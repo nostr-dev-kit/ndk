@@ -27,13 +27,28 @@
 	$effect(() => {
 		if (show) {
 			const newInputs: Record<string, string> = {};
+			const newPreviews: Record<string, NDKUser | NDKEvent | NDKArticle | string | null> = {};
 			for (const prop of props) {
-				newInputs[prop.name] = prop.default || '';
+				// Set current value as preview
+				if (prop.value) {
+					newPreviews[prop.name] = prop.value;
+					// Set the encoded value as the input
+					if (prop.type === 'article' && 'encode' in prop.value) {
+						newInputs[prop.name] = prop.value.encode();
+					} else if (prop.type === 'event' && 'encode' in prop.value) {
+						newInputs[prop.name] = prop.value.encode();
+					} else if (prop.type === 'user' && 'npub' in prop.value) {
+						newInputs[prop.name] = prop.value.npub;
+					}
+				}
+				if (!newInputs[prop.name]) {
+					newInputs[prop.name] = prop.default || '';
+				}
 			}
 			inputs = newInputs;
 			errors = {};
 			loading = {};
-			previews = {};
+			previews = newPreviews;
 		}
 	});
 
@@ -80,6 +95,7 @@
 			}
 		}, 500);
 	}
+
 
 	function handleApply() {
 		// Apply all previews
@@ -137,6 +153,8 @@
 						{prop.name}
 						<span class="prop-type">({prop.type})</span>
 					</label>
+
+					<!-- Text input for manual entry -->
 					<input
 						type="text"
 						class="prop-input"
@@ -145,6 +163,7 @@
 						value={inputs[prop.name] || ''}
 						oninput={(e) => handleInputChange(prop.name, prop.type, e.currentTarget.value)}
 					/>
+
 					{#if loading[prop.name]}
 						<div class="prop-loading">Loading preview...</div>
 					{/if}
@@ -277,8 +296,11 @@
 		color: hsl(var(--color-foreground));
 		border-radius: 0.375rem;
 		font-size: 0.875rem;
-		font-family: monospace;
 		transition: all 0.2s;
+	}
+
+	input.prop-input {
+		font-family: monospace;
 	}
 
 	.prop-input:focus {

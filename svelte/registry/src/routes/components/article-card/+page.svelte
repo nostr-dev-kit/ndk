@@ -19,21 +19,23 @@
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
 	import NeonCodeRaw from './examples/neon-code.svelte?raw';
 	import MediumCodeRaw from './examples/medium-code.svelte?raw';
-	import MediumSizesCodeRaw from './examples/medium-sizes-code.svelte?raw';
 
 	// Import UI component examples
 	import UIBasic from './examples/ui-basic.svelte';
 	import UIBasicRaw from './examples/ui-basic.svelte?raw';
 	import UIComposition from './examples/ui-composition.svelte';
 	import UICompositionRaw from './examples/ui-composition.svelte?raw';
-	import UIStyling from './examples/ui-styling.svelte';
-	import UIStylingRaw from './examples/ui-styling.svelte?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	let articles = $state<NDKArticle[]>([]);
 	let loading = $state(true);
-	let sampleArticle = $state<NDKArticle | undefined>();
+	let article1 = $state<NDKArticle | undefined>();
+	let article2 = $state<NDKArticle | undefined>();
+	let article3 = $state<NDKArticle | undefined>();
+	let article4 = $state<NDKArticle | undefined>();
+	let article5 = $state<NDKArticle | undefined>();
+	let mediumImageSize = $state<'small' | 'medium' | 'large'>('medium');
 
 	$effect(() => {
 		(async () => {
@@ -51,8 +53,13 @@
 					.map((event) => NDKArticle.from(event))
 					.filter((a) => a.title);
 
-				if (!sampleArticle && articles.length > 0) {
-					sampleArticle = articles[0];
+				// Initialize display articles from fetched articles
+				if (articles.length > 0) {
+					if (!article1) article1 = articles[0];
+					if (!article2 && articles.length > 1) article2 = articles[1];
+					if (!article3 && articles.length > 2) article3 = articles[2];
+					if (!article4 && articles.length > 3) article4 = articles[3];
+					if (!article5 && articles.length > 4) article5 = articles[4];
 				}
 
 				loading = false;
@@ -63,7 +70,7 @@
 		})();
 	});
 
-	const displayArticle = $derived(sampleArticle);
+	const displayArticles = $derived([article1, article2, article3, article4, article5].filter(Boolean) as NDKArticle[]);
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -75,9 +82,15 @@
 			layouts.
 		</p>
 
-		<EditProps.Root>
-			<EditProps.Prop name="Sample Article" type="article" bind:value={sampleArticle} />
-		</EditProps.Root>
+		{#key articles}
+			<EditProps.Root>
+				<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
+				<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />
+				<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} />
+				<EditProps.Prop name="Article 4" type="article" bind:value={article4} options={articles} />
+				<EditProps.Prop name="Article 5" type="article" bind:value={article5} options={articles} />
+			</EditProps.Root>
+		{/key}
 	</div>
 
 	{#if loading}
@@ -106,10 +119,7 @@
 				code={PortraitCodeRaw}
 			>
 				<div class="flex gap-6 overflow-x-auto pb-4">
-					{#if displayArticle}
-						<ArticleCardPortrait {ndk} article={displayArticle} />
-					{/if}
-					{#each articles.slice(0, 4) as article}
+					{#each displayArticles as article}
 						<ArticleCardPortrait {ndk} {article} />
 					{/each}
 				</div>
@@ -122,8 +132,8 @@
 				component="article-card-hero"
 				code={HeroCodeRaw}
 			>
-				{#if displayArticle}
-					<ArticleCardHero {ndk} article={displayArticle} />
+				{#if article1}
+					<ArticleCardHero {ndk} article={article1} />
 				{/if}
 			</BlockExample>
 
@@ -135,51 +145,36 @@
 				code={NeonCodeRaw}
 			>
 				<div class="flex gap-6 overflow-x-auto pb-4">
-					{#if displayArticle}
-						<ArticleCardNeon {ndk} article={displayArticle} />
-					{/if}
-					{#each articles.slice(0, 4) as article}
+					{#each displayArticles as article}
 						<ArticleCardNeon {ndk} {article} />
 					{/each}
 				</div>
 			</BlockExample>
 
 			<!-- Medium -->
-			<div>
-				<BlockExample
-					title="Medium"
-					description="Horizontal card layout with image on right. Ideal for list views and article feeds."
-					component="article-card-medium"
-					code={MediumCodeRaw}
-				>
-					<div class="space-y-0 border border-border rounded-lg overflow-hidden">
-						{#if displayArticle}
-							<ArticleCardMedium {ndk} article={displayArticle} />
-						{/if}
-						{#each articles.slice(0, 3) as article}
-							<ArticleCardMedium {ndk} {article} />
-						{/each}
-					</div>
-				</BlockExample>
+			<BlockExample
+				title="Medium"
+				description="Horizontal card layout with image on right. Ideal for list views and article feeds. Supports three image size variants."
+				component="article-card-medium"
+				code={MediumCodeRaw}
+			>
+				{#snippet controls()}
+					<label>
+						Image Size:
+						<select bind:value={mediumImageSize}>
+							<option value="small">Small</option>
+							<option value="medium">Medium</option>
+							<option value="large">Large</option>
+						</select>
+					</label>
+				{/snippet}
 
-				<!-- Sizes subsection -->
-				<div class="mt-8 ml-8 border-l-2 border-border pl-8">
-					<h4 class="text-xl font-semibold mb-4">Sizes</h4>
-					<BlockExample
-						description="Medium layout supports three image size options: small, medium, and large."
-						component="article-card-medium"
-						code={MediumSizesCodeRaw}
-					>
-						<div class="space-y-0 border border-border rounded-lg overflow-hidden">
-							{#if displayArticle}
-								<ArticleCardMedium {ndk} article={displayArticle} imageSize="small" />
-								<ArticleCardMedium {ndk} article={displayArticle} imageSize="medium" />
-								<ArticleCardMedium {ndk} article={displayArticle} imageSize="large" />
-							{/if}
-						</div>
-					</BlockExample>
+				<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+					{#each displayArticles.slice(0, 4) as article}
+						<ArticleCardMedium {ndk} {article} imageSize={mediumImageSize} />
+					{/each}
 				</div>
-			</div>
+			</BlockExample>
 		</div>
 	</section>
 
@@ -187,41 +182,30 @@
 	<section class="mb-16">
 		<h2 class="text-3xl font-bold mb-2">UI Components</h2>
 		<p class="text-muted-foreground mb-8">
-			Primitive components for building custom article card layouts. Mix and match to create your
-			own designs.
+			Primitive components for building custom article card layouts. Compose them together to
+			create your own designs.
 		</p>
 
 		<div class="space-y-8">
 			<!-- Basic -->
 			<UIExample
 				title="Basic Usage"
-				description="Start with ArticleCard.Root and add primitive components."
+				description="Minimal example with ArticleCard.Root and essential primitives."
 				code={UIBasicRaw}
 			>
-				{#if displayArticle}
-					<UIBasic {ndk} article={displayArticle} />
+				{#if article1}
+					<UIBasic {ndk} article={article1} />
 				{/if}
 			</UIExample>
 
-			<!-- Composition -->
+			<!-- Full Composition -->
 			<UIExample
 				title="Full Composition"
-				description="Combine multiple primitives to create rich card layouts."
+				description="All available primitives composed together."
 				code={UICompositionRaw}
 			>
-				{#if displayArticle}
-					<UIComposition {ndk} article={displayArticle} />
-				{/if}
-			</UIExample>
-
-			<!-- Styling -->
-			<UIExample
-				title="Custom Styling"
-				description="Apply your own Tailwind classes to create unique designs."
-				code={UIStylingRaw}
-			>
-				{#if displayArticle}
-					<UIStyling {ndk} article={displayArticle} />
+				{#if article1}
+					<UIComposition {ndk} article={article1} />
 				{/if}
 			</UIExample>
 		</div>

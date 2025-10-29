@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RelayCard Design Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            padding: 3rem;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            color: #fff;
+        }
+
+        /* Design 1: Glassmorphism */
+        .relay-card-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .relay-card-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+
+        .relay-card-glass:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Design 2: Neon Glow */
+        .relay-card-neon {
+            background: #111;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .relay-card-neon:hover {
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.6), 0 0 80px rgba(0, 255, 136, 0.3);
+            transform: scale(1.02);
+        }
+
+        .neon-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+        }
+
+        .neon-corner-tl {
+            top: -2px;
+            left: -2px;
+            border-top: 2px solid #00ff88;
+            border-left: 2px solid #00ff88;
+        }
+
+        .neon-corner-br {
+            bottom: -2px;
+            right: -2px;
+            border-bottom: 2px solid #00ff88;
+            border-right: 2px solid #00ff88;
+        }
+
+        /* Design 3: Gradient Card */
+        .relay-card-gradient {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid transparent;
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .relay-card-gradient::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .relay-card-gradient:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(118, 75, 162, 0.3);
+        }
+
+        /* Design 4: Minimal Elevated */
+        .relay-card-minimal {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .relay-card-minimal:hover {
+            border-color: #667eea;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Design 5: Card with Side Accent */
+        .relay-card-accent {
+            background: #151515;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #00ff88;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .relay-card-accent:hover {
+            border-left-width: 8px;
+            padding-left: calc(1.5rem - 4px);
+            box-shadow: 0 12px 24px rgba(0, 255, 136, 0.2);
+        }
+
+        /* Design 6: Brutalist */
+        .relay-card-brutal {
+            background: #000;
+            border: 3px solid #fff;
+            border-radius: 0;
+            padding: 1.5rem;
+            box-shadow: 8px 8px 0 #667eea;
+            transition: all 0.2s ease;
+        }
+
+        .relay-card-brutal:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0 #667eea;
+        }
+
+        /* Common Card Elements */
+        .relay-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .relay-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .relay-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .relay-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .relay-url {
+            font-size: 0.9rem;
+            color: #888;
+            font-family: 'Monaco', 'Courier New', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .relay-description {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .relay-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .relay-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #444;
+            color: #aaa;
+        }
+
+        .btn-secondary:hover {
+            border-color: #667eea;
+            color: #fff;
+        }
+
+        .bookmark-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .bookmark-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: gold;
+            transform: scale(1.1);
+        }
+
+        .avatars {
+            display: flex;
+            margin-left: auto;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #0a0a0a;
+            margin-left: -8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        /* Special: Compact Horizontal Card */
+        .relay-card-horizontal {
+            background: #151515;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .relay-card-horizontal:hover {
+            border-color: #667eea;
+            transform: translateX(4px);
+        }
+
+        .relay-card-horizontal .relay-header {
+            margin: 0;
+            flex: 1;
+        }
+
+        .relay-card-horizontal .relay-actions {
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 RelayCard Design Mockups</h1>
+    <p class="subtitle">Gorgeous design variations for Nostr relay cards</p>
+
+    <h2 class="section-title">1. Glassmorphism Style</h2>
+    <div class="grid">
+        <div class="relay-card-glass">
+            <div class="relay-header">
+                <div class="relay-icon">⚡</div>
+                <div class="relay-info">
+                    <div class="relay-name">Damus Relay</div>
+                    <div class="relay-url">wss://relay.damus.io</div>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span style="color: #888;">Online • 2.3k users</span>
+            </div>
+            <div class="relay-description">
+                A fast and reliable Nostr relay with low latency and high availability. Perfect for real-time messaging and social feeds.
+            </div>
+            <div class="relay-stats">
+                <div class="stat">
+                    <div class="stat-value">12.5k</div>
+                    <div class="stat-label">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">847</div>
+                    <div class="stat-label">Users</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">99.8%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+            <div class="relay-actions">
+                <button class="btn btn-primary">Connect</button>
+                <div class="bookmark-btn">⭐</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">2. Neon Cyberpunk</h2>
+    <div class="grid">
+        <div class="relay-card-neon">
+            <div class="neon-corner neon-corner-tl"></div>
+            <div class="neon-corner neon-corner-br"></div>
+            <div class="relay-header">
+                <div class="relay-icon">🔮</div>
+                <div class="relay-info">
+                    <div class="relay-name">Nostr.Wine</div>
+                    <div class="relay-url">wss://relay.nostr.wine</div>
+                </div>
+            </div>
+            <div class="tags">
+                <div class="tag">Paid</div>
+                <div class="tag">High Performance</div>
+                <div class="tag">Verified</div>
+            </div>
+            <div class="relay-description">
+                Premium relay service with spam filtering, data persistence, and guaranteed uptime. Built for serious Nostr users.
+            </div>
+            <div class="relay-actions">
+                <button class="btn btn-primary">Subscribe</button>
+                <button class="btn btn-secondary">Learn More</button>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">3. Gradient Border</h2>
+    <div class="grid">
+        <div class="relay-card-gradient">
+            <div class="relay-header">
+                <div class="relay-icon">💜</div>
+                <div class="relay-info">
+                    <div class="relay-name">Nostr.Band</div>
+                    <div class="relay-url">wss://relay.nostr.band</div>
+                </div>
+            </div>
+            <div class="relay-description">
+                Community-powered relay with advanced search capabilities and real-time trending content discovery.
+            </div>
+            <div class="relay-actions">
+                <button class="btn btn-primary">Add to Client</button>
+                <div class="avatars">
+                    <div class="avatar"></div>
+                    <div class="avatar"></div>
+                    <div class="avatar"></div>
+                    <div class="avatar"></div>
+                    <div class="avatar" style="background: #1a1a1a; color: #888; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600;">+47</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">4. Minimal Elevated</h2>
+    <div class="grid">
+        <div class="relay-card-minimal">
+            <div class="relay-header">
+                <div class="relay-icon">🌐</div>
+                <div class="relay-info">
+                    <div class="relay-name">Eden Relay</div>
+                    <div class="relay-url">wss://relay.eden.im</div>
+                </div>
+            </div>
+            <div class="relay-description">
+                Clean, simple, and fast. A no-nonsense relay that just works. Free for everyone.
+            </div>
+            <div class="relay-stats">
+                <div class="stat">
+                    <div class="stat-value">45ms</div>
+                    <div class="stat-label">Latency</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">1.2k</div>
+                    <div class="stat-label">Active</div>
+                </div>
+            </div>
+            <div class="relay-actions">
+                <button class="btn btn-primary">Connect</button>
+                <button class="btn btn-secondary">Info</button>
+                <div class="bookmark-btn">⭐</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">5. Side Accent</h2>
+    <div class="grid">
+        <div class="relay-card-accent">
+            <div class="relay-header">
+                <div class="relay-icon">🚀</div>
+                <div class="relay-info">
+                    <div class="relay-name">Nostr.Rocks</div>
+                    <div class="relay-url">wss://relay.nostr.rocks</div>
+                </div>
+                <div class="bookmark-btn">⭐</div>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span style="color: #888;">Blazing Fast • 15ms avg</span>
+            </div>
+            <div class="relay-description">
+                Lightning-fast relay optimized for speed. Perfect for day-trading and time-sensitive updates.
+            </div>
+            <div class="tags">
+                <div class="tag">Low Latency</div>
+                <div class="tag">Global CDN</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">6. Brutalist</h2>
+    <div class="grid">
+        <div class="relay-card-brutal">
+            <div class="relay-header">
+                <div class="relay-icon" style="border-radius: 0; border: 2px solid #fff;">█</div>
+                <div class="relay-info">
+                    <div class="relay-name">RELAY.CHAD</div>
+                    <div class="relay-url">wss://relay.chad.lol</div>
+                </div>
+            </div>
+            <div class="relay-description" style="font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;">
+                RAW. UNFILTERED. UNCENSORED. NO ALGORITHMS. JUST PURE NOSTR.
+            </div>
+            <div class="relay-actions">
+                <button class="btn btn-primary" style="border-radius: 0; border: 2px solid #fff;">CONNECT NOW</button>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">7. Compact Horizontal Layout</h2>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="relay-card-horizontal">
+            <div class="relay-header">
+                <div class="relay-icon" style="width: 40px; height: 40px;">⚡</div>
+                <div class="relay-info">
+                    <div class="relay-name">relay.damus.io</div>
+                    <div class="relay-url" style="color: #00ff88;">● Online • 847 users</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin: 0;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">12.5k</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+            <div class="relay-actions" style="gap: 0.5rem;">
+                <button class="btn btn-primary" style="flex: 0; padding: 0.5rem 1.5rem;">Connect</button>
+                <div class="bookmark-btn" style="width: 36px; height: 36px;">⭐</div>
+            </div>
+        </div>
+
+        <div class="relay-card-horizontal">
+            <div class="relay-header">
+                <div class="relay-icon" style="width: 40px; height: 40px;">🔮</div>
+                <div class="relay-info">
+                    <div class="relay-name">relay.nostr.wine</div>
+                    <div class="relay-url" style="color: #00ff88;">● Online • 2.3k users</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin: 0;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">45.2k</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+            <div class="relay-actions" style="gap: 0.5rem;">
+                <button class="btn btn-primary" style="flex: 0; padding: 0.5rem 1.5rem;">Connect</button>
+                <div class="bookmark-btn" style="width: 36px; height: 36px;">⭐</div>
+            </div>
+        </div>
+
+        <div class="relay-card-horizontal">
+            <div class="relay-header">
+                <div class="relay-icon" style="width: 40px; height: 40px;">💜</div>
+                <div class="relay-info">
+                    <div class="relay-name">relay.nostr.band</div>
+                    <div class="relay-url" style="color: #888;">● Offline</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin: 0;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">8.1k</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+            <div class="relay-actions" style="gap: 0.5rem;">
+                <button class="btn btn-secondary" style="flex: 0; padding: 0.5rem 1.5rem;">Retry</button>
+                <div class="bookmark-btn" style="width: 36px; height: 36px;">⭐</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">8. Grid Layout - Multiple Cards</h2>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <div class="relay-card-glass" style="padding: 1rem;">
+            <div class="relay-header" style="margin-bottom: 0.75rem;">
+                <div class="relay-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">⚡</div>
+                <div class="relay-info">
+                    <div class="relay-name" style="font-size: 1rem;">Damus</div>
+                    <div class="relay-url" style="font-size: 0.8rem;">relay.damus.io</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin-bottom: 0.75rem;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">12.5k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">847</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Users</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.4rem;">Connect</button>
+        </div>
+
+        <div class="relay-card-glass" style="padding: 1rem;">
+            <div class="relay-header" style="margin-bottom: 0.75rem;">
+                <div class="relay-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">🔮</div>
+                <div class="relay-info">
+                    <div class="relay-name" style="font-size: 1rem;">Nostr.Wine</div>
+                    <div class="relay-url" style="font-size: 0.8rem;">relay.nostr.wine</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin-bottom: 0.75rem;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">45.2k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">2.3k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Users</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.4rem;">Connect</button>
+        </div>
+
+        <div class="relay-card-glass" style="padding: 1rem;">
+            <div class="relay-header" style="margin-bottom: 0.75rem;">
+                <div class="relay-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">💜</div>
+                <div class="relay-info">
+                    <div class="relay-name" style="font-size: 1rem;">Nostr.Band</div>
+                    <div class="relay-url" style="font-size: 0.8rem;">relay.nostr.band</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin-bottom: 0.75rem;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">8.1k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">456</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Users</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.4rem;">Connect</button>
+        </div>
+
+        <div class="relay-card-glass" style="padding: 1rem;">
+            <div class="relay-header" style="margin-bottom: 0.75rem;">
+                <div class="relay-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">🌐</div>
+                <div class="relay-info">
+                    <div class="relay-name" style="font-size: 1rem;">Eden</div>
+                    <div class="relay-url" style="font-size: 0.8rem;">relay.eden.im</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin-bottom: 0.75rem;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">3.4k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">234</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Users</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.4rem;">Connect</button>
+        </div>
+
+        <div class="relay-card-glass" style="padding: 1rem;">
+            <div class="relay-header" style="margin-bottom: 0.75rem;">
+                <div class="relay-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">🚀</div>
+                <div class="relay-info">
+                    <div class="relay-name" style="font-size: 1rem;">Nostr.Rocks</div>
+                    <div class="relay-url" style="font-size: 0.8rem;">relay.nostr.rocks</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin-bottom: 0.75rem;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">28.7k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">1.8k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Users</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.4rem;">Connect</button>
+        </div>
+
+        <div class="relay-card-glass" style="padding: 1rem;">
+            <div class="relay-header" style="margin-bottom: 0.75rem;">
+                <div class="relay-icon" style="width: 36px; height: 36px; font-size: 1.2rem;">⚡</div>
+                <div class="relay-info">
+                    <div class="relay-name" style="font-size: 1rem;">Nostr.Mom</div>
+                    <div class="relay-url" style="font-size: 0.8rem;">relay.nostr.mom</div>
+                </div>
+            </div>
+            <div class="relay-stats" style="margin-bottom: 0.75rem;">
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">5.9k</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="font-size: 1.1rem;">392</div>
+                    <div class="stat-label" style="font-size: 0.7rem;">Users</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 0.4rem;">Connect</button>
+        </div>
+    </div>
+
+</body>
+</html>

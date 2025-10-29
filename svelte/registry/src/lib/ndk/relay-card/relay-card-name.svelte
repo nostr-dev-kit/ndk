@@ -42,6 +42,6 @@
   );
 </script>
 
-<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
+<span class={cn(size, truncate && 'truncate block max-w-full', className)}>
   {displayName}
 </span>

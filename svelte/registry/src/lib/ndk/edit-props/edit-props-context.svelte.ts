@@ -8,6 +8,7 @@ export interface PropDefinition {
 	type: PropType;
 	default?: string;
 	value?: NDKUser | NDKEvent | NDKArticle | string;
+	options?: (NDKUser | NDKEvent | NDKArticle)[];
 }
 
 export interface EditPropsContext {

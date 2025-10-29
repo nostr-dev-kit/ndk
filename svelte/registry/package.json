@@ -9,7 +9,13 @@
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "registry:versions": "bun run scripts/add-component-versions.ts",
+    "registry:manifest": "bun run scripts/generate-version-manifest.ts",
+    "registry:headers": "bun run scripts/add-version-headers.ts",
+    "registry:update": "bun run registry:versions && bun run registry:manifest && bun run registry:headers",
+    "ndk:check": "bun run scripts/scan-and-upgrade.ts",
+    "ndk:upgrade": "bun run scripts/scan-and-upgrade.ts --yes"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.1.0",

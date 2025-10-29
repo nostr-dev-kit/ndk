@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import CodePreview from '$site-components/code-preview.svelte';
   import UserInputControl from '$site-components/user-input-control.svelte';
+  import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
   import Nip05DefaultExample from '../user-profile/examples/nip05-default.svelte';
@@ -80,44 +81,14 @@
     </ul>
 
     <h2>Props</h2>
-    <div class="props-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Default</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>ndk</code></td>
-            <td>NDKSvelte</td>
-            <td>-</td>
-            <td>NDK instance (required for standalone mode, otherwise from context)</td>
-          </tr>
-          <tr>
-            <td><code>user</code></td>
-            <td>NDKUser</td>
-            <td>-</td>
-            <td>User instance (required for standalone mode, otherwise from context)</td>
-          </tr>
-          <tr>
-            <td><code>showNip05</code></td>
-            <td>boolean</td>
-            <td>true</td>
-            <td>Whether to display the NIP-05 identifier</td>
-          </tr>
-          <tr>
-            <td><code>showVerified</code></td>
-            <td>boolean</td>
-            <td>true</td>
-            <td>Actually verify NIP-05 by fetching from domain and show verification badge (✓/✗/⋯)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ApiTable
+      rows={[
+        { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (required for standalone mode, otherwise from context)' },
+        { name: 'user', type: 'NDKUser', description: 'User instance (required for standalone mode, otherwise from context)' },
+        { name: 'showNip05', type: 'boolean', default: 'true', description: 'Whether to display the NIP-05 identifier' },
+        { name: 'showVerified', type: 'boolean', default: 'true', description: 'Actually verify NIP-05 by fetching from domain and show verification badge (✓/✗/⋯)' }
+      ]}
+    />
   </section>
 </div>
 
@@ -146,44 +117,4 @@
     color: hsl(var(--color-foreground));
   }
 
-  .props-table {
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  thead {
-    background: hsl(var(--color-muted));
-  }
-
-  th {
-    padding: 0.75rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: hsl(var(--color-foreground));
-    border-bottom: 1px solid hsl(var(--color-border));
-  }
-
-  td {
-    padding: 0.75rem;
-    font-size: 0.875rem;
-    color: hsl(var(--color-foreground));
-    border-bottom: 1px solid hsl(var(--color-border));
-  }
-
-  td code {
-    background: hsl(var(--color-muted));
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.8125rem;
-  }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
 </style>

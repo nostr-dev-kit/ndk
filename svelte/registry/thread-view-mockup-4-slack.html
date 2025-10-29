@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreadView Mockup 4 - Slack-style</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Slack-Lato', 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #1a1d21;
+      color: #d1d2d3;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+    }
+
+    /* Main Container */
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Thread Header */
+    .thread-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #36393f;
+      background: #1a1d21;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .thread-header-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: #ffffff;
+    }
+    .thread-count {
+      color: #8e9297;
+      font-size: 14px;
+    }
+
+    /* Thread Container */
+    .thread-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    /* Message */
+    .message {
+      display: flex;
+      gap: 12px;
+      padding: 8px 20px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: background 0.1s;
+    }
+    .message:hover {
+      background: #2c2f33;
+    }
+
+    /* Focused Message */
+    .message--focused {
+      background: #2f3136;
+      border-left: 4px solid #5865f2;
+      padding-left: 16px;
+    }
+    .message--focused:hover {
+      background: #2f3136;
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    /* Message Content */
+    .message-content-wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+    .message-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .user-name {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 15px;
+    }
+    .timestamp {
+      font-size: 12px;
+      color: #8e9297;
+    }
+    .message-text {
+      font-size: 15px;
+      line-height: 22px;
+      color: #d1d2d3;
+    }
+    .message--focused .message-text {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    /* Message Actions */
+    .message-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #8e9297;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.1s;
+    }
+    .action-btn:hover {
+      background: #36393f;
+      color: #ffffff;
+    }
+
+    /* Thread Replies Indicator */
+    .thread-replies {
+      margin-left: 48px;
+      padding: 8px 12px;
+      margin-top: 4px;
+      background: #2c2f33;
+      border-left: 2px solid #5865f2;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #8e9297;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .thread-replies:hover {
+      background: #36393f;
+    }
+    .reply-count {
+      color: #5865f2;
+      font-weight: 600;
+    }
+
+    /* Nested Messages */
+    .nested-messages {
+      margin-left: 48px;
+      border-left: 2px solid #36393f;
+      padding-left: 16px;
+      margin-top: 8px;
+    }
+
+    /* Section Divider */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      padding: 0 20px;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: #36393f;
+    }
+    .divider-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #8e9297;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="thread-header">
+      <div class="thread-header-title">Thread</div>
+      <div class="thread-count">5 messages</div>
+    </div>
+
+    <div class="thread-container">
+
+      <!-- Parent Message -->
+      <div class="message">
+        <div class="avatar"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Alice Developer</span>
+            <span class="timestamp">2:45 PM</span>
+          </div>
+          <div class="message-text">
+            Hey team! I've been working on the thread view component and I think we should leverage the existing EventCard and UserProfile primitives. What do you all think?
+          </div>
+          <div class="message-actions">
+            <div class="action-btn">💬 Reply</div>
+            <div class="action-btn">🔁 Repost</div>
+            <div class="action-btn">➕ React</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Continuation 1 (Alice continues) -->
+      <div class="message">
+        <div class="avatar"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Alice Developer</span>
+            <span class="timestamp">2:46 PM</span>
+          </div>
+          <div class="message-text">
+            The key benefit is consistency. Users will see the same avatar styles, name displays, and interaction patterns across all views.
+          </div>
+        </div>
+      </div>
+
+      <!-- Continuation 2 (Alice continues) -->
+      <div class="message">
+        <div class="avatar"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Alice Developer</span>
+            <span class="timestamp">2:47 PM</span>
+          </div>
+          <div class="message-text">
+            Plus, createThreadView already handles the complex data structure for us - parent chains, same-author continuations, reply filtering, etc.
+          </div>
+          <div class="message-actions">
+            <div class="action-btn">💬 Reply</div>
+            <div class="action-btn">🔁 Repost</div>
+            <div class="action-btn">➕ React</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Focused Message -->
+      <div class="message message--focused">
+        <div class="avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Bob Engineer</span>
+            <span class="timestamp">3:15 PM</span>
+          </div>
+          <div class="message-text">
+            Absolutely! Using those primitives would give us consistency across the app and reduce code duplication. I'm thinking we could have different layout variants too - like Twitter-style, Reddit-style, etc.
+          </div>
+        </div>
+      </div>
+
+      <!-- Continuation 3 (Bob continues) -->
+      <div class="message message--focused">
+        <div class="avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Bob Engineer</span>
+            <span class="timestamp">3:16 PM</span>
+          </div>
+          <div class="message-text">
+            Each layout style would just be a different way of mapping over thread.events, thread.replies, and thread.otherReplies. The components stay the same.
+          </div>
+        </div>
+      </div>
+
+      <!-- Continuation 4 (Bob continues) -->
+      <div class="message message--focused">
+        <div class="avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Bob Engineer</span>
+            <span class="timestamp">3:17 PM</span>
+          </div>
+          <div class="message-text">
+            We could even support compact mobile layouts, chat-style bubbles, timeline views... the possibilities are endless!
+          </div>
+          <div class="message-actions">
+            <div class="action-btn">💬 2 Replies</div>
+            <div class="action-btn">🔁 3 Reposts</div>
+            <div class="action-btn">⚡ 42 Zaps</div>
+            <div class="action-btn">🔖 Save</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thread Replies Indicator -->
+      <div class="thread-replies">
+        <span class="reply-count">2 replies</span>
+        <span>Last reply 15 minutes ago</span>
+      </div>
+
+      <!-- Nested Replies -->
+      <div class="nested-messages">
+        <div class="message">
+          <div class="avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+          <div class="message-content-wrapper">
+            <div class="message-header">
+              <span class="user-name">Charlie Designer</span>
+              <span class="timestamp">3:45 PM</span>
+            </div>
+            <div class="message-text">
+              Love this idea! The consistency would make the UX so much better.
+            </div>
+            <div class="message-actions">
+              <div class="action-btn">💬 Reply</div>
+              <div class="action-btn">⚡ Zap</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="message">
+          <div class="avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+          <div class="message-content-wrapper">
+            <div class="message-header">
+              <span class="user-name">Dana Product</span>
+              <span class="timestamp">4:00 PM</span>
+            </div>
+            <div class="message-text">
+              From a product perspective, having multiple layout options would be fantastic for different use cases!
+            </div>
+            <div class="message-actions">
+              <div class="action-btn">💬 Reply</div>
+              <div class="action-btn">⚡ Zap</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">Also in this thread</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Other Reply -->
+      <div class="message">
+        <div class="avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+        <div class="message-content-wrapper">
+          <div class="message-header">
+            <span class="user-name">Eve Marketing</span>
+            <span class="timestamp">3:30 PM</span>
+          </div>
+          <div class="message-text">
+            Quick question about the original proposal - are we planning to support nested threads beyond 2 levels?
+          </div>
+          <div class="message-actions">
+            <div class="action-btn">💬 Reply</div>
+            <div class="action-btn">⚡ Zap</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

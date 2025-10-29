@@ -1,7 +1,7 @@
 <ArticleCard.Root {ndk} {article}>
 	<button
 		type="button"
-		class="group flex flex-col flex-shrink-0 w-[320px] h-[420px] rounded-2xl overflow-hidden bg-card hover:bg-muted transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10 text-left"
+		class="group flex flex-col flex-shrink-0 w-[320px] h-[420px] rounded-2xl overflow-hidden bg-card hover:bg-muted transition-colors text-left"
 	>
 		<ArticleCard.Image class="h-56" showGradient={true} />
 

@@ -21,6 +21,8 @@
   import { RELAY_CARD_CONTEXT_KEY, type RelayCardContext } from './context.svelte.js';
   import type { BookmarkedRelayListState } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
+  import LoadingIcon from '../icons/loading.svelte';
+  import BookmarkIcon from '../icons/bookmark.svelte';
 
   interface Props {
     /** Bookmarked relay list state (must include current user) */
@@ -81,9 +83,9 @@
   aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark relay'}
 >
   {#if isLoading}
-    <i class="hugeicons-stroke-rounded relay-card-bookmark-spinner">&#987577;</i>
+    <LoadingIcon class="relay-card-bookmark-spinner" />
   {:else}
-    <i class="hugeicons-{isBookmarked ? 'solid' : 'stroke'}-rounded">&#990859;</i>
+    <BookmarkIcon filled={isBookmarked} />
   {/if}
 </button>
 

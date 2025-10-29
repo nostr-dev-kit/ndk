@@ -21,6 +21,7 @@
   import { cn } from '$lib/utils';
   import { getContext } from 'svelte';
   import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from '../article-card/context.svelte.js';
+  import FileIcon from '../icons/file.svelte';
 
   interface Props {
     /** NDK instance */
@@ -102,7 +103,7 @@
       <!-- Top badges -->
       <div class="flex items-start justify-between mb-auto">
         <div class="w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
-          <i class="hugeicons-stroke-rounded text-xl text-white leading-none">&#985549;</i>
+          <FileIcon class="w-5 h-5 text-white" />
         </div>
 
         <div class="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

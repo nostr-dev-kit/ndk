@@ -1,120 +1,538 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import { getContext } from 'svelte';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
+	import { RelayCard } from '$lib/ndk/relay-card';
+	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/ndk/blocks';
+	import { EditProps } from '$lib/ndk/edit-props';
+	import BlockExample from '$site-components/block-example.svelte';
+	import UIExample from '$site-components/ui-example.svelte';
+	import ComponentAPI from '$site-components/component-api.svelte';
 
-  // Import examples
-  import BasicExample from './examples/basic.svelte';
-  import BasicExampleRaw from './examples/basic.svelte?raw';
-  import WithDescriptionExample from './examples/with-description.svelte';
-  import WithDescriptionExampleRaw from './examples/with-description.svelte?raw';
-  import BookmarkedByExample from './examples/bookmarked-by.svelte';
-  import BookmarkedByExampleRaw from './examples/bookmarked-by.svelte?raw';
-  import WithBookmarkButtonExample from './examples/with-bookmark-button.svelte';
-  import WithBookmarkButtonExampleRaw from './examples/with-bookmark-button.svelte?raw';
-  import FullCardExample from './examples/full-card.svelte';
-  import FullCardExampleRaw from './examples/full-card.svelte?raw';
-  import TopRelaysExample from './examples/top-relays.svelte';
-  import TopRelaysExampleRaw from './examples/top-relays.svelte?raw';
+	// Code examples for blocks
+	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
+	import CompactCodeRaw from './examples/compact-code.svelte?raw';
+	import ListCodeRaw from './examples/list-code.svelte?raw';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+	// UI component examples
+	import BasicExample from './examples/basic.svelte';
+	import BasicExampleRaw from './examples/basic.svelte?raw';
+	import FullCardExample from './examples/full-card.svelte';
+	import FullCardExampleRaw from './examples/full-card.svelte?raw';
+	import BuilderUsageExample from './examples/builder-usage.svelte';
+	import BuilderUsageExampleRaw from './examples/builder-usage.svelte?raw';
 
-  let exampleRelay = $state<string>('wss://relay.damus.io');
+	const ndk = getContext<NDKSvelte>('ndk');
 
-  const exampleRelays = [
-    'wss://relay.damus.io',
-    'wss://nos.lol',
-    'wss://relay.nostr.band'
-  ];
+	let exampleRelay = $state<string>('wss://relay.damus.io');
 
-  // Create bookmarks tracker (excludes current user for stats)
-  const followsBookmarks = createBookmarkedRelayList(() => ({
-    authors: Array.from(ndk.$sessions?.follows || []),
-    includeCurrentUser: false
-  }), ndk);
+	// Sample relays for blocks - customizable via EditProps
+	let relay1 = $state<string>('wss://relay.damus.io');
+	let relay2 = $state<string>('wss://f7z.io');
+	let relay3 = $state<string>('wss://140.f7z.io');
+	let relay4 = $state<string>('wss://relay.dergigi.com');
+	let relay5 = $state<string>('wss://nostr.wine');
 
-  // Create bookmarks with current user (for toggle capability)
-  const bookmarksWithToggle = createBookmarkedRelayList(() => ({
-    authors: Array.from(ndk.$sessions?.follows || [])
-  }), ndk);
+	const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
+
+	const followsBookmarks = createBookmarkedRelayList(
+		() => ({
+			authors: Array.from(ndk.$sessions?.follows || []),
+			includeCurrentUser: false
+		}),
+		ndk
+	);
+
+	const bookmarksWithToggle = createBookmarkedRelayList(
+		() => ({
+			authors: Array.from(ndk.$sessions?.follows || [])
+		}),
+		ndk
+	);
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>RelayCard</h1>
-    <p>Composable relay display components with NIP-11 info and bookmark functionality.</p>
+<div class="container mx-auto p-8 max-w-7xl">
+	<!-- Header -->
+	<div class="mb-12">
+		<h1 class="text-4xl font-bold mb-4">RelayCard</h1>
+		<p class="text-lg text-muted-foreground mb-6">
+			Composable relay display components with NIP-11 info and bookmark functionality. Build custom
+			relay cards with flexible primitive components.
+		</p>
 
-    <EditProps.Root>
-      <EditProps.Prop
-        name="Example Relay"
-        type="text"
-        default="wss://relay.damus.io"
-        bind:value={exampleRelay}
-      />
-    </EditProps.Root>
-  </header>
+		<EditProps.Root>
+			<EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
+			<EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
+			<EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
+			<EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
+			<EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
+			<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
+		</EditProps.Root>
+	</div>
 
-  <section class="demo">
-    <CodePreview
-      title="Basic Relay Card"
-      description="Simple relay card showing icon, name, and URL."
-      code={BasicExampleRaw}
-    >
-      <BasicExample {ndk} relayUrl={exampleRelay} />
-    </CodePreview>
-  </section>
+	<!-- Blocks Section -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
+		<p class="text-muted-foreground mb-8">
+			Pre-composed relay card layouts ready to use. Install with a single command.
+		</p>
 
-  <section class="demo">
-    <CodePreview
-      title="With Description"
-      description="Relay card with NIP-11 description text."
-      code={WithDescriptionExampleRaw}
-    >
-      <WithDescriptionExample {ndk} relayUrl={exampleRelay} />
-    </CodePreview>
-  </section>
+		<div class="space-y-12">
+			<!-- Portrait -->
+			<BlockExample
+				title="Portrait"
+				description="Vertical card layout with icon on top. Perfect for relay grids and discovery displays."
+				component="relay-card-portrait"
+				code={PortraitCodeRaw}
+			>
+				<div class="flex gap-6 overflow-x-auto pb-4">
+					{#each displayRelays as relayUrl}
+						<RelayCardPortrait {ndk} {relayUrl} />
+					{/each}
+				</div>
+			</BlockExample>
 
-  <section class="demo">
-    <CodePreview
-      title="Bookmarked By"
-      description="Shows avatars of users who have bookmarked this relay."
-      code={BookmarkedByExampleRaw}
-    >
-      <BookmarkedByExample {ndk} relayUrl={exampleRelay} {followsBookmarks} />
-    </CodePreview>
-  </section>
+			<!-- Compact -->
+			<BlockExample
+				title="Compact"
+				description="Small square card with icon and name. Ideal for compact grids where space is limited."
+				component="relay-card-compact"
+				code={CompactCodeRaw}
+			>
+				<div class="flex gap-4 overflow-x-auto pb-4">
+					{#each displayRelays as relayUrl}
+						<RelayCardCompact {ndk} {relayUrl} />
+					{/each}
+				</div>
+			</BlockExample>
 
-  <section class="demo">
-    <CodePreview
-      title="With Bookmark Button"
-      description="Toggle to bookmark/unbookmark relay (requires login)."
-      code={WithBookmarkButtonExampleRaw}
-    >
-      <WithBookmarkButtonExample {ndk} relayUrl={exampleRelay} {bookmarksWithToggle} />
-    </CodePreview>
-  </section>
+			<!-- List -->
+			<BlockExample
+				title="List"
+				description="Horizontal card layout. Perfect for relay lists and feeds with optional description."
+				component="relay-card-list"
+				code={ListCodeRaw}
+			>
+				<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+					{#each displayRelays.slice(0, 4) as relayUrl}
+						<RelayCardList {ndk} {relayUrl} />
+					{/each}
+				</div>
+			</BlockExample>
+		</div>
+	</section>
 
-  <section class="demo">
-    <CodePreview
-      title="Full Card"
-      description="Complete relay card with all features."
-      code={FullCardExampleRaw}
-    >
-      <FullCardExample {ndk} relayUrl={exampleRelay} {followsBookmarks} {bookmarksWithToggle} />
-    </CodePreview>
-  </section>
+	<!-- UI Components Section -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-2">UI Components</h2>
+		<p class="text-muted-foreground mb-8">
+			Primitive components for building custom relay card layouts. Compose them together to create
+			your own designs.
+		</p>
 
-  {#if followsBookmarks.relays.length > 0}
-    <section class="demo">
-      <CodePreview
-        title="Top Relays from Follows"
-        description="Most bookmarked relays by people you follow."
-        code={TopRelaysExampleRaw}
-      >
-        <TopRelaysExample {ndk} {followsBookmarks} {bookmarksWithToggle} />
-      </CodePreview>
-    </section>
-  {/if}
+		<div class="space-y-8">
+			<!-- Basic Usage -->
+			<UIExample
+				title="Basic Usage"
+				description="Minimal example with RelayCard.Root and essential primitives."
+				code={BasicExampleRaw}
+			>
+				<BasicExample {ndk} relayUrl={exampleRelay} />
+			</UIExample>
+
+			<!-- Full Composition -->
+			<UIExample
+				title="Full Composition"
+				description="All available primitives composed together."
+				code={FullCardExampleRaw}
+			>
+				<FullCardExample
+					{ndk}
+					relayUrl={exampleRelay}
+					{followsBookmarks}
+					{bookmarksWithToggle}
+				/>
+			</UIExample>
+		</div>
+	</section>
+
+	<!-- Builder Section -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-2">Builder</h2>
+		<p class="text-muted-foreground mb-8">
+			The <code class="text-sm bg-muted px-2 py-1 rounded">createBookmarkedRelayList</code> builder
+			provides reactive state for tracking bookmarked relays from a set of users.
+		</p>
+
+		<div class="space-y-8">
+			<UIExample
+				title="Using createBookmarkedRelayList"
+				description="Create a reactive bookmarked relay list to track and display relays bookmarked by users you follow."
+				code={BuilderUsageExampleRaw}
+			>
+				<BuilderUsageExample {ndk} />
+			</UIExample>
+		</div>
+	</section>
+
+	<!-- Component API -->
+	<ComponentAPI
+		components={[
+			{
+				name: 'RelayCard.Root',
+				description:
+					'Root container that provides context to child components. Fetches NIP-11 relay information automatically.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description:
+							'NDK instance. Optional if NDK is available in Svelte context (from parent components).',
+						required: false
+					},
+					{
+						name: 'relayUrl',
+						type: 'string',
+						description: 'The relay WebSocket URL (e.g., "wss://relay.damus.io")',
+						required: true
+					}
+				]
+			},
+			{
+				name: 'RelayCard.Icon',
+				description: 'Display relay icon from NIP-11 metadata with fallback.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'size',
+						type: 'number',
+						default: '48',
+						description: 'Icon size in pixels',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCard.Name',
+				description: 'Display relay name from NIP-11 metadata.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'fallback',
+						type: 'string',
+						default: '"Relay"',
+						description: 'Fallback text when relay name is unavailable',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCard.Url',
+				description: 'Display relay URL with optional domain-only mode.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'showProtocol',
+						type: 'boolean',
+						default: 'true',
+						description: 'Show wss:// protocol prefix',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCard.Description',
+				description: 'Display relay description from NIP-11 metadata with line clamping.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'maxLines',
+						type: 'number',
+						default: '2',
+						description: 'Maximum number of lines to display',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCard.BookmarkButton',
+				description:
+					'Toggle button for bookmarking/unbookmarking relay. Requires user authentication.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'bookmarks',
+						type: 'BookmarkedRelayListState',
+						description:
+							'Bookmarked relay list state from createBookmarkedRelayList. Must include current user for toggle functionality.',
+						required: true
+					},
+					{
+						name: 'size',
+						type: '"sm" | "md" | "lg"',
+						default: '"md"',
+						description: 'Button size variant',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCard.BookmarkedBy',
+				description: 'Display avatars of users who have bookmarked this relay.',
+				importPath: "import { RelayCard } from '$lib/ndk/relay-card'",
+				props: [
+					{
+						name: 'bookmarks',
+						type: 'BookmarkedRelayListState',
+						description: 'Bookmarked relay list state from createBookmarkedRelayList',
+						required: true
+					},
+					{
+						name: 'maxAvatars',
+						type: 'number',
+						default: '5',
+						description: 'Maximum number of avatars to display',
+						required: false
+					},
+					{
+						name: 'avatarSize',
+						type: 'number',
+						default: '32',
+						description: 'Avatar size in pixels',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCardPortrait',
+				description:
+					'Preset: Vertical card with icon on top. Import from $lib/ndk/blocks for quick use.',
+				importPath: "import { RelayCardPortrait } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'relayUrl',
+						type: 'string',
+						description: 'The relay WebSocket URL',
+						required: true
+					},
+					{
+						name: 'width',
+						type: 'string',
+						default: '"w-[280px]"',
+						description: 'Card width (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'height',
+						type: 'string',
+						default: '"h-[320px]"',
+						description: 'Card height (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'onclick',
+						type: '(e: MouseEvent) => void',
+						description: 'Click handler (default: opens relay URL in new tab)',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCardCompact',
+				description:
+					'Preset: Small square card with icon and name. Import from $lib/ndk/blocks.',
+				importPath: "import { RelayCardCompact } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'relayUrl',
+						type: 'string',
+						description: 'The relay WebSocket URL',
+						required: true
+					},
+					{
+						name: 'size',
+						type: 'string',
+						default: '"w-[160px] h-[160px]"',
+						description: 'Card size (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'onclick',
+						type: '(e: MouseEvent) => void',
+						description: 'Click handler (default: opens relay URL in new tab)',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'RelayCardList',
+				description:
+					'Preset: Horizontal list card. Import from $lib/ndk/blocks.',
+				importPath: "import { RelayCardList } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'relayUrl',
+						type: 'string',
+						description: 'The relay WebSocket URL',
+						required: true
+					},
+					{
+						name: 'showDescription',
+						type: 'boolean',
+						default: 'true',
+						description: 'Show relay description',
+						required: false
+					},
+					{
+						name: 'onclick',
+						type: '(e: MouseEvent) => void',
+						description: 'Click handler (default: opens relay URL in new tab)',
+						required: false
+					}
+				]
+			}
+		]}
+	/>
+
+	<!-- Builder API -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-4">Builder API</h2>
+
+		<div class="space-y-6">
+			<div class="border border-border rounded-lg p-6">
+				<h3 class="text-xl font-semibold mb-3">createBookmarkedRelayList</h3>
+				<p class="text-muted-foreground mb-4">
+					Creates a reactive store that tracks relays bookmarked by a set of users. Returns a
+					<code class="text-sm bg-muted px-2 py-1 rounded">BookmarkedRelayListState</code> with sorted
+					relay list and bookmark counts.
+				</p>
+
+				<div class="bg-muted p-4 rounded-lg mb-4">
+					<code class="text-sm">
+						createBookmarkedRelayList(
+						<br />
+						&nbsp;&nbsp;options: () => {'{'} authors: string[], includeCurrentUser?: boolean {'}'},
+						<br />
+						&nbsp;&nbsp;ndk: NDKSvelte
+						<br />
+						): BookmarkedRelayListState
+					</code>
+				</div>
+
+				<div class="space-y-3">
+					<div>
+						<h4 class="text-sm font-semibold mb-1">Parameters</h4>
+						<ul class="space-y-2 text-sm text-muted-foreground">
+							<li>
+								<code class="bg-muted px-2 py-1 rounded">options</code> - Function returning configuration
+								object:
+								<ul class="ml-4 mt-1 space-y-1">
+									<li>
+										<code class="bg-muted px-1 py-0.5 rounded">authors</code>: Array of pubkeys to track
+									</li>
+									<li>
+										<code class="bg-muted px-1 py-0.5 rounded">includeCurrentUser</code>: Include
+										current user's bookmarks (enables toggle)
+									</li>
+								</ul>
+							</li>
+							<li>
+								<code class="bg-muted px-2 py-1 rounded">ndk</code> - NDK instance
+							</li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-sm font-semibold mb-1">Returns</h4>
+						<div class="text-sm text-muted-foreground">
+							<code class="bg-muted px-2 py-1 rounded">BookmarkedRelayListState</code> with:
+							<ul class="ml-4 mt-1 space-y-1">
+								<li>
+									<code class="bg-muted px-1 py-0.5 rounded">relays</code>: Array of {'{'}url: string,
+									percentage: number{'}'} sorted by percentage
+								</li>
+								<li>
+									<code class="bg-muted px-1 py-0.5 rounded">loading</code>: Boolean loading state
+								</li>
+								<li>
+									<code class="bg-muted px-1 py-0.5 rounded">toggle(relay)</code>: Function to
+									bookmark/unbookmark relay
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<div>
+						<h4 class="text-sm font-semibold mb-1">Example</h4>
+						<div class="bg-muted p-3 rounded-lg">
+							<code class="text-sm">
+								const bookmarks = createBookmarkedRelayList(
+								<br />
+								&nbsp;&nbsp;() => ({'{'} authors: followPubkeys, includeCurrentUser: true {'}'}),
+								<br />
+								&nbsp;&nbsp;ndk
+								<br />
+								);
+							</code>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </div>

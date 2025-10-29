@@ -8,9 +8,10 @@
 		type: PropType;
 		default?: string;
 		value?: NDKUser | NDKEvent | NDKArticle | string;
+		options?: (NDKUser | NDKEvent | NDKArticle)[];
 	}
 
-	let { name, type, default: defaultValue, value = $bindable() }: Props = $props();
+	let { name, type, default: defaultValue, value = $bindable(), options }: Props = $props();
 
 	let context = getEditPropsContext();
 
@@ -20,7 +21,8 @@
 			name,
 			type,
 			default: defaultValue,
-			value
+			value,
+			options
 		});
 	});
 

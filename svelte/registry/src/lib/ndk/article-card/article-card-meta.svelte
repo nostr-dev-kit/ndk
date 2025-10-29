@@ -14,6 +14,7 @@
   import { cn } from '$lib/utils';
   import Author from './article-card-author.svelte';
   import Date from './article-card-date.svelte';
+  import CalendarIcon from '../icons/calendar.svelte';
 
   interface Props {
     /** Show calendar icon */
@@ -38,7 +39,7 @@
   <Author />
   <span>·</span>
   {#if showIcon}
-    <i class="hugeicons-stroke-rounded text-base leading-none">&#984777;</i>
+    <CalendarIcon class="w-4 h-4" />
   {/if}
   <Date />
 </div>

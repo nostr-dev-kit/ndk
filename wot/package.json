@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/wot",
-  "version": "0.3.7-beta.17",
+  "version": "0.3.7-beta.18",
   "description": "Web of Trust utilities for NDK",
   "type": "module",
   "main": "./dist/index.js",
@@ -49,8 +49,8 @@
   },
   "homepage": "https://github.com/nostr-dev-kit/ndk",
   "dependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.17",
-    "@nostr-dev-kit/sync": "0.4.0-beta.17",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.18",
+    "@nostr-dev-kit/sync": "0.4.0-beta.18",
     "debug": "^4.3.7",
     "typescript": "^5.9.3"
   },

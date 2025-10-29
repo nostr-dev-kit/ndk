@@ -251,73 +251,26 @@
 
     <div class="api-section">
       <h3>Props</h3>
-      <table class="api-table">
-        <thead>
-          <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Default</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>ndk</code></td>
-            <td><code>NDKSvelte</code></td>
-            <td>required</td>
-            <td>NDK instance</td>
-          </tr>
-          <tr>
-            <td><code>target</code></td>
-            <td><code>NDKUser | string</code></td>
-            <td>required</td>
-            <td>User object or hashtag string to follow</td>
-          </tr>
-          <tr>
-            <td><code>variant</code></td>
-            <td><code>'default' | 'primary'</code></td>
-            <td><code>'default'</code></td>
-            <td>Visual style variant</td>
-          </tr>
-          <tr>
-            <td><code>showIcon</code></td>
-            <td><code>boolean</code></td>
-            <td><code>true</code></td>
-            <td>Show/hide icon in button</td>
-          </tr>
-          <tr>
-            <td><code>class</code></td>
-            <td><code>string</code></td>
-            <td><code>''</code></td>
-            <td>Custom CSS classes (overrides variant)</td>
-          </tr>
-        </tbody>
-      </table>
+      <ApiTable
+        rows={[
+          { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+          { name: 'target', type: 'NDKUser | string', required: true, description: 'User object or hashtag string to follow' },
+          { name: 'variant', type: "'default' | 'primary'", default: "'default'", description: 'Visual style variant' },
+          { name: 'showIcon', type: 'boolean', default: 'true', description: 'Show/hide icon in button' },
+          { name: 'class', type: 'string', default: "''", description: 'Custom CSS classes (overrides variant)' }
+        ]}
+      />
     </div>
 
     <div class="api-section">
       <h3>Events</h3>
-      <table class="api-table">
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Detail</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>followsuccess</code></td>
-            <td><code>{'{ target, isFollowing, isHashtag }'}</code></td>
-            <td>Fired when follow/unfollow succeeds</td>
-          </tr>
-          <tr>
-            <td><code>followerror</code></td>
-            <td><code>{'{ error, target, isHashtag }'}</code></td>
-            <td>Fired when follow/unfollow fails</td>
-          </tr>
-        </tbody>
-      </table>
+      <ApiTable
+        title="Events"
+        rows={[
+          { name: 'followsuccess', type: '{ target, isFollowing, isHashtag }', description: 'Fired when follow/unfollow succeeds' },
+          { name: 'followerror', type: '{ error, target, isHashtag }', description: 'Fired when follow/unfollow fails' }
+        ]}
+      />
     </div>
 
     <div class="api-section">

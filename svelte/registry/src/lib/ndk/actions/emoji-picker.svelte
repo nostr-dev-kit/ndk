@@ -12,18 +12,9 @@
   ```
 -->
 <script lang="ts">
-  import { NDKKind } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createEmojiPicker, type EmojiData } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
-
-  interface EmojiData {
-    /** The emoji character or :shortcode: */
-    emoji: string;
-    /** Optional shortcode for custom emojis */
-    shortcode?: string;
-    /** Optional image URL for custom emojis */
-    url?: string;
-  }
 
   interface Props {
     /** NDKSvelte instance */
@@ -41,7 +32,11 @@
 
   let { ndk, onSelect, onClose, class: className = '' }: Props = $props();
 
-  // Standard emojis to show
+  // Use the emoji picker builder for user's custom emojis from Nostr
+  const emojiPicker = createEmojiPicker(ndk);
+  const preferredEmojis = $derived(emojiPicker.emojis);
+
+  // Standard emojis defined at component level (UI concern)
   const standardEmojis: EmojiData[] = [
     { emoji: '❤️' },
     { emoji: '👍' },
@@ -56,35 +51,6 @@
     { emoji: '🙏' },
     { emoji: '💜' },
   ];
-
-  // Subscribe to user's preferred emojis (kind 10030)
-  const preferredEmojis = $derived.by(() => {
-    if (!ndk.$currentPubkey) return [];
-
-    const subscription = ndk.$subscribe(() => ({
-      filters: [{
-        kinds: [10030 as NDKKind],
-        authors: [ndk.$currentPubkey!]
-      }],
-    }));
-
-    const event = subscription.events[0];
-    if (!event) return [];
-
-    // Parse emoji tags from the event
-    const emojis: EmojiData[] = [];
-    for (const tag of event.tags) {
-      if (tag[0] === 'emoji' && tag[1] && tag[2]) {
-        emojis.push({
-          emoji: `:${tag[1]}:`,
-          shortcode: tag[1],
-          url: tag[2]
-        });
-      }
-    }
-
-    return emojis;
-  });
 
   function handleSelect(emoji: EmojiData) {
     onSelect(emoji);

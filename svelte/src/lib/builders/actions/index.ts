@@ -4,3 +4,4 @@ export { createReplyAction, type ReplyActionConfig, type ReplyStats } from './re
 export { createRepostAction, type RepostActionConfig, type RepostStats } from './repost-action.svelte.js';
 export { createMuteAction, type MuteActionConfig } from './mute-action.svelte.js';
 export { createZapAction, type ZapActionConfig, type ZapStats } from './zap-action.svelte.js';
+export { createEmojiPicker, type EmojiData } from './emoji-picker.svelte.js';

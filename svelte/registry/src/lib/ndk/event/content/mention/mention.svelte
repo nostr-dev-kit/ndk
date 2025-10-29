@@ -11,25 +11,26 @@
 
   let { ndk, bech32, class: className = '' }: MentionProps = $props();
 
-  const profileFetcher = $derived.by(() => createProfileFetcher(() => ({ user: bech32 }), ndk));
+  const profileFetcher = createProfileFetcher(() => ({ user: bech32 }), ndk);
+  const profile = $derived(profileFetcher.profile);
 </script>
 
 <span class="mention {className}" role="button" tabindex="0">
   {#if profileFetcher?.loading}
     @{bech32.slice(0, 8)}...
-  {:else if profileFetcher?.profile}
-    @{profileFetcher.profile?.name || profileFetcher.profile?.displayName || bech32}
+  {:else if profile}
+    @{profile?.name || profile?.displayName || bech32}
   {/if}
 </span>
 
 <style>
   .mention {
-    color: #2563eb;
+    color: var(--primary);
     text-decoration: underline;
     cursor: pointer;
   }
 
   .mention:hover {
-    color: #1d4ed8;
+    opacity: 0.8;
   }
 </style>

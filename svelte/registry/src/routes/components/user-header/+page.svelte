@@ -1,8 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { nip19 } from 'nostr-tools';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import FullVariantExample from '$lib/ndk/user-header/examples/full-variant.svelte';
@@ -17,14 +16,16 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc'); // pablo
-  let examplePubkey = $derived.by(() => {
-    try {
-      const decoded = nip19.decode(npubInput);
-      if (decoded.type === 'npub') {
-        return decoded.data as string;
+  let examplePubkey = $state('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52'); // default
+
+  $effect(() => {
+    ndk.fetchUser(npubInput).then(user => {
+      if (user) {
+        examplePubkey = user.pubkey;
       }
-    } catch {}
-    return 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
+    }).catch(() => {
+      examplePubkey = 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
+    });
   });
 </script>
 
@@ -176,106 +177,3 @@
     </table>
   </section>
 </div>
-
-<style>
-  .component-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  header {
-    margin-bottom: 2rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  header p {
-    font-size: 1.125rem;
-    color: var(--muted-foreground, #666);
-  }
-
-  .controls {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: var(--card, #fff);
-    border: 1px solid var(--border, #e5e7eb);
-    border-radius: 0.5rem;
-  }
-
-  .label-text {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-
-  .npub-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--border, #e5e7eb);
-    border-radius: 0.375rem;
-    font-family: monospace;
-    font-size: 0.875rem;
-  }
-
-  .demo {
-    margin-bottom: 3rem;
-  }
-
-  .section-title {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin: 3rem 0 1.5rem;
-  }
-
-  .usage {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border, #e5e7eb);
-  }
-
-  .usage h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .usage-description {
-    color: var(--muted-foreground, #666);
-    margin-bottom: 2rem;
-  }
-
-  .usage h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 2rem 0 1rem;
-  }
-
-  .usage table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-  }
-
-  .usage th,
-  .usage td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border, #e5e7eb);
-  }
-
-  .usage th {
-    font-weight: 600;
-    background: var(--muted, #f3f4f6);
-  }
-
-  .usage td code {
-    background: var(--muted, #f3f4f6);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-  }
-</style>

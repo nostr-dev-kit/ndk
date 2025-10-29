@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { NDKSvelte, NDKEvent } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { HighlightCard } from '../index.js';
 
   interface Props {

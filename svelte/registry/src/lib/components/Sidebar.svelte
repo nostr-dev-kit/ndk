@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
-  import { ndk } from '$lib/ndk';
+  import { ndk } from '$lib/ndk.svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { themeManager } from '$lib/theme.svelte';
   import { docs, componentCategories, homeNavItem } from '$lib/navigation';

@@ -81,14 +81,14 @@
     top: 48px; /* Start below avatar (40px height + 8px margin) */
     bottom: 0;
     width: 2px;
-    background: var(--color-border);
+    background: hsl(var(--color-border));
     pointer-events: none;
     z-index: 0;
   }
 
   /* Self-thread (same author) - different color/style */
   .thread-line--self {
-    background: var(--color-border);
+    background: hsl(var(--color-border));
     width: 2px;
   }
 

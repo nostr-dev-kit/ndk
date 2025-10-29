@@ -1,4 +1,4 @@
-import { nip19 } from "nostr-tools";
+import { nip19 } from "@nostr-dev-kit/ndk";
 
 export interface ParsedSegment {
     type:

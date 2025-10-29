@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   import BuilderBasic from '$lib/ndk/user-input/examples/builder-basic.svelte';
   import BuilderBasicRaw from '$lib/ndk/user-input/examples/builder-basic.svelte?raw';
@@ -124,45 +124,6 @@
 </div>
 
 <style>
-  .component-page {
-    max-width: 64rem;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  header {
-    margin-bottom: 3rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: hsl(var(--foreground));
-  }
-
-  header > p {
-    font-size: 1.125rem;
-    color: hsl(var(--muted-foreground));
-  }
-
-  .demo {
-    margin-bottom: 4rem;
-  }
-
-  h2 {
-    font-size: 1.875rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: hsl(var(--foreground));
-  }
-
-  .demo-description {
-    color: hsl(var(--muted-foreground));
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-  }
-
   code {
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;

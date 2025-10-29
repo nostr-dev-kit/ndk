@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadingMetadata } from '$lib/ndk/event-card';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import BasicExample from '$lib/ndk/event-card/examples/basic.svelte';
@@ -137,47 +137,3 @@
   {/if}
 </div>
 
-<style>
-  .loading {
-    padding: 2rem;
-    text-align: center;
-    color: #6b7280;
-    font-size: 1.125rem;
-  }
-
-  .controls {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-
-  .controls label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .label-text {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-  }
-
-  .nevent-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    width: 100%;
-    max-width: 600px;
-  }
-
-  .nevent-input:focus {
-    outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-  }
-</style>

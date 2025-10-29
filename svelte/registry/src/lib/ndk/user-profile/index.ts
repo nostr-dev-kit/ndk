@@ -56,6 +56,7 @@ import Nip05 from './user-profile-nip05.svelte';
 import HoverCard from './user-profile-hover-card.svelte';
 import AvatarName from './user-profile-avatar-name.svelte';
 import Follow from './user-profile-follow.svelte';
+import AvatarGroup from './avatar-group.svelte';
 
 // Export as namespace for dot notation
 export const UserProfile = {
@@ -70,6 +71,7 @@ export const UserProfile = {
   HoverCard,
   AvatarName,
   Follow,
+  AvatarGroup,
 };
 
 // Export types

@@ -96,10 +96,24 @@
       onClose();
     }
   }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  }
 </script>
 
-<div class={cn('emoji-picker-backdrop', className)} onclick={handleBackdropClick}>
-  <div class="emoji-picker" onclick={(e) => e.stopPropagation()}>
+<div
+  class={cn('emoji-picker-backdrop', className)}
+  onclick={handleBackdropClick}
+  onkeydown={handleKeydown}
+  role="dialog"
+  aria-modal="true"
+  aria-label="Emoji picker"
+  tabindex="-1"
+>
+  <div class="emoji-picker" onclick={(e) => e.stopPropagation()} role="document">
     <div class="emoji-picker-header">
       <h3>Pick a reaction</h3>
       <button class="emoji-picker-close" onclick={onClose} aria-label="Close">
@@ -154,7 +168,7 @@
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: rgba(0, 0, 0, 0.3);
+    background: color-mix(in srgb, var(--foreground) 30%, transparent);
     backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
@@ -172,9 +186,9 @@
   }
 
   .emoji-picker {
-    background: white;
+    background: var(--card);
     border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 40px color-mix(in srgb, var(--foreground) 20%, transparent);
     width: 90%;
     max-width: 400px;
     max-height: 500px;
@@ -199,14 +213,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border);
   }
 
   .emoji-picker-header h3 {
     margin: 0;
     font-size: 1.125rem;
     font-weight: 600;
-    color: #111827;
+    color: var(--foreground);
   }
 
   .emoji-picker-close {
@@ -217,15 +231,15 @@
     height: 32px;
     border: none;
     background: transparent;
-    color: #6b7280;
+    color: var(--muted-foreground);
     cursor: pointer;
     border-radius: 6px;
     transition: all 0.2s;
   }
 
   .emoji-picker-close:hover {
-    background: #f3f4f6;
-    color: #111827;
+    background: var(--accent);
+    color: var(--foreground);
   }
 
   .emoji-picker-body {
@@ -247,7 +261,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #6b7280;
+    color: var(--muted-foreground);
     margin-bottom: 0.75rem;
   }
 
@@ -272,7 +286,7 @@
   }
 
   .emoji-button:hover {
-    background: #f3f4f6;
+    background: var(--accent);
     transform: scale(1.1);
   }
 

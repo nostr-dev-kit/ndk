@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/svelte",
-  "version": "4.0.0-beta.15",
+  "version": "4.0.0-beta.17",
   "description": "Modern, performant, and beautiful Svelte 5 integration for NDK",
   "type": "module",
   "svelte": "./dist/index.js",
@@ -59,27 +59,13 @@
   "author": "pablof7z",
   "license": "MIT",
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.15",
+    "@nostr-dev-kit/blossom": "8.0.0-beta.17",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.17",
+    "@nostr-dev-kit/sessions": "0.6.4-beta.17",
+    "@nostr-dev-kit/sync": "0.4.0-beta.17",
+    "@nostr-dev-kit/wallet": "0.8.11-beta.17",
+    "@nostr-dev-kit/wot": "0.3.7-beta.17",
     "svelte": "^5.42.3"
-  },
-  "dependencies": {
-    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.15",
-    "@nostr-dev-kit/sessions": "0.6.4-beta.15",
-    "@nostr-dev-kit/sync": "0.4.0-beta.15",
-    "@nostr-dev-kit/wallet": "0.8.11-beta.15",
-    "@nostr-dev-kit/wot": "0.3.7-beta.15",
-    "@tiptap/core": "^2.6.6",
-    "@tiptap/extension-image": "^2.6.6",
-    "@tiptap/extension-link": "^2.6.6",
-    "@tiptap/pm": "^2.6.6",
-    "@tiptap/starter-kit": "^2.6.6",
-    "linkifyjs": "^4.1.3",
-    "nostr-editor": "^1.0.1",
-    "prosemirror-markdown": "^1.13.0",
-    "prosemirror-model": "^1.22.3",
-    "prosemirror-state": "^1.4.3",
-    "prosemirror-view": "^1.39.3",
-    "tiptap-markdown": "^0.8.10"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",

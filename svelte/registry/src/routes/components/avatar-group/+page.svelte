@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import BasicExample from '$lib/ndk/avatar-group/examples/basic.svelte';
@@ -193,100 +193,3 @@
     </ul>
   </section>
 </div>
-
-<style>
-  .component-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  header {
-    margin-bottom: 2rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  header p {
-    font-size: 1.125rem;
-    color: var(--muted-foreground, #666);
-  }
-
-  .demo {
-    margin-bottom: 3rem;
-  }
-
-  .usage {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border, #e5e7eb);
-  }
-
-  .usage h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-
-  .usage h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .usage pre {
-    background: var(--muted, #f3f4f6);
-    padding: 1rem;
-    border-radius: 0.375rem;
-    overflow-x: auto;
-    margin: 1rem 0;
-  }
-
-  .usage code {
-    font-family: monospace;
-    font-size: 0.875rem;
-  }
-
-  .usage ul {
-    list-style: disc;
-    padding-left: 2rem;
-    margin: 1rem 0;
-  }
-
-  .usage li {
-    margin: 0.5rem 0;
-  }
-
-  .usage table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-  }
-
-  .usage th,
-  .usage td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border, #e5e7eb);
-  }
-
-  .usage th {
-    font-weight: 600;
-    background: var(--muted, #f3f4f6);
-  }
-
-  .usage td code {
-    background: var(--muted, #f3f4f6);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-  }
-
-  .usage p {
-    margin: 0.5rem 0;
-  }
-</style>

@@ -116,6 +116,7 @@
     <div
       class="dropdown-menu"
       onclick={(e) => e.stopPropagation()}
+      role="menu"
     >
       <!-- Mute button -->
       <button
@@ -209,8 +210,15 @@
 
 <!-- Raw Event Modal -->
 {#if showRawEventModal}
-  <div class="raw-event-modal">
-    <div class="modal-backdrop" onclick={() => showRawEventModal = false} />
+  <div class="raw-event-modal" role="dialog" aria-modal="true" aria-label="Raw event viewer">
+    <div
+      class="modal-backdrop"
+      onclick={() => showRawEventModal = false}
+      onkeydown={(e) => e.key === 'Escape' && (showRawEventModal = false)}
+      role="button"
+      tabindex="-1"
+      aria-label="Close modal"
+    />
     <div class="modal-content">
       <div class="modal-header">
         <h3>Raw Event</h3>
@@ -263,13 +271,13 @@
   }
 
   .dropdown-trigger:hover {
-    background: var(--muted, #f3f4f6);
+    background: var(--accent);
   }
 
   .dropdown-icon {
     width: 1.25rem;
     height: 1.25rem;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
   }
 
   .dropdown-menu {
@@ -277,10 +285,10 @@
     right: 0;
     margin-top: 0.25rem;
     width: 18rem;
-    background: var(--popover, white);
-    border: 1px solid var(--border, #e5e7eb);
+    background: var(--popover);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent);
     z-index: 10;
     max-height: 24rem;
     overflow-y: auto;
@@ -291,7 +299,7 @@
     padding: 0.75rem 1rem;
     text-align: left;
     font-size: 0.875rem;
-    color: var(--foreground, #111827);
+    color: var(--foreground);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -307,15 +315,15 @@
   }
 
   .dropdown-item:hover {
-    background: var(--muted, #f3f4f6);
+    background: var(--accent);
   }
 
   .dropdown-item--danger {
-    color: #dc2626;
+    color: var(--destructive);
   }
 
   .dropdown-item--warning {
-    color: #eab308;
+    color: var(--warning);
   }
 
   .dropdown-item-icon {
@@ -325,14 +333,14 @@
   }
 
   .dropdown-divider {
-    border-top: 1px solid var(--border, #e5e7eb);
+    border-top: 1px solid var(--border);
     margin: 0.25rem 0;
   }
 
   .dropdown-relay-info {
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
   }
 
   .dropdown-relay-count {
@@ -348,7 +356,7 @@
 
   .dropdown-relay-badge {
     padding: 0.25rem 0.5rem;
-    background: var(--muted, #f3f4f6);
+    background: var(--accent);
     border-radius: 0.25rem;
     font-size: 0.75rem;
     overflow: hidden;
@@ -369,13 +377,13 @@
   .modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: color-mix(in srgb, var(--foreground) 50%, transparent);
   }
 
   .modal-content {
     position: relative;
-    background: var(--background, white);
-    border: 1px solid var(--border, #e5e7eb);
+    background: var(--background);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     width: 90%;
     max-width: 56rem;
@@ -390,14 +398,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem;
-    border-bottom: 1px solid var(--border, #e5e7eb);
+    border-bottom: 1px solid var(--border);
   }
 
   .modal-header h3 {
     margin: 0;
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--foreground, #111827);
+    color: var(--foreground);
   }
 
   .modal-close {
@@ -406,11 +414,11 @@
     background: transparent;
     cursor: pointer;
     border-radius: 0.25rem;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
   }
 
   .modal-close:hover {
-    background: var(--muted, #f3f4f6);
+    background: var(--accent);
   }
 
   .modal-close svg {
@@ -422,7 +430,7 @@
     flex: 1;
     overflow: auto;
     padding: 1.5rem;
-    background: var(--muted, #f9fafb);
+    background: var(--muted);
   }
 
   .raw-event-content {
@@ -439,7 +447,7 @@
     justify-content: flex-end;
     gap: 0.5rem;
     padding: 1.5rem;
-    border-top: 1px solid var(--border, #e5e7eb);
+    border-top: 1px solid var(--border);
   }
 
   .modal-button {
@@ -453,18 +461,18 @@
 
   .modal-button--secondary {
     background: transparent;
-    border: 1px solid var(--border, #e5e7eb);
-    color: var(--foreground, #111827);
+    border: 1px solid var(--border);
+    color: var(--foreground);
   }
 
   .modal-button--secondary:hover {
-    background: var(--muted, #f3f4f6);
+    background: var(--accent);
   }
 
   .modal-button--primary {
-    background: var(--primary, #8b5cf6);
-    border: 1px solid var(--primary, #8b5cf6);
-    color: white;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: var(--primary-foreground);
   }
 
   .modal-button--primary:hover {

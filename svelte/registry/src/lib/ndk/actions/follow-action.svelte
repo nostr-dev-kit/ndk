@@ -4,6 +4,7 @@
   import { createFollowAction } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
   import UserAddIcon from '$lib/icons/user-add.svelte';
+  import type { Snippet } from 'svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -11,6 +12,7 @@
     variant?: 'default' | 'outline' | 'primary';
     showIcon?: boolean;
     class?: string;
+    children?: Snippet;
     onfollowsuccess?: (e: CustomEvent) => void;
     onfollowerror?: (e: CustomEvent) => void;
   }
@@ -20,7 +22,8 @@
     target,
     variant = 'default',
     showIcon = true,
-    class: className = ''
+    class: className = '',
+    children
   }: Props = $props();
 
   // Determine if target is a user or hashtag
@@ -113,8 +116,10 @@
         <UserAddIcon size={16} />
       {/if}
     {/if}
-    <slot>
+    {#if children}
+      {@render children()}
+    {:else}
       {followAction.isFollowing ? 'Unfollow' : 'Follow'}
-    </slot>
+    {/if}
   </button>
 {/if}

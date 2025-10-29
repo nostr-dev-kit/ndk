@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReplyAction } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import BasicExample from '$lib/ndk/actions/examples/reply-action-basic.svelte';
@@ -73,42 +73,3 @@
     </section>
   {/if}
 </div>
-
-<style>
-  .component-page {
-    max-width: 1200px;
-  }
-
-  .component-page > header {
-    margin-bottom: 3rem;
-  }
-
-  .component-page > header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .component-page > header p {
-    font-size: 1.125rem;
-    color: hsl(var(--color-muted-foreground));
-    margin: 0;
-  }
-
-  .demo {
-    margin-bottom: 3rem;
-    padding-bottom: 3rem;
-    border-bottom: 1px solid hsl(var(--color-border));
-  }
-
-  .demo:last-child {
-    border-bottom: none;
-  }
-
-  .component-page > section > h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 1.5rem 0;
-    color: hsl(var(--color-foreground));
-  }
-</style>

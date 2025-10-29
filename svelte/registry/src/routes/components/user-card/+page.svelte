@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import CompactListExample from '$lib/ndk/user-profile/examples/compact-list.svelte';
@@ -67,36 +67,3 @@
   </section>
 </div>
 
-<style>
-  .component-page {
-    max-width: 900px;
-  }
-
-  .component-page > header {
-    margin-bottom: 2rem;
-  }
-
-  .component-page > header h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem 0;
-    color: hsl(var(--color-foreground));
-  }
-
-  .component-page > header p {
-    font-size: 1.125rem;
-    color: hsl(var(--color-muted-foreground));
-    margin: 0;
-  }
-
-  .component-page > section {
-    margin-bottom: 3rem;
-  }
-
-  .demo {
-    padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-</style>

@@ -1,32 +1,34 @@
 <script lang="ts">
-  import { onMount, getContext } from 'svelte';
+  import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { ArticleCard } from '$lib/ndk/article-card';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let articles = $state<NDKArticle[]>([]);
   let loading = $state(true);
 
-  onMount(async () => {
-    try {
-      // Fetch some real articles from Nostr
-      const events = await ndk.fetchEvents({
-        kinds: [NDKKind.Article],
-        limit: 10
-      });
+  $effect(() => {
+    (async () => {
+      try {
+        // Fetch some real articles from Nostr
+        const events = await ndk.fetchEvents({
+          kinds: [NDKKind.Article],
+          limit: 10
+        });
 
-      articles = Array.from(events)
-        .map(event => NDKArticle.from(event))
-        .filter(a => a.title); // Only articles with titles
+        articles = Array.from(events)
+          .map(event => NDKArticle.from(event))
+          .filter(a => a.title); // Only articles with titles
 
-      loading = false;
-    } catch (error) {
-      console.error('Failed to fetch articles:', error);
-      loading = false;
-    }
+        loading = false;
+      } catch (error) {
+        console.error('Failed to fetch articles:', error);
+        loading = false;
+      }
+    })();
   });
 
   // Create sample article for demonstration
@@ -302,7 +304,3 @@
     </div>
   </section>
 </div>
-
-<style>
-  /* No custom styles needed - using CodePreview component */
-</style>

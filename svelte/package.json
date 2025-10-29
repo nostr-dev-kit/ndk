@@ -34,7 +34,6 @@
     "dev:package": "svelte-package -w",
     "build": "svelte-package",
     "build:package": "svelte-package",
-    "prepare": "svelte-package",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint . && prettier --check .",
@@ -61,7 +60,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@nostr-dev-kit/ndk": "3.0.0-beta.15",
-    "svelte": "^5.41.2"
+    "svelte": "^5.42.3"
   },
   "dependencies": {
     "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.15",
@@ -98,7 +97,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.0.0",
     "shadcn-svelte": "^1.0.10",
-    "svelte": "^5.41.2",
+    "svelte": "^5.42.3",
     "svelte-check": "^4.0.0",
     "svelte-eslint-parser": "^1.4.0",
     "tslib": "^2.6.0",

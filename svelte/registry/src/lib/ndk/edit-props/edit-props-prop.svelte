@@ -30,7 +30,9 @@
 	$effect(() => {
 		const prop = context.props.find(p => p.name === name);
 		if (prop && prop.value !== undefined) {
-			value = prop.value;
+			untrack(() => {
+				value = prop.value;
+			});
 		}
 	});
 </script>

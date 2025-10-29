@@ -18,6 +18,7 @@
  * <HighlightCardFeed {ndk} {event} />
  * <HighlightCardCompact {ndk} {event} />
  * <HighlightCardGrid {ndk} {event} />
+ * <HighlightCardElegant {ndk} {event} />
  * ```
  *
  * @example EventCard blocks:
@@ -43,6 +44,7 @@ export { default as ArticleCardNeon } from './article-card-neon.svelte';
 export { default as HighlightCardFeed } from './highlight-card-feed.svelte';
 export { default as HighlightCardCompact } from './highlight-card-compact.svelte';
 export { default as HighlightCardGrid } from './highlight-card-grid.svelte';
+export { default as HighlightCardElegant } from './highlight-card-elegant.svelte';
 
 // EventCard blocks
 export { default as SimpleEventCard } from './simple-event-card.svelte';

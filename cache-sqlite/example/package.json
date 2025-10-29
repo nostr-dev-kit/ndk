@@ -1,23 +1,23 @@
 {
-    "name": "ndk-cache-sqlite-example",
-    "version": "1.0.0",
-    "description": "Example app demonstrating NDK SQLite cache adapter functionality",
-    "type": "module",
-    "scripts": {
-        "start": "bun run src/index.ts",
-        "start:node": "npx tsx src/index.ts",
-        "dev": "bun --watch src/index.ts",
-        "dev:node": "npx tsx --watch src/index.ts",
-        "build": "bun build src/index.ts --outdir dist --target node",
-        "clean": "rm -rf dist cache.db"
-    },
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.14.29",
-        "better-sqlite3": "^9.6.0"
-    },
-    "devDependencies": {
-        "@types/node": "^20.0.0",
-        "tsx": "^4.0.0",
-        "typescript": "^5.0.0"
-    }
+  "name": "ndk-cache-sqlite-example",
+  "version": "1.0.0",
+  "description": "Example app demonstrating NDK SQLite cache adapter functionality",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "start:node": "npx tsx src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "dev:node": "npx tsx --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "clean": "rm -rf dist cache.db"
+  },
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.19",
+    "better-sqlite3": "^9.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
 }

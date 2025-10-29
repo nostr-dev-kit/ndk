@@ -195,7 +195,6 @@ if [ ${#APP_PACKAGES[@]} -gt 0 ]; then
         echo -e "${BLUE}Checking: ${app_dir}${NC}"
 
         UPDATED=false
-        WARNINGS=()
 
         while IFS='|' read -r dep_name dep_version; do
             # Skip workspace:* and file: references
@@ -204,42 +203,34 @@ if [ ${#APP_PACKAGES[@]} -gt 0 ]; then
                 continue
             fi
 
-            # Check if it's a beta version
-            if [[ "$dep_version" =~ -beta\. ]]; then
-                # Find the corresponding package to get the new version
-                for pkg in "${PACKAGES[@]}"; do
-                    PKG_PKG_JSON="${pkg}/package.json"
-                    if [ -f "$PKG_PKG_JSON" ]; then
-                        PKG_NAME=$(jq -r '.name' "$PKG_PKG_JSON")
-                        if [ "$PKG_NAME" == "$dep_name" ]; then
-                            NEW_VERSION=$(jq -r '.version' "$PKG_PKG_JSON")
+            # Find the corresponding package to get the new version
+            NEW_VERSION=""
+            for pkg in "${PACKAGES[@]}"; do
+                PKG_PKG_JSON="${pkg}/package.json"
+                if [ -f "$PKG_PKG_JSON" ]; then
+                    PKG_NAME=$(jq -r '.name' "$PKG_PKG_JSON")
+                    if [ "$PKG_NAME" == "$dep_name" ]; then
+                        NEW_VERSION=$(jq -r '.version' "$PKG_PKG_JSON")
+                        break
+                    fi
+                fi
+            done
 
-                            # Update the dependency
-                            for dep_type in "dependencies" "devDependencies" "peerDependencies"; do
-                                if jq -e ".${dep_type}.\"${dep_name}\"" "$PKG_JSON" > /dev/null 2>&1; then
-                                    jq --arg dep "$dep_name" --arg version "$NEW_VERSION" \
-                                        ".${dep_type}[\$dep] = \$version" "$PKG_JSON" > "${PKG_JSON}.tmp"
-                                    mv "${PKG_JSON}.tmp" "$PKG_JSON"
-                                    echo -e "  ${GREEN}✓${NC} Updated ${dep_name}: ${dep_version} → ${NEW_VERSION}"
-                                    UPDATED=true
-                                fi
-                            done
-                            break
-                        fi
+            # If we found a matching package, update the dependency
+            if [ -n "$NEW_VERSION" ]; then
+                for dep_type in "dependencies" "devDependencies" "peerDependencies"; do
+                    if jq -e ".${dep_type}.\"${dep_name}\"" "$PKG_JSON" > /dev/null 2>&1; then
+                        jq --arg dep "$dep_name" --arg version "$NEW_VERSION" \
+                            ".${dep_type}[\$dep] = \$version" "$PKG_JSON" > "${PKG_JSON}.tmp"
+                        mv "${PKG_JSON}.tmp" "$PKG_JSON"
+                        echo -e "  ${GREEN}✓${NC} Updated ${dep_name}: ${dep_version} → ${NEW_VERSION}"
+                        UPDATED=true
                     fi
                 done
-            elif [[ "$dep_version" == "latest" ]] || [[ "$dep_version" == "beta" ]] || [[ "$dep_version" =~ ^[\^~]?[0-9] ]]; then
-                WARNINGS+=("${dep_name}: ${dep_version}")
+            else
+                echo -e "  ${YELLOW}⚠${NC} ${dep_name}: ${dep_version} (no matching package found)"
             fi
         done <<< "$NDK_DEPS"
-
-        # Display warnings for non-beta versions
-        if [ ${#WARNINGS[@]} -gt 0 ]; then
-            echo -e "  ${YELLOW}⚠ WARNING: Non-beta dependencies found:${NC}"
-            for warning in "${WARNINGS[@]}"; do
-                echo -e "    - ${warning}"
-            done
-        fi
     done
 fi
 

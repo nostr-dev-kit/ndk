@@ -63,8 +63,8 @@
 <style>
   .relay-pool-tabs {
     width: 100%;
-    background: var(--tabs-bg, #ffffff);
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background: var(--tabs-bg);
+    border-bottom: 1px solid var(--border-color);
   }
 
   .tabs-container {
@@ -91,7 +91,7 @@
     padding: 0.75rem 1rem;
     border: none;
     background: none;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -102,12 +102,12 @@
   }
 
   .tab:hover {
-    background: var(--hover-bg, #f9fafb);
-    color: var(--text-primary, #111827);
+    background: var(--hover-bg);
+    color: var(--text-primary);
   }
 
   .tab.active {
-    color: var(--primary-color, #3b82f6);
+    color: var(--primary-color);
     background: transparent;
   }
 
@@ -127,16 +127,16 @@
     min-width: 1.5rem;
     height: 1.5rem;
     padding: 0 0.375rem;
-    background: var(--count-bg, #f3f4f6);
-    color: var(--count-text, #6b7280);
+    background: var(--count-bg);
+    color: var(--count-text);
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 600;
   }
 
   .tab.active .tab-count {
-    background: var(--primary-light, rgba(59, 130, 246, 0.1));
-    color: var(--primary-color, #3b82f6);
+    background: var(--primary-light, color-mix(in srgb, var(--primary) 10%, transparent));
+    color: var(--primary-color);
   }
 
   .tabs-indicator {
@@ -145,7 +145,7 @@
     left: var(--indicator-left, 0);
     height: 2px;
     width: calc(100% / 6);
-    background: var(--primary-color, #3b82f6);
+    background: var(--primary-color);
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 2px 2px 0 0;
   }

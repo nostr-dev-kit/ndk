@@ -1,343 +1,545 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-  import { ArticleCard } from '$lib/ndk/article-card';
-  import { ArticleCardPortrait, ArticleCardHero, ArticleCardNeon, ArticleCardMedium } from '$lib/ndk/blocks';
-  import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import { getContext } from 'svelte';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
+	import { ArticleCard } from '$lib/ndk/article-card';
+	import {
+		ArticleCardPortrait,
+		ArticleCardHero,
+		ArticleCardNeon,
+		ArticleCardMedium
+	} from '$lib/ndk/blocks';
+	import { EditProps } from '$lib/ndk/edit-props';
+	import BlockExample from '$site-components/block-example.svelte';
+	import UIExample from '$site-components/ui-example.svelte';
+	import ComponentAPI from '$site-components/component-api.svelte';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+	// Import simplified code examples (for Code tab)
+	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
+	import HeroCodeRaw from './examples/hero-code.svelte?raw';
+	import NeonCodeRaw from './examples/neon-code.svelte?raw';
+	import MediumCodeRaw from './examples/medium-code.svelte?raw';
+	import MediumSizesCodeRaw from './examples/medium-sizes-code.svelte?raw';
 
-  let articles = $state<NDKArticle[]>([]);
-  let loading = $state(true);
-  let sampleArticle = $state<NDKArticle | undefined>();
+	// Import UI component examples
+	import UIBasic from './examples/ui-basic.svelte';
+	import UIBasicRaw from './examples/ui-basic.svelte?raw';
+	import UIComposition from './examples/ui-composition.svelte';
+	import UICompositionRaw from './examples/ui-composition.svelte?raw';
+	import UIStyling from './examples/ui-styling.svelte';
+	import UIStylingRaw from './examples/ui-styling.svelte?raw';
 
-  $effect(() => {
-    (async () => {
-      try {
-        // Fetch some real articles from Nostr
-        const events = await ndk.fetchEvents({
-          kinds: [NDKKind.Article],
-          authors: [
-            "6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93",
-            ...(ndk.$follows)
-          ],
-          limit: 10
-        });
+	const ndk = getContext<NDKSvelte>('ndk');
 
-        articles = Array.from(events)
-          .map(event => NDKArticle.from(event))
-          .filter(a => a.title); // Only articles with titles
+	let articles = $state<NDKArticle[]>([]);
+	let loading = $state(true);
+	let sampleArticle = $state<NDKArticle | undefined>();
 
-        // Set initial sample article if not already set by EditProps
-        if (!sampleArticle && articles.length > 0) {
-          sampleArticle = articles[0];
-        }
+	$effect(() => {
+		(async () => {
+			try {
+				const events = await ndk.fetchEvents({
+					kinds: [NDKKind.Article],
+					authors: [
+						'6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93',
+						...ndk.$follows
+					],
+					limit: 10
+				});
 
-        loading = false;
-      } catch (error) {
-        console.error('Failed to fetch articles:', error);
-        loading = false;
-      }
-    })();
-  });
+				articles = Array.from(events)
+					.map((event) => NDKArticle.from(event))
+					.filter((a) => a.title);
 
-  const displayArticle = $derived(sampleArticle);
+				if (!sampleArticle && articles.length > 0) {
+					sampleArticle = articles[0];
+				}
+
+				loading = false;
+			} catch (error) {
+				console.error('Failed to fetch articles:', error);
+				loading = false;
+			}
+		})();
+	});
+
+	const displayArticle = $derived(sampleArticle);
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
-  <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">ArticleCard Component</h1>
-    <p class="text-lg text-muted-foreground mb-6">
-      Composable article card components for displaying NDKArticle content with customizable layouts.
-    </p>
+	<!-- Header -->
+	<div class="mb-12">
+		<h1 class="text-4xl font-bold mb-4">ArticleCard</h1>
+		<p class="text-lg text-muted-foreground mb-6">
+			Composable article card components for displaying NDKArticle content with customizable
+			layouts.
+		</p>
 
-    <EditProps.Root>
-      <EditProps.Prop name="Sample Article" type="article" bind:value={sampleArticle} />
-    </EditProps.Root>
-  </div>
+		<EditProps.Root>
+			<EditProps.Prop name="Sample Article" type="article" bind:value={sampleArticle} />
+		</EditProps.Root>
+	</div>
 
-  {#if loading}
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading articles...</div>
-    </div>
-  {:else if articles.length === 0}
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">No articles found. Using sample data...</div>
-    </div>
-  {/if}
+	{#if loading}
+		<div class="flex items-center justify-center py-12">
+			<div class="text-muted-foreground">Loading articles...</div>
+		</div>
+	{:else if articles.length === 0}
+		<div class="flex items-center justify-center py-12">
+			<div class="text-muted-foreground">No articles found. Using sample data...</div>
+		</div>
+	{/if}
 
-  <!-- Portrait Preset -->
-  <section class="mb-16">
-    <CodePreview
-      title="Portrait Layout"
-      description="Vertical card layout with image on top. Perfect for grid displays and featured content."
-      component="article-card-portrait"
-      code={`<ArticleCardPortrait {ndk} {article} />
+	<!-- Blocks Section -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
+		<p class="text-muted-foreground mb-8">
+			Pre-composed layouts ready to use. Install with a single command.
+		</p>
 
-<!-- With custom sizing -->
-<ArticleCardPortrait
-  {ndk}
-  {article}
-  width="w-[320px]"
-  height="h-[400px]"
-  imageHeight="h-56"
-/>`}
-    >
-      <div class="flex gap-6 overflow-x-auto pb-4">
-        {#if displayArticle}
-          <ArticleCardPortrait article={displayArticle} />
-        {/if}
-        {#each articles.slice(0, 4) as article}
-          <ArticleCardPortrait {article} />
-        {/each}
-      </div>
-    </CodePreview>
-  </section>
+		<div class="space-y-12">
+			<!-- Portrait -->
+			<BlockExample
+				title="Portrait"
+				description="Vertical card layout with image on top. Perfect for grid displays and featured content."
+				component="article-card-portrait"
+				code={PortraitCodeRaw}
+			>
+				<div class="flex gap-6 overflow-x-auto pb-4">
+					{#if displayArticle}
+						<ArticleCardPortrait {ndk} article={displayArticle} />
+					{/if}
+					{#each articles.slice(0, 4) as article}
+						<ArticleCardPortrait {ndk} {article} />
+					{/each}
+				</div>
+			</BlockExample>
 
-  <!-- Hero Preset -->
-  <section class="mb-16">
-    <CodePreview
-      title="Hero Layout"
-      description="Full-width hero card with gradient background and featured badge. Ideal for featured stories and landing page headers."
-      component="article-card-hero"
-      code={`<ArticleCardHero {ndk} {article} />
+			<!-- Hero -->
+			<BlockExample
+				title="Hero"
+				description="Full-width hero card with gradient background and featured badge. Ideal for featured stories and landing page headers."
+				component="article-card-hero"
+				code={HeroCodeRaw}
+			>
+				{#if displayArticle}
+					<ArticleCardHero {ndk} article={displayArticle} />
+				{/if}
+			</BlockExample>
 
-<!-- With custom options -->
-<ArticleCardHero
-  {ndk}
-  {article}
-  height="h-[600px]"
-  badgeText="TRENDING NOW"
-/>`}
-    >
-      {#if displayArticle}
-        <ArticleCardHero ndk={ndk} article={displayArticle} />
-      {/if}
-    </CodePreview>
-  </section>
+			<!-- Neon -->
+			<BlockExample
+				title="Neon"
+				description="Portrait card with subtle glossy white neon top border, full background image, author info and reading time."
+				component="article-card-neon"
+				code={NeonCodeRaw}
+			>
+				<div class="flex gap-6 overflow-x-auto pb-4">
+					{#if displayArticle}
+						<ArticleCardNeon {ndk} article={displayArticle} />
+					{/if}
+					{#each articles.slice(0, 4) as article}
+						<ArticleCardNeon {ndk} {article} />
+					{/each}
+				</div>
+			</BlockExample>
 
-  <!-- Neon Preset -->
-  <section class="mb-16">
-    <CodePreview
-      title="Neon Layout"
-      description="Portrait card with subtle glossy white neon top border, full background image, author info and reading time."
-      component="article-card-neon"
-      code={`<ArticleCardNeon {ndk} {article} />
+			<!-- Medium -->
+			<div>
+				<BlockExample
+					title="Medium"
+					description="Horizontal card layout with image on right. Ideal for list views and article feeds."
+					component="article-card-medium"
+					code={MediumCodeRaw}
+				>
+					<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+						{#if displayArticle}
+							<ArticleCardMedium {ndk} article={displayArticle} />
+						{/if}
+						{#each articles.slice(0, 3) as article}
+							<ArticleCardMedium {ndk} {article} />
+						{/each}
+					</div>
+				</BlockExample>
 
-<!-- With custom sizing -->
-<ArticleCardNeon
-  {ndk}
-  {article}
-  width="w-[320px]"
-  height="h-[480px]"
-/>`}
-    >
-      <div class="flex gap-6 overflow-x-auto pb-4">
-        {#if displayArticle}
-          <ArticleCardNeon ndk={ndk} article={displayArticle} />
-        {/if}
-        {#each articles.slice(0, 4) as article}
-          <ArticleCardNeon ndk={ndk} {article} />
-        {/each}
-      </div>
-    </CodePreview>
-  </section>
+				<!-- Sizes subsection -->
+				<div class="mt-8 ml-8 border-l-2 border-border pl-8">
+					<h4 class="text-xl font-semibold mb-4">Sizes</h4>
+					<BlockExample
+						description="Medium layout supports three image size options: small, medium, and large."
+						component="article-card-medium"
+						code={MediumSizesCodeRaw}
+					>
+						<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+							{#if displayArticle}
+								<ArticleCardMedium {ndk} article={displayArticle} imageSize="small" />
+								<ArticleCardMedium {ndk} article={displayArticle} imageSize="medium" />
+								<ArticleCardMedium {ndk} article={displayArticle} imageSize="large" />
+							{/if}
+						</div>
+					</BlockExample>
+				</div>
+			</div>
+		</div>
+	</section>
 
-  <!-- Medium Preset -->
-  <section class="mb-16">
-    <CodePreview
-      title="Medium Layout"
-      description="Horizontal card layout with image on right. Ideal for list views and article feeds."
-      component="article-card-medium"
-      code={`<ArticleCardMedium {ndk} {article} />
+	<!-- UI Components Section -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-2">UI Components</h2>
+		<p class="text-muted-foreground mb-8">
+			Primitive components for building custom article card layouts. Mix and match to create your
+			own designs.
+		</p>
 
-<!-- With different image sizes -->
-<ArticleCardMedium {ndk} {article} imageSize="small" />
-<ArticleCardMedium {ndk} {article} imageSize="medium" />
-<ArticleCardMedium {ndk} {article} imageSize="large" />`}
-    >
-      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#if displayArticle}
-          <ArticleCardMedium ndk={ndk} article={displayArticle} />
-        {/if}
-        {#each articles.slice(0, 3) as article}
-          <ArticleCardMedium ndk={ndk} {article} />
-        {/each}
-      </div>
-    </CodePreview>
-  </section>
+		<div class="space-y-8">
+			<!-- Basic -->
+			<UIExample
+				title="Basic Usage"
+				description="Start with ArticleCard.Root and add primitive components."
+				code={UIBasicRaw}
+			>
+				{#if displayArticle}
+					<UIBasic {ndk} article={displayArticle} />
+				{/if}
+			</UIExample>
 
-  <!-- Image Size Variations -->
-  <section class="mb-16">
-    <CodePreview
-      title="Image Size Variations"
-      description="Medium layout supports three image size options."
-      code={`<ArticleCardMedium {ndk} {article} imageSize="small" />
-<ArticleCardMedium {ndk} {article} imageSize="medium" />
-<ArticleCardMedium {ndk} {article} imageSize="large" />`}
-    >
-      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#if displayArticle}
-          <ArticleCardMedium ndk={ndk} article={displayArticle} imageSize="small" />
-          <ArticleCardMedium ndk={ndk} article={displayArticle} imageSize="medium" />
-          <ArticleCardMedium ndk={ndk} article={displayArticle} imageSize="large" />
-        {/if}
-      </div>
-    </CodePreview>
-  </section>
+			<!-- Composition -->
+			<UIExample
+				title="Full Composition"
+				description="Combine multiple primitives to create rich card layouts."
+				code={UICompositionRaw}
+			>
+				{#if displayArticle}
+					<UIComposition {ndk} article={displayArticle} />
+				{/if}
+			</UIExample>
 
-  <!-- Composable Example -->
-  <section class="mb-16">
-    <CodePreview
-      title="Composable Mode"
-      description="Build custom layouts by composing individual components within ArticleCard.Root."
-      code={`<ArticleCard.Root {ndk} {article}>
-  <div class="card">
-    <ArticleCard.Image class="h-64" showGradient={true} />
-    <div class="p-6">
-      <ArticleCard.Title class="text-3xl mb-3" />
-      <ArticleCard.Summary maxLength={250} lines={4} />
-      <ArticleCard.Meta showIcon={true} />
-    </div>
-  </div>
-</ArticleCard.Root>`}
-    >
-      {#if displayArticle}
-        <ArticleCard.Root ndk={ndk} article={displayArticle}>
-          <div class="border border-border rounded-xl overflow-hidden bg-card max-w-2xl">
-            <ArticleCard.Image class="h-64" showGradient={true} />
-            <div class="p-6">
-              <ArticleCard.Title class="text-3xl mb-3" lines={3} />
-              <ArticleCard.Summary class="text-base mb-4" maxLength={250} lines={4} />
-              <div class="flex items-center justify-between pt-4 border-t border-border">
-                <ArticleCard.Meta showIcon={true} />
-                <button class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                  Read Article
-                </button>
-              </div>
-            </div>
-          </div>
-        </ArticleCard.Root>
-      {/if}
-    </CodePreview>
-  </section>
+			<!-- Styling -->
+			<UIExample
+				title="Custom Styling"
+				description="Apply your own Tailwind classes to create unique designs."
+				code={UIStylingRaw}
+			>
+				{#if displayArticle}
+					<UIStyling {ndk} article={displayArticle} />
+				{/if}
+			</UIExample>
+		</div>
+	</section>
 
-  <!-- Component API -->
-  <section class="mb-16">
-    <h2 class="text-2xl font-bold mb-4">Component API</h2>
-
-    <div class="space-y-6">
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Root</h3>
-        <p class="text-muted-foreground mb-4">
-          Root container that provides context to child components. Fetches author profile automatically.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">ndk: NDKSvelte, article: NDKArticle, interactive?: boolean</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Image</h3>
-        <p class="text-muted-foreground mb-4">
-          Display article cover image with fallback icon.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">showGradient?: boolean, iconSize?: string</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Title</h3>
-        <p class="text-muted-foreground mb-4">
-          Display article title with line clamping.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">lines?: number (default: 2)</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Summary</h3>
-        <p class="text-muted-foreground mb-4">
-          Display article summary/excerpt with truncation.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">maxLength?: number (default: 150), lines?: number (default: 3)</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Author</h3>
-        <p class="text-muted-foreground mb-4">
-          Display article author name from profile.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">fallback?: string (default: "Anonymous")</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Date</h3>
-        <p class="text-muted-foreground mb-4">
-          Display article published date.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">format?: "relative" | "short" | "full" (default: "relative")</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Meta</h3>
-        <p class="text-muted-foreground mb-4">
-          Combined author + date display.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">showIcon?: boolean (default: false)</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCardPortrait</h3>
-        <p class="text-muted-foreground mb-4">
-          Preset: Vertical card with image on top. Import from <code>$lib/ndk/blocks</code>.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">width?: string, height?: string, imageHeight?: string</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCardHero</h3>
-        <p class="text-muted-foreground mb-4">
-          Preset: Full-width hero card with gradient background and optional badge (shown if badgeText provided). Import from <code>$lib/ndk/blocks</code>.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">height?: string, badgeText?: string</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCardNeon</h3>
-        <p class="text-muted-foreground mb-4">
-          Preset: Portrait card with subtle glossy white neon top border effect, full background image, author info and reading time. Import from <code>$lib/ndk/blocks</code>.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">width?: string, height?: string</code>
-        </div>
-      </div>
-
-      <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCardMedium</h3>
-        <p class="text-muted-foreground mb-4">
-          Preset: Horizontal card with image on right. Import from <code>$lib/ndk/blocks</code>.
-        </p>
-        <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">imageSize?: "small" | "medium" | "large"</code>
-        </div>
-      </div>
-    </div>
-  </section>
+	<!-- Component API -->
+	<ComponentAPI
+		components={[
+			{
+				name: 'ArticleCard.Root',
+				description:
+					'Root container that provides context to child components. Fetches author profile automatically.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description:
+							'NDK instance. Optional if NDK is available in Svelte context (from parent components).',
+						required: false
+					},
+					{
+						name: 'article',
+						type: 'NDKArticle',
+						description: 'The article to display',
+						required: true
+					},
+					{
+						name: 'interactive',
+						type: 'boolean',
+						default: 'false',
+						description: 'Enable interactive features like click handlers',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.Image',
+				description: 'Display article cover image with fallback icon.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'showGradient',
+						type: 'boolean',
+						default: 'false',
+						description: 'Add a gradient overlay on the image',
+						required: false
+					},
+					{
+						name: 'iconSize',
+						type: 'string',
+						default: '"w-16 h-16"',
+						description: 'Tailwind classes for fallback icon size',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.Title',
+				description: 'Display article title with line clamping.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'lines',
+						type: 'number',
+						default: '2',
+						description: 'Maximum number of lines to display',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.Summary',
+				description: 'Display article summary/excerpt with truncation.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'maxLength',
+						type: 'number',
+						default: '150',
+						description: 'Maximum character length before truncation',
+						required: false
+					},
+					{
+						name: 'lines',
+						type: 'number',
+						default: '3',
+						description: 'Maximum number of lines to display',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.Author',
+				description: 'Display article author name from profile.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'fallback',
+						type: 'string',
+						default: '"Anonymous"',
+						description: 'Fallback text when author name is unavailable',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.Date',
+				description: 'Display article published date.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'format',
+						type: '"relative" | "short" | "full"',
+						default: '"relative"',
+						description: 'Date format style',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.Meta',
+				description: 'Combined author + date display.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'showIcon',
+						type: 'boolean',
+						default: 'false',
+						description: 'Show author avatar icon',
+						required: false
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCard.ReadingTime',
+				description: 'Display estimated reading time based on article content length.',
+				importPath: "import { ArticleCard } from '$lib/ndk/article-card'",
+				props: [
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCardPortrait',
+				description:
+					'Preset: Vertical card with image on top. Import from $lib/ndk/blocks for quick use.',
+				importPath: "import { ArticleCardPortrait } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'article',
+						type: 'NDKArticle',
+						description: 'The article to display',
+						required: true
+					},
+					{
+						name: 'width',
+						type: 'string',
+						default: '"w-[320px]"',
+						description: 'Card width (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'height',
+						type: 'string',
+						default: '"h-[420px]"',
+						description: 'Card height (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'imageHeight',
+						type: 'string',
+						default: '"h-56"',
+						description: 'Image height (Tailwind classes)',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCardHero',
+				description:
+					'Preset: Full-width hero card with gradient background and optional badge. Import from $lib/ndk/blocks.',
+				importPath: "import { ArticleCardHero } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'article',
+						type: 'NDKArticle',
+						description: 'The article to display',
+						required: true
+					},
+					{
+						name: 'height',
+						type: 'string',
+						default: '"h-[500px]"',
+						description: 'Hero section height (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'badgeText',
+						type: 'string',
+						description: 'Optional badge text (badge shown if provided)',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCardNeon',
+				description:
+					'Preset: Portrait card with subtle glossy white neon top border effect, full background image. Import from $lib/ndk/blocks.',
+				importPath: "import { ArticleCardNeon } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'article',
+						type: 'NDKArticle',
+						description: 'The article to display',
+						required: true
+					},
+					{
+						name: 'width',
+						type: 'string',
+						default: '"w-[320px]"',
+						description: 'Card width (Tailwind classes)',
+						required: false
+					},
+					{
+						name: 'height',
+						type: 'string',
+						default: '"h-[480px]"',
+						description: 'Card height (Tailwind classes)',
+						required: false
+					}
+				]
+			},
+			{
+				name: 'ArticleCardMedium',
+				description:
+					'Preset: Horizontal card with image on right. Supports three image size variants. Import from $lib/ndk/blocks.',
+				importPath: "import { ArticleCardMedium } from '$lib/ndk/blocks'",
+				props: [
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance',
+						required: true
+					},
+					{
+						name: 'article',
+						type: 'NDKArticle',
+						description: 'The article to display',
+						required: true
+					},
+					{
+						name: 'imageSize',
+						type: '"small" | "medium" | "large"',
+						default: '"medium"',
+						description: 'Image size variant',
+						required: false
+					}
+				]
+			}
+		]}
+	/>
 </div>

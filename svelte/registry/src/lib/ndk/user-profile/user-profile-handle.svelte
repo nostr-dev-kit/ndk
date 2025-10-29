@@ -55,20 +55,6 @@
   const displayText = $derived(showAt ? `@${handle}` : handle);
 </script>
 
-<span class={cn('user-profile-handle', size, truncate && 'user-profile-handle-truncate', className)}>
+<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
   {displayText}
 </span>
-
-<style>
-  .user-profile-handle {
-    color: var(--muted-foreground, #6b7280);
-  }
-
-  .user-profile-handle-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    max-width: 100%;
-  }
-</style>

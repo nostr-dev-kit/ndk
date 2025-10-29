@@ -45,7 +45,7 @@
     if (resolvedPubkey) {
       return `background: ${deterministicPubkeyGradient(resolvedPubkey)}`;
     }
-    return 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    return 'background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 80%, var(--foreground) 20%) 100%)';
   });
 
   // Reset image state when banner URL changes

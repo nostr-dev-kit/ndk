@@ -137,18 +137,18 @@
     display: flex;
     gap: 0.75rem;
     padding: 1rem;
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
-    background: var(--card-background, #ffffff);
+    background: var(--card-background);
     cursor: pointer;
     transition: all 0.2s;
     margin: 0.5rem 0;
   }
 
   .note-preview:hover {
-    background: var(--card-hover-background, #f9fafb);
-    border-color: var(--border-hover-color, #d1d5db);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: var(--card-hover-background);
+    border-color: var(--border-hover-color);
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
   }
 
   .note-avatar {
@@ -177,7 +177,7 @@
 
   .author-name {
     font-weight: 700;
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     font-size: 0.9375rem;
     white-space: nowrap;
     overflow: hidden;
@@ -185,7 +185,7 @@
   }
 
   .author-handle {
-    color: var(--text-muted, #6b7280);
+    color: var(--text-muted);
     font-size: 0.875rem;
     white-space: nowrap;
     overflow: hidden;
@@ -193,13 +193,13 @@
   }
 
   .timestamp {
-    color: var(--text-muted, #6b7280);
+    color: var(--text-muted);
     font-size: 0.875rem;
     white-space: nowrap;
   }
 
   .note-body {
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     line-height: 1.5;
     word-wrap: break-word;
     font-size: 0.9375rem;
@@ -219,13 +219,13 @@
     border: none;
     padding: 0;
     cursor: pointer;
-    color: var(--text-muted, #6b7280);
+    color: var(--text-muted);
     font-size: 0.875rem;
     transition: color 0.2s;
   }
 
   .interaction-btn:hover {
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
   }
 
   .interaction-icon {

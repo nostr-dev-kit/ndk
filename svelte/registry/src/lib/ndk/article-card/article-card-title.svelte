@@ -35,6 +35,6 @@
   const lineClampClass = $derived(`line-clamp-${lines}`);
 </script>
 
-<h3 class={cn('article-card-title font-bold text-foreground', lineClampClass, className)}>
+<h3 class={cn(lineClampClass, className)}>
   {title}
 </h3>

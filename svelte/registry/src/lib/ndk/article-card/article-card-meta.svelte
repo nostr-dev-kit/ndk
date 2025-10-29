@@ -34,8 +34,8 @@
   }
 </script>
 
-<div class={cn('article-card-meta flex items-center gap-2 text-sm text-muted-foreground', className)}>
-  <Author class="font-medium" />
+<div class={cn('flex items-center gap-2', className)}>
+  <Author />
   <span>·</span>
   {#if showIcon}
     <i class="hugeicons-stroke-rounded text-base leading-none">&#984777;</i>

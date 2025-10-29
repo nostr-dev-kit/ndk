@@ -174,7 +174,7 @@
 		position: fixed;
 		inset: 0;
 		z-index: 50;
-		background: rgba(0, 0, 0, 0.5);
+		background: color-mix(in srgb, var(--foreground) 50%, transparent);
 		backdrop-filter: blur(4px);
 	}
 
@@ -191,7 +191,7 @@
 		background: hsl(var(--color-card));
 		border: 1px solid hsl(var(--color-border));
 		border-radius: 0.5rem;
-		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+		box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent), 0 4px 6px -2px color-mix(in srgb, var(--foreground) 5%, transparent);
 	}
 
 	.modal-header {

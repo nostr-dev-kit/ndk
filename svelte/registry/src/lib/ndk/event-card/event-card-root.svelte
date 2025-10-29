@@ -104,11 +104,11 @@
 <style>
   .event-card {
     /* Modern card shadow */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--foreground) 12%, transparent), 0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent);
     background: var(--background) !important;
   }
 
   .event-card:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 6px color-mix(in srgb, var(--foreground) 12%, transparent), 0 2px 4px color-mix(in srgb, var(--foreground) 8%, transparent);
   }
 </style>

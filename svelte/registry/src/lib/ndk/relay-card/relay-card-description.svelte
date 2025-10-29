@@ -41,7 +41,7 @@
 
 {#if description}
   <p
-    class={cn('relay-card-description', size, className)}
+    class={cn('overflow-hidden leading-relaxed m-0', size, className)}
     style:display="-webkit-box"
     style:-webkit-line-clamp={maxLines}
     style:-webkit-box-orient="vertical"
@@ -49,12 +49,3 @@
     {description}
   </p>
 {/if}
-
-<style>
-  .relay-card-description {
-    color: var(--muted-foreground, #6b7280);
-    overflow: hidden;
-    line-height: 1.5;
-    margin: 0;
-  }
-</style>

@@ -42,19 +42,12 @@
 
 {#if bio}
   <p
-    class={cn('user-profile-bio', size, className)}
+    class={cn(size, className)}
     style:display="-webkit-box"
     style:-webkit-line-clamp={maxLines}
     style:-webkit-box-orient="vertical"
+    style:overflow="hidden"
   >
     {bio}
   </p>
 {/if}
-
-<style>
-  .user-profile-bio {
-    color: var(--muted-foreground, #6b7280);
-    overflow: hidden;
-    line-height: 1.5;
-  }
-</style>

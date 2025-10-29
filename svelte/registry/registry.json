@@ -620,6 +620,28 @@
       ]
     },
     {
+      "name": "article-content",
+      "type": "registry:component",
+      "title": "Article Content",
+      "description": "Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte", "marked@^16.4.1"],
+      "files": [
+        {
+          "path": "registry/ndk/article-content/article-content.svelte",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ndk/article-content/highlight-toolbar.svelte",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ndk/article-content/index.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "blocks",
       "type": "registry:lib",
       "title": "Blocks",

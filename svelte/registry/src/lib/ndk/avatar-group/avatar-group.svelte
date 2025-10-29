@@ -175,7 +175,7 @@
   }
 
   .avatar-group-button:focus-visible {
-    outline: 2px solid var(--primary, #3b82f6);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
     border-radius: 50%;
   }
@@ -183,13 +183,13 @@
   .avatar-group-overflow {
     position: relative;
     border-radius: 50%;
-    background: var(--muted, #f3f4f6);
-    border: 2px solid var(--background, #ffffff);
+    background: var(--muted);
+    border: 2px solid var(--background);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
     flex-shrink: 0;
   }
 
@@ -204,18 +204,18 @@
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
     transition: all 0.2s ease;
   }
 
   .avatar-group-overflow-button:hover {
-    background: var(--muted-hover, #e5e7eb);
-    color: var(--foreground, #111827);
+    background: var(--muted-hover);
+    color: var(--foreground);
     transform: scale(1.1);
   }
 
   .avatar-group-overflow-button:focus-visible {
-    outline: 2px solid var(--primary, #3b82f6);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 

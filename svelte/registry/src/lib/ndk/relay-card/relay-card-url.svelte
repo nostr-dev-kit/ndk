@@ -37,22 +37,6 @@
   }
 </script>
 
-<span class={cn('relay-card-url', size, truncate && 'relay-card-url-truncate', className)}>
+<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
   {context.relayInfo.url}
 </span>
-
-<style>
-  .relay-card-url {
-    color: var(--muted-foreground, #6b7280);
-    font-family: monospace;
-    font-size: 0.875em;
-  }
-
-  .relay-card-url-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    max-width: 100%;
-  }
-</style>

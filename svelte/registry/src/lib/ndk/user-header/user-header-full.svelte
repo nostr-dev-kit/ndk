@@ -113,7 +113,7 @@
   .avatar-container :global(.avatar-large) {
     width: 7.5rem;
     height: 7.5rem;
-    border: 4px solid var(--background, #fff);
+    border: 4px solid var(--background);
     border-radius: 50%;
   }
 
@@ -152,18 +152,18 @@
   .name-handle :global(.display-name) {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--foreground, #000);
+    color: var(--foreground);
   }
 
   .name-handle :global(.handle) {
     font-size: 0.9375rem;
-    color: var(--muted-foreground, #666);
+    color: var(--muted-foreground);
   }
 
   .bio {
     font-size: 0.9375rem;
     line-height: 1.5;
-    color: var(--muted-foreground, #374151);
+    color: var(--muted-foreground);
   }
 
   .stats {
@@ -179,11 +179,11 @@
 
   .stat-value {
     font-weight: 700;
-    color: var(--foreground, #1a1a1a);
+    color: var(--foreground);
   }
 
   .stat-label {
-    color: var(--muted-foreground, #666);
+    color: var(--muted-foreground);
   }
 
   .actions-area {

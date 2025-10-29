@@ -59,13 +59,13 @@
 </script>
 
 {#if pubkeys.length > 0}
-  <div class={cn('relay-card-bookmarked-by', className)}>
+  <div class={cn('flex items-center gap-3', className)}>
     <AvatarGroup ndk={context.ndk} {pubkeys} {max} {size} {spacing} />
     {#if showCount && stats}
-      <span class="relay-card-bookmarked-by-count">
+      <span class="text-sm">
         {stats.count} {stats.count === 1 ? 'follow' : 'follows'}
         {#if stats.percentage > 0}
-          <span class="relay-card-bookmarked-by-percentage">
+          <span class="text-muted-foreground">
             ({stats.percentage.toFixed(0)}%)
           </span>
         {/if}
@@ -73,22 +73,3 @@
     {/if}
   </div>
 {/if}
-
-<style>
-  .relay-card-bookmarked-by {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .relay-card-bookmarked-by-count {
-    font-size: 0.875rem;
-    color: var(--foreground, #111827);
-    font-weight: 500;
-  }
-
-  .relay-card-bookmarked-by-percentage {
-    color: var(--muted-foreground, #6b7280);
-    font-weight: 400;
-  }
-</style>

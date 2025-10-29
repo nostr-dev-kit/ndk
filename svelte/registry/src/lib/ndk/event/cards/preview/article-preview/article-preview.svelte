@@ -90,18 +90,18 @@
     display: flex;
     gap: 1.5rem;
     padding: 1rem;
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
-    background: var(--card-background, #ffffff);
+    background: var(--card-background);
     cursor: pointer;
     transition: all 0.2s;
     margin: 0.5rem 0;
   }
 
   .article-preview:hover {
-    background: var(--card-hover-background, #f9fafb);
-    border-color: var(--border-hover-color, #d1d5db);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background: var(--card-hover-background);
+    border-color: var(--border-hover-color);
+    box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 
   .article-content {
@@ -131,7 +131,7 @@
 
   .author-name {
     font-weight: 600;
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     font-size: 0.875rem;
   }
 
@@ -140,11 +140,11 @@
     gap: 0.5rem;
     align-items: center;
     font-size: 0.75rem;
-    color: var(--text-muted, #6b7280);
+    color: var(--text-muted);
   }
 
   .separator {
-    color: var(--text-muted, #9ca3af);
+    color: var(--text-muted);
   }
 
   .article-body {
@@ -157,7 +157,7 @@
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -167,7 +167,7 @@
 
   .article-summary {
     margin: 0;
-    color: var(--text-secondary, #4b5563);
+    color: var(--text-secondary);
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -182,7 +182,7 @@
     height: 134px;
     border-radius: 0.375rem;
     overflow: hidden;
-    background: var(--image-placeholder, #f3f4f6);
+    background: var(--image-placeholder);
   }
 
   .article-image img {

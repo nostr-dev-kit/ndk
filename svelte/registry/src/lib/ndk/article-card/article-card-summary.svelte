@@ -44,6 +44,6 @@
   const lineClampClass = $derived(`line-clamp-${lines}`);
 </script>
 
-<p class={cn('article-card-summary text-muted-foreground', lineClampClass, className)}>
+<p class={cn(lineClampClass, className)}>
   {excerpt}
 </p>

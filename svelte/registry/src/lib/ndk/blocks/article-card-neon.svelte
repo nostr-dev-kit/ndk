@@ -93,7 +93,7 @@
         <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/90"></div>
       {:else}
         <!-- Fallback gradient background -->
-        <div class="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-black"></div>
+        <div class="w-full h-full bg-gradient-to-br from-muted via-muted-foreground to-foreground"></div>
       {/if}
     </div>
 
@@ -147,30 +147,30 @@
     height: 3px;
     background: radial-gradient(
       ellipse at top,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0.15) 50%,
+      color-mix(in srgb, white 40%, transparent) 0%,
+      color-mix(in srgb, white 15%, transparent) 50%,
       transparent 100%
     );
     box-shadow:
       /* Bright narrow shadow right at top */
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
-      inset 0 2px 3px 0 rgba(255, 255, 255, 0.3),
+      inset 0 1px 1px 0 color-mix(in srgb, white 60%, transparent),
+      inset 0 2px 3px 0 color-mix(in srgb, white 30%, transparent),
       /* Softer wide shadows below for depth */
-      inset 0 4px 6px 0 rgba(255, 255, 255, 0.15),
-      inset 0 6px 10px 0 rgba(255, 255, 255, 0.1);
+      inset 0 4px 6px 0 color-mix(in srgb, white 15%, transparent),
+      inset 0 6px 10px 0 color-mix(in srgb, white 10%, transparent);
   }
 
   .article-card-neon:hover .neon-border {
     background: radial-gradient(
       ellipse at top,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
+      color-mix(in srgb, white 50%, transparent) 0%,
+      color-mix(in srgb, white 20%, transparent) 50%,
       transparent 100%
     );
     box-shadow:
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.8),
-      inset 0 2px 3px 0 rgba(255, 255, 255, 0.4),
-      inset 0 4px 6px 0 rgba(255, 255, 255, 0.2),
-      inset 0 6px 10px 0 rgba(255, 255, 255, 0.15);
+      inset 0 1px 1px 0 color-mix(in srgb, white 80%, transparent),
+      inset 0 2px 3px 0 color-mix(in srgb, white 40%, transparent),
+      inset 0 4px 6px 0 color-mix(in srgb, white 20%, transparent),
+      inset 0 6px 10px 0 color-mix(in srgb, white 15%, transparent);
   }
 </style>

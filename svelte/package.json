@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/svelte",
-  "version": "4.0.0-beta.19",
+  "version": "4.0.0-beta.20",
   "description": "Modern, performant, and beautiful Svelte 5 integration for NDK",
   "type": "module",
   "svelte": "./dist/index.js",
@@ -59,12 +59,12 @@
   "author": "pablof7z",
   "license": "MIT",
   "peerDependencies": {
-    "@nostr-dev-kit/blossom": "8.0.0-beta.19",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.19",
-    "@nostr-dev-kit/sessions": "0.6.4-beta.19",
-    "@nostr-dev-kit/sync": "0.4.0-beta.19",
-    "@nostr-dev-kit/wallet": "0.8.11-beta.19",
-    "@nostr-dev-kit/wot": "0.3.7-beta.19",
+    "@nostr-dev-kit/blossom": "8.0.0-beta.20",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.20",
+    "@nostr-dev-kit/sessions": "0.6.4-beta.20",
+    "@nostr-dev-kit/sync": "0.4.0-beta.20",
+    "@nostr-dev-kit/wallet": "0.8.11-beta.20",
+    "@nostr-dev-kit/wot": "0.3.7-beta.20",
     "svelte": "^5.42.3"
   },
   "devDependencies": {

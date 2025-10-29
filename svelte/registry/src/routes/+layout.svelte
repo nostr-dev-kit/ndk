@@ -1,7 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import { setContext } from 'svelte';
-  import { ndk, initializeNDK2 } from '$lib/ndk.svelte.ts';
+  import { ndk, initializeNDK } from '$lib/ndk.svelte.ts';
   import Sidebar from '$lib/components/Sidebar.svelte';
   import LoginModal from '$lib/components/LoginModal.svelte';
 
@@ -13,7 +13,7 @@
   setContext('ndk', ndk);
 
   $effect(() => {
-    initializeNDK2().then(() => {
+    initializeNDK().then(() => {
       isInitialized = true;
     });
   });

@@ -2,9 +2,9 @@
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
   import { ndk } from '$lib/ndk.svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { themeManager } from '$lib/theme.svelte';
   import { docs, componentCategories, homeNavItem } from '$lib/navigation';
+  import { UserProfile } from '$lib/ndk/user-profile';
 
   interface Props {
     onLoginClick: () => void;
@@ -12,18 +12,6 @@
   }
 
   let { onLoginClick, onLogoutClick }: Props = $props();
-
-  const currentUserProfile = $derived.by(() => {
-    if (!ndk.$currentUser || !ndk.$currentPubkey) return null;
-    return createProfileFetcher(() => ({ user: ndk.$currentUser! }), ndk);
-  });
-
-  const avatarUrl = $derived(currentUserProfile?.profile?.picture);
-  const displayName = $derived(
-    currentUserProfile?.profile?.displayName ||
-    currentUserProfile?.profile?.name ||
-    (ndk.$currentPubkey ? ndk.$currentPubkey.substring(0, 8) : 'Anon')
-  );
 </script>
 
 <aside class="sidebar">
@@ -101,16 +89,11 @@
   <div class="sidebar-footer">
     {#if ndk.$currentPubkey}
       <div class="user-info">
-        <div class="user-details">
-          {#if avatarUrl}
-            <img src={avatarUrl} alt={displayName} class="avatar" />
-          {:else}
-            <div class="avatar avatar-fallback">
-              {displayName.slice(0, 2).toUpperCase()}
-            </div>
-          {/if}
-          <span class="user-name">{displayName}</span>
-        </div>
+        <UserProfile.AvatarName
+          pubkey={ndk.$currentPubkey}
+          avatarSize={32}
+          meta="handle"
+        />
         <button class="logout-btn" onclick={onLogoutClick}>
           Logout
         </button>
@@ -256,37 +239,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-  }
-
-  .user-details {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-  }
-
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .avatar-fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: hsl(var(--color-primary));
-    color: hsl(var(--color-primary-foreground));
-    font-weight: 600;
-    font-size: 0.75rem;
-  }
-
-  .user-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: hsl(var(--color-foreground));
   }
 
   .login-btn, .logout-btn {

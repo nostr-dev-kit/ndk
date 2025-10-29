@@ -59,7 +59,7 @@ export const componentCategories: NavCategory[] = [
     title: 'Events',
     items: [
       { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
-      { name: 'EventCard Thread', path: '/components/event-card-thread', icon: Chat01Icon },
+      { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
       { name: 'EventContent', path: '/components/event-content', icon: File01Icon },
       { name: 'HighlightCard', path: '/components/highlight-card', icon: File01Icon },
     ]

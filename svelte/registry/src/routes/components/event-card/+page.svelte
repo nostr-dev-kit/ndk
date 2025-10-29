@@ -1,7 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { ThreadingMetadata } from '$lib/ndk/event-card';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import CodePreview from '$site-components/code-preview.svelte';
 
@@ -10,8 +9,6 @@
   import BasicExampleRaw from './examples/basic.svelte?raw';
   import CompactExample from './examples/compact.svelte';
   import CompactExampleRaw from './examples/compact.svelte?raw';
-  import ThreadViewExample from './examples/thread-view.svelte';
-  import ThreadViewExampleRaw from './examples/thread-view.svelte?raw';
   import CustomCompositionExample from './examples/custom-composition.svelte';
   import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
   import InteractiveExample from './examples/interactive.svelte';
@@ -23,23 +20,6 @@
 
   let neventInput = $state('nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n');
   let exampleNote = $state<NDKEvent | undefined>();
-  let threadNote = $state<NDKEvent | undefined>();
-  let selfThreadNote = $state<NDKEvent | undefined>();
-
-  // Threading metadata examples
-  const threadingMetadata: ThreadingMetadata = {
-    showLineToNext: true,
-    isSelfThread: false,
-    depth: 0,
-    isMainChain: true
-  };
-
-  const selfThreadingMetadata: ThreadingMetadata = {
-    showLineToNext: true,
-    isSelfThread: true,
-    depth: 1,
-    isMainChain: true
-  };
 
   $effect(() => {
     const input = neventInput;
@@ -47,8 +27,6 @@
     ndk.fetchEvent(input).then(event => {
       if (event) {
         exampleNote = event;
-        threadNote = event;
-        selfThreadNote = event;
       }
     });
   });
@@ -92,16 +70,6 @@
         code={CompactExampleRaw}
       >
         <CompactExample {ndk} event={exampleNote} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
-      <CodePreview
-        title="Thread View with Lines"
-        description="Event cards with thread lines showing conversation flow."
-        code={ThreadViewExampleRaw}
-      >
-        <ThreadViewExample {ndk} {threadNote} {selfThreadNote} {threadingMetadata} {selfThreadingMetadata} />
       </CodePreview>
     </section>
 

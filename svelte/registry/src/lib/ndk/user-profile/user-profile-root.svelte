@@ -4,12 +4,14 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
   import HoverCard from './user-profile-hover-card.svelte';
+  import * as Popover from 'bits-ui';
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** User instance */
     user?: NDKUser;
@@ -34,7 +36,7 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     user,
     pubkey,
     profile: propProfile,
@@ -43,6 +45,8 @@
     class: className = '',
     children
   }: Props = $props();
+
+  const ndk = getNDKFromContext(providedNdk);
 
   // Resolve NDKUser from either user prop or pubkey
   const ndkUser = $derived.by(() => {
@@ -78,58 +82,6 @@
 
   const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);
 
-  // Hover card state
-  let isHoverCardVisible = $state(false);
-  let hoverCardPosition = $state({ x: 0, y: 0 });
-  let hoverTimer: ReturnType<typeof setTimeout> | null = null;
-  let containerRef: HTMLDivElement | null = null;
-
-  function handleMouseEnter(e: MouseEvent) {
-    if (!showHoverCard || !resolvedPubkey) return;
-
-    // Clear any existing timer
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-    }
-
-    // Show hover card after 500ms delay
-    hoverTimer = setTimeout(() => {
-      if (containerRef) {
-        const rect = containerRef.getBoundingClientRect();
-        const x = rect.left;
-        const y = rect.top;
-
-        hoverCardPosition = { x, y };
-        isHoverCardVisible = true;
-      }
-    }, 500);
-  }
-
-  function handleMouseLeave() {
-    if (!showHoverCard) return;
-
-    // Clear show timer
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-    }
-
-    // Hide after 100ms delay (allows moving to hover card)
-    hoverTimer = setTimeout(() => {
-      isHoverCardVisible = false;
-    }, 100);
-  }
-
-  function handleHoverCardMouseEnter() {
-    // Cancel hide timer when entering hover card
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-    }
-  }
-
-  function handleHoverCardMouseLeave() {
-    isHoverCardVisible = false;
-  }
-
   // Create reactive context with getters
   const context = {
     get ndk() { return ndk; },
@@ -143,36 +95,23 @@
   setContext(USER_PROFILE_CONTEXT_KEY, context);
 </script>
 
-<div
-  bind:this={containerRef}
-  class="user-profile-root {className}"
-  class:has-hover-card={showHoverCard}
-  onmouseenter={handleMouseEnter}
-  onmouseleave={handleMouseLeave}
->
-  {@render children()}
-</div>
-
 {#if showHoverCard && resolvedPubkey}
-  <div
-    onmouseenter={handleHoverCardMouseEnter}
-    onmouseleave={handleHoverCardMouseLeave}
-  >
-    <HoverCard
-      {ndk}
-      pubkey={resolvedPubkey}
-      isVisible={isHoverCardVisible}
-      position={hoverCardPosition}
-    />
+  <Popover.Root openDelay={500} closeDelay={100}>
+    <Popover.Trigger class="user-profile-root {className}">
+      {@render children()}
+    </Popover.Trigger>
+    <Popover.Content>
+      <HoverCard {ndk} pubkey={resolvedPubkey} />
+    </Popover.Content>
+  </Popover.Root>
+{:else}
+  <div class="user-profile-root {className}">
+    {@render children()}
   </div>
 {/if}
 
 <style>
   .user-profile-root {
-    display: contents;
-  }
-
-  .user-profile-root.has-hover-card {
     display: inline-block;
   }
 </style>

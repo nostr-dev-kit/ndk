@@ -43,9 +43,15 @@
   const ndkUser = $derived(user || (ndk && pubkey ? ndk.getUser({ pubkey }) : null));
 
   // Fetch profile if we have a user
-  const profileFetcher = $derived(
-    ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null
-  );
+  let profileFetcher = $state<ReturnType<typeof createProfileFetcher> | null>(null);
+
+  $effect(() => {
+    if (ndkUser && ndk) {
+      profileFetcher = createProfileFetcher(() => ({ user: ndkUser }), ndk);
+    } else {
+      profileFetcher = null;
+    }
+  });
 
   const imageUrl = $derived(profileFetcher?.profile?.picture || fallback);
   const displayName = $derived(

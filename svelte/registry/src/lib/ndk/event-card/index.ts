@@ -59,5 +59,3 @@ export type { ThreadingMetadata } from '@nostr-dev-kit/svelte';
 
 // Re-export preset components (blocks)
 export { default as SimpleEventCard } from '../blocks/simple-event-card.svelte';
-// export { default as ThreadEventCard } from '../blocks/thread-event-card.svelte';
-// export { default as CompactEventCard } from '../blocks/compact-event-card.svelte';

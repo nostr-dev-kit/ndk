@@ -20,7 +20,9 @@
 -->
 <script lang="ts">
   import { onDestroy } from 'svelte';
-  import { createReplies } from '@nostr-dev-kit/svelte';
+  // TODO: createReplies builder does not exist yet in @nostr-dev-kit/svelte
+  // This component is a WIP and needs to be implemented once the builder is available
+  // import { createReplies } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
@@ -53,7 +55,15 @@
   }: Props = $props();
 
   // Create replies state
-  const replies = createReplies(() => ({ event }), ndk);
+  // TODO: Replace with actual createReplies when available
+  const replies = {
+    count: 0,
+    directReplies: [],
+    threadedReplies: new Map(),
+    cleanup: () => {},
+    reply: async (_content: string) => {},
+    replyTo: (_reply: NDKEvent) => {}
+  };
 
   // Composer state
   let composerOpen = $state(false);

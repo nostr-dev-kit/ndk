@@ -1,4 +1,4 @@
-<!-- @ndk-version: user-card@0.0.0 -->
+<!-- @ndk-version: user-card@0.4.0 -->
 <!--
   @component UserCard - Profile display component
 

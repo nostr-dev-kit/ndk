@@ -62,7 +62,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: hsl(var(--color-background));
+    background: var(--color-background);
   }
 
   .loading-content {
@@ -75,13 +75,13 @@
   .loading-spinner {
     width: 3rem;
     height: 3rem;
-    color: hsl(var(--color-primary));
+    color: var(--color-primary);
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   .loading-text {
     font-size: 1rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0;
   }
 
@@ -103,7 +103,7 @@
   .app {
     display: flex;
     min-height: 100vh;
-    background: hsl(var(--color-background));
+    background: var(--color-background);
   }
 
   .main {

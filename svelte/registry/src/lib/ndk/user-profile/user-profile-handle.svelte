@@ -1,4 +1,4 @@
-<!-- @ndk-version: user-profile@0.0.0 -->
+<!-- @ndk-version: user-profile@0.10.0 -->
 <!--
   @component UserProfile.Handle
   Displays user's handle (username with @), reads from UserProfile context.

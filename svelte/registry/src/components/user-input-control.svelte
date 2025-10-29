@@ -81,8 +81,8 @@
   .user-input-control {
     margin-bottom: 2rem;
     padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.75rem;
   }
 
@@ -95,14 +95,14 @@
   .label-text {
     font-size: 0.875rem;
     font-weight: 600;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .user-input {
     padding: 0.5rem 0.75rem;
-    border: 1px solid hsl(var(--color-border));
-    background: hsl(var(--color-background));
-    color: hsl(var(--color-foreground));
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    color: var(--color-foreground);
     border-radius: 0.375rem;
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.875rem;
@@ -113,12 +113,12 @@
 
   .user-input:focus {
     outline: none;
-    border-color: hsl(var(--color-ring));
-    box-shadow: 0 0 0 3px hsl(var(--color-ring) / 0.2);
+    border-color: var(--color-ring);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) calc(0.2 * 100%), transparent);
   }
 
   .user-input.error {
-    border-color: hsl(var(--color-destructive));
+    border-color: var(--color-destructive);
   }
 
   .status {
@@ -127,10 +127,10 @@
   }
 
   .processing {
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
   }
 
   .error-message {
-    color: hsl(var(--color-destructive));
+    color: var(--color-destructive);
   }
 </style>

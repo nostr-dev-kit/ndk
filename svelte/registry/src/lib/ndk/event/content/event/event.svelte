@@ -1,4 +1,4 @@
-<!-- @ndk-version: embedded-event@0.0.0 -->
+<!-- @ndk-version: embedded-event@0.4.0 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';

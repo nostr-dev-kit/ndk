@@ -1,4 +1,4 @@
-<!-- @ndk-version: article-preview@0.0.0 -->
+<!-- @ndk-version: article-preview@0.4.0 -->
 <!--
   @component ArticlePreview - Medium-style preview for article events (kind 30023)
 

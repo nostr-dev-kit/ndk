@@ -81,8 +81,8 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.75rem 1rem;
-		background: hsl(var(--color-muted));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-muted);
+		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
 	}
 
@@ -90,7 +90,7 @@
 		flex: 1;
 		font-family: 'Monaco', 'Courier New', monospace;
 		font-size: 0.875rem;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		user-select: all;
 	}
 
@@ -99,18 +99,18 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0.5rem;
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.375rem;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		cursor: pointer;
 		transition: all 0.2s;
 		flex-shrink: 0;
 	}
 
 	.copy-button:hover {
-		background: hsl(var(--color-background));
-		border-color: hsl(var(--color-primary));
+		background: var(--color-background);
+		border-color: var(--color-primary);
 	}
 
 	.copy-button svg {
@@ -121,6 +121,6 @@
 	.note {
 		margin: 0.5rem 0 0;
 		font-size: 0.875rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 	}
 </style>

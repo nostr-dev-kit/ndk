@@ -1,0 +1,36 @@
+{
+  "name": "ndk-svelte",
+  "version": "0.1.0",
+  "description": "CLI for managing NDK Svelte components",
+  "type": "module",
+  "bin": {
+    "ndk-svelte": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "ndk",
+    "nostr",
+    "svelte",
+    "components",
+    "cli"
+  ],
+  "author": "NDK Team",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

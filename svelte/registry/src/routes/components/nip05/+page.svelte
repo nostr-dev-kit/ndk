@@ -95,8 +95,8 @@
 <style>
   .info {
     padding: 2rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.75rem;
   }
 
@@ -104,7 +104,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .info ul {
@@ -114,7 +114,7 @@
 
   .info li {
     margin-bottom: 0.5rem;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
 </style>

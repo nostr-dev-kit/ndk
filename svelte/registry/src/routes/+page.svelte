@@ -64,7 +64,7 @@
 
   .hero {
     padding: 4rem 0 3rem;
-    border-bottom: 1px solid hsl(var(--color-border));
+    border-bottom: 1px solid var(--color-border);
     margin-bottom: 3rem;
   }
 
@@ -72,14 +72,14 @@
     font-size: 3.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     letter-spacing: -0.025em;
     line-height: 1.1;
   }
 
   .subtitle {
     font-size: 1.25rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 2rem 0;
     line-height: 1.6;
   }
@@ -92,12 +92,12 @@
 
   .badge {
     padding: 0.375rem 0.75rem;
-    background: hsl(var(--color-secondary));
-    color: hsl(var(--color-secondary-foreground));
+    background: var(--color-secondary);
+    color: var(--color-secondary-foreground);
     border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
-    border: 1px solid hsl(var(--color-border));
+    border: 1px solid var(--color-border);
   }
 
   .intro {
@@ -108,21 +108,21 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     letter-spacing: -0.025em;
   }
 
   .intro p {
     font-size: 1rem;
     line-height: 1.7;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
   }
 
   .connection-status {
     margin-bottom: 3rem;
     padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
   }
 
@@ -130,7 +130,7 @@
     margin: 0 0 1rem 0;
     font-size: 1rem;
     font-weight: 600;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .status-grid {
@@ -144,27 +144,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    background: hsl(var(--color-muted) / 0.5);
+    background: color-mix(in srgb, var(--color-muted) 50%, transparent);
     border-radius: 0.375rem;
-    border: 1px solid hsl(var(--color-border));
+    border: 1px solid var(--color-border);
   }
 
   .relay-url {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
     font-size: 0.875rem;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .relay-state {
     font-size: 0.875rem;
     font-weight: 500;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
 
   .relay-state.connected {
-    color: hsl(142 76% 36%);
+    color: var(--color-success);
   }
 </style>

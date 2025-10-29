@@ -58,14 +58,14 @@
     font-size: 3rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     letter-spacing: -0.025em;
     line-height: 1.1;
   }
 
   .subtitle {
     font-size: 1.25rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0;
     line-height: 1.6;
   }
@@ -78,7 +78,7 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0 0 1.5rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     letter-spacing: -0.025em;
   }
 
@@ -86,21 +86,21 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   p {
     font-size: 1rem;
     line-height: 1.7;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 1rem 0;
   }
 
   .coming-soon {
     padding: 3rem;
     text-align: center;
-    background: hsl(var(--color-card));
-    border: 2px dashed hsl(var(--color-border));
+    background: var(--color-card);
+    border: 2px dashed var(--color-border);
     border-radius: 0.5rem;
   }
 
@@ -117,8 +117,8 @@
 
   .component-link {
     padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     text-decoration: none;
     transition: all 0.2s;
@@ -126,12 +126,12 @@
   }
 
   .component-link:hover {
-    border-color: hsl(var(--color-primary));
+    border-color: var(--color-primary);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .component-link h3 {
-    color: hsl(var(--color-primary));
+    color: var(--color-primary);
     margin-bottom: 0.5rem;
   }
 

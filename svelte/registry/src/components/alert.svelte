@@ -90,7 +90,7 @@ Use for: login requirements, deprecation notices, important information.
 	.alert-warning {
 		background: hsl(40 100% 50% / 0.1);
 		border-color: hsl(40 100% 50% / 0.3);
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 	}
 
 	.alert-warning .alert-icon {
@@ -99,34 +99,34 @@ Use for: login requirements, deprecation notices, important information.
 
 	/* Info variant (blue/primary) */
 	.alert-info {
-		background: hsl(var(--color-primary) / 0.1);
-		border-color: hsl(var(--color-primary) / 0.3);
-		color: hsl(var(--color-foreground));
+		background: color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
+		border-color: color-mix(in srgb, var(--color-primary) calc(0.3 * 100%), transparent);
+		color: var(--color-foreground);
 	}
 
 	.alert-info .alert-icon {
-		color: hsl(var(--color-primary));
+		color: var(--color-primary);
 	}
 
 	/* Error variant (red/destructive) */
 	.alert-error {
-		background: hsl(var(--color-destructive) / 0.1);
-		border-color: hsl(var(--color-destructive) / 0.3);
-		color: hsl(var(--color-foreground));
+		background: color-mix(in srgb, var(--color-destructive) calc(0.1 * 100%), transparent);
+		border-color: color-mix(in srgb, var(--color-destructive) calc(0.3 * 100%), transparent);
+		color: var(--color-foreground);
 	}
 
 	.alert-error .alert-icon {
-		color: hsl(var(--color-destructive));
+		color: var(--color-destructive);
 	}
 
 	/* Success variant (green) */
 	.alert-success {
-		background: hsl(var(--color-success) / 0.1);
-		border-color: hsl(var(--color-success) / 0.3);
-		color: hsl(var(--color-foreground));
+		background: color-mix(in srgb, var(--color-success) calc(0.1 * 100%), transparent);
+		border-color: color-mix(in srgb, var(--color-success) calc(0.3 * 100%), transparent);
+		color: var(--color-foreground);
 	}
 
 	.alert-success .alert-icon {
-		color: hsl(var(--color-success));
+		color: var(--color-success);
 	}
 </style>

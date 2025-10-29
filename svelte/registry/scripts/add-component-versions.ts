@@ -46,11 +46,20 @@ const REGISTRY_PATH = join(process.cwd(), 'registry.json');
 const REGISTRY_OUTPUT_PATH = join(process.cwd(), '.vercel/output/static/registry.json');
 
 /**
+ * Convert registry path to actual source path
+ * registry/ndk/event-card/... → src/lib/ndk/event-card/...
+ */
+function convertRegistryPathToSource(registryPath: string): string {
+  return registryPath.replace(/^registry\//, 'src/lib/');
+}
+
+/**
  * Get the last Git commit date for a file
  */
 function getLastCommitDate(filePath: string): string | null {
   try {
-    const absolutePath = join(process.cwd(), filePath);
+    const sourcePath = convertRegistryPathToSource(filePath);
+    const absolutePath = join(process.cwd(), sourcePath);
     const date = execSync(
       `git log -1 --format=%cI -- "${absolutePath}"`,
       { encoding: 'utf-8' }
@@ -66,7 +75,8 @@ function getLastCommitDate(filePath: string): string | null {
  */
 function getFileModDate(filePath: string): string {
   try {
-    const absolutePath = join(process.cwd(), filePath);
+    const sourcePath = convertRegistryPathToSource(filePath);
+    const absolutePath = join(process.cwd(), sourcePath);
     const stats = statSync(absolutePath);
     return stats.mtime.toISOString();
   } catch (error) {
@@ -80,8 +90,14 @@ function getFileModDate(filePath: string): string {
  */
 function calculateVersion(componentName: string, files: RegistryFile[]): string {
   try {
+    // Convert registry paths to source paths
+    const sourcePaths = files.map(f => {
+      const sourcePath = convertRegistryPathToSource(f.path);
+      return join(process.cwd(), sourcePath);
+    });
+
     // Get all commits that touched these files
-    const filePaths = files.map(f => join(process.cwd(), f.path)).join(' ');
+    const filePaths = sourcePaths.join(' ');
     const commitCount = execSync(
       `git log --oneline -- ${filePaths} | wc -l`,
       { encoding: 'utf-8' }
@@ -121,8 +137,14 @@ function getMostRecentDate(files: RegistryFile[]): string {
  */
 function hasBreakingChanges(componentName: string, files: RegistryFile[]): boolean {
   try {
+    // Convert registry paths to source paths
+    const sourcePaths = files.map(f => {
+      const sourcePath = convertRegistryPathToSource(f.path);
+      return join(process.cwd(), sourcePath);
+    });
+
     // Check commit messages for "BREAKING" or "!" prefix
-    const filePaths = files.map(f => join(process.cwd(), f.path)).join(' ');
+    const filePaths = sourcePaths.join(' ');
     const breakingCommits = execSync(
       `git log --oneline --grep="BREAKING\\|!" -- ${filePaths}`,
       { encoding: 'utf-8' }

@@ -5,10 +5,9 @@
   @example
   ```svelte
   <script>
-    const bookmarks = createBookmarkedRelayList({
-      ndk,
+    const bookmarks = createBookmarkedRelayList(() => ({
       authors: [...follows, ndk.$currentUser.pubkey]
-    });
+    }), ndk);
   </script>
 
   <RelayCard.Root {ndk} {relayUrl}>

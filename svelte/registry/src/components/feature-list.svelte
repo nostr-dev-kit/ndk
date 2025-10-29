@@ -38,7 +38,7 @@ Use for: listing component features, capabilities, or usage notes.
 		margin: 1rem 0;
 		padding-left: 1.5rem;
 		line-height: 1.6;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 	}
 
 	.feature-list li {
@@ -50,17 +50,17 @@ Use for: listing component features, capabilities, or usage notes.
 	}
 
 	.feature-list strong {
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		font-weight: 600;
 	}
 
 	.feature-list :global(code) {
-		background: hsl(var(--color-muted) / 0.5);
+		background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
 		padding: 0.125rem 0.375rem;
 		border-radius: 0.25rem;
 		font-size: 0.875em;
 		font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-		color: hsl(var(--color-primary));
+		color: var(--color-primary);
 	}
 
 	/* Compact variant - tighter spacing */
@@ -75,6 +75,6 @@ Use for: listing component features, capabilities, or usage notes.
 	.feature-list-compact strong {
 		display: inline-block;
 		min-width: 120px;
-		color: hsl(var(--color-primary));
+		color: var(--color-primary);
 	}
 </style>

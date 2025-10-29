@@ -1,4 +1,4 @@
-<!-- @ndk-version: relay-list@0.0.0 -->
+<!-- @ndk-version: relay-list@0.4.0 -->
 <script lang="ts">
   import type { BookmarkedRelayWithStats } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';

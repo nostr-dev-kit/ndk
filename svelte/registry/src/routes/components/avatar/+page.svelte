@@ -107,12 +107,12 @@
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .component-description {
     font-size: 1.125rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0;
   }
 
@@ -124,24 +124,24 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .component-section p {
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 1rem 0;
   }
 
   .preview {
-    background: hsl(var(--color-background));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     padding: 2rem;
     margin: 1rem 0;
   }
 
   pre {
-    background: hsl(var(--color-muted));
+    background: var(--color-muted);
     border-radius: 0.5rem;
     padding: 1rem;
     overflow-x: auto;

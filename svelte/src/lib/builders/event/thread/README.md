@@ -18,12 +18,11 @@ A reactive Nostr thread builder that handles the complexity of thread reconstruc
 ```typescript
 import { createThreadView } from '@nostr-dev-kit/svelte';
 
-const thread = createThreadView({
-  ndk,
+const thread = createThreadView(() => ({
   focusedEvent: eventIdOrEvent,
   maxDepth: 20,        // Optional: max parent chain depth
   kinds: [1, 9802]     // Optional: event kinds to include
-});
+}), ndk);
 
 // Access reactive data
 thread.events         // ThreadNode[] - complete linear thread chain

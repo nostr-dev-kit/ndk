@@ -1,4 +1,4 @@
-<!-- @ndk-version: note-preview@0.0.0 -->
+<!-- @ndk-version: note-preview@0.4.0 -->
 <!--
   @component NotePreview - Twitter-style preview for text note events (kind 1)
 

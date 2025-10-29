@@ -99,14 +99,14 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 	.code-title {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		margin-bottom: 0.5rem;
 	}
 
 	.code-container {
 		position: relative;
-		background: hsl(var(--color-muted) / 0.5);
-		border: 1px solid hsl(var(--color-border));
+		background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
+		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
 		overflow: hidden;
 	}
@@ -117,15 +117,15 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 		justify-content: center;
 		gap: 0.5rem;
 		padding: 2rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		font-size: 0.875rem;
 	}
 
 	.spinner {
 		width: 1rem;
 		height: 1rem;
-		border: 2px solid hsl(var(--color-muted-foreground) / 0.3);
-		border-top-color: hsl(var(--color-primary));
+		border: 2px solid color-mix(in srgb, var(--color-muted-foreground) calc(0.3 * 100%), transparent);
+		border-top-color: var(--color-primary);
 		border-radius: 50%;
 		animation: spin 0.6s linear infinite;
 	}
@@ -141,17 +141,17 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 		top: 0.75rem;
 		right: 0.75rem;
 		padding: 0.5rem;
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.375rem;
 		cursor: pointer;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		transition: all 0.2s;
 		z-index: 10;
 	}
 
 	.copy-button:hover {
-		background: hsl(var(--color-muted));
+		background: var(--color-muted);
 	}
 
 	.copy-button:active {

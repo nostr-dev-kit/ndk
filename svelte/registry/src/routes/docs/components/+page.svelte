@@ -37,7 +37,7 @@
 
   let { ndk, event }: Props = $props();
 
-  const state = createEventCard({ ndk, event: () => event });
+  const state = createEventCard(() => ({ event }), ndk);
 
   setContext(EVENT_CARD_CONTEXT_KEY, {
     get ndk() { return ndk; },
@@ -112,7 +112,7 @@
     <pre><code>{`<`+`script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
-  const state = createEventCard({ ndk, event: () => event });
+  const state = createEventCard(() => ({ event }), ndk);
 </`+`script>
 
 <div class="my-design">
@@ -203,13 +203,13 @@
     font-size: 3rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     letter-spacing: -0.025em;
   }
 
   .subtitle {
     font-size: 1.25rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0;
   }
 
@@ -221,37 +221,37 @@
     font-size: 1.875rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   h3 {
     font-size: 1.25rem;
     font-weight: 600;
     margin: 2rem 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   p {
     font-size: 1rem;
     line-height: 1.7;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 1rem 0;
   }
 
   code {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     font-size: 0.875rem;
-    background: hsl(var(--color-muted));
+    background: var(--color-muted);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   pre {
     margin: 1rem 0;
     padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     overflow-x: auto;
   }
@@ -264,7 +264,7 @@
   }
 
   .next-section {
-    border-top: 1px solid hsl(var(--color-border));
+    border-top: 1px solid var(--color-border);
     padding-top: 3rem;
   }
 
@@ -277,20 +277,20 @@
 
   .next-card {
     padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     text-decoration: none;
     transition: border-color 0.2s;
   }
 
   .next-card:hover {
-    border-color: hsl(var(--color-primary));
+    border-color: var(--color-primary);
   }
 
   .next-card h3 {
     margin: 0 0 0.5rem 0;
-    color: hsl(var(--color-primary));
+    color: var(--color-primary);
     font-size: 1.125rem;
   }
 

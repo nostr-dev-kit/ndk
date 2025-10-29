@@ -1,4 +1,4 @@
-<!-- @ndk-version: user-profile@0.0.0 -->
+<!-- @ndk-version: user-profile@0.10.0 -->
 <!--
   @component UserProfile.Bio
   Displays user's bio/about, reads from UserProfile context.

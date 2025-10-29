@@ -1,4 +1,4 @@
-<!-- @ndk-version: user-profile@0.0.0 -->
+<!-- @ndk-version: user-profile@0.10.0 -->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';

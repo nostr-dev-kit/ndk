@@ -122,13 +122,13 @@
     font-size: 3rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     letter-spacing: -0.025em;
   }
 
   .subtitle {
     font-size: 1.25rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0;
   }
 
@@ -140,27 +140,27 @@
     font-size: 1.875rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   h3 {
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   p {
     font-size: 1rem;
     line-height: 1.7;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 1rem 0;
   }
 
   ol, ul {
     margin: 1rem 0;
     padding-left: 1.5rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     line-height: 1.7;
   }
 
@@ -171,8 +171,8 @@
   pre {
     margin: 1rem 0;
     padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     overflow-x: auto;
   }
@@ -180,10 +180,10 @@
   code {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     font-size: 0.875rem;
-    background: hsl(var(--color-muted));
+    background: var(--color-muted);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   pre code {
@@ -201,7 +201,7 @@
   }
 
   .example-card {
-    border: 1px solid hsl(var(--color-border));
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     overflow: hidden;
   }
@@ -222,14 +222,14 @@
 
   .example-pubkey {
     font-size: 0.75rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     font-family: 'SF Mono', Monaco, monospace;
     word-break: break-all;
   }
 
   .example-color {
     font-size: 0.75rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin-top: 0.5rem;
   }
 
@@ -241,7 +241,7 @@
   }
 
   .use-case {
-    border: 1px solid hsl(var(--color-border));
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     padding: 1rem;
   }
@@ -253,7 +253,7 @@
 
   .use-case-description {
     font-size: 0.875rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     line-height: 1.5;
   }
 </style>

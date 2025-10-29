@@ -1,4 +1,4 @@
-// @ndk-version: user-input@0.0.0
+// @ndk-version: user-input@0.4.0
 /**
  * UserInput - Composable user search/input components
  *

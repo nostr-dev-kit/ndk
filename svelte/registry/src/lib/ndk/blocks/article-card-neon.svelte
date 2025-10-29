@@ -1,4 +1,4 @@
-<!-- @ndk-version: article-card-neon@0.0.0 -->
+<!-- @ndk-version: article-card-neon@0.4.0 -->
 <!--
   @component ArticleCard.Neon
   Neon-style article card with full background image and glossy top border

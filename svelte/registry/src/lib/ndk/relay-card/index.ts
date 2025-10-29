@@ -19,10 +19,9 @@
  * ```svelte
  * <script>
  *   const follows = Array.from(ndk.$sessions?.follows || []);
- *   const bookmarks = createBookmarkedRelayList({
- *     ndk,
+ *   const bookmarks = createBookmarkedRelayList(() => ({
  *     authors: [...follows, ndk.$currentUser.pubkey]
- *   });
+ *   }), ndk);
  * </script>
  *
  * <RelayCard.Root {relayUrl}>

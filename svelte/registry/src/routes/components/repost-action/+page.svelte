@@ -86,8 +86,8 @@
 
 <style>
   .feature-box {
-    background: hsl(var(--color-muted) / 0.3);
-    border: 1px solid hsl(var(--color-border));
+    background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     padding: 1.5rem;
   }
@@ -95,7 +95,7 @@
   .feature-box ul {
     margin: 0;
     padding-left: 1.5rem;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .feature-box li {
@@ -104,6 +104,6 @@
   }
 
   .feature-box strong {
-    color: hsl(var(--color-primary));
+    color: var(--color-primary);
   }
 </style>

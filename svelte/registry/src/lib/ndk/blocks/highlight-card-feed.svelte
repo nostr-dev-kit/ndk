@@ -1,4 +1,4 @@
-<!-- @ndk-version: highlight-card-feed@0.0.0 -->
+<!-- @ndk-version: highlight-card-feed@0.2.0 -->
 <!--
   @component HighlightCard.Feed
   Pre-composed feed variant with header, book-page style content, source badge, and actions.

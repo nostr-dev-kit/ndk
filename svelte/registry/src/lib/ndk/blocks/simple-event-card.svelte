@@ -1,4 +1,4 @@
-<!-- @ndk-version: simple-event-card@0.0.0 -->
+<!-- @ndk-version: simple-event-card@0.2.0 -->
 <!--
   @component SimpleEventCard
   A pre-composed event card with standard layout.

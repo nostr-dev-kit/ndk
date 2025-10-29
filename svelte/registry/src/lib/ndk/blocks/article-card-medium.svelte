@@ -1,4 +1,4 @@
-<!-- @ndk-version: article-card-medium@0.0.0 -->
+<!-- @ndk-version: article-card-medium@0.3.0 -->
 <!--
   @component ArticleCard.Medium
   Medium-style article card preset (horizontal layout with image on right)

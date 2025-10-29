@@ -1,4 +1,4 @@
-<!-- @ndk-version: user-input@0.0.0 -->
+<!-- @ndk-version: user-input@0.4.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';

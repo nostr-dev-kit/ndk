@@ -1,4 +1,4 @@
-<!-- @ndk-version: relay-pool-tabs@0.0.0 -->
+<!-- @ndk-version: relay-pool-tabs@0.3.0 -->
 <script lang="ts">
   import type { PoolType } from '@nostr-dev-kit/svelte';
 

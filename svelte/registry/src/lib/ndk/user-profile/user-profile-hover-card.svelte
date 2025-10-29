@@ -4,12 +4,7 @@
 
   @example
   ```svelte
-  <UserProfile.HoverCard
-    {ndk}
-    {pubkey}
-    isVisible={showCard}
-    position={{ x: 100, y: 200 }}
-  />
+  <UserProfile.HoverCard {ndk} {pubkey} />
   ```
 -->
 <script lang="ts">
@@ -24,12 +19,6 @@
     /** User's pubkey */
     pubkey: string;
 
-    /** Whether the card is visible */
-    isVisible: boolean;
-
-    /** Position of the card */
-    position: { x: number; y: number };
-
     /** Additional CSS classes */
     class?: string;
   }
@@ -37,22 +26,20 @@
   let {
     ndk,
     pubkey,
-    isVisible,
-    position,
     class: className = ''
   }: Props = $props();
 
   // Get user and fetch profile
   const user = $derived(ndk.getUser({ pubkey }));
   const profileFetcher = $derived(
-    user && isVisible ? createProfileFetcher(() => ({ user: user! }), ndk) : null
+    user ? createProfileFetcher(() => ({ user: user! }), ndk) : null
   );
 
   const profile = $derived(profileFetcher?.profile);
 
-  // Subscribe to user's notes count (if visible)
+  // Subscribe to user's notes count
   const notesSubscription = ndk.$subscribe(
-    () => pubkey && isVisible ? ({
+    () => pubkey ? ({
       filters: [{ kinds: [1], authors: [pubkey], limit: 100 }],
       bufferMs: 100,
     }) : undefined
@@ -60,7 +47,7 @@
 
   // Subscribe to contact list for following count
   const contactListSubscription = ndk.$subscribe(
-    () => pubkey && isVisible ? ({
+    () => pubkey ? ({
       filters: [{ kinds: [3], authors: [pubkey], limit: 1 }],
       bufferMs: 100,
     }) : undefined
@@ -76,118 +63,83 @@
     return contactList.tags.filter(tag => tag[0] === 'p').length;
   });
 
-  const isOwnProfile = $derived.by(() => {
-    try {
-      return ndk.$currentUser?.pubkey === pubkey;
-    } catch {
-      return false;
-    }
-  });
-
   const displayName = $derived(profile?.displayName || profile?.name || 'Anonymous');
   const imageUrl = $derived(profile?.picture || profile?.image);
   const bio = $derived(profile?.about);
   const gradient = $derived(deterministicPubkeyGradient(pubkey));
 </script>
 
-{#if isVisible}
-  <div
-    class={cn('user-profile-hover-card-container', className)}
-    style="left: {position.x}px; top: {position.y}px;"
-  >
-    <div class="user-profile-hover-card">
-      <!-- Banner section -->
-      <div class="user-profile-hover-card-banner" style="background: {gradient};">
-        {#if profile?.banner}
-          <img
-            src={profile.banner}
-            alt="Banner"
-            class="user-profile-hover-card-banner-image"
-          />
+<div class={cn('user-profile-hover-card', className)}>
+  <!-- Banner section -->
+  <div class="user-profile-hover-card-banner" style="background: {gradient};">
+    {#if profile?.banner}
+      <img
+        src={profile.banner}
+        alt="Banner"
+        class="user-profile-hover-card-banner-image"
+      />
+    {/if}
+  </div>
+
+  <!-- Profile content -->
+  <div class="user-profile-hover-card-content">
+    <!-- Avatar -->
+    <div class="user-profile-hover-card-avatar-wrapper">
+      {#if imageUrl}
+        <img
+          src={imageUrl}
+          alt={displayName}
+          class="user-profile-hover-card-avatar"
+        />
+      {:else}
+        <div class="user-profile-hover-card-avatar user-profile-hover-card-avatar-fallback" style="background: {gradient};">
+          {displayName[0]?.toUpperCase() || '?'}
+        </div>
+      {/if}
+    </div>
+
+    <!-- Name and verification -->
+    <div class="user-profile-hover-card-info">
+      <h3 class="user-profile-hover-card-name">
+        <span class="user-profile-hover-card-name-text">{displayName}</span>
+        {#if profile?.nip05}
+          <svg class="user-profile-hover-card-verified" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         {/if}
+      </h3>
+      <p class="user-profile-hover-card-handle">
+        {#if profile?.nip05}
+          {profile.nip05}
+        {:else}
+          {pubkey.slice(0, 16)}...
+        {/if}
+      </p>
+    </div>
+
+    <!-- Bio -->
+    {#if bio}
+      <div class="user-profile-hover-card-bio">
+        {bio}
       </div>
+    {/if}
 
-      <!-- Profile content -->
-      <div class="user-profile-hover-card-content">
-        <!-- Avatar -->
-        <div class="user-profile-hover-card-avatar-wrapper">
-          {#if imageUrl}
-            <img
-              src={imageUrl}
-              alt={displayName}
-              class="user-profile-hover-card-avatar"
-            />
-          {:else}
-            <div class="user-profile-hover-card-avatar user-profile-hover-card-avatar-fallback" style="background: {gradient};">
-              {displayName[0]?.toUpperCase() || '?'}
-            </div>
-          {/if}
-        </div>
-
-        <!-- Name and verification -->
-        <div class="user-profile-hover-card-info">
-          <h3 class="user-profile-hover-card-name">
-            <span class="user-profile-hover-card-name-text">{displayName}</span>
-            {#if profile?.nip05}
-              <svg class="user-profile-hover-card-verified" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            {/if}
-          </h3>
-          <p class="user-profile-hover-card-handle">
-            {#if profile?.nip05}
-              {profile.nip05}
-            {:else}
-              {pubkey.slice(0, 16)}...
-            {/if}
-          </p>
-        </div>
-
-        <!-- Bio -->
-        {#if bio}
-          <div class="user-profile-hover-card-bio">
-            {bio}
-          </div>
-        {/if}
-
-        <!-- Stats -->
-        <div class="user-profile-hover-card-stats">
-          <div class="user-profile-hover-card-stat">
-            <span class="user-profile-hover-card-stat-value">{noteCount}</span>
-            <span class="user-profile-hover-card-stat-label">notes</span>
-          </div>
-          <div class="user-profile-hover-card-stat">
-            <span class="user-profile-hover-card-stat-value">{followingCount}</span>
-            <span class="user-profile-hover-card-stat-label">following</span>
-          </div>
-        </div>
+    <!-- Stats -->
+    <div class="user-profile-hover-card-stats">
+      <div class="user-profile-hover-card-stat">
+        <span class="user-profile-hover-card-stat-value">{noteCount}</span>
+        <span class="user-profile-hover-card-stat-label">notes</span>
+      </div>
+      <div class="user-profile-hover-card-stat">
+        <span class="user-profile-hover-card-stat-value">{followingCount}</span>
+        <span class="user-profile-hover-card-stat-label">following</span>
       </div>
     </div>
   </div>
-{/if}
+</div>
 
 <style>
-  .user-profile-hover-card-container {
-    position: fixed;
-    z-index: 50;
-    pointer-events: none;
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
   .user-profile-hover-card {
-    position: relative;
-    pointer-events: auto;
     width: 20rem;
     background: var(--card);
     border: 1px solid var(--border);

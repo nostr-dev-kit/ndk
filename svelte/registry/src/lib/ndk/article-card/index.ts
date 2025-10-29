@@ -40,9 +40,9 @@ import Date from './article-card-date.svelte';
 import Meta from './article-card-meta.svelte';
 
 // Preset layouts (blocks)
-import Portrait from '../blocks/portrait.svelte';
-import Medium from '../blocks/medium.svelte';
-import MediumWithStats from '../blocks/medium-with-stats.svelte';
+import Portrait from '../blocks/article-card-portrait.svelte';
+import Medium from '../blocks/article-card-medium.svelte';
+import MediumWithStats from '../blocks/article-card-medium-with-stats.svelte';
 
 // Export as namespace for dot notation
 export const ArticleCard = {

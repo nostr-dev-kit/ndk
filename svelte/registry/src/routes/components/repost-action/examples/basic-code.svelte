@@ -1,0 +1,1 @@
+<RepostAction {ndk} {event} />

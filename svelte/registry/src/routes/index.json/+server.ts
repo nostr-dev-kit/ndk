@@ -4,5 +4,14 @@ import registryData from '../../../registry.json';
 export const prerender = true;
 
 export function GET() {
-  return json(registryData);
+  const index = registryData.items.map((item) => ({
+    name: item.name,
+    type: item.type,
+    title: item.title,
+    description: item.description,
+    registryDependencies: item.registryDependencies,
+    relativeUrl: `${item.name}.json`,
+  }));
+
+  return json(index);
 }

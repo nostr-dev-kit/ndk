@@ -163,10 +163,10 @@
 
 <style>
   .demo-description code {
-    background: hsl(var(--color-muted));
+    background: var(--color-muted);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
-    color: hsl(var(--color-primary));
+    color: var(--color-primary);
   }
 </style>

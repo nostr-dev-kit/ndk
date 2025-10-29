@@ -44,13 +44,13 @@ Use for: blocking interactive features that require authentication.
 	.login-prompt-title {
 		font-size: 1.5rem;
 		font-weight: 700;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		margin: 0 0 0.5rem 0;
 	}
 
 	.login-prompt-message {
 		font-size: 1rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		margin: 0;
 		line-height: 1.5;
 	}

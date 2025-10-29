@@ -1,4 +1,4 @@
-<!-- @ndk-version: event-card@0.0.0 -->
+<!-- @ndk-version: event-card@0.14.0 -->
 <!--
   @component EventCard.ThreadLine
   Displays vertical thread lines based on threading metadata.
@@ -82,14 +82,14 @@
     top: 48px; /* Start below avatar (40px height + 8px margin) */
     bottom: 0;
     width: 2px;
-    background: hsl(var(--color-border));
+    background: var(--color-border);
     pointer-events: none;
     z-index: 0;
   }
 
   /* Self-thread (same author) - different color/style */
   .thread-line--self {
-    background: hsl(var(--color-border));
+    background: var(--color-border);
     width: 2px;
   }
 

@@ -5,7 +5,7 @@
   @example
   ```svelte
   <script>
-    const bookmarks = createBookmarkedRelayList({ authors: follows }, ndk;
+    const bookmarks = createBookmarkedRelayList(() => ({ authors: follows }), ndk);
   </script>
 
   <RelayCard.Root {ndk} {relayUrl}>

@@ -303,19 +303,19 @@ await followButton.follow();`}</code></pre>
   .showcase-section h2 {
     font-size: 1.875rem;
     font-weight: 600;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     margin: 0 0 0.5rem 0;
   }
 
   .section-description {
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 2rem 0;
   }
 
   pre {
     margin: 0;
     padding: 1rem;
-    background: hsl(var(--color-muted) / 0.5);
+    background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
     border-radius: 0.375rem;
     overflow-x: auto;
   }
@@ -323,7 +323,7 @@ await followButton.follow();`}</code></pre>
   code {
     font-family: 'Monaco', 'Courier New', monospace;
     font-size: 0.8125rem;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .api-section {
@@ -333,12 +333,12 @@ await followButton.follow();`}</code></pre>
   .api-section h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     margin: 0 0 1rem 0;
   }
 
   .api-section p {
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0 0 1rem 0;
   }
 </style>

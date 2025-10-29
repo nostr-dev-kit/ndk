@@ -202,12 +202,11 @@ The builder is imported from `@nostr-dev-kit/svelte` and can be used standalone:
 <script>
   import { createEventContent } from '@nostr-dev-kit/svelte';
 
-  const contentState = createEventContent({
-    ndk,
+  const contentState = createEventContent(() => ({
     event,
     content: 'optional raw content',
     emojiTags: []
-  });
+  }), ndk);
 
   // Access parsed segments
   $effect(() => {

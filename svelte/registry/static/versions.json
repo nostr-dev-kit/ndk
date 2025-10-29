@@ -2,12 +2,12 @@
   "registry": {
     "name": "ndk-svelte",
     "version": "4.0.0-beta.22",
-    "generated": "2025-10-29T14:01:38.692Z"
+    "generated": "2025-10-29T14:16:29.121Z"
   },
   "components": {
     "event-card": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:34.379Z",
+      "version": "0.14.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "Event Card",
       "dependencies": [
@@ -17,8 +17,8 @@
       "registryDependencies": []
     },
     "simple-event-card": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:34.488Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Simple Event Card",
       "dependencies": [
@@ -31,7 +31,7 @@
     },
     "reactions": {
       "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:34.585Z",
+      "lastModified": "2025-10-29T14:16:25.981Z",
       "type": "registry:component",
       "title": "Reactions",
       "dependencies": [
@@ -41,8 +41,8 @@
       "registryDependencies": []
     },
     "replies": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:34.689Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Replies",
       "dependencies": [
@@ -52,8 +52,8 @@
       "registryDependencies": []
     },
     "user-profile": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.222Z",
+      "version": "0.10.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "User Profile",
       "dependencies": [
@@ -63,8 +63,8 @@
       "registryDependencies": []
     },
     "user-profile-avatar-name": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.330Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "User Profile Avatar Name",
       "dependencies": [
@@ -76,8 +76,8 @@
       ]
     },
     "user-card": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.429Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "User Card",
       "dependencies": [
@@ -87,8 +87,8 @@
       "registryDependencies": []
     },
     "user-input": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.676Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "User Input",
       "dependencies": [
@@ -99,7 +99,7 @@
     },
     "zap-button": {
       "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.774Z",
+      "lastModified": "2025-10-29T14:16:26.746Z",
       "type": "registry:component",
       "title": "Zap Button",
       "dependencies": [
@@ -110,8 +110,8 @@
       "registryDependencies": []
     },
     "event-content": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.867Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Event Content",
       "dependencies": [
@@ -125,8 +125,8 @@
       ]
     },
     "embedded-event": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:35.967Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Embedded Event",
       "dependencies": [
@@ -136,8 +136,8 @@
       "registryDependencies": []
     },
     "mention-preview": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.067Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Mention Preview",
       "dependencies": [
@@ -147,8 +147,8 @@
       "registryDependencies": []
     },
     "hashtag-preview": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.168Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Hashtag Preview",
       "dependencies": [
@@ -158,8 +158,8 @@
       "registryDependencies": []
     },
     "article-preview": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.269Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Article Preview",
       "dependencies": [
@@ -169,8 +169,8 @@
       "registryDependencies": []
     },
     "note-preview": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.369Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Note Preview",
       "dependencies": [
@@ -180,8 +180,8 @@
       "registryDependencies": []
     },
     "generic-preview": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.465Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Generic Preview",
       "dependencies": [
@@ -191,8 +191,8 @@
       "registryDependencies": []
     },
     "relay-card": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.564Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Relay Card",
       "dependencies": [
@@ -202,8 +202,8 @@
       "registryDependencies": []
     },
     "relay-connection-status": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.659Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Relay Connection Status",
       "dependencies": [
@@ -213,8 +213,8 @@
       "registryDependencies": []
     },
     "relay-list": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.757Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Relay List",
       "dependencies": [
@@ -224,8 +224,8 @@
       "registryDependencies": []
     },
     "relay-pool-tabs": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:36.849Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Relay Pool Tabs",
       "dependencies": [
@@ -235,8 +235,8 @@
       "registryDependencies": []
     },
     "article-card": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.194Z",
+      "version": "0.12.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "Article Card",
       "dependencies": [
@@ -246,8 +246,8 @@
       "registryDependencies": []
     },
     "article-card-portrait": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.285Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Article Card Portrait",
       "dependencies": [
@@ -259,8 +259,8 @@
       ]
     },
     "article-card-medium": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.375Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Article Card Medium",
       "dependencies": [
@@ -272,8 +272,8 @@
       ]
     },
     "article-card-hero": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.465Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Article Card Hero",
       "dependencies": [
@@ -285,8 +285,8 @@
       ]
     },
     "article-card-neon": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.557Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Article Card Neon",
       "dependencies": [
@@ -298,8 +298,8 @@
       ]
     },
     "user-header": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.714Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "User Header",
       "dependencies": [
@@ -309,8 +309,8 @@
       "registryDependencies": []
     },
     "user-header-full": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.810Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "User Header Full",
       "dependencies": [
@@ -322,8 +322,8 @@
       ]
     },
     "user-header-compact": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:37.903Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "User Header Compact",
       "dependencies": [
@@ -335,8 +335,8 @@
       ]
     },
     "highlight-card": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:38.106Z",
+      "version": "0.6.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:block",
       "title": "Highlight Card",
       "dependencies": [
@@ -346,8 +346,8 @@
       "registryDependencies": []
     },
     "highlight-card-feed": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:38.198Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Highlight Card Feed",
       "dependencies": [
@@ -359,8 +359,8 @@
       ]
     },
     "highlight-card-compact": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:38.287Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Highlight Card Compact",
       "dependencies": [
@@ -372,8 +372,8 @@
       ]
     },
     "highlight-card-grid": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:38.378Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Highlight Card Grid",
       "dependencies": [
@@ -385,8 +385,8 @@
       ]
     },
     "article-content": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:38.535Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:component",
       "title": "Article Content",
       "dependencies": [
@@ -397,8 +397,8 @@
       "registryDependencies": []
     },
     "blocks": {
-      "version": "0.0.0",
-      "lastModified": "2025-10-29T14:01:38.634Z",
+      "version": "0.5.0",
+      "lastModified": "2025-10-29T14:04:59.000Z",
       "type": "registry:lib",
       "title": "Blocks",
       "dependencies": [

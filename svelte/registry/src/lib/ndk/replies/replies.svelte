@@ -1,4 +1,4 @@
-<!-- @ndk-version: replies@0.0.0 -->
+<!-- @ndk-version: replies@0.4.0 -->
 <!--
   @component Replies - Reply thread display and composition
 

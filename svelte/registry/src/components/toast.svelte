@@ -45,13 +45,13 @@ Use for: temporary notifications, success messages, status updates.
 	.toast {
 		position: fixed;
 		padding: 1rem 1.5rem;
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
-		box-shadow: 0 10px 15px -3px hsl(var(--color-foreground) / 0.1);
+		box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-foreground) calc(0.1 * 100%), transparent);
 		z-index: 100;
 		font-size: 0.875rem;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		max-width: 400px;
 	}
 

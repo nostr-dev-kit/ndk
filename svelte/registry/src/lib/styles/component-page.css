@@ -12,12 +12,12 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
-  color: hsl(var(--color-foreground));
+  color: var(--color-foreground);
 }
 
 .component-page > header p {
   font-size: 1.125rem;
-  color: hsl(var(--color-muted-foreground));
+  color: var(--color-muted-foreground);
   margin: 0;
 }
 
@@ -31,25 +31,25 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  color: hsl(var(--color-foreground));
+  color: var(--color-foreground);
 }
 
 .component-page .demo-description {
-  color: hsl(var(--color-muted-foreground));
+  color: var(--color-muted-foreground);
   margin: 0 0 1rem 0;
 }
 
 .component-page .demo {
   padding: 1.5rem;
-  background: hsl(var(--color-card));
-  border: 1px solid hsl(var(--color-border));
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
 }
 
 .component-page .demo-container {
   padding: 1.5rem;
-  background: hsl(var(--color-muted) / 0.3);
-  border: 1px solid hsl(var(--color-border));
+  background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
 }
 
@@ -59,8 +59,8 @@
 
 .component-page .code-examples {
   padding: 1.5rem;
-  background: hsl(var(--color-card));
-  border: 1px solid hsl(var(--color-border));
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
 }
 
@@ -76,14 +76,14 @@
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
-  color: hsl(var(--color-foreground));
+  color: var(--color-foreground);
 }
 
 .component-page .code-block pre {
   margin: 0;
   padding: 1rem;
-  background: hsl(var(--color-muted));
-  border: 1px solid hsl(var(--color-border));
+  background: var(--color-muted);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   overflow-x: auto;
 }
@@ -92,7 +92,7 @@
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: hsl(var(--color-foreground));
+  color: var(--color-foreground);
 }
 
 /* Card example styles */
@@ -101,8 +101,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  background: hsl(var(--color-card));
-  border: 1px solid hsl(var(--color-border));
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
 }
 
@@ -112,18 +112,18 @@
 
 .card-name {
   font-weight: 600;
-  color: hsl(var(--color-foreground));
+  color: var(--color-foreground);
 }
 
 .card-url {
   font-size: 0.875rem;
-  color: hsl(var(--color-muted-foreground));
+  color: var(--color-muted-foreground);
 }
 
 .card-with-description {
   padding: 1rem;
-  background: hsl(var(--color-card));
-  border: 1px solid hsl(var(--color-border));
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
 }
 
@@ -147,15 +147,15 @@
 .percentage-badge {
   font-size: 0.875rem;
   font-weight: 500;
-  color: hsl(var(--color-primary));
+  color: var(--color-primary);
 }
 
 /* Controls section styles */
 .component-page .controls {
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: hsl(var(--color-card));
-  border: 1px solid hsl(var(--color-border));
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
 }
 
@@ -168,35 +168,35 @@
 .component-page .label-text {
   font-size: 0.875rem;
   font-weight: 600;
-  color: hsl(var(--color-foreground));
+  color: var(--color-foreground);
 }
 
 .component-page .nevent-input,
 .component-page .npub-input,
 .component-page .note-input {
   padding: 0.5rem 0.75rem;
-  border: 1px solid hsl(var(--color-border));
+  border: 1px solid var(--color-border);
   border-radius: 0.375rem;
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 0.875rem;
   width: 100%;
   max-width: 600px;
-  background: hsl(var(--color-background));
-  color: hsl(var(--color-foreground));
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
 .component-page .nevent-input:focus,
 .component-page .npub-input:focus,
 .component-page .note-input:focus {
   outline: none;
-  border-color: hsl(var(--color-primary));
-  box-shadow: 0 0 0 3px hsl(var(--color-primary) / 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
 }
 
 /* Loading and error states */
 .component-page .loading {
   padding: 2rem;
   text-align: center;
-  color: hsl(var(--color-muted-foreground));
+  color: var(--color-muted-foreground);
   font-size: 1.125rem;
 }

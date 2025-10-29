@@ -155,8 +155,8 @@
 
 <style>
 	.block-example-card {
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
 		overflow: hidden;
 	}
@@ -164,14 +164,14 @@
 	h3 {
 		font-size: 1.125rem;
 		font-weight: 600;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		margin: 0;
 		padding: 1.5rem 1.5rem 0;
 	}
 
 	.description {
 		font-size: 0.875rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		margin: 0.5rem 0 0;
 		padding: 0 1.5rem;
 	}
@@ -180,7 +180,7 @@
 		display: flex;
 		gap: 0.25rem;
 		padding: 1rem 1.5rem 0;
-		border-bottom: 1px solid hsl(var(--color-border));
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.tab {
@@ -188,7 +188,7 @@
 		background: transparent;
 		border: none;
 		border-bottom: 2px solid transparent;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		font-size: 0.875rem;
 		font-weight: 500;
 		cursor: pointer;
@@ -197,13 +197,13 @@
 	}
 
 	.tab:hover {
-		color: hsl(var(--color-foreground));
-		background: hsl(var(--color-muted) / 0.3);
+		color: var(--color-foreground);
+		background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
 	}
 
 	.tab.active {
-		color: hsl(var(--color-primary));
-		border-bottom-color: hsl(var(--color-primary));
+		color: var(--color-primary);
+		border-bottom-color: var(--color-primary);
 	}
 
 	.content {
@@ -211,13 +211,13 @@
 	}
 
 	.preview-container {
-		background: hsl(var(--color-muted));
+		background: var(--color-muted);
 	}
 
 	.preview-controls {
 		padding: 1rem 1.5rem;
-		border-bottom: 1px solid hsl(var(--color-border));
-		background: hsl(var(--color-card));
+		border-bottom: 1px solid var(--color-border);
+		background: var(--color-card);
 		display: flex;
 		gap: 1rem;
 		align-items: center;
@@ -230,28 +230,28 @@
 		gap: 0.5rem;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 	}
 
 	.preview-controls :global(select) {
 		padding: 0.375rem 0.75rem;
-		border: 1px solid hsl(var(--color-border));
+		border: 1px solid var(--color-border);
 		border-radius: 0.375rem;
-		background: hsl(var(--color-background));
-		color: hsl(var(--color-foreground));
+		background: var(--color-background);
+		color: var(--color-foreground);
 		font-size: 0.875rem;
 		cursor: pointer;
 		transition: border-color 0.2s;
 	}
 
 	.preview-controls :global(select:hover) {
-		border-color: hsl(var(--color-primary));
+		border-color: var(--color-primary);
 	}
 
 	.preview-controls :global(select:focus) {
 		outline: none;
-		border-color: hsl(var(--color-primary));
-		box-shadow: 0 0 0 3px hsl(var(--color-primary) / 0.1);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
 	}
 
 	.preview {
@@ -270,15 +270,15 @@
 		align-items: center;
 		justify-content: center;
 		gap: 1rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		font-size: 0.875rem;
 	}
 
 	.spinner {
 		width: 24px;
 		height: 24px;
-		border: 2px solid hsl(var(--color-muted));
-		border-top-color: hsl(var(--color-primary));
+		border: 2px solid var(--color-muted);
+		border-top-color: var(--color-primary);
 		border-radius: 50%;
 		animation: spin 0.6s linear infinite;
 	}
@@ -301,10 +301,10 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.5rem 0.75rem;
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.375rem;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		font-size: 0.875rem;
 		font-weight: 500;
 		cursor: pointer;
@@ -313,8 +313,8 @@
 	}
 
 	.copy-button:hover {
-		background: hsl(var(--color-muted));
-		border-color: hsl(var(--color-primary));
+		background: var(--color-muted);
+		border-color: var(--color-primary);
 	}
 
 	.copy-button svg {

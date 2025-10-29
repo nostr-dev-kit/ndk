@@ -1,4 +1,4 @@
-<!-- @ndk-version: highlight-card-grid@0.0.0 -->
+<!-- @ndk-version: highlight-card-grid@0.2.0 -->
 <!--
   @component HighlightCard.Grid
   Pre-composed grid variant with aspect-square card and author info below.

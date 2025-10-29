@@ -99,7 +99,7 @@ If you need completely custom rendering, use the builder directly:
   import { createEventContent } from '@nostr-dev-kit/svelte';
 
   let { ndk, event } = $props();
-  const content = createEventContent({ ndk, event });
+  const content = createEventContent(() => ({ event }), ndk);
 </script>
 
 {#each content.segments as segment}

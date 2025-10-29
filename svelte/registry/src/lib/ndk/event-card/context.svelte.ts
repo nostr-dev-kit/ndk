@@ -1,4 +1,4 @@
-// @ndk-version: event-card@0.0.0
+// @ndk-version: event-card@0.14.0
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte, ThreadingMetadata } from '@nostr-dev-kit/svelte';
 

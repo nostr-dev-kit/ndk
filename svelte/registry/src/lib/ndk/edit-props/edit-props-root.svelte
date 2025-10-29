@@ -75,10 +75,10 @@
 	}
 
 	.edit-props-box {
-		border: 1px solid hsl(var(--color-border));
+		border: 1px solid var(--color-border);
 		border-radius: 0.375rem;
 		padding: 0.75rem 1rem;
-		background: hsl(var(--color-muted) / 0.3);
+		background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
 		display: flex;
 		align-items: flex-start;
 		gap: 1rem;
@@ -88,9 +88,9 @@
 		display: inline-flex;
 		align-items: center;
 		padding: 0.25rem 0.625rem;
-		background: hsl(var(--color-background));
-		color: hsl(var(--color-foreground));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-background);
+		color: var(--color-foreground);
+		border: 1px solid var(--color-border);
 		border-radius: 0.25rem;
 		font-size: 0.75rem;
 		font-weight: 500;
@@ -100,7 +100,7 @@
 	}
 
 	.edit-props-button:hover {
-		background: hsl(var(--color-accent));
+		background: var(--color-accent);
 	}
 
 	.edit-props-content {
@@ -120,11 +120,11 @@
 
 	.prop-name {
 		font-weight: 500;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 	}
 
 	.prop-value {
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		font-family: monospace;
 		font-size: 0.8125rem;
 	}

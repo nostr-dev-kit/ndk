@@ -1,4 +1,4 @@
-<!-- @ndk-version: event-card@0.0.0 -->
+<!-- @ndk-version: event-card@0.14.0 -->
 <!--
   @component EventCard.Content
   Displays event content using EventContent from @nostr-dev-kit/svelte.

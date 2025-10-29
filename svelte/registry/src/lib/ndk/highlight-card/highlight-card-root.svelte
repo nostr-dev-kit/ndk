@@ -1,4 +1,4 @@
-<!-- @ndk-version: highlight-card@0.0.0 -->
+<!-- @ndk-version: highlight-card@0.6.0 -->
 <!--
   @component HighlightCard.Root
   Root container for highlight card that provides context to child components.

@@ -150,7 +150,7 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature');
 
   let { ndk, target, children }: Props = $props();
 
-  const state = createFeature({ ndk, target: () => target });
+  const state = createFeature(() => ({ target }), ndk);
 
   setContext(FEATURE_CONTEXT_KEY, {
     get ndk() { return ndk; },
@@ -430,7 +430,7 @@ function create(props: { event: () => NDKEvent }) {}
 
 // ✅ GOOD: Use builder
 <script>
-  const state = createBuilder({ ndk, ... });
+  const state = createBuilder(() => ({ ... }), ndk);
 </script>
 
 // ❌ BAD: Backwards compatibility
@@ -547,7 +547,7 @@ New functionality needed?
 <script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
-  const card = createEventCard({ ndk, event: () => event });
+  const card = createEventCard(() => ({ event }), ndk);
 </script>
 
 <!-- Your custom UI -->

@@ -1,4 +1,4 @@
-<!-- @ndk-version: mention-preview@0.0.0 -->
+<!-- @ndk-version: mention-preview@0.4.0 -->
 <script lang="ts">
     import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

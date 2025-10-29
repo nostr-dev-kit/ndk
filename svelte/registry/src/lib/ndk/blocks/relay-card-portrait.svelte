@@ -124,10 +124,10 @@
 				<Url class="text-sm text-muted-foreground mb-3" showProtocol={false} />
 
 				<!-- Description -->
-				<Description maxLines={3} class="text-sm leading-relaxed mb-4" />
+				<Description maxLines={2} class="text-sm leading-relaxed mb-4" />
 
 				<!-- Browse button - always visible, at bottom -->
-				<div class="mt-auto pt-4 border-t border-border/50">
+				<div class="mt-auto border-t border-border/50">
 					<div class="flex items-center justify-center gap-1 text-sm text-primary">
 						<span>Browse</span>
 						<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">

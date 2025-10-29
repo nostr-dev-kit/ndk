@@ -73,7 +73,7 @@
 		height: 2.5rem;
 		border-radius: 50%;
 		object-fit: cover;
-		background: hsl(var(--color-muted));
+		background: var(--color-muted);
 	}
 
 	.preview-user-info {
@@ -83,12 +83,12 @@
 
 	.preview-user-name {
 		font-weight: 500;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 	}
 
 	.preview-user-nip05 {
 		font-size: 0.75rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 	}
 
 	.preview-article,
@@ -100,35 +100,35 @@
 
 	.preview-article-title {
 		font-weight: 500;
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 	}
 
 	.preview-article-summary,
 	.preview-event-content {
 		font-size: 0.75rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		line-height: 1.4;
 	}
 
 	.preview-article-date,
 	.preview-event-date {
 		font-size: 0.75rem;
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 	}
 
 	.preview-event-kind {
 		font-size: 0.75rem;
 		font-weight: 500;
-		color: hsl(var(--color-primary));
+		color: var(--color-primary);
 	}
 
 	.preview-text-value {
-		color: hsl(var(--color-foreground));
+		color: var(--color-foreground);
 		font-family: monospace;
 	}
 
 	.preview-unknown {
-		color: hsl(var(--color-muted-foreground));
+		color: var(--color-muted-foreground);
 		font-style: italic;
 	}
 </style>

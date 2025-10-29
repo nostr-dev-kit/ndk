@@ -157,15 +157,15 @@
     z-index: 51;
     width: 90%;
     max-width: 500px;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
   .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid hsl(var(--color-border));
+    border-bottom: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
     align-items: start;
@@ -174,13 +174,13 @@
   .modal-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
     margin: 0;
   }
 
   .modal-subtitle {
     font-size: 0.875rem;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     margin: 0.25rem 0 0 0;
   }
 
@@ -191,12 +191,12 @@
     cursor: pointer;
     border-radius: 0.375rem;
     transition: background 0.2s;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
   }
 
   .modal-close:hover {
-    background: hsl(var(--color-accent));
-    color: hsl(var(--color-accent-foreground));
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
   }
 
   .modal-close svg {
@@ -215,7 +215,7 @@
     display: flex;
     gap: 0.25rem;
     padding: 0.25rem;
-    background: hsl(var(--color-muted));
+    background: var(--color-muted);
     border-radius: 0.375rem;
   }
 
@@ -232,13 +232,13 @@
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
     transition: all 0.2s;
   }
 
   .toggle-btn.active {
-    background: hsl(var(--color-background));
-    color: hsl(var(--color-foreground));
+    background: var(--color-background);
+    color: var(--color-foreground);
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
 
@@ -258,12 +258,12 @@
     border-radius: 0.375rem;
     display: flex;
     gap: 0.75rem;
-    border: 1px solid hsl(var(--color-border));
+    border: 1px solid var(--color-border);
   }
 
   .info-box.info {
-    background: hsl(var(--color-primary) / 0.1);
-    border-color: hsl(var(--color-primary) / 0.3);
+    background: color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
+    border-color: color-mix(in srgb, var(--color-primary) calc(0.3 * 100%), transparent);
   }
 
   .info-box.warning {
@@ -272,8 +272,8 @@
   }
 
   .info-box.error {
-    background: hsl(var(--color-destructive) / 0.1);
-    border-color: hsl(var(--color-destructive) / 0.3);
+    background: color-mix(in srgb, var(--color-destructive) calc(0.1 * 100%), transparent);
+    border-color: color-mix(in srgb, var(--color-destructive) calc(0.3 * 100%), transparent);
   }
 
   .info-icon {
@@ -284,7 +284,7 @@
   }
 
   .info-box.info .info-icon {
-    color: hsl(var(--color-primary));
+    color: var(--color-primary);
   }
 
   .info-box.warning .info-icon {
@@ -292,21 +292,21 @@
   }
 
   .info-box.error .info-icon {
-    color: hsl(var(--color-destructive));
+    color: var(--color-destructive);
   }
 
   .info-box p {
     font-size: 0.875rem;
     margin: 0;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .key-input {
     width: 100%;
     padding: 0.5rem 0.75rem;
-    border: 1px solid hsl(var(--color-input));
-    background: hsl(var(--color-background));
-    color: hsl(var(--color-foreground));
+    border: 1px solid var(--color-input);
+    background: var(--color-background);
+    color: var(--color-foreground);
     border-radius: 0.375rem;
     font-size: 0.875rem;
     transition: all 0.2s;
@@ -314,15 +314,15 @@
 
   .key-input:focus {
     outline: none;
-    border-color: hsl(var(--color-ring));
-    box-shadow: 0 0 0 3px hsl(var(--color-ring) / 0.2);
+    border-color: var(--color-ring);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) calc(0.2 * 100%), transparent);
   }
 
   .submit-btn {
     width: 100%;
     padding: 0.5rem 1rem;
-    background: hsl(var(--color-primary));
-    color: hsl(var(--color-primary-foreground));
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
     border: none;
     border-radius: 0.375rem;
     font-size: 0.875rem;

@@ -1,4 +1,4 @@
-<!-- @ndk-version: article-card-portrait@0.0.0 -->
+<!-- @ndk-version: article-card-portrait@0.2.0 -->
 <!--
   @component ArticleCard.Portrait
   Portrait-style article card preset (vertical layout with image on top)

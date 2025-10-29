@@ -512,7 +512,7 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature-context');
   }: Props = $props();
 
   // Create builder
-  const state = createFeature({ ndk, event: () => event });
+  const state = createFeature(() => ({ event }), ndk);
 
   // Create context with getters (reactive)
   const context = {
@@ -595,7 +595,7 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature-context');
 
   // Create builder if needed (only if not in context)
   const profileFetcher = $derived(
-    user && ndk ? createProfileFetcher({ ndk, user: () => user }) : null
+    user && ndk ? createProfileFetcher(() => ({ user }), ndk) : null
   );
 
   const profile = $derived(profileFetcher?.profile);
@@ -817,10 +817,9 @@ import { createFeature } from './index.svelte.js';
 
 describe('createFeature', () => {
     it('should fetch data when event changes', async () => {
-        const feature = createFeature({
-            ndk,
-            event: () => sampleEvent
-        });
+        const feature = createFeature(() => ({
+            event: sampleEvent
+        }), ndk);
 
         expect(feature.loading).toBe(true);
         await waitFor(() => !feature.loading);
@@ -832,10 +831,10 @@ describe('createFeature', () => {
 #### 6. Update Documentation
 Add to `svelte/registry/src/routes/docs/builders/+page.svelte`:
 ```svelte
-<p><code>createFeature({ ndk, event })</code> - Brief description.</p>
+<p><code>createFeature(() => ({ event }), ndk)</code> - Brief description.</p>
 <details>
   <summary>Show details</summary>
-  <pre><code>{`const feature = createFeature({ ndk, event: () => event });
+  <pre><code>{`const feature = createFeature(() => ({ event }), ndk);
 
 feature.data    // Your data
 feature.loading // Loading state`}</code></pre>
@@ -856,10 +855,9 @@ describe('createFeature', () => {
     it('should handle reactive input changes', async () => {
         let currentEvent = $state(event1);
 
-        const feature = createFeature({
-            ndk,
-            event: () => currentEvent
-        });
+        const feature = createFeature(() => ({
+            event: currentEvent
+        }), ndk);
 
         expect(feature.data.id).toBe(event1.id);
 
@@ -870,8 +868,8 @@ describe('createFeature', () => {
     it('should deduplicate requests', async () => {
         const spy = vi.spyOn(ndk, 'fetchEvent');
 
-        const feature1 = createFeature({ ndk, event: () => event });
-        const feature2 = createFeature({ ndk, event: () => event });
+        const feature1 = createFeature(() => ({ event }), ndk);
+        const feature2 = createFeature(() => ({ event }), ndk);
 
         await waitFor(() => !feature1.loading && !feature2.loading);
 
@@ -906,8 +904,8 @@ test('EventCard should display engagement metrics', async ({ page }) => {
 <script>
   import { createEventCard, createProfileFetcher } from '@nostr-dev-kit/svelte';
 
-  const card = createEventCard({ ndk, event: () => event });
-  const profile = createProfileFetcher({ ndk, user: () => event.author });
+  const card = createEventCard(() => ({ event }), ndk);
+  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
 </script>
 
 <article>
@@ -925,7 +923,7 @@ test('EventCard should display engagement metrics', async ({ page }) => {
   import { setContext } from 'svelte';
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
-  const state = createEventCard({ ndk, event: () => event });
+  const state = createEventCard(() => ({ event }), ndk);
 
   setContext(CONTEXT_KEY, {
     get state() { return state; }
@@ -1005,10 +1003,10 @@ export function createEventCard(props) {
 // After: Refactor to use new builder
 export function createEventCard(props) {
     // ✅ Use the new profile builder
-    const authorProfile = createProfileFetcher({
-        ndk: props.ndk,
-        user: () => props.event().author
-    });
+    const authorProfile = createProfileFetcher(
+        () => ({ user: props.event().author }),
+        props.ndk
+    );
 }
 ```
 
@@ -1184,7 +1182,7 @@ await event.publish();
 <script>
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
 
-  const profileFetcher = createProfileFetcher({ ndk, user: () => user });
+  const profileFetcher = createProfileFetcher(() => ({ user }), ndk);
 </script>
 <span>{profileFetcher.profile?.name}</span>
 ```

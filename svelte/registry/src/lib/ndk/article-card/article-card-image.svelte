@@ -1,4 +1,4 @@
-<!-- @ndk-version: article-card@0.0.0 -->
+<!-- @ndk-version: article-card@0.12.0 -->
 <!--
   @component ArticleCard.Image
   Display article cover image with fallback

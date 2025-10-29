@@ -95,8 +95,8 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 
 <style>
   .api-docs {
-    background: hsl(var(--color-muted) / 0.3);
-    border: 1px solid hsl(var(--color-border));
+    background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     padding: 1.5rem;
   }
@@ -105,19 +105,19 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
     margin: 0 0 0.5rem 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 
   .api-docs p {
     margin: 0 0 1rem 0;
-    color: hsl(var(--color-muted-foreground));
+    color: var(--color-muted-foreground);
   }
 
   .api-docs pre {
     margin: 0;
     padding: 1rem;
-    background: hsl(var(--color-background));
-    border: 1px solid hsl(var(--color-border));
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: 0.375rem;
     overflow-x: auto;
   }
@@ -126,6 +126,6 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
     font-family: 'Monaco', 'Courier New', monospace;
     font-size: 0.875rem;
     line-height: 1.6;
-    color: hsl(var(--color-foreground));
+    color: var(--color-foreground);
   }
 </style>

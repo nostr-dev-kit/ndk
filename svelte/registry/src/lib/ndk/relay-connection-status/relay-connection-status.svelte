@@ -1,4 +1,4 @@
-<!-- @ndk-version: relay-connection-status@0.0.0 -->
+<!-- @ndk-version: relay-connection-status@0.2.0 -->
 <script lang="ts">
   import type { RelayStatus } from '@nostr-dev-kit/svelte';
 

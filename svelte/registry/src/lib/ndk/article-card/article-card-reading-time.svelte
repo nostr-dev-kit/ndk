@@ -1,4 +1,4 @@
-<!-- @ndk-version: article-card@0.0.0 -->
+<!-- @ndk-version: article-card@0.12.0 -->
 <!--
   @component ArticleCard.ReadingTime
   Display estimated reading time for the article

@@ -39,20 +39,20 @@
   .embedded-event {
     margin: 0.75rem 0;
     padding: 1rem;
-    border: 1px solid #e5e7eb;
-    border-left: 3px solid #2563eb;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
     border-radius: 0.5rem;
-    background: #f9fafb;
+    background: var(--muted);
   }
 
   .loading,
   .error {
-    color: #6b7280;
+    color: var(--muted-foreground);
     font-size: 0.875rem;
   }
 
   .error {
-    color: #dc2626;
+    color: var(--destructive);
   }
 
   .event-preview {
@@ -75,7 +75,7 @@
     left: 0;
     right: 0;
     height: 2rem;
-    background: linear-gradient(transparent, #f9fafb);
+    background: linear-gradient(transparent, var(--muted));
   }
 
   .event-meta {
@@ -83,7 +83,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--muted-foreground);
   }
 
   .event-author {

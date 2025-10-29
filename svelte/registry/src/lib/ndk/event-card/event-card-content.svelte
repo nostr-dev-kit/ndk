@@ -139,7 +139,7 @@
     right: 0;
     width: 100%;
     height: 1.5em;
-    background: linear-gradient(to bottom, transparent, white);
+    background: linear-gradient(to bottom, transparent, var(--background));
     pointer-events: none;
   }
 
@@ -162,7 +162,7 @@
 
   /* Custom styles for EventContent children */
   .event-card-content :global(.mention) {
-    color: #8b5cf6 !important;
+    color: var(--primary) !important;
     font-weight: 500;
   }
 

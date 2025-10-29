@@ -42,21 +42,6 @@
   );
 </script>
 
-<span class={cn('relay-card-name', size, truncate && 'relay-card-name-truncate', className)}>
+<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
   {displayName}
 </span>
-
-<style>
-  .relay-card-name {
-    color: var(--foreground, #111827);
-    font-weight: 600;
-  }
-
-  .relay-card-name-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    max-width: 100%;
-  }
-</style>

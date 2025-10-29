@@ -117,7 +117,7 @@
   .avatar-container :global(.avatar-large) {
     width: 10rem;
     height: 10rem;
-    border: 4px solid var(--background, #fff);
+    border: 4px solid var(--background);
     border-radius: 50%;
   }
 
@@ -147,18 +147,18 @@
   .name-handle :global(.display-name) {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--foreground, #000);
+    color: var(--foreground);
   }
 
   .name-handle :global(.handle) {
     font-size: 0.9375rem;
-    color: var(--muted-foreground, #666);
+    color: var(--muted-foreground);
   }
 
   .bio {
     font-size: 0.9375rem;
     line-height: 1.5;
-    color: var(--muted-foreground, #374151);
+    color: var(--muted-foreground);
     text-align: center;
   }
 

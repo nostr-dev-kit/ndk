@@ -107,18 +107,18 @@
 <style>
   .generic-preview {
     padding: 0.75rem;
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
-    background: var(--card-background, #ffffff);
+    background: var(--card-background);
     cursor: pointer;
     transition: all 0.2s;
     margin: 0.5rem 0;
   }
 
   .generic-preview:hover {
-    background: var(--card-hover-background, #f9fafb);
-    border-color: var(--border-hover-color, #d1d5db);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: var(--card-hover-background);
+    border-color: var(--border-hover-color);
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
   }
 
   .preview-header {
@@ -142,14 +142,14 @@
 
   .author-name {
     font-weight: 600;
-    color: var(--text-primary, #111827);
+    color: var(--text-primary);
     font-size: 0.875rem;
   }
 
   .event-kind {
     font-size: 0.75rem;
-    color: var(--text-muted, #6b7280);
-    background: var(--badge-background, #f3f4f6);
+    color: var(--text-muted);
+    background: var(--badge-background);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     display: inline-block;
@@ -158,21 +158,21 @@
 
   .timestamp {
     font-size: 0.75rem;
-    color: var(--text-muted, #6b7280);
+    color: var(--text-muted);
     white-space: nowrap;
   }
 
   .preview-content {
     margin-top: 0.5rem;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--border-color, #e5e7eb);
+    border-top: 1px solid var(--border-color);
   }
 
   .content-text {
     margin: 0;
     font-family: inherit;
     font-size: 0.875rem;
-    color: var(--text-secondary, #4b5563);
+    color: var(--text-secondary);
     white-space: pre-wrap;
     word-wrap: break-word;
     line-height: 1.4;

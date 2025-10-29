@@ -86,6 +86,7 @@ export const componentCategories: NavCategory[] = [
     title: 'Article (NIP-23)',
     items: [
       { name: 'Card', path: '/components/article-card', icon: NewsIcon },
+      { name: 'Content', path: '/components/article-content', icon: File01Icon },
     ]
   },
   {

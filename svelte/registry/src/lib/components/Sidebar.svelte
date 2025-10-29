@@ -5,6 +5,7 @@
   import { themeManager } from '$lib/theme.svelte';
   import { docs, componentCategories, homeNavItem } from '$lib/navigation';
   import { UserProfile } from '$lib/ndk/user-profile';
+  import { sidebarOpen } from '$lib/stores/sidebar';
 
   interface Props {
     onLoginClick: () => void;
@@ -14,7 +15,7 @@
   let { onLoginClick, onLogoutClick }: Props = $props();
 </script>
 
-<aside class="sidebar">
+<aside class="sidebar h-screen flex flex-col gap-4" class:open={$sidebarOpen}>
   <div class="sidebar-header">
     <div class="logo-section">
       <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -48,7 +49,7 @@
     </button>
   </div>
 
-  <nav class="nav">
+  <nav class="nav flex-1 overflow-auto">
     <div class="nav-section">
       <h2 class="nav-title">Getting Started</h2>
       <a href={homeNavItem.path} class:active={$page.url.pathname === homeNavItem.path}>
@@ -118,6 +119,18 @@
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+    transition: transform 300ms ease-in-out;
+    z-index: 900;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
   }
 
   .sidebar-header {

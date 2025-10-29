@@ -3,7 +3,9 @@
   import { setContext } from 'svelte';
   import { ndk, initializeNDK } from '$lib/ndk.svelte.ts';
   import Sidebar from '$lib/components/Sidebar.svelte';
+  import HamburgerButton from '$lib/components/HamburgerButton.svelte';
   import LoginModal from '$lib/components/LoginModal.svelte';
+  import { sidebarOpen } from '$lib/stores/sidebar';
 
   let { children } = $props();
 
@@ -36,12 +38,14 @@
   </div>
 {:else}
   <div class="app">
+    <HamburgerButton />
+
     <Sidebar
       onLoginClick={() => showLoginModal = true}
       onLogoutClick={handleLogout}
     />
 
-    <main class="main">
+    <main class="main" class:sidebar-open={$sidebarOpen}>
       {@render children()}
     </main>
   </div>
@@ -107,11 +111,16 @@
     margin-left: 280px;
     padding: 3rem 2rem;
     max-width: 1400px;
+    transition: margin-left 300ms ease-in-out;
   }
 
   @media (max-width: 768px) {
     .main {
       margin-left: 0;
+    }
+
+    .main.sidebar-open {
+      margin-left: 280px;
     }
   }
 </style>

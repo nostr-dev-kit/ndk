@@ -26,7 +26,7 @@
 
 <style>
   .hashtag {
-    color: #2563eb;
+    color: var(--primary);
     cursor: pointer;
   }
 

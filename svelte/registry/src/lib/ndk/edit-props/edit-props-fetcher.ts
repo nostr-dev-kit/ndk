@@ -127,21 +127,8 @@ export async function fetchFromIdentifier(
 					return { success: false, error: 'Article must be naddr1...' };
 				}
 
-				const decoded = nip19.decode(identifier);
-				const data = decoded.data as { identifier: string; pubkey: string; kind: number; relays?: string[] };
-
-				const events = await ndk.fetchEvents({
-					kinds: [data.kind],
-					'#d': [data.identifier],
-					authors: [data.pubkey]
-				});
-
-				const event = Array.from(events)[0];
-				if (!event) {
-					return { success: false, error: 'Article not found' };
-				}
-
-				const article = NDKArticle.from(event);
+				const event = await ndk.fetchEvent(identifier);
+				const article = event ? NDKArticle.from(event) : undefined;
 				return { success: true, value: article };
 			}
 

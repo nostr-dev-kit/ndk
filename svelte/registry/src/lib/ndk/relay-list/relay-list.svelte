@@ -89,13 +89,13 @@
   }
 
   .empty-icon {
-    color: var(--text-tertiary, #9ca3af);
+    color: var(--text-tertiary);
     margin-bottom: 1rem;
   }
 
   .empty-message {
     font-size: 1rem;
-    color: var(--text-secondary, #6b7280);
+    color: var(--text-secondary);
     margin: 0 0 1rem 0;
   }
 

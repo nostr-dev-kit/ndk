@@ -93,7 +93,7 @@
     border-radius: 0.5rem;
     border: none;
     background: transparent;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -102,8 +102,8 @@
   }
 
   .relay-card-bookmark-button:hover:not(:disabled) {
-    background: var(--muted, #f3f4f6);
-    color: var(--primary, #8b5cf6);
+    background: var(--muted);
+    color: var(--primary);
   }
 
   .relay-card-bookmark-button:disabled {
@@ -112,7 +112,7 @@
   }
 
   .relay-card-bookmark-button--bookmarked {
-    color: var(--primary, #8b5cf6);
+    color: var(--primary);
   }
 
   .relay-card-bookmark-button--sm i {

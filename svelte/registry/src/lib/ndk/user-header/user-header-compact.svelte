@@ -84,8 +84,8 @@
 
 <style>
   .user-header-compact-layout {
-    background-color: var(--background, #fff);
-    border: 1px solid var(--border, #e5e7eb);
+    background-color: var(--background);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 
@@ -140,12 +140,12 @@
   .name-handle :global(.display-name) {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--foreground, #000);
+    color: var(--foreground);
   }
 
   .name-handle :global(.handle) {
     font-size: 0.875rem;
-    color: var(--muted-foreground, #666);
+    color: var(--muted-foreground);
   }
 
   .actions-section {
@@ -154,7 +154,7 @@
 
   .bio {
     font-size: 0.875rem;
-    color: var(--muted-foreground, #374151);
+    color: var(--muted-foreground);
   }
 
   .stats {

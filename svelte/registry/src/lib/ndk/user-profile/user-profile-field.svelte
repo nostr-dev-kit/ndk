@@ -84,19 +84,12 @@
   <Bio {size} class={className} {maxLines} />
 {:else if fieldValue}
   <span
-    class={cn('user-profile-field', size, className)}
+    class={cn(size, className)}
     style:display={maxLines ? '-webkit-box' : undefined}
     style:-webkit-line-clamp={maxLines}
     style:-webkit-box-orient={maxLines ? 'vertical' : undefined}
+    style:overflow={maxLines ? 'hidden' : undefined}
   >
     {fieldValue}
   </span>
 {/if}
-
-<style>
-  .user-profile-field {
-    color: var(--muted-foreground);
-    overflow: hidden;
-    line-height: 1.5;
-  }
-</style>

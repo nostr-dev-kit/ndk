@@ -102,51 +102,16 @@
 </script>
 
 {#if showNip05 && nip05}
-  <span class="user-profile-nip05 {className}">
+  <span class={className}>
     {displayText}
     {#if showVerified}
       {#if isVerifying}
-        <span class="user-profile-nip05-verifying" title="Verifying NIP-05...">⋯</span>
+        <span title="Verifying NIP-05...">⋯</span>
       {:else if verificationStatus === true}
-        <span class="user-profile-nip05-verified" title="NIP-05 verified">✓</span>
+        <span title="NIP-05 verified">✓</span>
       {:else if verificationStatus === false}
-        <span class="user-profile-nip05-invalid" title="NIP-05 does not match pubkey">✗</span>
+        <span title="NIP-05 does not match pubkey">✗</span>
       {/if}
     {/if}
   </span>
 {/if}
-
-<style>
-  .user-profile-nip05 {
-    color: var(--muted-foreground, #6b7280);
-    font-size: 0.875rem;
-  }
-
-  .user-profile-nip05-verified {
-    color: var(--success, #10b981);
-    margin-left: 4px;
-    font-size: 0.875em;
-  }
-
-  .user-profile-nip05-invalid {
-    color: var(--destructive, #ef4444);
-    margin-left: 4px;
-    font-size: 0.875em;
-  }
-
-  .user-profile-nip05-verifying {
-    color: var(--muted-foreground, #6b7280);
-    margin-left: 4px;
-    font-size: 0.875em;
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-</style>

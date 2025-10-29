@@ -135,7 +135,7 @@
 
   .mention,
   .event-ref {
-    color: #8b5cf6;
+    color: var(--primary);
     text-decoration: none;
     font-weight: 500;
     cursor: pointer;
@@ -147,7 +147,7 @@
   }
 
   .hashtag {
-    color: #2563eb;
+    color: var(--primary);
     cursor: pointer;
   }
 
@@ -156,13 +156,13 @@
   }
 
   .link {
-    color: #2563eb;
+    color: var(--primary);
     text-decoration: underline;
     word-break: break-all;
   }
 
   .link:hover {
-    color: #1d4ed8;
+    opacity: 0.8;
   }
 
   .media-image {

@@ -1,3 +1,4 @@
+// @ndk-version: user-input@0.0.0
 import type { NDKUser } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import type { UserInputResult } from '@nostr-dev-kit/svelte';

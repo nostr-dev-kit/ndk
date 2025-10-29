@@ -1,0 +1,415 @@
+{
+  "registry": {
+    "name": "ndk-svelte",
+    "version": "4.0.0-beta.22",
+    "generated": "2025-10-29T14:01:38.692Z"
+  },
+  "components": {
+    "event-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:34.379Z",
+      "type": "registry:block",
+      "title": "Event Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "simple-event-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:34.488Z",
+      "type": "registry:component",
+      "title": "Simple Event Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "event-card"
+      ]
+    },
+    "reactions": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:34.585Z",
+      "type": "registry:component",
+      "title": "Reactions",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "replies": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:34.689Z",
+      "type": "registry:component",
+      "title": "Replies",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "user-profile": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.222Z",
+      "type": "registry:block",
+      "title": "User Profile",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "user-profile-avatar-name": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.330Z",
+      "type": "registry:component",
+      "title": "User Profile Avatar Name",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "user-profile"
+      ]
+    },
+    "user-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.429Z",
+      "type": "registry:block",
+      "title": "User Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "user-input": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.676Z",
+      "type": "registry:block",
+      "title": "User Input",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "zap-button": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.774Z",
+      "type": "registry:component",
+      "title": "Zap Button",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/wallet"
+      ],
+      "registryDependencies": []
+    },
+    "event-content": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.867Z",
+      "type": "registry:component",
+      "title": "Event Content",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "mention-preview",
+        "embedded-event",
+        "hashtag-preview"
+      ]
+    },
+    "embedded-event": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:35.967Z",
+      "type": "registry:component",
+      "title": "Embedded Event",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "mention-preview": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.067Z",
+      "type": "registry:component",
+      "title": "Mention Preview",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "hashtag-preview": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.168Z",
+      "type": "registry:component",
+      "title": "Hashtag Preview",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "article-preview": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.269Z",
+      "type": "registry:component",
+      "title": "Article Preview",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "note-preview": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.369Z",
+      "type": "registry:component",
+      "title": "Note Preview",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "generic-preview": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.465Z",
+      "type": "registry:component",
+      "title": "Generic Preview",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "relay-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.564Z",
+      "type": "registry:component",
+      "title": "Relay Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "relay-connection-status": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.659Z",
+      "type": "registry:component",
+      "title": "Relay Connection Status",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "relay-list": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.757Z",
+      "type": "registry:component",
+      "title": "Relay List",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "relay-pool-tabs": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:36.849Z",
+      "type": "registry:component",
+      "title": "Relay Pool Tabs",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "article-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.194Z",
+      "type": "registry:block",
+      "title": "Article Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "article-card-portrait": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.285Z",
+      "type": "registry:component",
+      "title": "Article Card Portrait",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "article-card"
+      ]
+    },
+    "article-card-medium": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.375Z",
+      "type": "registry:component",
+      "title": "Article Card Medium",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "article-card"
+      ]
+    },
+    "article-card-hero": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.465Z",
+      "type": "registry:component",
+      "title": "Article Card Hero",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "article-card"
+      ]
+    },
+    "article-card-neon": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.557Z",
+      "type": "registry:component",
+      "title": "Article Card Neon",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "article-card"
+      ]
+    },
+    "user-header": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.714Z",
+      "type": "registry:block",
+      "title": "User Header",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "user-header-full": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.810Z",
+      "type": "registry:component",
+      "title": "User Header Full",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "user-profile"
+      ]
+    },
+    "user-header-compact": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:37.903Z",
+      "type": "registry:component",
+      "title": "User Header Compact",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "user-profile"
+      ]
+    },
+    "highlight-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:38.106Z",
+      "type": "registry:block",
+      "title": "Highlight Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "highlight-card-feed": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:38.198Z",
+      "type": "registry:component",
+      "title": "Highlight Card Feed",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "highlight-card"
+      ]
+    },
+    "highlight-card-compact": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:38.287Z",
+      "type": "registry:component",
+      "title": "Highlight Card Compact",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "highlight-card"
+      ]
+    },
+    "highlight-card-grid": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:38.378Z",
+      "type": "registry:component",
+      "title": "Highlight Card Grid",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "highlight-card"
+      ]
+    },
+    "article-content": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:38.535Z",
+      "type": "registry:component",
+      "title": "Article Content",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte",
+        "marked@^16.4.1"
+      ],
+      "registryDependencies": []
+    },
+    "blocks": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-29T14:01:38.634Z",
+      "type": "registry:lib",
+      "title": "Blocks",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "article-card",
+        "highlight-card",
+        "event-card"
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile@0.0.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { FollowAction } from '../actions';

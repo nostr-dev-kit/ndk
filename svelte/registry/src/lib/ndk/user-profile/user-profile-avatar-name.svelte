@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile-avatar-name@0.0.0 -->
 <!--
   @component UserProfile.AvatarName
   Pre-styled horizontal layout with avatar and name, with optional metadata below.

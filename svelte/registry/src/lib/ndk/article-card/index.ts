@@ -1,3 +1,4 @@
+// @ndk-version: article-card@0.0.0
 /**
  * ArticleCard - Composable article card components
  *

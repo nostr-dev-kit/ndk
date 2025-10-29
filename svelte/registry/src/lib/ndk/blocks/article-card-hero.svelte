@@ -1,3 +1,4 @@
+<!-- @ndk-version: article-card-hero@0.0.0 -->
 <!--
   @component ArticleCard.Hero
   Hero-style article card preset with prominent gradient background and featured badge

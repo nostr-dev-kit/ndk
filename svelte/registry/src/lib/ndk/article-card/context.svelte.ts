@@ -1,3 +1,4 @@
+// @ndk-version: article-card@0.0.0
 import type { NDKArticle } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte, ProfileFetcherState } from '@nostr-dev-kit/svelte';
 

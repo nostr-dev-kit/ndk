@@ -36,6 +36,9 @@ interface InstalledComponent {
 }
 
 const REGISTRY_URL = process.env.NDK_REGISTRY_URL || 'https://ndk.fyi';
+
+// For local testing, check if local versions.json exists
+const LOCAL_VERSIONS_PATH = '.vercel/output/static/versions.json';
 const SCAN_DIRS = ['src', 'lib'];
 
 /**
@@ -109,7 +112,9 @@ function scanForInstalledComponents(): Map<string, InstalledComponent> {
 
     for (const file of files) {
       try {
-        const content = readFileSync(file, 'utf-8');
+        // file is relative to dir, so prepend dir
+        const fullFilePath = join(dir, file);
+        const content = readFileSync(fullFilePath, 'utf-8');
         const version = extractVersion(content);
 
         if (version) {
@@ -121,7 +126,7 @@ function scanForInstalledComponents(): Map<string, InstalledComponent> {
             });
           }
 
-          components.get(version.name)!.files.push(file);
+          components.get(version.name)!.files.push(fullFilePath);
         }
       } catch (error) {
         // Can't read file, skip

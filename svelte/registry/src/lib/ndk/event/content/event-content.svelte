@@ -1,3 +1,4 @@
+<!-- @ndk-version: event-content@0.0.0 -->
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';

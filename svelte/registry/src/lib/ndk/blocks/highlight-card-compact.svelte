@@ -1,3 +1,4 @@
+<!-- @ndk-version: highlight-card-compact@0.0.0 -->
 <!--
   @component HighlightCard.Compact
   Pre-composed compact variant with inline metadata and left marker line.

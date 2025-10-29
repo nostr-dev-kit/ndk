@@ -1,3 +1,4 @@
+// @ndk-version: event-card@0.0.0
 /**
  * EventCard - Composable event display components
  *

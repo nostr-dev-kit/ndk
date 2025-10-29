@@ -1,3 +1,4 @@
+// @ndk-version: blocks@0.0.0
 /**
  * Block Components - Preset layouts for NDK components
  *

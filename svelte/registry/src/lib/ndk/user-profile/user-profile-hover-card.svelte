@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile@0.0.0 -->
 <!--
   @component UserProfile.HoverCard
   Displays a hover card with user profile information.

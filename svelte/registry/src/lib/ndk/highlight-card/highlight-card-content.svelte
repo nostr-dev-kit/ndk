@@ -1,3 +1,4 @@
+<!-- @ndk-version: highlight-card@0.0.0 -->
 <!--
   @component HighlightCard.Content
   Displays the highlight text with surrounding context.

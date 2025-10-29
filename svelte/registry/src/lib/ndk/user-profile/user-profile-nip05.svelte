@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile@0.0.0 -->
 <!--
   @component UserProfile.Nip05
   Displays user's NIP-05 identifier with optional verification.

@@ -1,3 +1,4 @@
+// @ndk-version: highlight-card@0.0.0
 /**
  * HighlightCard components for displaying Nostr highlight events (kind 9802)
  *

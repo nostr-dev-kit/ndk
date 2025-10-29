@@ -1,3 +1,4 @@
+// @ndk-version: user-header@0.0.0
 /**
  * UserHeader - User profile header components
  *

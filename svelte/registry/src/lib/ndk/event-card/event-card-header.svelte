@@ -1,3 +1,4 @@
+<!-- @ndk-version: event-card@0.0.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
   import Avatar from '$lib/ndk/user-profile/user-profile-avatar.svelte';

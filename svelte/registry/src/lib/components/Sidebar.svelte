@@ -95,13 +95,19 @@
           avatarSize={32}
           meta="handle"
         />
-        <button class="logout-btn" onclick={onLogoutClick}>
+        <button
+          class="w-full px-4 py-2 rounded-md text-sm font-medium border-none cursor-pointer transition-all flex items-center justify-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/80"
+          onclick={onLogoutClick}
+        >
           Logout
         </button>
       </div>
     {:else}
-      <button class="login-btn" onclick={onLoginClick}>
-        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button
+        class="w-full px-4 py-2 rounded-md text-sm font-medium border-none cursor-pointer transition-all flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:opacity-90"
+        onclick={onLoginClick}
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
         </svg>
         Login
@@ -254,41 +260,4 @@
     gap: 0.75rem;
   }
 
-  .login-btn, .logout-btn {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .login-btn {
-    background: hsl(var(--color-primary));
-    color: hsl(var(--color-primary-foreground));
-  }
-
-  .login-btn:hover {
-    opacity: 0.9;
-  }
-
-  .logout-btn {
-    background: hsl(var(--color-secondary));
-    color: hsl(var(--color-secondary-foreground));
-  }
-
-  .logout-btn:hover {
-    background: hsl(var(--color-secondary) / 0.8);
-  }
-
-  .login-btn .icon {
-    width: 1rem;
-    height: 1rem;
-  }
 </style>

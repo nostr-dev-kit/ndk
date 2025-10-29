@@ -29,8 +29,8 @@
 		"@hugeicons/core-free-icons": "^1.2.1",
 		"@hugeicons/svelte": "^1.0.2",
 		"@nostr-dev-kit/cache-sqlite-wasm": "beta",
-		"@nostr-dev-kit/ndk": "file:../../core",
-		"@nostr-dev-kit/svelte": "file:../",
+		"@nostr-dev-kit/ndk": "beta",
+		"@nostr-dev-kit/svelte": "beta",
 		"shiki": "^3.14.0"
 	}
 }

@@ -41,7 +41,7 @@
 							<RelayCard.Url class="text-sm text-muted-foreground truncate" />
 						</div>
 						<div class="text-xs text-muted-foreground">
-							{relay.percentage.toFixed(0)}%
+							{relay.count} {relay.count === 1 ? 'follow' : 'follows'}
 						</div>
 					</div>
 				</RelayCard.Root>

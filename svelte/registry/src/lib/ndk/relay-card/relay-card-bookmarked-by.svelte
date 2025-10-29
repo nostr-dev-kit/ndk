@@ -62,13 +62,8 @@
   <div class={cn('flex items-center gap-3', className)}>
     <AvatarGroup ndk={context.ndk} {pubkeys} {max} {size} {spacing} />
     {#if showCount && stats}
-      <span class="text-sm">
+      <span class="text-sm text-muted-foreground">
         {stats.count} {stats.count === 1 ? 'follow' : 'follows'}
-        {#if stats.percentage > 0}
-          <span class="text-muted-foreground">
-            ({stats.percentage.toFixed(0)}%)
-          </span>
-        {/if}
       </span>
     {/if}
   </div>

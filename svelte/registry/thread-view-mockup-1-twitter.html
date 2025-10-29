@@ -143,12 +143,18 @@
       fill: currentColor;
     }
 
-    /* Continuation styling - reduced avatar with vertical line through it */
+    /* Continuation styling - vertical line extends full height */
+    .event--continuation .event-left {
+      position: relative;
+    }
     .event--continuation .avatar {
-      width: 4px;
-      height: 100%;
-      min-height: 40px;
-      border-radius: 2px;
+      position: absolute;
+      width: 2px;
+      height: calc(100% + 14px); /* Extend beyond event padding to connect to next */
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0;
       background: #cfd9de;
     }
     .event--continuation .event-left::after {
@@ -158,8 +164,8 @@
       margin-top: 0;
     }
     .event--continuation {
-      padding-top: 4px;
-      padding-bottom: 4px;
+      padding-top: 2px;
+      padding-bottom: 2px;
     }
 
     /* Focused Event Styling */
@@ -189,10 +195,12 @@
 
     /* Focused continuation */
     .event--focused.event--continuation .avatar {
-      width: 4px;
-      height: 100%;
-      min-height: 40px;
-      border-radius: 2px;
+      width: 2px;
+      height: calc(100% + 14px);
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0;
       background: #1d9bf0;
     }
     .event--focused.event--continuation .event-left {

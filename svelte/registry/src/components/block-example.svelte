@@ -256,9 +256,7 @@
 
 	.preview {
 		padding: 2rem 1.5rem;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		overflow-x: auto;
 	}
 
 	.install-tab {

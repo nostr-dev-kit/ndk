@@ -64,7 +64,7 @@
 
 <style>
   .relay-card-icon {
-    border-radius: 0.5rem;
+    border-radius: 1.5rem;
     object-fit: cover;
     flex-shrink: 0;
   }

@@ -72,7 +72,7 @@
     type="button"
     onclick={handleClick}
     class={cn(
-      'article-card-medium',
+      'bg-background',
       'group block w-full',
       'p-4 sm:p-6',
       'hover:bg-card/30 transition-colors',

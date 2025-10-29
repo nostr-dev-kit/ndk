@@ -21,10 +21,11 @@
     HIGHLIGHT_CARD_CONTEXT_KEY,
     type HighlightCardContext,
   } from './context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** Highlight event (kind 9802) */
     event: NDKEvent;
@@ -40,12 +41,14 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     event,
     variant = 'feed',
     class: className = '',
     children,
   }: Props = $props();
+
+  const ndk = getNDKFromContext(providedNdk);
 
   // Create highlight builder
   const state = createHighlight(() => ({ event }), ndk);

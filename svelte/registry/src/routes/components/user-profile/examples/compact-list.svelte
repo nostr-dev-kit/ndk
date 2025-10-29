@@ -16,12 +16,12 @@
   ];
 </script>
 
-<div style="display: flex; flex-direction: column; gap: 0.5rem; max-width: 400px;">
+<div class="flex flex-col gap-2 max-w-[400px]">
   {#each examplePubkeys as pubkey}
     <UserProfile.Root {ndk} {pubkey}>
-      <div class="user-card-compact">
+      <div class="flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-muted">
         <UserProfile.Avatar size={48} />
-        <div class="user-card-info">
+        <div class="flex-1 min-w-0 flex flex-col gap-0.5">
           <UserProfile.Name field="displayName" size="md" truncate={true} />
           <UserProfile.Field field="name" size="sm" />
         </div>
@@ -30,26 +30,3 @@
     </UserProfile.Root>
   {/each}
 </div>
-
-<style>
-  .user-card-compact {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s;
-  }
-
-  .user-card-compact:hover {
-    background: hsl(var(--color-muted));
-  }
-
-  .user-card-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-</style>

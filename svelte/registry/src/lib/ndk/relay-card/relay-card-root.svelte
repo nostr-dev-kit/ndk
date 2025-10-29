@@ -15,11 +15,12 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createRelayInfo } from '@nostr-dev-kit/svelte';
   import { RELAY_CARD_CONTEXT_KEY, type RelayCardContext } from './context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** Relay URL */
     relayUrl: string;
@@ -35,12 +36,14 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     relayUrl,
     onclick,
     class: className = '',
     children
   }: Props = $props();
+
+  const ndk = getNDKFromContext(providedNdk);
 
   // Fetch relay info (NIP-11) - reactive to relayUrl changes
   const relayInfo = createRelayInfo(() => ({ relayUrl }), ndk);

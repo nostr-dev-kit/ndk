@@ -17,12 +17,12 @@
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
-  <div class="user-display">
+  <div class="flex items-center gap-4">
     <UserProfile.Avatar size={48} />
-    <div class="user-info">
+    <div class="flex flex-col gap-2">
       <UserProfile.Name />
       <button
-        class="custom-follow-btn"
+        class="px-4 py-2 bg-primary text-primary-foreground border-none rounded-md text-sm font-medium cursor-pointer transition-all hover:opacity-90"
         onclick={onToggle}
       >
         {follow.isFollowing ? '✓ Following' : '+ Follow'}
@@ -30,33 +30,3 @@
     </div>
   </div>
 </UserProfile.Root>
-
-<style>
-  .user-display {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .custom-follow-btn {
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-primary));
-    color: hsl(var(--color-primary-foreground));
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .custom-follow-btn:hover {
-    opacity: 0.9;
-  }
-</style>

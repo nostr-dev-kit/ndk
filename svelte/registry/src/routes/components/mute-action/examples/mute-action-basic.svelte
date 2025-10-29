@@ -11,24 +11,7 @@
   let { ndk, user }: Props = $props();
 </script>
 
-<div class="demo-card">
-  <p>User: {user.npub.slice(0, 16)}...</p>
+<div class="bg-card border border-border rounded-xl p-6 flex justify-between items-center">
+  <p class="m-0 text-foreground">User: {user.npub.slice(0, 16)}...</p>
   <MuteAction {ndk} target={user} />
 </div>
-
-<style>
-  .demo-card {
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .demo-card p {
-    margin: 0;
-    color: hsl(var(--color-foreground));
-  }
-</style>

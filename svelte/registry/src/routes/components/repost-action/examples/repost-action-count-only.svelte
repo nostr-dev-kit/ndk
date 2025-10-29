@@ -13,46 +13,15 @@
   const repostState = createRepostAction(() => ({ event }), ndk);
 </script>
 
-<div class="demo-event-card">
-  <div class="event-content">
-    <p>{event.content}</p>
+<div class="bg-card border border-border rounded-xl p-6">
+  <div class="mb-4">
+    <p class="m-0 leading-relaxed text-foreground">{event.content}</p>
   </div>
-  <div class="event-actions">
-    <div class="stat-display">
+  <div class="flex gap-2 pt-4 border-t border-border">
+    <div class="text-sm font-medium text-muted-foreground">
       {repostState.count} repost{repostState.count === 1 ? '' : 's'} & quote{repostState.count === 1 ? '' : 's'}
     </div>
   </div>
 </div>
 
-<style>
-  .demo-event-card {
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-  }
 
-  .event-content {
-    margin-bottom: 1rem;
-  }
-
-  .event-content p {
-    margin: 0;
-    line-height: 1.6;
-    color: hsl(var(--color-foreground));
-  }
-
-  .event-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    padding-top: 1rem;
-    border-top: 1px solid hsl(var(--color-border));
-  }
-
-  .stat-display {
-    font-size: 1rem;
-    font-weight: 600;
-    color: hsl(var(--color-foreground));
-  }
-</style>

@@ -15,16 +15,16 @@
 
 <UserProfile.Root {ndk} {user}>
   <!-- Custom banner -->
-  <UserProfile.Banner class="custom-banner" />
+  <UserProfile.Banner />
 
   <!-- Custom content layout -->
-  <div class="custom-content">
-    <div class="avatar-section">
+  <div class="p-6 flex gap-6 -mt-12">
+    <div class="shrink-0">
       <UserProfile.Avatar size={100} />
     </div>
 
-    <div class="info-section">
-      <div class="name-row">
+    <div class="flex-1 flex flex-col gap-4 mt-12">
+      <div class="flex justify-between items-center">
         <UserProfile.Name />
         <FollowAction {ndk} target={user} variant="primary" />
       </div>
@@ -33,30 +33,3 @@
     </div>
   </div>
 </UserProfile.Root>
-
-<style>
-  .custom-content {
-    padding: 1.5rem;
-    display: flex;
-    gap: 1.5rem;
-    margin-top: -3rem;
-  }
-
-  .avatar-section {
-    flex-shrink: 0;
-  }
-
-  .info-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 3rem;
-  }
-
-  .name-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-</style>

@@ -12,9 +12,9 @@
   let { ndk, hashtag, onfollowsuccess, onfollowerror }: Props = $props();
 </script>
 
-<div class="hashtag-display">
-  <span class="hashtag-icon">#</span>
-  <span class="hashtag-text">{hashtag}</span>
+<div class="flex items-center gap-3 px-4 py-2 bg-background border border-border rounded-lg">
+  <span class="text-2xl font-bold text-primary">#</span>
+  <span class="text-lg font-semibold text-foreground">{hashtag}</span>
   <FollowAction
     {ndk}
     target={hashtag}
@@ -22,27 +22,3 @@
     {onfollowerror}
   />
 </div>
-
-<style>
-  .hashtag-display {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-background));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
-  .hashtag-icon {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: hsl(var(--color-primary));
-  }
-
-  .hashtag-text {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: hsl(var(--color-foreground));
-  }
-</style>

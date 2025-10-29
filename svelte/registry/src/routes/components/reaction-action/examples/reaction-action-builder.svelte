@@ -13,28 +13,34 @@
   const reaction = createReactionAction(() => ({ event }), ndk);
 </script>
 
-<div class="demo-event-card">
-  <div class="event-content">
-    <p>{event.content}</p>
+<div class="bg-card border border-border rounded-xl p-6">
+  <div class="mb-4">
+    <p class="m-0 leading-relaxed text-foreground">{event.content}</p>
   </div>
-  <div class="event-actions builder-examples">
-    <button class="custom-reaction-btn" onclick={() => reaction.react("+")}>
-      <span class="emoji">❤️</span>
-      <span class="count">{reaction.get("+")?.count ?? 0}</span>
+  <div class="flex gap-2 pt-4 border-t border-border">
+    <button class="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border border-transparent hover:bg-accent transition-colors" onclick={() => reaction.react("+")}>
+      <span class="text-lg">❤️</span>
+      <span class="text-sm font-medium">{reaction.get("+")?.count ?? 0}</span>
     </button>
 
     <button
-      class="custom-reaction-btn"
-      class:reacted={reaction.get("🔥")?.hasReacted}
+      class={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors hover:bg-accent ${
+        reaction.get("🔥")?.hasReacted
+          ? 'border-primary bg-primary/10'
+          : 'bg-muted'
+      }`}
       onclick={() => reaction.react("🔥")}
     >
-      <span class="emoji">🔥</span>
-      <span class="count">{reaction.get("🔥")?.count ?? 0}</span>
+      <span class="text-lg">🔥</span>
+      <span class="text-sm font-medium">{reaction.get("🔥")?.count ?? 0}</span>
     </button>
 
     <button
-      class="custom-reaction-btn icon-only"
-      class:reacted={reaction.get("🚀")?.hasReacted}
+      class={`px-3 py-2 text-2xl rounded-lg border transition-colors hover:bg-accent ${
+        reaction.get("🚀")?.hasReacted
+          ? 'border-primary bg-primary/10'
+          : 'bg-muted'
+      }`}
       onclick={() => reaction.react("🚀")}
       title={reaction.get("🚀")?.hasReacted ? 'Remove reaction' : 'React with 🚀'}
     >
@@ -43,84 +49,4 @@
   </div>
 </div>
 
-<style>
-  .demo-event-card {
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
 
-  .event-content {
-    margin-bottom: 1rem;
-  }
-
-  .event-content p {
-    margin: 0;
-    color: hsl(var(--color-foreground));
-    line-height: 1.6;
-  }
-
-  .event-actions {
-    display: flex;
-    gap: 0.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid hsl(var(--color-border));
-  }
-
-  .builder-examples {
-    gap: 1rem;
-  }
-
-  .custom-reaction-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .custom-reaction-btn:hover {
-    background: hsl(var(--color-muted));
-    border-color: hsl(var(--color-border));
-  }
-
-  .custom-reaction-btn.reacted {
-    background: hsl(var(--color-primary) / 0.1);
-    border-color: hsl(var(--color-primary));
-    color: hsl(var(--color-primary));
-  }
-
-  .custom-reaction-btn.reacted:hover {
-    background: hsl(var(--color-primary) / 0.2);
-  }
-
-  .custom-reaction-btn .emoji {
-    font-size: 1.125rem;
-    line-height: 1;
-  }
-
-  .custom-reaction-btn .count {
-    font-weight: 500;
-    color: hsl(var(--color-muted-foreground));
-    min-width: 1rem;
-    text-align: center;
-  }
-
-  .custom-reaction-btn.reacted .count {
-    color: hsl(var(--color-primary));
-  }
-
-  .custom-reaction-btn.icon-only {
-    padding: 0.5rem;
-    font-size: 1.125rem;
-    min-width: 2.5rem;
-    justify-content: center;
-  }
-</style>

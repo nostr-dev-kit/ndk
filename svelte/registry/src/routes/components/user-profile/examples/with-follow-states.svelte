@@ -15,65 +15,27 @@
   ];
 </script>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+<div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
   <UserProfile.Root {ndk} pubkey={examplePubkeys[0]}>
-    <div class="user-card-portrait">
+    <div class="flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl">
       <UserProfile.Avatar size={96} />
-      <div class="user-card-details">
+      <div class="flex flex-col items-center gap-1">
         <UserProfile.Name field="displayName" size="lg" />
-        <span class="following-badge">Following</span>
+        <span class="inline-flex items-center px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium">Following</span>
       </div>
-      <UserProfile.Field field="about" maxLines={2} class="user-bio" />
+      <UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
       <UserProfile.Follow variant="default" showIcon={false} />
     </div>
   </UserProfile.Root>
 
   <UserProfile.Root {ndk} pubkey={examplePubkeys[1]}>
-    <div class="user-card-portrait">
+    <div class="flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl">
       <UserProfile.Avatar size={96} />
-      <div class="user-card-details">
+      <div class="flex flex-col items-center gap-1">
         <UserProfile.Name field="displayName" size="lg" />
       </div>
-      <UserProfile.Field field="about" maxLines={2} class="user-bio" />
+      <UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
       <UserProfile.Follow variant="primary" />
     </div>
   </UserProfile.Root>
 </div>
-
-<style>
-  .user-card-portrait {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
-    padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.75rem;
-  }
-
-  .user-card-details {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  :global(.user-bio) {
-    color: hsl(var(--color-muted-foreground));
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  .following-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    background: hsl(var(--color-muted));
-    color: hsl(var(--color-muted-foreground));
-    border-radius: 1rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-</style>

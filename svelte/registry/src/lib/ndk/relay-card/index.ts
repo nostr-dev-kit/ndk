@@ -4,9 +4,11 @@
  * A flexible system for displaying relay information with NIP-11 data,
  * bookmark functionality, and follows statistics.
  *
- * @example Basic usage:
+ * The `ndk` prop is optional on Root components - if not provided, it will be retrieved from Svelte context.
+ *
+ * @example Basic usage (ndk from context):
  * ```svelte
- * <RelayCard.Root {ndk} relayUrl="wss://relay.damus.io">
+ * <RelayCard.Root relayUrl="wss://relay.damus.io">
  *   <RelayCard.Icon />
  *   <RelayCard.Name />
  *   <RelayCard.Description />
@@ -23,7 +25,7 @@
  *   });
  * </script>
  *
- * <RelayCard.Root {ndk} {relayUrl}>
+ * <RelayCard.Root {relayUrl}>
  *   <RelayCard.Icon />
  *   <RelayCard.Name />
  *   <RelayCard.BookmarkedBy {bookmarks} />

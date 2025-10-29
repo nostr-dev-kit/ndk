@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
@@ -20,7 +21,8 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Example relay URLs
+  let exampleRelay = $state<string>('wss://relay.damus.io');
+
   const exampleRelays = [
     'wss://relay.damus.io',
     'wss://nos.lol',
@@ -43,6 +45,15 @@
   <header>
     <h1>RelayCard</h1>
     <p>Composable relay display components with NIP-11 info and bookmark functionality.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop
+        name="Example Relay"
+        type="text"
+        default="wss://relay.damus.io"
+        bind:value={exampleRelay}
+      />
+    </EditProps.Root>
   </header>
 
   <section class="demo">
@@ -51,7 +62,7 @@
       description="Simple relay card showing icon, name, and URL."
       code={BasicExampleRaw}
     >
-      <BasicExample {ndk} relayUrl={exampleRelays[0]} />
+      <BasicExample {ndk} relayUrl={exampleRelay} />
     </CodePreview>
   </section>
 
@@ -61,7 +72,7 @@
       description="Relay card with NIP-11 description text."
       code={WithDescriptionExampleRaw}
     >
-      <WithDescriptionExample {ndk} relayUrl={exampleRelays[1]} />
+      <WithDescriptionExample {ndk} relayUrl={exampleRelay} />
     </CodePreview>
   </section>
 
@@ -71,7 +82,7 @@
       description="Shows avatars of users who have bookmarked this relay."
       code={BookmarkedByExampleRaw}
     >
-      <BookmarkedByExample {ndk} relayUrl={exampleRelays[0]} {followsBookmarks} />
+      <BookmarkedByExample {ndk} relayUrl={exampleRelay} {followsBookmarks} />
     </CodePreview>
   </section>
 
@@ -81,7 +92,7 @@
       description="Toggle to bookmark/unbookmark relay (requires login)."
       code={WithBookmarkButtonExampleRaw}
     >
-      <WithBookmarkButtonExample {ndk} relayUrl={exampleRelays[2]} {bookmarksWithToggle} />
+      <WithBookmarkButtonExample {ndk} relayUrl={exampleRelay} {bookmarksWithToggle} />
     </CodePreview>
   </section>
 
@@ -91,7 +102,7 @@
       description="Complete relay card with all features."
       code={FullCardExampleRaw}
     >
-      <FullCardExample {ndk} relayUrl={exampleRelays[0]} {followsBookmarks} {bookmarksWithToggle} />
+      <FullCardExample {ndk} relayUrl={exampleRelay} {followsBookmarks} {bookmarksWithToggle} />
     </CodePreview>
   </section>
 

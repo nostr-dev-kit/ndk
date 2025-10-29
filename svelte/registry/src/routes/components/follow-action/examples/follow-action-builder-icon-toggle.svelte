@@ -17,17 +17,17 @@
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
-  <div class="user-display">
+  <div class="flex items-center gap-4">
     <UserProfile.Avatar size={48} />
-    <div class="user-info">
+    <div class="flex flex-col gap-2">
       <UserProfile.Name />
       <button
-        class="icon-toggle-btn"
+        class="w-8 h-8 p-1.5 bg-muted border-none rounded-full cursor-pointer transition-all flex items-center justify-center hover:bg-accent"
         onclick={onToggle}
         title={follow.isFollowing ? 'Unfollow' : 'Follow'}
       >
         {#if follow.isFollowing}
-          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -36,7 +36,7 @@
             />
           </svg>
         {:else}
-          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -49,40 +49,3 @@
     </div>
   </div>
 </UserProfile.Root>
-
-<style>
-  .user-display {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .icon-toggle-btn {
-    width: 2rem;
-    height: 2rem;
-    padding: 0.375rem;
-    background: hsl(var(--color-muted));
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .icon-toggle-btn:hover {
-    background: hsl(var(--color-accent));
-  }
-
-  .icon-toggle-btn .icon {
-    width: 1rem;
-    height: 1rem;
-  }
-</style>

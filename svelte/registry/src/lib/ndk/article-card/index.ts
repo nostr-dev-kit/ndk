@@ -5,9 +5,11 @@
  * Components support context mode (within ArticleCard.Root) for composable layouts,
  * or use preset components for common designs.
  *
- * @example Composable mode:
+ * The `ndk` prop is optional on Root components - if not provided, it will be retrieved from Svelte context.
+ *
+ * @example Composable mode (ndk from context):
  * ```svelte
- * <ArticleCard.Root {ndk} {article}>
+ * <ArticleCard.Root {article}>
  *   <div class="card">
  *     <ArticleCard.Image class="h-48" />
  *     <div class="p-4">
@@ -38,11 +40,13 @@ import Summary from './article-card-summary.svelte';
 import Author from './article-card-author.svelte';
 import Date from './article-card-date.svelte';
 import Meta from './article-card-meta.svelte';
+import ReadingTime from './article-card-reading-time.svelte';
 
 // Preset layouts (blocks)
 import Portrait from '../blocks/article-card-portrait.svelte';
 import Medium from '../blocks/article-card-medium.svelte';
-import MediumWithStats from '../blocks/article-card-medium-with-stats.svelte';
+import Hero from '../blocks/article-card-hero.svelte';
+import Neon from '../blocks/article-card-neon.svelte';
 
 // Export as namespace for dot notation
 export const ArticleCard = {
@@ -53,9 +57,11 @@ export const ArticleCard = {
   Author,
   Date,
   Meta,
+  ReadingTime,
   Portrait,
   Medium,
-  MediumWithStats,
+  Hero,
+  Neon,
 };
 
 // Export types

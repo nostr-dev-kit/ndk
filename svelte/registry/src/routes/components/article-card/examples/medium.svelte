@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
-  import { ArticleCard } from '$lib/ndk/article-card';
+  import { ArticleCardMedium } from '$lib/ndk/blocks';
 
   interface Props {
     ndk: NDKSvelte;
@@ -13,6 +13,6 @@
 
 <div class="space-y-0 border border-border rounded-lg overflow-hidden">
   {#each articles as article}
-    <ArticleCard.Medium {ndk} {article} />
+    <ArticleCardMedium {ndk} {article} />
   {/each}
 </div>

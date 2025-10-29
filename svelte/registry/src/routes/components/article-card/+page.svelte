@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { ArticleCard } from '$lib/ndk/article-card';
+  import { ArticleCardPortrait, ArticleCardHero, ArticleCardNeon, ArticleCardMedium } from '$lib/ndk/blocks';
   import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
@@ -73,10 +74,10 @@
       title="Portrait Layout"
       description="Vertical card layout with image on top. Perfect for grid displays and featured content."
       component="article-card-portrait"
-      code={`<ArticleCard.Portrait {ndk} {article} />
+      code={`<ArticleCardPortrait {ndk} {article} />
 
 <!-- With custom sizing -->
-<ArticleCard.Portrait
+<ArticleCardPortrait
   {ndk}
   {article}
   width="w-[320px]"
@@ -86,10 +87,10 @@
     >
       <div class="flex gap-6 overflow-x-auto pb-4">
         {#if displayArticle}
-          <ArticleCard.Portrait ndk={ndk} article={displayArticle} />
+          <ArticleCardPortrait article={displayArticle} />
         {/if}
         {#each articles.slice(0, 4) as article}
-          <ArticleCard.Portrait ndk={ndk} {article} />
+          <ArticleCardPortrait {article} />
         {/each}
       </div>
     </CodePreview>
@@ -101,10 +102,10 @@
       title="Hero Layout"
       description="Full-width hero card with gradient background and featured badge. Ideal for featured stories and landing page headers."
       component="article-card-hero"
-      code={`<ArticleCard.Hero {ndk} {article} />
+      code={`<ArticleCardHero {ndk} {article} />
 
 <!-- With custom options -->
-<ArticleCard.Hero
+<ArticleCardHero
   {ndk}
   {article}
   height="h-[600px]"
@@ -112,7 +113,7 @@
 />`}
     >
       {#if displayArticle}
-        <ArticleCard.Hero ndk={ndk} article={displayArticle} />
+        <ArticleCardHero ndk={ndk} article={displayArticle} />
       {/if}
     </CodePreview>
   </section>
@@ -123,10 +124,10 @@
       title="Neon Layout"
       description="Portrait card with subtle glossy white neon top border, full background image, author info and reading time."
       component="article-card-neon"
-      code={`<ArticleCard.Neon {ndk} {article} />
+      code={`<ArticleCardNeon {ndk} {article} />
 
 <!-- With custom sizing -->
-<ArticleCard.Neon
+<ArticleCardNeon
   {ndk}
   {article}
   width="w-[320px]"
@@ -135,10 +136,10 @@
     >
       <div class="flex gap-6 overflow-x-auto pb-4">
         {#if displayArticle}
-          <ArticleCard.Neon ndk={ndk} article={displayArticle} />
+          <ArticleCardNeon ndk={ndk} article={displayArticle} />
         {/if}
         {#each articles.slice(0, 4) as article}
-          <ArticleCard.Neon ndk={ndk} {article} />
+          <ArticleCardNeon ndk={ndk} {article} />
         {/each}
       </div>
     </CodePreview>
@@ -150,19 +151,19 @@
       title="Medium Layout"
       description="Horizontal card layout with image on right. Ideal for list views and article feeds."
       component="article-card-medium"
-      code={`<ArticleCard.Medium {ndk} {article} />
+      code={`<ArticleCardMedium {ndk} {article} />
 
 <!-- With different image sizes -->
-<ArticleCard.Medium {ndk} {article} imageSize="small" />
-<ArticleCard.Medium {ndk} {article} imageSize="medium" />
-<ArticleCard.Medium {ndk} {article} imageSize="large" />`}
+<ArticleCardMedium {ndk} {article} imageSize="small" />
+<ArticleCardMedium {ndk} {article} imageSize="medium" />
+<ArticleCardMedium {ndk} {article} imageSize="large" />`}
     >
       <div class="space-y-0 border border-border rounded-lg overflow-hidden">
         {#if displayArticle}
-          <ArticleCard.Medium ndk={ndk} article={displayArticle} />
+          <ArticleCardMedium ndk={ndk} article={displayArticle} />
         {/if}
         {#each articles.slice(0, 3) as article}
-          <ArticleCard.Medium ndk={ndk} {article} />
+          <ArticleCardMedium ndk={ndk} {article} />
         {/each}
       </div>
     </CodePreview>
@@ -173,15 +174,15 @@
     <CodePreview
       title="Image Size Variations"
       description="Medium layout supports three image size options."
-      code={`<ArticleCard.Medium {ndk} {article} imageSize="small" />
-<ArticleCard.Medium {ndk} {article} imageSize="medium" />
-<ArticleCard.Medium {ndk} {article} imageSize="large" />`}
+      code={`<ArticleCardMedium {ndk} {article} imageSize="small" />
+<ArticleCardMedium {ndk} {article} imageSize="medium" />
+<ArticleCardMedium {ndk} {article} imageSize="large" />`}
     >
       <div class="space-y-0 border border-border rounded-lg overflow-hidden">
         {#if displayArticle}
-          <ArticleCard.Medium ndk={ndk} article={displayArticle} imageSize="small" />
-          <ArticleCard.Medium ndk={ndk} article={displayArticle} imageSize="medium" />
-          <ArticleCard.Medium ndk={ndk} article={displayArticle} imageSize="large" />
+          <ArticleCardMedium ndk={ndk} article={displayArticle} imageSize="small" />
+          <ArticleCardMedium ndk={ndk} article={displayArticle} imageSize="medium" />
+          <ArticleCardMedium ndk={ndk} article={displayArticle} imageSize="large" />
         {/if}
       </div>
     </CodePreview>
@@ -299,9 +300,9 @@
       </div>
 
       <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Portrait</h3>
+        <h3 class="text-xl font-semibold mb-3">ArticleCardPortrait</h3>
         <p class="text-muted-foreground mb-4">
-          Preset: Vertical card with image on top.
+          Preset: Vertical card with image on top. Import from <code>$lib/ndk/blocks</code>.
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">width?: string, height?: string, imageHeight?: string</code>
@@ -309,9 +310,9 @@
       </div>
 
       <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Hero</h3>
+        <h3 class="text-xl font-semibold mb-3">ArticleCardHero</h3>
         <p class="text-muted-foreground mb-4">
-          Preset: Full-width hero card with gradient background and optional badge (shown if badgeText provided).
+          Preset: Full-width hero card with gradient background and optional badge (shown if badgeText provided). Import from <code>$lib/ndk/blocks</code>.
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">height?: string, badgeText?: string</code>
@@ -319,9 +320,9 @@
       </div>
 
       <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Neon</h3>
+        <h3 class="text-xl font-semibold mb-3">ArticleCardNeon</h3>
         <p class="text-muted-foreground mb-4">
-          Preset: Portrait card with subtle glossy white neon top border effect, full background image, author info and reading time.
+          Preset: Portrait card with subtle glossy white neon top border effect, full background image, author info and reading time. Import from <code>$lib/ndk/blocks</code>.
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">width?: string, height?: string</code>
@@ -329,9 +330,9 @@
       </div>
 
       <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Medium</h3>
+        <h3 class="text-xl font-semibold mb-3">ArticleCardMedium</h3>
         <p class="text-muted-foreground mb-4">
-          Preset: Horizontal card with image on right.
+          Preset: Horizontal card with image on right. Import from <code>$lib/ndk/blocks</code>.
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">imageSize?: "small" | "medium" | "large"</code>

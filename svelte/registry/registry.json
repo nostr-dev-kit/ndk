@@ -15,7 +15,7 @@
       "name": "event-card",
       "type": "registry:block",
       "title": "Event Card",
-      "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions",
+      "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions. UI components only, blocks sold separately",
       "registryDependencies": [],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
@@ -44,23 +44,7 @@
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/event-card/actions/reply-action.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/event-card/actions/reaction-action.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/event-card/actions/repost-action.svelte",
-          "type": "registry:component"
-        },
-        {
           "path": "registry/ndk/event-card/event-card-dropdown.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/event-card/presets/simple-event-card.svelte",
           "type": "registry:component"
         },
         {
@@ -70,15 +54,15 @@
       ]
     },
     {
-      "name": "event-card-simple",
+      "name": "simple-event-card",
       "type": "registry:component",
-      "title": "Event Card Simple",
-      "description": "Simple ready-to-use event card preset",
+      "title": "Simple Event Card",
+      "description": "Simple ready-to-use event card preset block",
       "registryDependencies": ["event-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/event-card/presets/simple-event-card.svelte",
+          "path": "registry/ndk/blocks/simple-event-card.svelte",
           "type": "registry:ui"
         }
       ]
@@ -411,7 +395,7 @@
       "name": "article-card",
       "type": "registry:block",
       "title": "Article Card",
-      "description": "Composable article card components for NDKArticle - includes Portrait and Medium presets",
+      "description": "Composable article card components for NDKArticle - UI components only, blocks sold separately",
       "registryDependencies": [],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
@@ -448,15 +432,7 @@
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/article-card/presets/portrait.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/article-card/presets/medium.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/article-card/presets/medium-with-stats.svelte",
+          "path": "registry/ndk/article-card/article-card-reading-time.svelte",
           "type": "registry:component"
         },
         {
@@ -469,12 +445,12 @@
       "name": "article-card-portrait",
       "type": "registry:component",
       "title": "Article Card Portrait",
-      "description": "Vertical article card layout preset",
+      "description": "Vertical article card layout preset block",
       "registryDependencies": ["article-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/article-card/presets/portrait.svelte",
+          "path": "registry/ndk/blocks/article-card-portrait.svelte",
           "type": "registry:ui"
         }
       ]
@@ -483,26 +459,40 @@
       "name": "article-card-medium",
       "type": "registry:component",
       "title": "Article Card Medium",
-      "description": "Horizontal article card layout preset",
+      "description": "Horizontal article card layout preset block",
       "registryDependencies": ["article-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/article-card/presets/medium.svelte",
+          "path": "registry/ndk/blocks/article-card-medium.svelte",
           "type": "registry:ui"
         }
       ]
     },
     {
-      "name": "article-card-medium-with-stats",
+      "name": "article-card-hero",
       "type": "registry:component",
-      "title": "Article Card Medium with Stats",
-      "description": "Horizontal article card with engagement statistics",
+      "title": "Article Card Hero",
+      "description": "Full-width hero article card layout preset block",
       "registryDependencies": ["article-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/article-card/presets/medium-with-stats.svelte",
+          "path": "registry/ndk/blocks/article-card-hero.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "article-card-neon",
+      "type": "registry:component",
+      "title": "Article Card Neon",
+      "description": "Portrait article card with neon border effect preset block",
+      "registryDependencies": ["article-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/article-card-neon.svelte",
           "type": "registry:ui"
         }
       ]
@@ -561,7 +551,7 @@
       "name": "highlight-card",
       "type": "registry:block",
       "title": "Highlight Card",
-      "description": "Display Nostr highlight events (kind 9802) with feed, compact, and grid layouts",
+      "description": "Display Nostr highlight events (kind 9802) - UI components only, blocks sold separately",
       "registryDependencies": [],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
@@ -582,18 +572,6 @@
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/highlight-card/highlight-card-feed.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/highlight-card/highlight-card-compact.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/highlight-card/highlight-card-grid.svelte",
-          "type": "registry:component"
-        },
-        {
           "path": "registry/ndk/highlight-card/index.ts",
           "type": "registry:lib"
         }
@@ -603,12 +581,12 @@
       "name": "highlight-card-feed",
       "type": "registry:component",
       "title": "Highlight Card Feed",
-      "description": "Feed layout preset for highlight cards",
+      "description": "Feed layout preset block for highlight cards",
       "registryDependencies": ["highlight-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/highlight-card/highlight-card-feed.svelte",
+          "path": "registry/ndk/blocks/highlight-card-feed.svelte",
           "type": "registry:ui"
         }
       ]
@@ -617,12 +595,12 @@
       "name": "highlight-card-compact",
       "type": "registry:component",
       "title": "Highlight Card Compact",
-      "description": "Compact layout preset for highlight cards",
+      "description": "Compact layout preset block for highlight cards",
       "registryDependencies": ["highlight-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/highlight-card/highlight-card-compact.svelte",
+          "path": "registry/ndk/blocks/highlight-card-compact.svelte",
           "type": "registry:ui"
         }
       ]
@@ -631,13 +609,27 @@
       "name": "highlight-card-grid",
       "type": "registry:component",
       "title": "Highlight Card Grid",
-      "description": "Grid layout preset for highlight cards",
+      "description": "Grid layout preset block for highlight cards",
       "registryDependencies": ["highlight-card"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/highlight-card/highlight-card-grid.svelte",
+          "path": "registry/ndk/blocks/highlight-card-grid.svelte",
           "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "blocks",
+      "type": "registry:lib",
+      "title": "Blocks",
+      "description": "Central export for all preset block components - ArticleCard, HighlightCard, and EventCard blocks",
+      "registryDependencies": ["article-card", "highlight-card", "event-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/index.ts",
+          "type": "registry:lib"
         }
       ]
     }

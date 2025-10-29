@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { HighlightCard } from '$lib/ndk/highlight-card/index.js';
+  import { HighlightCardCompact } from '$lib/ndk/blocks';
 
   interface Props {
     ndk: NDKSvelte;
@@ -11,4 +11,4 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<HighlightCard.Compact {ndk} {event} />
+<HighlightCardCompact {ndk} {event} />

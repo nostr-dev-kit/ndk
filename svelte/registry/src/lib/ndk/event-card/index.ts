@@ -25,6 +25,13 @@
  *   <EventCard.Content />
  * </EventCard.Root>
  * ```
+ *
+ * @example Using preset blocks (import separately from blocks):
+ * ```svelte
+ * import { SimpleEventCard } from '$lib/ndk/blocks';
+ *
+ * <SimpleEventCard {ndk} {event} />
+ * ```
  */
 
 // Core components
@@ -58,6 +65,3 @@ export {
 // Export types
 export type { EventCardContext } from './context.svelte.js';
 export type { ThreadingMetadata } from '@nostr-dev-kit/svelte';
-
-// Re-export preset components (blocks)
-export { default as SimpleEventCard } from '../blocks/simple-event-card.svelte';

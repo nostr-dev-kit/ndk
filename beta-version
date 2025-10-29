@@ -156,10 +156,13 @@ while IFS= read -r pkg_json; do
     # Extract directory path
     dir=$(dirname "$pkg_json")
 
+    # Normalize path by removing leading ./
+    normalized_path="${pkg_json#./}"
+
     # Skip if it's one of the main packages or root
     skip=false
     for main_pkg in "${PACKAGES[@]}"; do
-        if [[ "$pkg_json" == "${main_pkg}/package.json" ]] || [[ "$pkg_json" == "package.json" ]]; then
+        if [[ "$normalized_path" == "${main_pkg}/package.json" ]] || [[ "$normalized_path" == "package.json" ]]; then
             skip=true
             break
         fi
@@ -197,9 +200,9 @@ if [ ${#APP_PACKAGES[@]} -gt 0 ]; then
         UPDATED=false
 
         while IFS='|' read -r dep_name dep_version; do
-            # Skip workspace:* and file: references
-            if [[ "$dep_version" == "workspace:"* ]] || [[ "$dep_version" == "file:"* ]]; then
-                echo -e "  ${GREEN}✓${NC} ${dep_name}: ${dep_version} (local reference, skipping)"
+            # Skip workspace:* references only
+            if [[ "$dep_version" == "workspace:"* ]]; then
+                echo -e "  ${GREEN}✓${NC} ${dep_name}: ${dep_version} (workspace reference, skipping)"
                 continue
             fi
 

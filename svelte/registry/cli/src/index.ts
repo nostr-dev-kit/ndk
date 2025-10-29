@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { upgrade } from './commands/upgrade.js';
+import { init } from './commands/init.js';
 import { add } from './commands/add.js';
+import { upgrade } from './commands/upgrade.js';
 
 const program = new Command();
 
 program
   .name('ndk-svelte')
   .description('CLI for managing NDK Svelte components')
-  .version('0.1.0');
+  .version('0.1.1');
+
+program
+  .command('init')
+  .description('Initialize project for NDK components')
+  .option('-y, --yes', 'Skip confirmation prompts')
+  .action(init);
 
 program
   .command('add')

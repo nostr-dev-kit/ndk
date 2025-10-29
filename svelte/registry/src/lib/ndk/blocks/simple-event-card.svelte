@@ -12,7 +12,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { type NDKSvelte, type ThreadingMetadata } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, RepostAction, ReactionAction } from '../index.js';
+  import { EventCard, ReplyAction, RepostAction, ReactionAction } from '../event-card/index.js';
 
   interface Props {
     /** NDK instance */

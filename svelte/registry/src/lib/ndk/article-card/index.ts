@@ -39,10 +39,10 @@ import Author from './article-card-author.svelte';
 import Date from './article-card-date.svelte';
 import Meta from './article-card-meta.svelte';
 
-// Preset layouts
-import Portrait from './presets/portrait.svelte';
-import Medium from './presets/medium.svelte';
-import MediumWithStats from './presets/medium-with-stats.svelte';
+// Preset layouts (blocks)
+import Portrait from '../blocks/portrait.svelte';
+import Medium from '../blocks/medium.svelte';
+import MediumWithStats from '../blocks/medium-with-stats.svelte';
 
 // Export as namespace for dot notation
 export const ArticleCard = {

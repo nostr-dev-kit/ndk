@@ -7,23 +7,23 @@
   import LoginPrompt from '$site-components/login-prompt.svelte';
   import FeatureList from '$site-components/feature-list.svelte';
 
-  import BasicExample from '$lib/ndk/actions/examples/reaction-action-basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/actions/examples/reaction-action-basic.svelte?raw';
+  import BasicExample from './examples/reaction-action-basic.svelte';
+  import BasicExampleRaw from './examples/reaction-action-basic.svelte?raw';
 
-  import WithoutCountExample from '$lib/ndk/actions/examples/reaction-action-without-count.svelte';
-  import WithoutCountExampleRaw from '$lib/ndk/actions/examples/reaction-action-without-count.svelte?raw';
+  import WithoutCountExample from './examples/reaction-action-without-count.svelte';
+  import WithoutCountExampleRaw from './examples/reaction-action-without-count.svelte?raw';
 
-  import LongPressExample from '$lib/ndk/actions/examples/reaction-action-long-press.svelte';
-  import LongPressExampleRaw from '$lib/ndk/actions/examples/reaction-action-long-press.svelte?raw';
+  import LongPressExample from './examples/reaction-action-long-press.svelte';
+  import LongPressExampleRaw from './examples/reaction-action-long-press.svelte?raw';
 
-  import CustomEmojisExample from '$lib/ndk/actions/examples/reaction-action-custom-emojis.svelte';
-  import CustomEmojisExampleRaw from '$lib/ndk/actions/examples/reaction-action-custom-emojis.svelte?raw';
+  import CustomEmojisExample from './examples/reaction-action-custom-emojis.svelte';
+  import CustomEmojisExampleRaw from './examples/reaction-action-custom-emojis.svelte?raw';
 
-  import BuilderExample from '$lib/ndk/actions/examples/reaction-action-builder.svelte';
-  import BuilderExampleRaw from '$lib/ndk/actions/examples/reaction-action-builder.svelte?raw';
+  import BuilderExample from './examples/reaction-action-builder.svelte';
+  import BuilderExampleRaw from './examples/reaction-action-builder.svelte?raw';
 
-  import SlackStyleExample from '$lib/ndk/actions/examples/reaction-action-slack-style.svelte';
-  import SlackStyleExampleRaw from '$lib/ndk/actions/examples/reaction-action-slack-style.svelte?raw';
+  import SlackStyleExample from './examples/reaction-action-slack-style.svelte';
+  import SlackStyleExampleRaw from './examples/reaction-action-slack-style.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

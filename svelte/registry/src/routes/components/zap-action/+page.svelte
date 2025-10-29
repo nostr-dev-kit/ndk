@@ -4,14 +4,14 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import CodePreview from '$site-components/code-preview.svelte';
 
-  import BasicExample from '$lib/ndk/actions/examples/zap-action-basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/actions/examples/zap-action-basic.svelte?raw';
+  import BasicExample from './examples/zap-action-basic.svelte';
+  import BasicExampleRaw from './examples/zap-action-basic.svelte?raw';
 
-  import CustomAmountExample from '$lib/ndk/actions/examples/zap-action-custom-amount.svelte';
-  import CustomAmountExampleRaw from '$lib/ndk/actions/examples/zap-action-custom-amount.svelte?raw';
+  import CustomAmountExample from './examples/zap-action-custom-amount.svelte';
+  import CustomAmountExampleRaw from './examples/zap-action-custom-amount.svelte?raw';
 
-  import BuilderExample from '$lib/ndk/actions/examples/zap-action-builder.svelte';
-  import BuilderExampleRaw from '$lib/ndk/actions/examples/zap-action-builder.svelte?raw';
+  import BuilderExample from './examples/zap-action-builder.svelte';
+  import BuilderExampleRaw from './examples/zap-action-builder.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

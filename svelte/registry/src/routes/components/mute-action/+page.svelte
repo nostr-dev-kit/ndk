@@ -5,14 +5,14 @@
   import CodePreview from '$site-components/code-preview.svelte';
   import Alert from '$site-components/alert.svelte';
 
-  import BasicExample from '$lib/ndk/actions/examples/mute-action-basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/actions/examples/mute-action-basic.svelte?raw';
+  import BasicExample from './examples/mute-action-basic.svelte';
+  import BasicExampleRaw from './examples/mute-action-basic.svelte?raw';
 
-  import BuilderExample from '$lib/ndk/actions/examples/mute-action-builder.svelte';
-  import BuilderExampleRaw from '$lib/ndk/actions/examples/mute-action-builder.svelte?raw';
+  import BuilderExample from './examples/mute-action-builder.svelte';
+  import BuilderExampleRaw from './examples/mute-action-builder.svelte?raw';
 
-  import DirectAPIExample from '$lib/ndk/actions/examples/mute-action-direct-api.svelte';
-  import DirectAPIExampleRaw from '$lib/ndk/actions/examples/mute-action-direct-api.svelte?raw';
+  import DirectAPIExample from './examples/mute-action-direct-api.svelte';
+  import DirectAPIExampleRaw from './examples/mute-action-direct-api.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

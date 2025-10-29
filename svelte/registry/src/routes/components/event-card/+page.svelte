@@ -6,18 +6,18 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import BasicExample from '$lib/ndk/event-card/examples/basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/event-card/examples/basic.svelte?raw';
-  import CompactExample from '$lib/ndk/event-card/examples/compact.svelte';
-  import CompactExampleRaw from '$lib/ndk/event-card/examples/compact.svelte?raw';
-  import ThreadViewExample from '$lib/ndk/event-card/examples/thread-view.svelte';
-  import ThreadViewExampleRaw from '$lib/ndk/event-card/examples/thread-view.svelte?raw';
-  import CustomCompositionExample from '$lib/ndk/event-card/examples/custom-composition.svelte';
-  import CustomCompositionExampleRaw from '$lib/ndk/event-card/examples/custom-composition.svelte?raw';
-  import InteractiveExample from '$lib/ndk/event-card/examples/interactive.svelte';
-  import InteractiveExampleRaw from '$lib/ndk/event-card/examples/interactive.svelte?raw';
-  import DropdownExample from '$lib/ndk/event-card/examples/dropdown.svelte';
-  import DropdownExampleRaw from '$lib/ndk/event-card/examples/dropdown.svelte?raw';
+  import BasicExample from './examples/basic.svelte';
+  import BasicExampleRaw from './examples/basic.svelte?raw';
+  import CompactExample from './examples/compact.svelte';
+  import CompactExampleRaw from './examples/compact.svelte?raw';
+  import ThreadViewExample from './examples/thread-view.svelte';
+  import ThreadViewExampleRaw from './examples/thread-view.svelte?raw';
+  import CustomCompositionExample from './examples/custom-composition.svelte';
+  import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
+  import InteractiveExample from './examples/interactive.svelte';
+  import InteractiveExampleRaw from './examples/interactive.svelte?raw';
+  import DropdownExample from './examples/dropdown.svelte';
+  import DropdownExampleRaw from './examples/dropdown.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

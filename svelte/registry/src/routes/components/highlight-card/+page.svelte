@@ -6,14 +6,14 @@
   import InstallCommand from '$site-components/install-command.svelte';
 
   // Import examples
-  import FeedVariantExample from '$lib/ndk/highlight-card/examples/feed-variant.svelte';
-  import FeedVariantExampleRaw from '$lib/ndk/highlight-card/examples/feed-variant.svelte?raw';
-  import CompactVariantExample from '$lib/ndk/highlight-card/examples/compact-variant.svelte';
-  import CompactVariantExampleRaw from '$lib/ndk/highlight-card/examples/compact-variant.svelte?raw';
-  import GridVariantExample from '$lib/ndk/highlight-card/examples/grid-variant.svelte';
-  import GridVariantExampleRaw from '$lib/ndk/highlight-card/examples/grid-variant.svelte?raw';
-  import CustomCompositionExample from '$lib/ndk/highlight-card/examples/custom-composition.svelte';
-  import CustomCompositionExampleRaw from '$lib/ndk/highlight-card/examples/custom-composition.svelte?raw';
+  import FeedVariantExample from './examples/feed-variant.svelte';
+  import FeedVariantExampleRaw from './examples/feed-variant.svelte?raw';
+  import CompactVariantExample from './examples/compact-variant.svelte';
+  import CompactVariantExampleRaw from './examples/compact-variant.svelte?raw';
+  import GridVariantExample from './examples/grid-variant.svelte';
+  import GridVariantExampleRaw from './examples/grid-variant.svelte?raw';
+  import CustomCompositionExample from './examples/custom-composition.svelte';
+  import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -129,9 +129,7 @@
     <h2>Usage</h2>
     <h3>Basic Usage</h3>
     <pre><code>{`<script>
-  import { HighlightCard } from '$site-components/ui/highlight-card';
-
-  const highlightEvent = ndk.getEvent({ kind: 9802, ... });
+  import { HighlightCard } from '$lib/ndk/highlight-card';
 </script>
 
 <!-- Feed variant -->

@@ -4,14 +4,14 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import FullVariantExample from '$lib/ndk/user-header/examples/full-variant.svelte';
-  import FullVariantExampleRaw from '$lib/ndk/user-header/examples/full-variant.svelte?raw';
-  import CenteredVariantExample from '$lib/ndk/user-header/examples/centered-variant.svelte';
-  import CenteredVariantExampleRaw from '$lib/ndk/user-header/examples/centered-variant.svelte?raw';
-  import OwnProfileFullExample from '$lib/ndk/user-header/examples/own-profile-full.svelte';
-  import OwnProfileFullExampleRaw from '$lib/ndk/user-header/examples/own-profile-full.svelte?raw';
-  import CustomCompositionExample from '$lib/ndk/user-header/examples/custom-composition.svelte';
-  import CustomCompositionExampleRaw from '$lib/ndk/user-header/examples/custom-composition.svelte?raw';
+  import FullVariantExample from './examples/full-variant.svelte';
+  import FullVariantExampleRaw from './examples/full-variant.svelte?raw';
+  import CenteredVariantExample from './examples/centered-variant.svelte';
+  import CenteredVariantExampleRaw from './examples/centered-variant.svelte?raw';
+  import OwnProfileFullExample from './examples/own-profile-full.svelte';
+  import OwnProfileFullExampleRaw from './examples/own-profile-full.svelte?raw';
+  import CustomCompositionExample from './examples/custom-composition.svelte';
+  import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

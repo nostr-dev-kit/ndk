@@ -9,30 +9,30 @@
   import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
-  import DefaultExample from '$lib/ndk/actions/examples/follow-action-default.svelte';
-  import DefaultExampleRaw from '$lib/ndk/actions/examples/follow-action-default.svelte?raw';
-  import PrimaryExample from '$lib/ndk/actions/examples/follow-action-primary.svelte';
-  import PrimaryExampleRaw from '$lib/ndk/actions/examples/follow-action-primary.svelte?raw';
-  import WithoutIconExample from '$lib/ndk/actions/examples/follow-action-without-icon.svelte';
-  import WithoutIconExampleRaw from '$lib/ndk/actions/examples/follow-action-without-icon.svelte?raw';
-  import CustomStylingExample from '$lib/ndk/actions/examples/follow-action-custom-styling.svelte';
-  import CustomStylingExampleRaw from '$lib/ndk/actions/examples/follow-action-custom-styling.svelte?raw';
-  import HashtagDefaultExample from '$lib/ndk/actions/examples/follow-action-hashtag-default.svelte';
-  import HashtagDefaultExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-default.svelte?raw';
-  import HashtagPrimaryExample from '$lib/ndk/actions/examples/follow-action-hashtag-primary.svelte';
-  import HashtagPrimaryExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-primary.svelte?raw';
-  import HashtagWithoutIconExample from '$lib/ndk/actions/examples/follow-action-hashtag-without-icon.svelte';
-  import HashtagWithoutIconExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-without-icon.svelte?raw';
-  import HashtagCustomLabelExample from '$lib/ndk/actions/examples/follow-action-hashtag-custom-label.svelte';
-  import HashtagCustomLabelExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-custom-label.svelte?raw';
-  import BuilderCustomUserExample from '$lib/ndk/actions/examples/follow-action-builder-custom-user.svelte';
-  import BuilderCustomUserExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-custom-user.svelte?raw';
-  import BuilderCustomHashtagExample from '$lib/ndk/actions/examples/follow-action-builder-custom-hashtag.svelte';
-  import BuilderCustomHashtagExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-custom-hashtag.svelte?raw';
-  import BuilderIconToggleExample from '$lib/ndk/actions/examples/follow-action-builder-icon-toggle.svelte';
-  import BuilderIconToggleExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-icon-toggle.svelte?raw';
-  import BuilderIntegrationExample from '$lib/ndk/actions/examples/follow-action-builder-integration.svelte';
-  import BuilderIntegrationExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-integration.svelte?raw';
+  import DefaultExample from './examples/follow-action-default.svelte';
+  import DefaultExampleRaw from './examples/follow-action-default.svelte?raw';
+  import PrimaryExample from './examples/follow-action-primary.svelte';
+  import PrimaryExampleRaw from './examples/follow-action-primary.svelte?raw';
+  import WithoutIconExample from './examples/follow-action-without-icon.svelte';
+  import WithoutIconExampleRaw from './examples/follow-action-without-icon.svelte?raw';
+  import CustomStylingExample from './examples/follow-action-custom-styling.svelte';
+  import CustomStylingExampleRaw from './examples/follow-action-custom-styling.svelte?raw';
+  import HashtagDefaultExample from './examples/follow-action-hashtag-default.svelte';
+  import HashtagDefaultExampleRaw from './examples/follow-action-hashtag-default.svelte?raw';
+  import HashtagPrimaryExample from './examples/follow-action-hashtag-primary.svelte';
+  import HashtagPrimaryExampleRaw from './examples/follow-action-hashtag-primary.svelte?raw';
+  import HashtagWithoutIconExample from './examples/follow-action-hashtag-without-icon.svelte';
+  import HashtagWithoutIconExampleRaw from './examples/follow-action-hashtag-without-icon.svelte?raw';
+  import HashtagCustomLabelExample from './examples/follow-action-hashtag-custom-label.svelte';
+  import HashtagCustomLabelExampleRaw from './examples/follow-action-hashtag-custom-label.svelte?raw';
+  import BuilderCustomUserExample from './examples/follow-action-builder-custom-user.svelte';
+  import BuilderCustomUserExampleRaw from './examples/follow-action-builder-custom-user.svelte?raw';
+  import BuilderCustomHashtagExample from './examples/follow-action-builder-custom-hashtag.svelte';
+  import BuilderCustomHashtagExampleRaw from './examples/follow-action-builder-custom-hashtag.svelte?raw';
+  import BuilderIconToggleExample from './examples/follow-action-builder-icon-toggle.svelte';
+  import BuilderIconToggleExampleRaw from './examples/follow-action-builder-icon-toggle.svelte?raw';
+  import BuilderIntegrationExample from './examples/follow-action-builder-integration.svelte';
+  import BuilderIntegrationExampleRaw from './examples/follow-action-builder-integration.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -296,54 +296,6 @@ await followButton.follow();`}</code></pre>
 </div>
 
 <style>
-  .warning-box {
-    padding: 1rem;
-    background: hsl(40 100% 50% / 0.1);
-    border: 1px solid hsl(40 100% 50% / 0.3);
-    border-radius: 0.5rem;
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-
-  .warning-box .icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: hsl(40 100% 40%);
-    flex-shrink: 0;
-    margin-top: 0.125rem;
-  }
-
-  .warning-box p {
-    margin: 0;
-    color: hsl(var(--color-foreground));
-    font-size: 0.875rem;
-  }
-
-  .event-toast {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    padding: 1rem 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-    animation: slideIn 0.3s ease-out;
-  }
-
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
   .showcase-section {
     margin-bottom: 4rem;
   }
@@ -358,12 +310,6 @@ await followButton.follow();`}</code></pre>
   .section-description {
     color: hsl(var(--color-muted-foreground));
     margin: 0 0 2rem 0;
-  }
-
-  .example-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
   }
 
   pre {
@@ -394,43 +340,5 @@ await followButton.follow();`}</code></pre>
   .api-section p {
     color: hsl(var(--color-muted-foreground));
     margin: 0 0 1rem 0;
-  }
-
-  .api-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    overflow: hidden;
-  }
-
-  .api-table th {
-    text-align: left;
-    padding: 0.75rem 1rem;
-    background: hsl(var(--color-muted) / 0.5);
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: hsl(var(--color-foreground));
-    border-bottom: 1px solid hsl(var(--color-border));
-  }
-
-  .api-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid hsl(var(--color-border));
-    font-size: 0.875rem;
-    color: hsl(var(--color-muted-foreground));
-  }
-
-  .api-table tr:last-child td {
-    border-bottom: none;
-  }
-
-  .api-table code {
-    background: hsl(var(--color-muted) / 0.5);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.8125rem;
-    color: hsl(var(--color-foreground));
   }
 </style>

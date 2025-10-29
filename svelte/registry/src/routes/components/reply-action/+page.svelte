@@ -6,12 +6,12 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import BasicExample from '$lib/ndk/actions/examples/reply-action-basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/actions/examples/reply-action-basic.svelte?raw';
-  import BuilderCountExample from '$lib/ndk/actions/examples/reply-action-builder-count.svelte';
-  import BuilderCountExampleRaw from '$lib/ndk/actions/examples/reply-action-builder-count.svelte?raw';
-  import CountOnlyExample from '$lib/ndk/actions/examples/reply-action-count-only.svelte';
-  import CountOnlyExampleRaw from '$lib/ndk/actions/examples/reply-action-count-only.svelte?raw';
+  import BasicExample from './examples/reply-action-basic.svelte';
+  import BasicExampleRaw from './examples/reply-action-basic.svelte?raw';
+  import BuilderCountExample from './examples/reply-action-builder-count.svelte';
+  import BuilderCountExampleRaw from './examples/reply-action-builder-count.svelte?raw';
+  import CountOnlyExample from './examples/reply-action-count-only.svelte';
+  import CountOnlyExampleRaw from './examples/reply-action-count-only.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

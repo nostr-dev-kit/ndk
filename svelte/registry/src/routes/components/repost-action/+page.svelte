@@ -4,14 +4,14 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import CodePreview from '$site-components/code-preview.svelte';
 
-  import BasicExample from '$lib/ndk/actions/examples/repost-action-basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/actions/examples/repost-action-basic.svelte?raw';
+  import BasicExample from './examples/repost-action-basic.svelte';
+  import BasicExampleRaw from './examples/repost-action-basic.svelte?raw';
 
-  import BuilderExample from '$lib/ndk/actions/examples/repost-action-builder.svelte';
-  import BuilderExampleRaw from '$lib/ndk/actions/examples/repost-action-builder.svelte?raw';
+  import BuilderExample from './examples/repost-action-builder.svelte';
+  import BuilderExampleRaw from './examples/repost-action-builder.svelte?raw';
 
-  import CountOnlyExample from '$lib/ndk/actions/examples/repost-action-count-only.svelte';
-  import CountOnlyExampleRaw from '$lib/ndk/actions/examples/repost-action-count-only.svelte?raw';
+  import CountOnlyExample from './examples/repost-action-count-only.svelte';
+  import CountOnlyExampleRaw from './examples/repost-action-count-only.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

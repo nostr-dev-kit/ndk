@@ -28,9 +28,14 @@
 	"dependencies": {
 		"@hugeicons/core-free-icons": "^1.2.1",
 		"@hugeicons/svelte": "^1.0.2",
+		"@nostr-dev-kit/blossom": "file:../../blossom",
 		"@nostr-dev-kit/cache-sqlite-wasm": "beta",
-		"@nostr-dev-kit/ndk": "beta",
-		"@nostr-dev-kit/svelte": "beta",
+		"@nostr-dev-kit/ndk": "file:../../core",
+		"@nostr-dev-kit/sessions": "file:../../sessions",
+		"@nostr-dev-kit/svelte": "file:../",
+		"@nostr-dev-kit/sync": "file:../../sync",
+		"@nostr-dev-kit/wallet": "file:../../wallet",
+		"@nostr-dev-kit/wot": "file:../../wot",
 		"shiki": "^3.14.0"
 	}
 }

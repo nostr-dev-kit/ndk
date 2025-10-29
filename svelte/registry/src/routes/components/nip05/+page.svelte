@@ -5,14 +5,14 @@
   import UserInputControl from '$site-components/user-input-control.svelte';
 
   // Import examples
-  import Nip05DefaultExample from '$lib/ndk/user-profile/examples/nip05-default.svelte';
-  import Nip05DefaultExampleRaw from '$lib/ndk/user-profile/examples/nip05-default.svelte?raw';
-  import Nip05VerifiedExample from '$lib/ndk/user-profile/examples/nip05-verified.svelte';
-  import Nip05VerifiedExampleRaw from '$lib/ndk/user-profile/examples/nip05-verified.svelte?raw';
-  import Nip05NoVerificationExample from '$lib/ndk/user-profile/examples/nip05-no-verification.svelte';
-  import Nip05NoVerificationExampleRaw from '$lib/ndk/user-profile/examples/nip05-no-verification.svelte?raw';
-  import Nip05StandaloneExample from '$lib/ndk/user-profile/examples/nip05-standalone.svelte';
-  import Nip05StandaloneExampleRaw from '$lib/ndk/user-profile/examples/nip05-standalone.svelte?raw';
+  import Nip05DefaultExample from './examples/nip05-default.svelte';
+  import Nip05DefaultExampleRaw from './examples/nip05-default.svelte?raw';
+  import Nip05VerifiedExample from './examples/nip05-verified.svelte';
+  import Nip05VerifiedExampleRaw from './examples/nip05-verified.svelte?raw';
+  import Nip05NoVerificationExample from './examples/nip05-no-verification.svelte';
+  import Nip05NoVerificationExampleRaw from './examples/nip05-no-verification.svelte?raw';
+  import Nip05StandaloneExample from './examples/nip05-standalone.svelte';
+  import Nip05StandaloneExampleRaw from './examples/nip05-standalone.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

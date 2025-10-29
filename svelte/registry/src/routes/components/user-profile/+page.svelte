@@ -4,12 +4,12 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import AvatarOnlyExample from '$lib/ndk/user-profile/examples/avatar-only.svelte';
-  import AvatarNameExample from '$lib/ndk/user-profile/examples/avatar-name.svelte';
-  import AvatarNameHandleExample from '$lib/ndk/user-profile/examples/avatar-name-handle.svelte';
-  import AvatarNameBioExample from '$lib/ndk/user-profile/examples/avatar-name-bio.svelte';
-  import WithHoverCardExample from '$lib/ndk/user-profile/examples/with-hover-card.svelte';
-  import WithHoverCardExampleRaw from '$lib/ndk/user-profile/examples/with-hover-card.svelte?raw';
+  import AvatarOnlyExample from './examples/avatar-only.svelte';
+  import AvatarNameExample from './examples/avatar-name.svelte';
+  import AvatarNameHandleExample from './examples/avatar-name-handle.svelte';
+  import AvatarNameBioExample from './examples/avatar-name-bio.svelte';
+  import WithHoverCardExample from './examples/with-hover-card.svelte';
+  import WithHoverCardExampleRaw from './examples/with-hover-card.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

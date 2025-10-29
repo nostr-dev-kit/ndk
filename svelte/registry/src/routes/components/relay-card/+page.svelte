@@ -5,18 +5,18 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import BasicExample from '$lib/ndk/relay-card/examples/basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/relay-card/examples/basic.svelte?raw';
-  import WithDescriptionExample from '$lib/ndk/relay-card/examples/with-description.svelte';
-  import WithDescriptionExampleRaw from '$lib/ndk/relay-card/examples/with-description.svelte?raw';
-  import BookmarkedByExample from '$lib/ndk/relay-card/examples/bookmarked-by.svelte';
-  import BookmarkedByExampleRaw from '$lib/ndk/relay-card/examples/bookmarked-by.svelte?raw';
-  import WithBookmarkButtonExample from '$lib/ndk/relay-card/examples/with-bookmark-button.svelte';
-  import WithBookmarkButtonExampleRaw from '$lib/ndk/relay-card/examples/with-bookmark-button.svelte?raw';
-  import FullCardExample from '$lib/ndk/relay-card/examples/full-card.svelte';
-  import FullCardExampleRaw from '$lib/ndk/relay-card/examples/full-card.svelte?raw';
-  import TopRelaysExample from '$lib/ndk/relay-card/examples/top-relays.svelte';
-  import TopRelaysExampleRaw from '$lib/ndk/relay-card/examples/top-relays.svelte?raw';
+  import BasicExample from './examples/basic.svelte';
+  import BasicExampleRaw from './examples/basic.svelte?raw';
+  import WithDescriptionExample from './examples/with-description.svelte';
+  import WithDescriptionExampleRaw from './examples/with-description.svelte?raw';
+  import BookmarkedByExample from './examples/bookmarked-by.svelte';
+  import BookmarkedByExampleRaw from './examples/bookmarked-by.svelte?raw';
+  import WithBookmarkButtonExample from './examples/with-bookmark-button.svelte';
+  import WithBookmarkButtonExampleRaw from './examples/with-bookmark-button.svelte?raw';
+  import FullCardExample from './examples/full-card.svelte';
+  import FullCardExampleRaw from './examples/full-card.svelte?raw';
+  import TopRelaysExample from './examples/top-relays.svelte';
+  import TopRelaysExampleRaw from './examples/top-relays.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

@@ -12,9 +12,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils';
-  import Root from './highlight-card-root.svelte';
-  import Content from './highlight-card-content.svelte';
-  import Source from './highlight-card-source.svelte';
+  import Root from '../highlight-card/highlight-card-root.svelte';
+  import Content from '../highlight-card/highlight-card-content.svelte';
+  import Source from '../highlight-card/highlight-card-source.svelte';
   import { EventCard } from '../event-card/index.js';
 
   interface Props {

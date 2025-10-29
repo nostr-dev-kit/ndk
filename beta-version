@@ -148,7 +148,103 @@ bun cs:check || {
 }
 
 echo ""
-echo -e "${YELLOW}Step 4: Fixing package.json errors...${NC}"
+echo -e "${YELLOW}Step 4: Updating app dependencies...${NC}"
+
+# Find all package.json files that aren't part of main packages
+APP_PACKAGES=()
+while IFS= read -r pkg_json; do
+    # Extract directory path
+    dir=$(dirname "$pkg_json")
+
+    # Skip if it's one of the main packages or root
+    skip=false
+    for main_pkg in "${PACKAGES[@]}"; do
+        if [[ "$pkg_json" == "${main_pkg}/package.json" ]] || [[ "$pkg_json" == "package.json" ]]; then
+            skip=true
+            break
+        fi
+    done
+
+    if [ "$skip" = false ]; then
+        APP_PACKAGES+=("$dir")
+    fi
+done < <(find . -name "package.json" -not -path "*/node_modules/*" -not -path "*/.turbo/*" -not -path "*/dist/*")
+
+if [ ${#APP_PACKAGES[@]} -gt 0 ]; then
+    echo -e "${BLUE}Found ${#APP_PACKAGES[@]} app(s)/example(s) with package.json${NC}"
+
+    for app_dir in "${APP_PACKAGES[@]}"; do
+        PKG_JSON="${app_dir}/package.json"
+
+        if [ ! -f "$PKG_JSON" ]; then
+            continue
+        fi
+
+        # Check if this package.json has any @nostr-dev-kit dependencies
+        NDK_DEPS=$(jq -r '[
+            (.dependencies // {} | to_entries[]),
+            (.devDependencies // {} | to_entries[]),
+            (.peerDependencies // {} | to_entries[])
+        ] | map(select(.key | startswith("@nostr-dev-kit/"))) | .[] | "\(.key)|\(.value)"' "$PKG_JSON" 2>/dev/null || true)
+
+        if [ -z "$NDK_DEPS" ]; then
+            continue
+        fi
+
+        echo ""
+        echo -e "${BLUE}Checking: ${app_dir}${NC}"
+
+        UPDATED=false
+        WARNINGS=()
+
+        while IFS='|' read -r dep_name dep_version; do
+            # Skip workspace:* and file: references
+            if [[ "$dep_version" == "workspace:"* ]] || [[ "$dep_version" == "file:"* ]]; then
+                echo -e "  ${GREEN}✓${NC} ${dep_name}: ${dep_version} (local reference, skipping)"
+                continue
+            fi
+
+            # Check if it's a beta version
+            if [[ "$dep_version" =~ -beta\. ]]; then
+                # Find the corresponding package to get the new version
+                for pkg in "${PACKAGES[@]}"; do
+                    PKG_PKG_JSON="${pkg}/package.json"
+                    if [ -f "$PKG_PKG_JSON" ]; then
+                        PKG_NAME=$(jq -r '.name' "$PKG_PKG_JSON")
+                        if [ "$PKG_NAME" == "$dep_name" ]; then
+                            NEW_VERSION=$(jq -r '.version' "$PKG_PKG_JSON")
+
+                            # Update the dependency
+                            for dep_type in "dependencies" "devDependencies" "peerDependencies"; do
+                                if jq -e ".${dep_type}.\"${dep_name}\"" "$PKG_JSON" > /dev/null 2>&1; then
+                                    jq --arg dep "$dep_name" --arg version "$NEW_VERSION" \
+                                        ".${dep_type}[\$dep] = \$version" "$PKG_JSON" > "${PKG_JSON}.tmp"
+                                    mv "${PKG_JSON}.tmp" "$PKG_JSON"
+                                    echo -e "  ${GREEN}✓${NC} Updated ${dep_name}: ${dep_version} → ${NEW_VERSION}"
+                                    UPDATED=true
+                                fi
+                            done
+                            break
+                        fi
+                    fi
+                done
+            elif [[ "$dep_version" == "latest" ]] || [[ "$dep_version" == "beta" ]] || [[ "$dep_version" =~ ^[\^~]?[0-9] ]]; then
+                WARNINGS+=("${dep_name}: ${dep_version}")
+            fi
+        done <<< "$NDK_DEPS"
+
+        # Display warnings for non-beta versions
+        if [ ${#WARNINGS[@]} -gt 0 ]; then
+            echo -e "  ${YELLOW}⚠ WARNING: Non-beta dependencies found:${NC}"
+            for warning in "${WARNINGS[@]}"; do
+                echo -e "    - ${warning}"
+            done
+        fi
+    done
+fi
+
+echo ""
+echo -e "${YELLOW}Step 5: Fixing package.json errors...${NC}"
 for pkg in "${PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
         (cd "$pkg" && npm pkg fix) 2>/dev/null
@@ -157,7 +253,7 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 echo ""
-echo -e "${YELLOW}Step 5: Building all packages...${NC}"
+echo -e "${YELLOW}Step 6: Building all packages...${NC}"
 bun run build:libs
 
 echo ""
@@ -211,13 +307,13 @@ for pkg in "${PACKAGES[@]}"; do
     fi
 done
 
-echo -e "${YELLOW}Step 6: Committing changes...${NC}"
+echo -e "${YELLOW}Step 7: Committing changes...${NC}"
 git add -A
 git commit -m "chore: bump to beta.${BETA_NUM}"
 echo -e "${GREEN}✓ Changes committed${NC}"
 
 echo ""
-echo -e "${YELLOW}Step 7: Publishing to npm with beta tag...${NC}"
+echo -e "${YELLOW}Step 8: Publishing to npm with beta tag...${NC}"
 echo ""
 
 read -p "Continue with publish? (y/N) " -n 1 -r

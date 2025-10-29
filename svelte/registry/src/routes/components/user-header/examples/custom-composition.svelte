@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { UserProfile } from '../../user-profile/index.js';
-  import FollowAction from '../../actions/follow-action.svelte';
+  import { UserProfile } from '$lib/ndk/user-profile/index.js';
+  import FollowAction from '$lib/ndk/actions/follow-action.svelte';
 
   interface Props {
     ndk: NDKSvelte;

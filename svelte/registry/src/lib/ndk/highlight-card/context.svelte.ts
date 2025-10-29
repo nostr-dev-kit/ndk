@@ -1,3 +1,4 @@
+// @ndk-version: highlight-card@0.0.0
 /**
  * Context for HighlightCard components
  */

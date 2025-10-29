@@ -1,3 +1,4 @@
+<!-- @ndk-version: article-card@0.0.0 -->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';

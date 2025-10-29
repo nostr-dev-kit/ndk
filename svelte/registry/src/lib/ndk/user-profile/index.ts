@@ -1,3 +1,4 @@
+// @ndk-version: user-profile@0.0.0
 /**
  * UserProfile - Composable user profile display components
  *

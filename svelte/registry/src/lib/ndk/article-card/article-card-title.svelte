@@ -1,3 +1,4 @@
+<!-- @ndk-version: article-card@0.0.0 -->
 <!--
   @component ArticleCard.Title
   Display article title with optional line clamping

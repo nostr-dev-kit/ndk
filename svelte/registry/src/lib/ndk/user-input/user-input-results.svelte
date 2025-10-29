@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-input@0.0.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { Snippet } from 'svelte';

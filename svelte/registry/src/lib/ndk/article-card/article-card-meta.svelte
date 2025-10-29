@@ -1,3 +1,4 @@
+<!-- @ndk-version: article-card@0.0.0 -->
 <!--
   @component ArticleCard.Meta
   Display article metadata (author + date)

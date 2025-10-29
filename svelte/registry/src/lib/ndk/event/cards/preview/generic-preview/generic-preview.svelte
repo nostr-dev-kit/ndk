@@ -1,3 +1,4 @@
+<!-- @ndk-version: generic-preview@0.0.0 -->
 <!--
   @component GenericPreview - Fallback preview for unknown or unhandled event kinds
 

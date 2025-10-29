@@ -60,6 +60,15 @@ function removeVersionHeader(content: string): string {
 }
 
 /**
+ * Convert registry path to actual source path
+ * registry/ndk/event-card/... -> src/lib/ndk/event-card/...
+ */
+function convertRegistryPathToSource(registryPath: string): string {
+  // Replace "registry/" prefix with "src/lib/"
+  return registryPath.replace(/^registry\//, 'src/lib/');
+}
+
+/**
  * Add version header to a file
  */
 function addVersionHeaderToFile(
@@ -68,7 +77,10 @@ function addVersionHeaderToFile(
   version: string
 ): boolean {
   try {
-    const absolutePath = join(process.cwd(), filePath);
+    // Convert registry path to actual source path
+    const sourcePath = convertRegistryPathToSource(filePath);
+    const absolutePath = join(process.cwd(), sourcePath);
+
     const content = readFileSync(absolutePath, 'utf-8');
     const ext = extname(filePath);
 

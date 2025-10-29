@@ -1,3 +1,4 @@
+// @ndk-version: user-profile@0.0.0
 import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

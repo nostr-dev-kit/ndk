@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile@0.0.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';

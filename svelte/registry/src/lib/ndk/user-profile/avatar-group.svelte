@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile@0.0.0 -->
 <!--
   @component AvatarGroup
   Displays multiple user avatars in a stacked group with optional overflow count.

@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-header-compact@0.0.0 -->
 <!--
   @component UserHeader.Compact
   Pre-composed compact user header layout without banner.

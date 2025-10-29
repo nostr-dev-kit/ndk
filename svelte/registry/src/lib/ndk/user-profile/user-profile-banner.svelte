@@ -1,3 +1,4 @@
+<!-- @ndk-version: user-profile@0.0.0 -->
 <!--
   @component UserProfile.Banner
   Displays user banner image with gradient fallback.

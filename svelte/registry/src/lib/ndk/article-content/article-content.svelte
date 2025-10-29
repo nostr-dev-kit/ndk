@@ -1,3 +1,4 @@
+<!-- @ndk-version: article-content@0.0.0 -->
 <script lang="ts">
   import { marked } from 'marked';
   import { NDKHighlight, NDKKind, type NDKArticle } from '@nostr-dev-kit/ndk';

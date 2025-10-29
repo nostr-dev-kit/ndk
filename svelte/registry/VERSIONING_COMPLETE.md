@@ -29,13 +29,20 @@ A complete component versioning system that allows users to check for updates an
 ### 4. NPX CLI Tool
 **Location:** `cli/`
 
-A standalone npm package that users can run without installation:
+A standalone npm package that provides a unified interface for managing NDK components:
 
 ```bash
+# Add components
+npx ndk-svelte add event-card user-profile
+
+# Check for updates
 npx ndk-svelte upgrade
 ```
 
 **Features:**
+- `add` command - Install components (wraps shadcn-svelte)
+- `upgrade` command - Check for updates and upgrade
+- Lists available components
 - Scans user projects for version headers
 - Fetches latest versions from registry
 - Shows available upgrades
@@ -45,6 +52,7 @@ npx ndk-svelte upgrade
 **Files:**
 - `cli/package.json` - Package configuration
 - `cli/src/index.ts` - CLI entry point
+- `cli/src/commands/add.ts` - Add command logic
 - `cli/src/commands/upgrade.ts` - Upgrade command logic
 - `cli/README.md` - User documentation
 - `cli/PUBLISHING.md` - Publishing guide
@@ -107,6 +115,15 @@ Users can then run `npx ndk-svelte upgrade`
 
 ### For Users
 
+**Install components:**
+```bash
+# Add specific components
+npx ndk-svelte add event-card user-profile
+
+# List available components
+npx ndk-svelte add
+```
+
 **Check for updates:**
 ```bash
 npx ndk-svelte upgrade
@@ -132,8 +149,7 @@ npx ndk-svelte upgrade
      0.15.0 → 0.18.0
 
 💡 To upgrade:
-   npx shadcn-svelte@latest add event-card
-   npx shadcn-svelte@latest add user-profile
+   npx ndk-svelte add event-card user-profile
 ```
 
 **Auto-upgrade all:**

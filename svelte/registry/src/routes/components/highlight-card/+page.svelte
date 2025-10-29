@@ -2,64 +2,36 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
   import InstallCommand from '$site-components/install-command.svelte';
 
   // Import examples
   import FeedVariantExample from './examples/feed-variant.svelte';
   import FeedVariantExampleRaw from './examples/feed-variant.svelte?raw';
-  import CompactVariantExample from './examples/compact-variant.svelte';
-  import CompactVariantExampleRaw from './examples/compact-variant.svelte?raw';
-  import GridVariantExample from './examples/grid-variant.svelte';
-  import GridVariantExampleRaw from './examples/grid-variant.svelte?raw';
   import CustomCompositionExample from './examples/custom-composition.svelte';
   import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Create a mock highlight event for demo purposes
-  const mockHighlightEvent = $state(
-    new NDKEvent(ndk, {
-      kind: 9802,
-      pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52', // pablo
-      created_at: Math.floor(Date.now() / 1000) - 3600, // 1 hour ago
-      content:
-        'The most important thing is to keep the most important thing the most important thing.',
-      tags: [
-        [
-          'context',
-          'In productivity, we often get distracted by urgent but unimportant tasks. The most important thing is to keep the most important thing the most important thing. This requires constant vigilance and prioritization.',
-        ],
-        ['r', 'https://example.com/article-about-productivity'],
-      ],
-    })
+  let highlightContent = $state<string>(
+    'The most important thing is to keep the most important thing the most important thing.'
   );
+  let highlightContext = $state<string>(
+    'In productivity, we often get distracted by urgent but unimportant tasks. The most important thing is to keep the most important thing the most important thing. This requires constant vigilance and prioritization.'
+  );
+  let highlightUrl = $state<string>('https://example.com/article-about-productivity');
 
-  // Create a mock highlight with article reference
-  const mockArticleHighlightEvent = $state(
+  const mockHighlightEvent = $derived(
     new NDKEvent(ndk, {
       kind: 9802,
       pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-      created_at: Math.floor(Date.now() / 1000) - 7200, // 2 hours ago
-      content: 'Nostr is a simple, open protocol that enables global, decentralized social media.',
+      created_at: Math.floor(Date.now() / 1000) - 3600,
+      content: highlightContent,
       tags: [
-        [
-          'context',
-          'What is Nostr? Nostr is a simple, open protocol that enables global, decentralized social media. The protocol is based on very simple events that are passed around.',
-        ],
-        ['a', '30023:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:nostr-intro'],
+        ['context', highlightContext],
+        ['r', highlightUrl],
       ],
-    })
-  );
-
-  // Short highlight for grid demo
-  const mockShortHighlight = $state(
-    new NDKEvent(ndk, {
-      kind: 9802,
-      pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-      created_at: Math.floor(Date.now() / 1000) - 86400, // 1 day ago
-      content: 'Freedom of speech is essential for innovation.',
-      tags: [['r', 'https://example.com/freedom-of-speech']],
     })
   );
 </script>
@@ -72,6 +44,12 @@
       layouts. Automatically extracts and displays source references.
     </p>
 
+    <EditProps.Root>
+      <EditProps.Prop name="Highlight content" type="text" bind:value={highlightContent} />
+      <EditProps.Prop name="Context text" type="text" bind:value={highlightContext} />
+      <EditProps.Prop name="Source URL" type="text" bind:value={highlightUrl} />
+    </EditProps.Root>
+
     <div class="border border-border rounded-lg p-6 bg-card mt-6">
       <h2 class="text-xl font-semibold mb-3">Installation</h2>
       <InstallCommand
@@ -81,7 +59,9 @@
     </div>
   </header>
 
-  <section class="demo">
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+
     <CodePreview
       title="Feed Variant"
       description="Full-width card with header, large highlighted text in a book-page style, source badge, and action buttons. Best for main feed displays."
@@ -89,33 +69,7 @@
     >
       <FeedVariantExample {ndk} event={mockHighlightEvent} />
     </CodePreview>
-  </section>
 
-  <section class="demo">
-    <CodePreview
-      title="Compact Variant"
-      description="Streamlined layout with left marker line and inline metadata. Good for sidebars or dense list views."
-      code={CompactVariantExampleRaw}
-    >
-      <CompactVariantExample {ndk} event={mockArticleHighlightEvent} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <CodePreview
-      title="Grid Variant"
-      description="Square aspect ratio card with icon and source badge. Perfect for grid layouts and discovery views."
-      code={GridVariantExampleRaw}
-    >
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <GridVariantExample {ndk} event={mockShortHighlight} />
-        <GridVariantExample {ndk} event={mockArticleHighlightEvent} />
-        <GridVariantExample {ndk} event={mockHighlightEvent} />
-      </div>
-    </CodePreview>
-  </section>
-
-  <section class="demo">
     <CodePreview
       title="Custom Composition"
       description="Build your own layout using HighlightCard.Root and child components."

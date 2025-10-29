@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
@@ -8,15 +9,11 @@
   import FullVariantExampleRaw from './examples/full-variant.svelte?raw';
   import CenteredVariantExample from './examples/centered-variant.svelte';
   import CenteredVariantExampleRaw from './examples/centered-variant.svelte?raw';
-  import OwnProfileFullExample from './examples/own-profile-full.svelte';
-  import OwnProfileFullExampleRaw from './examples/own-profile-full.svelte?raw';
-  import CustomCompositionExample from './examples/custom-composition.svelte';
-  import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc'); // pablo
-  let examplePubkey = $state('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52'); // default
+  let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc');
+  let examplePubkey = $state('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
 
   $effect(() => {
     ndk.fetchUser(npubInput).then(user => {
@@ -33,147 +30,31 @@
   <header>
     <h1>UserHeader</h1>
     <p>User profile header components for displaying user information at the top of profile pages.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="User npub" type="text" bind:value={npubInput} />
+    </EditProps.Root>
   </header>
 
-  <section class="controls">
-    <label>
-      <span class="label-text">Test with different user (npub):</span>
-      <input
-        type="text"
-        bind:value={npubInput}
-        placeholder="npub1..."
-        class="npub-input"
-      />
-    </label>
-  </section>
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-  <h2 class="section-title">Components</h2>
-
-  <section class="demo">
     <CodePreview
       title="Full Variant (Inline Layout)"
       description="Profile header with banner and inline layout. Avatar and info are side-by-side with follow button on the right. Best for dedicated profile pages."
       component="user-header-full"
-      code={`<UserProfile.Root {ndk} {user}>
-  <UserProfile.Banner />
-
-  <div class="px-6 pb-4">
-    <div class="flex gap-4 items-start -mt-16 mb-4">
-      <UserProfile.Avatar size={128} class="border-4 border-white rounded-full" />
-      <div class="flex-1" />
-      <div class="mt-16">
-        <FollowAction {ndk} target={user} variant="primary" />
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-4">
-      <UserProfile.Name class="text-3xl font-bold" />
-      <UserProfile.Bio class="text-muted-foreground" />
-    </div>
-  </div>
-</UserProfile.Root>`}
+      code={FullVariantExampleRaw}
     >
       <FullVariantExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
-  </section>
 
-  <section class="demo">
     <CodePreview
       title="Centered Variant"
       description="Profile header with banner and centered layout. Everything is centered with follow button below avatar. Great for profile modals or focused profile views."
       component="user-header-centered"
-      code={`<UserProfile.Root {ndk} {user}>
-  <UserProfile.Banner />
-
-  <div class="px-6 pb-6">
-    <div class="flex flex-col items-center -mt-16">
-      <UserProfile.Avatar size={128} class="border-4 border-white rounded-full mb-4" />
-      <UserProfile.Name class="text-3xl font-bold mb-2" />
-      <UserProfile.Nip05 class="text-sm text-muted-foreground mb-4" />
-      <UserProfile.Bio class="text-center text-muted-foreground mb-4" />
-      <FollowAction {ndk} target={user} variant="primary" />
-    </div>
-  </div>
-</UserProfile.Root>`}
+      code={CenteredVariantExampleRaw}
     >
       <CenteredVariantExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
-  </section>
-
-  <section class="usage">
-    <h2>Usage</h2>
-    <p class="usage-description">Build custom user headers by composing UserProfile components.</p>
-
-    <h3>Full Variant (Inline Layout)</h3>
-    <CodePreview
-      code={`<UserProfile.Root {ndk} {user}>
-  <UserProfile.Banner />
-
-  <div class="px-6 pb-4">
-    <div class="flex gap-4 items-start -mt-16 mb-4">
-      <UserProfile.Avatar size={128} class="border-4 border-white rounded-full" />
-      <div class="flex-1" />
-      <div class="mt-16">
-        <FollowAction {ndk} target={user} variant="primary" />
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-4">
-      <UserProfile.Name class="text-3xl font-bold" />
-      <UserProfile.Bio class="text-muted-foreground" />
-    </div>
-  </div>
-</UserProfile.Root>`}
-    />
-
-    <h3>Centered Layout</h3>
-    <CodePreview
-      code={`<UserProfile.Root {ndk} {user}>
-  <UserProfile.Banner />
-
-  <div class="px-6 pb-6">
-    <div class="flex flex-col items-center -mt-16">
-      <UserProfile.Avatar size={128} class="border-4 border-white rounded-full mb-4" />
-      <UserProfile.Name class="text-3xl font-bold mb-2" />
-      <UserProfile.Nip05 class="text-sm text-muted-foreground mb-4" />
-      <UserProfile.Bio class="text-center text-muted-foreground mb-4" />
-      <FollowAction {ndk} target={user} variant="primary" />
-    </div>
-  </div>
-</UserProfile.Root>`}
-    />
-
-    <h2>Props</h2>
-    <h3>UserHeader.Full / UserHeader.Centered</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Prop</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ndk</code></td>
-          <td><code>NDKSvelte</code></td>
-          <td>-</td>
-          <td>NDK instance (required)</td>
-        </tr>
-        <tr>
-          <td><code>user</code></td>
-          <td><code>NDKUser</code></td>
-          <td>-</td>
-          <td>User instance (required)</td>
-        </tr>
-        <tr>
-          <td><code>isOwnProfile</code></td>
-          <td><code>boolean</code></td>
-          <td><code>false</code></td>
-          <td>Whether this is the current user's profile (hides Follow button)</td>
-        </tr>
-      </tbody>
-    </table>
   </section>
 </div>

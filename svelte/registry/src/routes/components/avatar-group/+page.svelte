@@ -1,6 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createAvatarGroup } from '@nostr-dev-kit/svelte';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
@@ -8,23 +10,12 @@
   import BasicExampleRaw from './examples/basic.svelte?raw';
   import WithOverflowExample from './examples/with-overflow.svelte';
   import WithOverflowExampleRaw from './examples/with-overflow.svelte?raw';
-  import SpacingVariantsExample from './examples/spacing-variants.svelte';
-  import SpacingVariantsExampleRaw from './examples/spacing-variants.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Example pubkeys (nostr developers)
-  const examplePubkeys = [
-    'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52', // pablo
-    '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2', // jack
-    'c4eabae1be3cf657bc1855ee05e69de9f059cb7a059227168b80b89761cbc4e0', // fiatjaf
-    '472f440f29ef996e92a186b8d320ff180c855903882e59d50de1b8bd5669301e', // Marty Bent
-    '91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832', // Lyn Alden
-    'c48e29f04b482cc01ca1f9ef8c86ef8318c059e0e9353235162f080f26e14c11', // Walker
-    '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d', // Gigi
-  ];
+  let maxAvatars = $state<number>(5);
 
-  const manyPubkeys = [
+  const examplePubkeys = [
     'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
     '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
     'c4eabae1be3cf657bc1855ee05e69de9f059cb7a059227168b80b89761cbc4e0',
@@ -39,38 +30,31 @@
   <header>
     <h1>AvatarGroup</h1>
     <p>Display multiple user avatars in a stacked group with smart ordering based on follows.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="Max avatars" type="number" bind:value={maxAvatars} />
+    </EditProps.Root>
   </header>
 
-  <section class="demo">
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+
     <CodePreview
       title="Basic"
-      description="Simple avatar group showing multiple users."
+      description="Simple avatar group showing multiple users with smart ordering. Users you follow appear first."
       component="avatar-group"
       code={BasicExampleRaw}
     >
       <BasicExample {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
     </CodePreview>
-  </section>
 
-  <section class="demo">
     <CodePreview
       title="With Overflow"
-      description="Shows overflow count when there are more users than max."
+      description="Shows overflow count when there are more users than max. Adjust the max avatars field above to see the effect."
       component="avatar-group"
       code={WithOverflowExampleRaw}
     >
-      <WithOverflowExample {ndk} pubkeys={manyPubkeys} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <CodePreview
-      title="Spacing Variants"
-      description="Different spacing options for avatar overlap."
-      component="avatar-group"
-      code={SpacingVariantsExampleRaw}
-    >
-      <SpacingVariantsExample {ndk} pubkeys={examplePubkeys.slice(0, 4)} />
+      <WithOverflowExample {ndk} pubkeys={examplePubkeys} max={maxAvatars} />
     </CodePreview>
   </section>
 

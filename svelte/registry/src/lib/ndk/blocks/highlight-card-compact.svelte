@@ -13,9 +13,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
-  import Root from './highlight-card-root.svelte';
-  import Content from './highlight-card-content.svelte';
-  import { HIGHLIGHT_CARD_CONTEXT_KEY, type HighlightCardContext } from './context.svelte.js';
+  import Root from '../highlight-card/highlight-card-root.svelte';
+  import Content from '../highlight-card/highlight-card-content.svelte';
+  import { HIGHLIGHT_CARD_CONTEXT_KEY, type HighlightCardContext } from '../highlight-card/context.svelte.js';
 
   interface Props {
     /** NDK instance */

@@ -148,7 +148,16 @@ bun cs:check || {
 }
 
 echo ""
-echo -e "${YELLOW}Step 4: Building all packages...${NC}"
+echo -e "${YELLOW}Step 4: Fixing package.json errors...${NC}"
+for pkg in "${PACKAGES[@]}"; do
+    if [ -d "$pkg" ]; then
+        (cd "$pkg" && npm pkg fix) 2>/dev/null
+        echo -e "  ${GREEN}✓${NC} Fixed ${pkg}/package.json"
+    fi
+done
+
+echo ""
+echo -e "${YELLOW}Step 5: Building all packages...${NC}"
 bun run build:libs
 
 echo ""
@@ -202,13 +211,13 @@ for pkg in "${PACKAGES[@]}"; do
     fi
 done
 
-echo -e "${YELLOW}Step 5: Committing changes...${NC}"
+echo -e "${YELLOW}Step 6: Committing changes...${NC}"
 git add -A
 git commit -m "chore: bump to beta.${BETA_NUM}"
 echo -e "${GREEN}✓ Changes committed${NC}"
 
 echo ""
-echo -e "${YELLOW}Step 6: Publishing to npm with beta tag...${NC}"
+echo -e "${YELLOW}Step 7: Publishing to npm with beta tag...${NC}"
 echo ""
 
 read -p "Continue with publish? (y/N) " -n 1 -r

@@ -4,26 +4,26 @@
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import CodePreview from '$site-components/code-preview.svelte';
 
-  import BasicExample from '$lib/ndk/event-content/examples/basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/event-content/examples/basic.svelte?raw';
+  import BasicExample from './examples/basic.svelte';
+  import BasicExampleRaw from './examples/basic.svelte?raw';
 
-  import WithEmojisExample from '$lib/ndk/event-content/examples/with-emojis.svelte';
-  import WithEmojisExampleRaw from '$lib/ndk/event-content/examples/with-emojis.svelte?raw';
+  import WithEmojisExample from './examples/with-emojis.svelte';
+  import WithEmojisExampleRaw from './examples/with-emojis.svelte?raw';
 
-  import WithMediaExample from '$lib/ndk/event-content/examples/with-media.svelte';
-  import WithMediaExampleRaw from '$lib/ndk/event-content/examples/with-media.svelte?raw';
+  import WithMediaExample from './examples/with-media.svelte';
+  import WithMediaExampleRaw from './examples/with-media.svelte?raw';
 
-  import CustomSnippetsExample from '$lib/ndk/event-content/examples/custom-snippets.svelte';
-  import CustomSnippetsExampleRaw from '$lib/ndk/event-content/examples/custom-snippets.svelte?raw';
+  import CustomSnippetsExample from './examples/custom-snippets.svelte';
+  import CustomSnippetsExampleRaw from './examples/custom-snippets.svelte?raw';
 
-  import CustomLinksExample from '$lib/ndk/event-content/examples/custom-links.svelte';
-  import CustomLinksExampleRaw from '$lib/ndk/event-content/examples/custom-links.svelte?raw';
+  import CustomLinksExample from './examples/custom-links.svelte';
+  import CustomLinksExampleRaw from './examples/custom-links.svelte?raw';
 
-  import PlainTextExample from '$lib/ndk/event-content/examples/plain-text.svelte';
-  import PlainTextExampleRaw from '$lib/ndk/event-content/examples/plain-text.svelte?raw';
+  import PlainTextExample from './examples/plain-text.svelte';
+  import PlainTextExampleRaw from './examples/plain-text.svelte?raw';
 
-  import TruncatedExample from '$lib/ndk/event-content/examples/truncated.svelte';
-  import TruncatedExampleRaw from '$lib/ndk/event-content/examples/truncated.svelte?raw';
+  import TruncatedExample from './examples/truncated.svelte';
+  import TruncatedExampleRaw from './examples/truncated.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

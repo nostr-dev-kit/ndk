@@ -4,14 +4,14 @@
   import { createThreadView } from '@nostr-dev-kit/svelte';
   import CodePreview from '$site-components/code-preview.svelte';
 
-  import ThreadCompleteExample from '$lib/ndk/event-card/examples/thread-complete.svelte';
-  import ThreadCompleteExampleRaw from '$lib/ndk/event-card/examples/thread-complete.svelte?raw';
+  import ThreadCompleteExample from './examples/thread-complete.svelte';
+  import ThreadCompleteExampleRaw from './examples/thread-complete.svelte?raw';
 
-  import ThreadLinesExample from '$lib/ndk/event-card/examples/thread-lines.svelte';
-  import ThreadLinesExampleRaw from '$lib/ndk/event-card/examples/thread-lines.svelte?raw';
+  import ThreadLinesExample from './examples/thread-lines.svelte';
+  import ThreadLinesExampleRaw from './examples/thread-lines.svelte?raw';
 
-  import ThreadCompactExample from '$lib/ndk/event-card/examples/thread-compact.svelte';
-  import ThreadCompactExampleRaw from '$lib/ndk/event-card/examples/thread-compact.svelte?raw';
+  import ThreadCompactExample from './examples/thread-compact.svelte';
+  import ThreadCompactExampleRaw from './examples/thread-compact.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

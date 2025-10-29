@@ -4,12 +4,12 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import BasicExample from '$lib/ndk/avatar-group/examples/basic.svelte';
-  import BasicExampleRaw from '$lib/ndk/avatar-group/examples/basic.svelte?raw';
-  import WithOverflowExample from '$lib/ndk/avatar-group/examples/with-overflow.svelte';
-  import WithOverflowExampleRaw from '$lib/ndk/avatar-group/examples/with-overflow.svelte?raw';
-  import SpacingVariantsExample from '$lib/ndk/avatar-group/examples/spacing-variants.svelte';
-  import SpacingVariantsExampleRaw from '$lib/ndk/avatar-group/examples/spacing-variants.svelte?raw';
+  import BasicExample from './examples/basic.svelte';
+  import BasicExampleRaw from './examples/basic.svelte?raw';
+  import WithOverflowExample from './examples/with-overflow.svelte';
+  import WithOverflowExampleRaw from './examples/with-overflow.svelte?raw';
+  import SpacingVariantsExample from './examples/spacing-variants.svelte';
+  import SpacingVariantsExampleRaw from './examples/spacing-variants.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

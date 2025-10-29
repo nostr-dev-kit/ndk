@@ -3,14 +3,14 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import CodePreview from '$site-components/code-preview.svelte';
 
-  import BuilderBasic from '$lib/ndk/user-input/examples/builder-basic.svelte';
-  import BuilderBasicRaw from '$lib/ndk/user-input/examples/builder-basic.svelte?raw';
+  import BuilderBasic from './examples/builder-basic.svelte';
+  import BuilderBasicRaw from './examples/builder-basic.svelte?raw';
 
-  import ComposableParts from '$lib/ndk/user-input/examples/composable-parts.svelte';
-  import ComposablePartsRaw from '$lib/ndk/user-input/examples/composable-parts.svelte?raw';
+  import ComposableParts from './examples/composable-parts.svelte';
+  import ComposablePartsRaw from './examples/composable-parts.svelte?raw';
 
-  import WithSelection from '$lib/ndk/user-input/examples/with-selection.svelte';
-  import WithSelectionRaw from '$lib/ndk/user-input/examples/with-selection.svelte?raw';
+  import WithSelection from './examples/with-selection.svelte';
+  import WithSelectionRaw from './examples/with-selection.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>

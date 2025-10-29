@@ -13,11 +13,11 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Root from '../article-card-root.svelte';
-  import Image from '../article-card-image.svelte';
-  import Title from '../article-card-title.svelte';
-  import Summary from '../article-card-summary.svelte';
-  import Meta from '../article-card-meta.svelte';
+  import Root from '../article-card/article-card-root.svelte';
+  import Image from '../article-card/article-card-image.svelte';
+  import Title from '../article-card/article-card-title.svelte';
+  import Summary from '../article-card/article-card-summary.svelte';
+  import Meta from '../article-card/article-card-meta.svelte';
   import { ReactionAction, ReplyAction } from '$lib/ndk/actions';
   import { cn } from '$lib/utils';
 

@@ -57,7 +57,7 @@ export {
 export type { EventCardContext } from './context.svelte.js';
 export type { ThreadingMetadata } from '@nostr-dev-kit/svelte';
 
-// Re-export preset components once created
-// export { default as SimpleEventCard } from './presets/simple-event-card.svelte';
-// export { default as ThreadEventCard } from './presets/thread-event-card.svelte';
-// export { default as CompactEventCard } from './presets/compact-event-card.svelte';
+// Re-export preset components (blocks)
+export { default as SimpleEventCard } from '../blocks/simple-event-card.svelte';
+// export { default as ThreadEventCard } from '../blocks/thread-event-card.svelte';
+// export { default as CompactEventCard } from '../blocks/compact-event-card.svelte';

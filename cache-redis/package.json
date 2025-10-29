@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/cache-redis",
-  "version": "0.1.52-beta.18",
+  "version": "0.1.52-beta.19",
   "description": "NDK Redis Cache Adapter",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,7 +15,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.18",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.19",
     "ioredis": "^5.0.0"
   },
   "devDependencies": {
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nostr-dev-kit/ndk"
+    "url": "git+https://github.com/nostr-dev-kit/ndk.git"
   },
   "keywords": [
     "nostr",

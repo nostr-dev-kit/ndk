@@ -29,9 +29,9 @@
 import Root from './highlight-card-root.svelte';
 import Content from './highlight-card-content.svelte';
 import Source from './highlight-card-source.svelte';
-import Feed from './highlight-card-feed.svelte';
-import Compact from './highlight-card-compact.svelte';
-import Grid from './highlight-card-grid.svelte';
+import Feed from '../blocks/highlight-card-feed.svelte';
+import Compact from '../blocks/highlight-card-compact.svelte';
+import Grid from '../blocks/highlight-card-grid.svelte';
 
 export const HighlightCard = {
   Root,

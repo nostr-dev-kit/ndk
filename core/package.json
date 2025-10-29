@@ -1,12 +1,12 @@
 {
   "name": "@nostr-dev-kit/ndk",
-  "version": "3.0.0-beta.18",
+  "version": "3.0.0-beta.19",
   "description": "NDK - Nostr Development Kit. Includes AI Guardrails to catch common mistakes during development.",
   "homepage": "https://ndk.fyi",
   "documentation": "https://nostr-dev-kit.github.io/ndk",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nostr-dev-kit/ndk"
+    "url": "git+https://github.com/nostr-dev-kit/ndk.git"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

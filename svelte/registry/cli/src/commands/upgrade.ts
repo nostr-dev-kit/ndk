@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'fs';
+import { readFileSync, readdirSync, writeFileSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 import { execSync } from 'child_process';
 
@@ -146,6 +146,31 @@ function compareVersions(current: string, latest: string): number {
 }
 
 /**
+ * Ensure components.json has the correct registry URL
+ */
+function ensureComponentsConfig(registryUrl: string): void {
+  if (!existsSync('components.json')) {
+    console.error('❌ No components.json found.');
+    console.error('   Run `npx ndk-svelte init` first to initialize your project.\n');
+    process.exit(1);
+  }
+
+  try {
+    const config = JSON.parse(readFileSync('components.json', 'utf-8'));
+
+    // Check if registry URL needs updating
+    if (config.registry !== registryUrl) {
+      config.registry = registryUrl;
+      writeFileSync('components.json', JSON.stringify(config, null, 2));
+      console.log(`📝 Updated registry URL to ${registryUrl}\n`);
+    }
+  } catch (error) {
+    console.error('❌ Failed to read/update components.json');
+    process.exit(1);
+  }
+}
+
+/**
  * Upgrade a component using shadcn-svelte
  */
 function upgradeComponent(componentName: string): boolean {
@@ -173,10 +198,13 @@ interface UpgradeOptions {
  */
 export async function upgrade(options: UpgradeOptions) {
   const autoUpgrade = options.yes || false;
-  const registryUrl = options.registry || 'https://ndk.fyi';
+  const registryUrl = options.registry || 'https://shadcn.ndk.fyi';
 
   console.log('\n🚀 NDK Svelte Component Upgrade Tool\n');
   console.log('━'.repeat(50));
+
+  // Ensure components.json has correct registry URL
+  ensureComponentsConfig(registryUrl);
 
   // Scan for installed components
   const installed = scanForInstalledComponents();

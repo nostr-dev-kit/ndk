@@ -46,12 +46,12 @@ export async function init(options: InitOptions) {
     const config = JSON.parse(readFileSync('components.json', 'utf-8'));
 
     // Update registry URL
-    config.registry = 'https://ndk.fyi';
+    config.registry = 'https://shadcn.ndk.fyi';
 
     // Write updated config
     writeFileSync('components.json', JSON.stringify(config, null, 2));
 
-    console.log('✅ Updated registry URL to https://ndk.fyi\n');
+    console.log('✅ Updated registry URL to https://shadcn.ndk.fyi\n');
     console.log('━'.repeat(50));
     console.log('\n✅ Project initialized successfully!\n');
     console.log('Next steps:');

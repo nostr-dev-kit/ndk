@@ -55,12 +55,12 @@ export interface BookmarkedRelayListConfig {
  * ```ts
  * // NDK from context - Track follows' bookmarked relays (reactive)
  * const bookmarks = createBookmarkedRelayList(() => ({
- *   authors: Array.from(ndk.$sessions?.follows || [])
+ *   authors: ndk.$follows
  * }));
  *
  * // Or with explicit NDK
  * const bookmarks = createBookmarkedRelayList(() => ({
- *   authors: Array.from(ndk.$sessions?.follows || [])
+ *   authors: ndk.$follows
  * }), ndk);
  *
  * console.log(bookmarks.relays); // Array of relays with stats
@@ -69,7 +69,7 @@ export interface BookmarkedRelayListConfig {
  *
  * // Exclude current user
  * const bookmarksWithoutUser = createBookmarkedRelayList(() => ({
- *   authors: Array.from(ndk.$sessions?.follows || []),
+ *   authors: ndk.$follows,
  *   includeCurrentUser: false
  * }));
  *

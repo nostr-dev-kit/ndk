@@ -29,7 +29,7 @@ interface InstalledComponent {
  * Fetch the latest version manifest from the registry
  */
 async function fetchVersionManifest(): Promise<VersionManifest> {
-  const response = await fetch('https://ndk.fyi/versions.json');
+  const response = await fetch('https://shadcn.ndk.fyi/versions.json');
   return response.json();
 }
 

@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, writeFileSync } from 'fs';
 
 interface AddOptions {
   all?: boolean;
@@ -64,6 +64,31 @@ function checkSvelteProject(): boolean {
 }
 
 /**
+ * Ensure components.json has the correct registry URL
+ */
+function ensureComponentsConfig(registryUrl: string): void {
+  if (!existsSync('components.json')) {
+    console.error('❌ No components.json found.');
+    console.error('   Run `npx ndk-svelte init` first to initialize your project.\n');
+    process.exit(1);
+  }
+
+  try {
+    const config = JSON.parse(readFileSync('components.json', 'utf-8'));
+
+    // Check if registry URL needs updating
+    if (config.registry !== registryUrl) {
+      config.registry = registryUrl;
+      writeFileSync('components.json', JSON.stringify(config, null, 2));
+      console.log(`📝 Updated registry URL to ${registryUrl}\n`);
+    }
+  } catch (error) {
+    console.error('❌ Failed to read/update components.json');
+    process.exit(1);
+  }
+}
+
+/**
  * Install a component using shadcn-svelte
  */
 function installComponent(
@@ -107,7 +132,10 @@ export async function add(
     return;
   }
 
-  const registryUrl = options.registry || 'https://ndk.fyi';
+  const registryUrl = options.registry || 'https://shadcn.ndk.fyi';
+
+  // Ensure components.json has correct registry URL
+  ensureComponentsConfig(registryUrl);
 
   // If no components specified and not --all, show help
   if (components.length === 0 && !options.all) {

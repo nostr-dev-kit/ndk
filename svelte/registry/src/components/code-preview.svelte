@@ -81,7 +81,7 @@
 
 	<div class="content">
 		{#if activeTab === 'preview'}
-			<div class="preview">
+			<div class="preview bg-background">
 				{@render children?.()}
 			</div>
 		{:else if activeTab === 'install' && component}

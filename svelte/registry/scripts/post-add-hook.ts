@@ -34,7 +34,7 @@ interface ComponentLockfile {
 }
 
 const LOCKFILE_PATH = join(process.cwd(), 'components.lock.json');
-const REGISTRY_URL = 'https://ndk.fyi';
+const REGISTRY_URL = 'https://shadcn.ndk.fyi';
 
 /**
  * Fetch component info from registry
@@ -87,7 +87,7 @@ function getLockfile(): ComponentLockfile {
 
   // Create new lockfile
   return {
-    $schema: 'https://ndk.fyi/schema/components-lock.json',
+    $schema: 'https://shadcn.ndk.fyi/schema/components-lock.json',
     registry: {
       name: 'ndk-svelte',
       url: REGISTRY_URL,

@@ -13,11 +13,20 @@ export interface RelayInfoState {
 const relayInfoCache = new SvelteMap<string, { info: NDKRelayInformation; timestamp: number }>();
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
-async function fetchRelayInfo(relayUrl: string): Promise<NDKRelayInformation> {
+// Track in-flight requests to prevent duplicates
+const inFlightRequests = new Map<string, Promise<NDKRelayInformation>>();
+
+async function fetchRelayInfo(relayUrl: string, signal?: AbortSignal): Promise<NDKRelayInformation> {
     // Check cache first
     const cached = relayInfoCache.get(relayUrl);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
         return cached.info;
+    }
+
+    // Check if there's already an in-flight request for this URL
+    const existingRequest = inFlightRequests.get(relayUrl);
+    if (existingRequest) {
+        return existingRequest;
     }
 
     // Convert ws/wss URL to http/https for NIP-11
@@ -28,36 +37,51 @@ async function fetchRelayInfo(relayUrl: string): Promise<NDKRelayInformation> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-    try {
-        const response = await fetch(httpUrl, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/nostr+json'
-            },
-            signal: controller.signal,
-            mode: 'cors'
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Cache the result
-        relayInfoCache.set(relayUrl, { info: data, timestamp: Date.now() });
-        return data;
-    } catch (err) {
-        clearTimeout(timeoutId);
-
-        // Cache empty result to prevent hammering
-        const emptyInfo = {};
-        relayInfoCache.set(relayUrl, { info: emptyInfo, timestamp: Date.now() });
-
-        throw err;
+    // Chain the external signal if provided
+    if (signal) {
+        signal.addEventListener('abort', () => controller.abort());
     }
+
+    const requestPromise = (async () => {
+        try {
+            const response = await fetch(httpUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/nostr+json'
+                },
+                signal: controller.signal,
+                mode: 'cors'
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Cache the result
+            relayInfoCache.set(relayUrl, { info: data, timestamp: Date.now() });
+            return data;
+        } catch (err) {
+            clearTimeout(timeoutId);
+
+            // Only cache errors if not aborted
+            if (!(err instanceof Error && err.name === 'AbortError')) {
+                const emptyInfo = {};
+                relayInfoCache.set(relayUrl, { info: emptyInfo, timestamp: Date.now() });
+            }
+
+            throw err;
+        } finally {
+            // Remove from in-flight requests
+            inFlightRequests.delete(relayUrl);
+        }
+    })();
+
+    inFlightRequests.set(relayUrl, requestPromise);
+    return requestPromise;
 }
 
 export interface RelayInfoConfig {
@@ -90,21 +114,32 @@ export function createRelayInfo(
     let loading = $state(true);
     let error = $state<Error | null>(null);
 
-    // Fetch NIP-11 info reactively
+    // Fetch NIP-11 info reactively with proper cleanup
     $effect(() => {
         const url = normalizedUrl;
+        const controller = new AbortController();
+
         loading = true;
         error = null;
 
-        fetchRelayInfo(url)
+        fetchRelayInfo(url, controller.signal)
             .then(info => {
-                nip11 = info;
-                loading = false;
+                if (!controller.signal.aborted) {
+                    nip11 = info;
+                    loading = false;
+                }
             })
             .catch(err => {
-                error = err;
-                loading = false;
+                if (!controller.signal.aborted) {
+                    error = err;
+                    loading = false;
+                }
             });
+
+        // Cleanup: abort fetch if effect re-runs or component unmounts
+        return () => {
+            controller.abort();
+        };
     });
 
     return {

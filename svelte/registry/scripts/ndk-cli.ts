@@ -117,7 +117,7 @@ Examples:
   ndk-svelte check-updates
   ndk-svelte list
 
-For more information, visit: https://ndk.fyi
+For more information, visit: https://shadcn.ndk.fyi
   `);
 }
 

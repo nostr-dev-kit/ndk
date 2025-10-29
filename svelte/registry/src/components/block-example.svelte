@@ -91,7 +91,7 @@
 
 	<div class="content">
 		{#if activeTab === 'preview'}
-			<div class="preview-container">
+			<div class="bg-background">
 				{#if controls}
 					<div class="preview-controls">
 						{@render controls()}
@@ -205,10 +205,6 @@
 	.tab.active {
 		color: var(--color-primary);
 		border-bottom-color: var(--color-primary);
-	}
-
-	.content {
-		min-height: 200px;
 	}
 
 	.preview-container {

@@ -11,8 +11,6 @@ export interface BookmarkedRelayWithStats {
     url: string;
     /** Number of authors who have bookmarked this relay */
     count: number;
-    /** Percentage of authors who have bookmarked this relay */
-    percentage: number;
     /** Pubkeys of authors who have bookmarked this relay */
     pubkeys: string[];
     /** Whether current user has bookmarked this relay (only when includesCurrentUser=true) */
@@ -162,7 +160,6 @@ export function createBookmarkedRelayList(
             .map(([url, data]) => ({
                 url,
                 count: data.count,
-                percentage: totalAuthors > 0 ? (data.count / totalAuthors) * 100 : 0,
                 pubkeys: Array.from(data.pubkeys),
                 isBookmarkedByCurrentUser: includesCurrentUser && resolvedNDK.$currentUser?.pubkey
                     ? data.pubkeys.has(resolvedNDK.$currentUser.pubkey)

@@ -27,10 +27,10 @@
 		/** Relay WebSocket URL */
 		relayUrl: string;
 
-		/** Card width (default: 280px) */
+		/** Card width (default: 360px) */
 		width?: string;
 
-		/** Card height (default: 360px) */
+		/** Card height (default: 420px) */
 		height?: string;
 
 		/** Click handler */
@@ -43,7 +43,7 @@
 	let {
 		ndk,
 		relayUrl,
-		width = 'w-[280px]',
+		width = 'w-[220px]',
 		height = 'h-[320px]',
 		onclick,
 		class: className = ''
@@ -73,14 +73,14 @@
 		type="button"
 		onclick={handleClick}
 		class={cn(
-			'relay-card-portrait',
 			'group flex flex-col',
-			'rounded-2xl overflow-hidden',
+			'rounded-2xl',
 			'bg-card hover:bg-muted',
 			'border border-border',
 			'transition-all duration-300',
-			'hover:scale-[1.02] hover:shadow-lg',
 			'text-left relative',
+			'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.06)]',
+			'overflow-hidden',
 			width,
 			height,
 			className
@@ -115,23 +115,25 @@
 		</div>
 
 		<!-- Content -->
-		<div class="relative z-[1] px-4 pb-4 flex flex-col flex-1 min-h-0 text-center">
-			<div class="relative z-[1]">
+		<div class="relative z-[1] px-6 pb-6 flex flex-col flex-1 min-h-0 text-center">
+			<div class="relative z-[1] flex flex-col flex-1">
 				<!-- Name -->
-				<Name class="text-base font-semibold mb-1" />
+				<Name class="text-lg font-semibold mb-1" />
 
 				<!-- URL -->
-				<Url class="text-xs text-muted-foreground mb-3" showProtocol={false} />
+				<Url class="text-sm text-muted-foreground mb-3" showProtocol={false} />
 
 				<!-- Description -->
-				<Description maxLines={3} class="text-xs leading-relaxed" />
+				<Description maxLines={3} class="text-sm leading-relaxed mb-4" />
 
-				<!-- Browse indicator -->
-				<div class="mt-3 pt-3 flex items-center justify-center gap-1 text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-					<span>Browse</span>
-					<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-					</svg>
+				<!-- Browse button - always visible, at bottom -->
+				<div class="mt-auto pt-4 border-t border-border/50">
+					<div class="flex items-center justify-center gap-1 text-sm text-primary">
+						<span>Browse</span>
+						<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						</svg>
+					</div>
 				</div>
 			</div>
 		</div>

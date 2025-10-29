@@ -87,7 +87,7 @@
 			>
 				<div class="flex gap-6 overflow-x-auto pb-4">
 					{#each displayRelays as relayUrl}
-						<RelayCardPortrait {ndk} {relayUrl} />
+						<RelayCardPortrait {ndk} {relayUrl} class="flex-none" />
 					{/each}
 				</div>
 			</BlockExample>
@@ -504,7 +504,7 @@
 							<ul class="ml-4 mt-1 space-y-1">
 								<li>
 									<code class="bg-muted px-1 py-0.5 rounded">relays</code>: Array of {'{'}url: string,
-									percentage: number{'}'} sorted by percentage
+									count: number{'}'} sorted by count
 								</li>
 								<li>
 									<code class="bg-muted px-1 py-0.5 rounded">loading</code>: Boolean loading state

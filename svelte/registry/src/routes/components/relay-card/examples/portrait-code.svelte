@@ -1,5 +1,5 @@
 <RelayCard.Root {ndk} {relayUrl}>
-	<button type="button" class="group flex flex-col w-[280px] h-[320px] rounded-2xl overflow-hidden bg-card hover:bg-muted border border-border transition-colors text-left relative">
+	<button type="button" class="group flex flex-col w-[360px] h-[420px] rounded-2xl bg-card hover:bg-muted border border-border transition-colors text-left relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.06)] overflow-hidden">
 		<!-- Background Icon with Gradient - covers entire card -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
 			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50 scale-[2.5]">
@@ -21,14 +21,19 @@
 			</div>
 		</div>
 
-		<div class="relative z-[1] px-4 pb-4 flex flex-col flex-1 min-h-0 text-center">
-			<div class="relative z-[1]">
-				<RelayCard.Name class="text-base font-semibold mb-1" />
-				<RelayCard.Url class="text-xs text-muted-foreground mb-3" showProtocol={false} />
-				<RelayCard.Description maxLines={3} class="text-xs leading-relaxed" />
+		<div class="relative z-[1] px-6 pb-6 flex flex-col flex-1 min-h-0 text-center">
+			<div class="relative z-[1] flex flex-col flex-1">
+				<RelayCard.Name class="text-lg font-semibold mb-1" />
+				<RelayCard.Url class="text-sm text-muted-foreground mb-3" showProtocol={false} />
+				<RelayCard.Description maxLines={3} class="text-sm leading-relaxed mb-4" />
 
-				<div class="mt-3 pt-3 flex items-center justify-center gap-1 text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-					<span>Browse</span>
+				<div class="mt-auto pt-4 border-t border-border/50">
+					<div class="flex items-center justify-center gap-1 text-sm text-primary">
+						<span>Browse</span>
+						<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						</svg>
+					</div>
 				</div>
 			</div>
 		</div>

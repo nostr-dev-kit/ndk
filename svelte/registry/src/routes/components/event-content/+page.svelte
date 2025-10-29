@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   import BasicExample from '$lib/ndk/event-content/examples/basic.svelte';
   import BasicExampleRaw from '$lib/ndk/event-content/examples/basic.svelte?raw';
@@ -168,37 +168,3 @@ Pretty cool feature, right? #nostr #ux #design`,
     </CodePreview>
   </section>
 </div>
-
-<style>
-  .component-page {
-    max-width: 900px;
-  }
-
-  .component-page > header {
-    margin-bottom: 2rem;
-  }
-
-  .component-page > header h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem 0;
-    color: #111827;
-  }
-
-  .component-page > header p {
-    font-size: 1.125rem;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .component-page > section {
-    margin-bottom: 3rem;
-  }
-
-  .demo {
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-</style>

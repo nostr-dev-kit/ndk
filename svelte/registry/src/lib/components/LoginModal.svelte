@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ndk } from '$lib/ndk';
+  import { ndk } from '$lib/ndk.svelte';
   import { NDKNip07Signer, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
 
   interface Props {

@@ -1,8 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { nip19 } from 'nostr-tools';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import AvatarOnlyExample from '$lib/ndk/user-profile/examples/avatar-only.svelte';
@@ -15,14 +14,16 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc'); // pablo
-  let examplePubkey = $derived.by(() => {
-    try {
-      const decoded = nip19.decode(npubInput);
-      if (decoded.type === 'npub') {
-        return decoded.data as string;
+  let examplePubkey = $state('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52'); // default
+
+  $effect(() => {
+    ndk.fetchUser(npubInput).then(user => {
+      if (user) {
+        examplePubkey = user.pubkey;
       }
-    } catch {}
-    return 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
+    }).catch(() => {
+      examplePubkey = 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
+    });
   });
 
   const examplePubkeys = [
@@ -127,71 +128,3 @@
   </section>
 </div>
 
-<style>
-  .component-page {
-    max-width: 900px;
-  }
-
-  .component-page > header {
-    margin-bottom: 2rem;
-  }
-
-  .component-page > header h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .component-page > header p {
-    font-size: 1.125rem;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  .component-page > section {
-    margin-bottom: 3rem;
-  }
-
-  .demo {
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-
-  .controls {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-
-  .controls label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .label-text {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-  }
-
-  .npub-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    width: 100%;
-    max-width: 600px;
-  }
-
-  .npub-input:focus {
-    outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-  }
-</style>

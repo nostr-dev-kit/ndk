@@ -189,10 +189,10 @@
     position: relative;
     pointer-events: auto;
     width: 20rem;
-    background: var(--card, white);
-    border: 1px solid var(--border, #e5e7eb);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    box-shadow: 0 20px 25px -5px color-mix(in srgb, var(--foreground) 10%, transparent), 0 8px 10px -6px color-mix(in srgb, var(--foreground) 10%, transparent);
     overflow: hidden;
   }
 
@@ -224,8 +224,8 @@
     width: 5rem;
     height: 5rem;
     border-radius: 9999px;
-    border: 4px solid var(--foreground, #111827);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    border: 4px solid var(--card);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent);
     object-fit: cover;
   }
 
@@ -233,10 +233,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--primary-foreground);
     font-weight: 600;
     font-size: 1.5rem;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 30%, transparent);
   }
 
   .user-profile-hover-card-info {
@@ -250,7 +250,7 @@
     margin: 0 0 0.125rem 0;
     font-size: 1rem;
     font-weight: 600;
-    color: var(--foreground, #111827);
+    color: var(--foreground);
   }
 
   .user-profile-hover-card-name-text {
@@ -262,14 +262,14 @@
   .user-profile-hover-card-verified {
     width: 0.875rem;
     height: 0.875rem;
-    color: #3b82f6;
+    color: var(--primary);
     flex-shrink: 0;
   }
 
   .user-profile-hover-card-handle {
     margin: 0;
     font-size: 0.875rem;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -278,7 +278,7 @@
   .user-profile-hover-card-bio {
     margin-bottom: 1rem;
     font-size: 0.875rem;
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -291,7 +291,7 @@
     align-items: center;
     gap: 1rem;
     padding-top: 0.75rem;
-    border-top: 1px solid var(--border, #e5e7eb);
+    border-top: 1px solid var(--border);
     font-size: 0.875rem;
   }
 
@@ -303,10 +303,10 @@
 
   .user-profile-hover-card-stat-value {
     font-weight: 500;
-    color: var(--foreground, #111827);
+    color: var(--foreground);
   }
 
   .user-profile-hover-card-stat-label {
-    color: var(--muted-foreground, #6b7280);
+    color: var(--muted-foreground);
   }
 </style>

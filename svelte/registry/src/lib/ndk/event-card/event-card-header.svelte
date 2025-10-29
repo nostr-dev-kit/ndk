@@ -419,11 +419,11 @@
   }
 
   .dropdown-item--danger {
-    color: #dc2626;
+    color: var(--destructive);
   }
 
   .dropdown-item--warning {
-    color: #eab308;
+    color: var(--warning);
   }
 
   .dropdown-item-icon {
@@ -570,9 +570,9 @@
   }
 
   .modal-button--primary {
-    background: var(--primary, #8b5cf6);
-    border: 1px solid var(--primary, #8b5cf6);
-    color: white;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: var(--primary-foreground);
   }
 
   .modal-button--primary:hover {

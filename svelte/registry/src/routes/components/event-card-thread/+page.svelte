@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   import ThreadCompleteExample from '$lib/ndk/event-card/examples/thread-complete.svelte';
   import ThreadCompleteExampleRaw from '$lib/ndk/event-card/examples/thread-complete.svelte?raw';

@@ -1,9 +1,11 @@
 <script lang="ts">
   import '../app.css';
   import { setContext } from 'svelte';
-  import { ndk, initializeNDK } from '$lib/ndk';
+  import { ndk, initializeNDK2 } from '$lib/ndk.svelte.ts';
   import Sidebar from '$lib/components/Sidebar.svelte';
   import LoginModal from '$lib/components/LoginModal.svelte';
+
+  let { children } = $props();
 
   let isInitialized = $state(false);
   let showLoginModal = $state(false);
@@ -11,7 +13,7 @@
   setContext('ndk', ndk);
 
   $effect(() => {
-    initializeNDK().then(() => {
+    initializeNDK2().then(() => {
       isInitialized = true;
     });
   });
@@ -40,7 +42,7 @@
     />
 
     <main class="main">
-      <slot />
+      {@render children()}
     </main>
   </div>
 

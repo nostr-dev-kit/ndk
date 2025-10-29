@@ -16,7 +16,7 @@
 </script>
 
 {#if thread.focusedEventId}
-  <div class="border border-border rounded-lg overflow-hidden">
+  <div class="border border-border overflow-hidden">
     {#each thread.events as node}
       {#if node.event}
       {#key node.event.id}
@@ -24,7 +24,7 @@
           <div class="bg-accent/10 border-l-4 border-primary">
             <EventCard.Root {ndk} event={node.event}>
               <div
-                class="bg-background cursor-pointer"
+                class="cursor-pointer"
                 onclick={() => thread.focusOn(node.event)}
                 role="button"
                 tabindex="0"
@@ -54,10 +54,8 @@
               tabindex="0"
             >
               <EventCard.ThreadLine />
-              <div class="p-4">
-                <EventCard.Header variant="compact" />
-                <EventCard.Content />
-              </div>
+              <EventCard.Header variant="compact" />
+              <EventCard.Content />
             </div>
           </EventCard.Root>
         {/if}

@@ -1,9 +1,24 @@
 <script lang="ts">
-  import type { BookmarkedRelayWithStats } from '@nostr-dev-kit/svelte';
+  import type { BookmarkedRelayWithStats, RelayNIP11Info, RelayStatus } from '@nostr-dev-kit/svelte';
   import RelayConnectionStatus from '$lib/ndk/relay-connection-status/relay-connection-status.svelte';
 
+  interface ExtendedRelayStats extends BookmarkedRelayWithStats {
+    nip11?: RelayNIP11Info | null;
+    error?: Error | null;
+    status?: RelayStatus;
+    connectionStats?: {
+      attempts: number;
+      success: number;
+      connectedAt?: number;
+    };
+    isRead?: boolean;
+    isWrite?: boolean;
+    isBoth?: boolean;
+    isBlacklisted?: boolean;
+  }
+
   interface Props {
-    relay: BookmarkedRelayWithStats;
+    relay: ExtendedRelayStats;
     onFetchInfo?: (url: string) => void;
     onRemove?: (url: string) => void;
     onBlacklist?: (url: string) => void;
@@ -77,7 +92,7 @@
 <div class="relay-card">
   <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
     <div class="relay-card-header-left">
-      <RelayConnectionStatus status={relay.status} size="md" />
+      <RelayConnectionStatus status={relay.status || 'disconnected'} size="md" />
       {#if relay.nip11?.icon}
         <img src={relay.nip11.icon} alt="{relay.nip11.name || relay.url} icon" class="relay-icon" />
       {/if}
@@ -269,15 +284,15 @@
 
 <style>
   .relay-card {
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
-    background: var(--card-bg, #ffffff);
+    background: var(--card);
     overflow: hidden;
     transition: all 0.2s ease;
   }
 
   .relay-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 
   .relay-card-header {
@@ -290,7 +305,7 @@
   }
 
   .relay-card-header:hover {
-    background: var(--hover-bg, #f9fafb);
+    background: var(--accent);
   }
 
   .relay-card-header-left {
@@ -319,13 +334,13 @@
   .relay-card-name {
     font-size: 1rem;
     font-weight: 500;
-    color: var(--text-primary, #111827);
+    color: var(--foreground);
   }
 
   .relay-card-url {
     font-size: 0.75rem;
     font-family: monospace;
-    color: var(--text-secondary, #6b7280);
+    color: var(--muted-foreground);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -346,28 +361,28 @@
   }
 
   .badge-read {
-    background: rgba(59, 130, 246, 0.1);
-    color: #2563eb;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
   }
 
   .badge-write {
-    background: rgba(168, 85, 247, 0.1);
-    color: #7c3aed;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
   }
 
   .badge-both {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
+    background: color-mix(in srgb, var(--success) 10%, transparent);
+    color: var(--success);
   }
 
   .badge-blacklist {
-    background: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
+    background: color-mix(in srgb, var(--destructive) 10%, transparent);
+    color: var(--destructive);
   }
 
   .badge-warning {
-    background: rgba(245, 158, 11, 0.1);
-    color: #d97706;
+    background: color-mix(in srgb, var(--warning) 10%, transparent);
+    color: var(--warning);
     padding: 0.125rem 0.5rem;
     font-size: 0.75rem;
   }
@@ -377,12 +392,12 @@
     border: none;
     cursor: pointer;
     padding: 0.25rem;
-    color: var(--text-secondary, #6b7280);
+    color: var(--muted-foreground);
     transition: color 0.2s ease;
   }
 
   .expand-button:hover {
-    color: var(--text-primary, #111827);
+    color: var(--foreground);
   }
 
   .expand-icon {
@@ -407,22 +422,22 @@
   }
 
   .relay-section.error {
-    background: rgba(239, 68, 68, 0.05);
+    background: color-mix(in srgb, var(--destructive) 5%, transparent);
     padding: 0.75rem;
     border-radius: 0.5rem;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 1px solid color-mix(in srgb, var(--destructive) 20%, transparent);
   }
 
   .relay-section h4 {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--text-primary, #111827);
+    color: var(--foreground);
     margin: 0;
   }
 
   .relay-section p {
     font-size: 0.875rem;
-    color: var(--text-secondary, #6b7280);
+    color: var(--muted-foreground);
     margin: 0;
     line-height: 1.5;
   }
@@ -445,7 +460,7 @@
   .info-label {
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--text-secondary, #6b7280);
+    color: var(--muted-foreground);
     text-transform: uppercase;
     letter-spacing: 0.025em;
   }
@@ -454,7 +469,7 @@
   .info-value {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--text-primary, #111827);
+    color: var(--foreground);
   }
 
   .nips-list {
@@ -465,8 +480,8 @@
 
   .nip-badge {
     padding: 0.125rem 0.5rem;
-    background: rgba(99, 102, 241, 0.1);
-    color: #4f46e5;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
     border-radius: 0.375rem;
     font-size: 0.75rem;
     font-weight: 600;
@@ -477,54 +492,54 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--border-color, #e5e7eb);
+    border-top: 1px solid var(--border);
   }
 
   .action-button {
     padding: 0.5rem 1rem;
-    border: 1px solid var(--border-color, #e5e7eb);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: white;
+    background: var(--background);
   }
 
   .copy-button {
-    color: var(--text-primary, #111827);
+    color: var(--foreground);
   }
 
   .copy-button:hover {
-    background: var(--hover-bg, #f9fafb);
-    border-color: var(--primary-color, #3b82f6);
+    background: var(--accent);
+    border-color: var(--primary);
   }
 
   .blacklist-button {
-    color: #dc2626;
+    color: var(--destructive);
   }
 
   .blacklist-button:hover {
-    background: rgba(239, 68, 68, 0.05);
-    border-color: #dc2626;
+    background: color-mix(in srgb, var(--destructive) 5%, transparent);
+    border-color: var(--destructive);
   }
 
   .unblacklist-button {
-    color: #059669;
+    color: var(--success);
   }
 
   .unblacklist-button:hover {
-    background: rgba(16, 185, 129, 0.05);
-    border-color: #059669;
+    background: color-mix(in srgb, var(--success) 5%, transparent);
+    border-color: var(--success);
   }
 
   .remove-button {
-    color: #dc2626;
+    color: var(--destructive);
   }
 
   .remove-button:hover {
-    background: rgba(239, 68, 68, 0.05);
-    border-color: #dc2626;
+    background: color-mix(in srgb, var(--destructive) 5%, transparent);
+    border-color: var(--destructive);
   }
 
   @media (max-width: 640px) {

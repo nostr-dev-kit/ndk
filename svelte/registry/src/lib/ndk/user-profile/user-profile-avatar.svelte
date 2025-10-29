@@ -76,7 +76,7 @@
   const avatarGradient = $derived(
     ndkUser?.pubkey
       ? deterministicPubkeyGradient(ndkUser.pubkey)
-      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      : 'var(--primary)'
   );
 </script>
 
@@ -107,9 +107,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--primary-foreground);
     font-weight: 600;
     font-size: 0.875rem;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 30%, transparent);
   }
 </style>

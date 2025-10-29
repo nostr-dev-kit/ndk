@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   import BasicExample from '$lib/ndk/actions/examples/zap-action-basic.svelte';
   import BasicExampleRaw from '$lib/ndk/actions/examples/zap-action-basic.svelte?raw';
@@ -68,33 +68,3 @@
     </section>
   {/if}
 </div>
-
-<style>
-  .component-page {
-    max-width: 1200px;
-  }
-
-  .component-page > header {
-    margin-bottom: 3rem;
-  }
-
-  .component-page > header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .component-page > header p {
-    font-size: 1.125rem;
-    color: hsl(var(--color-muted-foreground));
-    margin: 0;
-  }
-
-  .demo {
-    margin-bottom: 2rem;
-  }
-
-  .demo:last-child {
-    margin-bottom: 0;
-  }
-</style>

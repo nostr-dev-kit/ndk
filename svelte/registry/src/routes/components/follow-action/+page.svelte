@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction, createFetchUser } from '@nostr-dev-kit/svelte';
-  import CodePreview from '$lib/components/code-preview.svelte';
+  import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
   import DefaultExample from '$lib/ndk/actions/examples/follow-action-default.svelte';
@@ -351,27 +351,6 @@ await followButton.follow();`}</code></pre>
 </div>
 
 <style>
-  .component-page {
-    max-width: 1200px;
-  }
-
-  .component-page > header {
-    margin-bottom: 3rem;
-  }
-
-  .component-page > header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: hsl(var(--color-foreground));
-    margin: 0 0 0.5rem 0;
-  }
-
-  .component-page > header p {
-    font-size: 1.125rem;
-    color: hsl(var(--color-muted-foreground));
-    margin: 0;
-  }
-
   .warning-box {
     padding: 1rem;
     background: hsl(40 100% 50% / 0.1);
@@ -434,38 +413,6 @@ await followButton.follow();`}</code></pre>
   .section-description {
     color: hsl(var(--color-muted-foreground));
     margin: 0 0 2rem 0;
-  }
-
-  .controls {
-    margin-bottom: 2rem;
-  }
-
-  .controls label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .label-text {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: hsl(var(--color-foreground));
-  }
-
-  .npub-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid hsl(var(--color-border));
-    background: hsl(var(--color-background));
-    color: hsl(var(--color-foreground));
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-family: 'Monaco', 'Courier New', monospace;
-  }
-
-  .npub-input:focus {
-    outline: none;
-    border-color: hsl(var(--color-ring));
-    box-shadow: 0 0 0 3px hsl(var(--color-ring) / 0.2);
   }
 
   .example-grid {

@@ -34,7 +34,7 @@ export const ndk = createNDK({
 export async function initializeNDK() {
   try {
     await cacheAdapter.initializeAsync()
-    await ndk.connect()
+    ndk.connect()
   } catch (err) {
     console.error('NDK initialization error:', err);
   }

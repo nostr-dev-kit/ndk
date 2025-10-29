@@ -51,7 +51,19 @@ This updates all version numbers based on new Git commits.
 
 ## For Users (How They Check for Updates)
 
-### Option 1: NPX Command (Recommended)
+### Installing Components
+
+Users can install components using the unified `ndk-svelte` CLI:
+
+```bash
+# Add components
+npx ndk-svelte add event-card user-profile
+
+# List available components
+npx ndk-svelte add
+```
+
+### Checking for Updates
 
 ```bash
 # Check for upgrades (no installation required)
@@ -94,19 +106,19 @@ npx ndk-svelte upgrade --yes
 
 This automatically runs `npx shadcn-svelte add` for each outdated component.
 
-### Option 3: Download Script (Alternative)
+### Alternative: shadcn-svelte (Still Works)
 
-If you prefer not to use npx:
+The traditional method still works:
 
 ```bash
-# Download script
+npx shadcn-svelte@latest add event-card
+```
+
+Or download the upgrade script:
+
+```bash
 curl -o ndk-upgrade.ts https://ndk.fyi/scripts/scan-and-upgrade.ts
-
-# Check for upgrades
 bun ndk-upgrade.ts
-
-# Or one-liner
-curl -s https://ndk.fyi/scripts/scan-and-upgrade.ts | bun run -
 ```
 
 ---

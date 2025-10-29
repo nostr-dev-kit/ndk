@@ -8,14 +8,8 @@
   // Import examples
   import BasicExample from './examples/basic.svelte';
   import BasicExampleRaw from './examples/basic.svelte?raw';
-  import CompactExample from './examples/compact.svelte';
-  import CompactExampleRaw from './examples/compact.svelte?raw';
   import CustomCompositionExample from './examples/custom-composition.svelte';
   import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
-  import InteractiveExample from './examples/interactive.svelte';
-  import InteractiveExampleRaw from './examples/interactive.svelte?raw';
-  import DropdownExample from './examples/dropdown.svelte';
-  import DropdownExampleRaw from './examples/dropdown.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -40,7 +34,9 @@
   {#if !exampleNote}
     <div class="loading">Loading real events...</div>
   {:else}
-    <section class="demo">
+    <section class="demo space-y-8">
+      <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+
       <CodePreview
         title="Basic EventCard"
         description="A simple event card with header, content, and action buttons."
@@ -48,45 +44,13 @@
       >
         <BasicExample {ndk} event={exampleNote} />
       </CodePreview>
-    </section>
 
-    <section class="demo">
-      <CodePreview
-        title="Compact Variant"
-        description="Minimal header with truncated content."
-        code={CompactExampleRaw}
-      >
-        <CompactExample {ndk} event={exampleNote} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
       <CodePreview
         title="Custom Composition"
-        description="Full control over component arrangement and styling."
+        description="Full control over component arrangement and styling using EventCard primitives."
         code={CustomCompositionExampleRaw}
       >
         <CustomCompositionExample {ndk} event={exampleNote} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
-      <CodePreview
-        title="Interactive Card"
-        description="Clickable card that navigates to event page."
-        code={InteractiveExampleRaw}
-      >
-        <InteractiveExample {ndk} event={exampleNote} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
-      <CodePreview
-        title="Dropdown Menu"
-        description="Self-contained dropdown menu with event options (mute, report, copy, view raw)."
-        code={DropdownExampleRaw}
-      >
-        <DropdownExample {ndk} event={exampleNote} />
       </CodePreview>
     </section>
   {/if}

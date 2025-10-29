@@ -6,10 +6,8 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import AvatarOnlyExample from './examples/avatar-only.svelte';
-  import AvatarNameExample from './examples/avatar-name.svelte';
   import AvatarNameHandleExample from './examples/avatar-name-handle.svelte';
-  import AvatarNameBioExample from './examples/avatar-name-bio.svelte';
+  import AvatarNameHandleExampleRaw from './examples/avatar-name-handle.svelte?raw';
   import WithHoverCardExample from './examples/with-hover-card.svelte';
   import WithHoverCardExampleRaw from './examples/with-hover-card.svelte?raw';
 
@@ -43,71 +41,18 @@
     </EditProps.Root>
   </header>
 
-  <section class="demo">
-    <CodePreview
-      title="Avatar Only"
-      description="Standalone avatar component with pubkey."
-      code={`<UserProfile.Avatar {pubkey} size={40} />`}
-    >
-      <AvatarOnlyExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
-  </section>
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-  <section class="demo">
     <CodePreview
-      title="Avatar + Name"
-      description="Avatar with display name in a horizontal layout."
+      title="Basic Profile Display"
+      description="Compose UserProfile primitives (Avatar, Name, Handle) to build custom layouts. Supports hover cards for quick profile previews."
       component="user-profile-avatar-name"
-      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
-  <div class="flex items-center gap-3">
-    <UserProfile.Avatar size={40} />
-    <UserProfile.Name class="font-semibold" />
-  </div>
-</UserProfile.Root>`}
-    >
-      <AvatarNameExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <CodePreview
-      title="Avatar + Name + Handle"
-      description="Avatar with display name and handle below."
-      component="user-profile-avatar-name"
-      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
-  <div class="flex items-center gap-3">
-    <UserProfile.Avatar size={40} />
-    <div class="flex flex-col">
-      <UserProfile.Name class="font-semibold" />
-      <UserProfile.Handle class="text-sm text-muted-foreground" />
-    </div>
-  </div>
-</UserProfile.Root>`}
+      code={AvatarNameHandleExampleRaw}
     >
       <AvatarNameHandleExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
-  </section>
 
-  <section class="demo">
-    <CodePreview
-      title="Avatar + Name + Bio"
-      description="Avatar with display name and bio text."
-      component="user-profile-avatar-name"
-      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
-  <div class="flex items-center gap-3">
-    <UserProfile.Avatar size={48} />
-    <div class="flex flex-col">
-      <UserProfile.Name class="font-semibold" />
-      <UserProfile.Bio class="text-sm text-muted-foreground line-clamp-1" />
-    </div>
-  </div>
-</UserProfile.Root>`}
-    >
-      <AvatarNameBioExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
     <CodePreview
       title="With Hover Card"
       description="UserProfile.Root supports showHoverCard prop to display a profile card on hover. The card appears after a 500ms delay and stays visible while hovering."

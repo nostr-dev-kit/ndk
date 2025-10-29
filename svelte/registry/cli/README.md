@@ -7,7 +7,7 @@ Command-line tool for managing NDK Svelte components.
 The CLI is designed to be used with `npx` without installation:
 
 ```bash
-npx ndk-svelte upgrade
+npx ndk-svelte add event-card
 ```
 
 Or install globally:
@@ -17,6 +17,35 @@ npm install -g ndk-svelte
 ```
 
 ## Commands
+
+### `add`
+
+Add NDK components to your project.
+
+```bash
+# Add specific components
+npx ndk-svelte add event-card user-profile
+
+# Add a single component
+npx ndk-svelte add event-card
+
+# List available components
+npx ndk-svelte add
+
+# Install all components (requires --yes)
+npx ndk-svelte add --all --yes
+
+# Overwrite existing files
+npx ndk-svelte add event-card --overwrite
+```
+
+**Options:**
+- `[components...]` - Component names to add
+- `-a, --all` - Install all available components
+- `-o, --overwrite` - Overwrite existing files
+- `-y, --yes` - Skip confirmation prompts
+- `-p, --path <path>` - Custom installation path
+- `--registry <url>` - Custom registry URL (default: https://ndk.fyi)
 
 ### `upgrade`
 

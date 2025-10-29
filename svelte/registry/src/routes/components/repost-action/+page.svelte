@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
   import BasicExample from './examples/repost-action-basic.svelte';
@@ -10,15 +11,13 @@
   import BuilderExample from './examples/repost-action-builder.svelte';
   import BuilderExampleRaw from './examples/repost-action-builder.svelte?raw';
 
-  import CountOnlyExample from './examples/repost-action-count-only.svelte';
-  import CountOnlyExampleRaw from './examples/repost-action-count-only.svelte?raw';
-
   const ndk = getContext<NDKSvelte>('ndk');
 
+  let eventId = $state<string>('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
   let sampleEvent = $state<NDKEvent | undefined>();
 
   $effect(() => {
-    ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j')
+    ndk.fetchEvent(eventId)
       .then(event => {
         if (event) sampleEvent = event;
       })
@@ -30,11 +29,16 @@
   <header>
     <h1>RepostAction</h1>
     <p>Repost button with count display. Tracks both regular reposts and quote posts.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="Event ID" type="text" bind:value={eventId} />
+    </EditProps.Root>
   </header>
 
   {#if sampleEvent}
-    <section class="demo">
-      <h2>Basic Usage</h2>
+    <section class="demo space-y-8">
+      <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+
       <CodePreview
         title="Basic RepostAction"
         description="Simple repost button with automatic count tracking (includes quotes)"
@@ -42,27 +46,13 @@
       >
         <BasicExample {ndk} event={sampleEvent} />
       </CodePreview>
-    </section>
 
-    <section class="demo">
-      <h2>Using the Builder with Count</h2>
       <CodePreview
-        title="Custom Implementation with Count"
-        description="Build your own repost button showing the count"
+        title="Using the Builder"
+        description="Build your own repost button UI using createRepostAction() for full control"
         code={BuilderExampleRaw}
       >
         <BuilderExample {ndk} event={sampleEvent} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
-      <h2>Count Only Display</h2>
-      <CodePreview
-        title="Just Show the Count"
-        description="Display repost count without interaction"
-        code={CountOnlyExampleRaw}
-      >
-        <CountOnlyExample {ndk} event={sampleEvent} />
       </CodePreview>
     </section>
 

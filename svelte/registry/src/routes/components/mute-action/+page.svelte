@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
   import Alert from '$site-components/alert.svelte';
 
@@ -11,19 +12,27 @@
   import BuilderExample from './examples/mute-action-builder.svelte';
   import BuilderExampleRaw from './examples/mute-action-builder.svelte?raw';
 
-  import DirectAPIExample from './examples/mute-action-direct-api.svelte';
-  import DirectAPIExampleRaw from './examples/mute-action-direct-api.svelte?raw';
-
   const ndk = getContext<NDKSvelte>('ndk');
 
-  const sampleUser = new NDKUser({ pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52' });
-  sampleUser.ndk = ndk;
+  let userPubkey = $state<string>('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
+
+  let sampleUser = $state<NDKUser>();
+
+  $effect(() => {
+    const user = new NDKUser({ pubkey: userPubkey });
+    user.ndk = ndk;
+    sampleUser = user;
+  });
 </script>
 
 <div class="component-page">
   <header>
     <h1>MuteAction</h1>
     <p>Mute button for users with multiple implementation options.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="User pubkey" type="text" bind:value={userPubkey} />
+    </EditProps.Root>
   </header>
 
   {#if !ndk.$currentUser}
@@ -32,8 +41,9 @@
     </Alert>
   {/if}
 
-  <section class="demo">
-    <h2>Basic Usage</h2>
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+
     <CodePreview
       title="Basic Mute Action"
       description="Simple mute button component"
@@ -41,27 +51,13 @@
     >
       <BasicExample {ndk} user={sampleUser} />
     </CodePreview>
-  </section>
 
-  <section class="demo">
-    <h2>Using the Builder</h2>
     <CodePreview
-      title="Builder Pattern"
-      description="Using createMuteAction for custom implementations"
+      title="Using the Builder"
+      description="Using createMuteAction() for custom implementations with full control"
       code={BuilderExampleRaw}
     >
       <BuilderExample {ndk} user={sampleUser} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <h2>Direct API Usage</h2>
-    <CodePreview
-      title="Using ndk.$mutes Directly"
-      description="Direct access to the mutes API for maximum flexibility"
-      code={DirectAPIExampleRaw}
-    >
-      <DirectAPIExample {ndk} user={sampleUser} />
     </CodePreview>
   </section>
 

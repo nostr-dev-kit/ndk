@@ -9,8 +9,6 @@
   // Import examples
   import BasicExample from './examples/basic.svelte';
   import BasicCodeRaw from './examples/basic-code.svelte?raw';
-  import WithFilterExample from './examples/with-filter.svelte';
-  import WithFilterRaw from './examples/with-filter.svelte?raw';
   import WithClickExample from './examples/with-click.svelte';
   import WithClickRaw from './examples/with-click.svelte?raw';
 
@@ -52,7 +50,7 @@
   {:else}
     <!-- Usage Examples Section -->
     <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Usage</h2>
+      <h2 class="text-3xl font-bold mb-2">Examples</h2>
       <p class="text-muted-foreground mb-8">
         Different ways to use the ArticleContent component.
       </p>
@@ -69,21 +67,10 @@
           </div>
         </UIExample>
 
-        <!-- With Filter -->
-        <UIExample
-          title="With Highlight Filter"
-          description="Filter which highlights are displayed using the highlightFilter callback."
-          code={WithFilterRaw}
-        >
-          <div class="max-h-[min(500px,80vh)] overflow-y-auto">
-            <WithFilterExample article={article} />
-          </div>
-        </UIExample>
-
         <!-- With Click Handler -->
         <UIExample
           title="With Click Handler"
-          description="Handle highlight clicks to show details, open drawers, etc."
+          description="Handle highlight clicks to show details, open drawers, etc. You can also filter highlights using the highlightFilter callback."
           code={WithClickRaw}
         >
           <div class="max-h-[min(500px,80vh)] overflow-y-auto">

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDK Highlight Card Variations - Series III</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            padding: 3rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .intro {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .intro h1 {
+            font-size: 3rem;
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .intro .series {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: #999;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .variation {
+            margin-bottom: 5rem;
+            border-top: 1px solid #222;
+            padding-top: 3rem;
+        }
+
+        .brief {
+            margin-bottom: 2.5rem;
+        }
+
+        .brief h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .brief .tagline {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .brief .description {
+            color: #aaa;
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 800px;
+        }
+
+        .mockup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            background: #111;
+            border-radius: 8px;
+        }
+
+        /* Variation 10: The Specimen - Landscape */
+        .specimen {
+            width: 520px;
+            height: 340px;
+            background: #fafafa;
+            border: 2px solid #000;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .specimen::before {
+            content: '';
+            position: absolute;
+            inset: 0.75rem;
+            border: 1px solid #ddd;
+            pointer-events: none;
+        }
+
+        .specimen-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #000;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .specimen-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            color: #333;
+        }
+
+        .specimen-field {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .specimen-field-label {
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        .specimen-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f0f0f0 0%, #fafafa 100%);
+            border: 1px solid #ddd;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .specimen-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 9px, rgba(0,0,0,0.02) 9px, rgba(0,0,0,0.02) 10px),
+                repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(0,0,0,0.02) 9px, rgba(0,0,0,0.02) 10px);
+            pointer-events: none;
+        }
+
+        .specimen-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #1a1a1a;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .specimen-footer {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            font-size: 0.65rem;
+            color: #666;
+        }
+
+        .specimen-barcode {
+            display: flex;
+            gap: 1px;
+        }
+
+        .specimen-barcode span {
+            width: 2px;
+            height: 20px;
+            background: #000;
+        }
+
+        .specimen-barcode span:nth-child(even) {
+            opacity: 0.3;
+        }
+
+        /* Variation 11: The Postcard - Portrait */
+        .postcard {
+            width: 360px;
+            height: 500px;
+            background: #fff;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            transform: rotate(1deg);
+        }
+
+        .postcard-image {
+            height: 280px;
+            background: linear-gradient(135deg, #ee9ca7 0%, #ffdde1 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .postcard-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0,0,0,0.1) 0%, transparent 50%);
+        }
+
+        .postcard-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .postcard-highlight {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            font-style: italic;
+        }
+
+        .postcard-stamp {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 60px;
+            height: 80px;
+            background: #fff;
+            border: 2px dashed #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transform: rotate(5deg);
+        }
+
+        .postcard-divider {
+            height: 1px;
+            background: repeating-linear-gradient(
+                90deg,
+                #ddd 0px,
+                #ddd 8px,
+                transparent 8px,
+                transparent 16px
+            );
+        }
+
+        .postcard-message {
+            flex: 1;
+            padding: 1.5rem;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .postcard-lines {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .postcard-line {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .postcard-line-label {
+            font-weight: 600;
+            min-width: 50px;
+        }
+
+        .postcard-line-value {
+            flex: 1;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .postcard-postmark {
+            align-self: flex-end;
+            font-size: 0.7rem;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Variation 12: The Newsprint - Landscape */
+        .newsprint {
+            width: 600px;
+            background: #f8f6f0;
+            border: 1px solid #d0c8b8;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            font-family: 'Georgia', serif;
+        }
+
+        .newsprint-masthead {
+            border-bottom: 3px double #000;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .newsprint-publication {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .newsprint-date {
+            font-size: 0.75rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .newsprint-category {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .newsprint-headline {
+            font-size: 1.8rem;
+            line-height: 1.3;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.5rem;
+            font-family: 'Georgia', serif;
+        }
+
+        .newsprint-byline {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .newsprint-highlight {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #1a1a1a;
+            text-align: justify;
+            position: relative;
+            padding-left: 1.5rem;
+            border-left: 4px solid #000;
+            font-weight: 500;
+        }
+
+        .newsprint-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #d0c8b8;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        /* Variation 13: The Tattoo - Square */
+        .tattoo {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at center, #f5d9c8 0%, #e8c4b0 100%);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tattoo::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px);
+            pointer-events: none;
+        }
+
+        .tattoo-ornament {
+            position: absolute;
+            top: 2rem;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 2rem;
+            color: rgba(0,0,0,0.4);
+        }
+
+        .tattoo-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tattoo-highlight {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #000;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            margin-bottom: 2rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .tattoo-attribution {
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .tattoo-date {
+            font-size: 0.75rem;
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tattoo-frame {
+            position: absolute;
+            inset: 1.5rem;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .tattoo-frame::before {
+            content: '◆';
+            position: absolute;
+            top: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5d9c8;
+            padding: 0 0.5rem;
+            color: rgba(0,0,0,0.3);
+            font-size: 1rem;
+        }
+
+        .tattoo-frame::after {
+            content: '◆';
+            position: absolute;
+            bottom: -0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5d9c8;
+            padding: 0 0.5rem;
+            color: rgba(0,0,0,0.3);
+            font-size: 1rem;
+        }
+
+        /* Variation 14: The Fortune - Small Landscape */
+        .fortune {
+            width: 440px;
+            height: 60px;
+            background: linear-gradient(135deg, #fef9e7 0%, #fcf3cf 100%);
+            border: 1px solid #d4af37;
+            border-radius: 30px;
+            padding: 0 2rem;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .fortune::before {
+            content: '';
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle, #d4af37 0%, #aa8c2e 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .fortune-text {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #2a2a2a;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            text-align: center;
+            margin-left: 2rem;
+        }
+
+        .fortune-author {
+            font-size: 0.75rem;
+            color: #8b7355;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .fortune-lucky {
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #d4af37;
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            padding: 0.25rem 1rem;
+            border-radius: 4px;
+        }
+
+        /* Additional container for fortune to show the lucky numbers */
+        .fortune-wrapper {
+            position: relative;
+            padding-bottom: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro">
+            <div class="series">Series III</div>
+            <h1>Highlight Card Variations</h1>
+            <p>Five more meditations on memory and meaning—from laboratory precision to mystical serendipity, each design asking: how do we mark what matters?</p>
+        </div>
+
+        <!-- Variation 10: The Specimen -->
+        <div class="variation">
+            <div class="brief">
+                <div class="tagline">Variation Ten</div>
+                <h2>The Specimen</h2>
+                <p class="description">
+                    In the basements of natural history museums, in the sterile corridors of research institutes, specimens float in preservation fluid, mounted on slides, catalogued with meticulous precision. The Specimen treats highlights as objects of scientific inquiry—not art, not literature, but data points in the endless human project of understanding. Its landscape orientation mirrors the microscope slide, that rectangular window into invisible worlds. The grid overlay suggests measurement, quantification, the taxonomist's gaze that seeks to classify and preserve. The label in the corner—stark black on white—evokes the museum tag, the herbarium sheet, the pinned butterfly in its display case. But what are we preserving here? Not a butterfly but a thought, not a leaf but a sentence. The Specimen asks us to approach our highlights with the scientist's reverence—each one a unique observation, worthy of documentation, part of the vast archive of human knowledge. The barcode at the bottom reminds us: in the digital age, everything can be tracked, retrieved, cross-referenced. Nothing is lost if properly labeled.
+                </p>
+            </div>
+            <div class="mockup-container">
+                <div class="specimen">
+                    <div class="specimen-label">SPECIMEN #9802-A47</div>
+                    <div class="specimen-header">
+                        <div class="specimen-field">
+                            <div class="specimen-field-label">COLLECTOR:</div>
+                            <div class="specimen-field-value">Dr. Maria Santos</div>
+                        </div>
+                        <div class="specimen-field">
+                            <div class="specimen-field-label">DATE:</div>
+                            <div class="specimen-field-value">2024-11-29</div>
+                        </div>
+                        <div class="specimen-field">
+                            <div class="specimen-field-label">SOURCE:</div>
+                            <div class="specimen-field-value">The Nature of Scientific Discovery</div>
+                        </div>
+                        <div class="specimen-field">
+                            <div class="specimen-field-label">CATEGORY:</div>
+                            <div class="specimen-field-value">Philosophy of Science</div>
+                        </div>
+                    </div>
+                    <div class="specimen-content">
+                        <div class="specimen-text">
+                            Science is not about certainty, but about systematically reducing uncertainty—each experiment not a proof but a question mark that slowly transforms into a comma.
+                        </div>
+                    </div>
+                    <div class="specimen-footer">
+                        <div>PRESERVED: NOSTR PROTOCOL NDK</div>
+                        <div class="specimen-barcode">
+                            <span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 11: The Postcard -->
+        <div class="variation">
+            <div class="brief">
+                <div class="tagline">Variation Eleven</div>
+                <h2>The Postcard</h2>
+                <p class="description">
+                    "Wish you were here." The postcard is technology of distance and longing—a fragment of somewhere else, mailed to someone far away. It splits itself in half: the front is image, beauty, the place you visited; the back is message, connection, the words you send home. The Postcard design captures this duality. The top half is pure visual experience—a gradient sky where the highlighted text floats like a thought you had while standing on a cliff overlooking the ocean. The postage stamp in the corner (rotated just slightly, the way real stamps are) suggests this message has traveled, that what you're reading isn't local but arrived from elsewhere. The bottom half returns to the epistolary tradition—lines for address, space for message, the infrastructure of communication. In treating highlights as postcards, we acknowledge their temporal quality: this is what I was thinking when I was there (in that book, in that moment of understanding), and I'm sending it to you (my future self, who will need this again). The postmark at the bottom timestamps not just the date but the coordinates of mind and text. Every highlight is a postcard from the country of reading, sent forward through time.
+                </p>
+            </div>
+            <div class="mockup-container">
+                <div class="postcard">
+                    <div class="postcard-image">
+                        <div class="postcard-stamp">🌍</div>
+                        <div class="postcard-overlay">
+                            <div class="postcard-highlight">
+                                Travel is fatal to prejudice, bigotry, and narrow-mindedness—and many of our people need it sorely.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="postcard-divider"></div>
+                    <div class="postcard-message">
+                        <div class="postcard-lines">
+                            <div class="postcard-line">
+                                <div class="postcard-line-label">From:</div>
+                                <div class="postcard-line-value">Mark Twain</div>
+                            </div>
+                            <div class="postcard-line">
+                                <div class="postcard-line-label">Source:</div>
+                                <div class="postcard-line-value">The Innocents Abroad (1869)</div>
+                            </div>
+                            <div class="postcard-line">
+                                <div class="postcard-line-label">To:</div>
+                                <div class="postcard-line-value">Future Self</div>
+                            </div>
+                        </div>
+                        <div class="postcard-postmark">
+                            ✉ POSTED: NOV 29 2024 • NOSTR MAIL
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 12: The Newsprint -->
+        <div class="variation">
+            <div class="brief">
+                <div class="tagline">Variation Twelve</div>
+                <h2>The Newsprint</h2>
+                <p class="description">
+                    The newspaper is urgency made physical—history's first draft, printed in haste on cheap paper, meant to be read once and discarded. Yet certain articles get clipped, saved, pinned to bulletin boards, folded into wallets. The Newsprint design honors this ritual of preservation-from-ephemera. Its landscape format mirrors the broadsheet, while the serif typography evokes the gravitas of serious journalism. The masthead at the top (with its double-rule border, a newspaper convention dating back centuries) establishes authority: this text comes from somewhere, it has been vetted, it carries weight. The category badge ("ARTS" or "SCIENCE" or "WORLD") helps us file it mentally, while the byline attributes the thinking. The highlighted text appears as a pullquote—the journalistic device of emphasis, the editor's declaration that "this sentence is the lede, this is what matters." In treating highlights as clippings, we participate in an old practice: cutting out what we need to remember from the relentless stream of what we merely encounter. Not everything printed is worth saving. But what we clip, we claim as ours.
+                </p>
+            </div>
+            <div class="mockup-container">
+                <div class="newsprint">
+                    <div class="newsprint-masthead">
+                        <div class="newsprint-publication">THE DAILY INSIGHT</div>
+                        <div class="newsprint-date">November 29, 2024</div>
+                    </div>
+                    <div class="newsprint-category">PHILOSOPHY</div>
+                    <div class="newsprint-headline">
+                        On the Nature of Understanding
+                    </div>
+                    <div class="newsprint-byline">
+                        By Hannah Arendt, Special Contributor
+                    </div>
+                    <div class="newsprint-highlight">
+                        The aim of totalitarian education has never been to instill convictions but to destroy the capacity to form any.
+                    </div>
+                    <div class="newsprint-footer">
+                        <span>Archived via Nostr Protocol • Kind 9802</span>
+                        <span>Page A-1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 13: The Tattoo -->
+        <div class="variation">
+            <div class="brief">
+                <div class="tagline">Variation Thirteen</div>
+                <h2>The Tattoo</h2>
+                <p class="description">
+                    Of all the ways humans mark meaning on matter, the tattoo is the most committed. Unlike highlights in books (which close and reopen) or notes in margins (which can be erased), the tattoo is covenant with permanence. It says: this matters so much I will carry it on my body until I die. The Tattoo design treats highlights with this level of devotion. The skin-tone background with its subtle texture evokes the human canvas; the ornamental frame and diamond markers recall traditional tattoo flash art. The text sits centered, surrounded by space, given room to breathe—because a tattoo is never crowded, never rushed. Each element is considered, placed with intention. The date stamp at the bottom marks not just when this was highlighted but when this commitment was made, when you decided this text was worth making permanent. In an age of infinite scrolling, of ephemeral everything, The Tattoo asks: what would you carry forever? What words matter enough to inscribe not on paper but on skin, not in a database but on the body? This design is for the highlights you return to again and again, the sentences that have become part of your identity, the words that are now written on your heart.
+                </p>
+            </div>
+            <div class="mockup-container">
+                <div class="tattoo">
+                    <div class="tattoo-ornament">❋</div>
+                    <div class="tattoo-frame"></div>
+                    <div class="tattoo-content">
+                        <div class="tattoo-highlight">
+                            Between stimulus and response there is a space. In that space is our power to choose our response. In our response lies our growth and our freedom.
+                        </div>
+                        <div class="tattoo-attribution">VIKTOR FRANKL</div>
+                        <div class="tattoo-date">INSCRIBED: 2024.11.29</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 14: The Fortune -->
+        <div class="variation">
+            <div class="brief">
+                <div class="tagline">Variation Fourteen</div>
+                <h2>The Fortune</h2>
+                <p class="description">
+                    At the end of a meal, you break open a cookie, and inside is a slip of paper with words that feel mysteriously relevant to your life. The fortune cookie message is modern divination—the oracle in the dessert, prophecy from the kitchen. It's absurd and profound simultaneously, commercial and mystical, throwaway and keepsake. The Fortune design embraces this paradox. Its small landscape format (longer than it is tall, like the actual paper slip) and golden color scheme evoke both treasure and whimsy. The circular seal on the left suggests authenticity, certification from the universe. The text itself is centered, given equal weight—because in a fortune, you don't know which words will resonate until they do. The lucky numbers at the bottom (here replaced with a Nostr timestamp) remind us that fortunes exist at the intersection of randomness and meaning. This design is for highlights encountered serendipitously—the quote that appeared exactly when you needed it, the sentence that felt written specifically for you, the words that arrived not through methodical reading but through chance. Sometimes the most important highlights aren't the ones we deliberately seek but the ones that find us, slipped like messages from the universe into the cookie of everyday experience.
+                </p>
+            </div>
+            <div class="mockup-container">
+                <div class="fortune-wrapper">
+                    <div class="fortune">
+                        <div class="fortune-text">
+                            The teacher who is indeed wise does not bid you to enter the house of their wisdom but leads you to the threshold of your mind.
+                        </div>
+                        <div class="fortune-author">— KAHLIL GIBRAN</div>
+                    </div>
+                    <div class="fortune-lucky">LUCKY NUMBERS: 9802 • 2024 • 1129</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

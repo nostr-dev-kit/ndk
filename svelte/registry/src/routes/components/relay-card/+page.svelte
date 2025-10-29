@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
 	import { RelayCard } from '$lib/ndk/relay-card';
 	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/ndk/blocks';
 	import { EditProps } from '$lib/ndk/edit-props';
@@ -17,8 +16,6 @@
 	// UI component examples
 	import BasicExample from './examples/basic.svelte';
 	import BasicExampleRaw from './examples/basic.svelte?raw';
-	import FullCardExample from './examples/full-card.svelte';
-	import FullCardExampleRaw from './examples/full-card.svelte?raw';
 	import BuilderUsageExample from './examples/builder-usage.svelte';
 	import BuilderUsageExampleRaw from './examples/builder-usage.svelte?raw';
 
@@ -34,21 +31,6 @@
 	let relay5 = $state<string>('wss://nostr.wine');
 
 	const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
-
-	const followsBookmarks = createBookmarkedRelayList(
-		() => ({
-			authors: Array.from(ndk.$sessions?.follows || []),
-			includeCurrentUser: false
-		}),
-		ndk
-	);
-
-	const bookmarksWithToggle = createBookmarkedRelayList(
-		() => ({
-			authors: Array.from(ndk.$sessions?.follows || [])
-		}),
-		ndk
-	);
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -134,40 +116,16 @@
 			<!-- Basic Usage -->
 			<UIExample
 				title="Basic Usage"
-				description="Minimal example with RelayCard.Root and essential primitives."
+				description="Minimal example with RelayCard.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy."
 				code={BasicExampleRaw}
 			>
 				<BasicExample {ndk} relayUrl={exampleRelay} />
 			</UIExample>
 
-			<!-- Full Composition -->
+			<!-- Builder Usage -->
 			<UIExample
-				title="Full Composition"
-				description="All available primitives composed together."
-				code={FullCardExampleRaw}
-			>
-				<FullCardExample
-					{ndk}
-					relayUrl={exampleRelay}
-					{followsBookmarks}
-					{bookmarksWithToggle}
-				/>
-			</UIExample>
-		</div>
-	</section>
-
-	<!-- Builder Section -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">Builder</h2>
-		<p class="text-muted-foreground mb-8">
-			The <code class="text-sm bg-muted px-2 py-1 rounded">createBookmarkedRelayList</code> builder
-			provides reactive state for tracking bookmarked relays from a set of users.
-		</p>
-
-		<div class="space-y-8">
-			<UIExample
-				title="Using createBookmarkedRelayList"
-				description="Create a reactive bookmarked relay list to track and display relays bookmarked by users you follow."
+				title="Using the Builder"
+				description="Use createBookmarkedRelayList() to create a reactive bookmarked relay list that tracks relays bookmarked by users you follow. Includes bookmark counts and toggle functionality."
 				code={BuilderUsageExampleRaw}
 			>
 				<BuilderUsageExample {ndk} />

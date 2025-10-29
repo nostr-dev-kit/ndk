@@ -17,6 +17,7 @@
   import Root from '../highlight-card/highlight-card-root.svelte';
   import Content from '../highlight-card/highlight-card-content.svelte';
   import { HIGHLIGHT_CARD_CONTEXT_KEY, type HighlightCardContext } from '../highlight-card/context.svelte.js';
+  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
 
   interface Props {
     /** NDK instance */
@@ -55,30 +56,6 @@
       profileFetcher.profile?.name ||
       'Anonymous'
   );
-
-  // Format timestamp
-  const timestamp = $derived.by(() => {
-    if (!event.created_at) return '';
-
-    const date = new Date(event.created_at * 1000);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-
-    if (hours < 1) {
-      const mins = Math.floor(diff / (1000 * 60));
-      if (mins < 1) return 'now';
-      return `${mins}m`;
-    } else if (hours < 24) {
-      return `${hours}h`;
-    } else if (hours < 168) {
-      // 7 days
-      const days = Math.floor(hours / 24);
-      return `${days}d`;
-    } else {
-      return date.toLocaleDateString();
-    }
-  });
 </script>
 
 <Root {ndk} {event} variant="compact" class={cn(className)}>
@@ -104,9 +81,9 @@
             {#if showAuthor}
               <span>{authorName}</span>
             {/if}
-            {#if showTimestamp && timestamp}
+            {#if showTimestamp}
               <span>·</span>
-              <span>{timestamp}</span>
+              <TimeAgo timestamp={event.created_at} />
             {/if}
             {#if showSource && ctx.state.source}
               <span>·</span>

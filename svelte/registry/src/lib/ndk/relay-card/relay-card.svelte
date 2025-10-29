@@ -1,10 +1,10 @@
 <!-- @ndk-version: relay-card@0.4.0 -->
 <script lang="ts">
-  import type { BookmarkedRelayWithStats, RelayNIP11Info, RelayStatus } from '@nostr-dev-kit/svelte';
+  import type { BookmarkedRelayWithStats, NDKRelayInformation, RelayStatus } from '@nostr-dev-kit/svelte';
   import RelayConnectionStatus from '$lib/ndk/relay-connection-status/relay-connection-status.svelte';
 
   interface ExtendedRelayStats extends BookmarkedRelayWithStats {
-    nip11?: RelayNIP11Info | null;
+    nip11?: NDKRelayInformation | null;
     error?: Error | null;
     status?: RelayStatus;
     connectionStats?: {

@@ -26,6 +26,15 @@
  * <SimpleEventCard {ndk} {event} />
  * ```
  *
+ * @example ThreadView blocks:
+ * ```svelte
+ * <script>
+ *   import { createThreadView } from '@nostr-dev-kit/svelte';
+ *   const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
+ * </script>
+ * <ThreadViewTwitter {ndk} {thread} />
+ * ```
+ *
  * @example RelayCard blocks:
  * ```svelte
  * <RelayCardPortrait {ndk} relayUrl="wss://relay.damus.io" />
@@ -48,6 +57,9 @@ export { default as HighlightCardElegant } from './highlight-card-elegant.svelte
 
 // EventCard blocks
 export { default as SimpleEventCard } from './simple-event-card.svelte';
+
+// ThreadView blocks
+export { default as ThreadViewTwitter } from './thread-view-twitter.svelte';
 
 // RelayCard blocks
 export { default as RelayCardPortrait } from './relay-card-portrait.svelte';

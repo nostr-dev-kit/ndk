@@ -13,6 +13,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import Avatar from '$lib/ndk/user-profile/user-profile-avatar.svelte';
   import EventContent from '$lib/ndk/event/content/event-content.svelte';
+  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -36,24 +37,6 @@
 
   const authorHandle = $derived(
     `@${event.pubkey.slice(0, 8)}`
-  );
-
-  // Format timestamp as relative time
-  function formatRelativeTime(timestamp: number): string {
-    const now = Date.now() / 1000;
-    const diff = now - timestamp;
-
-    if (diff < 60) return 'now';
-    if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d`;
-
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
-  const formattedTime = $derived(
-    formatRelativeTime(event.created_at || 0)
   );
 
   // Get truncated content if needed
@@ -91,7 +74,7 @@
         <span class="author-name">{authorName}</span>
         <span class="author-handle">{authorHandle}</span>
       </div>
-      <span class="timestamp">{formattedTime}</span>
+      <TimeAgo timestamp={event.created_at || 0} class="timestamp" />
     </div>
 
     <div class="note-body">

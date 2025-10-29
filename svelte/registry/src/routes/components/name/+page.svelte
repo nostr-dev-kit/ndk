@@ -1,115 +1,56 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/ndk/user-profile';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { EditProps } from '$lib/ndk/edit-props';
+  import CodePreview from '$site-components/code-preview.svelte';
   import ApiTable from '$site-components/api-table.svelte';
+
+  // Import examples
+  import BasicExample from './examples/basic.svelte';
+  import BasicExampleRaw from './examples/basic.svelte?raw';
+  import CustomizationExample from './examples/customization.svelte';
+  import CustomizationExampleRaw from './examples/customization.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Example pubkeys for demonstration
-  const examplePubkey = 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52'; // pablo
+  let examplePubkey = $state<string>('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
+  let size = $state<'sm' | 'md' | 'lg' | 'xl'>('md');
+  let truncate = $state<boolean>(false);
 </script>
 
 <div class="component-page">
-  <div class="component-header">
-    <h1>Name</h1>
-    <p class="component-description">
-      Display user names with automatic fallbacks. Part of the UserProfile component system.
-    </p>
-  </div>
+  <header>
+    <h1>UserProfile.Name</h1>
+    <p>Display user names with automatic fallbacks. Part of the UserProfile component system.</p>
 
-  <div class="component-section">
-    <h2>Display Name</h2>
-    <p>Shows the user's display name (falls back to name or pubkey).</p>
+    <EditProps.Root>
+      <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
+      <EditProps.Prop name="Size" type="select" bind:value={size} options={['sm', 'md', 'lg', 'xl']} />
+      <EditProps.Prop name="Truncate" type="boolean" bind:value={truncate} />
+    </EditProps.Root>
+  </header>
 
-    <div class="preview">
-      <UserProfile.Root {ndk} pubkey={examplePubkey}>
-        <UserProfile.Name field="displayName" />
-      </UserProfile.Root>
-    </div>
-  </div>
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-  <div class="component-section">
-    <h2>Username</h2>
-    <p>Shows the user's username/name.</p>
+    <CodePreview
+      title="Basic Usage"
+      description="Display user names with three field options: displayName (shows display name, falls back to name or pubkey), name (shows username/name), or both (shows 'Display Name (@username)' format)."
+      code={BasicExampleRaw}
+    >
+      <BasicExample {ndk} pubkey={examplePubkey} />
+    </CodePreview>
 
-    <div class="preview">
-      <UserProfile.Root {ndk} pubkey={examplePubkey}>
-        <UserProfile.Name field="name" />
-      </UserProfile.Root>
-    </div>
-  </div>
+    <CodePreview
+      title="Customization"
+      description="Customize the appearance with size variants (sm, md, lg, xl) and optional truncation for long names. Use the controls above to adjust the settings."
+      code={CustomizationExampleRaw}
+    >
+      <CustomizationExample {ndk} pubkey={examplePubkey} {size} {truncate} />
+    </CodePreview>
+  </section>
 
-  <div class="component-section">
-    <h2>Both Name and Username</h2>
-    <p>Shows both display name and username in format "Display Name (@username)".</p>
-
-    <div class="preview">
-      <UserProfile.Root {ndk} pubkey={examplePubkey}>
-        <UserProfile.Name field="both" />
-      </UserProfile.Root>
-    </div>
-  </div>
-
-  <div class="component-section">
-    <h2>Sizes</h2>
-    <p>Names support different text sizes.</p>
-
-    <div class="preview">
-      <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <UserProfile.Name field="displayName" size="sm" />
-        </UserProfile.Root>
-
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <UserProfile.Name field="displayName" size="md" />
-        </UserProfile.Root>
-
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <UserProfile.Name field="displayName" size="lg" />
-        </UserProfile.Root>
-
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <UserProfile.Name field="displayName" size="xl" />
-        </UserProfile.Root>
-      </div>
-    </div>
-  </div>
-
-  <div class="component-section">
-    <h2>With Truncation</h2>
-    <p>Long names can be truncated with ellipsis.</p>
-
-    <div class="preview">
-      <div style="max-width: 200px;">
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <UserProfile.Name field="displayName" truncate={true} />
-        </UserProfile.Root>
-      </div>
-    </div>
-  </div>
-
-  <div class="component-section">
-    <h2>Usage</h2>
-    <pre><code>{`<script>
-  import { UserProfile } from '$lib/ndk/user-profile';
-  import { getContext } from 'svelte';
-
-  const ndk = getContext('ndk');
-  const pubkey = 'fa984bd7...';
-</script>
-
-<UserProfile.Root {ndk} {pubkey}>
-  <UserProfile.Name field="displayName" />
-</UserProfile.Root>
-
-<!-- Or show both name and username -->
-<UserProfile.Root {ndk} {pubkey}>
-  <UserProfile.Name field="both" />
-</UserProfile.Root>`}</code></pre>
-  </div>
-
-  <div class="component-section">
+  <section class="info">
     <h2>Props</h2>
     <ApiTable
       rows={[
@@ -119,67 +60,22 @@
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />
-  </div>
+  </section>
 </div>
 
 <style>
-  .component-page {
-    max-width: 1200px;
-    margin: 0 auto;
+  .info {
     padding: 2rem;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    margin-top: 2rem;
   }
 
-  .component-header {
-    margin-bottom: 3rem;
-  }
-
-  .component-header h1 {
-    font-size: 2.5rem;
+  .info h2 {
+    font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
     color: var(--color-foreground);
   }
-
-  .component-description {
-    font-size: 1.125rem;
-    color: var(--color-muted-foreground);
-    margin: 0;
-  }
-
-  .component-section {
-    margin-bottom: 3rem;
-  }
-
-  .component-section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 1rem 0;
-    color: var(--color-foreground);
-  }
-
-  .component-section p {
-    color: var(--color-muted-foreground);
-    margin: 0 0 1rem 0;
-  }
-
-  .preview {
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    padding: 2rem;
-    margin: 1rem 0;
-  }
-
-  pre {
-    background: var(--color-muted);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: 'Courier New', monospace;
-    font-size: 0.875rem;
-  }
-
 </style>

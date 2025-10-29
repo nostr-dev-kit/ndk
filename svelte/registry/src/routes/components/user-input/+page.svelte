@@ -1,9 +1,9 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
   import Alert from '$site-components/alert.svelte';
-  import FeatureList from '$site-components/feature-list.svelte';
 
   import BuilderBasic from './examples/builder-basic.svelte';
   import BuilderBasicRaw from './examples/builder-basic.svelte?raw';
@@ -11,27 +11,27 @@
   import ComposableParts from './examples/composable-parts.svelte';
   import ComposablePartsRaw from './examples/composable-parts.svelte?raw';
 
-  import WithSelection from './examples/with-selection.svelte';
-  import WithSelectionRaw from './examples/with-selection.svelte?raw';
-
   const ndk = getContext<NDKSvelte>('ndk');
+
+  let placeholder = $state<string>('Search for users...');
 </script>
 
 <div class="component-page">
   <header>
     <h1>UserInput</h1>
     <p>Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="Placeholder" type="text" bind:value={placeholder} />
+    </EditProps.Root>
   </header>
 
-  <section class="demo">
-    <h2>Using the Builder (Svelte 5 Runes)</h2>
-    <p class="demo-description">
-      The <code>createUserInput</code> builder provides reactive search functionality with full control over rendering.
-      This example shows how to use Svelte 5 runes ($state, $derived) with the builder API.
-    </p>
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+
     <CodePreview
       title="Builder Pattern"
-      description="Use createUserInput(() => (config)) with reactive config for maximum flexibility"
+      description="Use createUserInput() for full control over rendering with Svelte 5 runes. Searches cached profiles as you type, with debounced network lookups for NIP-05/npub/nprofile."
       code={BuilderBasicRaw}
     >
       <BuilderBasic {ndk} />
@@ -45,63 +45,22 @@
         <li><strong>Reactive state</strong> - Uses Svelte 5 runes for optimal reactivity</li>
       </ul>
     </Alert>
-  </section>
 
-  <section class="demo">
-    <h2>Composable Components</h2>
-    <p class="demo-description">
-      Use pre-built composable components for quick implementation with customizable styling.
-    </p>
     <CodePreview
-      title="Composable Parts"
-      description="Combine UserInput.Root, Search, Results, and ResultItem for a complete solution"
+      title="Composable Components"
+      description="Use pre-built composable components (UserInput.Root, Search, Results, ResultItem) for quick implementation with customizable styling."
       code={ComposablePartsRaw}
     >
       <ComposableParts {ndk} />
     </CodePreview>
 
-    <Alert variant="info" title="Component Architecture">
+    <Alert variant="info" title="Search Capabilities">
+      <p class="mb-2">Supports multiple search methods:</p>
       <ul>
-        <li><code>UserInput.Root</code> - Provides context and manages state</li>
-        <li><code>UserInput.Search</code> - Input field with loading indicator</li>
-        <li><code>UserInput.Results</code> - Dropdown container for results</li>
-        <li><code>UserInput.ResultItem</code> - Individual result with avatar and info</li>
-      </ul>
-    </Alert>
-  </section>
-
-  <section class="demo">
-    <h2>With Selection State</h2>
-    <p class="demo-description">
-      Show selected user and provide a way to clear the selection.
-    </p>
-    <CodePreview
-      title="Selection Management"
-      description="Display selected user and allow clearing the selection"
-      code={WithSelectionRaw}
-    >
-      <WithSelection {ndk} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <h2>Search Capabilities</h2>
-    <p class="demo-description">
-      The user input component supports multiple search methods:
-    </p>
-    <FeatureList items={[
-      { title: 'Name search', description: 'Search by display name or username' },
-      { title: 'NIP-05', description: 'Enter a Nostr address (e.g., user@domain.com)' },
-      { title: 'npub', description: 'Paste a public key in npub format' },
-      { title: 'nprofile', description: 'Paste an nprofile string with relay hints' }
-    ]} />
-
-    <Alert variant="info" title="Performance">
-      <ul>
-        <li>Cache searches are <strong>immediate</strong> with no debouncing</li>
-        <li>Network lookups are <strong>debounced</strong> (default 300ms)</li>
-        <li>Results are sorted with <strong>followed users first</strong></li>
-        <li>Supports cache adapters with <code>getProfiles</code> method</li>
+        <li><strong>Name search</strong> - Search by display name or username</li>
+        <li><strong>NIP-05</strong> - Enter a Nostr address (e.g., user@domain.com)</li>
+        <li><strong>npub</strong> - Paste a public key in npub format</li>
+        <li><strong>nprofile</strong> - Paste an nprofile string with relay hints</li>
       </ul>
     </Alert>
   </section>

@@ -2,6 +2,7 @@
   import { UserProfile } from '$lib/ndk/user-profile';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import ApiTable from '$site-components/api-table.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -110,44 +111,14 @@
 
   <div class="component-section">
     <h2>Props</h2>
-    <div class="props-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Default</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>field</td>
-            <td>'name' | 'displayName' | 'both'</td>
-            <td>'displayName'</td>
-            <td>Which name field to display</td>
-          </tr>
-          <tr>
-            <td>size</td>
-            <td>'sm' | 'md' | 'lg' | 'xl'</td>
-            <td>'md'</td>
-            <td>Text size</td>
-          </tr>
-          <tr>
-            <td>truncate</td>
-            <td>boolean</td>
-            <td>false</td>
-            <td>Truncate long names with ellipsis</td>
-          </tr>
-          <tr>
-            <td>class</td>
-            <td>string</td>
-            <td>''</td>
-            <td>Additional CSS classes</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ApiTable
+      rows={[
+        { name: 'field', type: "'name' | 'displayName' | 'both'", default: "'displayName'", description: 'Which name field to display' },
+        { name: 'size', type: "'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: 'Text size' },
+        { name: 'truncate', type: 'boolean', default: 'false', description: 'Truncate long names with ellipsis' },
+        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+      ]}
+    />
   </div>
 </div>
 
@@ -211,40 +182,4 @@
     font-size: 0.875rem;
   }
 
-  .props-table {
-    overflow-x: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: hsl(var(--color-background));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
-  th, td {
-    text-align: left;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid hsl(var(--color-border));
-  }
-
-  th {
-    font-weight: 600;
-    color: hsl(var(--color-foreground));
-    background: hsl(var(--color-muted));
-  }
-
-  td {
-    color: hsl(var(--color-muted-foreground));
-  }
-
-  tr:last-child td {
-    border-bottom: none;
-  }
-
-  td:first-child {
-    font-family: 'Courier New', monospace;
-    color: hsl(var(--color-primary));
-  }
 </style>

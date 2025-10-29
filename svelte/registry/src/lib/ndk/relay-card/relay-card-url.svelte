@@ -23,20 +23,30 @@
 
     /** Whether to truncate */
     truncate?: boolean;
+
+    /** Whether to show protocol (wss://, ws://) */
+    showProtocol?: boolean;
   }
 
   let {
     size = 'text-sm',
     class: className = '',
-    truncate = true
+    truncate = true,
+    showProtocol = true
   }: Props = $props();
 
   const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
   if (!context) {
     throw new Error('RelayCard.Url must be used within RelayCard.Root');
   }
+
+  const displayUrl = $derived(
+    showProtocol
+      ? context.relayInfo.url
+      : context.relayInfo.url.replace('wss://', '').replace('ws://', '')
+  );
 </script>
 
-<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
-  {context.relayInfo.url}
+<span class={cn(size, truncate && 'truncate block max-w-full', 'opacity-70', className)}>
+  {displayUrl}
 </span>

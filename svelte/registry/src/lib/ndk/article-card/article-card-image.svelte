@@ -12,6 +12,7 @@
   import { getContext } from 'svelte';
   import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from './context.svelte.js';
   import { cn } from '$lib/utils';
+  import FileIcon from '../icons/file.svelte';
 
   interface Props {
     /** Additional CSS classes */
@@ -50,7 +51,7 @@
     {/if}
   {:else}
     <div class="w-full h-full flex items-center justify-center bg-primary/10">
-      <i class="hugeicons-stroke-rounded text-6xl text-primary/30 leading-none">&#985549;</i>
+      <FileIcon class="{iconSize} text-primary/30" />
     </div>
   {/if}
 </div>

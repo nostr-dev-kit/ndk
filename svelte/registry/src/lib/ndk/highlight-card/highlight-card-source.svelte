@@ -14,6 +14,8 @@
     HIGHLIGHT_CARD_CONTEXT_KEY,
     type HighlightCardContext,
   } from './context.svelte.js';
+  import LinkIcon from '../icons/link.svelte';
+  import FileIcon from '../icons/file.svelte';
 
   interface Props {
     /** Position of the badge */
@@ -50,7 +52,7 @@
     }
   }
 
-  const iconSize = $derived(size === 'sm' ? 'text-[10px]' : 'text-xs');
+  const iconSizeClass = $derived(size === 'sm' ? 'w-2.5 h-2.5' : 'w-3 h-3');
   const textSize = $derived(size === 'sm' ? 'text-[10px]' : 'text-xs');
   const padding = $derived(size === 'sm' ? 'px-2 py-1' : 'px-3 py-1.5');
 </script>
@@ -72,11 +74,11 @@
     )}
   >
     {#if context.state.source.type === 'web'}
-      <i class="hugeicons-stroke-rounded {iconSize} leading-none">&#987531;</i>
+      <LinkIcon class={iconSizeClass} />
     {:else if context.state.source.type === 'article'}
-      <i class="hugeicons-stroke-rounded {iconSize} leading-none">&#985549;</i>
+      <FileIcon class={iconSizeClass} />
     {:else}
-      <i class="hugeicons-stroke-rounded {iconSize} leading-none">&#987975;</i>
+      <FileIcon class={iconSizeClass} />
     {/if}
     <span
       class={cn(

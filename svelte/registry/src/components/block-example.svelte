@@ -18,9 +18,12 @@
 
 		/** The preview content (actual block component) */
 		children?: import('svelte').Snippet;
+
+		/** Optional controls to show above preview (for prop toggles/selects) */
+		controls?: import('svelte').Snippet;
 	}
 
-	let { code, title, description, component, children }: Props = $props();
+	let { code, title, description, component, children, controls }: Props = $props();
 
 	let activeTab = $state<'preview' | 'code' | 'install'>('preview');
 	let highlightedCode = $state<string>('');
@@ -87,8 +90,15 @@
 
 	<div class="content">
 		{#if activeTab === 'preview'}
-			<div class="preview">
-				{@render children?.()}
+			<div class="preview-container">
+				{#if controls}
+					<div class="preview-controls">
+						{@render controls()}
+					</div>
+				{/if}
+				<div class="preview">
+					{@render children?.()}
+				</div>
 			</div>
 		{:else if activeTab === 'install'}
 			<div class="install-tab">
@@ -200,12 +210,55 @@
 		min-height: 200px;
 	}
 
+	.preview-container {
+		background: hsl(var(--color-muted));
+	}
+
+	.preview-controls {
+		padding: 1rem 1.5rem;
+		border-bottom: 1px solid hsl(var(--color-border));
+		background: hsl(var(--color-card));
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.preview-controls :global(label) {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: hsl(var(--color-foreground));
+	}
+
+	.preview-controls :global(select) {
+		padding: 0.375rem 0.75rem;
+		border: 1px solid hsl(var(--color-border));
+		border-radius: 0.375rem;
+		background: hsl(var(--color-background));
+		color: hsl(var(--color-foreground));
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: border-color 0.2s;
+	}
+
+	.preview-controls :global(select:hover) {
+		border-color: hsl(var(--color-primary));
+	}
+
+	.preview-controls :global(select:focus) {
+		outline: none;
+		border-color: hsl(var(--color-primary));
+		box-shadow: 0 0 0 3px hsl(var(--color-primary) / 0.1);
+	}
+
 	.preview {
 		padding: 2rem 1.5rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: hsl(var(--color-muted));
 	}
 
 	.install-tab {

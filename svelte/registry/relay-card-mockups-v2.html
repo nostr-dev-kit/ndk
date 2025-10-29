@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RelayCard - Actually Creative Designs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #0f0f0f;
+            color: #e5e5e5;
+            padding: 3rem;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .design-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            opacity: 0.7;
+        }
+
+        /* DESIGN 1: Terminal/Command Line Style */
+        .relay-terminal {
+            background: #000;
+            border: 2px solid #33ff00;
+            font-family: 'Courier New', monospace;
+            padding: 0;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(51, 255, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #33ff00;
+            color: #000;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .terminal-body {
+            padding: 1rem;
+            color: #33ff00;
+            font-size: 0.9rem;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+        }
+
+        .terminal-prompt {
+            color: #ff00ff;
+        }
+
+        .terminal-command {
+            color: #00ffff;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background: #33ff00;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* DESIGN 2: Bento Box / iOS Widget Style */
+        .relay-bento {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 1px;
+            background: #333;
+            border-radius: 20px;
+            overflow: hidden;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .bento-cell {
+            background: #1a1a1a;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bento-header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bento-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .bento-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .bento-metric-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .bento-metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* DESIGN 3: Music Player / Spotify-like */
+        .relay-player {
+            background: linear-gradient(180deg, #1db954 0%, #191414 50%);
+            border-radius: 12px;
+            padding: 0;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .player-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+
+        .player-info {
+            padding: 1.5rem;
+            background: #191414;
+        }
+
+        .player-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-subtitle {
+            color: #b3b3b3;
+            margin-bottom: 1rem;
+        }
+
+        .player-progress {
+            width: 100%;
+            height: 4px;
+            background: #404040;
+            border-radius: 2px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-progress::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 67%;
+            background: #1db954;
+        }
+
+        .player-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .player-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: #1db954;
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* DESIGN 4: Credit Card / Banking */
+        .relay-card-banking {
+            width: 400px;
+            height: 240px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+        }
+
+        .relay-card-banking::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            top: -200px;
+            right: -100px;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #f0f0f0, #c0c0c0);
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: linear-gradient(135deg, #e0e0e0, #a0a0a0);
+            border-radius: 3px;
+        }
+
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            letter-spacing: 4px;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-name {
+            font-size: 0.9rem;
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .card-logo {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+
+        /* DESIGN 5: Newspaper Article */
+        .relay-newspaper {
+            background: #f9f7f1;
+            color: #1a1a1a;
+            border: 3px double #333;
+            padding: 2rem;
+            max-width: 600px;
+            font-family: 'Georgia', serif;
+            position: relative;
+        }
+
+        .newspaper-masthead {
+            text-align: center;
+            border-bottom: 4px solid #000;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .newspaper-title {
+            font-family: 'Times New Roman', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .newspaper-date {
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .newspaper-headline {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .newspaper-body {
+            columns: 2;
+            column-gap: 2rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        /* DESIGN 6: Ticket/Boarding Pass */
+        .relay-ticket {
+            width: 500px;
+            background: #fff;
+            color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .ticket-top {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            padding: 2rem;
+            color: #fff;
+            position: relative;
+        }
+
+        .ticket-top::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: radial-gradient(circle at 10px, transparent 10px, #fff 10px);
+            background-size: 20px 20px;
+        }
+
+        .ticket-flight {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-route {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-bottom {
+            padding: 2rem;
+            padding-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .ticket-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .ticket-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .ticket-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .ticket-barcode {
+            margin-top: 1rem;
+            height: 60px;
+            background: repeating-linear-gradient(90deg, #000 0px, #000 2px, #fff 2px, #fff 4px);
+        }
+
+        /* DESIGN 7: Retro Computer UI */
+        .relay-retro {
+            background: #000080;
+            border: 4px solid #c0c0c0;
+            box-shadow: inset 2px 2px 0 #000, inset -2px -2px 0 #808080;
+            max-width: 500px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .retro-titlebar {
+            background: linear-gradient(180deg, #000080, #0000c0);
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #fff;
+        }
+
+        .retro-buttons {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .retro-button {
+            width: 16px;
+            height: 16px;
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .retro-content {
+            background: #c0c0c0;
+            padding: 1rem;
+            color: #000;
+        }
+
+        .retro-fieldset {
+            border: 2px groove #808080;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .retro-legend {
+            font-weight: bold;
+            padding: 0 0.5rem;
+        }
+
+        .retro-btn {
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            padding: 0.5rem 1rem;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .retro-btn:active {
+            border-style: inset;
+        }
+
+        /* DESIGN 8: Game Achievement */
+        .relay-achievement {
+            background: linear-gradient(135deg, #2d3561 0%, #1a1f3a 100%);
+            border: 3px solid #ffd700;
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .achievement-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 60%);
+            animation: rotate 6s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .achievement-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .achievement-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .achievement-trophy {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+        }
+
+        .achievement-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-subtitle {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .achievement-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .achievement-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .achievement-stat-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* DESIGN 9: macOS Dock Icon */
+        .relay-dock {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(40px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            align-items: flex-end;
+        }
+
+        .dock-item {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .dock-item:hover {
+            transform: translateY(-20px) scale(1.2);
+        }
+
+        .dock-item::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -30px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .dock-item:hover::after {
+            opacity: 1;
+        }
+
+        .dock-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ff3b30;
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+        }
+
+        /* DESIGN 10: Periodic Table Element */
+        .relay-element {
+            width: 200px;
+            height: 220px;
+            background: linear-gradient(135deg, #00d4ff, #020024);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .element-number {
+            font-size: 1rem;
+            color: #00d4ff;
+            font-weight: 700;
+        }
+
+        .element-symbol {
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .element-name {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .element-weight {
+            font-size: 0.9rem;
+            text-align: center;
+            color: #aaa;
+        }
+
+        /* DESIGN 11: iOS Notification */
+        .relay-notification {
+            max-width: 400px;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(40px);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .notification-app {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-body {
+            font-size: 0.95rem;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        /* DESIGN 12: Recipe Card */
+        .relay-recipe {
+            background: #fff;
+            color: #333;
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .recipe-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .recipe-description {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Actually Creative RelayCard Designs</h1>
+
+        <!-- Terminal -->
+        <div class="design-section">
+            <h2 class="section-title">1. Terminal / Command Line</h2>
+            <div class="relay-terminal">
+                <div class="terminal-header">
+                    ● RELAY.TERMINAL
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">relay@nostr</span>:<span class="terminal-command">~$</span> status
+                    </div>
+                    <div class="terminal-line">
+                        CONNECTION: <span style="color: #33ff00;">ACTIVE</span>
+                    </div>
+                    <div class="terminal-line">
+                        URL: wss://relay.damus.io
+                    </div>
+                    <div class="terminal-line">
+                        USERS: 847 connected
+                    </div>
+                    <div class="terminal-line">
+                        EVENTS: 12,547 cached
+                    </div>
+                    <div class="terminal-line">
+                        LATENCY: 45ms
+                    </div>
+                    <div class="terminal-line" style="margin-top: 1rem;">
+                        <span class="terminal-prompt">relay@nostr</span>:<span class="terminal-command">~$</span> connect<span class="terminal-cursor"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bento Box -->
+        <div class="design-section">
+            <h2 class="section-title">2. Bento Box / iOS Widget</h2>
+            <div class="relay-bento">
+                <div class="bento-cell bento-header">
+                    <div class="bento-icon">⚡</div>
+                    <div>
+                        <div class="bento-title">relay.damus.io</div>
+                        <div style="color: #00ff88; font-size: 0.85rem;">● Online</div>
+                    </div>
+                </div>
+                <div class="bento-cell">
+                    <div class="bento-metric-label">Users</div>
+                    <div class="bento-metric-value">847</div>
+                </div>
+                <div class="bento-cell">
+                    <div class="bento-metric-label">Events</div>
+                    <div class="bento-metric-value">12.5k</div>
+                </div>
+                <div class="bento-cell">
+                    <div class="bento-metric-label">Latency</div>
+                    <div class="bento-metric-value">45ms</div>
+                </div>
+                <div class="bento-cell">
+                    <div class="bento-metric-label">Uptime</div>
+                    <div class="bento-metric-value">99.8%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Music Player -->
+        <div class="design-section">
+            <h2 class="section-title">3. Music Player / Spotify Style</h2>
+            <div class="relay-player">
+                <div class="player-cover">⚡</div>
+                <div class="player-info">
+                    <div class="player-title">Damus Relay</div>
+                    <div class="player-subtitle">wss://relay.damus.io • 847 listeners</div>
+                    <div class="player-progress"></div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.8rem; color: #b3b3b3;">
+                        <span>12.5k events</span>
+                        <span>99.8% uptime</span>
+                    </div>
+                    <div class="player-controls">
+                        <button class="player-btn">▶ Connect</button>
+                        <button class="player-btn" style="background: transparent; border: 1px solid #404040; color: #fff;">⭐ Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credit Card -->
+        <div class="design-section">
+            <h2 class="section-title">4. Credit Card / Banking</h2>
+            <div class="relay-card-banking">
+                <div class="card-chip"></div>
+                <div class="card-number">RELAY•DAMUS•IO</div>
+                <div class="card-bottom">
+                    <div>
+                        <div style="font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.25rem;">VALID THRU</div>
+                        <div class="card-name">∞ / FOREVER</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.25rem; text-align: right;">CONNECTIONS</div>
+                        <div class="card-name" style="text-align: right;">847 ACTIVE</div>
+                    </div>
+                    <div class="card-logo">⚡</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newspaper -->
+        <div class="design-section">
+            <h2 class="section-title">5. Newspaper Article</h2>
+            <div class="relay-newspaper">
+                <div class="newspaper-masthead">
+                    <div class="newspaper-title">THE NOSTR TIMES</div>
+                    <div class="newspaper-date">Est. 2022 • Vol. MMXXV</div>
+                </div>
+                <div class="newspaper-headline">
+                    Damus Relay Reaches Record 847 Concurrent Users
+                </div>
+                <div class="newspaper-body">
+                    In a remarkable achievement for the decentralized social network, relay.damus.io has established itself as one of the most reliable and performant relays in the Nostr ecosystem. With an impressive 99.8% uptime and consistently low latency of just 45ms, this relay has become the go-to choice for thousands of users worldwide. The relay currently hosts over 12,500 cached events and continues to grow at an unprecedented rate. Industry experts predict this trend will continue as more users discover the benefits of decentralized social networking.
+                </div>
+            </div>
+        </div>
+
+        <!-- Boarding Pass -->
+        <div class="design-section">
+            <h2 class="section-title">6. Boarding Pass / Ticket</h2>
+            <div class="relay-ticket">
+                <div class="ticket-top">
+                    <div class="ticket-flight">NOSTR RELAY • PRIORITY ACCESS</div>
+                    <div class="ticket-route">relay.damus.io</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Connection confirmed • Gate 443 now open</div>
+                </div>
+                <div class="ticket-bottom">
+                    <div class="ticket-info">
+                        <div class="ticket-label">Passengers</div>
+                        <div class="ticket-value">847</div>
+                    </div>
+                    <div class="ticket-info">
+                        <div class="ticket-label">Events</div>
+                        <div class="ticket-value">12.5k</div>
+                    </div>
+                    <div class="ticket-info">
+                        <div class="ticket-label">Latency</div>
+                        <div class="ticket-value">45ms</div>
+                    </div>
+                    <div class="ticket-info">
+                        <div class="ticket-label">Uptime</div>
+                        <div class="ticket-value">99.8%</div>
+                    </div>
+                    <div class="ticket-info">
+                        <div class="ticket-label">Protocol</div>
+                        <div class="ticket-value">WSS</div>
+                    </div>
+                    <div class="ticket-info">
+                        <div class="ticket-label">Status</div>
+                        <div class="ticket-value" style="color: #1db954;">Online</div>
+                    </div>
+                </div>
+                <div style="padding: 0 2rem 2rem;">
+                    <div class="ticket-barcode"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Retro Computer -->
+        <div class="design-section">
+            <h2 class="section-title">7. Windows 95 / Retro Computer</h2>
+            <div class="relay-retro">
+                <div class="retro-titlebar">
+                    <span>Relay Properties</span>
+                    <div class="retro-buttons">
+                        <div class="retro-button">_</div>
+                        <div class="retro-button">□</div>
+                        <div class="retro-button">×</div>
+                    </div>
+                </div>
+                <div class="retro-content">
+                    <fieldset class="retro-fieldset">
+                        <legend class="retro-legend">Connection Info</legend>
+                        <div style="margin-bottom: 0.5rem;"><strong>Name:</strong> Damus Relay</div>
+                        <div style="margin-bottom: 0.5rem;"><strong>URL:</strong> wss://relay.damus.io</div>
+                        <div style="margin-bottom: 0.5rem;"><strong>Status:</strong> Connected</div>
+                    </fieldset>
+                    <fieldset class="retro-fieldset">
+                        <legend class="retro-legend">Statistics</legend>
+                        <div style="margin-bottom: 0.5rem;"><strong>Users:</strong> 847</div>
+                        <div style="margin-bottom: 0.5rem;"><strong>Events:</strong> 12,547</div>
+                        <div style="margin-bottom: 0.5rem;"><strong>Latency:</strong> 45ms</div>
+                    </fieldset>
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button class="retro-btn">OK</button>
+                        <button class="retro-btn">Cancel</button>
+                        <button class="retro-btn">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement -->
+        <div class="design-section">
+            <h2 class="section-title">8. Game Achievement Unlocked</h2>
+            <div class="relay-achievement">
+                <div class="achievement-glow"></div>
+                <div class="achievement-content">
+                    <div class="achievement-header">
+                        <div class="achievement-trophy">🏆</div>
+                        <div class="achievement-title">ELITE RELAY DISCOVERED</div>
+                        <div class="achievement-subtitle">relay.damus.io unlocked</div>
+                    </div>
+                    <div class="achievement-stats">
+                        <div>
+                            <div class="achievement-stat-value">847</div>
+                            <div class="achievement-stat-label">Allies</div>
+                        </div>
+                        <div>
+                            <div class="achievement-stat-value">12.5k</div>
+                            <div class="achievement-stat-label">XP</div>
+                        </div>
+                        <div>
+                            <div class="achievement-stat-value">99.8%</div>
+                            <div class="achievement-stat-label">Power</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- macOS Dock -->
+        <div class="design-section">
+            <h2 class="section-title">9. macOS Dock Style</h2>
+            <div class="relay-dock">
+                <div class="dock-item" data-label="Damus">
+                    ⚡
+                    <div class="dock-badge">847</div>
+                </div>
+                <div class="dock-item" data-label="Wine" style="background: linear-gradient(135deg, #ff6b6b, #ff8e53);">
+                    🍷
+                    <div class="dock-badge">2.3k</div>
+                </div>
+                <div class="dock-item" data-label="Band" style="background: linear-gradient(135deg, #00d4ff, #090979);">
+                    🎵
+                    <div class="dock-badge">1.5k</div>
+                </div>
+                <div class="dock-item" data-label="Eden" style="background: linear-gradient(135deg, #1db954, #191414);">
+                    🌿
+                    <div class="dock-badge">456</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Periodic Table -->
+        <div class="design-section">
+            <h2 class="section-title">10. Periodic Table Element</h2>
+            <div class="relay-element">
+                <div class="element-number">47</div>
+                <div class="element-symbol">Da</div>
+                <div class="element-name">Damus</div>
+                <div class="element-weight">relay.damus.io</div>
+            </div>
+        </div>
+
+        <!-- iOS Notification -->
+        <div class="design-section">
+            <h2 class="section-title">11. iOS Notification</h2>
+            <div class="relay-notification">
+                <div class="notification-header">
+                    <div class="notification-icon">⚡</div>
+                    <div class="notification-app">Nostr Relay</div>
+                    <div class="notification-time">now</div>
+                </div>
+                <div class="notification-title">Damus Relay Connected</div>
+                <div class="notification-body">
+                    Successfully connected to relay.damus.io • 847 users online • 45ms latency
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Card -->
+        <div class="design-section">
+            <h2 class="section-title">12. Recipe Card</h2>
+            <div class="relay-recipe">
+                <div class="recipe-image">⚡</div>
+                <div class="recipe-content">
+                    <div class="recipe-title">Perfect Relay Connection</div>
+                    <div class="recipe-meta">
+                        <div class="recipe-meta-item">
+                            <span>⏱</span> 45ms
+                        </div>
+                        <div class="recipe-meta-item">
+                            <span>👥</span> 847 users
+                        </div>
+                        <div class="recipe-meta-item">
+                            <span>📊</span> 99.8%
+                        </div>
+                    </div>
+                    <div class="recipe-description">
+                        A fast and reliable relay connection with low latency and high availability. Perfect for real-time messaging and social feeds. Serves 12.5k cached events.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

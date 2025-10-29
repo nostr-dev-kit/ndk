@@ -23,6 +23,13 @@
  * ```svelte
  * <SimpleEventCard {ndk} {event} />
  * ```
+ *
+ * @example RelayCard blocks:
+ * ```svelte
+ * <RelayCardPortrait {ndk} relayUrl="wss://relay.damus.io" />
+ * <RelayCardCompact {ndk} relayUrl="wss://relay.damus.io" />
+ * <RelayCardList {ndk} relayUrl="wss://relay.damus.io" />
+ * ```
  */
 
 // ArticleCard blocks
@@ -38,3 +45,8 @@ export { default as HighlightCardGrid } from './highlight-card-grid.svelte';
 
 // EventCard blocks
 export { default as SimpleEventCard } from './simple-event-card.svelte';
+
+// RelayCard blocks
+export { default as RelayCardPortrait } from './relay-card-portrait.svelte';
+export { default as RelayCardCompact } from './relay-card-compact.svelte';
+export { default as RelayCardList } from './relay-card-list.svelte';

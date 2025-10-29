@@ -14,12 +14,13 @@ This document defines the canonical structure for all component documentation pa
 2. [Page Structure](#page-structure)
 3. [Section Specifications](#section-specifications)
 4. [Code Simplification Rules](#code-simplification-rules)
-5. [File Organization](#file-organization)
-6. [Infrastructure Components](#infrastructure-components)
-7. [Hierarchical Subsections](#hierarchical-subsections)
-8. [Import Patterns](#import-patterns)
-9. [Complete Checklist](#complete-checklist)
-10. [Examples](#examples)
+5. [EditProps Patterns](#editprops-patterns)
+6. [File Organization](#file-organization)
+7. [Infrastructure Components](#infrastructure-components)
+8. [Hierarchical Subsections](#hierarchical-subsections)
+9. [Import Patterns](#import-patterns)
+10. [Complete Checklist](#complete-checklist)
+11. [Examples](#examples)
 
 ---
 
@@ -76,6 +77,7 @@ Every component page MUST follow this exact order:
 
 ### Header Template
 
+**For components displaying single instances:**
 ```svelte
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
@@ -89,6 +91,51 @@ Every component page MUST follow this exact order:
 			<EditProps.Prop name="Sample [Entity]" type="[type]" bind:value={sample} />
 		</EditProps.Root>
 	</div>
+```
+
+**For components displaying multiple instances (e.g., grids, lists):**
+```svelte
+<script>
+	let items = $state<NDKArticle[]>([]);
+	let item1 = $state<NDKArticle | undefined>();
+	let item2 = $state<NDKArticle | undefined>();
+	let item3 = $state<NDKArticle | undefined>();
+	let item4 = $state<NDKArticle | undefined>();
+	let item5 = $state<NDKArticle | undefined>();
+
+	$effect(() => {
+		// Fetch items and auto-initialize
+		const fetched = await fetchItems();
+		items = fetched;
+
+		if (fetched.length > 0) {
+			if (!item1) item1 = fetched[0];
+			if (!item2 && fetched.length > 1) item2 = fetched[1];
+			if (!item3 && fetched.length > 2) item3 = fetched[2];
+			if (!item4 && fetched.length > 3) item4 = fetched[3];
+			if (!item5 && fetched.length > 4) item5 = fetched[4];
+		}
+	});
+
+	const displayItems = $derived([item1, item2, item3, item4, item5].filter(Boolean));
+</script>
+
+<div class="mb-12">
+	<h1 class="text-4xl font-bold mb-4">[ComponentName]</h1>
+	<p class="text-lg text-muted-foreground mb-6">
+		[Description]
+	</p>
+
+	{#key items}
+		<EditProps.Root>
+			<EditProps.Prop name="Item 1" type="[type]" bind:value={item1} options={items} />
+			<EditProps.Prop name="Item 2" type="[type]" bind:value={item2} options={items} />
+			<EditProps.Prop name="Item 3" type="[type]" bind:value={item3} options={items} />
+			<EditProps.Prop name="Item 4" type="[type]" bind:value={item4} options={items} />
+			<EditProps.Prop name="Item 5" type="[type]" bind:value={item5} options={items} />
+		</EditProps.Root>
+	{/key}
+</div>
 ```
 
 ---
@@ -156,12 +203,17 @@ Every component page MUST follow this exact order:
 - ✅ **Preview Tab**: Shows custom composition
 - ✅ **Code Tab**: Shows full composable pattern
 - ✅ **Import from**: `$lib/ndk/[component-name]`
-- ✅ **Minimum 3 examples**: Basic, Composition, Styling
+- ✅ **Exactly 2 examples**: Basic and Full Composition
 
 **Standard UI Examples:**
-1. **Basic Usage**: Minimal Root + 1-2 primitives
-2. **Full Composition**: All relevant primitives working together
-3. **Custom Styling**: Multiple styling variations demonstrating flexibility
+1. **Basic Usage**: Minimal example - Root + 1-3 essential primitives
+2. **Full Composition**: Complete example - All available primitives composed together with minimal but acceptable styling
+
+**What NOT to Include:**
+- ❌ No "Custom Styling" examples (obvious that Tailwind can be applied)
+- ❌ No styling variations (that's what blocks are for)
+- ❌ No theme examples (obvious capability)
+- ❌ No layout variations (show one good layout in Full Composition)
 
 ### 3. Component API Section
 
@@ -273,6 +325,147 @@ Every component page MUST follow this exact order:
 
 ---
 
+## EditProps Patterns
+
+### Purpose
+
+EditProps allows users to customize the example data shown on component pages. When components display multiple instances (grids, lists), use multiple EditProps.Prop entries with pre-fetched options.
+
+### Pattern: Single Instance
+
+For components showing one example at a time:
+
+```svelte
+<script>
+	let sampleUser = $state<NDKUser | undefined>();
+</script>
+
+<EditProps.Root>
+	<EditProps.Prop name="Sample User" type="user" bind:value={sampleUser} />
+</EditProps.Root>
+```
+
+**User Experience:**
+- Opens dialog with text input
+- User enters npub/hex pubkey
+- System fetches and validates
+
+### Pattern: Multiple Instances (Preferred for Lists/Grids)
+
+For components showing multiple examples (e.g., article grids, user lists):
+
+```svelte
+<script>
+	let articles = $state<NDKArticle[]>([]);
+	let article1 = $state<NDKArticle | undefined>();
+	let article2 = $state<NDKArticle | undefined>();
+	let article3 = $state<NDKArticle | undefined>();
+	let article4 = $state<NDKArticle | undefined>();
+	let article5 = $state<NDKArticle | undefined>();
+
+	$effect(() => {
+		(async () => {
+			// Fetch items
+			const fetched = await ndk.fetchEvents({...});
+			articles = Array.from(fetched);
+
+			// Auto-initialize from fetched data
+			if (articles.length > 0) {
+				if (!article1) article1 = articles[0];
+				if (!article2 && articles.length > 1) article2 = articles[1];
+				if (!article3 && articles.length > 2) article3 = articles[2];
+				if (!article4 && articles.length > 3) article4 = articles[3];
+				if (!article5 && articles.length > 4) article5 = articles[4];
+			}
+		})();
+	});
+
+	const displayArticles = $derived(
+		[article1, article2, article3, article4, article5].filter(Boolean) as NDKArticle[]
+	);
+</script>
+
+{#key articles}
+	<EditProps.Root>
+		<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
+		<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />
+		<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} />
+		<EditProps.Prop name="Article 4" type="article" bind:value={article4} options={articles} />
+		<EditProps.Prop name="Article 5" type="article" bind:value={article5} options={articles} />
+	</EditProps.Root>
+{/key}
+
+<!-- Use in blocks -->
+{#each displayArticles as article}
+	<ArticleCardPortrait {ndk} {article} />
+{/each}
+```
+
+**User Experience:**
+- Opens dialog with 5 text inputs
+- Each input pre-populated with encoded identifier (naddr, npub, etc.)
+- User can modify or paste different identifiers
+- System validates and fetches on change
+
+### Key Benefits
+
+1. **Auto-Population**: Shows real data immediately upon page load
+2. **Pre-Filled Inputs**: Text inputs show encoded identifiers for easy copying/pasting
+3. **Flexible**: Users can customize which specific items appear by pasting different identifiers
+4. **No Hardcoding**: No naddrs hardcoded in examples
+5. **Better Previews**: Shows actual variation across multiple items
+6. **Validation**: System validates identifiers and shows previews before applying
+
+### When to Use Multiple Instance Pattern
+
+✅ **Use when:**
+- Displaying multiple items in grids/lists
+- Blocks show 3+ instances
+- Users benefit from seeing variety
+- Examples: ArticleCard grids, UserProfile lists, Event feeds
+
+❌ **Don't use when:**
+- Showing single instance (Hero blocks, detail views)
+- Simple components without variations
+- Relationship components (where items relate to each other)
+
+### EditProps.Prop API
+
+```typescript
+interface Props {
+  name: string;                                    // Display label
+  type: 'user' | 'event' | 'article' | 'text';    // Type of prop
+  value: NDKUser | NDKEvent | NDKArticle | string; // Bindable value
+  options?: (NDKUser | NDKEvent | NDKArticle)[];   // Pre-fetched data (for context)
+  default?: string;                                // Default identifier (fallback)
+}
+```
+
+**Behavior:**
+- Renders text input for identifier entry
+- If `value` exists, auto-populates input with encoded identifier:
+  - Articles → `article.encode()` (naddr)
+  - Events → `event.encode()` (nevent/note)
+  - Users → `user.npub`
+- Validates input and fetches preview on change
+- Shows preview below input when valid
+
+### Critical: Wrap in {#key}
+
+Always wrap EditProps in `{#key articles}` to ensure it re-renders when fetched data arrives:
+
+```svelte
+{#key articles}
+	<EditProps.Root>
+		<!-- Props here -->
+	</EditProps.Root>
+{/key}
+```
+
+This ensures the dropdown options update when articles are fetched.
+
+---
+
 ## File Organization
 
 ### Directory Structure
@@ -344,17 +537,47 @@ src/
 </BlockExample>
 ```
 
+**With Interactive Controls:**
+```svelte
+<BlockExample
+	title="Block Name"
+	description="Description mentioning prop variants"
+	component="npm-package-name"
+	code={BlockCodeRaw}
+>
+	{#snippet controls()}
+		<label>
+			Prop Name:
+			<select bind:value={propValue}>
+				<option value="option1">Option 1</option>
+				<option value="option2">Option 2</option>
+			</select>
+		</label>
+	{/snippet}
+
+	<BlockComponent {ndk} {article} prop={propValue} />
+</BlockExample>
+```
+
 **Props:**
 - `title` (optional): Block name (h3)
 - `description` (optional): When to use this block
 - `component` (required): Package name for install command
 - `code` (required): Raw code string for Code tab
 - `children`: Preview content
+- `controls` (optional): Interactive controls snippet for toggling props
 
 **Tabs:**
-1. **Preview**: Shows live component
+1. **Preview**: Shows live component with optional interactive controls
 2. **Code**: Shows simplified composition
 3. **Install**: Shows `npx shadcn-svelte@latest add [component]`
+
+**When to Use Interactive Controls:**
+- ✅ Block has prop variants (sizes, themes, layouts)
+- ✅ Variants are closely related (not separate use cases)
+- ✅ User benefits from seeing live changes
+- ❌ Don't use for completely different blocks
+- ❌ Don't use if code structure differs significantly between variants
 
 ### UIExample
 
@@ -443,33 +666,59 @@ When a block has related variants (like sizes, themes, layouts), use hierarchica
 - **Heading**: `h4` instead of using `title` prop (smaller heading)
 - **Grouping**: Wrap parent + subsection in `<div>`
 
-### When to Use Hierarchical Subsections
+### When to Use Hierarchical Subsections vs Interactive Controls
 
-✅ **Use hierarchical subsections when:**
-- Variants are tightly coupled (e.g., size options for same block)
-- Showing capability of parent block (e.g., "Sizes" under "Medium")
-- Teaching progressive complexity (basic → advanced)
+**Use Interactive Controls (Preferred)** when:
+- ✅ Block has prop variants (sizes, themes, colors)
+- ✅ Variants share the same structure and code
+- ✅ User benefits from toggling between options
+- ✅ Less than 5 related variants
 
-❌ **Don't use hierarchical subsections when:**
-- Blocks are independent concepts (Portrait vs Hero vs Neon)
-- Different use cases or design patterns
-- No clear parent-child relationship
+**Use Hierarchical Subsections** when:
+- ✅ Completely different code structures
+- ✅ Teaching progressive complexity (basic → advanced)
+- ✅ Different use cases that warrant separate examples
 
-### Example: ArticleCard Medium > Sizes
+**Don't Use Either** when:
+- ❌ Blocks are independent concepts (Portrait vs Hero vs Neon)
+- ❌ Different use cases or design patterns
+- ❌ No clear parent-child relationship
 
+### Example: ArticleCard Medium with Interactive Controls
+
+Instead of a separate "Sizes" subsection, use interactive controls:
+
+```svelte
+<script>
+	let mediumImageSize = $state<'small' | 'medium' | 'large'>('medium');
+</script>
+
+<BlockExample
+	title="Medium"
+	description="Horizontal card layout with image on right. Supports three image size variants."
+	component="article-card-medium"
+	code={MediumCodeRaw}
+>
+	{#snippet controls()}
+		<label>
+			Image Size:
+			<select bind:value={mediumImageSize}>
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>
+			</select>
+		</label>
+	{/snippet}
+
+	<ArticleCardMedium {ndk} {article} imageSize={mediumImageSize} />
+</BlockExample>
 ```
-## Medium (h3 via BlockExample title)
-   [Preview of default medium size]
-   [Code showing medium structure]
-   [Install tab]
 
-   ### Sizes (h4 via direct heading)
-      [Preview showing all three sizes]
-      [Code showing size variants]
-      [Install tab for same component]
-```
-
-This creates a clear hierarchy showing that "Sizes" is a capability of "Medium", not a separate block.
+This is better than a hierarchical subsection because:
+- Users can interact directly with the variants
+- No need for separate code examples
+- Cleaner page structure
+- More engaging learning experience
 
 ---
 
@@ -524,6 +773,8 @@ Use this checklist before marking any component page as complete.
 ### 📋 Structure Checklist
 
 - [ ] Header section with title, subtitle, EditProps
+- [ ] EditProps wrapped in {#key} if using options
+- [ ] EditProps has multiple props if showing multiple instances
 - [ ] Blocks section with description
 - [ ] UI Components section with description
 - [ ] Builder section (if applicable)
@@ -558,12 +809,13 @@ Use this checklist before marking any component page as complete.
 
 ### 📋 UI Components Section Checklist
 
-- [ ] Minimum 3 examples (Basic, Composition, Styling)
+- [ ] Exactly 2 examples (Basic, Full Composition)
 - [ ] Each example uses `UIExample` component
-- [ ] Examples demonstrate composition flexibility
-- [ ] Examples show different styling approaches
+- [ ] Basic shows minimal viable composition (1-3 primitives)
+- [ ] Full Composition shows all primitives working together
 - [ ] Code examples show full composable pattern
-- [ ] Clear progression from simple to complex
+- [ ] No styling variation examples
+- [ ] No obvious/redundant examples
 
 ### 📋 Component API Checklist
 
@@ -620,6 +872,17 @@ Use this checklist before marking any component page as complete.
 - [ ] No jargon without explanation
 - [ ] Consistent terminology throughout
 
+### 📋 EditProps Checklist
+
+- [ ] Fetches real data from Nostr (not hardcoded)
+- [ ] Creates multiple state variables if showing multiple instances
+- [ ] Auto-initializes variables from fetched data
+- [ ] Passes fetched array as `options` to EditProps.Prop
+- [ ] Wrapped in {#key} block if using options
+- [ ] Creates derived displayItems from individual variables
+- [ ] Each prop has clear label (Item 1, Item 2, etc.)
+- [ ] Uses displayItems throughout all examples
+
 ---
 
 ## Examples
@@ -638,6 +901,8 @@ For a simple component with only primitives:
 
 	import UIBasic from './examples/ui-basic.svelte';
 	import UIBasicRaw from './examples/ui-basic.svelte?raw';
+	import UIFull from './examples/ui-full.svelte';
+	import UIFullRaw from './examples/ui-full.svelte?raw';
 
 	const ndk = getContext('ndk');
 	let sample = $state();
@@ -707,9 +972,15 @@ For a component with blocks, primitives, and builder:
 			Description of what this component does and when to use it.
 		</p>
 
-		<EditProps.Root>
-			<EditProps.Prop name="Sample" type="type" bind:value={sample} />
-		</EditProps.Root>
+		{#key items}
+			<EditProps.Root>
+				<EditProps.Prop name="Item 1" type="type" bind:value={item1} options={items} />
+				<EditProps.Prop name="Item 2" type="type" bind:value={item2} options={items} />
+				<EditProps.Prop name="Item 3" type="type" bind:value={item3} options={items} />
+				<EditProps.Prop name="Item 4" type="type" bind:value={item4} options={items} />
+				<EditProps.Prop name="Item 5" type="type" bind:value={item5} options={items} />
+			</EditProps.Root>
+		{/key}
 	</div>
 
 	<!-- Blocks Section -->
@@ -726,7 +997,9 @@ For a component with blocks, primitives, and builder:
 				component="component-block1"
 				code={Block1CodeRaw}
 			>
-				<ComponentBlock1 {ndk} {sample} />
+				{#each displayItems as item}
+					<ComponentBlock1 {ndk} {item} />
+				{/each}
 			</BlockExample>
 
 			<BlockExample
@@ -735,7 +1008,9 @@ For a component with blocks, primitives, and builder:
 				component="component-block2"
 				code={Block2CodeRaw}
 			>
-				<ComponentBlock2 {ndk} {sample} />
+				{#each displayItems as item}
+					<ComponentBlock2 {ndk} {item} />
+				{/each}
 			</BlockExample>
 		</div>
 	</section>
@@ -750,10 +1025,22 @@ For a component with blocks, primitives, and builder:
 		<div class="space-y-8">
 			<UIExample
 				title="Basic Usage"
-				description="Start with Component.Root and add primitives."
+				description="Minimal example with Component.Root and essential primitives."
 				code={UIBasicRaw}
 			>
-				<UIBasic {ndk} {sample} />
+				{#if item1}
+					<UIBasic {ndk} item={item1} />
+				{/if}
+			</UIExample>
+
+			<UIExample
+				title="Full Composition"
+				description="All available primitives composed together."
+				code={UIFullRaw}
+			>
+				{#if item1}
+					<UIFull {ndk} item={item1} />
+				{/if}
 			</UIExample>
 		</div>
 	</section>
@@ -796,6 +1083,18 @@ For a component with blocks, primitives, and builder:
 ---
 
 ## Version History
+
+### v3.1 (2025-01-29)
+- Added interactive controls pattern for BlockExample
+- Updated guidelines to prefer interactive controls over hierarchical subsections
+- Added controls snippet support to BlockExample component
+- Updated ArticleCard Medium example to use interactive controls
+- Simplified UI Components section to only Basic and Full Composition (removed styling examples)
+- Clarified that UI section should focus on composition, not styling variations
+- Added EditProps Patterns section documenting single vs multiple instance patterns
+- Added EditProps.Prop options support for dropdown selection
+- Documented auto-initialization pattern for fetched data
+- Added EditProps checklist to ensure proper implementation
 
 ### v3.0 (2025-01-29)
 - Added hierarchical subsection guidelines

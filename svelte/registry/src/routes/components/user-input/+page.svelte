@@ -2,6 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import CodePreview from '$site-components/code-preview.svelte';
+  import Alert from '$site-components/alert.svelte';
+  import FeatureList from '$site-components/feature-list.svelte';
 
   import BuilderBasic from './examples/builder-basic.svelte';
   import BuilderBasicRaw from './examples/builder-basic.svelte?raw';

@@ -3,27 +3,27 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import RepostAction from '$lib/ndk/actions/repost-action.svelte';
-  import UIExample from '$site-components/ui-example.svelte';
-  import ComponentAPI from '$site-components/component-api.svelte';
+  import { RepostButton, RepostButtonPill } from '$lib/ndk/blocks';
+	import Demo from '$site-components/Demo.svelte';
 
-  // Import code examples (for Code tab)
+  // Import code examples
   import BasicCodeRaw from './examples/basic-code.svelte?raw';
   import BuilderCodeRaw from './examples/builder-code.svelte?raw';
+  import BlocksCodeRaw from './examples/blocks-code.svelte?raw';
 
-  // Import builder example (for Preview tab)
-  import BuilderExample from './examples/builder.svelte';
+  // Import builder examples
+  import BasicExample from './examples/basic-code.svelte';
+  import BuilderExample from './examples/builder-code.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let eventId = $state<string>('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
   let sampleEvent = $state<NDKEvent | undefined>();
 
   $effect(() => {
     (async () => {
       try {
-        const event = await ndk.fetchEvent(eventId);
-        if (event) sampleEvent = event;
+        const event = await ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
+        if (event && !sampleEvent) sampleEvent = event;
       } catch (err) {
         console.error('Failed to fetch sample event:', err);
       }
@@ -34,9 +34,9 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">RepostAction</h1>
+    <h1 class="text-4xl font-bold mb-4">Repost Button</h1>
     <p class="text-lg text-muted-foreground mb-6">
-      Repost button component and builder for adding repost functionality to your Nostr events. Tracks both regular reposts (Kind 6/16) and quote posts.
+      Repost button blocks and builder for adding repost functionality to Nostr events. Tracks both regular reposts (Kind 6/16) and quote posts.
     </p>
 
     <EditProps.Root>
@@ -45,73 +45,69 @@
   </div>
 
   {#if sampleEvent}
-    <!-- UI Components Section -->
+    <!-- Blocks Section -->
     <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">UI Components</h2>
+      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
       <p class="text-muted-foreground mb-8">
-        Simple repost button component and custom builder for full control.
+        Pre-composed repost button layouts ready to use. Install with a single command.
       </p>
 
-      <div class="space-y-8">
-        <UIExample
-          title="Basic Usage"
-          description="Ready-to-use repost button with icon, count display, and visual feedback."
-          code={BasicCodeRaw}
+      <div class="space-y-12">
+        <Demo
+          title="RepostButton"
+          description="Clean, minimal repost button with icon and count. Perfect for action bars and compact layouts."
+          component="repost-button"
+          code={BlocksCodeRaw}
         >
-          <div class="flex items-center gap-4 p-6 bg-card border border-border rounded-lg">
-            <RepostAction {ndk} event={sampleEvent} />
-            <span class="text-sm text-muted-foreground">Click to repost this event</span>
+          <div class="flex items-center justify-center">
+            <RepostButton {ndk} event={sampleEvent} />
           </div>
-        </UIExample>
+        </Demo>
 
-        <UIExample
-          title="Custom Repost Button"
-          description="Use the createRepostAction builder to create your own repost button with custom styling and behavior."
-          code={BuilderCodeRaw}
+        <Demo
+          title="RepostButtonPill"
+          description="Pill-style button with rounded background. Great for standalone repost actions."
+          component="repost-button-pill"
+          code={BlocksCodeRaw}
         >
-          <BuilderExample {ndk} event={sampleEvent} />
-        </UIExample>
+          <div class="flex items-center justify-center gap-4">
+            <RepostButtonPill {ndk} event={sampleEvent} variant="solid" />
+            <RepostButtonPill {ndk} event={sampleEvent} variant="outline" />
+          </div>
+        </Demo>
       </div>
     </section>
 
-    <!-- Component API -->
-    <ComponentAPI
-      components={[
-        {
-          name: 'RepostAction',
-          description: 'Pre-composed repost button with icon, count display, and state management.',
-          importPath: "import RepostAction from '$lib/ndk/actions/repost-action.svelte'",
-          props: [
-            {
-              name: 'ndk',
-              type: 'NDKSvelte',
-              description: 'NDK instance. Optional if NDK is available in Svelte context.',
-              required: false
-            },
-            {
-              name: 'event',
-              type: 'NDKEvent',
-              description: 'The event to repost',
-              required: false
-            },
-            {
-              name: 'showCount',
-              type: 'boolean',
-              default: 'true',
-              description: 'Whether to display the repost count',
-              required: false
-            },
-            {
-              name: 'class',
-              type: 'string',
-              default: "''",
-              description: 'Additional CSS classes to apply to the button',
-              required: false
-            }
-          ]
-        }
-      ]}
-    />
+    <!-- Builder Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-2">Builder</h2>
+      <p class="text-muted-foreground mb-8">
+        The <code class="px-2 py-1 bg-muted rounded">createRepostAction</code> builder provides reactive state and methods.
+        Build custom repost buttons with full control over styling and behavior.
+      </p>
+
+      <div class="space-y-8">
+        <Demo
+          title="Minimal Example"
+          description="Simplest possible implementation using the builder."
+          code={BasicCodeRaw}
+        >
+          <div class="flex items-center gap-4">
+            <BasicExample {ndk} event={sampleEvent} />
+          </div>
+        </Demo>
+
+        <Demo
+          title="Custom Styled Button"
+          description="Build your own repost button with custom styling and layout."
+          code={BuilderCodeRaw}
+        >
+          <div class="flex items-center">
+            <BuilderExample {ndk} event={sampleEvent} />
+          </div>
+        </Demo>
+      </div>
+    </section>
 
     <!-- Builder API -->
     <section class="mb-16">

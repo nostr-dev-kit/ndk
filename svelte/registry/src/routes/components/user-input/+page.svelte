@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
   import Alert from '$site-components/alert.svelte';
 
   import BuilderBasic from './examples/builder-basic.svelte';
@@ -29,13 +29,13 @@
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Builder Pattern"
       description="Use createUserInput() for full control over rendering with Svelte 5 runes. Searches cached profiles as you type, with debounced network lookups for NIP-05/npub/nprofile."
       code={BuilderBasicRaw}
     >
       <BuilderBasic {ndk} />
-    </CodePreview>
+    </Demo>
 
     <Alert variant="info" title="Builder Features">
       <ul>
@@ -46,13 +46,13 @@
       </ul>
     </Alert>
 
-    <CodePreview
+    <Demo
       title="Composable Components"
       description="Use pre-built composable components (UserInput.Root, Search, Results, ResultItem) for quick implementation with customizable styling."
       code={ComposablePartsRaw}
     >
       <ComposableParts {ndk} />
-    </CodePreview>
+    </Demo>
 
     <Alert variant="info" title="Search Capabilities">
       <p class="mb-2">Supports multiple search methods:</p>

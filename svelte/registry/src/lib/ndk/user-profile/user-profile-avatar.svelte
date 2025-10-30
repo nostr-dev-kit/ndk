@@ -91,32 +91,14 @@
   <img
     src={imageUrl}
     alt={displayName}
-    class="user-profile-avatar {className}"
+    class="rounded-full object-cover block shrink-0 {className}"
     style="width: {size}px; height: {size}px;"
   />
 {:else}
   <div
-    class="user-profile-avatar user-profile-avatar-fallback {className}"
-    style="width: {size}px; height: {size}px; background: {avatarGradient};"
+    class="rounded-full flex items-center justify-center text-primary-foreground font-semibold text-sm shrink-0 {className}"
+    style="width: {size}px; height: {size}px; background: {avatarGradient}; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);"
   >
     {displayName.slice(0, 2).toUpperCase()}
   </div>
 {/if}
-
-<style>
-  .user-profile-avatar {
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .user-profile-avatar-fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-foreground);
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 30%, transparent);
-  }
-</style>

@@ -1,4 +1,4 @@
-<!-- @ndk-version: user-header-compact@0.3.0 -->
+<!-- @ndk-version: user-header-compact@0.4.0 -->
 <!--
   @component UserHeader.Compact
   Pre-composed compact user header layout without banner.
@@ -24,7 +24,6 @@
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { UserProfile } from '../user-profile/index.js';
-  import FollowAction from '../actions/follow-action.svelte';
 
   interface Props {
     /** NDK instance */
@@ -69,7 +68,7 @@
 
           <div class="actions-section">
             {#if !isOwnProfile}
-              <FollowAction {ndk} target={user} variant="primary" />
+              <UserProfile.Follow variant="primary" />
             {/if}
           </div>
         </div>

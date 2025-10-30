@@ -38,8 +38,7 @@
   <article class="w-full">
     <!-- Square elegant card with gradient -->
     <div
-      class="relative aspect-square rounded-lg overflow-hidden border border-border shadow-lg w-full"
-      style="background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.7) 100%)"
+      class="relative aspect-square rounded-lg overflow-hidden border border-border shadow-lg w-full bg-gradient-to-br from-card to-card/70"
     >
       <!-- Content with custom styling -->
       <div class="relative flex flex-col items-center justify-center p-6 h-full">

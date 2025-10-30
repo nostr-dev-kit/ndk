@@ -52,7 +52,6 @@ import Handle from './user-profile-handle.svelte';
 import Bio from './user-profile-bio.svelte';
 import Banner from './user-profile-banner.svelte';
 import Nip05 from './user-profile-nip05.svelte';
-import HoverCard from './user-profile-hover-card.svelte';
 import AvatarName from './user-profile-avatar-name.svelte';
 import Follow from './user-profile-follow.svelte';
 import AvatarGroup from './avatar-group.svelte';
@@ -67,7 +66,6 @@ export const UserProfile = {
   Bio,
   Banner,
   Nip05,
-  HoverCard,
   AvatarName,
   Follow,
   AvatarGroup,

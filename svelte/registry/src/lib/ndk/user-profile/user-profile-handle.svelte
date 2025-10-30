@@ -17,9 +17,6 @@
   import { cn } from '$lib/utils';
 
   interface Props {
-    /** Text size classes */
-    size?: string;
-
     /** Additional CSS classes */
     class?: string;
 
@@ -31,7 +28,6 @@
   }
 
   let {
-    size = 'text-sm',
     class: className = '',
     showAt = true,
     truncate = true
@@ -56,6 +52,6 @@
   const displayText = $derived(showAt ? `@${handle}` : handle);
 </script>
 
-<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
+<span class={cn(truncate && 'truncate inline-block max-w-full', className)}>
   {displayText}
 </span>

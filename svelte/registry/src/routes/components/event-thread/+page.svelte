@@ -4,8 +4,7 @@
   import { createThreadView } from '@nostr-dev-kit/svelte';
   import { ThreadViewTwitter } from '$lib/ndk/blocks';
   import { EditProps } from '$lib/ndk/edit-props';
-  import BlockExample from '$site-components/block-example.svelte';
-  import UIExample from '$site-components/ui-example.svelte';
+	import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   import TwitterCode from './examples/twitter-code.svelte';
@@ -57,14 +56,14 @@
       </p>
 
       <div class="space-y-12">
-        <BlockExample
+        <Demo
           title="Twitter Style"
           description="Vertical thread view with continuous connector lines, perfect for social media-style conversations. Shows parent chain, focused event, and all replies."
           component="thread-view-twitter"
           code={TwitterBlockCodeRaw}
         >
           <TwitterCode {ndk} nevent={neventInput} />
-        </BlockExample>
+        </Demo>
       </div>
     </section>
 
@@ -77,21 +76,21 @@
       </p>
 
       <div class="space-y-8">
-        <UIExample
+        <Demo
           title="Basic Usage"
           description="Minimal thread view with EventCard.Root, EventCard.Header, and EventCard.Content. Shows the essential composition for displaying thread events."
           code={UIBasicRaw}
         >
           <UIBasic {ndk} nevent={neventInput} />
-        </UIExample>
+        </Demo>
 
-        <UIExample
+        <Demo
           title="Full Composition"
           description="Complete thread view showing parent chain with thread lines, focused event highlighting, reply sections, and interactive navigation. Demonstrates all available primitives working together."
           code={UICompositionRaw}
         >
           <UIComposition {ndk} nevent={neventInput} />
-        </UIExample>
+        </Demo>
       </div>
     </section>
 

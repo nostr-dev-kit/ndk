@@ -72,13 +72,13 @@
   }: Props = $props();
 </script>
 
-<Root ndk={ndk} {user} {pubkey} {showHoverCard} {onclick} class={className}>
+<Root ndk={ndk} {user} {pubkey} {onclick} class={className}>
   <div class={cn('flex items-center gap-3', className)}>
     <Avatar size={avatarSize} />
     {#if meta}
       <div class="flex flex-col">
         <Name class="font-semibold" />
-        <div class="text-sm text-muted-foreground">
+        <div class="text-xs text-muted-foreground">
           {#if meta === 'handle'}
             <Handle />
           {:else if meta === 'about'}

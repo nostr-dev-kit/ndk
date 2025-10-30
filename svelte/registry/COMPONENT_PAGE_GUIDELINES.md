@@ -1,7 +1,7 @@
 # Component Page Structure Guidelines
 
-**Version:** 3.0
-**Last Updated:** 2025-01-29
+**Version:** 3.3
+**Last Updated:** 2025-01-30
 **Status:** Canonical Reference
 
 This document defines the canonical structure for all component documentation pages in the NDK Svelte Registry. These guidelines ensure consistency, maintainability, and excellent developer experience across all component pages.
@@ -29,13 +29,15 @@ This document defines the canonical structure for all component documentation pa
 ### Core Principles
 
 1. **Consistency Over Flexibility**: Every component page follows the exact same structure
-2. **Structure Over Implementation**: Code examples show WHAT to build, not HOW to build it
-3. **Hierarchy Matters**: Related concepts are grouped hierarchically, not flatly
-4. **No Backwards Compatibility**: Clean, modern code only - break things to make them better
-5. **Developer Experience First**: Minimize cognitive load, maximize clarity
+2. **Educational Code Examples**: Block code tabs show HOW blocks are built from primitives (composition pattern), not just the finished block component
+3. **Structure Over Implementation**: Show component composition hierarchy without boilerplate (no scripts, imports, types)
+4. **Hierarchy Matters**: Related concepts are grouped hierarchically, not flatly
+5. **No Backwards Compatibility**: Clean, modern code only - break things to make them better
+6. **Developer Experience First**: Minimize cognitive load, maximize clarity
 
 ### Anti-Patterns to Avoid
 
+❌ **DO NOT** show the block component itself in the Code tab (e.g., `<FollowButton />`)
 ❌ **DO NOT** show script tags in block code examples
 ❌ **DO NOT** show imports in block code examples
 ❌ **DO NOT** show decorative SVG in structural examples
@@ -43,6 +45,8 @@ This document defines the canonical structure for all component documentation pa
 ❌ **DO NOT** mix blocks and primitives in the same section
 ❌ **DO NOT** write backwards-compatible code
 ❌ **DO NOT** leave TODOs or technical debt comments
+
+**MOST COMMON MISTAKE:** Showing `<BlockComponent />` in the Code tab instead of showing how the block is built from primitives.
 
 ---
 
@@ -156,24 +160,34 @@ Every component page MUST follow this exact order:
 
 	<div class="space-y-12">
 		<!-- Each block example -->
-		<BlockExample
+		<Demo
 			title="[BlockName]"
 			description="[When to use this block]"
 			component="[npm-package-name]"
 			code={BlockCodeRaw}
 		>
 			<!-- Preview content: actual block components -->
-		</BlockExample>
+		</Demo>
 	</div>
 </section>
 ```
 
 **Block Example Requirements:**
-- ✅ **Preview Tab**: Renders the ACTUAL block component (e.g., `<ArticleCardPortrait />`)
-- ✅ **Code Tab**: Shows SIMPLIFIED primitive composition (see Code Simplification Rules)
-- ✅ **Install Tab**: Automatically shown with install command
+- ✅ **Preview Tab**: Renders the ACTUAL block component (e.g., `<FollowButton {ndk} {user} />`)
+- ✅ **Code Tab**: Shows HOW TO BUILD the block using primitives - a simplified implementation of the block itself (see Code Simplification Rules)
+- ✅ **Usage Tab**: Automatically shown when `component` prop is provided - shows install command AND basic usage snippet
 - ✅ **Import from**: `$lib/ndk/blocks`
 - ✅ **Description**: Explains WHEN to use this block, not WHAT it is
+
+**CRITICAL DISTINCTION:**
+- **Preview Tab**: Live demo of the finished block
+- **Code Tab**: Educational - shows HOW the block is built from primitives
+- **Usage Tab**: Practical - shows install command + import/usage snippet
+
+Example for `<FollowButton>`:
+- Preview: Shows the live button
+- Code: Shows primitive composition (UserProfile.Root + button + UserProfile.Avatar, etc.)
+- Usage: Shows `npx shadcn-svelte@latest add ...` + basic import and usage
 
 ### 2. UI Components Section
 
@@ -188,13 +202,13 @@ Every component page MUST follow this exact order:
 	</p>
 
 	<div class="space-y-8">
-		<UIExample
+		<Demo
 			title="[Example Purpose]"
 			description="[What this example demonstrates]"
 			code={ExampleCodeRaw}
 		>
 			<!-- Preview content -->
-		</UIExample>
+		</Demo>
 	</div>
 </section>
 ```
@@ -204,6 +218,7 @@ Every component page MUST follow this exact order:
 - ✅ **Code Tab**: Shows full composable pattern
 - ✅ **Import from**: `$lib/ndk/[component-name]`
 - ✅ **Exactly 2 examples**: Basic and Full Composition
+- ✅ **No component prop**: UI examples don't show Usage tab
 
 **Standard UI Examples:**
 1. **Basic Usage**: Minimal example - Root + 1-3 essential primitives
@@ -258,8 +273,20 @@ Every component page MUST follow this exact order:
 
 ### Block Code Examples (e.g., `portrait-code.svelte`)
 
+**IMPORTANT:** Block code examples show HOW TO BUILD the block from primitives, NOT how to use the block component. The code tab is an educational, simplified implementation of the block itself.
+
+**Example:** If your block is `<FollowButton>`, the code tab shows the internal composition:
+```svelte
+<UserProfile.Root {ndk} {user}>
+  <button class="...">
+    <UserProfile.Avatar />
+    <UserProfile.Name />
+  </button>
+</UserProfile.Root>
+```
+
 **✅ DO INCLUDE:**
-- Component composition hierarchy
+- Primitive component composition hierarchy (how the block is built)
 - Tailwind v4 classes
 - Structural HTML (button, div, etc.)
 - Component props that affect layout
@@ -273,10 +300,23 @@ Every component page MUST follow this exact order:
 - Hover arrows/decorations
 - Event handlers (unless critical to structure)
 - Inline comments explaining the obvious
+- TypeScript interfaces or prop types
 
 ### Example Transformation
 
-**❌ WRONG (too verbose):**
+**Context:** We have a block component `<ArticleCardPortrait>` that we're documenting.
+
+**Preview Tab (uses the block):**
+```svelte
+<ArticleCardPortrait {ndk} {article} />
+```
+
+**Code Tab - ❌ WRONG (showing block usage):**
+```svelte
+<ArticleCardPortrait {ndk} {article} />
+```
+
+**Code Tab - ❌ WRONG (too verbose with scaffolding):**
 ```svelte
 <script lang="ts">
 	import { ArticleCard } from '$lib/ndk/article-card';
@@ -303,7 +343,7 @@ Every component page MUST follow this exact order:
 </ArticleCard.Root>
 ```
 
-**✅ CORRECT (structure only):**
+**Code Tab - ✅ CORRECT (shows HOW block is built from primitives):**
 ```svelte
 <ArticleCard.Root {ndk} {article}>
 	<button type="button" class="...">
@@ -315,6 +355,12 @@ Every component page MUST follow this exact order:
 	</button>
 </ArticleCard.Root>
 ```
+
+**Key Points:**
+- Preview tab shows the finished block component
+- Code tab shows the simplified implementation of that block using primitives
+- No script tags, imports, or boilerplate in the code tab
+- Focus on the composition structure only
 
 ### Why This Matters
 
@@ -520,26 +566,70 @@ src/
 
 ## Infrastructure Components
 
-### BlockExample
+### Demo
 
-**Purpose:** Display block examples with Preview/Code/Install tabs.
+**Purpose:** Display examples with Preview/Code/Usage tabs for blocks, or Preview/Code tabs for UI examples.
 
-**Usage:**
+The Demo component serves dual purposes:
+- **Block Examples**: When `component` prop is provided, shows Usage tab (with install command + usage snippet)
+- **UI Examples**: Without `component` prop, shows only Preview/Code tabs
+
+**CRITICAL FOR BLOCKS - Three Tabs:**
+- **Preview Tab** (children slot): Live demo of the finished block component
+- **Code Tab** (`code` prop): Educational - shows HOW TO BUILD the block from primitives
+- **Usage Tab** (auto-generated from `component` prop): Practical - shows install command + basic usage snippet
+
+**Usage for Blocks:**
 ```svelte
-<BlockExample
-	title="Block Name"
+<Demo
+	title="Follow Button"
 	description="When to use this block"
-	component="npm-package-name"
-	code={BlockCodeRaw}
+	component="follow-button"
+	code={FollowButtonCodeRaw}
 >
-	<!-- Preview content: actual block components -->
-	<ArticleCardPortrait {ndk} {article} />
-</BlockExample>
+	<!-- Preview: Use the actual block -->
+	<FollowButton {ndk} {user} />
+</Demo>
+```
+
+Where `FollowButtonCodeRaw` contains simplified implementation:
+```svelte
+<UserProfile.Root {ndk} {user}>
+	<button class="...">
+		<UserProfile.Avatar />
+		<UserProfile.Name />
+	</button>
+</UserProfile.Root>
+```
+
+The Usage tab will automatically show:
+```bash
+npx shadcn-svelte@latest add follow-button
+```
+
+And a usage snippet:
+```svelte
+<script>
+	import { FollowButton } from '$lib/ndk/blocks';
+</script>
+
+<FollowButton {ndk} target={user} />
+```
+
+**Usage for UI Examples:**
+```svelte
+<Demo
+	title="Example Purpose"
+	description="What this demonstrates"
+	code={ExampleCodeRaw}
+>
+	<!-- Preview content -->
+</Demo>
 ```
 
 **With Interactive Controls:**
 ```svelte
-<BlockExample
+<Demo
 	title="Block Name"
 	description="Description mentioning prop variants"
 	component="npm-package-name"
@@ -556,21 +646,21 @@ src/
 	{/snippet}
 
 	<BlockComponent {ndk} {article} prop={propValue} />
-</BlockExample>
+</Demo>
 ```
 
 **Props:**
-- `title` (optional): Block name (h3)
-- `description` (optional): When to use this block
-- `component` (required): Package name for install command
-- `code` (required): Raw code string for Code tab
+- `title` (optional): Example name (h3 or h4 depending on context)
+- `description` (optional): When to use this (blocks) or what it demonstrates (UI)
+- `component` (optional): Package name for install command - **enables Usage tab**
+- `code` (required): Raw code string for Code tab (shows primitive composition for blocks)
 - `children`: Preview content
 - `controls` (optional): Interactive controls snippet for toggling props
 
 **Tabs:**
-1. **Preview**: Shows live component with optional interactive controls
-2. **Code**: Shows simplified composition
-3. **Install**: Shows `npx shadcn-svelte@latest add [component]`
+- **Preview**: Shows live component with optional interactive controls
+- **Code**: Shows code (simplified primitive composition for blocks, full composable pattern for UI examples)
+- **Usage**: Only shown when `component` prop is provided - displays install command + basic usage snippet
 
 **When to Use Interactive Controls:**
 - ✅ Block has prop variants (sizes, themes, layouts)
@@ -578,31 +668,6 @@ src/
 - ✅ User benefits from seeing live changes
 - ❌ Don't use for completely different blocks
 - ❌ Don't use if code structure differs significantly between variants
-
-### UIExample
-
-**Purpose:** Display UI component examples with Preview/Code tabs.
-
-**Usage:**
-```svelte
-<UIExample
-	title="Example Purpose"
-	description="What this demonstrates"
-	code={ExampleCodeRaw}
->
-	<!-- Preview content -->
-</UIExample>
-```
-
-**Props:**
-- `title` (optional): Example name (h4)
-- `description` (optional): What this demonstrates
-- `code` (required): Raw code string
-- `children`: Preview content
-
-**Tabs:**
-1. **Preview**: Shows live composition
-2. **Code**: Shows full code
 
 ### ComponentAPI
 
@@ -752,17 +817,44 @@ import UICompositionRaw from './examples/ui-composition.svelte?raw';
 
 **Infrastructure:**
 ```svelte
-import BlockExample from '$site-components/block-example.svelte';
-import UIExample from '$site-components/ui-example.svelte';
+import Demo from '$site-components/Demo.svelte';
 import ComponentAPI from '$site-components/component-api.svelte';
 ```
 
 ### Why Separate Code Files?
 
-1. **Single Responsibility**: Preview components show real usage, code files show structure
-2. **Maintainability**: Update block implementation without touching examples
-3. **Clarity**: Code examples are explicitly simplified, not magical
-4. **Consistency**: Every block follows same pattern
+1. **Single Responsibility**:
+   - Preview files (`portrait.svelte`) = actual block component usage (live demo)
+   - Code files (`portrait-code.svelte`) = simplified implementation showing composition (educational)
+   - Usage snippets (auto-generated) = install command + basic import/usage (practical)
+2. **Educational Purpose**: Code files teach developers how blocks are constructed from primitives
+3. **Maintainability**: Update block implementation without touching examples
+4. **Clarity**: Code examples are explicitly simplified, not magical
+5. **Consistency**: Every block follows same pattern
+
+### Usage Snippet Format
+
+When the Demo component has a `component` prop, it automatically generates a Usage tab with:
+
+**Install Command:**
+```bash
+npx shadcn-svelte@latest add [component-name]
+```
+
+**Basic Usage Snippet:**
+```svelte
+<script>
+	import { ComponentName } from '$lib/ndk/blocks';
+</script>
+
+<ComponentName {ndk} prop={value} />
+```
+
+The usage snippet should be:
+- Minimal and copy-paste ready
+- Show only required props (ndk) and 1-2 common props
+- Use simple, clear prop names
+- Include proper import statement
 
 ---
 
@@ -784,15 +876,17 @@ Use this checklist before marking any component page as complete.
 
 ### 📋 Blocks Section Checklist
 
-- [ ] Each block uses `BlockExample` component
+- [ ] Each block uses `Demo` component
 - [ ] All blocks have `title` prop
 - [ ] All blocks have `description` explaining WHEN to use
-- [ ] All blocks have `component` prop for install
+- [ ] All blocks have `component` prop (enables Usage tab with install command + usage snippet)
 - [ ] Code examples imported as `?raw`
-- [ ] Preview shows actual block component
-- [ ] Code shows simplified structure (no script/imports)
+- [ ] Preview tab shows actual block component (e.g., `<FollowButton />`)
+- [ ] Code tab shows HOW TO BUILD the block from primitives (NOT the block component itself)
+- [ ] Code shows simplified implementation structure (no script/imports/types)
+- [ ] Usage tab automatically shows install command and basic usage (generated by Demo component)
 - [ ] Hierarchical subsections properly indented
-- [ ] Subsections use h4, not BlockExample title
+- [ ] Subsections use h4, not Demo title
 - [ ] Related blocks grouped under parent
 
 ### 📋 Code Simplification Checklist
@@ -810,7 +904,8 @@ Use this checklist before marking any component page as complete.
 ### 📋 UI Components Section Checklist
 
 - [ ] Exactly 2 examples (Basic, Full Composition)
-- [ ] Each example uses `UIExample` component
+- [ ] Each example uses `Demo` component
+- [ ] No `component` prop (UI examples don't have Usage tab)
 - [ ] Basic shows minimal viable composition (1-3 primitives)
 - [ ] Full Composition shows all primitives working together
 - [ ] Code examples show full composable pattern
@@ -847,14 +942,16 @@ Use this checklist before marking any component page as complete.
 - [ ] Primitives imported from `$lib/ndk/[component]`
 - [ ] Code examples imported with `?raw`
 - [ ] UI examples imported as components + raw
-- [ ] Infrastructure components from `$site-components`
+- [ ] Demo component imported from `$site-components/Demo.svelte`
+- [ ] ComponentAPI imported from `$site-components/component-api.svelte`
 - [ ] No unused imports
 
 ### 📋 Quality Checklist
 
 - [ ] Page builds without errors
-- [ ] All tabs function correctly
-- [ ] Install commands are correct
+- [ ] All tabs function correctly (Preview, Code, Usage for blocks)
+- [ ] Usage tab shows install command AND basic usage snippet
+- [ ] Usage snippets are accurate and copy-paste ready
 - [ ] EditProps works with sample data
 - [ ] No console errors
 - [ ] Responsive design works
@@ -896,7 +993,7 @@ For a simple component with only primitives:
 	import { getContext } from 'svelte';
 	import { Component } from '$lib/ndk/component';
 	import { EditProps } from '$lib/ndk/edit-props';
-	import UIExample from '$site-components/ui-example.svelte';
+	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	import UIBasic from './examples/ui-basic.svelte';
@@ -929,9 +1026,9 @@ For a simple component with only primitives:
 		</p>
 
 		<div class="space-y-8">
-			<UIExample title="Basic Usage" code={UIBasicRaw}>
+			<Demo title="Basic Usage" code={UIBasicRaw}>
 				<UIBasic {ndk} {sample} />
-			</UIExample>
+			</Demo>
 		</div>
 	</section>
 
@@ -950,8 +1047,7 @@ For a component with blocks, primitives, and builder:
 	import { Component } from '$lib/ndk/component';
 	import { ComponentBlock1, ComponentBlock2 } from '$lib/ndk/blocks';
 	import { EditProps } from '$lib/ndk/edit-props';
-	import BlockExample from '$site-components/block-example.svelte';
-	import UIExample from '$site-components/ui-example.svelte';
+	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	import Block1CodeRaw from './examples/block1-code.svelte?raw';
@@ -959,6 +1055,8 @@ For a component with blocks, primitives, and builder:
 
 	import UIBasic from './examples/ui-basic.svelte';
 	import UIBasicRaw from './examples/ui-basic.svelte?raw';
+	import UIFull from './examples/ui-full.svelte';
+	import UIFullRaw from './examples/ui-full.svelte?raw';
 
 	const ndk = getContext('ndk');
 	let sample = $state();
@@ -991,7 +1089,7 @@ For a component with blocks, primitives, and builder:
 		</p>
 
 		<div class="space-y-12">
-			<BlockExample
+			<Demo
 				title="Block1"
 				description="When to use this block"
 				component="component-block1"
@@ -1000,9 +1098,9 @@ For a component with blocks, primitives, and builder:
 				{#each displayItems as item}
 					<ComponentBlock1 {ndk} {item} />
 				{/each}
-			</BlockExample>
+			</Demo>
 
-			<BlockExample
+			<Demo
 				title="Block2"
 				description="When to use this block"
 				component="component-block2"
@@ -1011,7 +1109,7 @@ For a component with blocks, primitives, and builder:
 				{#each displayItems as item}
 					<ComponentBlock2 {ndk} {item} />
 				{/each}
-			</BlockExample>
+			</Demo>
 		</div>
 	</section>
 
@@ -1023,7 +1121,7 @@ For a component with blocks, primitives, and builder:
 		</p>
 
 		<div class="space-y-8">
-			<UIExample
+			<Demo
 				title="Basic Usage"
 				description="Minimal example with Component.Root and essential primitives."
 				code={UIBasicRaw}
@@ -1031,9 +1129,9 @@ For a component with blocks, primitives, and builder:
 				{#if item1}
 					<UIBasic {ndk} item={item1} />
 				{/if}
-			</UIExample>
+			</Demo>
 
-			<UIExample
+			<Demo
 				title="Full Composition"
 				description="All available primitives composed together."
 				code={UIFullRaw}
@@ -1041,7 +1139,7 @@ For a component with blocks, primitives, and builder:
 				{#if item1}
 					<UIFull {ndk} item={item1} />
 				{/if}
-			</UIExample>
+			</Demo>
 		</div>
 	</section>
 
@@ -1055,19 +1153,19 @@ For a component with blocks, primitives, and builder:
 ```svelte
 <!-- Medium Block with Sizes subsection -->
 <div>
-	<BlockExample
+	<Demo
 		title="Medium"
 		description="Horizontal card layout with image on right."
 		component="component-medium"
 		code={MediumCodeRaw}
 	>
 		<ComponentMedium {ndk} {sample} />
-	</BlockExample>
+	</Demo>
 
 	<!-- Sizes subsection -->
 	<div class="mt-8 ml-8 border-l-2 border-border pl-8">
 		<h4 class="text-xl font-semibold mb-4">Sizes</h4>
-		<BlockExample
+		<Demo
 			description="Medium layout supports three size options: small, medium, and large."
 			component="component-medium"
 			code={MediumSizesCodeRaw}
@@ -1075,7 +1173,7 @@ For a component with blocks, primitives, and builder:
 			<ComponentMedium {ndk} {sample} imageSize="small" />
 			<ComponentMedium {ndk} {sample} imageSize="medium" />
 			<ComponentMedium {ndk} {sample} imageSize="large" />
-		</BlockExample>
+		</Demo>
 	</div>
 </div>
 ```
@@ -1084,10 +1182,26 @@ For a component with blocks, primitives, and builder:
 
 ## Version History
 
+### v3.3 (2025-01-30)
+- **CRITICAL CLARIFICATION**: Block code tabs must show HOW TO BUILD the block from primitives, not just the block component usage
+- **RENAMED "Install" → "Usage"**: Usage tab now shows both install command AND basic usage snippet
+- Added explicit examples showing Preview tab (block usage) vs Code tab (primitive composition) vs Usage tab (install + usage)
+- Updated all sections to emphasize this educational purpose of code tabs
+- Added "CRITICAL DISTINCTION" callouts showing all three tabs' purposes
+- Updated checklists to verify code tabs show implementation, not usage
+- Updated all references from "Install" to "Usage" throughout the document
+
+### v3.2 (2025-01-30)
+- Updated all references from `BlockExample` and `UIExample` to `Demo` component
+- Clarified that Demo component serves dual purpose (blocks with `component` prop, UI without)
+- Updated all code examples and templates to use Demo component
+- Updated import patterns to reflect actual infrastructure components
+- Updated all checklists to reference Demo instead of BlockExample/UIExample
+
 ### v3.1 (2025-01-29)
-- Added interactive controls pattern for BlockExample
+- Added interactive controls pattern for Demo component (previously called BlockExample)
 - Updated guidelines to prefer interactive controls over hierarchical subsections
-- Added controls snippet support to BlockExample component
+- Added controls snippet support to Demo component
 - Updated ArticleCard Medium example to use interactive controls
 - Simplified UI Components section to only Basic and Full Composition (removed styling examples)
 - Clarified that UI section should focus on composition, not styling variations

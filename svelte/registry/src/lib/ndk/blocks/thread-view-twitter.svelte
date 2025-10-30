@@ -16,8 +16,9 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, RepostAction, ReactionAction } from '../event-card/index.js';
+  import { EventCard, ReplyAction, ReactionAction } from '../event-card/index.js';
   import Avatar from '../user-profile/user-profile-avatar.svelte';
+  import RepostButton from './repost-button.svelte';
 
   interface Props {
     /** NDK instance */
@@ -62,7 +63,7 @@
 
                   <EventCard.Actions class="tweet-actions ml-5 ">
                     <ReplyAction />
-                    <RepostAction />
+                    <RepostButton {ndk} event={node.event} />
                     <ReactionAction />
                   </EventCard.Actions>
               </div>

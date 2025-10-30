@@ -1,9 +1,9 @@
 <script lang="ts">
+	import Demo from '$site-components/Demo.svelte';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import UIExample from '$site-components/ui-example.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples
@@ -57,7 +57,7 @@
 
       <div class="space-y-8">
         <!-- Basic Usage -->
-        <UIExample
+        <Demo
           title="Basic Usage"
           description="Render article content with automatic highlight subscription. Select text to create highlights."
           code={BasicCodeRaw}
@@ -65,10 +65,10 @@
           <div class="max-h-[min(500px,80vh)] overflow-y-auto">
             <BasicExample article={article} />
           </div>
-        </UIExample>
+        </Demo>
 
         <!-- With Click Handler -->
-        <UIExample
+        <Demo
           title="With Click Handler"
           description="Handle highlight clicks to show details, open drawers, etc. You can also filter highlights using the highlightFilter callback."
           code={WithClickRaw}
@@ -76,7 +76,7 @@
           <div class="max-h-[min(500px,80vh)] overflow-y-auto">
             <WithClickExample article={article} />
           </div>
-        </UIExample>
+        </Demo>
       </div>
     </section>
 

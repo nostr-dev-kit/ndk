@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { EventCard, ReplyAction, RepostAction, ReactionAction } from '$lib/ndk/event-card';
+  import { EventCard, ReplyAction, ReactionAction } from '$lib/ndk/event-card';
+  import { RepostButton } from '$lib/ndk/blocks';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
@@ -16,7 +17,7 @@
   <EventCard.Content />
   <EventCard.Actions>
     <ReplyAction />
-    <RepostAction />
+    <RepostButton {ndk} {event} />
     <ReactionAction />
   </EventCard.Actions>
 </EventCard.Root>

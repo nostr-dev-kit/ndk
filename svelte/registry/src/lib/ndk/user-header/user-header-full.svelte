@@ -1,9 +1,8 @@
-<!-- @ndk-version: user-header-full@0.3.0 -->
+<!-- @ndk-version: user-header-full@0.4.0 -->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { UserProfile } from '../user-profile/index.js';
-  import FollowAction from '../actions/follow-action.svelte';
 
   interface Props {
     /** NDK instance */
@@ -68,7 +67,7 @@
         <!-- Actions -->
         <div class="actions-area">
           {#if !isOwnProfile}
-            <FollowAction {ndk} target={user} variant="primary" />
+            <UserProfile.Follow variant="primary" />
           {/if}
         </div>
       </div>

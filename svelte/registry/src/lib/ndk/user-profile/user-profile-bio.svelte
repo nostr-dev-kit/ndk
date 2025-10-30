@@ -17,9 +17,6 @@
   import { cn } from '$lib/utils';
 
   interface Props {
-    /** Text size classes */
-    size?: string;
-
     /** Additional CSS classes */
     class?: string;
 
@@ -28,7 +25,6 @@
   }
 
   let {
-    size = 'text-sm',
     class: className = '',
     maxLines = 3
   }: Props = $props();
@@ -42,13 +38,7 @@
 </script>
 
 {#if bio}
-  <p
-    class={cn(size, className)}
-    style:display="-webkit-box"
-    style:-webkit-line-clamp={maxLines}
-    style:-webkit-box-orient="vertical"
-    style:overflow="hidden"
-  >
+  <p class={cn(`line-clamp-${maxLines}`, className)}>
     {bio}
   </p>
 {/if}

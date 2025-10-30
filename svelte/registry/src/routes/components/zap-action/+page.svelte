@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
 
   import BasicExample from './examples/zap-action-basic.svelte';
   import BasicExampleRaw from './examples/zap-action-basic.svelte?raw';
@@ -13,15 +13,17 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let eventId = $state<string>('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
   let sampleEvent = $state<NDKEvent | undefined>();
 
   $effect(() => {
-    ndk.fetchEvent(eventId)
-      .then(event => {
-        if (event) sampleEvent = event;
-      })
-      .catch(err => console.error('Failed to fetch sample event:', err));
+    (async () => {
+      try {
+        const event = await ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
+        if (event && !sampleEvent) sampleEvent = event;
+      } catch (err) {
+        console.error('Failed to fetch sample event:', err);
+      }
+    })();
   });
 </script>
 
@@ -31,7 +33,7 @@
     <p>Zap (lightning payment) button with amount display.</p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Event ID" type="text" bind:value={eventId} />
+      <EditProps.Prop name="Sample Event" type="event" bind:value={sampleEvent} />
     </EditProps.Root>
   </header>
 
@@ -39,21 +41,21 @@
     <section class="demo space-y-8">
       <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-      <CodePreview
+      <Demo
         title="Basic Usage"
         description="Simple zap button with automatic amount tracking"
         code={BasicExampleRaw}
       >
         <BasicExample {ndk} event={sampleEvent} />
-      </CodePreview>
+      </Demo>
 
-      <CodePreview
+      <Demo
         title="Using the Builder"
         description="Create custom zap UI using createZapAction() for full control"
         code={BuilderExampleRaw}
       >
         <BuilderExample {ndk} event={sampleEvent} />
-      </CodePreview>
+      </Demo>
     </section>
   {:else}
     <section class="demo">

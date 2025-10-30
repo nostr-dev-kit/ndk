@@ -1,11 +1,10 @@
 <script lang="ts">
+	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { RelayCard } from '$lib/ndk/relay-card';
 	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/ndk/blocks';
 	import { EditProps } from '$lib/ndk/edit-props';
-	import BlockExample from '$site-components/block-example.svelte';
-	import UIExample from '$site-components/ui-example.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Code examples for blocks
@@ -61,7 +60,7 @@
 
 		<div class="space-y-12">
 			<!-- Portrait -->
-			<BlockExample
+			<Demo
 				title="Portrait"
 				description="Vertical card layout with icon on top. Perfect for relay grids and discovery displays."
 				component="relay-card-portrait"
@@ -72,10 +71,10 @@
 						<RelayCardPortrait {ndk} {relayUrl} class="flex-none" />
 					{/each}
 				</div>
-			</BlockExample>
+			</Demo>
 
 			<!-- Compact -->
-			<BlockExample
+			<Demo
 				title="Compact"
 				description="Small square card with icon and name. Ideal for compact grids where space is limited."
 				component="relay-card-compact"
@@ -86,10 +85,10 @@
 						<RelayCardCompact {ndk} {relayUrl} />
 					{/each}
 				</div>
-			</BlockExample>
+			</Demo>
 
 			<!-- List -->
-			<BlockExample
+			<Demo
 				title="List"
 				description="Horizontal card layout. Perfect for relay lists and feeds with optional description."
 				component="relay-card-list"
@@ -100,7 +99,7 @@
 						<RelayCardList {ndk} {relayUrl} />
 					{/each}
 				</div>
-			</BlockExample>
+			</Demo>
 		</div>
 	</section>
 
@@ -114,22 +113,22 @@
 
 		<div class="space-y-8">
 			<!-- Basic Usage -->
-			<UIExample
+			<Demo
 				title="Basic Usage"
 				description="Minimal example with RelayCard.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy."
 				code={BasicExampleRaw}
 			>
 				<BasicExample {ndk} relayUrl={exampleRelay} />
-			</UIExample>
+			</Demo>
 
 			<!-- Builder Usage -->
-			<UIExample
+			<Demo
 				title="Using the Builder"
 				description="Use createBookmarkedRelayList() to create a reactive bookmarked relay list that tracks relays bookmarked by users you follow. Includes bookmark counts and toggle functionality."
 				code={BuilderUsageExampleRaw}
 			>
 				<BuilderUsageExample {ndk} />
-			</UIExample>
+			</Demo>
 		</div>
 	</section>
 

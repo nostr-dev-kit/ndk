@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
@@ -31,21 +31,21 @@
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Basic Usage"
       description="Display user avatars with customizable size in pixels. Use the controls above to adjust the size and try different users."
       code={BasicExampleRaw}
     >
       <BasicExample {ndk} pubkey={examplePubkey} {size} />
-    </CodePreview>
+    </Demo>
 
-    <CodePreview
+    <Demo
       title="With Fallback"
       description="When no profile picture is available, avatars automatically show initials with a gradient background generated from the pubkey."
       code={FallbackExampleRaw}
     >
       <FallbackExample {ndk} />
-    </CodePreview>
+    </Demo>
   </section>
 
   <section class="info">

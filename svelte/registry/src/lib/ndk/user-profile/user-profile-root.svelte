@@ -6,8 +6,6 @@
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
   import { getNDKFromContext } from '../ndk-context.svelte.js';
-  import HoverCard from './user-profile-hover-card.svelte';
-  import * as Popover from 'bits-ui';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -22,9 +20,6 @@
 
     /** Pre-loaded profile (optional, avoids fetch) */
     profile?: NDKUserProfile;
-
-    /** Show hover card on mouse enter */
-    showHoverCard?: boolean;
 
     /** Click handler */
     onclick?: (e: MouseEvent) => void;
@@ -41,7 +36,6 @@
     user,
     pubkey,
     profile: propProfile,
-    showHoverCard = true,
     onclick,
     class: className = '',
     children
@@ -95,30 +89,12 @@
     get user() { return user; },
     get ndkUser() { return ndkUser; },
     get profile() { return profile; },
-    get showHoverCard() { return showHoverCard; },
     get onclick() { return onclick; }
   };
 
   setContext(USER_PROFILE_CONTEXT_KEY, context);
 </script>
 
-{#if showHoverCard && resolvedPubkey}
-  <Popover.Root openDelay={500} closeDelay={100}>
-    <Popover.Trigger class="user-profile-root {className}">
-      {@render children()}
-    </Popover.Trigger>
-    <Popover.Content>
-      <HoverCard {ndk} pubkey={resolvedPubkey} />
-    </Popover.Content>
-  </Popover.Root>
-{:else}
-  <div class="user-profile-root {className}">
-    {@render children()}
-  </div>
-{/if}
-
-<style>
-  .user-profile-root {
-    display: inline-block;
-  }
-</style>
+<div class="inline-block {className}">
+  {@render children()}
+</div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Demo from '$site-components/Demo.svelte';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
@@ -10,8 +11,6 @@
     HighlightCardGrid
   } from '$lib/ndk/blocks';
   import { EditProps } from '$lib/ndk/edit-props';
-  import BlockExample from '$site-components/block-example.svelte';
-  import UIExample from '$site-components/ui-example.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Code examples for blocks
@@ -111,7 +110,7 @@
 
     <div class="space-y-12">
       <!-- Feed -->
-      <BlockExample
+      <Demo
         title="Feed"
         description="Full-width card with header, large highlighted text in a book-page style, source badge, and action buttons. Best for main feed displays."
         component="highlight-card-feed"
@@ -120,10 +119,10 @@
         {#if highlight1}
           <HighlightCardFeed {ndk} event={highlight1} />
         {/if}
-      </BlockExample>
+      </Demo>
 
       <!-- Elegant -->
-      <BlockExample
+      <Demo
         title="Elegant"
         description="Square-sized elegant card with gradient background. Context text is muted while the highlight is bright with primary foreground color."
         component="highlight-card-elegant"
@@ -134,10 +133,10 @@
             <HighlightCardElegant {ndk} event={highlight} />
           {/each}
         </div>
-      </BlockExample>
+      </Demo>
 
       <!-- Compact -->
-      <BlockExample
+      <Demo
         title="Compact"
         description="Small horizontal card layout. Ideal for compact lists and sidebars."
         component="highlight-card-compact"
@@ -148,10 +147,10 @@
             <HighlightCardCompact {ndk} event={highlight} />
           {/each}
         </div>
-      </BlockExample>
+      </Demo>
 
       <!-- Grid -->
-      <BlockExample
+      <Demo
         title="Grid"
         description="Square card perfect for grid layouts. Shows highlight with optional author info below."
         component="highlight-card-grid"
@@ -162,7 +161,7 @@
             <HighlightCardGrid {ndk} event={highlight} />
           {/each}
         </div>
-      </BlockExample>
+      </Demo>
     </div>
   </section>
 
@@ -176,7 +175,7 @@
 
     <div class="space-y-8">
       <!-- Basic Usage -->
-      <UIExample
+      <Demo
         title="Basic Usage"
         description="Minimal example with HighlightCard.Root and essential primitives."
         code={UIBasicRaw}
@@ -184,10 +183,10 @@
         {#if highlight1}
           <UIBasic {ndk} event={highlight1} />
         {/if}
-      </UIExample>
+      </Demo>
 
       <!-- Full Composition -->
-      <UIExample
+      <Demo
         title="Full Composition"
         description="All available primitives composed together."
         code={UICompositionRaw}
@@ -195,7 +194,7 @@
         {#if highlight1}
           <UIComposition {ndk} event={highlight1} />
         {/if}
-      </UIExample>
+      </Demo>
     </div>
   </section>
 

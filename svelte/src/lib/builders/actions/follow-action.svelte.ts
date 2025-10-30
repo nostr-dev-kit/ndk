@@ -35,6 +35,12 @@ export function createFollowAction(
 ) {
     const resolvedNDK = resolveNDK(ndk);
 
+    // Ensure NDKInterestList is monitored if we have sessions
+    // This is needed for hashtag follows
+    if (resolvedNDK.$sessions) {
+        resolvedNDK.$sessions.addMonitor([NDKInterestList]);
+    }
+
     const isFollowing = $derived.by(() => {
         const { target } = config();
         if (!target) return false;

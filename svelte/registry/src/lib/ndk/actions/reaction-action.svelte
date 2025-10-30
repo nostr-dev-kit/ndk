@@ -126,7 +126,7 @@
 </script>
 
 <Popover.Root bind:open={showPicker}>
-  <Popover.Trigger asChild>
+  <Popover.Trigger>
     {#snippet child({ props })}
       <button
         {...props}

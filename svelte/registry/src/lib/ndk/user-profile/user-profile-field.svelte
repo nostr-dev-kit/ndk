@@ -82,7 +82,7 @@
 </script>
 
 {#if field === 'about' && context}
-  <Bio {size} class={className} {maxLines} />
+  <Bio class={cn(size, className)} {maxLines} />
 {:else if fieldValue}
   <span
     class={cn(size, className)}

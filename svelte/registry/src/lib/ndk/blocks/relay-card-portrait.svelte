@@ -71,10 +71,9 @@
 </script>
 
 <Root {ndk} {relayUrl}>
-	{#snippet cardContent()}
-		{@const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY)}
-		{@const banner = context?.relayInfo.nip11?.banner}
-		{@const hasBanner = banner != null && banner !== ''}
+	{@const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY)}
+	{@const banner = context?.relayInfo.nip11?.banner}
+	{@const hasBanner = banner != null && banner !== ''}
 
 	<button
 		type="button"
@@ -157,7 +156,4 @@
 			</div>
 		</div>
 	</button>
-	{/snippet}
-
-	{@render cardContent()}
 </Root>

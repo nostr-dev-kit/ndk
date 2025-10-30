@@ -12,9 +12,6 @@
 </script>
 
 <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
-  <div class="mb-4">
-    <p class="m-0 text-foreground leading-relaxed">{event.content}</p>
-  </div>
   <div class="flex gap-2 pt-4 border-t border-border">
     <ReactionAction {ndk} {event} />
   </div>

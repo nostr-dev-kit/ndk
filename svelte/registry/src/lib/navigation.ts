@@ -20,7 +20,8 @@ import {
   ServerStack01Icon,
   Search01Icon,
   PaintBoardIcon,
-  Image02Icon
+  Image02Icon,
+  ViewIcon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -60,6 +61,7 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
       { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
+      { name: 'Embedded Previews', path: '/components/embedded-previews', icon: ViewIcon },
     ]
   },
   {
@@ -82,6 +84,7 @@ export const componentCategories: NavCategory[] = [
     title: 'Note (Kind:1)',
     items: [
       { name: 'Content', path: '/components/event-content', icon: File01Icon },
+      { name: 'Embedded Preview', path: '/components/note-embedded-preview', icon: ViewIcon },
     ]
   },
   {
@@ -89,6 +92,7 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'Card', path: '/components/article-card', icon: NewsIcon },
       { name: 'Content', path: '/components/article-content', icon: File01Icon },
+      { name: 'Embedded Preview', path: '/components/article-embedded-preview', icon: ViewIcon },
     ]
   },
   {
@@ -101,6 +105,7 @@ export const componentCategories: NavCategory[] = [
     title: 'Highlight (NIP-84)',
     items: [
       { name: 'Card', path: '/components/highlight-card', icon: File01Icon },
+      { name: 'Embedded Preview', path: '/components/highlight-embedded-preview', icon: ViewIcon },
     ]
   },
 ];

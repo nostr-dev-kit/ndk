@@ -26,7 +26,7 @@
             <EventCard.Root {ndk} event={node.event}>
               <div
                 class="cursor-pointer"
-                onclick={() => thread.focusOn(node.event)}
+                onclick={() => thread.focusOn(node.id)}
                 role="button"
                 tabindex="0"
               >
@@ -49,7 +49,7 @@
           >
             <div
               class="relative border-b border-border transition-colors cursor-pointer"
-              onclick={() => thread.focusOn(node.event)}
+              onclick={() => thread.focusOn(node.id)}
               role="button"
               tabindex="0"
             >

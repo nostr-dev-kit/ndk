@@ -22,13 +22,9 @@
 </script>
 
 <div class="bg-card border border-border rounded-xl p-6">
-  <div class="mb-4">
-    <p class="m-0 leading-relaxed text-foreground">{event.content}</p>
-  </div>
-
   {#if reactionState.all.length > 0}
     <Tooltip.Provider delayDuration={100}>
-      <div class="flex flex-wrap gap-2 pt-4 border-t border-border">
+      <div class="flex flex-wrap gap-2 pt-4">
         {#each reactionState.all as reaction (reaction.emoji)}
           <Tooltip.Root>
             <Tooltip.Trigger>

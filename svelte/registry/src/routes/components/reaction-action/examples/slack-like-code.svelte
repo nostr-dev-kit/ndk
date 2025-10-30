@@ -1,16 +1,7 @@
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { Tooltip } from 'bits-ui';
   import AvatarGroup from '$lib/ndk/avatar-group/avatar-group.svelte';
-
-  interface Props {
-    ndk: NDKSvelte;
-    event: NDKEvent;
-  }
-
-  let { ndk, event }: Props = $props();
 
   const reactionState = createReactionAction(() => ({ event }), ndk);
 </script>

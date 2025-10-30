@@ -373,7 +373,7 @@ export function createFollowAction(config: () => FollowActionConfig) {
 
         if (typeof target === 'string') {
             // Hashtag follow
-            const list = ndk.$sessionEvent<NDKInterestList>(NDKInterestList);
+            const list = ndk.$sessionEvent<NDKInterestList>(NDKInterestList, { create: true });
             return list?.hasInterest(target.toLowerCase());
         }
 

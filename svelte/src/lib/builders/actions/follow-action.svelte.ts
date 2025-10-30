@@ -47,8 +47,7 @@ export function createFollowAction(
 
         // String = hashtag
         if (typeof target === 'string') {
-            const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList);
-            if (!interestList) return false;
+            const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList, { create: true });
             return interestList.hasInterest(target.toLowerCase());
         }
 
@@ -68,10 +67,7 @@ export function createFollowAction(
 
         // String = hashtag
         if (typeof target === 'string') {
-            const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList);
-            if (!interestList) {
-                throw new Error("No interest list found. User may not be logged in.");
-            }
+            const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList, { create: true });
 
             const hashtag = target.toLowerCase();
             if (isFollowing) {

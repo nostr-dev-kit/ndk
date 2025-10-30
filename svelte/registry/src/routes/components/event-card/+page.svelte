@@ -17,6 +17,10 @@
 	import UIFull from './examples/ui-full.svelte';
 	import UIFullRaw from './examples/ui-full.svelte?raw';
 
+	// Import chrome demo
+	import ChromeDemo from './examples/chrome-demo.svelte';
+	import ChromeDemoRaw from './examples/chrome-demo.svelte?raw';
+
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	let sampleEvent = $state<NDKEvent | undefined>();
@@ -40,6 +44,58 @@
 			/>
 		</EditProps.Root>
 	</div>
+
+	<!-- Concept: The Chrome -->
+	{#if sampleEvent}
+		<section class="mb-16">
+			<h2 class="text-3xl font-bold mb-4">Understanding the Chrome</h2>
+			<p class="text-muted-foreground mb-6">
+				EventCard provides the <strong>chrome</strong> — the consistent visual frame around your content.
+				Think of it as the picture frame that stays the same while the artwork inside changes.
+			</p>
+
+			<div class="bg-muted/30 border border-border rounded-lg p-6 mb-6">
+				<h3 class="text-lg font-semibold mb-3">The chrome includes:</h3>
+				<ul class="space-y-2 text-muted-foreground">
+					<li class="flex items-start gap-2">
+						<span class="text-primary">•</span>
+						<span><strong>Header</strong> — Author info, avatar, timestamp, and actions menu</span>
+					</li>
+					<li class="flex items-start gap-2">
+						<span class="text-primary">•</span>
+						<span><strong>Content slot</strong> — Where any event kind renders (notes, articles, videos, etc.)</span>
+					</li>
+					<li class="flex items-start gap-2">
+						<span class="text-primary">•</span>
+						<span><strong>Actions</strong> — Interaction buttons (reply, repost, reactions)</span>
+					</li>
+					<li class="flex items-start gap-2">
+						<span class="text-primary">•</span>
+						<span><strong>Thread indicators</strong> — Visual lines connecting related events</span>
+					</li>
+				</ul>
+			</div>
+
+			<Demo
+				title="Interactive Chrome Demo"
+				description="See how the same chrome adapts to different event kinds. The header, layout, and actions stay consistent while the content changes."
+				code={ChromeDemoRaw}
+			>
+				<div class="max-w-2xl">
+					<ChromeDemo {ndk} event={sampleEvent} />
+				</div>
+			</Demo>
+
+			<div class="mt-6 p-4 bg-primary/5 border-l-4 border-primary rounded">
+				<p class="text-sm text-muted-foreground">
+					<strong class="text-foreground">Why this matters:</strong> By separating the chrome from the content,
+					you can display any Nostr event kind (kind 1 notes, kind 30023 articles, kind 30040 videos, etc.)
+					with a consistent, familiar interface. Your users always know where to find the author, how to interact,
+					and how events relate to each other — regardless of content type.
+				</p>
+			</div>
+		</section>
+	{/if}
 
 	{#if sampleEvent}
 		<!-- Blocks Section -->

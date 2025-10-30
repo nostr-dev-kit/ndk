@@ -27,6 +27,12 @@
  * <EventCardMenu {ndk} {event} />
  * ```
  *
+ * @example ImageCard blocks:
+ * ```svelte
+ * <ImageCard {ndk} {image} />
+ * <ImageCard {ndk} {image} imageHeight="h-96" />
+ * ```
+ *
  * @example ThreadView blocks:
  * ```svelte
  * <script>
@@ -99,6 +105,9 @@ export { default as HighlightCardElegant } from './highlight-card-elegant.svelte
 // EventCard blocks
 export { default as EventCardClassic } from './event-card-classic.svelte';
 export { default as EventCardMenu } from './event-card-menu.svelte';
+
+// ImageCard blocks
+export { default as ImageCard } from './image-card.svelte';
 
 // ThreadView blocks
 export { default as ThreadViewTwitter } from './thread-view-twitter.svelte';

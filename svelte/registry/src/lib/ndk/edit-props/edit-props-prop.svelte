@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
+	import { untrack, getContext } from 'svelte';
 	import type { NDKArticle, NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { getEditPropsContext, type PropType } from './edit-props-context.svelte';
+	import { fetchFromIdentifier } from './edit-props-fetcher';
 
 	interface Props {
 		name: string;
@@ -14,6 +16,7 @@
 	let { name, type, default: defaultValue, value = $bindable(), options }: Props = $props();
 
 	let context = getEditPropsContext();
+	const ndk = getContext<NDKSvelte>('ndk');
 
 	// Register this prop with the parent context
 	untrack(() => {
@@ -24,6 +27,19 @@
 			value,
 			options
 		});
+	});
+
+	// Fetch default value on mount if no value is provided
+	$effect(() => {
+		if (!value && defaultValue && (type === 'user' || type === 'event' || type === 'article')) {
+			untrack(async () => {
+				const result = await fetchFromIdentifier(ndk, type, defaultValue);
+				if (result.success && result.value) {
+					value = result.value;
+					context.updatePropValue(name, result.value);
+				}
+			});
+		}
 	});
 
 	// Watch for value changes from the context and update the bindable

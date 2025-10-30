@@ -835,6 +835,34 @@
       "updatedAt": "2025-10-29T14:04:59.000Z"
     },
     {
+      "name": "emoji-picker",
+      "type": "registry:block",
+      "title": "Emoji Picker",
+      "description": "Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte",
+        "bits-ui@^2.8.3"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/emoji-picker/emoji-picker-list.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/emoji-picker/emoji-picker-content.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/emoji-picker/index.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T00:00:00.000Z"
+    },
+    {
       "name": "blocks",
       "type": "registry:lib",
       "title": "Blocks",

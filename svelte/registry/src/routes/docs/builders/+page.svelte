@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CodeBlock from '$components/CodeBlock.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
 </script>
 
 <div class="docs-page">
@@ -107,10 +107,10 @@ relay.nip11?.description
 relay.nip11?.supported_nips`} />
     </details>
 
-    <p><code>createBookmarkedRelayList(() => ({}), ndk)</code> - User's bookmarked relays with connection stats.</p>
+    <p><code>createBookmarkedRelayList(() => ({'{ }'}), ndk)</code> - User's bookmarked relays with connection stats.</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const relays = createBookmarkedRelayList(() => ({}), ndk);
+      <CodeBlock lang="typescript" code={`const relays = createBookmarkedRelayList(() => ({ }), ndk);
 
 relays.relays  // Array<BookmarkedRelayWithStats>`} />
     </details>

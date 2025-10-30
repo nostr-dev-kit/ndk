@@ -49,7 +49,12 @@
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Sample Event" type="event" bind:value={sampleEvent} />
+      <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        bind:value={sampleEvent}
+      />
     </EditProps.Root>
   </div>
 

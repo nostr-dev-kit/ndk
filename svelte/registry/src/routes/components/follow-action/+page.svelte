@@ -24,7 +24,7 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let sampleUser = $state<NDKUser | undefined>(ndk.getUser({npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"}));
+  let sampleUser = $state<NDKUser | undefined>();
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -37,7 +37,12 @@
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Sample User" type="user" bind:value={sampleUser} />
+      <EditProps.Prop
+        name="Sample User"
+        type="user"
+        default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+        bind:value={sampleUser}
+      />
     </EditProps.Root>
   </div>
 

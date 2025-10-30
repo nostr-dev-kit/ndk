@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import type { NDKSvelte, MetaSubscribeSortOption } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '$lib/ndk/event-card';
+	import { UserProfile } from '$lib/ndk/user-profile';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 	interface Props {
@@ -9,78 +10,84 @@
 
 	let { ndk }: Props = $props();
 
-	// Subscribe to zap events from your follows
-	// $metaSubscribe automatically fetches the zapped events
+	let sortOption = $state<MetaSubscribeSortOption>('tag-time');
+
+	// Subscribe to repost events from your follows
+	// $metaSubscribe automatically fetches the reposted content
 	const feed = ndk.$metaSubscribe(() => ({
-		filters: [{ kinds: [9735], authors: [...ndk.$follows] }],
-		sort: 'tag-time'
+		filters: [{ kinds: [6, 16], authors: [...ndk.$follows] }],
+		sort: sortOption
 	}));
 
 	// Derive sorted events for display
 	const events = $derived(feed.events.slice(0, 10));
 
-	// Format zap amount from millisats
-	function formatZapAmount(millisats: number): string {
-		const sats = Math.floor(millisats / 1000);
-		if (sats >= 1000000) {
-			return `${(sats / 1000000).toFixed(1)}M`;
-		}
-		if (sats >= 1000) {
-			return `${(sats / 1000).toFixed(1)}K`;
-		}
-		return sats.toString();
+	// Get repost count for an event
+	function getRepostCount(event: NDKEvent): number {
+		return feed.eventsTagging(event).length;
 	}
 
-	// Get total zap amount for an event
-	function getTotalZaps(event: NDKEvent): number {
-		const zaps = feed.eventsTagging(event);
-		return zaps.reduce((total, zap) => {
-			const bolt11 = zap.getMatchingTags('bolt11')[0]?.[1];
-			if (!bolt11) return total;
-
-			// Extract amount from bolt11 invoice
-			const match = bolt11.match(/lnbc(\d+)([munp]?)/i);
-			if (!match) return total;
-
-			const amount = parseInt(match[1]);
-			const unit = match[2]?.toLowerCase() || '';
-
-			// Convert to millisats
-			let millisats = amount;
-			if (unit === 'm') millisats = amount * 100000000; // milli-bitcoin
-			else if (unit === 'u') millisats = amount * 100000; // micro-bitcoin
-			else if (unit === 'n') millisats = amount * 100; // nano-bitcoin
-			else if (unit === 'p') millisats = amount / 10; // pico-bitcoin
-
-			return total + millisats;
-		}, 0);
+	// Get unique reposter count
+	function getReposterCount(event: NDKEvent): number {
+		const reposts = feed.eventsTagging(event);
+		const uniqueReposters = new Set(reposts.map((r) => r.pubkey));
+		return uniqueReposters.size;
 	}
 
-	// Get unique zapper count
-	function getZapperCount(event: NDKEvent): number {
-		const zaps = feed.eventsTagging(event);
-		const uniqueZappers = new Set(zaps.map((z) => z.pubkey));
-		return uniqueZappers.size;
+	// Get reposters for display
+	function getReposters(event: NDKEvent): NDKEvent[] {
+		return feed.eventsTagging(event);
 	}
 </script>
 
-<div class="zapped-feed">
+<div class="repost-feed">
+	<div class="sort-controls">
+		<label class="sort-button" class:active={sortOption === 'tag-time'}>
+			<input type="radio" name="sort" value="tag-time" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Most Recent</strong>
+				<small>Newest reposts first</small>
+			</span>
+		</label>
+		<label class="sort-button" class:active={sortOption === 'count'}>
+			<input type="radio" name="sort" value="count" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Most Popular</strong>
+				<small>Most reposted first</small>
+			</span>
+		</label>
+		<label class="sort-button" class:active={sortOption === 'time'}>
+			<input type="radio" name="sort" value="time" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Newest Content</strong>
+				<small>By creation time</small>
+			</span>
+		</label>
+		<label class="sort-button" class:active={sortOption === 'unique-authors'}>
+			<input type="radio" name="sort" value="unique-authors" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Most Diverse</strong>
+				<small>Unique reposters</small>
+			</span>
+		</label>
+	</div>
+
 	{#if !feed.eosed && events.length === 0}
 		<div class="loading">
 			<div class="spinner"></div>
-			<p>Loading zapped events from your network...</p>
+			<p>Loading reposted content from your network...</p>
 		</div>
 	{:else if events.length === 0}
 		<div class="empty-state">
-			<p class="empty-title">No zaps yet</p>
+			<p class="empty-title">No reposts yet</p>
 			<p class="empty-description">
-				Events zapped by people you follow will appear here. Follow more people or wait for them to
-				zap content!
+				Content reposted by people you follow will appear here. Follow more people or wait for them
+				to repost content!
 			</p>
 		</div>
 	{:else}
 		<div class="feed-header">
-			<h4 class="feed-title">Recently Zapped by Your Network</h4>
+			<h4 class="feed-title">Reposted by Your Network</h4>
 			<div class="feed-stats">
 				<span class="stat">{feed.count} events</span>
 				<span class="separator">•</span>
@@ -90,22 +97,35 @@
 
 		<div class="events-list">
 			{#each events as event (event.id)}
-				{@const totalSats = getTotalZaps(event)}
-				{@const zapperCount = getZapperCount(event)}
+				{@const repostCount = getRepostCount(event)}
+				{@const reposterCount = getReposterCount(event)}
+				{@const reposters = getReposters(event)}
 
 				<EventCard.Root {ndk} {event}>
 					<EventCard.Header variant="compact" />
 
 					<EventCard.Content truncate={280} />
 
-					<div class="zap-info">
-						<div class="zap-badge">
-							<span class="zap-emoji">⚡</span>
-							<span class="zap-amount">{formatZapAmount(totalSats)} sats</span>
+					<div class="repost-info">
+						<div class="repost-stats">
+							<div class="repost-badge">
+								<span class="repost-emoji">🔁</span>
+								<span class="repost-count">{repostCount} {repostCount === 1 ? 'repost' : 'reposts'}</span>
+							</div>
+							<span class="reposter-count">
+								from {reposterCount} {reposterCount === 1 ? 'person' : 'people'}
+							</span>
 						</div>
-						<span class="zap-count">
-							from {zapperCount} {zapperCount === 1 ? 'person' : 'people'}
-						</span>
+						<div class="reposters-avatars">
+							{#each reposters.slice(0, 5) as reposter}
+								<div class="avatar-wrapper">
+									<UserProfile.Avatar {ndk} pubkey={reposter.pubkey} size={28} />
+								</div>
+							{/each}
+							{#if reposters.length > 5}
+								<div class="avatar-more">+{reposters.length - 5}</div>
+							{/if}
+						</div>
 					</div>
 				</EventCard.Root>
 			{/each}
@@ -113,16 +133,70 @@
 
 		{#if feed.count > 10}
 			<div class="more-indicator">
-				<p>+{feed.count - 10} more zapped events</p>
+				<p>+{feed.count - 10} more reposted events</p>
 			</div>
 		{/if}
 	{/if}
 </div>
 
 <style>
-	.zapped-feed {
+	.repost-feed {
 		width: 100%;
 		min-height: 300px;
+	}
+
+	.sort-controls {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+		padding: 1rem;
+		background: var(--color-muted);
+		border-radius: 0.5rem;
+	}
+
+	.sort-button {
+		cursor: pointer;
+		display: block;
+	}
+
+	.sort-button input[type='radio'] {
+		display: none;
+	}
+
+	.sort-label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.75rem;
+		background: var(--color-background);
+		border: 2px solid var(--color-border);
+		border-radius: 0.5rem;
+		transition: all 0.2s;
+	}
+
+	.sort-button.active .sort-label {
+		background: var(--color-primary);
+		border-color: var(--color-primary);
+		color: var(--color-primary-foreground);
+	}
+
+	.sort-button:hover .sort-label {
+		border-color: var(--color-primary);
+	}
+
+	.sort-label strong {
+		font-size: 0.875rem;
+	}
+
+	.sort-label small {
+		font-size: 0.75rem;
+		opacity: 0.8;
+	}
+
+	.sort-button.active .sort-label strong,
+	.sort-button.active .sort-label small {
+		color: var(--color-primary-foreground);
 	}
 
 	.loading {
@@ -215,40 +289,80 @@
 		gap: 1rem;
 	}
 
-	.zap-info {
+	.repost-info {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: 0.75rem;
 		padding: 0.75rem 0 0 0;
 		border-top: 1px solid var(--color-border);
 		margin-top: 0.75rem;
+		flex-wrap: wrap;
 	}
 
-	.zap-badge {
+	.repost-stats {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.repost-badge {
 		display: flex;
 		align-items: center;
 		gap: 0.375rem;
 		padding: 0.375rem 0.75rem;
-		background: linear-gradient(135deg, hsl(45, 100%, 50%) 0%, hsl(35, 100%, 50%) 100%);
+		background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
 		border-radius: 1rem;
 		font-weight: 600;
 		font-size: 0.875rem;
-		color: hsl(25, 40%, 20%);
+		color: var(--color-primary-foreground);
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 
-	.zap-emoji {
+	.repost-emoji {
 		font-size: 1rem;
 		line-height: 1;
 	}
 
-	.zap-amount {
+	.repost-count {
 		line-height: 1;
 	}
 
-	.zap-count {
+	.reposter-count {
 		font-size: 0.8125rem;
 		color: var(--color-muted-foreground);
+	}
+
+	.reposters-avatars {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	.avatar-wrapper {
+		position: relative;
+		border: 2px solid var(--color-background);
+		border-radius: 50%;
+		transition: transform 0.2s;
+	}
+
+	.avatar-wrapper:hover {
+		transform: scale(1.15);
+		z-index: 10;
+	}
+
+	.avatar-more {
+		background: var(--color-muted);
+		color: var(--color-muted-foreground);
+		font-size: 0.75rem;
+		font-weight: 600;
+		padding: 0.25rem 0.5rem;
+		border-radius: 1rem;
+		min-width: 28px;
+		height: 28px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.more-indicator {

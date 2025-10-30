@@ -108,6 +108,8 @@ export { default as EventCardMenu } from './event-card-menu.svelte';
 
 // ImageCard blocks
 export { default as ImageCard } from './image-card.svelte';
+export { default as ImageCardInstagram } from './image-card-instagram.svelte';
+export { default as ImageCardHero } from './image-card-hero.svelte';
 
 // ThreadView blocks
 export { default as ThreadViewTwitter } from './thread-view-twitter.svelte';

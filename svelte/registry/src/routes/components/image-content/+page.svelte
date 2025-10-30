@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { NDKImage } from '@nostr-dev-kit/ndk';
+	import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { ImageCard } from '$lib/ndk/blocks';
+	import { ImageCard, ImageCardInstagram, ImageCardHero } from '$lib/ndk/blocks';
 	import { EditProps } from '$lib/ndk/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	import ImageCardCodeRaw from './examples/image-card-code.svelte?raw';
+	import InstagramCodeRaw from './examples/instagram-code.svelte?raw';
+	import HeroCodeRaw from './examples/hero-code.svelte?raw';
 
 	import UIBasic from './examples/ui-basic.svelte';
 	import UIBasicRaw from './examples/ui-basic.svelte?raw';
@@ -24,11 +26,12 @@
 				// In production, you would fetch a real image event
 				const events = await ndk.fetchEvents({
 					kinds: [20], // kind 20 for images
+					"#t": ["olas365"],
 					limit: 1
 				});
 				const firstEvent = Array.from(events)[0];
 				if (firstEvent) {
-					sampleImage = firstEvent as unknown as NDKImage;
+					sampleImage = NDKImage.from(firstEvent);
 				}
 			} catch (error) {
 				console.error('Failed to fetch image:', error);
@@ -61,8 +64,90 @@
 
 		<div class="space-y-12">
 			<Demo
+				title="ImageCardInstagram"
+				description="Use for social feed layouts. Classic Instagram-style card with user header, square image, caption, and action buttons."
+				component="image-card-instagram"
+				code={InstagramCodeRaw}
+				props={[
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance (optional if provided via context)'
+					},
+					{
+						name: 'image',
+						type: 'NDKImage',
+						required: true,
+						description: 'The image event to display'
+					},
+					{
+						name: 'showDropdown',
+						type: 'boolean',
+						default: 'true',
+						description: 'Show dropdown menu button'
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes'
+					}
+				]}
+			>
+				{#if sampleImage}
+					<div class="max-w-md mx-auto">
+						<ImageCardInstagram {ndk} image={sampleImage} />
+					</div>
+				{:else}
+					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
+				{/if}
+			</Demo>
+
+			<Demo
+				title="ImageCardHero"
+				description="Use for featured or detail views. Fullbleed immersive display with caption and author info anchored at bottom over gradient."
+				component="image-card-hero"
+				code={HeroCodeRaw}
+				props={[
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance (optional if provided via context)'
+					},
+					{
+						name: 'image',
+						type: 'NDKImage',
+						required: true,
+						description: 'The image event to display'
+					},
+					{
+						name: 'height',
+						type: 'string',
+						default: 'h-[500px]',
+						description: 'Custom height class'
+					},
+					{
+						name: 'showFollow',
+						type: 'boolean',
+						default: 'true',
+						description: 'Show follow button for author'
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes'
+					}
+				]}
+			>
+				{#if sampleImage}
+					<ImageCardHero {ndk} image={sampleImage} />
+				{:else}
+					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
+				{/if}
+			</Demo>
+
+			<Demo
 				title="ImageCard"
-				description="Use for displaying image events in feeds, galleries, or detail views. Features prominent image display with user info and interactions."
+				description="Use for general purpose image display. Combines EventCard primitives with ImageContent for flexible layouts."
 				component="image-card"
 				code={ImageCardCodeRaw}
 				props={[

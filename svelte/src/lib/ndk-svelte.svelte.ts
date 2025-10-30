@@ -607,6 +607,8 @@ export class NDKSvelte extends NDK {
      * To start monitoring an event kind, explicitly call `ndk.$sessions.addMonitor([EventClass])`.
      *
      * @param eventClass - An NDK event class with a static `kinds` property and `from` method
+     * @param options - Optional configuration
+     * @param options.create - If true, creates a new instance if none exists
      * @returns The session event for that kind, or undefined if not found/monitored or sessions not enabled
      *
      * @example
@@ -633,14 +635,36 @@ export class NDKSvelte extends NDK {
      *   console.warn("Wallet event not monitored. Call ndk.$sessions.addMonitor([NDKCashuMintAnnouncement])");
      * }
      * ```
+     *
+     * @example
+     * ```ts
+     * import { NDKInterestList } from "@nostr-dev-kit/ndk";
+     *
+     * // Create a new instance if none exists
+     * const interestList = ndk.$sessionEvent(NDKInterestList, { create: true });
+     * // interestList is guaranteed to exist (never undefined)
+     * ```
      */
     $sessionEvent<T extends NDKEvent>(
-        eventClass: { kinds: number[]; from(event: NDKEvent): T }
+        eventClass: { kinds: number[]; from(event: NDKEvent): T; new(ndk?: NDK): T },
+        options?: { create?: boolean }
     ): T | undefined {
         if (!this.$sessions) return undefined;
 
         const kind = eventClass.kinds[0];
-        return this.$sessions.getSessionEvent(kind) as T | undefined;
+        const existing = this.$sessions.getSessionEvent(kind) as T | undefined;
+
+        if (existing) return existing;
+
+        if (options?.create) {
+            const newEvent = new eventClass(this);
+            if (this.$currentUser) {
+                newEvent.pubkey = this.$currentUser.pubkey;
+            }
+            return newEvent;
+        }
+
+        return undefined;
     }
 }
 

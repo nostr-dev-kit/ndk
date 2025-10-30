@@ -19,7 +19,8 @@ import {
   NewsIcon,
   ServerStack01Icon,
   Search01Icon,
-  PaintBoardIcon
+  PaintBoardIcon,
+  Image02Icon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -37,6 +38,7 @@ export const docs: NavItem[] = [
   { name: 'Introduction', path: '/docs', icon: Book02Icon },
   { name: 'Architecture', path: '/docs/architecture', icon: Building01Icon },
   { name: 'Builders', path: '/docs/builders', icon: Layers01Icon },
+  { name: 'Subscriptions', path: '/docs/subscriptions', icon: RepeatIcon },
   { name: 'Components', path: '/docs/components', icon: CodeIcon },
   { name: 'Utilities', path: '/docs/utilities', icon: PaintBoardIcon },
 ];
@@ -87,6 +89,12 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'Card', path: '/components/article-card', icon: NewsIcon },
       { name: 'Content', path: '/components/article-content', icon: File01Icon },
+    ]
+  },
+  {
+    title: 'Image (NIP-68)',
+    items: [
+      { name: 'Content', path: '/components/image-content', icon: Image02Icon },
     ]
   },
   {

@@ -12,7 +12,7 @@
 	// Subscribe to zap events from your follows
 	// $metaSubscribe automatically fetches the zapped events
 	const feed = ndk.$metaSubscribe(() => ({
-		filters: [{ kinds: [9735], authors: ndk.$follows }],
+		filters: [{ kinds: [9735], authors: [...ndk.$follows] }],
 		sort: 'tag-time'
 	}));
 

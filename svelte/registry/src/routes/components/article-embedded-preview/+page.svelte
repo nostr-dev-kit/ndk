@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { NDKArticle } from '@nostr-dev-kit/ndk';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
   import Demo from '$site-components/Demo.svelte';
 
@@ -11,7 +11,8 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let sampleArticle = $state<NDKArticle | undefined>();
+  // The sample should be a kind:1 event that EMBEDS a kind:30023 article
+  let sampleNote = $state<NDKEvent | undefined>();
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -28,8 +29,20 @@
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Sample Article" type="article" bind:value={sampleArticle} />
+      <EditProps.Prop
+        name="Sample Note (Kind:1 embedding an article)"
+        type="event"
+        bind:value={sampleNote}
+      />
     </EditProps.Root>
+
+    {#if sampleNote}
+      <div class="mt-4 p-4 border border-border rounded-lg bg-muted/30">
+        <p class="text-sm text-muted-foreground mb-2">
+          This note embeds an article (naddr1) in its content. Scroll down to see how the embedded article renders.
+        </p>
+      </div>
+    {/if}
   </div>
 
   <!-- Overview -->
@@ -58,11 +71,11 @@
         title="Card Variant"
         description="Full display with cover image, title, summary, and metadata. Default variant for embedded articles."
       >
-        {#if sampleArticle}
-          <ArticleCardExample {ndk} article={sampleArticle} />
+        {#if sampleNote}
+          <ArticleCardExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample article above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>
@@ -72,11 +85,11 @@
         title="Inline Variant"
         description="Medium-sized display suitable for inline references within content."
       >
-        {#if sampleArticle}
-          <ArticleInlineExample {ndk} article={sampleArticle} />
+        {#if sampleNote}
+          <ArticleInlineExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample article above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>
@@ -86,11 +99,11 @@
         title="Compact Variant"
         description="Minimal horizontal layout with small image and truncated text."
       >
-        {#if sampleArticle}
-          <ArticleCompactExample {ndk} article={sampleArticle} />
+        {#if sampleNote}
+          <ArticleCompactExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample article above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>

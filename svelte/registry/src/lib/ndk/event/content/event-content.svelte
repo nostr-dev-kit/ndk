@@ -4,6 +4,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createEventContent, type ParsedSegment } from '@nostr-dev-kit/svelte';
+  import type { KindRegistry } from './registry.svelte';
   import Mention from './mention/mention.svelte';
   import Hashtag from './hashtag/hashtag.svelte';
   import EmbeddedEvent from './event/event.svelte';
@@ -14,6 +15,7 @@
     content?: string;
     emojiTags?: string[][];
     class?: string;
+    kindRegistry?: KindRegistry;
     mention?: Snippet<[{ bech32: string }]>;
     eventRef?: Snippet<[{ bech32: string }]>;
     hashtag?: Snippet<[{ tag: string }]>;
@@ -29,6 +31,7 @@
     content: contentProp,
     emojiTags,
     class: className = '',
+    kindRegistry,
     mention,
     eventRef,
     hashtag,
@@ -62,7 +65,7 @@
         {#if eventRef}
           {@render eventRef({ bech32: segment.data })}
         {:else}
-          <EmbeddedEvent {ndk} bech32={segment.data} />
+          <EmbeddedEvent {ndk} bech32={segment.data} {kindRegistry} />
         {/if}
       {/if}
     {:else if segment.type === 'hashtag'}

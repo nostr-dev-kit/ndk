@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Component } from 'svelte';
-  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { NDKEvent, NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
   import GenericEmbedded from '$lib/ndk/event/content/event/generic-embedded.svelte';
@@ -13,18 +13,25 @@
   /**
    * KIND_HANDLERS Registry
    *
-   * Simple map defining which component renders each event kind.
-   * To add a new kind:
-   * 1. Import the handler component
-   * 2. Add an entry: [kind]: HandlerComponent
+   * Maps NDK wrapper classes to components.
+   * Benefits:
+   * - Automatic kind mapping from NDK classes
+   * - Type-safe event wrapping with .from()
+   * - No manual kind number management
    */
-  const KIND_HANDLERS: Record<number, Component<any>> = {
-    30023: ArticleEmbedded,    // Long-form articles
-    1: NoteEmbedded,           // Short text notes
-    1111: NoteEmbedded,        // Generic replies
-    9802: HighlightEmbedded,   // Highlights
-    // Add your kind handlers here
-  };
+  const CLASS_HANDLERS = [
+    [NDKArticle, ArticleEmbedded],
+    [NDKHighlight, HighlightEmbedded],
+    [{ kinds: [1, 1111] }, NoteEmbedded],
+  ];
+
+  // Build kind mapping
+  const KIND_HANDLERS: Record<number, any> = {};
+  for (const [wrapper, component] of CLASS_HANDLERS) {
+    for (const kind of wrapper.kinds || []) {
+      KIND_HANDLERS[kind] = { component, wrapper };
+    }
+  }
 
   interface Props {
     ndk: NDKSvelte;
@@ -36,11 +43,16 @@
 
   const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
 
-  // Lookup handler, fallback to generic
-  let Handler = $derived(
-    embedded.event
-      ? (KIND_HANDLERS[embedded.event.kind] ?? GenericEmbedded)
-      : null
+  let handlerInfo = $derived(
+    embedded.event ? KIND_HANDLERS[embedded.event.kind] : null
+  );
+  let Handler = $derived(handlerInfo?.component ?? GenericEmbedded);
+
+  // Wrap event using NDK wrapper class
+  let wrappedEvent = $derived(
+    embedded.event && handlerInfo?.wrapper?.from
+      ? handlerInfo.wrapper.from(embedded.event)
+      : embedded.event
   );
 </script>
 
@@ -48,6 +60,6 @@
   <div class="loading">Loading...</div>
 {:else if embedded.error}
   <div class="error">Failed to load event</div>
-{:else if embedded.event && Handler}
-  <Handler {ndk} event={embedded.event} {variant} />
+{:else if wrappedEvent && Handler}
+  <Handler {ndk} event={wrappedEvent} {variant} />
 {/if}

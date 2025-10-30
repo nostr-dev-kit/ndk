@@ -9,7 +9,8 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let sampleEvent = $state<NDKEvent | undefined>();
+  // The sample should be a kind:1 event that EMBEDS an unknown/unsupported kind
+  let sampleNote = $state<NDKEvent | undefined>();
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -26,8 +27,20 @@
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Sample Event" type="event" bind:value={sampleEvent} />
+      <EditProps.Prop
+        name="Sample Note (Kind:1 embedding an unknown kind)"
+        type="event"
+        bind:value={sampleNote}
+      />
     </EditProps.Root>
+
+    {#if sampleNote}
+      <div class="mt-4 p-4 border border-border rounded-lg bg-muted/30">
+        <p class="text-sm text-muted-foreground mb-2">
+          This note embeds an event with an unknown/unsupported kind. Scroll down to see how it falls back to the generic renderer.
+        </p>
+      </div>
+    {/if}
   </div>
 
   <!-- Overview -->
@@ -90,11 +103,11 @@
         title="Generic Fallback Rendering"
         description="Shows how unknown kinds are displayed with EventCard primitives and kind badge."
       >
-        {#if sampleEvent}
-          <GenericFallbackExample {ndk} event={sampleEvent} />
+        {#if sampleNote}
+          <GenericFallbackExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample event above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>

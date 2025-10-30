@@ -1,44 +1,18 @@
-<!-- @ndk-version: embedded-event@0.5.0 -->
+<!-- @ndk-version: embedded-event@0.6.0 -->
 <script lang="ts">
-  import type { Component } from 'svelte';
-  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
+  import { defaultKindRegistry, type KindRegistry } from '../registry.svelte';
   import GenericEmbedded from './generic-embedded.svelte';
 
-  // Import kind handlers here
-  // When you install a new kind handler via shadcn-svelte, add its import below
-  import ArticleEmbedded from '../kinds/article-embedded.svelte';
-  import NoteEmbedded from '../kinds/note-embedded.svelte';
-  import HighlightEmbedded from '../kinds/highlight-embedded.svelte';
-
-  /**
-   * Kind Handlers Registry
-   *
-   * This map defines which component renders each Nostr event kind.
-   * To add support for a new kind:
-   * 1. Import the handler component above
-   * 2. Add an entry to this map: [kind]: HandlerComponent
-   *
-   * Example:
-   *   import VideoEmbedded from '../kinds/video-embedded.svelte';
-   *   const KIND_HANDLERS: Record<number, Component<any>> = {
-   *     ...existing entries...
-   *     34235: VideoEmbedded,  // Video events
-   *   };
-   */
-  const KIND_HANDLERS: Record<number, Component<any>> = {
-    30023: ArticleEmbedded,    // Long-form articles
-    1: NoteEmbedded,           // Short text notes
-    1111: NoteEmbedded,        // Generic replies
-    9802: HighlightEmbedded,   // Highlights
-    // Add your kind handlers here when installing new components
-  };
+  // Load default handlers
+  import '../embedded-handlers';
 
   interface EmbeddedEventProps {
     ndk: NDKSvelte;
     bech32: string;
     variant?: 'inline' | 'card' | 'compact';
+    kindRegistry?: KindRegistry;
     class?: string;
   }
 
@@ -46,16 +20,22 @@
     ndk,
     bech32,
     variant = 'card',
+    kindRegistry = defaultKindRegistry,
     class: className = ''
   }: EmbeddedEventProps = $props();
 
   const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
 
-  // Lookup the appropriate handler for the event's kind, fallback to generic
-  let Handler = $derived(
-    embedded.event
-      ? (KIND_HANDLERS[embedded.event.kind] ?? GenericEmbedded)
-      : null
+  // Lookup handler from registry
+  let handlerInfo = $derived(kindRegistry.get(embedded.event?.kind));
+
+  let Handler = $derived(handlerInfo?.component ?? GenericEmbedded);
+
+  // Wrap event using NDK wrapper class if available
+  let wrappedEvent = $derived(
+    embedded.event && handlerInfo?.wrapper?.from
+      ? handlerInfo.wrapper.from(embedded.event)
+      : embedded.event
   );
 </script>
 
@@ -68,8 +48,8 @@
   <div class="embedded-error {className}">
     <span>Failed to load event</span>
   </div>
-{:else if embedded.event && Handler}
-  <Handler {ndk} event={embedded.event} {variant} />
+{:else if wrappedEvent && Handler}
+  <Handler {ndk} event={wrappedEvent} {variant} />
 {/if}
 
 <style>

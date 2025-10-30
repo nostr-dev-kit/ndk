@@ -1,14 +1,22 @@
 <script lang="ts">
-  import type { NDKArticle } from '@nostr-dev-kit/ndk';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { ArticleEmbedded } from '$lib/ndk/event/content';
+  import { EventContent } from '$lib/ndk/event/content';
+  import { EventCard } from '$lib/ndk/event-card';
 
   interface Props {
     ndk: NDKSvelte;
-    article: NDKArticle;
+    event: NDKEvent;
   }
 
-  let { ndk, article }: Props = $props();
+  let { ndk, event }: Props = $props();
 </script>
 
-<ArticleEmbedded {ndk} event={article} variant="card" />
+<div class="max-w-2xl">
+  <EventCard.Root {ndk} {event}>
+    <EventCard.Header variant="full" showTimestamp={true} />
+    <EventCard.Content>
+      <EventContent {ndk} {event} />
+    </EventCard.Content>
+  </EventCard.Root>
+</div>

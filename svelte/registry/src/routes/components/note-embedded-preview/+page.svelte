@@ -11,6 +11,7 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
+  // The sample should be a kind:1 event that EMBEDS another kind:1 event
   let sampleNote = $state<NDKEvent | undefined>();
 </script>
 
@@ -28,8 +29,20 @@
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Sample Note" type="event" bind:value={sampleNote} />
+      <EditProps.Prop
+        name="Sample Note (Kind:1 embedding another note)"
+        type="event"
+        bind:value={sampleNote}
+      />
     </EditProps.Root>
+
+    {#if sampleNote}
+      <div class="mt-4 p-4 border border-border rounded-lg bg-muted/30">
+        <p class="text-sm text-muted-foreground mb-2">
+          This note embeds another note in its content. Scroll down to see how the embedded event renders.
+        </p>
+      </div>
+    {/if}
   </div>
 
   <!-- Overview -->

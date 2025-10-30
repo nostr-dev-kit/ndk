@@ -11,7 +11,8 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let sampleHighlight = $state<NDKEvent | undefined>();
+  // The sample should be a kind:1 event that EMBEDS a kind:9802 highlight
+  let sampleNote = $state<NDKEvent | undefined>();
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -28,8 +29,20 @@
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Sample Highlight" type="event" bind:value={sampleHighlight} />
+      <EditProps.Prop
+        name="Sample Note (Kind:1 embedding a highlight)"
+        type="event"
+        bind:value={sampleNote}
+      />
     </EditProps.Root>
+
+    {#if sampleNote}
+      <div class="mt-4 p-4 border border-border rounded-lg bg-muted/30">
+        <p class="text-sm text-muted-foreground mb-2">
+          This note embeds a highlight (nevent1 of kind:9802) in its content. Scroll down to see how the embedded highlight renders.
+        </p>
+      </div>
+    {/if}
   </div>
 
   <!-- Overview -->
@@ -58,11 +71,11 @@
         title="Card Variant"
         description="Full book-page style display with source badge. Default variant for embedded highlights."
       >
-        {#if sampleHighlight}
-          <HighlightCardExample {ndk} event={sampleHighlight} />
+        {#if sampleNote}
+          <HighlightCardExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample highlight above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>
@@ -72,11 +85,11 @@
         title="Inline Variant"
         description="Medium-sized display for inline references with line clamping."
       >
-        {#if sampleHighlight}
-          <HighlightInlineExample {ndk} event={sampleHighlight} />
+        {#if sampleNote}
+          <HighlightInlineExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample highlight above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>
@@ -86,11 +99,11 @@
         title="Compact Variant"
         description="Minimal display with heavily truncated content (2 lines)."
       >
-        {#if sampleHighlight}
-          <HighlightCompactExample {ndk} event={sampleHighlight} />
+        {#if sampleNote}
+          <HighlightCompactExample {ndk} event={sampleNote} />
         {:else}
           <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
-            <p class="text-sm text-muted-foreground">Select a sample highlight above to preview</p>
+            <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
       </Demo>

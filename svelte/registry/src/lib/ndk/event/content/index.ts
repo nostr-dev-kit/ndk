@@ -34,34 +34,48 @@ export { default as Hashtag } from './hashtag/hashtag.svelte';
 /**
  * EmbeddedEvent - Renders embedded Nostr events based on their kind
  *
- * Uses a simple KIND_HANDLERS map to determine which component renders each event kind.
+ * Uses a KindRegistry to map event kinds to rendering components.
  * Falls back to a generic renderer for unknown kinds.
  *
- * Supported kinds by default:
+ * Supported kinds by default (via embedded-handlers.ts):
  * - 30023: Long-form articles (ArticleEmbedded)
- * - 1: Short text notes (NoteEmbedded)
- * - 1111: Generic replies (NoteEmbedded)
+ * - 1, 1111: Notes and replies (NoteEmbedded)
  * - 9802: Highlights (HighlightEmbedded)
  *
  * To add support for a new kind:
- * 1. Create a new kind handler component in `kinds/`
- * 2. Import it in `event/event.svelte`
- * 3. Add an entry to the KIND_HANDLERS map
+ * 1. Install: `npx shadcn-svelte@latest add video-embedded`
+ * 2. Post-install automatically adds import to embedded-handlers.ts
  *
- * @example Basic usage:
+ * Or manually:
+ *   Add `import '$lib/ndk/event/content/kinds/video-embedded'` to embedded-handlers.ts
+ *
+ * @example Basic usage (uses defaultKindRegistry):
  * ```svelte
  * <EmbeddedEvent {ndk} bech32="nevent1..." />
  * ```
  *
- * @example With variant:
+ * @example With custom registry (for variant-specific rendering):
  * ```svelte
- * <EmbeddedEvent {ndk} bech32="naddr1..." variant="compact" />
+ * <script>
+ *   import { KindRegistry } from '$lib/ndk/event/content';
+ *   import { NDKArticle } from '@nostr-dev-kit/ndk';
+ *   import ArticleCompactPreview from './article-compact-preview.svelte';
+ *
+ *   const customRegistry = new KindRegistry();
+ *   customRegistry.add(NDKArticle, ArticleCompactPreview);
+ * </script>
+ *
+ * <EmbeddedEvent {ndk} bech32="naddr1..." {kindRegistry} />
  * ```
  */
 export { default as EmbeddedEvent } from './event/event.svelte';
 
-// Kind-specific embedded renderers (use these directly or register in KIND_HANDLERS)
-export { default as ArticleEmbedded } from './kinds/article-embedded.svelte';
-export { default as NoteEmbedded } from './kinds/note-embedded.svelte';
-export { default as HighlightEmbedded } from './kinds/highlight-embedded.svelte';
+// Registry system
+export { KindRegistry, defaultKindRegistry } from './registry.svelte';
+export type { NDKWrapper, HandlerInfo } from './registry.svelte';
+
+// Kind-specific embedded renderers
+export { default as ArticleEmbedded } from './kinds/article-embedded/article-embedded.svelte';
+export { default as NoteEmbedded } from './kinds/note-embedded/note-embedded.svelte';
+export { default as HighlightEmbedded } from './kinds/highlight-embedded/highlight-embedded.svelte';
 export { default as GenericEmbedded } from './event/generic-embedded.svelte';

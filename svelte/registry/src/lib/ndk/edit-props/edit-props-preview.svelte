@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { NDKArticle, NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
+	import { getContext } from 'svelte';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { PropType } from './edit-props-context.svelte';
+	import { UserProfile } from '../user-profile';
 
 	interface Props {
 		type: PropType;
@@ -8,6 +11,8 @@
 	}
 
 	let { type, value }: Props = $props();
+
+	const ndk = getContext<NDKSvelte>('ndk');
 
 	function formatTimestamp(timestamp: number): string {
 		return new Date(timestamp * 1000).toLocaleDateString();
@@ -17,17 +22,17 @@
 <div class="preview">
 	{#if type === 'user' && value instanceof Object && 'profile' in value}
 		{@const user = value as NDKUser}
-		<div class="preview-user">
-			{#if user.profile?.image}
-				<img src={user.profile.image} alt={user.profile.name || 'User'} class="preview-avatar" />
-			{/if}
-			<div class="preview-user-info">
-				<div class="preview-user-name">{user.profile?.name || user.profile?.displayName || 'Anonymous'}</div>
-				{#if user.profile?.nip05}
-					<div class="preview-user-nip05">{user.profile.nip05}</div>
-				{/if}
+		<UserProfile.Root {ndk} pubkey={user.pubkey}>
+			<div class="preview-user">
+				<UserProfile.Avatar size={40} />
+				<div class="preview-user-info">
+					<div class="preview-user-name">
+						<UserProfile.Name field="displayName" />
+					</div>
+					<UserProfile.Nip05 class="preview-user-nip05" />
+				</div>
 			</div>
-		</div>
+		</UserProfile.Root>
 	{:else if type === 'article' && value instanceof Object && 'title' in value}
 		{@const article = value as NDKArticle}
 		<div class="preview-article">
@@ -68,13 +73,6 @@
 		gap: 0.75rem;
 	}
 
-	.preview-avatar {
-		width: 2.5rem;
-		height: 2.5rem;
-		border-radius: 50%;
-		object-fit: cover;
-		background: var(--color-muted);
-	}
 
 	.preview-user-info {
 		flex: 1;

@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
   import Alert from '$site-components/alert.svelte';
 
   import BasicExample from './examples/mute-action-basic.svelte';
@@ -14,14 +14,17 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let userPubkey = $state<string>('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
-
-  let sampleUser = $state<NDKUser>();
+  let sampleUser = $state<NDKUser | undefined>();
 
   $effect(() => {
-    const user = new NDKUser({ pubkey: userPubkey });
-    user.ndk = ndk;
-    sampleUser = user;
+    (async () => {
+      try {
+        const user = await ndk.getUserFromNip05('pablo@nostr.com');
+        if (user && !sampleUser) sampleUser = user;
+      } catch (err) {
+        console.error('Failed to fetch sample user:', err);
+      }
+    })();
   });
 </script>
 
@@ -31,7 +34,7 @@
     <p>Mute button for users with multiple implementation options.</p>
 
     <EditProps.Root>
-      <EditProps.Prop name="User pubkey" type="text" bind:value={userPubkey} />
+      <EditProps.Prop name="Sample User" type="user" bind:value={sampleUser} />
     </EditProps.Root>
   </header>
 
@@ -41,25 +44,27 @@
     </Alert>
   {/if}
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+  {#if sampleUser}
+    <section class="demo space-y-8">
+      <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
-      title="Basic Mute Action"
-      description="Simple mute button component"
-      code={BasicExampleRaw}
-    >
-      <BasicExample {ndk} user={sampleUser} />
-    </CodePreview>
+      <Demo
+        title="Basic Mute Action"
+        description="Simple mute button component"
+        code={BasicExampleRaw}
+      >
+        <BasicExample {ndk} user={sampleUser} />
+      </Demo>
 
-    <CodePreview
-      title="Using the Builder"
-      description="Using createMuteAction() for custom implementations with full control"
-      code={BuilderExampleRaw}
-    >
-      <BuilderExample {ndk} user={sampleUser} />
-    </CodePreview>
-  </section>
+      <Demo
+        title="Using the Builder"
+        description="Using createMuteAction() for custom implementations with full control"
+        code={BuilderExampleRaw}
+      >
+        <BuilderExample {ndk} user={sampleUser} />
+      </Demo>
+    </section>
+  {/if}
 
   <section class="demo">
     <h2>API Reference</h2>

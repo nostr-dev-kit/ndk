@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
 
   // Import examples
   import BasicExample from './examples/basic.svelte';
@@ -37,21 +37,21 @@
     <section class="demo space-y-8">
       <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-      <CodePreview
+      <Demo
         title="Basic EventCard"
         description="A simple event card with header, content, and action buttons."
         code={BasicExampleRaw}
       >
         <BasicExample {ndk} event={exampleNote} />
-      </CodePreview>
+      </Demo>
 
-      <CodePreview
+      <Demo
         title="Custom Composition"
         description="Full control over component arrangement and styling using EventCard primitives."
         code={CustomCompositionExampleRaw}
       >
         <CustomCompositionExample {ndk} event={exampleNote} />
-      </CodePreview>
+      </Demo>
     </section>
   {/if}
 </div>

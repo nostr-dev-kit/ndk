@@ -41,6 +41,27 @@
  * <RelayCardCompact {ndk} relayUrl="wss://relay.damus.io" />
  * <RelayCardList {ndk} relayUrl="wss://relay.damus.io" />
  * ```
+ *
+ * @example RepostButton blocks:
+ * ```svelte
+ * <RepostButton {ndk} {event} />
+ * <RepostButtonPill {ndk} {event} variant="outline" />
+ * ```
+ *
+ * @example FollowButton blocks:
+ * ```svelte
+ * <FollowButton {ndk} target={user} />
+ * <FollowButtonPill {ndk} target={user} variant="outline" />
+ * <FollowButtonCard {ndk} target={user} variant="gradient" />
+ * ```
+ *
+ * @example UserCard blocks:
+ * ```svelte
+ * <UserCardClassic {ndk} {pubkey} />
+ * <UserCardPortrait {ndk} {pubkey} />
+ * <UserCardLandscape {ndk} {pubkey} />
+ * <UserCardCompact {ndk} {pubkey} />
+ * ```
  */
 
 // ArticleCard blocks
@@ -57,6 +78,7 @@ export { default as HighlightCardElegant } from './highlight-card-elegant.svelte
 
 // EventCard blocks
 export { default as SimpleEventCard } from './simple-event-card.svelte';
+export { default as EventCardMenu } from './event-card-menu.svelte';
 
 // ThreadView blocks
 export { default as ThreadViewTwitter } from './thread-view-twitter.svelte';
@@ -65,3 +87,21 @@ export { default as ThreadViewTwitter } from './thread-view-twitter.svelte';
 export { default as RelayCardPortrait } from './relay-card-portrait.svelte';
 export { default as RelayCardCompact } from './relay-card-compact.svelte';
 export { default as RelayCardList } from './relay-card-list.svelte';
+
+// RepostButton blocks
+export { default as RepostButton } from './repost-button.svelte';
+export { default as RepostButtonPill } from './repost-button-pill.svelte';
+
+// FollowButton blocks
+export { default as FollowButton } from './follow-button.svelte';
+export { default as FollowButtonPill } from './follow-button-pill.svelte';
+export { default as FollowButtonCard } from './follow-button-card.svelte';
+
+// UserProfile blocks
+export { default as UserProfileHero } from './user-profile-hero.svelte';
+
+// UserCard blocks
+export { default as UserCardClassic } from './user-card-classic.svelte';
+export { default as UserCardPortrait } from './user-card-portrait.svelte';
+export { default as UserCardLandscape } from './user-card-landscape.svelte';
+export { default as UserCardCompact } from './user-card-compact.svelte';

@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
@@ -33,21 +33,21 @@
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Basic Usage"
       description="Display user names with three field options: displayName (shows display name, falls back to name or pubkey), name (shows username/name), or both (shows 'Display Name (@username)' format)."
       code={BasicExampleRaw}
     >
       <BasicExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
+    </Demo>
 
-    <CodePreview
+    <Demo
       title="Customization"
       description="Customize the appearance with size variants (sm, md, lg, xl) and optional truncation for long names. Use the controls above to adjust the settings."
       code={CustomizationExampleRaw}
     >
       <CustomizationExample {ndk} pubkey={examplePubkey} {size} {truncate} />
-    </CodePreview>
+    </Demo>
   </section>
 
   <section class="info">

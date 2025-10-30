@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createAvatarGroup } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
 
   // Import examples
   import BasicExample from './examples/basic.svelte';
@@ -39,23 +39,23 @@
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Basic"
       description="Simple avatar group showing multiple users with smart ordering. Users you follow appear first."
       component="avatar-group"
       code={BasicExampleRaw}
     >
       <BasicExample {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
-    </CodePreview>
+    </Demo>
 
-    <CodePreview
+    <Demo
       title="With Overflow"
       description="Shows overflow count when there are more users than max. Adjust the max avatars field above to see the effect."
       component="avatar-group"
       code={WithOverflowExampleRaw}
     >
       <WithOverflowExample {ndk} pubkeys={examplePubkeys} max={maxAvatars} />
-    </CodePreview>
+    </Demo>
   </section>
 
   <section class="usage">

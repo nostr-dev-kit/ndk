@@ -20,14 +20,27 @@
     // Extract headings from the page
     const headings = Array.from(document.querySelectorAll('.component-content h2, .component-content h3'));
 
+    const usedIds = new Set<string>();
     items = headings.map((heading) => {
       // Create an ID if one doesn't exist
       if (!heading.id) {
-        heading.id = heading.textContent
+        let baseId = heading.textContent
           ?.toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)/g, '') || '';
+
+        // Ensure uniqueness by appending a counter if needed
+        let uniqueId = baseId;
+        let counter = 1;
+        while (usedIds.has(uniqueId)) {
+          uniqueId = `${baseId}-${counter}`;
+          counter++;
+        }
+
+        heading.id = uniqueId;
       }
+
+      usedIds.add(heading.id);
 
       return {
         id: heading.id,

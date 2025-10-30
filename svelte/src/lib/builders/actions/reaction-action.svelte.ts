@@ -1,4 +1,4 @@
-import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
 import { resolveNDK } from "../resolve-ndk.svelte.js";
 import { SvelteMap } from "svelte/reactivity";
@@ -69,8 +69,9 @@ export function createReactionAction(
         reactionsSub = resolvedNDK.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Reaction],
-                "#e": [event.id]
-            }]
+                ...event.filter()
+            }],
+            subId: 'reactions'
         }));
     });
 

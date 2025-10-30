@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
 
   // Import examples
   import BasicExample from './examples/basic.svelte';
@@ -17,23 +17,23 @@
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Basic"
       description="Simple relative time display showing elapsed time in a human-readable format (e.g., '5m', '2h', '3d'). For times older than 7 days, displays the date."
       component="time-ago"
       code={BasicExampleRaw}
     >
       <BasicExample />
-    </CodePreview>
+    </Demo>
 
-    <CodePreview
+    <Demo
       title="Auto-updating"
       description="The component automatically updates every minute to keep the display current. Open your browser console to see update logs."
       component="time-ago"
       code={UpdateExampleRaw}
     >
       <UpdateExample />
-    </CodePreview>
+    </Demo>
   </section>
 
   <section class="usage">

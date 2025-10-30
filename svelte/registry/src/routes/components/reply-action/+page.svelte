@@ -4,7 +4,7 @@
   import { createReplyAction } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
 
   // Import examples
   import BasicExample from './examples/reply-action-basic.svelte';
@@ -14,16 +14,18 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let eventId = $state<string>('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
   let sampleEvent = $state<NDKEvent | undefined>();
   let replyState = $state<ReturnType<typeof createReplyAction> | null>(null);
 
   $effect(() => {
-    ndk.fetchEvent(eventId)
-      .then(event => {
-        if (event) sampleEvent = event;
-      })
-      .catch(err => console.error('Failed to fetch sample event:', err));
+    (async () => {
+      try {
+        const event = await ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
+        if (event && !sampleEvent) sampleEvent = event;
+      } catch (err) {
+        console.error('Failed to fetch sample event:', err);
+      }
+    })();
   });
 
   $effect(() => {
@@ -41,7 +43,7 @@
     <p>Reply button with count display and reply composer.</p>
 
     <EditProps.Root>
-      <EditProps.Prop name="Event ID" type="text" bind:value={eventId} />
+      <EditProps.Prop name="Sample Event" type="event" bind:value={sampleEvent} />
     </EditProps.Root>
   </header>
 
@@ -49,21 +51,21 @@
     <section class="demo space-y-8">
       <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-      <CodePreview
+      <Demo
         title="Basic ReplyAction"
         description="Click to open reply composer. The button shows the current reply count."
         code={BasicExampleRaw}
       >
         <BasicExample {ndk} event={sampleEvent} content={sampleEvent.content} count={replyState.count} />
-      </CodePreview>
+      </Demo>
 
-      <CodePreview
+      <Demo
         title="Using the Builder"
         description="Build your own reply button UI using createReplyAction() for full control"
         code={BuilderCountExampleRaw}
       >
         <BuilderCountExample {ndk} event={sampleEvent} content={sampleEvent.content} count={replyState.count} />
-      </CodePreview>
+      </Demo>
     </section>
   {:else}
     <section class="demo">

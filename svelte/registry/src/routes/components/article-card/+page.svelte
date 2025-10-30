@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
@@ -10,8 +11,6 @@
 		ArticleCardMedium
 	} from '$lib/ndk/blocks';
 	import { EditProps } from '$lib/ndk/edit-props';
-	import BlockExample from '$site-components/block-example.svelte';
-	import UIExample from '$site-components/ui-example.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import simplified code examples (for Code tab)
@@ -112,7 +111,7 @@
 
 		<div class="space-y-12">
 			<!-- Portrait -->
-			<BlockExample
+			<Demo
 				title="Portrait"
 				description="Vertical card layout with image on top. Perfect for grid displays and featured content."
 				component="article-card-portrait"
@@ -123,10 +122,10 @@
 						<ArticleCardPortrait {ndk} {article} />
 					{/each}
 				</div>
-			</BlockExample>
+			</Demo>
 
 			<!-- Hero -->
-			<BlockExample
+			<Demo
 				title="Hero"
 				description="Full-width hero card with gradient background and featured badge. Ideal for featured stories and landing page headers."
 				component="article-card-hero"
@@ -135,10 +134,10 @@
 				{#if article1}
 					<ArticleCardHero {ndk} article={article1} />
 				{/if}
-			</BlockExample>
+			</Demo>
 
 			<!-- Neon -->
-			<BlockExample
+			<Demo
 				title="Neon"
 				description="Portrait card with subtle glossy white neon top border, full background image, author info and reading time."
 				component="article-card-neon"
@@ -149,10 +148,10 @@
 						<ArticleCardNeon {ndk} {article} />
 					{/each}
 				</div>
-			</BlockExample>
+			</Demo>
 
 			<!-- Medium -->
-			<BlockExample
+			<Demo
 				title="Medium"
 				description="Horizontal card layout with image on right. Ideal for list views and article feeds. Supports three image size variants."
 				component="article-card-medium"
@@ -174,7 +173,7 @@
 						<ArticleCardMedium {ndk} {article} imageSize={mediumImageSize} />
 					{/each}
 				</div>
-			</BlockExample>
+			</Demo>
 		</div>
 	</section>
 
@@ -188,7 +187,7 @@
 
 		<div class="space-y-8">
 			<!-- Basic -->
-			<UIExample
+			<Demo
 				title="Basic Usage"
 				description="Minimal example with ArticleCard.Root and essential primitives."
 				code={UIBasicRaw}
@@ -196,10 +195,10 @@
 				{#if article1}
 					<UIBasic {ndk} article={article1} />
 				{/if}
-			</UIExample>
+			</Demo>
 
 			<!-- Full Composition -->
-			<UIExample
+			<Demo
 				title="Full Composition"
 				description="All available primitives composed together."
 				code={UICompositionRaw}
@@ -207,7 +206,7 @@
 				{#if article1}
 					<UIComposition {ndk} article={article1} />
 				{/if}
-			</UIExample>
+			</Demo>
 		</div>
 	</section>
 

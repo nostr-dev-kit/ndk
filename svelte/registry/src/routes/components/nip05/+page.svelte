@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
@@ -29,21 +29,21 @@
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Default (With Verification)"
       description="Shows NIP-05 identifier with verification badge. Default identifiers (_@domain) show only the domain. Verification is enabled by default and shows: ⋯ (verifying), ✓ (verified), or ✗ (invalid). Use showVerified={false} to disable verification."
       code={Nip05DefaultExampleRaw}
     >
       <Nip05DefaultExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
+    </Demo>
 
-    <CodePreview
+    <Demo
       title="Standalone Mode"
       description="Use without UserProfile.Root context by passing ndk and user directly. Useful when building custom components outside the UserProfile system."
       code={Nip05StandaloneExampleRaw}
     >
       <Nip05StandaloneExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
+    </Demo>
   </section>
 
   <section class="info">

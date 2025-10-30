@@ -1,177 +1,359 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createFetchUser } from '@nostr-dev-kit/svelte';
+  import { NDKUser } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
-  import Alert from '$site-components/alert.svelte';
-  import Toast from '$site-components/toast.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import Demo from '$site-components/Demo.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
-  // Import examples
-  import DefaultExample from './examples/follow-action-default.svelte';
-  import DefaultExampleRaw from './examples/follow-action-default.svelte?raw';
-  import BuilderIntegrationExample from './examples/follow-action-builder-integration.svelte';
-  import BuilderIntegrationExampleRaw from './examples/follow-action-builder-integration.svelte?raw';
+  // Import block components for preview
+  import {
+    FollowButton,
+    FollowButtonPill,
+    FollowButtonCard
+  } from '$lib/ndk/blocks';
+
+  // Import code examples
+  import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
+  import PillCodeRaw from './examples/pill-code.svelte?raw';
+  import CardCodeRaw from './examples/card-code.svelte?raw';
+
+  // Import UI example
+  import UIComposition from './examples/ui-composition.svelte';
+  import UICompositionCode from './examples/ui-composition--code.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc');
-  const exampleUser = createFetchUser(ndk, () => npubInput);
-  const examplePubkey = $derived(exampleUser.$loaded ? exampleUser.pubkey : undefined);
-
-  let toastMessage = $state<string>('');
-  let toastVisible = $state(false);
-
-  function handleFollowSuccess(e: Event) {
-    const detail = (e as CustomEvent).detail;
-    toastMessage = `Success: ${detail.isFollowing ? 'Followed' : 'Unfollowed'} user`;
-    toastVisible = true;
-  }
-
-  function handleFollowError(e: Event) {
-    const detail = (e as CustomEvent).detail;
-    toastMessage = `Error: ${detail.error.message}`;
-    toastVisible = true;
-  }
+  let sampleUser = $state<NDKUser | undefined>(ndk.getUser({npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"}));
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>FollowAction</h1>
-    <p>
-      Follow/unfollow button for users and hashtags with multiple variants and customization
-      options.
+<div class="container mx-auto p-8 max-w-7xl">
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-bold mb-4">FollowAction</h1>
+    <p class="text-lg text-muted-foreground mb-6">
+      Follow/unfollow buttons for users and hashtags. Choose from pre-built block variants or
+      compose custom layouts using primitives.
     </p>
 
     <EditProps.Root>
-      <EditProps.Prop name="User npub" type="text" bind:value={npubInput} />
+      <EditProps.Prop name="Sample User" type="user" bind:value={sampleUser} />
     </EditProps.Root>
-  </header>
+  </div>
 
-  {#if !ndk.$currentUser}
-    <Alert variant="warning" title="Login required">
-      <p>You need to be logged in to see and use the follow button. Click "Login" in the sidebar to continue.</p>
-    </Alert>
+  {#if sampleUser}
+    <!-- Blocks Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
+      <p class="text-muted-foreground mb-8">
+        Pre-composed follow button layouts ready to use. Install with a single command.
+      </p>
+
+      <div class="space-y-12">
+        <Demo
+          title="FollowButton"
+          description="Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name."
+          component="follow-button"
+          code={MinimalCodeRaw}
+        >
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">Default:</span>
+              <FollowButton {ndk} target={sampleUser} />
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">With User:</span>
+              <FollowButton {ndk} target={sampleUser} showTarget={true} />
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
+              <FollowButton {ndk} target="bitcoin" showTarget={true} />
+            </div>
+          </div>
+        </Demo>
+
+        <Demo
+          title="FollowButtonPill"
+          description="Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name."
+          component="follow-button-pill"
+          code={PillCodeRaw}
+        >
+          <div class="flex flex-col gap-6 items-center">
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
+              <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+            </div>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+              <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+            </div>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
+              <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+            </div>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonPill {ndk} target={sampleUser} compact />
+              <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+            </div>
+          </div>
+        </Demo>
+
+        <Demo
+          title="FollowButtonCard"
+          description="Large prominent button with gradient effects. Ideal for profile pages and prominent call-to-actions. Supports showTarget mode for avatar/icon and target name."
+          component="follow-button-card"
+          code={CardCodeRaw}
+        >
+          <div class="flex flex-col gap-6 items-center">
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonCard {ndk} target={sampleUser} variant="default" />
+              <FollowButtonCard {ndk} target={sampleUser} variant="gradient" />
+              <FollowButtonCard {ndk} target={sampleUser} variant="outline" />
+            </div>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonCard {ndk} target={sampleUser} variant="default" showTarget={true} />
+              <FollowButtonCard {ndk} target={sampleUser} variant="gradient" showTarget={true} />
+              <FollowButtonCard {ndk} target={sampleUser} variant="outline" showTarget={true} />
+            </div>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <FollowButtonCard {ndk} target="nostr" variant="default" showTarget={true} />
+              <FollowButtonCard {ndk} target="bitcoin" variant="gradient" showTarget={true} />
+            </div>
+          </div>
+        </Demo>
+      </div>
+    </section>
+
+    <!-- UI Components Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-2">Custom Implementation</h2>
+      <p class="text-muted-foreground mb-8">
+        Use the createFollowAction builder directly to create custom follow buttons.
+      </p>
+
+      <div class="space-y-8">
+        <Demo
+          title="Example"
+          description="Building a custom follow button using the createFollowAction builder."
+          code={UICompositionCode}
+        >
+          <UIComposition {ndk} user={sampleUser} />
+        </Demo>
+      </div>
+    </section>
   {/if}
 
-  <Toast bind:visible={toastVisible} message={toastMessage} duration={3000} />
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'createFollowAction',
+        description: 'Builder function that provides follow/unfollow state and methods. Use directly in custom components or with FollowButton blocks.',
+        importPath: "import { createFollowAction } from '@nostr-dev-kit/svelte'",
+        props: [
+          {
+            name: 'config',
+            type: '() => { target: NDKUser | string }',
+            required: true,
+            description: 'Reactive function returning target configuration'
+          },
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance'
+          }
+        ],
+        returns: {
+          name: 'FollowActionState',
+          properties: [
+            {
+              name: 'isFollowing',
+              type: 'boolean',
+              description: 'Current follow state'
+            },
+            {
+              name: 'follow',
+              type: '() => Promise<void>',
+              description: 'Toggle follow/unfollow'
+            }
+          ]
+        },
+        events: [
+          {
+            name: 'followsuccess',
+            type: '{ target, isFollowing, isHashtag }',
+            description: 'Fired when follow/unfollow operation succeeds'
+          },
+          {
+            name: 'followerror',
+            type: '{ error, target, isHashtag }',
+            description: 'Fired when follow/unfollow operation fails'
+          }
+        ]
+      },
+      {
+        name: 'FollowButton',
+        description: 'Minimal follow button block with icon-first design.',
+        importPath: "import { FollowButton } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance (optional if provided via context)'
+          },
+          {
+            name: 'target',
+            type: 'NDKUser | string',
+            required: true,
+            description: 'User object or hashtag string to follow'
+          },
+          {
+            name: 'showIcon',
+            type: 'boolean',
+            default: 'true',
+            description: 'Whether to show icon'
+          },
+          {
+            name: 'showTarget',
+            type: 'boolean',
+            default: 'false',
+            description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold.'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            default: "''",
+            description: 'Custom CSS classes'
+          }
+        ]
+      },
+      {
+        name: 'FollowButtonPill',
+        description: 'Pill-style follow button block with rounded design. Supports compact mode for icon-only display.',
+        importPath: "import { FollowButtonPill } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance (optional if provided via context)'
+          },
+          {
+            name: 'target',
+            type: 'NDKUser | string',
+            required: true,
+            description: 'User object or hashtag string to follow'
+          },
+          {
+            name: 'variant',
+            type: "'solid' | 'outline'",
+            default: "'solid'",
+            description: 'Button style variant'
+          },
+          {
+            name: 'compact',
+            type: 'boolean',
+            default: 'false',
+            description: 'When true, hides the label and shows icon only in a circular layout'
+          },
+          {
+            name: 'showIcon',
+            type: 'boolean',
+            default: 'true',
+            description: 'Whether to show icon'
+          },
+          {
+            name: 'showTarget',
+            type: 'boolean',
+            default: 'false',
+            description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold. Ignored when compact is true.'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            default: "''",
+            description: 'Custom CSS classes'
+          }
+        ]
+      },
+      {
+        name: 'FollowButtonCard',
+        description: 'Large card-style follow button block with gradient effects.',
+        importPath: "import { FollowButtonCard } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance (optional if provided via context)'
+          },
+          {
+            name: 'target',
+            type: 'NDKUser | string',
+            required: true,
+            description: 'User object or hashtag string to follow'
+          },
+          {
+            name: 'variant',
+            type: "'default' | 'gradient' | 'outline'",
+            default: "'default'",
+            description: 'Button style variant with different visual treatments'
+          },
+          {
+            name: 'showTarget',
+            type: 'boolean',
+            default: 'false',
+            description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold.'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            default: "''",
+            description: 'Custom CSS classes'
+          }
+        ]
+      }
+    ]}
+  />
 
-  <section class="mb-12">
-    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+  <!-- Builder API -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
+    <p class="text-muted-foreground mb-6">
+      Use <code
+        class="px-2 py-1 bg-muted rounded text-sm">createFollowAction()</code
+      > to build custom follow button implementations with reactive state management.
+    </p>
 
-    <div class="space-y-8">
-      <CodePreview
-        title="Default Variant"
-        description="Simple follow button for users and hashtags. The button automatically hides when viewing your own profile."
-        code={DefaultExampleRaw}
-      >
-        <DefaultExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
-      </CodePreview>
+    <div class="bg-muted/50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-3">createFollowAction</h3>
+      <pre class="text-sm overflow-x-auto"><code>import &#123; createFollowAction &#125; from '@nostr-dev-kit/svelte';
 
-      <CodePreview
-        title="Using the Builder"
-        description="For custom UI, use createFollowAction() directly for full control over markup while benefiting from reactive state management."
-        code={BuilderIntegrationExampleRaw}
-      >
-        <BuilderIntegrationExample {ndk} user={exampleUser} />
-      </CodePreview>
-    </div>
-  </section>
-
-  <section class="showcase-section">
-    <h2>API</h2>
-
-    <div class="api-section">
-      <h3>Props</h3>
-      <ApiTable
-        rows={[
-          { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
-          { name: 'target', type: 'NDKUser | string', required: true, description: 'User object or hashtag string to follow' },
-          { name: 'variant', type: "'default' | 'primary'", default: "'default'", description: 'Visual style variant' },
-          { name: 'showIcon', type: 'boolean', default: 'true', description: 'Show/hide icon in button' },
-          { name: 'class', type: 'string', default: "''", description: 'Custom CSS classes (overrides variant)' }
-        ]}
-      />
-    </div>
-
-    <div class="api-section">
-      <h3>Events</h3>
-      <ApiTable
-        title="Events"
-        rows={[
-          { name: 'followsuccess', type: '{ target, isFollowing, isHashtag }', description: 'Fired when follow/unfollow succeeds' },
-          { name: 'followerror', type: '{ error, target, isHashtag }', description: 'Fired when follow/unfollow fails' }
-        ]}
-      />
-    </div>
-
-    <div class="api-section">
-      <h3>Builder Function</h3>
-      <p>
-        Use <code>createFollowAction()</code> to create custom follow button implementations:
-      </p>
-      <pre><code>{`import { createFollowAction } from '@nostr-dev-kit/svelte';
-
-// NDK from context
-const followButton = createFollowAction(() => ({ target: user }));
-
-// Or with explicit NDK
-const followButton = createFollowAction(() => ({ target: user }), ndk);
+// Create follow action
+const followAction = createFollowAction(() => (&#123; target: user &#125;), ndk);
 
 // Access reactive state
-followButton.isFollowing // boolean
+followAction.isFollowing  // boolean - whether currently following
 
-// Follow/unfollow (toggles automatically)
-await followButton.follow();`}</code></pre>
+// Toggle follow/unfollow
+await followAction.follow();</code></pre>
+
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Parameters:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li>
+            <code>options</code>: Function returning &#123; target: NDKUser | string &#125;
+          </li>
+          <li><code>ndk</code>: NDKSvelte instance</li>
+        </ul>
+      </div>
+
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Returns:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li><code>isFollowing</code>: boolean - Current follow state</li>
+          <li><code>follow()</code>: async function - Toggle follow/unfollow</li>
+        </ul>
+      </div>
     </div>
   </section>
 </div>
-
-<style>
-  .showcase-section {
-    margin-bottom: 4rem;
-  }
-
-  .showcase-section h2 {
-    font-size: 1.875rem;
-    font-weight: 600;
-    color: var(--color-foreground);
-    margin: 0 0 0.5rem 0;
-  }
-
-  .section-description {
-    color: var(--color-muted-foreground);
-    margin: 0 0 2rem 0;
-  }
-
-  pre {
-    margin: 0;
-    padding: 1rem;
-    background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
-    border-radius: 0.375rem;
-    overflow-x: auto;
-  }
-
-  code {
-    font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 0.8125rem;
-    color: var(--color-foreground);
-  }
-
-  .api-section {
-    margin-bottom: 2rem;
-  }
-
-  .api-section h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-foreground);
-    margin: 0 0 1rem 0;
-  }
-
-  .api-section p {
-    color: var(--color-muted-foreground);
-    margin: 0 0 1rem 0;
-  }
-</style>

@@ -2,6 +2,7 @@
 temp
 **/build
 **/dist
+**/coverage
 **/lib
 !ndk-svelte-components/src/lib/
 !svelte/src/lib/

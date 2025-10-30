@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
+	import Demo from '$site-components/Demo.svelte';
 
   import BasicExample from './examples/basic.svelte';
   import BasicExampleRaw from './examples/basic.svelte?raw';
@@ -50,20 +50,20 @@ Pretty cool, right? #awesome`);
   <section class="demo space-y-8">
     <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-    <CodePreview
+    <Demo
       title="Basic Content Rendering"
       description="Automatically detects and renders mentions, hashtags, links, images, videos, YouTube embeds, and custom emojis."
       code={BasicExampleRaw}
     >
       <BasicExample {ndk} event={exampleEvent} />
-    </CodePreview>
+    </Demo>
 
-    <CodePreview
+    <Demo
       title="Custom Snippets"
       description="Use custom snippets to override default rendering for any content type (mentions, hashtags, links, etc.)."
       code={CustomSnippetsExampleRaw}
     >
       <CustomSnippetsExample {ndk} event={exampleEvent} />
-    </CodePreview>
+    </Demo>
   </section>
 </div>

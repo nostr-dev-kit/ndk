@@ -95,7 +95,6 @@ export async function fetchFromIdentifier(
 					pubkey = identifier;
 				}
 				const user = ndk.getUser({ pubkey });
-				await user.fetchProfile();
 				return { success: true, value: user };
 			}
 

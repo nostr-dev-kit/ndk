@@ -602,16 +602,21 @@ export class NDKSvelte extends NDK {
      * The event is already wrapped in the appropriate class by the session manager.
      * Requires sessions to be enabled.
      *
-     * If the event kind is not currently being monitored, this method will automatically
-     * add it to the session's monitors and start fetching it.
+     * **Important:** This method is read-only and will NOT automatically start monitoring.
+     * If the event kind is not being monitored, it returns undefined.
+     * To start monitoring an event kind, explicitly call `ndk.$sessions.addMonitor([EventClass])`.
      *
      * @param eventClass - An NDK event class with a static `kinds` property and `from` method
-     * @returns The session event for that kind, or undefined if not found or sessions not enabled
+     * @returns The session event for that kind, or undefined if not found/monitored or sessions not enabled
      *
      * @example
      * ```ts
      * import { NDKRelayFeedList } from "@nostr-dev-kit/ndk";
      *
+     * // First, ensure the event type is being monitored
+     * ndk.$sessions?.addMonitor([NDKRelayFeedList]);
+     *
+     * // Then access it (read-only)
      * const relayFeedList = ndk.$sessionEvent(NDKRelayFeedList);
      * if (relayFeedList) {
      *   console.log(relayFeedList.relayUrls);
@@ -622,8 +627,11 @@ export class NDKSvelte extends NDK {
      * ```ts
      * import { NDKCashuMintAnnouncement } from "@nostr-dev-kit/ndk";
      *
+     * // Returns undefined if not being monitored - does NOT auto-subscribe
      * const walletEvent = ndk.$sessionEvent(NDKCashuMintAnnouncement);
-     * // If this event type wasn't in the initial monitor list, it will be automatically added
+     * if (!walletEvent) {
+     *   console.warn("Wallet event not monitored. Call ndk.$sessions.addMonitor([NDKCashuMintAnnouncement])");
+     * }
      * ```
      */
     $sessionEvent<T extends NDKEvent>(
@@ -632,17 +640,7 @@ export class NDKSvelte extends NDK {
         if (!this.$sessions) return undefined;
 
         const kind = eventClass.kinds[0];
-        const event = this.$sessions.getSessionEvent(kind) as T | undefined;
-
-        // If event doesn't exist and we have an active session, add this event class to monitor
-        if (!event && this.$sessions.current) {
-            // Only add if we have a from method (i.e., it's a proper event constructor)
-            if (typeof eventClass.from === 'function') {
-                this.$sessions.addMonitor([eventClass]);
-            }
-        }
-
-        return event;
+        return this.$sessions.getSessionEvent(kind) as T | undefined;
     }
 }
 

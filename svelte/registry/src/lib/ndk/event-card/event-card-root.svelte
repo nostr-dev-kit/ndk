@@ -1,8 +1,8 @@
-<!-- @ndk-version: event-card@0.14.0 -->
+<!-- @ndk-version: event-card@0.15.0 -->
 <!--
   @component EventCard.Root
-  Root container that provides context to child components.
-  Works with any NDKEvent type.
+  Minimal root container providing context to child components.
+  Layout-only styling - use blocks for opinionated designs.
 
   @example
   ```svelte
@@ -78,13 +78,7 @@
 
 <article
   class={cn(
-    'event-card',
-    'p-4',
-    'relative',
-    'rounded-xl',
-    'bg-background',
-    'overflow-hidden',
-    isClickable && 'cursor-pointer transition-all',
+    'relative flex flex-col gap-2',
     className
   )}
   onclick={isClickable ? handleClick : undefined}
@@ -101,15 +95,3 @@
     {@render children()}
   {/if}
 </article>
-
-<style>
-  .event-card {
-    /* Modern card shadow */
-    box-shadow: 0 1px 3px color-mix(in srgb, var(--foreground) 12%, transparent), 0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent);
-    background: var(--background) !important;
-  }
-
-  .event-card:hover {
-    box-shadow: 0 4px 6px color-mix(in srgb, var(--foreground) 12%, transparent), 0 2px 4px color-mix(in srgb, var(--foreground) 8%, transparent);
-  }
-</style>

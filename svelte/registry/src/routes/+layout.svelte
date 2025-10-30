@@ -6,6 +6,7 @@
   import HamburgerButton from '$lib/components/HamburgerButton.svelte';
   import LoginModal from '$lib/components/LoginModal.svelte';
   import { sidebarOpen } from '$lib/stores/sidebar';
+  import { nip19 } from 'nostr-tools';
 
   let { children } = $props();
 
@@ -14,9 +15,48 @@
 
   setContext('ndk', ndk);
 
+  async function autoCreateAccount() {
+    const sourceNpub = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
+    const decoded = nip19.decode(sourceNpub);
+    const sourcePubkey = decoded.data as string;
+
+    const contactListEvent = await ndk.fetchEvent({
+      kinds: [3],
+      authors: [sourcePubkey],
+      limit: 1
+    });
+
+    const follows: string[] = [];
+    if (contactListEvent) {
+      for (const tag of contactListEvent.tags) {
+        if (tag[0] === 'p') {
+          follows.push(tag[1]);
+        }
+      }
+    }
+
+    const randomNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank', 'Grace', 'Henry'];
+    const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+    const randomSeed = Math.random().toString(36).substring(2, 15);
+    const avatarUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${randomSeed}`;
+
+    await ndk.$sessions.createAccount({
+      profile: {
+        name: randomName,
+        about: 'Just checking out Nostr!',
+        picture: avatarUrl,
+      },
+      follows
+    });
+  }
+
   $effect(() => {
-    initializeNDK().then(() => {
+    initializeNDK().then(async () => {
       isInitialized = true;
+
+      if (!ndk.$currentPubkey) {
+        await autoCreateAccount();
+      }
     });
   });
 

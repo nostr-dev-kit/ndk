@@ -1,18 +1,14 @@
-<!-- @ndk-version: event-card@0.14.0 -->
+<!-- @ndk-version: event-card@0.15.0 -->
 <!--
   @component EventCard.Actions
-  Container for event action buttons.
-  Can use default slot to provide custom actions.
+  Minimal container for action buttons with layout only.
 
   @example
   ```svelte
-  <EventCard.Actions />
-
   <EventCard.Actions>
     <ReplyAction />
-    <RepostAction />
+    <RepostButton {ndk} {event} />
     <ReactionAction />
-    <ZapAction />
   </EventCard.Actions>
   ```
 -->
@@ -45,30 +41,13 @@
 
 <div
   class={cn(
-    'event-card-actions',
-    variant === 'vertical' ? 'flex-col gap-4' : 'flex-row',
-    'flex items-center py-2',
-    'border-t',
+    'flex items-center gap-12 select-none',
+    variant === 'vertical' && 'flex-col gap-4',
     className
   )}
   onclick={stopPropagation}
 >
   {#if children}
     {@render children()}
-  {:else}
-    <!-- Default actions if none provided -->
-    <div class="text-muted-foreground text-sm">
-      Add action components here
-    </div>
   {/if}
 </div>
-
-<style>
-  .event-card-actions {
-    /* Prevent accidental text selection */
-    user-select: none;
-    display: flex;
-    flex-direction: row;
-    gap: 3rem;
-  }
-</style>

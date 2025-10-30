@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CodeBlock from '$site-components/CodeBlock.svelte';
 </script>
 
 <div class="docs-page">
@@ -30,8 +31,8 @@
       Children get the context and render UI.
     </p>
 
-    <pre><code>{`<!-- event-card-root.svelte -->
-<`+`script>
+    <CodeBlock lang="svelte" code={`<!-- event-card-root.svelte -->
+<script>
   import { setContext } from 'svelte';
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
@@ -44,30 +45,30 @@
     get event() { return event; },
     get state() { return state; }
   });
-</`+`script>
+</script>
 
 <article>
   {@render children?.()}
-</article>`}</code></pre>
+</article>`} />
 
-    <pre><code>{`<!-- event-card-header.svelte -->
-<`+`script>
+    <CodeBlock lang="svelte" code={`<!-- event-card-header.svelte -->
+<script>
   import { getContext } from 'svelte';
 
   const { event, state } = getContext(EVENT_CARD_CONTEXT_KEY);
-</`+`script>
+</script>
 
 <header>
   <img src={state.profile?.picture} alt="" />
   <span>{event.created_at}</span>
-</header>`}</code></pre>
+</header>`} />
 
-    <pre><code>{`<!-- Usage -->
+    <CodeBlock lang="svelte" code={`<!-- Usage -->
 <EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
   <EventCard.Actions />
-</EventCard.Root>`}</code></pre>
+</EventCard.Root>`} />
 
     <p>
       Root creates the builder in one place. Context shares state with children. Children compose together as needed.
@@ -81,21 +82,21 @@
     <h3>Edit the Files Directly</h3>
     <p>Open your copy and modify it.</p>
 
-    <pre><code>{`<!-- Your copy at src/lib/components/ui/event-card/
+    <CodeBlock lang="svelte" code={`<!-- Your copy at src/lib/components/ui/event-card/
      event-card-header.svelte -->
-<`+`script>
+<script>
   import { fade } from 'svelte/transition';
-</`+`script>
+</script>
 
 <header transition:fade class="my-custom-styles">
   <div class="badge">Premium</div>
   <Avatar {ndk} user={event.author} />
-</header>`}</code></pre>
+</header>`} />
 
     <h3>Mix Component Parts with Custom Parts</h3>
     <p>Use some registry parts, replace others with your own markup.</p>
 
-    <pre><code>{`<EventCard.Root {ndk} {event}>
+    <CodeBlock lang="svelte" code={`<EventCard.Root {ndk} {event}>
   <EventCard.Header />
 
   <!-- Custom content -->
@@ -104,22 +105,22 @@
   </div>
 
   <EventCard.Actions />
-</EventCard.Root>`}</code></pre>
+</EventCard.Root>`} />
 
     <h3>Extract the Builder</h3>
     <p>Keep the builder, replace all UI with your own design.</p>
 
-    <pre><code>{`<`+`script>
+    <CodeBlock lang="svelte" code={`<script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
   const state = createEventCard(() => ({ event }), ndk);
-</`+`script>
+</script>
 
 <div class="my-design">
   <h2>{state.profile?.displayName}</h2>
   <p>{event.content}</p>
   <footer>{state.replies.count} replies</footer>
-</div>`}</code></pre>
+</div>`} />
   </section>
 
   <section>
@@ -128,8 +129,8 @@
       You can build your own child components that access the same context.
     </p>
 
-    <pre><code>{`<!-- my-custom-engagement.svelte -->
-<`+`script>
+    <CodeBlock lang="svelte" code={`<!-- my-custom-engagement.svelte -->
+<script>
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY } from './context.svelte';
 
@@ -140,18 +141,18 @@
     state.reactions.count +
     state.reposts.count
   );
-</`+`script>
+</script>
 
 <div class="engagement">
   Score: {engagementScore}
-</div>`}</code></pre>
+</div>`} />
 
-    <pre><code>{`<!-- Use alongside registry parts -->
+    <CodeBlock lang="svelte" code={`<!-- Use alongside registry parts -->
 <EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
   <MyCustomEngagement />
-</EventCard.Root>`}</code></pre>
+</EventCard.Root>`} />
   </section>
 
   <section>
@@ -160,7 +161,7 @@
       Some components work standalone or composed. They accept optional props and fall back to context if not provided.
     </p>
 
-    <pre><code>{`<!-- Composed - gets data from context -->
+    <CodeBlock lang="svelte" code={`<!-- Composed - gets data from context -->
 <UserProfile.Root {ndk} {user}>
   <UserProfile.Avatar />
   <UserProfile.Name />
@@ -168,7 +169,7 @@
 
 <!-- Standalone - provide data directly -->
 <UserProfile.Avatar {ndk} {user} size={64} />
-<UserProfile.Name {ndk} {user} field="displayName" />`}</code></pre>
+<UserProfile.Name {ndk} {user} field="displayName" />`} />
 
     <p>
       Check the component props - optional props mean it supports standalone usage and will fall back to context.

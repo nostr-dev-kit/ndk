@@ -22,9 +22,9 @@
 		type="button"
 		class="group relative w-full h-[400px] rounded-3xl overflow-hidden bg-card hover:shadow-2xl transition-shadow {className}"
 	>
-		<FollowPack.Image class="absolute inset-0 w-full h-full" showGradient={true} />
+		<FollowPack.Image class="absolute inset-0 w-full h-full z-0" showGradient={true} />
 
-		<div class="relative z-10 h-full flex flex-col justify-end p-8 text-white">
+		<div class="absolute inset-0 z-10 h-full flex flex-col justify-end p-8 text-white">
 			<FollowPack.Title class="text-4xl font-bold mb-3" lines={2} />
 			<FollowPack.Description class="text-base mb-4 max-w-2xl" maxLength={200} lines={2} />
 

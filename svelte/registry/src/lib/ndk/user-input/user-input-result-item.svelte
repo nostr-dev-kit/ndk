@@ -77,12 +77,12 @@
   }
 
   .user-input-result-item:hover {
-    background-color: hsl(var(--accent));
+    background-color: hsl(var(--color-accent));
   }
 
   .user-input-result-item:focus {
     outline: none;
-    background-color: hsl(var(--accent));
+    background-color: hsl(var(--color-accent));
   }
 
   .user-input-result-item-avatar {
@@ -91,7 +91,7 @@
     border-radius: 9999px;
     overflow: hidden;
     flex-shrink: 0;
-    background-color: hsl(var(--muted));
+    background-color: hsl(var(--color-muted));
   }
 
   .user-input-result-item-avatar img {
@@ -106,7 +106,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: hsl(var(--primary));
+    background-color: hsl(var(--color-primary));
     color: hsl(var(--primary-foreground));
     font-weight: 600;
     font-size: 1rem;
@@ -122,7 +122,7 @@
     align-items: center;
     gap: 0.5rem;
     font-weight: 500;
-    color: hsl(var(--foreground));
+    color: hsl(var(--color-foreground));
     font-size: 0.875rem;
     white-space: nowrap;
     overflow: hidden;
@@ -134,8 +134,8 @@
     align-items: center;
     padding: 0.125rem 0.5rem;
     border-radius: 9999px;
-    background-color: hsl(var(--primary) / 0.1);
-    color: hsl(var(--primary));
+    background-color: hsl(var(--color-primary) / 0.1);
+    color: hsl(var(--color-primary));
     font-size: 0.75rem;
     font-weight: 500;
     flex-shrink: 0;

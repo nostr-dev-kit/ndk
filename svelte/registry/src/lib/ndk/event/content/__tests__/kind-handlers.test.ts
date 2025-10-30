@@ -2,9 +2,9 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render } from '@testing-library/svelte';
 import type { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
 import { NDKSvelte } from '@nostr-dev-kit/svelte';
-import ArticleEmbedded from '../kinds/article-embedded.svelte';
-import NoteEmbedded from '../kinds/note-embedded.svelte';
-import HighlightEmbedded from '../kinds/highlight-embedded.svelte';
+import { ArticleEmbedded } from '../kinds/article-embedded';
+import { NoteEmbedded } from '../kinds/note-embedded';
+import { HighlightEmbedded } from '../kinds/highlight-embedded';
 import GenericEmbedded from '../event/generic-embedded.svelte';
 
 describe('Kind Handlers', () => {

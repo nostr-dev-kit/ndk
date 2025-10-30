@@ -57,8 +57,8 @@
   .embedded-error {
     padding: 1rem;
     border-radius: 0.5rem;
-    border: 1px solid var(--border);
-    background: var(--muted);
+    border: 1px solid var(--color-border);
+    background: var(--color-muted);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -68,7 +68,7 @@
   .loading-spinner {
     width: 1rem;
     height: 1rem;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--color-primary);
     border-top-color: transparent;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
@@ -79,6 +79,6 @@
   }
 
   .embedded-error {
-    color: var(--destructive);
+    color: var(--color-destructive);
   }
 </style>

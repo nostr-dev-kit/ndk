@@ -103,8 +103,8 @@
   }
 
   .relay-card-bookmark-button:hover:not(:disabled) {
-    background: var(--muted);
-    color: var(--primary);
+    background: var(--color-muted);
+    color: var(--color-primary);
   }
 
   .relay-card-bookmark-button:disabled {
@@ -113,7 +113,7 @@
   }
 
   .relay-card-bookmark-button--bookmarked {
-    color: var(--primary);
+    color: var(--color-primary);
   }
 
   .relay-card-bookmark-button--sm i {

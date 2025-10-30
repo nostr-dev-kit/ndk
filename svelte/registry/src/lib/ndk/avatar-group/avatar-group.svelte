@@ -175,7 +175,7 @@
   }
 
   .avatar-group-button:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
     border-radius: 50%;
   }
@@ -183,8 +183,8 @@
   .avatar-group-overflow {
     position: relative;
     border-radius: 50%;
-    background: var(--muted);
-    border: 2px solid var(--background);
+    background: var(--color-muted);
+    border: 2px solid var(--color-background);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -210,12 +210,12 @@
 
   .avatar-group-overflow-button:hover {
     background: var(--muted-hover);
-    color: var(--foreground);
+    color: var(--color-foreground);
     transform: scale(1.1);
   }
 
   .avatar-group-overflow-button:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 

@@ -6,9 +6,9 @@
   import GenericEmbedded from '$lib/ndk/event/content/event/generic-embedded.svelte';
 
   // Import kind handlers
-  import ArticleEmbedded from '$lib/ndk/event/content/kinds/article-embedded.svelte';
-  import NoteEmbedded from '$lib/ndk/event/content/kinds/note-embedded.svelte';
-  import HighlightEmbedded from '$lib/ndk/event/content/kinds/highlight-embedded.svelte';
+  import ArticleEmbedded from '$lib/ndk/event/content/kinds/article-embedded/article-embedded.svelte';
+  import NoteEmbedded from '$lib/ndk/event/content/kinds/note-embedded/note-embedded.svelte';
+  import HighlightEmbedded from '$lib/ndk/event/content/kinds/highlight-embedded/highlight-embedded.svelte';
 
   /**
    * KIND_HANDLERS Registry

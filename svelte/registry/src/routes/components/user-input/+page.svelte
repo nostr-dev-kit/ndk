@@ -70,8 +70,8 @@
   code {
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
-    background-color: hsl(var(--muted));
-    color: hsl(var(--foreground));
+    background-color: hsl(var(--color-muted));
+    color: hsl(var(--color-foreground));
     font-size: 0.875em;
     font-family: ui-monospace, monospace;
   }

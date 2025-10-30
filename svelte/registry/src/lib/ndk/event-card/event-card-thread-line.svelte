@@ -113,8 +113,8 @@
   :global(.event-card--missing) .thread-line {
     background-image: repeating-linear-gradient(
       to bottom,
-      var(--border),
-      var(--border) 4px,
+      var(--color-border),
+      var(--color-border) 4px,
       transparent 4px,
       transparent 8px
     );

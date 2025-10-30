@@ -65,18 +65,18 @@
   .user-input-search-input {
     width: 100%;
     padding: 0.5rem 0.75rem;
-    border: 1px solid hsl(var(--border));
+    border: 1px solid hsl(var(--color-border));
     border-radius: 0.375rem;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
     font-size: 0.875rem;
     outline: none;
     transition: border-color 0.15s;
   }
 
   .user-input-search-input:focus {
-    border-color: hsl(var(--ring));
-    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+    border-color: hsl(var(--color-ring));
+    box-shadow: 0 0 0 2px hsl(var(--color-ring) / 0.2);
   }
 
   .user-input-search-input.loading {
@@ -99,7 +99,7 @@
   }
 
   .spinner circle {
-    stroke: hsl(var(--primary));
+    stroke: hsl(var(--color-primary));
     stroke-linecap: round;
     animation: dash 1.5s ease-in-out infinite;
   }

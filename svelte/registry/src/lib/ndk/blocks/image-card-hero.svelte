@@ -112,7 +112,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: hsl(var(--muted));
+		background-color: hsl(var(--color-muted));
 	}
 
 	.hero-content {

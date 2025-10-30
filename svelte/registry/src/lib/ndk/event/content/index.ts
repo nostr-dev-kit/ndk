@@ -79,3 +79,7 @@ export { default as ArticleEmbedded } from './kinds/article-embedded/article-emb
 export { default as NoteEmbedded } from './kinds/note-embedded/note-embedded.svelte';
 export { default as HighlightEmbedded } from './kinds/highlight-embedded/highlight-embedded.svelte';
 export { default as GenericEmbedded } from './event/generic-embedded.svelte';
+
+// NIP-89 embedded renderers
+export { default as AppRecommendationEmbedded } from './kinds/app-recommendation-embedded/app-recommendation-embedded.svelte';
+export { default as HandlerInfoEmbedded } from './kinds/handler-info-embedded/handler-info-embedded.svelte';

@@ -73,6 +73,35 @@
         description="Full display with cover image, title, summary, and metadata. Default variant for embedded articles."
         component="article-embedded-card"
       >
+        {#snippet usage()}
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-semibold mb-3">Installation</h4>
+              <code class="block p-3 bg-muted rounded text-sm">
+                npx shadcn-svelte@latest add article-embedded-card
+              </code>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-semibold mb-3">Setup</h4>
+              <p class="text-sm text-muted-foreground mb-3">
+                Post-install automatically adds the import to <code class="px-2 py-1 bg-card rounded">embedded-handlers.ts</code>:
+              </p>
+              <div class="p-3 bg-muted rounded font-mono text-sm">
+                import './kinds/article-embedded-card';
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-semibold mb-3">That's it!</h4>
+              <p class="text-sm text-muted-foreground">
+                All article embeds (kind 30023) will now automatically use the card variant.
+                No additional code needed - the handler self-registers via its index.ts file.
+              </p>
+            </div>
+          </div>
+        {/snippet}
+
         {#if sampleNote}
           <ArticleCardExample {ndk} event={sampleNote} />
         {:else}
@@ -88,6 +117,32 @@
         description="Medium-sized display suitable for inline references within content."
         component="article-embedded-inline"
       >
+        {#snippet usage()}
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-semibold mb-3">Installation</h4>
+              <code class="block p-3 bg-muted rounded text-sm">
+                npx shadcn-svelte@latest add article-embedded-inline
+              </code>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold mb-3">Setup</h4>
+              <p class="text-sm text-muted-foreground mb-3">
+                Post-install adds to <code class="px-2 py-1 bg-card rounded">embedded-handlers.ts</code>:
+              </p>
+              <div class="p-3 bg-muted rounded font-mono text-sm">
+                import './kinds/article-embedded-inline';
+              </div>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold mb-3">That's it!</h4>
+              <p class="text-sm text-muted-foreground">
+                Article embeds now use the inline variant automatically.
+              </p>
+            </div>
+          </div>
+        {/snippet}
+
         {#if sampleNote}
           <ArticleInlineExample {ndk} event={sampleNote} />
         {:else}
@@ -103,6 +158,32 @@
         description="Minimal horizontal layout with small image and truncated text."
         component="article-embedded-compact"
       >
+        {#snippet usage()}
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-semibold mb-3">Installation</h4>
+              <code class="block p-3 bg-muted rounded text-sm">
+                npx shadcn-svelte@latest add article-embedded-compact
+              </code>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold mb-3">Setup</h4>
+              <p class="text-sm text-muted-foreground mb-3">
+                Post-install adds to <code class="px-2 py-1 bg-card rounded">embedded-handlers.ts</code>:
+              </p>
+              <div class="p-3 bg-muted rounded font-mono text-sm">
+                import './kinds/article-embedded-compact';
+              </div>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold mb-3">That's it!</h4>
+              <p class="text-sm text-muted-foreground">
+                Article embeds now use the compact variant automatically.
+              </p>
+            </div>
+          </div>
+        {/snippet}
+
         {#if sampleNote}
           <ArticleCompactExample {ndk} event={sampleNote} />
         {:else}

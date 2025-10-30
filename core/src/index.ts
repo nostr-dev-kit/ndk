@@ -51,6 +51,7 @@ export * from "./events/kinds/subscriptions/tier.js";
 export * from "./events/kinds/task.js";
 export * from "./events/kinds/thread.js";
 export * from "./events/kinds/video.js";
+export * from "./events/kinds/voice-message.js";
 export * from "./events/kinds/wiki.js";
 export { deserialize, type NDKEventSerialized, serialize } from "./events/serializer.js";
 export * from "./events/wrap.js";

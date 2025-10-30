@@ -187,7 +187,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Note -->
-      <a href="/components/note-embedded-preview" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/components/previews/notes" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Notes</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">Kind 1, 1111</span>
@@ -201,7 +201,7 @@
       </a>
 
       <!-- Article -->
-      <a href="/components/article-embedded-preview" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/components/previews/articles" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Articles</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">Kind 30023</span>
@@ -215,7 +215,7 @@
       </a>
 
       <!-- Highlight -->
-      <a href="/components/highlight-embedded-preview" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/components/previews/highlights" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Highlights</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">Kind 9802</span>
@@ -228,14 +228,42 @@
         </div>
       </a>
 
+      <!-- App Recommendations (NIP-89) -->
+      <a href="/components/previews/app-recommendations" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-lg font-semibold">App Recommendations</h3>
+          <span class="text-xs px-2 py-1 bg-muted rounded">Kind 31989</span>
+        </div>
+        <p class="text-sm text-muted-foreground mb-4">
+          NIP-89 app recommendation events for discovering handlers.
+        </p>
+        <div class="text-sm text-primary group-hover:underline">
+          View documentation →
+        </div>
+      </a>
+
+      <!-- Handler Info (NIP-89) -->
+      <a href="/components/previews/handler-info" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-lg font-semibold">Handler Info</h3>
+          <span class="text-xs px-2 py-1 bg-muted rounded">Kind 31990</span>
+        </div>
+        <p class="text-sm text-muted-foreground mb-4">
+          NIP-89 handler information declaring app capabilities.
+        </p>
+        <div class="text-sm text-primary group-hover:underline">
+          View documentation →
+        </div>
+      </a>
+
       <!-- Generic Fallback -->
-      <a href="/components/generic-embedded-preview" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/components/previews/generic" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Generic Fallback</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">Unknown kinds</span>
         </div>
         <p class="text-sm text-muted-foreground mb-4">
-          Default renderer for kinds without specific handlers.
+          Default renderer with NIP-31 alt tag support for unknown kinds.
         </p>
         <div class="text-sm text-primary group-hover:underline">
           View documentation →

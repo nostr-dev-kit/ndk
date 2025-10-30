@@ -17,6 +17,10 @@ import './kinds/article-embedded';
 import './kinds/note-embedded';
 import './kinds/highlight-embedded';
 
+// NIP-89 handlers (App Discovery)
+import './kinds/app-recommendation-embedded';
+import './kinds/handler-info-embedded';
+
 // Add your custom kind handlers here
 // import '$lib/ndk/event/content/kinds/video-embedded';
 // import '$lib/ndk/event/content/kinds/audio-embedded';

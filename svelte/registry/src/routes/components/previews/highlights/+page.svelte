@@ -71,6 +71,7 @@
         title="Card Variant"
         description="Full book-page style display with source badge. Default variant for embedded highlights."
         component="highlight-embedded-card"
+        usageOneLiner="import './kinds/highlight-embedded-card'  // Add to embedded-handlers.ts"
       >
         {#if sampleNote}
           <HighlightCardExample {ndk} event={sampleNote} />
@@ -86,6 +87,7 @@
         title="Inline Variant"
         description="Medium-sized display for inline references with line clamping."
         component="highlight-embedded-inline"
+        usageOneLiner="import './kinds/highlight-embedded-inline'  // Add to embedded-handlers.ts"
       >
         {#if sampleNote}
           <HighlightInlineExample {ndk} event={sampleNote} />
@@ -101,6 +103,7 @@
         title="Compact Variant"
         description="Minimal display with heavily truncated content (2 lines)."
         component="highlight-embedded-compact"
+        usageOneLiner="import './kinds/highlight-embedded-compact'  // Add to embedded-handlers.ts"
       >
         {#if sampleNote}
           <HighlightCompactExample {ndk} event={sampleNote} />

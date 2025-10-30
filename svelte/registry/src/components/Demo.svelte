@@ -14,8 +14,8 @@
 	}
 
 	interface Props {
-		/** The code example */
-		code: string;
+		/** The code example (optional - hides Code tab if not provided) */
+		code?: string;
 
 		/** Title for the demo */
 		title?: string;
@@ -37,9 +37,12 @@
 
 		/** Optional controls to show above preview (for prop toggles/selects) */
 		controls?: import('svelte').Snippet;
+
+		/** Custom usage content (overrides default UsageSection) */
+		usage?: import('svelte').Snippet;
 	}
 
-	let { code, title, description, component, props, usageOneLiner, children, controls }: Props = $props();
+	let { code, title, description, component, props, usageOneLiner, children, controls, usage }: Props = $props();
 
 	let activeTab = $state<'preview' | 'code' | 'usage'>('preview');
 	let copySuccess = $state(false);
@@ -115,14 +118,16 @@
 		>
 			Preview
 		</button>
-		<button
-			class="px-4 py-2 bg-transparent border-none border-b-2 border-transparent text-muted-foreground text-sm font-medium cursor-pointer transition-all -mb-px hover:text-foreground hover:bg-muted/30"
-			class:!text-primary={activeTab === 'code'}
-			class:!border-b-primary={activeTab === 'code'}
-			onclick={() => (activeTab = 'code')}
-		>
-			Code
-		</button>
+		{#if code}
+			<button
+				class="px-4 py-2 bg-transparent border-none border-b-2 border-transparent text-muted-foreground text-sm font-medium cursor-pointer transition-all -mb-px hover:text-foreground hover:bg-muted/30"
+				class:!text-primary={activeTab === 'code'}
+				class:!border-b-primary={activeTab === 'code'}
+				onclick={() => (activeTab = 'code')}
+			>
+				Code
+			</button>
+		{/if}
 		{#if component}
 			<button
 				class="px-4 py-2 bg-transparent border-none border-b-2 border-transparent text-muted-foreground text-sm font-medium cursor-pointer transition-all -mb-px hover:text-foreground hover:bg-muted/30"
@@ -173,9 +178,13 @@
 		</div>
 
 		<!-- Usage Tab -->
-		{#if component}
+		{#if component || usage}
 			<div class:hidden={activeTab !== 'usage'} class="p-8 px-6">
-				<UsageSection componentName={component} {props} />
+				{#if usage}
+					{@render usage()}
+				{:else if component}
+					<UsageSection componentName={component} {props} />
+				{/if}
 			</div>
 		{/if}
 	</div>

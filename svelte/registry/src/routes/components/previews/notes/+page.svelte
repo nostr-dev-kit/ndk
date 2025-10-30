@@ -71,6 +71,7 @@
         title="Card Variant"
         description="Full display with maximum detail. Default variant for embedded notes."
         component="note-embedded-card"
+        usageOneLiner="import './kinds/note-embedded-card'  // Add to embedded-handlers.ts"
       >
         {#if sampleNote}
           <NoteCardExample {ndk} event={sampleNote} />
@@ -86,6 +87,7 @@
         title="Inline Variant"
         description="Constrained width for inline display within flowing content."
         component="note-embedded-inline"
+        usageOneLiner="import './kinds/note-embedded-inline'  // Add to embedded-handlers.ts"
       >
         {#if sampleNote}
           <NoteInlineExample {ndk} event={sampleNote} />
@@ -101,6 +103,7 @@
         title="Compact Variant"
         description="Minimal display with heavily truncated content for dense layouts."
         component="note-embedded-compact"
+        usageOneLiner="import './kinds/note-embedded-compact'  // Add to embedded-handlers.ts"
       >
         {#if sampleNote}
           <NoteCompactExample {ndk} event={sampleNote} />

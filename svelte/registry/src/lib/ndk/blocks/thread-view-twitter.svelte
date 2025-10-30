@@ -42,7 +42,7 @@
           {@const isFocused = node.event.id === thread.focusedEventId}
           {@const isFirst = i === 0}
           {@const isLast = i === thread.events.length - 1}
-          {@const isContinuation = node.threading?.isContinuation}
+          {@const isContinuation = node.threading?.isSelfThread}
 
           <EventCard.Root {ndk} event={node.event} threading={node.threading}
             class={`py-0 !rounded-none hover:!bg-muted ${isFirst ? '!rounded-t-2xl' : ''}`}
@@ -53,7 +53,7 @@
               class:tweet--continuation={isContinuation}
               class:tweet--first={isFirst}
               class:tweet--last={isLast}
-              onclick={() => thread.focusOn(node.event)}
+              onclick={() => thread.focusOn(node.id)}
               role="button"
               tabindex="0"
             >

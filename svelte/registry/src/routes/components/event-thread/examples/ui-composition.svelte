@@ -24,7 +24,7 @@
               class="relative border-b border-border transition-colors cursor-pointer {isFocused
                 ? 'bg-accent/10 border-l-4 border-primary'
                 : 'hover:bg-accent/5'}"
-              onclick={() => thread.focusOn(node.event)}
+              onclick={() => thread.focusOn(node.id)}
               role="button"
               tabindex="0"
             >

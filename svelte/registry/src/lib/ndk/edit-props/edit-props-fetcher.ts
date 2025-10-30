@@ -32,6 +32,11 @@ export function validateIdentifier(type: PropType, identifier: string): { valid:
 				return { valid: false, error: 'Must be npub1... or hex pubkey' };
 
 			case 'event':
+				if (identifier.startsWith('naddr1')) {
+					nip19.decode(identifier);
+					return { valid: true };
+				}
+				
 				if (identifier.startsWith('nevent1')) {
 					nip19.decode(identifier);
 					return { valid: true };

@@ -21,7 +21,9 @@ import {
   Search01Icon,
   PaintBoardIcon,
   Image02Icon,
-  ViewIcon
+  ViewIcon,
+  VoiceIcon,
+  UserGroupIcon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -39,7 +41,7 @@ export const docs: NavItem[] = [
   { name: 'Introduction', path: '/docs', icon: Book02Icon },
   { name: 'Architecture', path: '/docs/architecture', icon: Building01Icon },
   { name: 'Builders', path: '/docs/builders', icon: Layers01Icon },
-  { name: 'Subscriptions', path: '/docs/subscriptions', icon: RepeatIcon },
+  { name: 'Meta Subscriptions', path: '/docs/subscriptions', icon: RepeatIcon },
   { name: 'Components', path: '/docs/components', icon: CodeIcon },
   { name: 'Utilities', path: '/docs/utilities', icon: PaintBoardIcon },
 ];
@@ -61,7 +63,18 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
       { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
-      { name: 'Embedded Previews', path: '/components/embedded-previews', icon: ViewIcon },
+    ]
+  },
+  {
+    title: 'Previews',
+    items: [
+      { name: 'Introduction', path: '/components/previews/introduction', icon: ViewIcon },
+      { name: 'Notes', path: '/components/previews/notes', icon: Chat01Icon },
+      { name: 'Articles', path: '/components/previews/articles', icon: NewsIcon },
+      { name: 'Highlights', path: '/components/previews/highlights', icon: File01Icon },
+      { name: 'App Recommendations', path: '/components/previews/app-recommendations', icon: ViewIcon },
+      { name: 'Handler Info', path: '/components/previews/handler-info', icon: ViewIcon },
+      { name: 'Generic', path: '/components/previews/generic', icon: ViewIcon },
     ]
   },
   {
@@ -84,7 +97,6 @@ export const componentCategories: NavCategory[] = [
     title: 'Note (Kind:1)',
     items: [
       { name: 'Content', path: '/components/event-content', icon: File01Icon },
-      { name: 'Embedded Preview', path: '/components/note-embedded-preview', icon: ViewIcon },
     ]
   },
   {
@@ -92,7 +104,6 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'Card', path: '/components/article-card', icon: NewsIcon },
       { name: 'Content', path: '/components/article-content', icon: File01Icon },
-      { name: 'Embedded Preview', path: '/components/article-embedded-preview', icon: ViewIcon },
     ]
   },
   {
@@ -105,7 +116,18 @@ export const componentCategories: NavCategory[] = [
     title: 'Highlight (NIP-84)',
     items: [
       { name: 'Card', path: '/components/highlight-card', icon: File01Icon },
-      { name: 'Embedded Preview', path: '/components/highlight-embedded-preview', icon: ViewIcon },
+    ]
+  },
+  {
+    title: 'Voice Message (NIP-A0)',
+    items: [
+      { name: 'Card', path: '/components/voice-message-card', icon: VoiceIcon },
+    ]
+  },
+  {
+    title: 'Lists (NIP-51)',
+    items: [
+      { name: 'Follow Pack', path: '/components/follow-pack', icon: UserGroupIcon },
     ]
   },
 ];

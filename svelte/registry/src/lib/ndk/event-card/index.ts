@@ -1,39 +1,4 @@
 // @ndk-version: event-card@0.14.0
-/**
- * EventCard - Composable event display components
- *
- * A flexible system for displaying any NDKEvent with customizable layout and actions.
- *
- * The `ndk` prop is optional on Root components - if not provided, it will be retrieved from Svelte context.
- *
- * @example Basic usage (ndk from context):
- * ```svelte
- * <EventCard.Root {event}>
- *   <EventCard.Header />
- *   <EventCard.Content />
- *   <EventCard.Actions>
- *     <ReactionAction />
- *   </EventCard.Actions>
- * </EventCard.Root>
- * ```
- *
- * @example Thread view:
- * ```svelte
- * <EventCard.Root {event} {threading}>
- *   <EventCard.ThreadLine />
- *   <EventCard.Header variant="compact" />
- *   <EventCard.Content />
- * </EventCard.Root>
- * ```
- *
- * @example Using preset blocks (import separately from blocks):
- * ```svelte
- * import { SimpleEventCard } from '$lib/ndk/blocks';
- *
- * <SimpleEventCard {ndk} {event} />
- * ```
- */
-
 // Core components
 import Root from './event-card-root.svelte';
 import Header from './event-card-header.svelte';

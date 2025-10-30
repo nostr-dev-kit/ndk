@@ -13,7 +13,7 @@
 
 <div class="docs-page">
 	<header class="docs-header">
-		<h1>Subscriptions</h1>
+		<h1>Meta Subscriptions</h1>
 		<p class="subtitle">
 			Reactive meta-subscriptions that automatically track relationships between events
 		</p>

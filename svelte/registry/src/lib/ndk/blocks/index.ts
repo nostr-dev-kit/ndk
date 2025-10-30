@@ -88,6 +88,14 @@
  * <UserCardLandscape {ndk} {pubkey} />
  * <UserCardCompact {ndk} {pubkey} />
  * ```
+ *
+ * @example FollowPack blocks:
+ * ```svelte
+ * <FollowPackPortrait {ndk} {followPack} />
+ * <FollowPackHero {ndk} {followPack} />
+ * <FollowPackCompact {ndk} {followPack} />
+ * <FollowPackListItem {ndk} {followPack} />
+ * ```
  */
 
 // ArticleCard blocks
@@ -145,3 +153,13 @@ export { default as UserCardClassic } from './user-card-classic.svelte';
 export { default as UserCardPortrait } from './user-card-portrait.svelte';
 export { default as UserCardLandscape } from './user-card-landscape.svelte';
 export { default as UserCardCompact } from './user-card-compact.svelte';
+
+// FollowPack blocks
+export { default as FollowPackPortrait } from './follow-pack-portrait.svelte';
+export { default as FollowPackHero } from './follow-pack-hero.svelte';
+export { default as FollowPackCompact } from './follow-pack-compact.svelte';
+export { default as FollowPackListItem } from './follow-pack-list-item.svelte';
+
+// VoiceMessageCard blocks
+export { default as VoiceMessageCardCompact } from './voice-message-card-compact.svelte';
+export { default as VoiceMessageCardExpanded } from './voice-message-card-expanded.svelte';

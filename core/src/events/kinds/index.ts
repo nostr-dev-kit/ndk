@@ -44,6 +44,10 @@ export enum NDKKind {
 
     Media = 1063,
 
+    // NIP-A0: Voice Messages
+    VoiceMessage = 1222,
+    VoiceReply = 1244,
+
     DraftCheckpoint = 1234,
 
     Task = 1934,

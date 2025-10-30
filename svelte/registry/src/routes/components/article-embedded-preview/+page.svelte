@@ -33,6 +33,7 @@
         name="Sample Note (Kind:1 embedding an article)"
         type="event"
         bind:value={sampleNote}
+        default="nevent1qqs20u3darewyx27ltlnw9tuzdd5dlvfujqxkzjdmg3glgcsw6zrc2ql6gzju"
       />
     </EditProps.Root>
 
@@ -70,6 +71,7 @@
       <Demo
         title="Card Variant"
         description="Full display with cover image, title, summary, and metadata. Default variant for embedded articles."
+        component="article-embedded-card"
       >
         {#if sampleNote}
           <ArticleCardExample {ndk} event={sampleNote} />
@@ -84,6 +86,7 @@
       <Demo
         title="Inline Variant"
         description="Medium-sized display suitable for inline references within content."
+        component="article-embedded-inline"
       >
         {#if sampleNote}
           <ArticleInlineExample {ndk} event={sampleNote} />
@@ -98,6 +101,7 @@
       <Demo
         title="Compact Variant"
         description="Minimal horizontal layout with small image and truncated text."
+        component="article-embedded-compact"
       >
         {#if sampleNote}
           <ArticleCompactExample {ndk} event={sampleNote} />
@@ -143,43 +147,30 @@
     </div>
   </section>
 
-  <!-- Quick Reference -->
+  <!-- How to Register -->
   <section class="mb-12">
-    <h2 class="text-3xl font-bold mb-4">Quick Reference</h2>
+    <h2 class="text-3xl font-bold mb-4">How to Register</h2>
     <div class="p-6 border border-border rounded-lg bg-card">
-      <h3 class="text-lg font-semibold mb-4">Props</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="border-b border-border">
-            <tr class="text-left">
-              <th class="pb-2 pr-4 font-semibold">Prop</th>
-              <th class="pb-2 pr-4 font-semibold">Type</th>
-              <th class="pb-2 pr-4 font-semibold">Default</th>
-              <th class="pb-2 font-semibold">Description</th>
-            </tr>
-          </thead>
-          <tbody class="text-muted-foreground">
-            <tr class="border-b border-border">
-              <td class="py-3 pr-4 font-mono text-xs">ndk</td>
-              <td class="py-3 pr-4">NDKSvelte</td>
-              <td class="py-3 pr-4">-</td>
-              <td class="py-3">NDK instance</td>
-            </tr>
-            <tr class="border-b border-border">
-              <td class="py-3 pr-4 font-mono text-xs">event</td>
-              <td class="py-3 pr-4">NDKArticle</td>
-              <td class="py-3 pr-4">-</td>
-              <td class="py-3">The article event to render</td>
-            </tr>
-            <tr>
-              <td class="py-3 pr-4 font-mono text-xs">variant</td>
-              <td class="py-3 pr-4">'card' | 'inline' | 'compact'</td>
-              <td class="py-3 pr-4">'card'</td>
-              <td class="py-3">Display variant</td>
-            </tr>
-          </tbody>
-        </table>
+      <h3 class="text-lg font-semibold mb-4">Using Custom Registry</h3>
+      <p class="text-sm text-muted-foreground mb-4">
+        To use a specific variant, create a custom registry and register the variant component:
+      </p>
+      <div class="p-4 bg-muted rounded font-mono text-sm space-y-2">
+        <div class="text-muted-foreground">// Import the variant component</div>
+        <div>import ArticleEmbeddedCompact from './article-embedded-compact.svelte';</div>
+        <div>import {'{ KindRegistry }'} from '$lib/ndk/event/content';</div>
+        <div>import {'{ NDKArticle }'} from '@nostr-dev-kit/ndk';</div>
+        <div class="h-2"></div>
+        <div class="text-muted-foreground">// Create custom registry</div>
+        <div>const compactRegistry = new KindRegistry();</div>
+        <div>compactRegistry.add(NDKArticle, ArticleEmbeddedCompact);</div>
+        <div class="h-2"></div>
+        <div class="text-muted-foreground">// Pass to EventContent</div>
+        <div>&lt;EventContent {'{ndk}'} {'{event}'} kindRegistry={'{compactRegistry}'} /&gt;</div>
       </div>
+      <p class="text-sm text-muted-foreground mt-4">
+        Now all embedded articles will use the compact variant!
+      </p>
     </div>
   </section>
 </div>

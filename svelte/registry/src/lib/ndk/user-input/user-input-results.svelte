@@ -59,10 +59,10 @@
     z-index: 50;
     max-height: 20rem;
     overflow-y: auto;
-    background-color: hsl(var(--popover));
-    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--color-popover));
+    border: 1px solid hsl(var(--color-border));
     border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--foreground) 10%, transparent), 0 2px 4px -2px color-mix(in srgb, var(--foreground) 10%, transparent);
+    box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--color-foreground) 10%, transparent), 0 2px 4px -2px color-mix(in srgb, var(--color-foreground) 10%, transparent);
   }
 
   .user-input-results:empty {

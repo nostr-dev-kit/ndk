@@ -84,8 +84,8 @@
 
 <style>
   .user-header-compact-layout {
-    background-color: var(--background);
-    border: 1px solid var(--border);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
   }
 
@@ -140,7 +140,7 @@
   .name-handle :global(.display-name) {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--foreground);
+    color: var(--color-foreground);
   }
 
   .name-handle :global(.handle) {

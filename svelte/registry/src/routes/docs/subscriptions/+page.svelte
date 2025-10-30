@@ -405,8 +405,8 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.callout-box {
-		background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.03));
-		border: 1px solid hsl(var(--primary) / 0.2);
+		background: linear-gradient(135deg, hsl(var(--color-primary) / 0.08), hsl(var(--color-primary) / 0.03));
+		border: 1px solid hsl(var(--color-primary) / 0.2);
 		border-radius: 0.5rem;
 		padding: 1.5rem;
 		margin: 2rem 0;

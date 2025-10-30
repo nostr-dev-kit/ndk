@@ -120,9 +120,6 @@
               field="displayName"
               class="font-semibold text-[15px] text-foreground truncate"
             />
-            <Nip05
-              class="text-xs text-muted-foreground truncate"
-            />
           </UserProfile.Root>
         </div>
       {:else}

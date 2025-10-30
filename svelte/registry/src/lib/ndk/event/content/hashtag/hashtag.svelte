@@ -27,7 +27,7 @@
 
 <style>
   .hashtag {
-    color: var(--primary);
+    color: var(--color-primary);
     cursor: pointer;
   }
 

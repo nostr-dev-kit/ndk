@@ -139,7 +139,7 @@
 
   .mention,
   .event-ref {
-    color: var(--primary);
+    color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
     cursor: pointer;
@@ -151,7 +151,7 @@
   }
 
   .hashtag {
-    color: var(--primary);
+    color: var(--color-primary);
     cursor: pointer;
   }
 
@@ -160,7 +160,7 @@
   }
 
   .link {
-    color: var(--primary);
+    color: var(--color-primary);
     text-decoration: underline;
     word-break: break-all;
   }

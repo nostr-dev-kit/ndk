@@ -83,7 +83,7 @@
   const avatarGradient = $derived(
     ndkUser?.pubkey
       ? deterministicPubkeyGradient(ndkUser.pubkey)
-      : 'var(--primary)'
+      : 'var(--color-primary)'
   );
 </script>
 

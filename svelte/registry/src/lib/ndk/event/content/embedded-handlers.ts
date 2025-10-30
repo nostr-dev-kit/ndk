@@ -13,9 +13,9 @@
  */
 
 // Default handlers (included with event-content installation)
-import '$lib/ndk/event/content/kinds/article-embedded';
-import '$lib/ndk/event/content/kinds/note-embedded';
-import '$lib/ndk/event/content/kinds/highlight-embedded';
+import './kinds/article-embedded';
+import './kinds/note-embedded';
+import './kinds/highlight-embedded';
 
 // Add your custom kind handlers here
 // import '$lib/ndk/event/content/kinds/video-embedded';

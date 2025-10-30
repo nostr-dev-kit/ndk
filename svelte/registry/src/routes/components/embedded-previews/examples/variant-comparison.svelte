@@ -12,7 +12,7 @@
   // Create example event with embedded reference
   const exampleContent = `Check out this embedded note:
 
-nostr:note1examplenotebech32string`;
+nostr:nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k`;
 
   const exampleEvent = new NDKEvent(ndk, {
     kind: NDKKind.Text,
@@ -22,7 +22,7 @@ nostr:note1examplenotebech32string`;
     tags: []
   } as any);
 
-  const sampleBech32 = 'note1examplenotebech32string';
+  const sampleBech32 = 'nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k';
 </script>
 
 <div class="space-y-8">

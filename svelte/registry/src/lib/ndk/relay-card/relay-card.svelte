@@ -285,15 +285,15 @@
 
 <style>
   .relay-card {
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
     border-radius: 0.75rem;
-    background: var(--card);
+    background: var(--color-card);
     overflow: hidden;
     transition: all 0.2s ease;
   }
 
   .relay-card:hover {
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 10%, transparent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-foreground) 10%, transparent);
   }
 
   .relay-card-header {
@@ -306,7 +306,7 @@
   }
 
   .relay-card-header:hover {
-    background: var(--accent);
+    background: var(--color-accent);
   }
 
   .relay-card-header-left {
@@ -335,7 +335,7 @@
   .relay-card-name {
     font-size: 1rem;
     font-weight: 500;
-    color: var(--foreground);
+    color: var(--color-foreground);
   }
 
   .relay-card-url {
@@ -362,28 +362,28 @@
   }
 
   .badge-read {
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
   }
 
   .badge-write {
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    color: var(--accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
   }
 
   .badge-both {
-    background: color-mix(in srgb, var(--success) 10%, transparent);
-    color: var(--success);
+    background: color-mix(in srgb, var(--color-success) 10%, transparent);
+    color: var(--color-success);
   }
 
   .badge-blacklist {
-    background: color-mix(in srgb, var(--destructive) 10%, transparent);
-    color: var(--destructive);
+    background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+    color: var(--color-destructive);
   }
 
   .badge-warning {
-    background: color-mix(in srgb, var(--warning) 10%, transparent);
-    color: var(--warning);
+    background: color-mix(in srgb, var(--color-warning) 10%, transparent);
+    color: var(--color-warning);
     padding: 0.125rem 0.5rem;
     font-size: 0.75rem;
   }
@@ -398,7 +398,7 @@
   }
 
   .expand-button:hover {
-    color: var(--foreground);
+    color: var(--color-foreground);
   }
 
   .expand-icon {
@@ -423,16 +423,16 @@
   }
 
   .relay-section.error {
-    background: color-mix(in srgb, var(--destructive) 5%, transparent);
+    background: color-mix(in srgb, var(--color-destructive) 5%, transparent);
     padding: 0.75rem;
     border-radius: 0.5rem;
-    border: 1px solid color-mix(in srgb, var(--destructive) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-destructive) 20%, transparent);
   }
 
   .relay-section h4 {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--foreground);
+    color: var(--color-foreground);
     margin: 0;
   }
 
@@ -470,7 +470,7 @@
   .info-value {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--foreground);
+    color: var(--color-foreground);
   }
 
   .nips-list {
@@ -481,8 +481,8 @@
 
   .nip-badge {
     padding: 0.125rem 0.5rem;
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
     border-radius: 0.375rem;
     font-size: 0.75rem;
     font-weight: 600;
@@ -493,54 +493,54 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--color-border);
   }
 
   .action-button {
     padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: var(--background);
+    background: var(--color-background);
   }
 
   .copy-button {
-    color: var(--foreground);
+    color: var(--color-foreground);
   }
 
   .copy-button:hover {
-    background: var(--accent);
-    border-color: var(--primary);
+    background: var(--color-accent);
+    border-color: var(--color-primary);
   }
 
   .blacklist-button {
-    color: var(--destructive);
+    color: var(--color-destructive);
   }
 
   .blacklist-button:hover {
-    background: color-mix(in srgb, var(--destructive) 5%, transparent);
-    border-color: var(--destructive);
+    background: color-mix(in srgb, var(--color-destructive) 5%, transparent);
+    border-color: var(--color-destructive);
   }
 
   .unblacklist-button {
-    color: var(--success);
+    color: var(--color-success);
   }
 
   .unblacklist-button:hover {
-    background: color-mix(in srgb, var(--success) 5%, transparent);
-    border-color: var(--success);
+    background: color-mix(in srgb, var(--color-success) 5%, transparent);
+    border-color: var(--color-success);
   }
 
   .remove-button {
-    color: var(--destructive);
+    color: var(--color-destructive);
   }
 
   .remove-button:hover {
-    background: color-mix(in srgb, var(--destructive) 5%, transparent);
-    border-color: var(--destructive);
+    background: color-mix(in srgb, var(--color-destructive) 5%, transparent);
+    border-color: var(--color-destructive);
   }
 
   @media (max-width: 640px) {

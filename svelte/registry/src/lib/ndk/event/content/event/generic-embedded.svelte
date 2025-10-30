@@ -32,16 +32,16 @@
 
 <style>
   .generic-embedded {
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
-    background: var(--card);
+    background: var(--color-card);
     padding: 0.75rem;
   }
 
   .kind-badge {
     margin-top: 0.5rem;
     padding: 0.25rem 0.5rem;
-    background: var(--muted);
+    background: var(--color-muted);
     border-radius: 0.25rem;
     font-size: 0.75rem;
     color: var(--muted-foreground);

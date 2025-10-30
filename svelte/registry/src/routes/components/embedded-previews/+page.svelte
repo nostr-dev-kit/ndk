@@ -67,33 +67,42 @@
         </div>
       </div>
 
-      <!-- KIND_HANDLERS Registry -->
+      <!-- KindRegistry System -->
       <Demo
-        title="KIND_HANDLERS Registry"
-        description="A simple Record<number, Component> map that defines which component renders each kind. No classes, no context, no complexity."
+        title="KindRegistry System"
+        description="Self-registering handlers using NDK wrapper classes for automatic kind mapping and type-safe event wrapping."
         code={HowItWorksCode}
       >
         <div class="p-6 border border-border rounded-lg bg-muted/30">
           <p class="text-sm text-muted-foreground mb-4">
-            The registry lives directly in <code class="px-2 py-1 bg-muted rounded">event/event.svelte</code> as a plain TypeScript object:
+            Each kind handler self-registers via its <code class="px-2 py-1 bg-muted rounded">index.ts</code> file:
           </p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">30023 → ArticleEmbedded</div>
-              <p class="text-xs text-muted-foreground">Long-form articles</p>
+              <div class="text-sm font-mono mb-2">NDKArticle → ArticleEmbedded</div>
+              <p class="text-xs text-muted-foreground">Automatically registers kind 30023 and wraps with NDKArticle.from()</p>
             </div>
             <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">1, 1111 → NoteEmbedded</div>
-              <p class="text-xs text-muted-foreground">Notes and replies</p>
+              <div class="text-sm font-mono mb-2">[1, 1111] → NoteEmbedded</div>
+              <p class="text-xs text-muted-foreground">Manual kinds (no NDK wrapper class exists)</p>
             </div>
             <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">9802 → HighlightEmbedded</div>
-              <p class="text-xs text-muted-foreground">Highlights</p>
+              <div class="text-sm font-mono mb-2">NDKHighlight → HighlightEmbedded</div>
+              <p class="text-xs text-muted-foreground">Automatically registers kind 9802 and wraps with NDKHighlight.from()</p>
             </div>
             <div class="p-4 bg-card rounded border border-border">
               <div class="text-sm font-mono mb-2">* → GenericEmbedded</div>
-              <p class="text-xs text-muted-foreground">Fallback for unknown kinds</p>
+              <p class="text-xs text-muted-foreground">Fallback for unknown kinds (no wrapping)</p>
             </div>
+          </div>
+          <div class="mt-4 p-4 bg-card/50 rounded border border-primary/20">
+            <p class="text-sm"><strong>Benefits:</strong></p>
+            <ul class="text-xs text-muted-foreground list-disc list-inside mt-2 space-y-1">
+              <li>Type-safe: Components receive NDKArticle, NDKHighlight, not just NDKEvent</li>
+              <li>Automatic: Kind numbers extracted from NDK wrapper classes</li>
+              <li>Flexible: Custom registries for variant-specific previews</li>
+              <li>Clean: No manual kind number management</li>
+            </ul>
           </div>
         </div>
       </Demo>
@@ -101,7 +110,7 @@
       <!-- Adding New Handlers -->
       <Demo
         title="Adding New Kind Handlers"
-        description="When you install a new kind handler, simply add 2 lines to the KIND_HANDLERS map. No registration API, no complex setup."
+        description="Kind handlers self-register automatically via side effects. Just install and import - no manual registration needed."
         code={AddingHandlerCode}
       >
         <div class="p-6 border border-border rounded-lg bg-muted/30">
@@ -113,24 +122,44 @@
               </code>
             </div>
             <div>
-              <div class="text-sm font-semibold mb-2">Step 2: Add to KIND_HANDLERS map</div>
+              <div class="text-sm font-semibold mb-2">Step 2: Import in embedded-handlers.ts</div>
               <p class="text-xs text-muted-foreground mb-2">
-                Edit <code class="px-1 py-0.5 bg-muted rounded">event/event.svelte</code>:
+                Post-install automatically appends to <code class="px-1 py-0.5 bg-muted rounded">embedded-handlers.ts</code>:
               </p>
-              <div class="p-3 bg-card rounded text-sm font-mono space-y-1">
-                <div class="text-muted-foreground">// 1. Import the component</div>
-                <div>import VideoEmbedded from '../kinds/video-embedded.svelte';</div>
-                <div class="h-2"></div>
-                <div class="text-muted-foreground">// 2. Add to map</div>
-                <div>34235: VideoEmbedded,</div>
+              <div class="p-3 bg-card rounded text-sm font-mono">
+                <div>import './kinds/video-embedded';</div>
               </div>
+              <p class="text-xs text-muted-foreground mt-2">
+                Or add manually if installing without CLI
+              </p>
             </div>
             <p class="text-sm text-muted-foreground">
-              That's it! The handler is now registered and will render all video events (kind 34235).
+              That's it! The handler automatically registers itself via its index.ts file
+              and will render all video events using NDKVideo.kinds and NDKVideo.from().
             </p>
           </div>
         </div>
       </Demo>
+
+      <!-- Custom Registries -->
+      <div class="p-6 border border-border rounded-lg bg-primary/5 border-primary/20">
+        <h3 class="text-xl font-semibold mb-4">Custom Registries (Advanced)</h3>
+        <p class="text-sm text-muted-foreground mb-4">
+          Create custom registries to render the same kind differently in different contexts:
+        </p>
+        <div class="p-4 bg-card rounded text-sm font-mono space-y-2 mb-4">
+          <div class="text-muted-foreground">// Create variant-specific registry</div>
+          <div>const compactRegistry = new KindRegistry();</div>
+          <div>compactRegistry.add(NDKHighlight, HighlightCompactPreview);</div>
+          <div class="h-2"></div>
+          <div class="text-muted-foreground">// Use in component</div>
+          <div>&lt;EventContent kindRegistry={'{compactRegistry}'} /&gt;</div>
+        </div>
+        <p class="text-sm text-muted-foreground">
+          <strong>Use case:</strong> Show full highlight cards in feeds, but compact previews in sidebars -
+          just pass different registries with different components.
+        </p>
+      </div>
 
       <!-- Fallback Behavior -->
       <div class="p-6 border border-border rounded-lg bg-card">

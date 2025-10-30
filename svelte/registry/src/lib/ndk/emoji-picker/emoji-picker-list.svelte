@@ -71,7 +71,7 @@
   }
 
   .emoji-button:hover {
-    background: var(--accent);
+    background: var(--color-accent);
     transform: scale(1.1);
   }
 

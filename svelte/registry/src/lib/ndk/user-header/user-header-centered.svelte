@@ -116,7 +116,7 @@
   .avatar-container :global(.avatar-large) {
     width: 10rem;
     height: 10rem;
-    border: 4px solid var(--background);
+    border: 4px solid var(--color-background);
     border-radius: 50%;
   }
 
@@ -146,7 +146,7 @@
   .name-handle :global(.display-name) {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--foreground);
+    color: var(--color-foreground);
   }
 
   .name-handle :global(.handle) {

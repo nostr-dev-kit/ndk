@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CodeBlock from '$site-components/CodeBlock.svelte';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
 
   // Sample pubkeys to demonstrate different gradients
@@ -29,16 +30,16 @@
 
   <section>
     <h3>Installation</h3>
-    <pre><code>import &#123; deterministicPubkeyGradient &#125; from '@nostr-dev-kit/svelte';</code></pre>
+    <CodeBlock lang="typescript" code={`import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';`} />
   </section>
 
   <section>
     <h3>Usage</h3>
-    <pre><code>const gradient = deterministicPubkeyGradient(user.pubkey);
+    <CodeBlock lang="typescript" code={`const gradient = deterministicPubkeyGradient(user.pubkey);
 // Returns: 'linear-gradient(135deg, #abc123, hsl(210, 50%, 60%))'
 
 // Use in CSS
-&lt;div style="background: &#123;gradient&#125;"&gt;...&lt;/div&gt;</code></pre>
+<div style="background: {gradient}">...</div>`} />
   </section>
 
   <section>

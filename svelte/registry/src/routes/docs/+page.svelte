@@ -1,3 +1,6 @@
+<script lang="ts">
+  import CodeBlock from '$site-components/CodeBlock.svelte';
+</script>
 
 <div class="docs-page">
   <header class="docs-header">
@@ -27,11 +30,11 @@
     <h2>Quick Start</h2>
 
     <h3>Using Builders</h3>
-    <pre><code>{`<`+`script>
+    <CodeBlock lang="svelte" code={`<script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
   const card = createEventCard(() => ({ event }), ndk);
-</`+`script>
+</script>
 
 <article>
   <img src={card.profile?.picture} alt="" />
@@ -41,18 +44,18 @@
     <span>{card.replies.count} replies</span>
     <span>{card.zaps.totalAmount} sats</span>
   </footer>
-</article>`}</code></pre>
+</article>`} />
 
     <h3>Using Components</h3>
-    <pre><code>{`<`+`script>
+    <CodeBlock lang="svelte" code={`<script>
   import { EventCard } from '$lib/components/ui/event-card';
-</`+`script>
+</script>
 
 <EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
   <EventCard.Actions />
-</EventCard.Root>`}</code></pre>
+</EventCard.Root>`} />
   </section>
 
   <section>

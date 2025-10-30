@@ -1,8 +1,17 @@
 <script lang="ts">
-	import { codeToHtml } from 'shiki';
-	import InstallCommand from './install-command.svelte';
+	import UsageSection from './UsageSection.svelte';
+	import CodeBlock from './CodeBlock.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
+	import { codeToHtml } from 'shiki';
+
+	interface PropDoc {
+		name: string;
+		type: string;
+		required?: boolean;
+		default?: string;
+		description: string;
+	}
 
 	interface Props {
 		/** The code example */
@@ -14,8 +23,14 @@
 		/** Description of the demo */
 		description?: string;
 
-		/** Component name for install command (e.g., "article-card-portrait") - enables Usage tab */
+		/** Component name for install command (e.g., "article-card-portrait") - enables Usage section */
 		component?: string;
+
+		/** Props documentation to display in Usage section */
+		props?: PropDoc[];
+
+		/** One-liner usage example (e.g., "<FollowButtonPill target={user} />") */
+		usageOneLiner?: string;
 
 		/** The preview content */
 		children?: import('svelte').Snippet;
@@ -24,28 +39,48 @@
 		controls?: import('svelte').Snippet;
 	}
 
-	let { code, title, description, component, children, controls }: Props = $props();
+	let { code, title, description, component, props, usageOneLiner, children, controls }: Props = $props();
 
 	let activeTab = $state<'preview' | 'code' | 'usage'>('preview');
-	let highlightedCode = $state<string>('');
-	let isLoading = $state(true);
 	let copySuccess = $state(false);
+	let highlightedOneLiner = $state<string>('');
+	let isLoadingOneLiner = $state(true);
+
+	// Convert kebab-case to PascalCase for component name
+	const pascalCaseName = $derived(
+		component
+			? component
+					.split('-')
+					.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+					.join('')
+			: ''
+	);
+
+	// Use provided one-liner or generate default
+	const oneLiner = $derived(
+		component ? usageOneLiner || `<${pascalCaseName} {ndk} target={user} />` : ''
+	);
 
 	$effect(() => {
+		if (!component || !oneLiner) {
+			isLoadingOneLiner = false;
+			return;
+		}
+
 		(async () => {
 			try {
-				highlightedCode = await codeToHtml(code, {
+				highlightedOneLiner = await codeToHtml(oneLiner, {
 					lang: 'svelte',
 					themes: {
 						light: 'github-light',
 						dark: 'github-dark'
 					}
 				});
-				isLoading = false;
+				isLoadingOneLiner = false;
 			} catch (error) {
-				console.error('Failed to highlight code:', error);
-				highlightedCode = `<pre><code>${code}</code></pre>`;
-				isLoading = false;
+				console.error('Failed to highlight one-liner:', error);
+				highlightedOneLiner = `<code>${oneLiner}</code>`;
+				isLoadingOneLiner = false;
 			}
 		})();
 	});
@@ -63,7 +98,7 @@
 	}
 </script>
 
-<div class="bg-card border border-border rounded-lg overflow-hidden min-h-[300px] flex flex-col">
+<div class="bg-card border border-border rounded-lg overflow-hidden flex flex-col">
 	{#if title}
 		<h3 class="text-lg font-semibold text-foreground m-0 px-6 pt-6">{title}</h3>
 	{/if}
@@ -100,54 +135,49 @@
 		{/if}
 	</div>
 
-	<div class="flex-1 flex flex-col bg-background">
+	<div class="flex-1 flex flex-col bg-background min-h-[443px]">
 		<!-- Preview Tab -->
-		<div class:hidden={activeTab !== 'preview'}>
+		<div class:hidden={activeTab !== 'preview'} class="flex flex-col flex-1">
 			{#if controls}
 				<div class="p-4 px-6 border-b border-border bg-card flex gap-4 items-center flex-wrap controls">
 					{@render controls()}
 				</div>
 			{/if}
-			<div class="p-8 px-6 flex justify-center items-center flex-1">
+			<div class="p-12 flex justify-center items-center flex-1">
 				{@render children?.()}
 			</div>
+			<!-- One-liner below preview -->
+			{#if component && !isLoadingOneLiner && highlightedOneLiner}
+				<div class="oneliner-below-preview">
+					{@html highlightedOneLiner}
+				</div>
+			{/if}
+		</div>
+
+		<!-- Code Tab -->
+		<div class:hidden={activeTab !== 'code'} class="relative">
+			<button
+				class="absolute top-4 right-4 z-10 flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-md text-foreground text-sm font-medium cursor-pointer transition-all hover:bg-muted hover:border-primary"
+				onclick={copyCode}
+				title="Copy code"
+			>
+				{#if copySuccess}
+					<HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={2} />
+					Copied!
+				{:else}
+					<HugeiconsIcon icon={Copy01Icon} size={16} strokeWidth={2} />
+					Copy
+				{/if}
+			</button>
+			<CodeBlock {code} lang="svelte" class="demo-code" />
 		</div>
 
 		<!-- Usage Tab -->
 		{#if component}
 			<div class:hidden={activeTab !== 'usage'} class="p-8 px-6">
-				<InstallCommand componentName={component} />
+				<UsageSection componentName={component} {props} />
 			</div>
 		{/if}
-
-		<!-- Code Tab -->
-		<div class:hidden={activeTab !== 'code'}>
-			{#if isLoading}
-				<div class="flex flex-col items-center justify-center gap-4 p-8">
-					<div class="w-6 h-6 border-2 border-muted border-t-primary rounded-full animate-spin"></div>
-					<span class="text-sm text-muted-foreground">Loading syntax highlighting...</span>
-				</div>
-			{:else}
-				<div class="relative">
-					<button
-						class="absolute top-4 right-4 z-10 flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-md text-foreground text-sm font-medium cursor-pointer transition-all hover:bg-muted hover:border-primary"
-						onclick={copyCode}
-						title="Copy code"
-					>
-						{#if copySuccess}
-							<HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={2} />
-							Copied!
-						{:else}
-							<HugeiconsIcon icon={Copy01Icon} size={16} strokeWidth={2} />
-							Copy
-						{/if}
-					</button>
-					<div class="overflow-x-auto code-container">
-						{@html highlightedCode}
-					</div>
-				</div>
-			{/if}
-		</div>
 	</div>
 </div>
 
@@ -182,14 +212,29 @@
 		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
 	}
 
-	.code-container :global(pre) {
-		margin: 0;
-		padding: 1.5rem;
+	.oneliner-below-preview {
+		display: flex;
+		justify-content: center;
+		padding: 0 3rem 2rem;
+		font-size: 0.8125rem;
 	}
 
-	.code-container :global(code) {
+	.oneliner-below-preview :global(pre) {
+		margin: 0;
+		padding: 0;
+		background: transparent !important;
+		overflow: visible;
+	}
+
+	.oneliner-below-preview :global(code) {
 		font-family: 'Monaco', 'Courier New', monospace;
 		font-size: 0.8125rem;
-		line-height: 1.6;
+		background: transparent !important;
+	}
+
+	:global(.demo-code .code-block pre) {
+		margin: 0 !important;
+		border: none !important;
+		border-radius: 0 !important;
 	}
 </style>

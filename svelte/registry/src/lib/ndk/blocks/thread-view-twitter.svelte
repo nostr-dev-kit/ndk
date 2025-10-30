@@ -16,7 +16,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, ReactionAction } from '../event-card/index.js';
+  import { EventCard, ReactionAction } from '../event-card/index.js';
   import Avatar from '../user-profile/user-profile-avatar.svelte';
   import RepostButton from './repost-button.svelte';
 
@@ -62,7 +62,6 @@
                 <EventCard.Content class={`tweet-text ml-12 pb-4 ${isFocused ? 'text-lg' : ''}`} />
 
                   <EventCard.Actions class="tweet-actions ml-5 ">
-                    <ReplyAction />
                     <RepostButton {ndk} event={node.event} />
                     <ReactionAction />
                   </EventCard.Actions>

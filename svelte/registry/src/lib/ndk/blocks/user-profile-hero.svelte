@@ -14,6 +14,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { UserProfile } from '../user-profile';
+  import FollowButtonPill from './follow-button-pill.svelte';
 
   interface Props {
     /** NDK instance */
@@ -43,6 +44,8 @@
     showFollow = true,
     class: className = ''
   }: Props = $props();
+
+  const user = $derived(ndk ? ndk.getUser({ pubkey }) : null);
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
@@ -67,8 +70,8 @@
           <div class="flex-1 min-w-0">
             <UserProfile.Name class="text-2xl font-bold truncate" />
           </div>
-          {#if showFollow}
-            <UserProfile.Follow variant="primary" class="shrink-0" />
+          {#if showFollow && user && ndk}
+            <FollowButtonPill {ndk} target={user} variant="solid" class="shrink-0" />
           {/if}
         </div>
 

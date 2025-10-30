@@ -1,3 +1,7 @@
+<script lang="ts">
+  import CodeBlock from '$components/CodeBlock.svelte';
+</script>
+
 <div class="docs-page">
   <header class="docs-header">
     <h1>Builders</h1>
@@ -13,35 +17,33 @@
       and it handles subscriptions and data fetching automatically. As Nostr data arrives, the getters update and Svelte re-renders your UI.
     </p>
 
-    <pre><code>{`import { createEventCard } from '@nostr-dev-kit/svelte';
+    <CodeBlock lang="typescript" code={`import { createEventCard } from '@nostr-dev-kit/svelte';
 
-const card = createEventCard({
-  ndk,
-  event: () => event
-});
+const card = createEventCard(() => ({ event }), ndk);
 
 // Access reactive state
 card.profile?.displayName  // Auto-fetched
 card.replies.count         // Auto-subscribed
-card.zaps.totalAmount      // Updates live`}</code></pre>
+card.zaps.totalAmount      // Updates live`} />
   </section>
 
   <section>
     <h2>Why Functions for Props?</h2>
     <p>
-      Props use functions (<code>event: () => event</code>) instead of direct values (<code>event: event</code>) to enable reactivity.
-      When the input changes, the builder can clean up old subscriptions and create new ones.
+      Builders take a function that returns props (<code>() => ({ event })</code>) to enable reactivity.
+      When reactive values inside the function change, the builder automatically cleans up old subscriptions and creates new ones.
     </p>
 
-    <pre><code>{`let currentEvent = $state(events[0]);
+    <CodeBlock lang="typescript" code={`let currentEvent = $state(events[0]);
 
-// ❌ Won't react to changes
-const card = createEventCard({ ndk, event: currentEvent });
+// The builder tracks changes to currentEvent
+const card = createEventCard(() => ({ event: currentEvent }), ndk);
 
-// ✅ Reacts when currentEvent changes
-const card = createEventCard({ ndk, event: () => currentEvent });
-
-currentEvent = events[1]; // Builder automatically updates`}</code></pre>
+// When currentEvent changes, the builder automatically:
+// 1. Stops old subscriptions
+// 2. Creates new subscriptions for the new event
+// 3. Updates all reactive state
+currentEvent = events[1];`} />
   </section>
 
   <section>
@@ -52,24 +54,24 @@ currentEvent = events[1]; // Builder automatically updates`}</code></pre>
     <p><code>createThreadView(() => ({ focusedEvent, maxDepth }), ndk)</code> - Thread navigation with parent chain and replies.</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const thread = createThreadView(() => ({ focusedEvent: event, maxDepth: 20 }), ndk);
+      <CodeBlock lang="typescript" code={`const thread = createThreadView(() => ({ focusedEvent: event, maxDepth: 20 }), ndk);
 
 thread.events         // Array<ThreadNode> - complete linear chain
 thread.replies        // Array<NDKEvent> - replies to focused event only
 thread.otherReplies   // Array<NDKEvent> - replies to other thread events
 thread.allReplies     // Array<NDKEvent> - all replies (replies + otherReplies)
 thread.focusedEventId // string | null - ID of focused event
-thread.focusOn(event) // Navigate to different event`}</code></pre>
+thread.focusOn(event) // Navigate to different event`} />
     </details>
 
     <p><code>createEmbeddedEvent(() => ({ bech32 }), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const embedded = createEmbeddedEvent({ ndk, bech32: () => 'note1...' });
+      <CodeBlock lang="typescript" code={`const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
 
 embedded.event    // The fetched event
 embedded.loading  // Boolean
-embedded.error    // Error message if failed`}</code></pre>
+embedded.error    // Error message if failed`} />
     </details>
 
     <h3>Profile & Social</h3>
@@ -77,40 +79,40 @@ embedded.error    // Error message if failed`}</code></pre>
     <p><code>createProfileFetcher(() => ({ user }), ndk)</code> - Fetches user profiles with automatic deduplication.</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const profile = createProfileFetcher(() => ({ user }), ndk);
+      <CodeBlock lang="typescript" code={`const profile = createProfileFetcher(() => ({ user }), ndk);
 
 profile.profile?.picture
 profile.profile?.displayName
-profile.loading`}</code></pre>
+profile.loading`} />
     </details>
 
-    <p><code>createFollowButton(ndk, target)</code> - Follow/unfollow state for users or hashtags.</p>
+    <p><code>createFollowAction(() => ({ target }), ndk)</code> - Follow/unfollow state for users or hashtags.</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const followButton = createFollowButton(ndk, () => user);
+      <CodeBlock lang="typescript" code={`const followAction = createFollowAction(() => ({ target: user }), ndk);
 
-followButton.isFollowing  // Boolean
-await followButton.toggle();`}</code></pre>
+followAction.isFollowing  // Boolean
+await followAction.follow();`} />
     </details>
 
     <h3>Relays</h3>
 
-    <p><code>createRelayInfo({ ndk, relayUrl })</code> - Fetches NIP-11 relay information.</p>
+    <p><code>createRelayInfo(() => ({ relayUrl }), ndk)</code> - Fetches NIP-11 relay information.</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const relay = createRelayInfo({ ndk, relayUrl: () => 'wss://relay.damus.io' });
+      <CodeBlock lang="typescript" code={`const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
 
 relay.nip11?.name
 relay.nip11?.description
-relay.nip11?.supported_nips`}</code></pre>
+relay.nip11?.supported_nips`} />
     </details>
 
-    <p><code>createBookmarkedRelayList({ ndk })</code> - User's bookmarked relays with connection stats.</p>
+    <p><code>createBookmarkedRelayList(() => ({}), ndk)</code> - User's bookmarked relays with connection stats.</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const relays = createBookmarkedRelayList({ ndk });
+      <CodeBlock lang="typescript" code={`const relays = createBookmarkedRelayList(() => ({}), ndk);
 
-relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
+relays.relays  // Array<BookmarkedRelayWithStats>`} />
     </details>
   </section>
 
@@ -123,19 +125,19 @@ relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
       without performance concerns - data fetching happens only when needed.
     </p>
 
-    <pre><code>{`<details>
+    <CodeBlock lang="svelte" code={`<details>
   <summary>Show engagement</summary>
   <!-- Subscription starts when details opens -->
   <p>{card.replies.count} replies</p>
-</details>`}</code></pre>
+</details>`} />
 
     <h3>Multiple Instances</h3>
     <p>Create a builder for each item in a list. Builders handle deduplication automatically.</p>
 
-    <pre><code>{`const cards = $derived(
+    <CodeBlock lang="svelte" code={`const cards = $derived(
   events.map(event => ({
     event,
-    state: createEventCard({ ndk, event: () => event })
+    state: createEventCard(() => ({ event }), ndk)
   }))
 );
 
@@ -144,14 +146,14 @@ relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
     <p>{state.profile?.displayName}</p>
     <p>{state.replies.count} replies</p>
   </article>
-{/each}`}</code></pre>
+{/each}`} />
   </section>
 
   <section>
     <h2>Example: Custom Feed</h2>
     <p>Building a feed from scratch with builders:</p>
 
-    <pre><code>{`<`+`script>
+    <CodeBlock lang="svelte" code={`<script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
   const feed = ndk.$subscribe(() => ({
@@ -167,10 +169,10 @@ relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
   const cards = $derived(
     events.map(event => ({
       event,
-      state: createEventCard({ ndk, event: () => event })
+      state: createEventCard(() => ({ event }), ndk)
     }))
   );
-</`+`script>
+</script>
 
 <div class="feed">
   {#each cards as { event, state }}
@@ -186,7 +188,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
       </footer>
     </article>
   {/each}
-</div>`}</code></pre>
+</div>`} />
   </section>
 
   <section class="next-section">

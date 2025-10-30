@@ -78,8 +78,8 @@
       </div>
 
       <!-- Name and verification -->
-      <div class="mb-3">
-        <UserProfile.Name class="text-base font-semibold m-0 mb-0.5" />
+      <div class="mb-3 flex flex-col gap-0.5">
+        <UserProfile.Name class="text-base font-semibold" />
         <UserProfile.Nip05 class="text-sm text-muted-foreground" />
       </div>
 

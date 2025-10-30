@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, ReactionAction } from '$lib/ndk/event-card';
+  import { EventCard, ReactionAction } from '$lib/ndk/event-card';
   import { RepostButton } from '$lib/ndk/blocks';
 
   interface Props {
@@ -35,7 +35,6 @@
                   <EventCard.Content class="text-xl" />
                 </div>
                 <EventCard.Actions>
-                  <ReplyAction />
                   <RepostButton {ndk} event={node.event} />
                   <ReactionAction />
                 </EventCard.Actions>
@@ -86,7 +85,6 @@
             <EventCard.Header variant="compact" />
             <EventCard.Content />
             <EventCard.Actions>
-              <ReplyAction />
               <RepostAction />
               <ReactionAction />
             </EventCard.Actions>
@@ -112,7 +110,6 @@
             <EventCard.Header variant="compact" />
             <EventCard.Content />
             <EventCard.Actions>
-              <ReplyAction />
               <RepostAction />
               <ReactionAction />
             </EventCard.Actions>

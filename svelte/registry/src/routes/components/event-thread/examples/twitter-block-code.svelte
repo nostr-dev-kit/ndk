@@ -21,7 +21,6 @@
 
                 {#if node.event.id === thread.focusedEventId}
                   <EventCard.Actions>
-                    <ReplyAction />
                     <RepostAction />
                     <ReactionAction />
                   </EventCard.Actions>

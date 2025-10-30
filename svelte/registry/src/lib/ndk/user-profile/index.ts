@@ -53,7 +53,6 @@ import Bio from './user-profile-bio.svelte';
 import Banner from './user-profile-banner.svelte';
 import Nip05 from './user-profile-nip05.svelte';
 import AvatarName from './user-profile-avatar-name.svelte';
-import Follow from './user-profile-follow.svelte';
 import AvatarGroup from './avatar-group.svelte';
 
 // Export as namespace for dot notation
@@ -67,7 +66,6 @@ export const UserProfile = {
   Banner,
   Nip05,
   AvatarName,
-  Follow,
   AvatarGroup,
 };
 

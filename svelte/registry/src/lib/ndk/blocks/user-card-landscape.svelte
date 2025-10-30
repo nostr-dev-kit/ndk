@@ -2,7 +2,7 @@
 <!--
   @component UserCardLandscape
   Horizontal card layout with avatar on left.
-  Built using composable UserProfile primitives.
+  Built using composable UserProfile primitives and FollowButtonPill block.
   Perfect for feed views and detailed lists.
 
   @example
@@ -14,6 +14,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
   import { UserProfile } from '../user-profile';
+  import FollowButtonPill from './follow-button-pill.svelte';
 
   interface Props {
     /** NDK instance */
@@ -31,6 +32,8 @@
     pubkey,
     class: className = ''
   }: Props = $props();
+
+  const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
@@ -45,7 +48,7 @@
           <UserProfile.Name field="displayName" size="lg" />
           <UserProfile.Field field="name" size="sm" class="text-muted-foreground" />
         </div>
-        <UserProfile.Follow variant="primary" class="shrink-0" />
+        <FollowButtonPill {ndk} target={user} variant="solid" class="shrink-0" />
       </div>
       <UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
     </div>

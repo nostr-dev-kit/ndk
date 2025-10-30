@@ -2,7 +2,7 @@
 <!--
   @component UserCardPortrait
   Vertical card layout showing avatar, name, bio, and stats.
-  Built using composable UserProfile primitives.
+  Built using composable UserProfile primitives and FollowButtonPill block.
   Great for grids and profile galleries.
 
   @example
@@ -14,6 +14,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
   import { UserProfile } from '../user-profile';
+  import FollowButtonPill from './follow-button-pill.svelte';
 
   interface Props {
     /** NDK instance */
@@ -31,6 +32,8 @@
     pubkey,
     class: className = ''
   }: Props = $props();
+
+  const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
@@ -55,6 +58,6 @@
         <span class="text-muted-foreground text-xs">followers</span>
       </div>
     </div>
-    <UserProfile.Follow variant="primary" />
+    <FollowButtonPill {ndk} target={user} variant="solid" />
   </div>
 </UserProfile.Root>

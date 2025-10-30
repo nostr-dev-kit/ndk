@@ -3,75 +3,218 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/ndk/edit-props';
-	import Demo from '$site-components/Demo.svelte';
+  import Demo from '$site-components/Demo.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
   import Alert from '$site-components/alert.svelte';
 
-  import BasicExample from './examples/mute-action-basic.svelte';
-  import BasicExampleRaw from './examples/mute-action-basic.svelte?raw';
+  // Import block components for preview
+  import { MuteButton } from '$lib/ndk/blocks';
 
-  import BuilderExample from './examples/mute-action-builder.svelte';
-  import BuilderExampleRaw from './examples/mute-action-builder.svelte?raw';
+  // Import code examples
+  import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
+
+  // Import UI example
+  import UIComposition from './examples/mute-action-builder.svelte';
+  import UICompositionCode from './examples/mute-action-builder--code.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let sampleUser = $state<NDKUser | undefined>();
-
-  $effect(() => {
-    (async () => {
-      try {
-        const user = await ndk.getUserFromNip05('pablo@nostr.com');
-        if (user && !sampleUser) sampleUser = user;
-      } catch (err) {
-        console.error('Failed to fetch sample user:', err);
-      }
-    })();
-  });
+  let sampleUser = $state<NDKUser | undefined>(ndk.getUser({npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"}));
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>MuteAction</h1>
-    <p>Mute button for users with multiple implementation options.</p>
+<div class="container mx-auto p-8 max-w-7xl">
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-bold mb-4">Mute Action</h1>
+    <p class="text-lg text-muted-foreground mb-6">
+      Mute/unmute buttons for users. Choose from pre-built block variants or compose custom layouts using the builder.
+    </p>
+
+    {#if !ndk.$currentUser}
+      <Alert variant="warning" title="Login required">
+        <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
+      </Alert>
+    {/if}
 
     <EditProps.Root>
       <EditProps.Prop name="Sample User" type="user" bind:value={sampleUser} />
     </EditProps.Root>
-  </header>
-
-  {#if !ndk.$currentUser}
-    <Alert variant="warning" title="Login required">
-      <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
-    </Alert>
-  {/if}
+  </div>
 
   {#if sampleUser}
-    <section class="demo space-y-8">
-      <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+    <!-- Blocks Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
+      <p class="text-muted-foreground mb-8">
+        Pre-composed mute button layouts ready to use. Install with a single command.
+      </p>
 
-      <Demo
-        title="Basic Mute Action"
-        description="Simple mute button component"
-        code={BasicExampleRaw}
-      >
-        <BasicExample {ndk} user={sampleUser} />
-      </Demo>
+      <div class="space-y-12">
+        <Demo
+          title="MuteButton"
+          description="Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar and name."
+          component="mute-button"
+          code={MinimalCodeRaw}
+        >
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">Default:</span>
+              <MuteButton {ndk} target={sampleUser} />
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">With User:</span>
+              <MuteButton {ndk} target={sampleUser} showTarget={true} />
+            </div>
+          </div>
+        </Demo>
+      </div>
+    </section>
 
-      <Demo
-        title="Using the Builder"
-        description="Using createMuteAction() for custom implementations with full control"
-        code={BuilderExampleRaw}
-      >
-        <BuilderExample {ndk} user={sampleUser} />
-      </Demo>
+    <!-- Custom Implementation Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-2">Custom Implementation</h2>
+      <p class="text-muted-foreground mb-8">
+        Use the createMuteAction builder directly to create custom mute buttons.
+      </p>
+
+      <div class="space-y-8">
+        <Demo
+          title="Example"
+          description="Building a custom mute button using the createMuteAction builder."
+          code={UICompositionCode}
+        >
+          <UIComposition {ndk} user={sampleUser} />
+        </Demo>
+      </div>
     </section>
   {/if}
 
-  <section class="demo">
-    <h2>API Reference</h2>
-    <div class="api-docs">
-      <h3>ndk.$mutes API</h3>
-      <p>The mutes store provides a Set-like interface with async methods that publish to the network:</p>
-      <pre><code>{`// Check if user is muted (use $derived for reactivity)
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'createMuteAction',
+        description: 'Builder function that provides mute/unmute state and methods. Use directly in custom components or with MuteButton blocks.',
+        importPath: "import { createMuteAction } from '@nostr-dev-kit/svelte'",
+        props: [
+          {
+            name: 'config',
+            type: '() => { target: NDKUser | string }',
+            required: true,
+            description: 'Reactive function returning target configuration'
+          },
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance'
+          }
+        ],
+        returns: {
+          name: 'MuteActionState',
+          properties: [
+            {
+              name: 'isMuted',
+              type: 'boolean',
+              description: 'Current mute state'
+            },
+            {
+              name: 'mute',
+              type: '() => Promise<void>',
+              description: 'Toggle mute/unmute'
+            }
+          ]
+        }
+      },
+      {
+        name: 'MuteButton',
+        description: 'Minimal mute button block with icon-first design.',
+        importPath: "import { MuteButton } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance (optional if provided via context)'
+          },
+          {
+            name: 'target',
+            type: 'NDKUser | string',
+            required: true,
+            description: 'User to mute'
+          },
+          {
+            name: 'showIcon',
+            type: 'boolean',
+            default: 'true',
+            description: 'Whether to show icon'
+          },
+          {
+            name: 'showTarget',
+            type: 'boolean',
+            default: 'false',
+            description: 'When true, shows user avatar and name. Format: "Mute Name" with bold Mute text'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            default: "''",
+            description: 'Custom CSS classes'
+          }
+        ]
+      }
+    ]}
+  />
+
+  <!-- Builder API -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
+    <p class="text-muted-foreground mb-6">
+      Use <code class="px-2 py-1 bg-muted rounded text-sm">createMuteAction()</code> to build custom mute button implementations with reactive state management.
+    </p>
+
+    <div class="bg-muted/50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-3">createMuteAction</h3>
+      <pre class="text-sm overflow-x-auto"><code>import &#123; createMuteAction &#125; from '@nostr-dev-kit/svelte';
+
+// Create mute action
+const muteAction = createMuteAction(() => (&#123; target: user &#125;), ndk);
+
+// Access reactive state
+muteAction.isMuted  // boolean - whether currently muted
+
+// Toggle mute/unmute
+await muteAction.mute();</code></pre>
+
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Parameters:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li>
+            <code>options</code>: Function returning &#123; target: NDKUser | string &#125;
+          </li>
+          <li><code>ndk</code>: NDKSvelte instance</li>
+        </ul>
+      </div>
+
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Returns:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li><code>isMuted</code>: boolean - Current mute state</li>
+          <li><code>mute()</code>: async function - Toggle mute/unmute</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Reference -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-2">ndk.$mutes API</h2>
+    <p class="text-muted-foreground mb-6">
+      The <code class="px-2 py-1 bg-muted rounded text-sm">ndk.$mutes</code> store provides a Set-like interface with async methods that publish to the network.
+    </p>
+
+    <div class="bg-muted/50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-3">ndk.$mutes API</h3>
+      <pre class="text-sm overflow-x-auto bg-background rounded p-4 border border-border"><code>{`// Check if user is muted (use $derived for reactivity)
 const isMuted = $derived(ndk.$mutes.has(pubkey));
 
 // Mute a user
@@ -93,40 +236,3 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
     </div>
   </section>
 </div>
-
-<style>
-  .api-docs {
-    background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-  }
-
-  .api-docs h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-foreground);
-  }
-
-  .api-docs p {
-    margin: 0 0 1rem 0;
-    color: var(--color-muted-foreground);
-  }
-
-  .api-docs pre {
-    margin: 0;
-    padding: 1rem;
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 0.375rem;
-    overflow-x: auto;
-  }
-
-  .api-docs code {
-    font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--color-foreground);
-  }
-</style>

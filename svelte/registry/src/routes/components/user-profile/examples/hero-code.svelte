@@ -1,3 +1,7 @@
+<script lang="ts">
+  const user = $derived(ndk.getUser({ pubkey }));
+</script>
+
 <UserProfile.Root {ndk} {pubkey}>
   <div class="user-profile-hero relative">
     <UserProfile.Banner height="16rem" class="w-full" />
@@ -15,7 +19,7 @@
           <div class="flex-1 min-w-0">
             <UserProfile.Name class="text-2xl font-bold truncate" />
           </div>
-          <UserProfile.Follow variant="primary" />
+          <FollowButtonPill {ndk} target={user} variant="solid" />
         </div>
 
         <UserProfile.Handle class="text-muted-foreground" />

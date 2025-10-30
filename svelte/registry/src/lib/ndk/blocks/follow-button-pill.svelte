@@ -69,34 +69,37 @@
 </script>
 
 {#if !isOwnProfile && ndk?.$currentUser}
-  <button
-    type="button"
-    onclick={handleToggle}
-    class={cn(
-      'inline-flex items-center cursor-pointer transition-all font-medium text-sm rounded-full',
-      compact ? 'p-2 relative group overflow-visible' : 'gap-2 px-4 py-2',
-      variant === 'solid' &&
-        !followAction.isFollowing &&
-        'bg-primary text-primary-foreground hover:bg-primary/90',
-      variant === 'solid' &&
-        followAction.isFollowing &&
-        'bg-muted text-foreground hover:bg-red-500 hover:text-white',
-      variant === 'outline' &&
-        !followAction.isFollowing &&
-        'bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground',
-      variant === 'outline' &&
-        followAction.isFollowing &&
-        'bg-transparent border border-border text-muted-foreground hover:border-red-500 hover:text-red-500',
-      className
-    )}
-    aria-label={followAction.isFollowing
-      ? isHashtag
-        ? `Unfollow #${target}`
-        : 'Unfollow user'
-      : isHashtag
-        ? `Follow #${target}`
-        : 'Follow user'}
-  >
+  <div class={compact ? 'inline-block w-10 h-10 relative' : 'inline-block'}>
+    <button
+      type="button"
+      onclick={handleToggle}
+      class={cn(
+        'inline-flex items-center cursor-pointer transition-all font-medium text-sm rounded-full',
+        compact
+          ? 'w-10 h-10 px-3 group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:z-50'
+          : 'gap-2 px-4 py-2',
+        variant === 'solid' &&
+          !followAction.isFollowing &&
+          'bg-primary text-primary-foreground hover:bg-primary/90',
+        variant === 'solid' &&
+          followAction.isFollowing &&
+          'bg-muted text-foreground hover:bg-red-500 hover:text-white',
+        variant === 'outline' &&
+          !followAction.isFollowing &&
+          'bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground',
+        variant === 'outline' &&
+          followAction.isFollowing &&
+          'bg-transparent border border-border text-muted-foreground hover:border-red-500 hover:text-red-500',
+        className
+      )}
+      aria-label={followAction.isFollowing
+        ? isHashtag
+          ? `Unfollow #${target}`
+          : 'Unfollow user'
+        : isHashtag
+          ? `Follow #${target}`
+          : 'Follow user'}
+    >
     {#if showTarget && !compact}
       {#if isHashtag}
         <svg
@@ -125,7 +128,28 @@
         </span>
       {/if}
     {:else}
-      {#if showIcon}
+      {#if compact && showTarget}
+        <!-- Compact with target shows avatar/hashtag icon -->
+        {#if isHashtag}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="flex-shrink-0"
+          >
+            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
+          </svg>
+        {:else}
+          <Avatar {ndk} user={target as NDKUser} size={16} class="flex-shrink-0" />
+        {/if}
+      {:else if showIcon}
+        <!-- Regular icons -->
         {#if isHashtag}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -162,30 +186,23 @@
       {/if}
       {#if !compact}
         <span>{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+      {:else if showTarget}
+        <!-- Compact with target name/hashtag -->
+        <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[200px] ml-2 inline-flex items-baseline gap-1">
+          <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+          {#if isHashtag}
+            <span class="font-normal">#{target}</span>
+          {:else}
+            <Name {ndk} user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
+          {/if}
+        </span>
       {:else}
-        <!-- Hover label for compact mode -->
-        <span
-          class={cn(
-            'absolute left-full ml-2 px-3 py-1.5 rounded-full whitespace-nowrap pointer-events-none',
-            'opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0',
-            'transition-all duration-300 ease-out z-50',
-            variant === 'solid' &&
-              !followAction.isFollowing &&
-              'bg-primary text-primary-foreground shadow-md',
-            variant === 'solid' &&
-              followAction.isFollowing &&
-              'bg-muted text-foreground shadow-md',
-            variant === 'outline' &&
-              !followAction.isFollowing &&
-              'bg-primary text-primary-foreground shadow-md',
-            variant === 'outline' &&
-              followAction.isFollowing &&
-              'bg-card border border-border text-foreground shadow-md'
-          )}
-        >
+        <!-- Compact without target -->
+        <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[100px] ml-2">
           {followAction.isFollowing ? 'Following' : 'Follow'}
         </span>
       {/if}
     {/if}
-  </button>
+    </button>
+  </div>
 {/if}

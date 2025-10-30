@@ -2,7 +2,7 @@
 <!--
   @component UserCardCompact
   Minimal user card for lists, showing avatar, name, and follow button.
-  Built using composable UserProfile primitives.
+  Built using composable UserProfile primitives and FollowButton block.
   Ideal for sidebars and compact layouts.
 
   @example
@@ -14,6 +14,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
   import { UserProfile } from '../user-profile';
+  import FollowButton from './follow-button.svelte';
 
   interface Props {
     /** NDK instance */
@@ -31,6 +32,8 @@
     pubkey,
     class: className = ''
   }: Props = $props();
+
+  const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
@@ -43,6 +46,6 @@
       <UserProfile.Name field="displayName" size="md" truncate={true} />
       <UserProfile.Field field="name" size="sm" />
     </div>
-    <UserProfile.Follow variant="default" class="shrink-0" />
+    <FollowButton {ndk} target={user} class="shrink-0" />
   </div>
 </UserProfile.Root>

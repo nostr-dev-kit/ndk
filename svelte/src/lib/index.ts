@@ -45,7 +45,7 @@ export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
 // Store types (for typing ndk.* properties)
 export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
-export type { Mint, ReactiveWalletStore, Transaction } from "./stores/wallet.svelte.js";
+export type { Mint, ReactiveWalletStore } from "./stores/wallet.svelte.js";
 export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions } from "./stores/wot.svelte.js";
 export type { SubscribeConfig, Subscription, SyncSubscribeConfig } from "./subscribe.svelte.js";
 // Subscription - can be used as standalone function or via ndk.$subscribe()
@@ -91,8 +91,8 @@ export {
 export {
     createEventContent,
     createEmbeddedEvent,
-    type CreateEmbeddedEventProps,
-    type CreateEventContentProps,
+    type EmbeddedEventConfig,
+    type EventContentConfig,
     type EmbeddedEventState,
     type EventContentState,
 } from "./builders/event-content/index.svelte.js";
@@ -103,7 +103,7 @@ export {
 
 export {
     createProfileFetcher,
-    type CreateProfileFetcherProps,
+    type ProfileFetcherConfig,
     type ProfileFetcherState,
 } from "./builders/profile/index.svelte.js";
 

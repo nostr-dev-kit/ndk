@@ -177,6 +177,7 @@ export {
     type ZapActionConfig,
     type EmojiReaction,
     type EmojiData,
+    type EmojiPickerConfig,
     type ReplyStats,
     type RepostStats,
     type ZapStats,

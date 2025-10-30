@@ -23,7 +23,8 @@
  *
  * @example EventCard blocks:
  * ```svelte
- * <SimpleEventCard {ndk} {event} />
+ * <EventCardClassic {ndk} {event} />
+ * <EventCardMenu {ndk} {event} />
  * ```
  *
  * @example ThreadView blocks:
@@ -96,7 +97,7 @@ export { default as HighlightCardGrid } from './highlight-card-grid.svelte';
 export { default as HighlightCardElegant } from './highlight-card-elegant.svelte';
 
 // EventCard blocks
-export { default as SimpleEventCard } from './simple-event-card.svelte';
+export { default as EventCardClassic } from './event-card-classic.svelte';
 export { default as EventCardMenu } from './event-card-menu.svelte';
 
 // ThreadView blocks

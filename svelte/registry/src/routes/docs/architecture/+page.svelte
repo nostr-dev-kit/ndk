@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CodeBlock from '$components/CodeBlock.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
 </script>
 
 <div class="docs-page">

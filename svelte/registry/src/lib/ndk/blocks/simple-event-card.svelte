@@ -13,7 +13,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { type NDKSvelte, type ThreadingMetadata } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, ReactionAction } from '../event-card/index.js';
+  import { EventCard, ReactionAction } from '../event-card/index.js';
   import RepostButton from './repost-button.svelte';
 
   interface Props {
@@ -61,7 +61,6 @@
 
   {#if showActions}
     <EventCard.Actions>
-      <ReplyAction />
       <RepostButton {ndk} {event} />
       <ReactionAction />
     </EventCard.Actions>

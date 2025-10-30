@@ -27,39 +27,48 @@
   });
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>ZapAction</h1>
-    <p>Zap (lightning payment) button with amount display.</p>
+<div class="container mx-auto p-8 max-w-7xl">
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-bold mb-4">ZapAction</h1>
+    <p class="text-lg text-muted-foreground mb-6">
+      Zap (lightning payment) button with amount display. Send sats to support events and users on Nostr.
+    </p>
 
     <EditProps.Root>
       <EditProps.Prop name="Sample Event" type="event" bind:value={sampleEvent} />
     </EditProps.Root>
-  </header>
+  </div>
 
   {#if sampleEvent}
-    <section class="demo space-y-8">
-      <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+    <!-- Examples Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-2">Examples</h2>
+      <p class="text-muted-foreground mb-8">
+        Different ways to implement zap functionality in your application.
+      </p>
 
-      <Demo
-        title="Basic Usage"
-        description="Simple zap button with automatic amount tracking"
-        code={BasicExampleRaw}
-      >
-        <BasicExample {ndk} event={sampleEvent} />
-      </Demo>
+      <div class="space-y-12">
+        <Demo
+          title="Basic Usage"
+          description="Simple zap button with automatic amount tracking using the ZapAction component."
+          code={BasicExampleRaw}
+        >
+          <BasicExample {ndk} event={sampleEvent} />
+        </Demo>
 
-      <Demo
-        title="Using the Builder"
-        description="Create custom zap UI using createZapAction() for full control"
-        code={BuilderExampleRaw}
-      >
-        <BuilderExample {ndk} event={sampleEvent} />
-      </Demo>
+        <Demo
+          title="Using the Builder"
+          description="Build custom zap buttons using createZapAction() for full control over styling and behavior."
+          code={BuilderExampleRaw}
+        >
+          <BuilderExample {ndk} event={sampleEvent} />
+        </Demo>
+      </div>
     </section>
   {:else}
-    <section class="demo">
-      <p>Loading event...</p>
-    </section>
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Loading event...</div>
+    </div>
   {/if}
 </div>

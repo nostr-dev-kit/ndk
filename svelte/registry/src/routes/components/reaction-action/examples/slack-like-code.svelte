@@ -1,11 +1,26 @@
-const reactionState = createReactionAction(() => ({ event }), ndk);
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
+  import { Tooltip } from 'bits-ui';
+  import AvatarGroup from '$lib/ndk/avatar-group/avatar-group.svelte';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
+
+  const reactionState = createReactionAction(() => ({ event }), ndk);
+</script>
 
 <div class="flex gap-2">
   {#each reactionState.all as reaction}
     <Tooltip.Root>
       <Tooltip.Trigger>
         <button
-          class:reacted={reaction.hasReacted}
+          class="px-3 py-1.5 rounded-full border transition-colors {reaction.hasReacted ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-border hover:bg-muted'}"
           onclick={() => reactionState.react(reaction.emoji)}
         >
           {reaction.emoji} {reaction.count}

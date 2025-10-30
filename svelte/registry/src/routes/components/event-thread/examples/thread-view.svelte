@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EventCard, ReplyAction, ReactionAction } from '$lib/ndk/event-card';
+  import { EventCard, ReactionAction } from '$lib/ndk/event-card';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { ThreadingMetadata } from '$lib/ndk/event-card';
@@ -21,7 +21,6 @@
   <EventCard.Header variant="compact" />
   <EventCard.Content />
   <EventCard.Actions>
-    <ReplyAction />
     <ReactionAction />
   </EventCard.Actions>
 </EventCard.Root>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, ReactionAction } from '$lib/ndk/event-card';
+  import { EventCard, ReactionAction } from '$lib/ndk/event-card';
 
   interface Props {
     ndk: NDKSvelte;
@@ -24,7 +24,6 @@
             <EventCard.Header variant="compact" />
             <EventCard.Content />
             <EventCard.Actions variant="compact">
-              <ReplyAction />
               <ReactionAction />
             </EventCard.Actions>
           </div>

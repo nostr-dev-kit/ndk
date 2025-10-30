@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { UserProfile } from '$lib/ndk/user-profile';
+	import { FollowButtonPill } from '$lib/ndk/blocks';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 	interface Props {
@@ -8,6 +9,8 @@
 	}
 
 	let { ndk, pubkey }: Props = $props();
+
+	const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
@@ -19,7 +22,7 @@
 					<UserProfile.Name field="displayName" size="lg" />
 					<UserProfile.Field field="name" size="sm" class="text-muted-foreground" />
 				</div>
-				<UserProfile.Follow variant="primary" class="shrink-0" />
+				<FollowButtonPill {ndk} target={user} variant="solid" class="shrink-0" />
 			</div>
 			<UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
 		</div>

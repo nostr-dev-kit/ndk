@@ -48,11 +48,30 @@
  * <RepostButtonPill {ndk} {event} variant="outline" />
  * ```
  *
+ * @example ReactionButton blocks:
+ * ```svelte
+ * <ReactionButton {ndk} {event} />
+ * <ReactionButton {ndk} {event} emoji="🔥" />
+ * ```
+ *
+ * @example ReactionSlack blocks:
+ * ```svelte
+ * <ReactionSlack {ndk} {event} />
+ * <ReactionSlack {ndk} {event} variant="vertical" />
+ * <ReactionSlack {ndk} {event} showAvatars={false} />
+ * ```
+ *
  * @example FollowButton blocks:
  * ```svelte
  * <FollowButton {ndk} target={user} />
  * <FollowButtonPill {ndk} target={user} variant="outline" />
  * <FollowButtonCard {ndk} target={user} variant="gradient" />
+ * ```
+ *
+ * @example MuteButton blocks:
+ * ```svelte
+ * <MuteButton {ndk} target={user} />
+ * <MuteButton {ndk} target={user} showTarget={true} />
  * ```
  *
  * @example UserCard blocks:
@@ -92,10 +111,19 @@ export { default as RelayCardList } from './relay-card-list.svelte';
 export { default as RepostButton } from './repost-button.svelte';
 export { default as RepostButtonPill } from './repost-button-pill.svelte';
 
+// ReactionButton blocks
+export { default as ReactionButton } from './reaction-button.svelte';
+
+// ReactionSlack blocks
+export { default as ReactionSlack } from './reaction-slack.svelte';
+
 // FollowButton blocks
 export { default as FollowButton } from './follow-button.svelte';
 export { default as FollowButtonPill } from './follow-button-pill.svelte';
 export { default as FollowButtonCard } from './follow-button-card.svelte';
+
+// MuteButton blocks
+export { default as MuteButton } from './mute-button.svelte';
 
 // UserProfile blocks
 export { default as UserProfileHero } from './user-profile-hero.svelte';

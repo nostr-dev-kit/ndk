@@ -55,6 +55,37 @@
           description="Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name."
           component="follow-button"
           code={MinimalCodeRaw}
+          props={[
+            {
+              name: 'ndk',
+              type: 'NDKSvelte',
+              description: 'NDK instance (optional if provided via context)'
+            },
+            {
+              name: 'target',
+              type: 'NDKUser | string',
+              required: true,
+              description: 'User object or hashtag string to follow'
+            },
+            {
+              name: 'showIcon',
+              type: 'boolean',
+              default: 'true',
+              description: 'Whether to show icon'
+            },
+            {
+              name: 'showTarget',
+              type: 'boolean',
+              default: 'false',
+              description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold.'
+            },
+            {
+              name: 'class',
+              type: 'string',
+              default: "''",
+              description: 'Custom CSS classes'
+            }
+          ]}
         >
           <div class="flex flex-col gap-4">
             <div class="flex items-center gap-4">
@@ -77,23 +108,85 @@
           description="Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name."
           component="follow-button-pill"
           code={PillCodeRaw}
+          props={[
+            {
+              name: 'ndk',
+              type: 'NDKSvelte',
+              description: 'NDK instance (optional if provided via context)'
+            },
+            {
+              name: 'target',
+              type: 'NDKUser | string',
+              required: true,
+              description: 'User object or hashtag string to follow'
+            },
+            {
+              name: 'variant',
+              type: "'solid' | 'outline'",
+              default: "'solid'",
+              description: 'Button style variant'
+            },
+            {
+              name: 'compact',
+              type: 'boolean',
+              default: 'false',
+              description: 'When true, hides the label and shows icon only in a circular layout'
+            },
+            {
+              name: 'showIcon',
+              type: 'boolean',
+              default: 'true',
+              description: 'Whether to show icon'
+            },
+            {
+              name: 'showTarget',
+              type: 'boolean',
+              default: 'false',
+              description: 'When true, shows target name on hover. In compact mode: displays "Follow Name" on hover. In regular mode: displays avatar/icon + "Follow Name". Text is bold.'
+            },
+            {
+              name: 'class',
+              type: 'string',
+              default: "''",
+              description: 'Custom CSS classes'
+            }
+          ]}
         >
           <div class="flex flex-col gap-6 items-center">
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-              <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Default</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
+                <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+              </div>
             </div>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-              <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">With User Target</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+                <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+              </div>
             </div>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
-              <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
+                <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+              </div>
             </div>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} compact />
-              <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} compact />
+                <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
+                <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
+              </div>
             </div>
           </div>
         </Demo>
@@ -103,6 +196,37 @@
           description="Large prominent button with gradient effects. Ideal for profile pages and prominent call-to-actions. Supports showTarget mode for avatar/icon and target name."
           component="follow-button-card"
           code={CardCodeRaw}
+          props={[
+            {
+              name: 'ndk',
+              type: 'NDKSvelte',
+              description: 'NDK instance (optional if provided via context)'
+            },
+            {
+              name: 'target',
+              type: 'NDKUser | string',
+              required: true,
+              description: 'User object or hashtag string to follow'
+            },
+            {
+              name: 'variant',
+              type: "'default' | 'gradient' | 'outline'",
+              default: "'default'",
+              description: 'Button style variant with different visual treatments'
+            },
+            {
+              name: 'showTarget',
+              type: 'boolean',
+              default: 'false',
+              description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold.'
+            },
+            {
+              name: 'class',
+              type: 'string',
+              default: "''",
+              description: 'Custom CSS classes'
+            }
+          ]}
         >
           <div class="flex flex-col gap-6 items-center">
             <div class="flex flex-wrap gap-4 justify-center">

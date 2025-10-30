@@ -3,15 +3,25 @@
 	import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 	import { codeToHtml } from 'shiki';
 
+	interface PropDoc {
+		name: string;
+		type: string;
+		required?: boolean;
+		default?: string;
+		description: string;
+	}
+
 	interface Props {
 		componentName: string;
+		/** Props documentation to display */
+		props?: PropDoc[];
 		/** Optional additional information about what gets installed */
 		note?: string;
 		/** Show the full URL format instead of shorthand */
 		showFullUrl?: boolean;
 	}
 
-	let { componentName, note, showFullUrl = false }: Props = $props();
+	let { componentName, props, note, showFullUrl = false }: Props = $props();
 
 	let copySuccess = $state(false);
 	let copyUsageSuccess = $state(false);
@@ -84,52 +94,99 @@
 
 <div class="usage-section">
 	<!-- Install Command Section -->
-	<div class="section-header">
-		<h4>Install</h4>
-		<p class="section-description">Add this component to your project using the following command:</p>
-	</div>
-	<div class="command-wrapper">
-		<code class="command-text">{command}</code>
-		<button class="copy-button" onclick={copyCommand} title="Copy command">
-			{#if copySuccess}
-				<HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={2} />
-			{:else}
-				<HugeiconsIcon icon={Copy01Icon} size={16} strokeWidth={2} />
-			{/if}
-		</button>
-	</div>
-	{#if note}
-		<p class="note">{note}</p>
-	{/if}
-
-	<!-- Usage Example Section -->
-	<div class="section-header usage-header">
-		<h4>Basic Usage</h4>
-		<p class="section-description">Import and use the component in your Svelte files:</p>
-	</div>
-	<div class="usage-wrapper">
-		{#if isLoadingUsage}
-			<div class="loading">
-				<div class="spinner"></div>
-				<span>Loading syntax highlighting...</span>
-			</div>
-		{:else}
-			<button
-				class="copy-button copy-button-absolute"
-				onclick={copyUsage}
-				title="Copy usage example"
-			>
-				{#if copyUsageSuccess}
+	<section>
+		<div class="section-header">
+			<h4>Install</h4>
+			<p class="section-description">Add this component to your project using the following command:</p>
+		</div>
+		<div class="command-wrapper">
+			<code class="command-text">{command}</code>
+			<button class="copy-button" onclick={copyCommand} title="Copy command">
+				{#if copySuccess}
 					<HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={2} />
 				{:else}
 					<HugeiconsIcon icon={Copy01Icon} size={16} strokeWidth={2} />
 				{/if}
 			</button>
-			<div class="code-container">
-				{@html highlightedUsage}
-			</div>
+		</div>
+		{#if note}
+			<p class="note">{note}</p>
 		{/if}
-	</div>
+	</section>
+
+	<!-- Usage Example Section -->
+	<section>
+		<div class="section-header">
+			<h4>Basic Usage</h4>
+			<p class="section-description">Import and use the component in your Svelte files:</p>
+		</div>
+		<div class="usage-wrapper">
+			{#if isLoadingUsage}
+				<div class="loading">
+					<div class="spinner"></div>
+					<span>Loading syntax highlighting...</span>
+				</div>
+			{:else}
+				<button
+					class="copy-button copy-button-absolute"
+					onclick={copyUsage}
+					title="Copy usage example"
+				>
+					{#if copyUsageSuccess}
+						<HugeiconsIcon icon={Tick02Icon} size={16} strokeWidth={2} />
+					{:else}
+						<HugeiconsIcon icon={Copy01Icon} size={16} strokeWidth={2} />
+					{/if}
+				</button>
+				<div class="code-container">
+					{@html highlightedUsage}
+				</div>
+			{/if}
+		</div>
+	</section>
+
+	<!-- Props Documentation Section -->
+	{#if props && props.length > 0}
+		<section>
+			<div class="section-header">
+				<h4>Props</h4>
+				<p class="section-description">Configure the component with these properties:</p>
+			</div>
+			<div class="props-table-wrapper">
+				<table class="props-table">
+					<thead>
+						<tr>
+							<th>Prop</th>
+							<th>Type</th>
+							<th>Default</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each props as prop}
+							<tr>
+								<td class="prop-name">
+									{prop.name}
+									{#if prop.required}
+										<span class="required-badge">required</span>
+									{/if}
+								</td>
+								<td class="prop-type"><code>{prop.type}</code></td>
+								<td class="prop-default">
+									{#if prop.default}
+										<code>{prop.default}</code>
+									{:else}
+										<span class="text-muted">—</span>
+									{/if}
+								</td>
+								<td class="prop-description">{prop.description}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	{/if}
 </div>
 
 <style>
@@ -141,10 +198,6 @@
 
 	.section-header {
 		margin-bottom: 1rem;
-	}
-
-	.usage-header {
-		margin-top: 0.5rem;
 	}
 
 	.section-header h4 {
@@ -259,5 +312,91 @@
 		font-family: 'Monaco', 'Courier New', monospace;
 		font-size: 0.8125rem;
 		line-height: 1.6;
+	}
+
+	/* Props Table Styles */
+	.props-table-wrapper {
+		border: 1px solid var(--color-border);
+		border-radius: 0.5rem;
+		overflow: hidden;
+		background: var(--color-background);
+	}
+
+	.props-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.875rem;
+	}
+
+	.props-table thead {
+		background: var(--color-muted);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.props-table th {
+		padding: 0.75rem 1rem;
+		text-align: left;
+		font-weight: 600;
+		color: var(--color-foreground);
+		font-size: 0.8125rem;
+		text-transform: uppercase;
+		letter-spacing: 0.025em;
+	}
+
+	.props-table tbody tr {
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.props-table tbody tr:last-child {
+		border-bottom: none;
+	}
+
+	.props-table tbody tr:hover {
+		background: var(--color-muted);
+	}
+
+	.props-table td {
+		padding: 0.75rem 1rem;
+		vertical-align: top;
+	}
+
+	.prop-name {
+		font-weight: 500;
+		color: var(--color-foreground);
+		white-space: nowrap;
+	}
+
+	.required-badge {
+		display: inline-block;
+		margin-left: 0.5rem;
+		padding: 0.125rem 0.375rem;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.025em;
+		color: var(--color-destructive-foreground);
+		background: var(--color-destructive);
+		border-radius: 0.25rem;
+	}
+
+	.prop-type code,
+	.prop-default code {
+		padding: 0.125rem 0.375rem;
+		font-family: 'Monaco', 'Courier New', monospace;
+		font-size: 0.75rem;
+		background: var(--color-muted);
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		color: var(--color-foreground);
+		white-space: nowrap;
+	}
+
+	.prop-description {
+		color: var(--color-muted-foreground);
+		line-height: 1.5;
+	}
+
+	.text-muted {
+		color: var(--color-muted-foreground);
 	}
 </style>

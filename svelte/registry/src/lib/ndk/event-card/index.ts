@@ -12,7 +12,6 @@
  *   <EventCard.Header />
  *   <EventCard.Content />
  *   <EventCard.Actions>
- *     <ReplyAction />
  *     <ReactionAction />
  *   </EventCard.Actions>
  * </EventCard.Root>
@@ -44,7 +43,7 @@ import ThreadLine from './event-card-thread-line.svelte';
 import Dropdown from './event-card-dropdown.svelte';
 
 // Import action components from centralized actions directory
-import { ReplyAction, ReactionAction } from '../actions/index.js';
+import { ReactionAction } from '../actions/index.js';
 
 // Export as namespace for dot notation
 export const EventCard = {
@@ -58,7 +57,6 @@ export const EventCard = {
 
 // Export action components separately for flexibility
 export {
-  ReplyAction,
   ReactionAction,
 };
 

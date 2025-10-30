@@ -1,3 +1,7 @@
+<script lang="ts">
+  import CodeBlock from '$components/CodeBlock.svelte';
+</script>
+
 <div class="docs-page">
   <header class="docs-header">
     <h1>Architecture</h1>
@@ -21,14 +25,14 @@
       it sets up subscriptions to Nostr relays and returns an object with reactive getters for engagement metrics.
     </p>
 
-    <pre><code>{`import { createEventCard } from '@nostr-dev-kit/svelte';
+    <CodeBlock lang="typescript" code={`import { createEventCard } from '@nostr-dev-kit/svelte';
 
-const card = createEventCard({ ndk, event: () => event });
+const card = createEventCard(() => ({ event }), ndk);
 
 // Access reactive state
 card.replies.count
 card.zaps.totalAmount
-card.reactions.byEmoji`}</code></pre>
+card.reactions.byEmoji`} />
 
     <h3>Components (UI Layer)</h3>
     <p>
@@ -38,16 +42,16 @@ card.reactions.byEmoji`}</code></pre>
       and build your own UI from scratch.
     </p>
 
-    <pre><code>{`<!-- Copied to your project -->
-<`+`script>
+    <CodeBlock lang="svelte" code={`<!-- Copied to your project -->
+<script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
-  const state = createEventCard({ ndk, event: () => event });
-</`+`script>
+  const state = createEventCard(() => ({ event }), ndk);
+</script>
 
 <article>
   <!-- Your UI using builder state -->
   <span>{state.replies.count} replies</span>
-</article>`}</code></pre>
+</article>`} />
   </section>
 
   <section>
@@ -57,7 +61,7 @@ card.reactions.byEmoji`}</code></pre>
     </p>
 
     <ol>
-      <li>Component calls builder: <code>createEventCard({"{ndk, event: () => event}"})</code></li>
+      <li>Component calls builder: <code>createEventCard(() => ({"{event}"}), ndk)</code></li>
       <li>Builder creates subscriptions (lazy - only when you access getters)</li>
       <li>New data arrives from Nostr relays over websockets</li>
       <li>Builder updates reactive state automatically</li>
@@ -77,21 +81,21 @@ card.reactions.byEmoji`}</code></pre>
       working UI immediately and you can customize them by editing your copies.
     </p>
 
-    <pre><code>{`npx shadcn-svelte add event-card
+    <CodeBlock lang="bash" code={`npx shadcn-svelte add event-card`} />
 
-<EventCard.Root {ndk} {event}>
+    <CodeBlock lang="svelte" code={`<EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
-</EventCard.Root>`}</code></pre>
+</EventCard.Root>`} />
 
     <p>
       <strong>Start with builders</strong> when you need custom designs or unique interactions. Builders give you
       reactive data without any UI opinions.
     </p>
 
-    <pre><code>{`import { createEventCard, createProfileFetcher } from '@nostr-dev-kit/svelte';
+    <CodeBlock lang="svelte" code={`import { createEventCard, createProfileFetcher } from '@nostr-dev-kit/svelte';
 
-const card = createEventCard({ ndk, event: () => event });
+const card = createEventCard(() => ({ event }), ndk);
 const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
 
 // Build your own UI
@@ -99,7 +103,7 @@ const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
   <img src={profile.profile?.picture} alt="" />
   <p>{event.content}</p>
   <span>{card.zaps.totalAmount} sats</span>
-</div>`}</code></pre>
+</div>`} />
 
     <p>
       You can always switch approaches. If you start with a component but later need more control,
@@ -110,23 +114,20 @@ const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
   <section>
     <h2>Why Functions for Props?</h2>
     <p>
-      Builders take functions like <code>event: () => event</code> instead of direct values like <code>event: event</code>.
+      Builders take a function that returns props (<code>() => ({ event })</code>).
       This enables reactivity - when the input changes, the builder can clean up old subscriptions and create new ones.
     </p>
 
-    <pre><code>{`let currentEvent = $state(events[0]);
-
-// ❌ Won't react to changes
-const card = createEventCard({ ndk, event: currentEvent });
+    <CodeBlock lang="typescript" code={`let currentEvent = $state(events[0]);
 
 // ✅ Reacts when currentEvent changes
-const card = createEventCard({ ndk, event: () => currentEvent });
+const card = createEventCard(() => ({ event: currentEvent }), ndk);
 
 // When you update currentEvent, builder automatically:
 // 1. Stops old subscriptions
 // 2. Creates new subscriptions
 // 3. Updates all state
-currentEvent = events[1];`}</code></pre>
+currentEvent = events[1];`} />
   </section>
 
   <section class="next-section">

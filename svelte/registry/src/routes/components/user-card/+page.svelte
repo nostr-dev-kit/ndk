@@ -215,10 +215,28 @@
 						]
 					},
 					{
-						name: 'UserProfile.Follow',
-						description: 'Follow/unfollow button',
-						importPath: "import { UserProfile } from '$lib/ndk/user-profile'",
+						name: 'FollowButton / FollowButtonPill',
+						description: 'Follow/unfollow button blocks',
+						importPath: "import { FollowButton, FollowButtonPill } from '$lib/ndk/blocks'",
 						props: [
+							{
+								name: 'ndk',
+								type: 'NDKSvelte',
+								required: true,
+								description: 'NDK instance'
+							},
+							{
+								name: 'target',
+								type: 'NDKUser',
+								required: true,
+								description: 'User to follow/unfollow'
+							},
+							{
+								name: 'variant',
+								type: "'solid' | 'outline'",
+								default: "'solid'",
+								description: 'Button style (FollowButtonPill only)'
+							},
 							{
 								name: 'class',
 								type: 'string',

@@ -6,7 +6,6 @@
   @example
   ```svelte
   <EventCard.Actions>
-    <ReplyAction />
     <RepostButton {ndk} {event} />
     <ReactionAction />
   </EventCard.Actions>

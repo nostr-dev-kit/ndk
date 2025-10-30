@@ -1,3 +1,7 @@
+<script lang="ts">
+  const user = $derived(ndk.getUser({ pubkey }));
+</script>
+
 <UserProfile.Root {ndk} {pubkey}>
   <div class="flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-muted">
     <UserProfile.Avatar size={48} />
@@ -5,6 +9,6 @@
       <UserProfile.Name field="displayName" size="md" truncate={true} />
       <UserProfile.Field field="name" size="sm" />
     </div>
-    <UserProfile.Follow variant="default" class="shrink-0" />
+    <FollowButton {ndk} target={user} class="shrink-0" />
   </div>
 </UserProfile.Root>

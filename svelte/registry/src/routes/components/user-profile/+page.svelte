@@ -287,16 +287,16 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Follow</h3>
+					<h3 class="text-xl font-semibold mb-2">Follow Buttons</h3>
 					<p class="text-muted-foreground mb-4">
-						Follow/unfollow button with reactive state.
+						For follow/unfollow functionality, use the <a href="/components/follow-action" class="text-primary underline">FollowButton or FollowButtonPill blocks</a> from <code>$lib/ndk/blocks</code> instead of a UserProfile primitive.
 					</p>
 					<div class="bg-muted/50 p-4 rounded-lg text-sm">
-						<p class="mb-2"><strong>Props:</strong></p>
+						<p class="mb-2"><strong>Available Blocks:</strong></p>
 						<ul class="list-disc list-inside space-y-1 text-muted-foreground">
-							<li><code>variant?: 'default' | 'outline' | 'primary'</code> - Button style (default: 'default')</li>
-							<li><code>showIcon?: boolean</code> - Show icon in button (default: true)</li>
-							<li><code>class?: string</code> - Additional CSS classes</li>
+							<li><code>FollowButton</code> - Minimal text-style button</li>
+							<li><code>FollowButtonPill</code> - Rounded pill-style button with variants</li>
+							<li><code>FollowButtonCard</code> - Large card-style button with gradients</li>
 						</ul>
 					</div>
 				</div>

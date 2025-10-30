@@ -11,8 +11,8 @@
 	import ClassicCodeRaw from './examples/classic-code.svelte?raw';
 
 	// Import examples
-	import AvatarNameHandleExample from './examples/avatar-name-handle.svelte';
-	import AvatarNameHandleExampleRaw from './examples/avatar-name-handle.svelte?raw';
+	import PrimitivesGridExample from './examples/primitives-grid.svelte';
+	import PrimitivesGridExampleRaw from './examples/primitives-grid.svelte?raw';
 	import PopoverCompositionExample from './examples/popover-composition.svelte';
 	import PopoverCompositionCodeRaw from './examples/popover-composition-code.svelte?raw';
 
@@ -147,11 +147,11 @@
 
 			<div class="space-y-8">
 				<Demo
-					title="Basic Usage"
-					description="Minimal example with UserProfile.Root, Avatar, Name, and Handle primitives."
-					code={AvatarNameHandleExampleRaw}
+					title="All Primitives"
+					description="Complete overview of all UserProfile component primitives with common compositions. Each primitive can be used standalone or combined with others."
+					code={PrimitivesGridExampleRaw}
 				>
-					<AvatarNameHandleExample {ndk} pubkey={examplePubkey} />
+					<PrimitivesGridExample {ndk} pubkey={examplePubkey} />
 				</Demo>
 			</div>
 		</section>

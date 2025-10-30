@@ -70,8 +70,8 @@ export function createRepostAction(
         const sub = repostsSub;
         if (!sub) return { count: 0, hasReposted: false };
 
-        const { ndk } = config();
         const reposts = sub.events;
+        if (!reposts) return { count: 0, hasReposted: false };
 
         let userRepost: NDKEvent | undefined;
         const hasReposted = resolvedNDK.$currentPubkey
@@ -85,7 +85,7 @@ export function createRepostAction(
             : false;
 
         return {
-            count: reposts.size,
+            count: reposts.length,
             hasReposted,
             userRepost
         };

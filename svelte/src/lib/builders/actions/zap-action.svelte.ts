@@ -1,4 +1,4 @@
-import { NDKEvent, NDKKind, type NDKUser, zapInvoiceFromEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, NDKZapper, type NDKUser, zapInvoiceFromEvent } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
 import { resolveNDK } from "../resolve-ndk.svelte.js";
 
@@ -73,7 +73,6 @@ export function createZapAction(
         const sub = zapsSub;
         if (!sub) return { count: 0, totalAmount: 0, hasZapped: false };
 
-        const { ndk } = config();
         const zaps = Array.from(sub.events);
         const zapInvoices = zaps.map(zapInvoiceFromEvent).filter(Boolean);
         const totalAmount = zapInvoices.reduce((sum, invoice) =>
@@ -102,8 +101,11 @@ export function createZapAction(
             throw new Error("User must be logged in to zap");
         }
 
-        // Use NDK's zap functionality
-        await target.zap(amount * 1000, comment); // Convert sats to millisats
+        // Use NDKZapper to send the zap
+        const zapper = new NDKZapper(target, amount * 1000, "msat", {
+            comment,
+        });
+        await zapper.zap();
     }
 
     return {

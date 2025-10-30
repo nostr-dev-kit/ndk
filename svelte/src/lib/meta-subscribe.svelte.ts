@@ -130,14 +130,14 @@ export function createMetaSubscription<T extends NDKEvent = NDKEvent>(
     // Extract filters
     const derivedFilters = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg?.filters) return [];
+        if (!cfg || !('filters' in cfg)) return [];
         return Array.isArray(cfg.filters) ? cfg.filters : [cfg.filters];
     });
 
     // Extract NDK subscription options
     const derivedNdkOpts = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg) return {};
+        if (!cfg || !('filters' in cfg)) return {};
 
         const { filters, sort, ...ndkOpts } = cfg;
         return ndkOpts as NDKSubscriptionOptions;

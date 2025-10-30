@@ -60,7 +60,7 @@ export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undef
 
         if (!fetchPromise) {
             // No in-flight request, create a new one
-            fetchPromise = ndk.fetchUser(id).finally(() => {
+            fetchPromise = ndk.fetchUser(id).then(user => user ?? null).finally(() => {
                 inFlightUserRequests.delete(id);
             });
 

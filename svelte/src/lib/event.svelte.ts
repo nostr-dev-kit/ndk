@@ -222,14 +222,14 @@ export function createFetchEvents<T extends NDKEvent = NDKEvent>(
     // Extract filters
     const derivedFilters = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg?.filters) return undefined;
+        if (!cfg || !('filters' in cfg)) return undefined;
         return Array.isArray(cfg.filters) ? cfg.filters : [cfg.filters];
     });
 
     // Extract NDK options
     const derivedNdkOpts = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg) return {};
+        if (!cfg || !('filters' in cfg)) return {};
 
         const { filters, ...ndkOpts } = cfg;
         return ndkOpts as NDKSubscriptionOptions;

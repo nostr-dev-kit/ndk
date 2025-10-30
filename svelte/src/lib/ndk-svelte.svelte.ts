@@ -42,7 +42,7 @@ class ReactiveFollows extends Array<Hexpubkey> {
         const user = this.#sessions?.currentUser;
         if (!user) throw new Error("No active user");
 
-        const followSet = this.#sessions?.follows ?? new Set();
+        const followSet = this.#sessions?.current?.followSet ?? new Set();
 
         // Call core's follow() method once with the array
         return await user.follow(pubkeys, followSet);
@@ -57,7 +57,7 @@ class ReactiveFollows extends Array<Hexpubkey> {
         const user = this.#sessions?.currentUser;
         if (!user) throw new Error("No active user");
 
-        const followSet = this.#sessions?.follows ?? new Set();
+        const followSet = this.#sessions?.current?.followSet ?? new Set();
 
         // Call core's unfollow() method once with the array
         return await user.unfollow(pubkeys, followSet);

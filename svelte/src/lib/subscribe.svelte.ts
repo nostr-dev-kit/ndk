@@ -250,28 +250,28 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
                     if (wrapperOpts.wot && typeof wrapperOpts.wot === "object") {
                         // Custom filter options for this subscription
                         const { maxDepth, minScore, includeUnknown = false } = wrapperOpts.wot;
-                        const inWoT = ndk.$wot.includes(event.pubkey, { maxDepth });
+                        const inWoT = ndk.$wot!.includes(event.pubkey, { maxDepth });
 
                         if (!inWoT) {
                             return includeUnknown;
                         }
 
                         if (minScore !== undefined) {
-                            const score = ndk.$wot.getScore(event.pubkey);
+                            const score = ndk.$wot!.getScore(event.pubkey);
                             return score >= minScore;
                         }
 
                         return true;
                     } else {
                         // Use global auto-filter
-                        return !ndk.$wot.shouldFilterEvent(event);
+                        return !ndk.$wot!.shouldFilterEvent(event);
                     }
                 });
             }
 
             // Apply WoT ranking if specified
             if (wrapperOpts.wotRank) {
-                events = ndk.$wot.rankEvents(events, wrapperOpts.wotRank) as typeof events;
+                events = ndk.$wot!.rankEvents(events, wrapperOpts.wotRank) as typeof events;
                 wotSorted = true;
             }
         }

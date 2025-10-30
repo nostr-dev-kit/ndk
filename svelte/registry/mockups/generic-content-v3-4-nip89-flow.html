@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V3 Concept 4: NIP-89 Flow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .event-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #3a3a3a;
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .author-info {
+            flex: 1;
+        }
+        .author-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .author-handle {
+            font-size: 14px;
+            color: #888;
+        }
+        .timestamp {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .content-area {
+            border: 2px dashed #667eea;
+            background: #1e1e1e;
+        }
+
+        /* NIP-89 aware display */
+        .generic-content {
+            padding: 20px;
+        }
+
+        .kind-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .kind-badge {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+            color: #888;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .unknown-label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .alt-text {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        /* NIP-89 recommendations */
+        .handlers-section {
+            margin-top: 16px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .handler-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .handler-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .handler-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .handler-info {
+            flex: 1;
+        }
+
+        .handler-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .handler-recommenders {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .handler-recommenders strong {
+            color: #667eea;
+        }
+
+        .handler-platforms {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .platform-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: #aaa;
+        }
+
+        .no-handlers {
+            text-align: center;
+            padding: 24px;
+            color: #666;
+        }
+
+        .no-handlers-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .no-handlers-text {
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .query-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .query-btn:hover {
+            background: #5568d3;
+        }
+
+        .card-actions {
+            padding: 12px 20px;
+            border-top: 1px solid #3a3a3a;
+            display: flex;
+            gap: 24px;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .action-btn:hover {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- SCENARIO 1: Recommendations found -->
+    <div class="event-card" style="margin-bottom: 40px;">
+        <div class="card-header">
+            <div class="avatar"></div>
+            <div class="author-info">
+                <div class="author-name">PABLOf7z</div>
+                <div class="author-handle">@f7z.io</div>
+            </div>
+            <div class="timestamp">10/8/2025</div>
+        </div>
+
+        <div class="content-area">
+            <div class="generic-content">
+                <div class="kind-line">
+                    <span class="kind-badge">kind:981234298324</span>
+                    <span class="unknown-label">• Unknown event type</span>
+                </div>
+
+                <div class="alt-text">
+                    Published a new song: "Midnight Dreams" - An ambient electronic track exploring themes of solitude and connection. Duration 4:32, featuring synthesizers and field recordings.
+                </div>
+
+                <div class="handlers-section">
+                    <div class="section-label">Open With</div>
+
+                    <div class="handler-item">
+                        <div class="handler-icon">🎵</div>
+                        <div class="handler-info">
+                            <div class="handler-name">Wavlake</div>
+                            <div class="handler-recommenders">
+                                Recommended by <strong>12 people you follow</strong>
+                            </div>
+                            <div class="handler-platforms">
+                                <span class="platform-badge">web</span>
+                                <span class="platform-badge">ios</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="handler-item">
+                        <div class="handler-icon">🎧</div>
+                        <div class="handler-info">
+                            <div class="handler-name">Nostr Music</div>
+                            <div class="handler-recommenders">
+                                Recommended by <strong>8 people you follow</strong>
+                            </div>
+                            <div class="handler-platforms">
+                                <span class="platform-badge">web</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">💬 Reply</button>
+            <button class="action-btn">🔁 Repost</button>
+            <button class="action-btn">❤️ Like</button>
+        </div>
+    </div>
+
+    <p style="color: #888; text-align: center; margin: 20px 0; font-style: italic;">
+        Scenario 1: Handlers found via NIP-89
+    </p>
+
+    <!-- SCENARIO 2: No recommendations found -->
+    <div class="event-card">
+        <div class="card-header">
+            <div class="avatar"></div>
+            <div class="author-info">
+                <div class="author-name">PABLOf7z</div>
+                <div class="author-handle">@f7z.io</div>
+            </div>
+            <div class="timestamp">10/8/2025</div>
+        </div>
+
+        <div class="content-area">
+            <div class="generic-content">
+                <div class="kind-line">
+                    <span class="kind-badge">kind:981234298324</span>
+                    <span class="unknown-label">• Unknown event type</span>
+                </div>
+
+                <div class="alt-text">
+                    Published a new song: "Midnight Dreams" - An ambient electronic track exploring themes of solitude and connection. Duration 4:32, featuring synthesizers and field recordings.
+                </div>
+
+                <div class="handlers-section">
+                    <div class="no-handlers">
+                        <div class="no-handlers-icon">🔍</div>
+                        <div class="no-handlers-text">
+                            No compatible apps found in your network
+                        </div>
+                        <button class="query-btn">Search App Directory</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">💬 Reply</button>
+            <button class="action-btn">🔁 Repost</button>
+            <button class="action-btn">❤️ Like</button>
+        </div>
+    </div>
+
+    <p style="color: #888; text-align: center; margin-top: 20px; font-style: italic;">
+        Scenario 2: No handlers found - fallback to directory search
+    </p>
+</body>
+</html>

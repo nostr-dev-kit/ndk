@@ -46,15 +46,16 @@
 	</section>
 
 	<section>
-		<h2>Live Demo: Zapped by Your Follows</h2>
+		<h2>Live Demo: Reposted by Your Follows</h2>
 		<p>
-			This example shows events that have been zapped by people you follow. Notice how minimal the
-			code is — just one reactive call that handles subscriptions, fetching, and updates:
+			This example shows content that has been reposted by people you follow. Notice how minimal
+			the code is — just one reactive call that handles subscriptions, fetching, and updates. Use
+			the sort buttons to see how the feed instantly reorganizes:
 		</p>
 
 		<Demo
-			title="Zapped Events Feed"
-			description="Real-time feed of events zapped by your follows. The feed automatically updates as new zaps arrive."
+			title="Reposted Content Feed"
+			description="Real-time feed of content reposted by your follows. Try the sort options to see the feed reorganize instantly. The feed automatically updates as new reposts arrive."
 			code={ZappedFeedRaw}
 		>
 			<div class="max-w-3xl w-full">
@@ -67,7 +68,8 @@
 			<p>
 				The code you see is the <em>entire implementation</em>. No manual event fetching, no
 				complex state management, no duplicate subscriptions. Just one reactive call that tracks
-				zaps from your follows and automatically fetches the zapped content.
+				reposts from your follows and automatically fetches the reposted content. The sort options
+				update instantly without restarting the subscription.
 			</p>
 		</div>
 	</section>
@@ -78,15 +80,15 @@
 		<CodeBlock
 			lang="typescript"
 			code={`const feed = ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [9735], authors: ndk.$follows }],
+  filters: [{ kinds: [6, 16], authors: ndk.$follows }],
   sort: 'tag-time'
 }));
 
-// Access the events that were zapped
-feed.events  // Array of events that received zaps
+// Access the events that were reposted
+feed.events  // Array of events that were reposted
 
-// See who zapped each event
-const zapEvents = feed.eventsTagging(event);  // Array of kind 9735 zap events`}
+// See who reposted each event
+const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`}
 		/>
 	</section>
 

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V2 Concept 6: Tag-Focused Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .event-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #3a3a3a;
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .author-info {
+            flex: 1;
+        }
+        .author-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .author-handle {
+            font-size: 14px;
+            color: #888;
+        }
+        .timestamp {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .content-area {
+            border: 2px dashed #667eea;
+            background: #1e1e1e;
+        }
+
+        /* Concept 6: Show structured tag data prominently */
+        .generic-content-tags {
+            padding: 20px;
+        }
+
+        .kind-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .kind-icon-large {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        .kind-info {
+            flex: 1;
+        }
+        .kind-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .kind-number {
+            font-size: 13px;
+            color: #888;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .alt-text {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #e0e0e0;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .metadata-section {
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
+        }
+        .metadata-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 12px;
+            border-radius: 8px;
+        }
+        .metadata-key {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .metadata-value {
+            font-size: 13px;
+            color: #e0e0e0;
+            font-family: 'SF Mono', Monaco, monospace;
+            word-break: break-all;
+        }
+
+        .cta-section {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .cta-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .cta-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .cta-btn.primary:hover {
+            opacity: 0.9;
+        }
+        .cta-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+        .cta-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .card-actions {
+            padding: 12px 20px;
+            border-top: 1px solid #3a3a3a;
+            display: flex;
+            gap: 24px;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .action-btn:hover {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="event-card">
+        <div class="card-header">
+            <div class="avatar"></div>
+            <div class="author-info">
+                <div class="author-name">PABLOf7z</div>
+                <div class="author-handle">@f7z.io</div>
+            </div>
+            <div class="timestamp">10/8/2025</div>
+        </div>
+
+        <div class="content-area">
+            <div class="generic-content-tags">
+                <div class="kind-header">
+                    <span class="kind-icon-large">🎵</span>
+                    <div class="kind-info">
+                        <div class="kind-title">Music Event</div>
+                        <div class="kind-number">kind:31337</div>
+                    </div>
+                </div>
+
+                <div class="alt-text">
+                    Published a new song: "Midnight Dreams" - An ambient electronic track exploring themes of solitude and connection. Duration 4:32, featuring synthesizers and field recordings.
+                </div>
+
+                <div class="metadata-section">
+                    <div class="section-title">Event Data</div>
+                    <div class="metadata-grid">
+                        <div class="metadata-item">
+                            <div class="metadata-key">TITLE</div>
+                            <div class="metadata-value">Midnight Dreams</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-key">DURATION</div>
+                            <div class="metadata-value">4:32</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-key">GENRE</div>
+                            <div class="metadata-value">ambient</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-key">FILE</div>
+                            <div class="metadata-value">audio.mp3</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <button class="cta-btn primary">
+                        <span>🚀</span>
+                        <span>Find Apps</span>
+                    </button>
+                    <button class="cta-btn secondary">
+                        <span>🔍</span>
+                        <span>Details</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">💬 Reply</button>
+            <button class="action-btn">🔁 Repost</button>
+            <button class="action-btn">❤️ Like</button>
+        </div>
+    </div>
+
+    <p style="color: #888; text-align: center; margin-top: 20px; font-style: italic;">
+        Concept 6: Structured metadata grid showing parsed tag data
+    </p>
+</body>
+</html>

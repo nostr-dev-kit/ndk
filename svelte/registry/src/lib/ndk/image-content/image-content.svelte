@@ -25,8 +25,8 @@
 		imageClass = ''
 	}: Props = $props();
 
-	const ndk = getNDKFromContext(providedNdk);
-
+	console.log(image.inspect)
+	
 	const imetas = $derived(image.imetas);
 	const hasImages = $derived(imetas.length > 0);
 

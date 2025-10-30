@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageCard Design Proposals - Captions Included</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 60px;
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .proposal {
+            background: #1a1a1a;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .proposal-header {
+            padding: 16px 20px;
+            background: #151515;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .proposal-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .proposal-desc {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .card-preview {
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        /* Shared styles */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar-tiny {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .image-placeholder {
+            background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            font-size: 3rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid #2a2a2a;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        /* Proposal 1: Instagram-style */
+        .p1-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .p1-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .p1-user-info {
+            flex: 1;
+        }
+
+        .p1-username {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .p1-timestamp {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .p1-image {
+            width: 100%;
+            aspect-ratio: 1;
+        }
+
+        .p1-caption {
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .p1-actions {
+            padding: 0 16px 16px;
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Proposal 2: Pinterest-style */
+        .p2-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+            position: relative;
+        }
+
+        .p2-image {
+            width: 100%;
+            height: 320px;
+        }
+
+        .p2-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            padding: 80px 20px 20px;
+        }
+
+        .p2-caption {
+            font-size: 1.1rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .p2-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .p2-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        /* Proposal 3: Fullbleed Hero */
+        .p3-card {
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            height: 500px;
+        }
+
+        .p3-image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .p3-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+            padding: 80px 24px 24px;
+        }
+
+        .p3-caption {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            color: #ddd;
+        }
+
+        .p3-author-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .p3-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Proposal 4: Compact List */
+        .p4-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #2a2a2a;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .p4-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .p4-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .p4-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .p4-caption {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+        }
+
+        /* Proposal 5: Gallery Grid */
+        .p5-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .p5-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            position: relative;
+        }
+
+        .p5-quick-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .p5-quick-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-center;
+        }
+
+        .p5-footer {
+            padding: 12px;
+        }
+
+        .p5-caption {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .p5-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Proposal 6: Polaroid */
+        .p6-card {
+            background: #fff;
+            border-radius: 4px;
+            padding: 16px 16px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .p6-image {
+            width: 100%;
+            aspect-ratio: 1;
+            margin-bottom: 16px;
+        }
+
+        .p6-caption {
+            text-align: center;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .p6-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        /* Proposal 7: Magazine */
+        .p7-card {
+            background: #000;
+            border: 2px solid #fff;
+            position: relative;
+            height: 480px;
+        }
+
+        .p7-image {
+            width: 100%;
+            height: 60%;
+        }
+
+        .p7-content {
+            padding: 20px;
+            background: #fff;
+            color: #000;
+            height: 40%;
+        }
+
+        .p7-caption {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            color: #666;
+        }
+
+        .p7-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 2px solid #000;
+            margin-top: auto;
+        }
+
+        /* Proposal 8: Minimal Border */
+        .p8-card {
+            border: 3px solid #667eea;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .p8-image {
+            width: 100%;
+            height: 350px;
+        }
+
+        .p8-caption {
+            background: #1a1a1a;
+            padding: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .p8-bar {
+            background: #667eea;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .p8-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Proposal 9: Hover Reveal */
+        .p9-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            height: 420px;
+        }
+
+        .p9-image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .p9-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            transform: translateY(calc(100% - 60px));
+            transition: transform 0.3s;
+        }
+
+        .p9-card:hover .p9-info {
+            transform: translateY(0);
+        }
+
+        .p9-peek {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .p9-caption {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .p9-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Proposal 10: Split Screen */
+        .p10-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 320px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .p10-image {
+        }
+
+        .p10-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .p10-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .p10-caption {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        /* Proposal 11: Newspaper */
+        .p11-card {
+            background: #f5f5f5;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            transform: rotate(-1deg);
+        }
+
+        .p11-image {
+            width: 100%;
+            height: 280px;
+            border: 4px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .p11-caption {
+            margin-top: 16px;
+            padding: 12px;
+            background: #fff;
+            border-left: 4px solid #3b82f6;
+            color: #000;
+            font-size: 0.9rem;
+        }
+
+        .p11-meta {
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.75rem;
+            font-style: italic;
+        }
+
+        /* Proposal 12: Neon Frame */
+        .p12-card {
+            background: #0a0a0a;
+            padding: 8px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .p12-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
+            opacity: 0.5;
+            filter: blur(20px);
+        }
+
+        .p12-inner {
+            position: relative;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #8b5cf6;
+        }
+
+        .p12-image {
+            width: 100%;
+            height: 280px;
+        }
+
+        .p12-footer {
+            padding: 16px;
+            background: #0a0a0a;
+        }
+
+        .p12-caption {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .p12-author {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .p12-author-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Proposal 13: Stacked Layers */
+        .p13-card {
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .p13-layer {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .p13-layer::before {
+            content: '';
+            position: absolute;
+            inset: 8px 8px auto auto;
+            width: calc(100% - 16px);
+            height: calc(100% - 8px);
+            background: #151515;
+            border: 1px solid #222;
+            border-radius: 12px;
+            z-index: -1;
+        }
+
+        .p13-image {
+            width: 100%;
+            height: 280px;
+        }
+
+        .p13-info {
+            padding: 16px;
+        }
+
+        .p13-caption {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .p13-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Proposal 14: Bottom Sheet */
+        .p14-card {
+            background: #1a1a1a;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .p14-image {
+            width: 100%;
+            height: 360px;
+        }
+
+        .p14-sheet {
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 24px 24px 0 0;
+            margin-top: -24px;
+            position: relative;
+        }
+
+        .p14-handle {
+            width: 40px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        .p14-caption {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .p14-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        /* Proposal 15: Film Strip */
+        .p15-card {
+            background: #000;
+            padding: 16px 8px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .p15-sprocket {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 8px,
+                #333 8px,
+                #333 12px
+            );
+        }
+
+        .p15-sprocket-left { left: 0; }
+        .p15-sprocket-right { right: 0; }
+
+        .p15-frame {
+            margin: 0 16px;
+        }
+
+        .p15-image {
+            width: 100%;
+            height: 240px;
+            border: 2px solid #333;
+        }
+
+        .p15-info {
+            margin-top: 12px;
+            padding: 12px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .p15-caption {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .p15-author {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* Proposal 16: Glassmorphic */
+        .p16-card {
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            height: 450px;
+        }
+
+        .p16-image {
+            width: 100%;
+            height: 100%;
+        }
+
+        .p16-glass {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .p16-caption {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .p16-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ImageCard Design Proposals</h1>
+        <p class="subtitle">16 unique styles showcasing caption/description placement (metadata removed - not important)</p>
+
+        <div class="grid">
+            <!-- Proposal 1 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">1. Instagram-style</div>
+                    <div class="proposal-desc">Classic social feed - caption after image, before actions</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p1-card">
+                        <div class="p1-header">
+                            <div class="avatar"></div>
+                            <div class="p1-user-info">
+                                <div class="p1-username">alice</div>
+                                <div class="p1-timestamp">2h ago</div>
+                            </div>
+                            <button class="action-btn">•••</button>
+                        </div>
+                        <div class="p1-image image-placeholder">📷</div>
+                        <div class="p1-caption">
+                            Golden hour over the mountains. The way the light hits the peaks is absolutely stunning.
+                        </div>
+                        <div class="p1-actions">
+                            <button class="action-btn">♡ 24</button>
+                            <button class="action-btn">↻ 3</button>
+                            <button class="action-btn">⚡ 12</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 2 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">2. Pinterest Masonry</div>
+                    <div class="proposal-desc">Caption floats on gradient overlay over image</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p2-card">
+                        <div class="p2-image image-placeholder" style="background: linear-gradient(135deg, #831843 0%, #c2185b 100%);">📷</div>
+                        <div class="p2-overlay">
+                            <div class="p2-caption">
+                                The perfect symmetry of nature
+                            </div>
+                            <div class="p2-author">
+                                <div class="avatar-sm"></div>
+                                <div>
+                                    <div style="font-weight: 600;">alice</div>
+                                    <div style="font-size: 0.75rem; color: #aaa;">2h ago</div>
+                                </div>
+                            </div>
+                            <div class="p2-actions">
+                                <button class="action-btn">♡ 24</button>
+                                <button class="action-btn">↻ 3</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 3 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">3. Fullbleed Hero</div>
+                    <div class="proposal-desc">Caption anchored at bottom with author info</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p3-card">
+                        <div class="p3-image image-placeholder" style="background: linear-gradient(135deg, #134e4a 0%, #059669 100%);">📷</div>
+                        <div class="p3-content">
+                            <div class="p3-caption">
+                                Caught this incredible moment during my morning hike. The colors were even more vibrant in person.
+                            </div>
+                            <div class="p3-author-bar">
+                                <div class="p3-author">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 1.1rem;">alice</div>
+                                        <div style="font-size: 0.85rem; color: #888;">2 hours ago</div>
+                                    </div>
+                                </div>
+                                <button class="action-btn">Follow</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 4 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">4. Compact List</div>
+                    <div class="proposal-desc">Caption next to thumbnail, space-efficient</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p4-card">
+                        <div class="p4-image image-placeholder" style="font-size: 2.5rem; background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%);">📷</div>
+                        <div class="p4-content">
+                            <div class="p4-author">
+                                <div class="avatar-sm"></div>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.9rem;">alice</div>
+                                    <div style="font-size: 0.75rem; color: #666;">2h ago</div>
+                                </div>
+                            </div>
+                            <div class="p4-caption">
+                                Morning light streaming through the forest canopy
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 5 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">5. Gallery Grid</div>
+                    <div class="proposal-desc">Caption in footer below image</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p5-card">
+                        <div class="p5-image image-placeholder" style="background: linear-gradient(135deg, #3b0764 0%, #7c3aed 100%);">
+                            📷
+                            <div class="p5-quick-actions">
+                                <button class="p5-quick-btn">♡</button>
+                                <button class="p5-quick-btn">↻</button>
+                                <button class="p5-quick-btn">⋯</button>
+                            </div>
+                        </div>
+                        <div class="p5-footer">
+                            <div class="p5-caption">
+                                Exploring hidden trails in the wilderness
+                            </div>
+                            <div class="p5-author">
+                                <div class="avatar-tiny"></div>
+                                <span>alice</span>
+                                <span style="color: #666;">·</span>
+                                <span style="color: #666;">2h ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 6 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">6. Polaroid Style</div>
+                    <div class="proposal-desc">Handwritten caption below photo</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p6-card">
+                        <div class="p6-image image-placeholder" style="color: rgba(0,0,0,0.1); background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);">📷</div>
+                        <div class="p6-caption">Sunset over the mountains ~ captured this beauty just in time</div>
+                        <div class="p6-meta">
+                            <span>@alice</span>
+                            <span>2h ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 7 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">7. Magazine Editorial</div>
+                    <div class="proposal-desc">Caption as subtitle in content section</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p7-card">
+                        <div class="p7-image image-placeholder" style="color: rgba(255,255,255,0.2); background: linear-gradient(135deg, #14532d 0%, #22c55e 100%);">📷</div>
+                        <div class="p7-content">
+                            <div style="font-weight: 800; font-size: 1.3rem; margin-bottom: 8px; text-transform: uppercase;">MOUNTAIN VISTA</div>
+                            <div class="p7-caption">Amazing sunset captured at 3000m elevation. The play of light and shadow across the peaks was mesmerizing.</div>
+                            <div class="p7-author">
+                                <div class="avatar-sm" style="background: #000;"></div>
+                                <div>
+                                    <div style="font-weight: 700;">ALICE</div>
+                                    <div style="font-size: 0.75rem; color: #666;">2 HOURS AGO</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 8 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">8. Minimal Border Focus</div>
+                    <div class="proposal-desc">Caption between image and colored footer bar</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p8-card">
+                        <div class="p8-image image-placeholder" style="color: rgba(255,255,255,0.1); background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">📷</div>
+                        <div class="p8-caption">
+                            The convergence of light and landscape
+                        </div>
+                        <div class="p8-bar">
+                            <div class="p8-author">
+                                <div class="avatar-sm"></div>
+                                <span style="font-weight: 600;">alice</span>
+                            </div>
+                            <span style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">2h ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 9 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">9. Hover-Reveal Info</div>
+                    <div class="proposal-desc">Caption revealed on hover with slide-up panel</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p9-card">
+                        <div class="p9-image image-placeholder" style="background: linear-gradient(135deg, #713f12 0%, #ca8a04 100%);">📷</div>
+                        <div class="p9-info">
+                            <div class="p9-peek">👆 Hover to see caption</div>
+                            <div class="p9-caption">
+                                A moment of pure serenity. Sometimes you just need to stop and appreciate the beauty around you.
+                            </div>
+                            <div class="p9-author">
+                                <div class="avatar-sm"></div>
+                                <div>
+                                    <div style="font-weight: 600;">alice</div>
+                                    <div style="font-size: 0.75rem; color: #888;">2 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 10 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">10. Split Screen</div>
+                    <div class="proposal-desc">Caption in dedicated content area beside image</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p10-card">
+                        <div class="p10-image image-placeholder" style="background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);">📷</div>
+                        <div class="p10-content">
+                            <div class="p10-author">
+                                <div class="avatar"></div>
+                                <div>
+                                    <div style="font-weight: 600;">alice</div>
+                                    <div style="font-size: 0.85rem; color: #666;">2h ago</div>
+                                </div>
+                            </div>
+                            <div class="p10-caption">
+                                Every sunset is a reminder that endings can be beautiful too. This one painted the sky in shades I'd never seen before.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 11 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">11. Newspaper Clipping</div>
+                    <div class="proposal-desc">Caption as article text with byline</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p11-card">
+                        <div class="p11-image image-placeholder" style="color: rgba(0,0,0,0.1); background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">📷</div>
+                        <div class="p11-caption">
+                            <strong>Mountain Vista at Sunset</strong> — Captured by photographer alice at 3000m elevation. The interplay of light and shadow created an unforgettable scene.
+                        </div>
+                        <div class="p11-meta">Published 2 hours ago</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 12 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">12. Neon Frame</div>
+                    <div class="proposal-desc">Caption in dark footer below glowing border</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p12-card">
+                        <div class="p12-glow"></div>
+                        <div class="p12-inner">
+                            <div class="p12-image image-placeholder" style="background: linear-gradient(135deg, #581c87 0%, #a855f7 100%);">📷</div>
+                            <div class="p12-footer">
+                                <div class="p12-caption">
+                                    Where earth meets sky in perfect harmony
+                                </div>
+                                <div class="p12-author">
+                                    <div class="p12-author-info">
+                                        <div class="avatar-sm"></div>
+                                        <div>
+                                            <div style="font-weight: 600;">alice</div>
+                                            <div style="font-size: 0.75rem; color: #666;">2h ago</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="action-btn">♡</button>
+                                        <button class="action-btn">↻</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 13 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">13. Stacked Layers</div>
+                    <div class="proposal-desc">Caption in info bar with depth effect</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p13-card">
+                        <div class="p13-layer">
+                            <div class="p13-image image-placeholder" style="background: linear-gradient(135deg, #be185d 0%, #ec4899 100%);">📷</div>
+                            <div class="p13-info">
+                                <div class="p13-caption">
+                                    Nature's canvas, painted with light and shadow
+                                </div>
+                                <div class="p13-author">
+                                    <div class="avatar-tiny"></div>
+                                    <span>alice</span>
+                                    <span style="color: #666;">·</span>
+                                    <span>2h ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 14 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">14. Bottom Sheet</div>
+                    <div class="proposal-desc">Caption in pulled-up sheet overlay</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p14-card">
+                        <div class="p14-image image-placeholder" style="background: linear-gradient(135deg, #065f46 0%, #10b981 100%);">📷</div>
+                        <div class="p14-sheet">
+                            <div class="p14-handle"></div>
+                            <div class="p14-caption">
+                                The golden hour never disappoints. This was worth the early wake-up call and steep climb.
+                            </div>
+                            <div class="p14-author">
+                                <div class="avatar-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                                <div>
+                                    <div style="font-weight: 600;">alice</div>
+                                    <div style="font-size: 0.85rem; color: #666;">2 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 15 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">15. Film Strip</div>
+                    <div class="proposal-desc">Caption in film frame metadata bar</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p15-card">
+                        <div class="p15-sprocket p15-sprocket-left"></div>
+                        <div class="p15-sprocket p15-sprocket-right"></div>
+                        <div class="p15-frame">
+                            <div class="p15-image image-placeholder" style="color: rgba(255,255,255,0.2); background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);">📷</div>
+                            <div class="p15-info">
+                                <div class="p15-caption">
+                                    Frame 024: The decisive moment
+                                </div>
+                                <div class="p15-author">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <div class="avatar-tiny"></div>
+                                        <span>alice</span>
+                                    </div>
+                                    <span>2h ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposal 16 -->
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="proposal-title">16. Glassmorphic Overlay</div>
+                    <div class="proposal-desc">Caption in frosted glass card floating over image</div>
+                </div>
+                <div class="card-preview">
+                    <div class="p16-card">
+                        <div class="p16-image image-placeholder" style="background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%);">📷</div>
+                        <div class="p16-glass">
+                            <div class="p16-caption">
+                                Standing at the edge of forever. Sometimes the journey matters more than the destination.
+                            </div>
+                            <div class="p16-author">
+                                <div class="avatar"></div>
+                                <div>
+                                    <div style="font-weight: 600;">alice</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.8;">2 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

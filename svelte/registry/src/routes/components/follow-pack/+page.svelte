@@ -181,42 +181,6 @@
 			</Demo>
 
 			<Demo
-				title="Modern Portrait"
-				description="Use for premium follow pack displays with full-bleed imagery and glossy design. Features pack creator information and modern glass-morphism effects."
-				component="follow-pack-modern-portrait"
-				code={ModernPortraitCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'followPack',
-						type: 'NDKFollowPack',
-						required: true,
-						description: 'The follow pack event (kind 39089) to display'
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler for custom actions'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes to apply'
-					}
-				]}
-			>
-				<div class="flex gap-4 flex-wrap">
-					{#each displayPacks.slice(0, 3) as pack}
-						<FollowPackModernPortrait {ndk} followPack={pack} />
-					{/each}
-				</div>
-			</Demo>
-
-			<Demo
 				title="Hero"
 				description="Use for featured follow packs or landing page highlights. Large format with dramatic imagery and overlaid text."
 				component="follow-pack-hero"

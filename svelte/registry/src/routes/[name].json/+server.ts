@@ -6,18 +6,47 @@ import type { RequestHandler } from './$types';
 
 export const prerender = true;
 
+// Build a map of all registry:ui file paths for smarter import transformation
+function buildUiFileMap(): Set<string> {
+  const uiFiles = new Set<string>();
+  registryData.items.forEach((item) => {
+    item.files?.forEach((file: any) => {
+      if (file.type === 'registry:ui') {
+        // Store the path without registry/ndk/ prefix
+        const path = file.path.replace(/^registry\/ndk\//, '');
+        uiFiles.add(path);
+      }
+    });
+  });
+  return uiFiles;
+}
+
+const uiFileMap = buildUiFileMap();
+
 function transformItem(item: any) {
   const transformedItem = {
     ...item,
     files: item.files.map((file: any) => {
       // Read the actual file content
-      // Convert registry/ndk/ path to lib/ndk/ for actual file location
-      const actualPath = file.path.replace(/^registry\/ndk\//, 'lib/ndk/');
+      // Convert registry/ndk/ path to lib/components/ndk/ for actual file location
+      const actualPath = file.path.replace(/^registry\/ndk\//, 'lib/components/ndk/');
       const filePath = join(process.cwd(), 'src', actualPath);
       let content = '';
 
       try {
         content = readFileSync(filePath, 'utf-8');
+
+        // Transform import paths: replace $lib/ndk/ with correct relative path
+        // For registry:ui files, they get installed to ui/ subdirectory by shadcn-svelte
+        content = content.replace(/\$lib\/ndk\/([^\s'"]+)/g, (match, importPath) => {
+          // Check if the import target is a registry:ui file
+          if (uiFileMap.has(importPath)) {
+            // Add ui/ prefix for registry:ui files
+            return `../ui/${importPath}`;
+          }
+          // For non-ui files, use standard relative path
+          return `../${importPath}`;
+        });
       } catch (err) {
         console.error(`Failed to read file: ${filePath}`, err);
       }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RelayCard } from '$lib/ndk/relay-card';
+	import { RelayCard } from '$lib/components/ndk/relay-card';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

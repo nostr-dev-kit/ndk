@@ -40,6 +40,10 @@ export class ReactiveSessionsStore {
                 if (signer && state.ndk) {
                     state.ndk.signer = signer;
                 }
+            } else if (state.ndk) {
+                // Clear signer and activeUser when no active session
+                state.ndk.signer = undefined;
+                state.ndk.activeUser = undefined;
             }
 
             this.activePubkey = state.activePubkey;

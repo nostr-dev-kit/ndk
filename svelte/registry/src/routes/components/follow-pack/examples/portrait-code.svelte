@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
-	import { FollowPack } from '$lib/ndk/follow-pack';
-	import AvatarGroup from '$lib/ndk/avatar-group/avatar-group.svelte';
+	import { FollowPack } from '$lib/components/ndk/follow-pack';
+	import AvatarGroup from '$lib/components/ndk/avatar-group/avatar-group.svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

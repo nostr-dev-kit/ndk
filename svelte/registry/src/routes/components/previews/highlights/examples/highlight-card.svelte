@@ -2,9 +2,9 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
-  import { EventContent, KindRegistry } from '$lib/ndk/event/content';
-  import HighlightEmbeddedCard from '$lib/ndk/event/content/kinds/highlight-embedded/highlight-embedded-card.svelte';
-  import { EventCard } from '$lib/ndk/event-card';
+  import { EventContent, KindRegistry } from '$lib/components/ndk/event/content';
+  import HighlightEmbeddedCard from '$lib/components/ndk/event/content/kinds/highlight-embedded/highlight-embedded-card.svelte';
+  import { EventCard } from '$lib/components/ndk/event-card';
 
   interface Props {
     ndk: NDKSvelte;

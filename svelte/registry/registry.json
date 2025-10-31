@@ -12,6 +12,33 @@
   },
   "items": [
     {
+      "name": "actions",
+      "type": "registry:component",
+      "title": "Actions",
+      "description": "Reusable action components for reactions, zaps, and other event interactions",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/actions/index.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/actions/reaction-action.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/actions/zap-action.svelte",
+          "type": "registry:component"
+        }
+      ],
+      "version": "0.9.0",
+      "updatedAt": "2025-10-30T19:04:10.000Z"
+    },
+    {
       "name": "article-card",
       "type": "registry:block",
       "title": "Article Card",
@@ -63,8 +90,84 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.12.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.13.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
+    },
+    {
+      "name": "article-card-hero",
+      "type": "registry:component",
+      "title": "Article Card Hero",
+      "description": "Block component - article card hero",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/article-card-hero.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.4.0",
+      "updatedAt": "2025-10-29T21:50:58.000Z"
+    },
+    {
+      "name": "article-card-medium",
+      "type": "registry:component",
+      "title": "Article Card Medium",
+      "description": "Block component - article card medium",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/article-card-medium.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.4.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
+    },
+    {
+      "name": "article-card-neon",
+      "type": "registry:component",
+      "title": "Article Card Neon",
+      "description": "Block component - article card neon",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/article-card-neon.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.5.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
+    },
+    {
+      "name": "article-card-portrait",
+      "type": "registry:component",
+      "title": "Article Card Portrait",
+      "description": "Block component - article card portrait",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/article-card-portrait.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.3.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
     },
     {
       "name": "article-content",
@@ -91,8 +194,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.3.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
     },
     {
       "name": "article-preview",
@@ -110,8 +213,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
     },
     {
       "name": "blocks",
@@ -133,8 +236,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.5.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.14.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
     },
     {
       "name": "embedded-event",
@@ -152,8 +255,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.8.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "emoji-picker",
@@ -180,15 +283,21 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.1.0",
-      "updatedAt": "2025-10-30T00:00:00.000Z"
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "event-card",
       "type": "registry:block",
       "title": "Event Card",
       "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions. UI components only, blocks sold separately",
-      "registryDependencies": [],
+      "registryDependencies": [
+        "user-profile",
+        "time-ago",
+        "event-content",
+        "actions",
+        "ndk-context"
+      ],
       "dependencies": [
         "@nostr-dev-kit/ndk",
         "@nostr-dev-kit/svelte"
@@ -227,8 +336,46 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.14.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.20.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
+    },
+    {
+      "name": "event-card-classic",
+      "type": "registry:component",
+      "title": "Event Card Classic",
+      "description": "Block component - event card classic",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/event-card-classic.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T13:52:10.000Z"
+    },
+    {
+      "name": "event-card-menu",
+      "type": "registry:component",
+      "title": "Event Card Menu",
+      "description": "Block component - event card menu",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/event-card-menu.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
     },
     {
       "name": "event-content",
@@ -250,8 +397,141 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.7.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
+    },
+    {
+      "name": "follow-button",
+      "type": "registry:component",
+      "title": "Follow Button",
+      "description": "Follow button component - follow button variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-button.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
+    },
+    {
+      "name": "follow-button-card",
+      "type": "registry:component",
+      "title": "Follow Button Card",
+      "description": "Follow button component - follow button card variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-button-card.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
+    },
+    {
+      "name": "follow-button-pill",
+      "type": "registry:component",
+      "title": "Follow Button Pill",
+      "description": "Follow button component - follow button pill variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-button-pill.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "follow-pack-compact",
+      "type": "registry:component",
+      "title": "Follow Pack Compact",
+      "description": "Follow button component - follow pack compact variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-pack-compact.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
+    },
+    {
+      "name": "follow-pack-hero",
+      "type": "registry:component",
+      "title": "Follow Pack Hero",
+      "description": "Follow button component - follow pack hero variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-pack-hero.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T23:48:29.000Z"
+    },
+    {
+      "name": "follow-pack-list-item",
+      "type": "registry:component",
+      "title": "Follow Pack List Item",
+      "description": "Follow button component - follow pack list item variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-pack-list-item.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
+    },
+    {
+      "name": "follow-pack-portrait",
+      "type": "registry:component",
+      "title": "Follow Pack Portrait",
+      "description": "Follow button component - follow pack portrait variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/follow-pack-portrait.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
     },
     {
       "name": "generic-preview",
@@ -269,8 +549,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.7.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
     },
     {
       "name": "hashtag-preview",
@@ -288,8 +568,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.5.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "highlight-card",
@@ -323,8 +603,160 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.6.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.7.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
+    },
+    {
+      "name": "highlight-card-compact",
+      "type": "registry:component",
+      "title": "Highlight Card Compact",
+      "description": "Block component - highlight card compact",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/highlight-card-compact.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.4.0",
+      "updatedAt": "2025-10-29T21:50:58.000Z"
+    },
+    {
+      "name": "highlight-card-elegant",
+      "type": "registry:component",
+      "title": "Highlight Card Elegant",
+      "description": "Block component - highlight card elegant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/highlight-card-elegant.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
+    },
+    {
+      "name": "highlight-card-feed",
+      "type": "registry:component",
+      "title": "Highlight Card Feed",
+      "description": "Block component - highlight card feed",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/highlight-card-feed.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.3.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
+    },
+    {
+      "name": "highlight-card-grid",
+      "type": "registry:component",
+      "title": "Highlight Card Grid",
+      "description": "Block component - highlight card grid",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/highlight-card-grid.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.3.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
+    },
+    {
+      "name": "image-card",
+      "type": "registry:component",
+      "title": "Image Card",
+      "description": "Block component - image card",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/image-card.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T14:23:23.000Z"
+    },
+    {
+      "name": "image-card-hero",
+      "type": "registry:component",
+      "title": "Image Card Hero",
+      "description": "Block component - image card hero",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/image-card-hero.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
+    },
+    {
+      "name": "image-card-instagram",
+      "type": "registry:component",
+      "title": "Image Card Instagram",
+      "description": "Block component - image card instagram",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/image-card-instagram.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
+    },
+    {
+      "name": "media-upload-carousel",
+      "type": "registry:component",
+      "title": "Media Upload Carousel",
+      "description": "Block component - media upload carousel",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/media-upload-carousel.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.0.0",
+      "updatedAt": "2025-10-31T00:43:11.598Z"
     },
     {
       "name": "mention-preview",
@@ -342,8 +774,46 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
+    },
+    {
+      "name": "mute-button",
+      "type": "registry:component",
+      "title": "Mute Button",
+      "description": "Mute button component - mute button variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/mute-button.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "ndk-context",
+      "type": "registry:component",
+      "title": "NDK Context",
+      "description": "Shared NDK context utility for accessing NDK instance from Svelte context",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/ndk-context.svelte.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-29T09:24:58.000Z"
     },
     {
       "name": "note-preview",
@@ -361,8 +831,46 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.7.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
+    },
+    {
+      "name": "reaction-button",
+      "type": "registry:component",
+      "title": "Reaction Button",
+      "description": "Reaction component - reaction button variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/reaction-button.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "reaction-slack",
+      "type": "registry:component",
+      "title": "Reaction Slack",
+      "description": "Reaction component - reaction slack variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/reaction-slack.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
     },
     {
       "name": "reactions",
@@ -381,7 +889,7 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-29T14:16:25.981Z"
+      "updatedAt": "2025-10-31T00:43:12.203Z"
     },
     {
       "name": "relay-card",
@@ -399,8 +907,65 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.7.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
+    },
+    {
+      "name": "relay-card-compact",
+      "type": "registry:component",
+      "title": "Relay Card Compact",
+      "description": "Relay card component - relay card compact layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/relay-card-compact.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-29T13:35:57.000Z"
+    },
+    {
+      "name": "relay-card-list",
+      "type": "registry:component",
+      "title": "Relay Card List",
+      "description": "Relay card component - relay card list layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/relay-card-list.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-29T13:35:57.000Z"
+    },
+    {
+      "name": "relay-card-portrait",
+      "type": "registry:component",
+      "title": "Relay Card Portrait",
+      "description": "Relay card component - relay card portrait layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/relay-card-portrait.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T19:04:10.000Z"
     },
     {
       "name": "relay-connection-status",
@@ -418,8 +983,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.3.0",
+      "updatedAt": "2025-10-29T14:25:24.000Z"
     },
     {
       "name": "relay-list",
@@ -437,8 +1002,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
     },
     {
       "name": "relay-pool-tabs",
@@ -456,8 +1021,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.5.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
     },
     {
       "name": "replies",
@@ -475,8 +1040,46 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.7.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
+    },
+    {
+      "name": "repost-button",
+      "type": "registry:component",
+      "title": "Repost Button",
+      "description": "Repost button component - repost button variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/repost-button.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
+    },
+    {
+      "name": "repost-button-pill",
+      "type": "registry:component",
+      "title": "Repost Button Pill",
+      "description": "Repost button component - repost button pill variant",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/repost-button-pill.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
     },
     {
       "name": "simple-event-card",
@@ -496,8 +1099,69 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T13:52:10.000Z"
+    },
+    {
+      "name": "thread-view-twitter",
+      "type": "registry:component",
+      "title": "Thread View Twitter",
+      "description": "Thread view component - thread view twitter layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/thread-view-twitter.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.4.0",
+      "updatedAt": "2025-10-30T19:04:10.000Z"
+    },
+    {
+      "name": "time-ago",
+      "type": "registry:component",
+      "title": "Time Ago",
+      "description": "Human-readable relative time display component",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/time-ago/index.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/time-ago/time-ago.svelte",
+          "type": "registry:component"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-29T21:50:58.000Z"
+    },
+    {
+      "name": "upload-button",
+      "type": "registry:component",
+      "title": "Upload Button",
+      "description": "Block component - upload button",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/upload-button.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.0.0",
+      "updatedAt": "2025-10-31T00:43:13.428Z"
     },
     {
       "name": "user-card",
@@ -515,8 +1179,84 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T07:19:17.000Z"
+    },
+    {
+      "name": "user-card-classic",
+      "type": "registry:component",
+      "title": "User Card Classic",
+      "description": "User card component - user card classic layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/user-card-classic.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "user-card-compact",
+      "type": "registry:component",
+      "title": "User Card Compact",
+      "description": "User card component - user card compact layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/user-card-compact.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "user-card-landscape",
+      "type": "registry:component",
+      "title": "User Card Landscape",
+      "description": "User card component - user card landscape layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/user-card-landscape.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "user-card-portrait",
+      "type": "registry:component",
+      "title": "User Card Portrait",
+      "description": "User card component - user card portrait layout",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/user-card-portrait.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
     },
     {
       "name": "user-header",
@@ -542,8 +1282,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "user-header-compact",
@@ -563,8 +1303,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "user-header-full",
@@ -584,8 +1324,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "user-input",
@@ -623,8 +1363,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.6.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "user-profile",
@@ -694,8 +1434,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.10.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.15.0",
+      "updatedAt": "2025-10-30T21:49:34.000Z"
     },
     {
       "name": "user-profile-avatar-name",
@@ -715,8 +1455,65 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
+      "version": "0.5.0",
+      "updatedAt": "2025-10-30T09:22:33.000Z"
+    },
+    {
+      "name": "user-profile-hero",
+      "type": "registry:component",
+      "title": "User Profile Hero",
+      "description": "Block component - user profile hero",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/user-profile-hero.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.2.0",
+      "updatedAt": "2025-10-30T13:17:29.000Z"
+    },
+    {
+      "name": "voice-message-card-compact",
+      "type": "registry:component",
+      "title": "Voice Message Card Compact",
+      "description": "Block component - voice message card compact",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/voice-message-card-compact.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
+    },
+    {
+      "name": "voice-message-card-expanded",
+      "type": "registry:component",
+      "title": "Voice Message Card Expanded",
+      "description": "Block component - voice message card expanded",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/blocks/voice-message-card-expanded.svelte",
+          "type": "registry:ui"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-10-30T23:44:56.000Z"
     },
     {
       "name": "zap-button",
@@ -736,498 +1533,8 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-29T14:16:26.746Z"
-    },
-    {
-      "name": "article-card-hero",
-      "type": "registry:component",
-      "title": "Article Card Hero",
-      "description": "Block component - article card hero",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/article-card-hero.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "article-card-medium",
-      "type": "registry:component",
-      "title": "Article Card Medium",
-      "description": "Block component - article card medium",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/article-card-medium.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "article-card-neon",
-      "type": "registry:component",
-      "title": "Article Card Neon",
-      "description": "Block component - article card neon",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/article-card-neon.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "article-card-portrait",
-      "type": "registry:component",
-      "title": "Article Card Portrait",
-      "description": "Block component - article card portrait",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/article-card-portrait.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "event-card-classic",
-      "type": "registry:component",
-      "title": "Event Card Classic",
-      "description": "Block component - event card classic",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/event-card-classic.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "event-card-menu",
-      "type": "registry:component",
-      "title": "Event Card Menu",
-      "description": "Block component - event card menu",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/event-card-menu.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "follow-button",
-      "type": "registry:component",
-      "title": "Follow Button",
-      "description": "Follow button component - follow button variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/follow-button.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "follow-button-card",
-      "type": "registry:component",
-      "title": "Follow Button Card",
-      "description": "Follow button component - follow button card variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/follow-button-card.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "follow-button-pill",
-      "type": "registry:component",
-      "title": "Follow Button Pill",
-      "description": "Follow button component - follow button pill variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/follow-button-pill.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "highlight-card-compact",
-      "type": "registry:component",
-      "title": "Highlight Card Compact",
-      "description": "Block component - highlight card compact",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/highlight-card-compact.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "highlight-card-elegant",
-      "type": "registry:component",
-      "title": "Highlight Card Elegant",
-      "description": "Block component - highlight card elegant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/highlight-card-elegant.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "highlight-card-feed",
-      "type": "registry:component",
-      "title": "Highlight Card Feed",
-      "description": "Block component - highlight card feed",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/highlight-card-feed.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "highlight-card-grid",
-      "type": "registry:component",
-      "title": "Highlight Card Grid",
-      "description": "Block component - highlight card grid",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/highlight-card-grid.svelte",
-          "type": "registry:ui"
-        }
-      ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-29T14:04:59.000Z"
-    },
-    {
-      "name": "image-card",
-      "type": "registry:component",
-      "title": "Image Card",
-      "description": "Block component - image card",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/image-card.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "mute-button",
-      "type": "registry:component",
-      "title": "Mute Button",
-      "description": "Mute button component - mute button variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/mute-button.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "reaction-button",
-      "type": "registry:component",
-      "title": "Reaction Button",
-      "description": "Reaction component - reaction button variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/reaction-button.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "reaction-slack",
-      "type": "registry:component",
-      "title": "Reaction Slack",
-      "description": "Reaction component - reaction slack variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/reaction-slack.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "relay-card-compact",
-      "type": "registry:component",
-      "title": "Relay Card Compact",
-      "description": "Relay card component - relay card compact layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/relay-card-compact.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "relay-card-list",
-      "type": "registry:component",
-      "title": "Relay Card List",
-      "description": "Relay card component - relay card list layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/relay-card-list.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "relay-card-portrait",
-      "type": "registry:component",
-      "title": "Relay Card Portrait",
-      "description": "Relay card component - relay card portrait layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/relay-card-portrait.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "repost-button",
-      "type": "registry:component",
-      "title": "Repost Button",
-      "description": "Repost button component - repost button variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/repost-button.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "repost-button-pill",
-      "type": "registry:component",
-      "title": "Repost Button Pill",
-      "description": "Repost button component - repost button pill variant",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/repost-button-pill.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "thread-view-twitter",
-      "type": "registry:component",
-      "title": "Thread View Twitter",
-      "description": "Thread view component - thread view twitter layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/thread-view-twitter.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "user-card-classic",
-      "type": "registry:component",
-      "title": "User Card Classic",
-      "description": "User card component - user card classic layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/user-card-classic.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "user-card-compact",
-      "type": "registry:component",
-      "title": "User Card Compact",
-      "description": "User card component - user card compact layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/user-card-compact.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "user-card-landscape",
-      "type": "registry:component",
-      "title": "User Card Landscape",
-      "description": "User card component - user card landscape layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/user-card-landscape.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "user-card-portrait",
-      "type": "registry:component",
-      "title": "User Card Portrait",
-      "description": "User card component - user card portrait layout",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/user-card-portrait.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "user-profile-hero",
-      "type": "registry:component",
-      "title": "User Profile Hero",
-      "description": "Block component - user profile hero",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/blocks/user-profile-hero.svelte",
-          "type": "registry:ui"
-        }
-      ]
+      "updatedAt": "2025-10-31T00:43:14.965Z"
     }
   ],
-  "version": "4.0.0-beta.22"
+  "version": "4.0.0-beta.25"
 }

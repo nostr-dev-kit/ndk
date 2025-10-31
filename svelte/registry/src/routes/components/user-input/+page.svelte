@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/ndk/edit-props';
+  import { EditProps } from '$lib/components/ndk/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import Alert from '$site-components/alert.svelte';
 

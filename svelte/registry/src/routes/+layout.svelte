@@ -2,9 +2,9 @@
   import '../app.css';
   import { setContext } from 'svelte';
   import { ndk, initializeNDK } from '$lib/ndk.svelte.ts';
-  import Sidebar from '$lib/components/Sidebar.svelte';
-  import HamburgerButton from '$lib/components/HamburgerButton.svelte';
-  import LoginModal from '$lib/components/LoginModal.svelte';
+  import Sidebar from '$site-components/Sidebar.svelte';
+  import HamburgerButton from '$site-components/HamburgerButton.svelte';
+  import LoginModal from '$site-components/LoginModal.svelte';
   import { sidebarOpen } from '$lib/stores/sidebar';
   import { nip19 } from 'nostr-tools';
 

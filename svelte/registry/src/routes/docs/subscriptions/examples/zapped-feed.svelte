@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { NDKSvelte, MetaSubscribeSortOption } from '@nostr-dev-kit/svelte';
-	import { EventCard } from '$lib/ndk/event-card';
-	import { UserProfile } from '$lib/ndk/user-profile';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { EventCard } from '$lib/components/ndk/event-card';
+	import { UserProfile } from '$lib/components/ndk/user-profile';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 	interface Props {
@@ -10,7 +10,7 @@
 
 	let { ndk }: Props = $props();
 
-	let sortOption = $state<MetaSubscribeSortOption>('tag-time');
+	let sortOption = $state<'tag-time' | 'count' | 'time' | 'unique-authors'>('tag-time');
 
 	// Subscribe to repost events from your follows
 	// $metaSubscribe automatically fetches the reposted content

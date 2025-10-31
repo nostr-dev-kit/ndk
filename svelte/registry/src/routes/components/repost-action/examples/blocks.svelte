@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { RepostButton, RepostButtonPill } from '$lib/ndk/blocks';
+  import { RepostButton, RepostButtonPill } from '$lib/components/ndk/blocks';
 
   interface Props {
     ndk: NDKSvelte;

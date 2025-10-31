@@ -7,8 +7,8 @@
 		FollowPackHero,
 		FollowPackCompact,
 		FollowPackListItem
-	} from '$lib/ndk/blocks';
-	import { EditProps } from '$lib/ndk/edit-props';
+	} from '$lib/components/ndk/blocks';
+	import { EditProps } from '$lib/components/ndk/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -297,7 +297,7 @@
 				name: 'FollowPack.Root',
 				description:
 					'Context provider component that wraps all FollowPack primitives. Makes NDK instance and follow pack data available to child components.',
-				importPath: "import { FollowPack } from '$lib/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
 				props: [
 					{
 						name: 'ndk',
@@ -335,7 +335,7 @@
 				name: 'FollowPack.Image',
 				description:
 					'Displays the follow pack image. Automatically handles missing images with a fallback icon. Supports gradient overlays for better text readability.',
-				importPath: "import { FollowPack } from '$lib/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
 				props: [
 					{
 						name: 'class',
@@ -362,7 +362,7 @@
 				name: 'FollowPack.Title',
 				description:
 					'Displays the follow pack title. Shows "Untitled Pack" if no title is set. Supports line clamping for overflow control.',
-				importPath: "import { FollowPack } from '$lib/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
 				props: [
 					{
 						name: 'class',
@@ -382,7 +382,7 @@
 				name: 'FollowPack.Description',
 				description:
 					'Displays the follow pack description. Automatically hidden if no description exists. Supports both character truncation and line clamping.',
-				importPath: "import { FollowPack } from '$lib/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
 				props: [
 					{
 						name: 'class',
@@ -407,7 +407,7 @@
 				name: 'FollowPack.MemberCount',
 				description:
 					'Displays the number of people in the follow pack. Counts the pubkeys array from the event. Supports both short (number only) and long (formatted with "people") formats.',
-				importPath: "import { FollowPack } from '$lib/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
 				props: [
 					{
 						name: 'class',

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { UserProfile } from '$lib/ndk/user-profile';
-  import { UserCardClassic } from '$lib/ndk/blocks';
+  import { UserProfile } from '$lib/components/ndk/user-profile';
+  import { UserCardClassic } from '$lib/components/ndk/blocks';
   import { Popover } from 'bits-ui';
 
   interface Props {

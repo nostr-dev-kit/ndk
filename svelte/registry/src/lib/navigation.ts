@@ -38,6 +38,12 @@ export interface NavCategory {
   items: NavItem[];
 }
 
+export const mainNav: NavItem[] = [
+  { name: 'Intro', path: '/', icon: Home01Icon },
+  { name: 'Docs', path: '/docs', icon: Book02Icon },
+  { name: 'Blocks', path: '/blocks', icon: Layers01Icon },
+];
+
 export const docs: NavItem[] = [
   { name: 'Introduction', path: '/docs', icon: Book02Icon },
   { name: 'Architecture', path: '/docs/architecture', icon: Building01Icon },
@@ -126,8 +132,3 @@ export const componentCategories: NavCategory[] = [
   },
 ];
 
-export const homeNavItem: NavItem = {
-  name: 'Home',
-  path: '/',
-  icon: Home01Icon
-};

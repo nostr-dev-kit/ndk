@@ -1,14 +1,17 @@
 <script lang="ts">
   import '../app.css';
   import { setContext } from 'svelte';
+  import { page } from '$app/stores';
   import { ndk, initializeNDK } from '$lib/ndk.svelte.ts';
+  import Navbar from '$site-components/Navbar.svelte';
   import Sidebar from '$site-components/Sidebar.svelte';
-  import HamburgerButton from '$site-components/HamburgerButton.svelte';
   import LoginModal from '$site-components/LoginModal.svelte';
   import { sidebarOpen } from '$lib/stores/sidebar';
   import { nip19 } from 'nostr-tools';
 
   let { children } = $props();
+
+  const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/components'));
 
   let isInitialized = $state(false);
   let showLoginModal = $state(false);
@@ -78,14 +81,16 @@
   </div>
 {:else}
   <div class="app">
-    <HamburgerButton />
-
-    <Sidebar
+    <Navbar
       onLoginClick={() => showLoginModal = true}
       onLogoutClick={handleLogout}
     />
 
-    <main class="main" class:sidebar-open={$sidebarOpen}>
+    {#if showSidebar}
+      <Sidebar />
+    {/if}
+
+    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen}>
       {@render children()}
     </main>
   </div>
@@ -148,18 +153,25 @@
 
   .main {
     flex: 1;
-    margin-left: 280px;
-    padding: 3rem 2rem;
-    max-width: 1400px;
+    margin-top: 3.5rem;
+    margin-left: 0;
+    padding: 0;
+    width: 100%;
     transition: margin-left 300ms ease-in-out;
   }
 
+  .main.has-sidebar {
+    margin-left: 280px;
+    padding: 3rem 2rem;
+    max-width: 1400px;
+  }
+
   @media (max-width: 768px) {
-    .main {
+    .main.has-sidebar {
       margin-left: 0;
     }
 
-    .main.sidebar-open {
+    .main.has-sidebar.sidebar-open {
       margin-left: 280px;
     }
   }

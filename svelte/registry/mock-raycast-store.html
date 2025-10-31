@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blocks - NDK Svelte Registry</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      background: #0c0c0c;
+      color: #e8e8e8;
+      line-height: 1.5;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(12, 12, 12, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-logo {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .navbar-links a {
+      color: #999;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .navbar-links a:hover {
+      color: #e8e8e8;
+    }
+
+    .navbar-links a.active {
+      color: #e8e8e8;
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1400px;
+      height: 500px;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwMCIgaGVpZ2h0PSI1MDAiIHZpZXdCb3g9IjAgMCAxNDAwIDUwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZDEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmY5YWE4O3N0b3Atb3BhY2l0eTowLjMiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojYTNjNGY4O3N0b3Atb3BhY2l0eTowLjMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJibHVyIj4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNDAiLz4KICAgIDwvZmlsdGVyPgogIDwvZGVmcz4KICA8cGF0aCBkPSJNMjAwIDEwMEw0MDAgMzAwTDYwMCAxNTBMODAwIDM1MEwxMDAwIDIwMEwxMjAwIDMwMCIgc3Ryb2tlPSJ1cmwoI2dyYWQxKSIgc3Ryb2tlLXdpZHRoPSIxMjAiIGZpbGw9Im5vbmUiIGZpbHRlcj0idXJsKCNibHVyKSIgb3BhY2l0eT0iMC42Ii8+CiAgPHBhdGggZD0iTTEwMCAyMDBMNDAwIDEwMEw3MDAgMzUwTDkwMCAxNTBMMTEwMCAzMDBMMTMwMCAxNTAiIHN0cm9rZT0idXJsKCNncmFkMSkiIHN0cm9rZS13aWR0aD0iMTAwIiBmaWxsPSJub25lIiBmaWx0ZXI9InVybCgjYmx1cikiIG9wYWNpdHk9IjAuNCIvPgogIDxwYXRoIGQ9Ik0zMDAgNTBMNjAwIDI1MEw5MDAgODBMMTEwMCAyODAiIHN0cm9rZT0iIzhmYTNmYiIgc3Ryb2tlLXdpZHRoPSI4MCIgZmlsbD0ibm9uZSIgZmlsdGVyPSJ1cmwoI2JsdXIpIiBvcGFjaXR5PSIwLjMiLz4KPC9zdmc+');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center top;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+      color: #ffffff;
+    }
+
+    .hero p {
+      font-size: 1.375rem;
+      color: #999;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Search */
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.25rem 1rem 3rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #e8e8e8;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Filters */
+    .filters {
+      max-width: 1400px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .filter-pill {
+      padding: 0.625rem 1.25rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      color: #999;
+      font-size: 0.875rem;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e8e8e8;
+    }
+
+    .filter-pill.active {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #8b8ff5;
+    }
+
+    /* Grid */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    .category-section {
+      margin-bottom: 4rem;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .category-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #e8e8e8;
+    }
+
+    .category-count {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .blocks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Block Card */
+    .block-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .block-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .block-icon-container {
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      position: relative;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    }
+
+    .block-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    .block-preview-mini {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    .block-content {
+      padding: 1.5rem;
+    }
+
+    .block-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #e8e8e8;
+      margin-bottom: 0.5rem;
+    }
+
+    .block-description {
+      color: #999;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .block-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .block-badge {
+      padding: 0.25rem 0.625rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    .block-badge.nip {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: rgba(99, 102, 241, 0.2);
+      color: #8b8ff5;
+    }
+
+    .block-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .block-stats {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .block-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    @media (max-width: 968px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .blocks-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="navbar-logo">
+        <span>🔷</span> NDK Registry
+      </div>
+      <div class="navbar-links">
+        <a href="#">Docs</a>
+        <a href="#" class="active">Blocks</a>
+        <a href="#">Components</a>
+        <a href="#">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Building Blocks for Nostr</h1>
+    <p>Production-ready components that help you build Nostr apps faster. Copy, paste, ship.</p>
+
+    <div class="search-container">
+      <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input type="text" class="search-input" placeholder="Search blocks...">
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="filter-pill active">All Blocks</div>
+    <div class="filter-pill">Feeds & Discovery</div>
+    <div class="filter-pill">User Profiles</div>
+    <div class="filter-pill">Publishing</div>
+    <div class="filter-pill">Messaging</div>
+    <div class="filter-pill">Payments</div>
+  </div>
+
+  <div class="container">
+    <!-- Feeds & Discovery -->
+    <section class="category-section">
+      <div class="category-header">
+        <h2 class="category-title">Feeds & Discovery</h2>
+        <span class="category-count">6 blocks</span>
+      </div>
+
+      <div class="blocks-grid">
+        <a href="mock-raycast-detail.html" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(245, 93, 108, 0.1) 0%, rgba(255, 100, 130, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #f55d6c 0%, #ff6482 100%);">
+              📰
+            </div>
+            <div class="block-preview-mini">5 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Timeline Feeds</h3>
+            <p class="block-description">Infinite scroll feeds with real-time updates, filtering, and multiple layout options.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 1</span>
+              <span class="block-badge nip">NIP-01</span>
+              <span class="block-badge">Medium</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">⚡ Real-time</div>
+              <div class="block-stat">♾️ Infinite Scroll</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+              💬
+            </div>
+            <div class="block-preview-mini">3 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Thread Viewers</h3>
+            <p class="block-description">Nested conversation threads with reply chains and collapsible branches.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 1</span>
+              <span class="block-badge nip">NIP-10</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🌲 Nested</div>
+              <div class="block-stat">📱 Responsive</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+              🔍
+            </div>
+            <div class="block-preview-mini">4 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Search & Explore</h3>
+            <p class="block-description">Global search with filters, trending topics, and user discovery.</p>
+            <div class="block-meta">
+              <span class="block-badge">Multiple Kinds</span>
+              <span class="block-badge">Medium</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🔎 Full-text</div>
+              <div class="block-stat">🏷️ Tags</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+              📊
+            </div>
+            <div class="block-preview-mini">3 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Activity Feeds</h3>
+            <p class="block-description">Notification-style feeds showing replies, mentions, zaps, and reactions.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 1, 7, 9735</span>
+              <span class="block-badge">Medium</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🔔 Notifications</div>
+              <div class="block-stat">🎯 Filtered</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(48, 207, 208, 0.1) 0%, rgba(51, 8, 103, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+              🎯
+            </div>
+            <div class="block-preview-mini">2 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Content Discovery</h3>
+            <p class="block-description">Algorithmic content discovery with trending posts and recommendations.</p>
+            <div class="block-meta">
+              <span class="block-badge">Multiple Kinds</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🧠 Smart</div>
+              <div class="block-stat">📈 Trending</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(255, 216, 155, 0.1) 0%, rgba(25, 84, 123, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);">
+              🖼️
+            </div>
+            <div class="block-preview-mini">4 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Media Galleries</h3>
+            <p class="block-description">Grid and masonry layouts for photo/video content with lightbox.</p>
+            <div class="block-meta">
+              <span class="block-badge nip">NIP-68</span>
+              <span class="block-badge">Medium</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🎨 Masonry</div>
+              <div class="block-stat">🔍 Lightbox</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- User Profiles -->
+    <section class="category-section">
+      <div class="category-header">
+        <h2 class="category-title">User Profiles</h2>
+        <span class="category-count">4 blocks</span>
+      </div>
+
+      <div class="blocks-grid">
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+              👤
+            </div>
+            <div class="block-preview-mini">5 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Profile Headers</h3>
+            <p class="block-description">Full profile headers with banner, avatar, bio, and follow button.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 0</span>
+              <span class="block-badge nip">NIP-05</span>
+              <span class="block-badge">Medium</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🎨 Customizable</div>
+              <div class="block-stat">📊 Stats</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #ec4899 0%, #ef4444 100%);">
+              📋
+            </div>
+            <div class="block-preview-mini">3 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Follow Lists</h3>
+            <p class="block-description">Display follower/following lists with search and filtering.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 3</span>
+              <span class="block-badge nip">NIP-51</span>
+              <span class="block-badge">Medium</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">🔍 Searchable</div>
+              <div class="block-stat">♾️ Paginated</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);">
+              ✏️
+            </div>
+            <div class="block-preview-mini">2 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Profile Editors</h3>
+            <p class="block-description">Complete profile editing with image upload and metadata fields.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 0</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">📸 Upload</div>
+              <div class="block-stat">✓ Validation</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #fb923c 0%, #eab308 100%);">
+              📈
+            </div>
+            <div class="block-preview-mini">2 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">User Analytics</h3>
+            <p class="block-description">Profile stats dashboard with growth metrics and activity charts.</p>
+            <div class="block-meta">
+              <span class="block-badge">Multiple Kinds</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">📊 Charts</div>
+              <div class="block-stat">📈 Growth</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Publishing -->
+    <section class="category-section">
+      <div class="category-header">
+        <h2 class="category-title">Publishing</h2>
+        <span class="category-count">3 blocks</span>
+      </div>
+
+      <div class="blocks-grid">
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #a855f7 0%, #db2777 100%);">
+              ✍️
+            </div>
+            <div class="block-preview-mini">4 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Note Composers</h3>
+            <p class="block-description">Rich text composers with media upload, mentions, and hashtags.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 1</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">📸 Media</div>
+              <div class="block-stat">@ Mentions</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);">
+              📝
+            </div>
+            <div class="block-preview-mini">2 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Article Editors</h3>
+            <p class="block-description">Long-form editor with markdown, image insertion, and metadata.</p>
+            <div class="block-meta">
+              <span class="block-badge nip">NIP-23</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">📄 Markdown</div>
+              <div class="block-stat">🖼️ Images</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="block-card">
+          <div class="block-icon-container" style="background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);">
+            <div class="block-icon" style="background: linear-gradient(135deg, #14b8a6 0%, #059669 100%);">
+              📅
+            </div>
+            <div class="block-preview-mini">2 variants</div>
+          </div>
+          <div class="block-content">
+            <h3 class="block-title">Content Schedulers</h3>
+            <p class="block-description">Schedule posts with calendar view and draft management.</p>
+            <div class="block-meta">
+              <span class="block-badge">Kind 1, NIP-23</span>
+              <span class="block-badge">Complex</span>
+            </div>
+          </div>
+          <div class="block-footer">
+            <div class="block-stats">
+              <div class="block-stat">📅 Calendar</div>
+              <div class="block-stat">💾 Drafts</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

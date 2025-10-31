@@ -24,9 +24,16 @@
 		type="button"
 		class="group relative flex flex-col w-[320px] h-[420px] rounded-2xl bg-card hover:bg-muted overflow-hidden transition-colors {className}"
 	>
-		<!-- Full-bleed image background -->
+		<!-- Full-bleed image background with gradient blur effect -->
 		<div class="absolute inset-0">
+			<!-- Sharp base layer (unblurred) -->
 			<FollowPack.Image class="w-full h-full object-cover" showGradient={true} />
+
+			<!-- Blurred layer with gradient mask (sharp at bottom, blurred at top) -->
+			<div class="absolute inset-0 pointer-events-none" style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0) 100%);">
+				<FollowPack.Image class="w-full h-full object-cover blur-lg" showGradient={true} />
+			</div>
+
 			<!-- Darkening gradient overlay for text legibility -->
 			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/70"></div>
 		</div>

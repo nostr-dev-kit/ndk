@@ -9,28 +9,26 @@
   let activeTab = $state<'preview' | 'code' | 'props'>('preview');
 </script>
 
-<div class="variant-card">
-  <div class="variant-header">
-    <h3>{title}</h3>
-    <p>{description}</p>
+<div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
+  <div class="p-6 border-b border-border">
+    <h3 class="text-xl font-semibold mb-2">{title}</h3>
+    <p class="text-muted-foreground text-[0.95rem]">{description}</p>
   </div>
 
-  <div class="variant-preview">
+  <div class="py-12 px-8 bg-background border-b border-border min-h-[400px] flex items-center justify-center">
     {@render children?.preview?.()}
   </div>
 
-  <div class="variant-tabs">
+  <div class="flex gap-0 bg-muted border-b border-border">
     <button
-      class="variant-tab"
-      class:active={activeTab === 'preview'}
+      class="py-3.5 px-6 bg-transparent border-none text-muted-foreground text-sm font-medium cursor-pointer border-b-2 border-transparent transition-all hover:text-foreground hover:bg-accent {activeTab === 'preview' ? 'text-primary border-b-primary' : ''}"
       onclick={() => (activeTab = 'preview')}
     >
       Preview
     </button>
     {#if children?.code}
       <button
-        class="variant-tab"
-        class:active={activeTab === 'code'}
+        class="py-3.5 px-6 bg-transparent border-none text-muted-foreground text-sm font-medium cursor-pointer border-b-2 border-transparent transition-all hover:text-foreground hover:bg-accent {activeTab === 'code' ? 'text-primary border-b-primary' : ''}"
         onclick={() => (activeTab = 'code')}
       >
         Code
@@ -38,8 +36,7 @@
     {/if}
     {#if children?.props}
       <button
-        class="variant-tab"
-        class:active={activeTab === 'props'}
+        class="py-3.5 px-6 bg-transparent border-none text-muted-foreground text-sm font-medium cursor-pointer border-b-2 border-transparent transition-all hover:text-foreground hover:bg-accent {activeTab === 'props' ? 'text-primary border-b-primary' : ''}"
         onclick={() => (activeTab = 'props')}
       >
         Props
@@ -48,95 +45,12 @@
   </div>
 
   {#if activeTab === 'code' && children?.code}
-    <div class="variant-code">
+    <div class="p-6 bg-background overflow-x-auto [&_pre]:font-mono [&_pre]:text-sm [&_pre]:leading-relaxed [&_pre]:text-foreground [&_pre]:m-0 [&_code]:font-[inherit]">
       {@render children.code()}
     </div>
   {:else if activeTab === 'props' && children?.props}
-    <div class="variant-code">
+    <div class="p-6 bg-background overflow-x-auto [&_pre]:font-mono [&_pre]:text-sm [&_pre]:leading-relaxed [&_pre]:text-foreground [&_pre]:m-0 [&_code]:font-[inherit]">
       {@render children.props()}
     </div>
   {/if}
 </div>
-
-<style>
-  .variant-card {
-    background: var(--color-muted);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 2rem;
-  }
-
-  .variant-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .variant-header h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .variant-header p {
-    color: var(--color-muted-foreground);
-    font-size: 0.95rem;
-  }
-
-  .variant-preview {
-    padding: 3rem 2rem;
-    background: var(--color-background);
-    border-bottom: 1px solid var(--color-border);
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .variant-tabs {
-    display: flex;
-    gap: 0;
-    background: var(--color-muted);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .variant-tab {
-    padding: 0.875rem 1.5rem;
-    background: transparent;
-    border: none;
-    color: var(--color-muted-foreground);
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .variant-tab:hover {
-    color: var(--color-foreground);
-    background: var(--color-accent);
-  }
-
-  .variant-tab.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-  }
-
-  .variant-code {
-    padding: 1.5rem 2rem;
-    background: var(--color-background);
-    overflow-x: auto;
-  }
-
-  .variant-code :global(pre) {
-    font-family: 'SF Mono', Monaco, monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--color-foreground);
-    margin: 0;
-  }
-
-  .variant-code :global(code) {
-    font-family: inherit;
-  }
-</style>

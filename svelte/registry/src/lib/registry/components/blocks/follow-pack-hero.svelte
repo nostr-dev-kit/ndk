@@ -31,10 +31,10 @@
 
 		<div class="absolute inset-0 z-10 h-full flex flex-col p-8 text-white text-left">
 			<!-- Author at top, subtle -->
-			{#if followPack.pubkey}
+			{#if followPack.author}
 				<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
-					<UserProfile.Avatar {ndk} pubkey={followPack.pubkey} size={20} class="ring-1 ring-white/30" />
-					<UserProfile.Name {ndk} pubkey={followPack.pubkey} />
+					<UserProfile.Avatar {ndk} user={followPack.author} size={20} class="ring-1 ring-white/30" />
+					<UserProfile.Name {ndk} user={followPack.author} />
 				</div>
 			{/if}
 

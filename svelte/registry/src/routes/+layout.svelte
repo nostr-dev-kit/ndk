@@ -8,6 +8,7 @@
   import LoginModal from '$site-components/LoginModal.svelte';
   import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
   import { nip19 } from 'nostr-tools';
+    import { ConsoleFreeIcons } from '@hugeicons/core-free-icons';
 
   let { children } = $props();
 
@@ -54,6 +55,7 @@
   }
 
   $effect(() => {
+    console.log('connect')
     initializeNDK().then(async () => {
       isInitialized = true;
 

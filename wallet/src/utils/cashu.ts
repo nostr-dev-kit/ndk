@@ -25,12 +25,16 @@ export async function mintProofs(
     amount: number,
     mint: string,
     p2pk?: string,
+    proofTags?: [string, string][],
 ): Promise<{ proofs: Proof[]; mint: string }> {
     const mintTokenAttempt = (resolve: (value: any) => void, reject: (reason?: any) => void, attempt: number) => {
         const pubkey = ensureIsCashuPubkey(p2pk);
 
         wallet
-            .mintProofs(amount, quote.quote, { pubkey })
+            .mintProofs(amount, quote.quote, {
+                pubkey,
+                ...(proofTags && proofTags.length > 0 ? { tags: proofTags } : {}),
+            })
             .then((mintProofs) => {
                 console.debug("minted tokens", mintProofs);
 

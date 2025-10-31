@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -65,21 +65,23 @@
 
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
-	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">User Card</h1>
-		<p class="text-lg text-muted-foreground mb-6">
-			Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts for different contexts.
-		</p>
-
-		{#key users}
-			<EditProps.Root>
-				<EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} />
-				<EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} />
-				<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} />
-			</EditProps.Root>
-		{/key}
-	</div>
-
+	  <div class="mb-12">
+	    <div class="flex items-start justify-between gap-4 mb-4">
+	        <h1 class="text-4xl font-bold">User Card</h1>
+	    </div>
+			<p class="text-lg text-muted-foreground mb-6">
+				Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts for different contexts.
+			</p>
+	
+			{#key users}
+				<EditProps.Root>
+					<EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} />
+					<EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} />
+					<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} />
+					<EditProps.Button>Edit Examples</EditProps.Button>
+				</EditProps.Root>
+			{/key}
+		</div>
 	{#if displayUsers.length > 0}
 		<!-- Blocks Section -->
 		<section class="mb-16">

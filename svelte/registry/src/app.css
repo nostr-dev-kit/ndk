@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./lib/styles/component-page.css";
+@import "./lib/styles/docs-page.css";
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
 
 /* Tailwind v4 theme configuration - defines light mode defaults */
@@ -11,7 +12,7 @@
   --color-card-foreground: oklch(24.22% 0.006 265.75);
   --color-popover: oklch(100% 0 0);
   --color-popover-foreground: oklch(24.22% 0.006 265.75);
-  --color-primary: oklch(59.75% 0.207 13.37);
+  --color-primary: oklch(0.645 0.246 16.439);
   --color-primary-foreground: oklch(97.22% 0.026 15.34);
   --color-secondary: oklch(96.08% 0.004 265.75);
   --color-secondary-foreground: oklch(25.31% 0.012 265.75);
@@ -39,8 +40,8 @@
     --color-card-foreground: oklch(98.5% 0 0);
     --color-popover: oklch(26.9% 0 0);
     --color-popover-foreground: oklch(98.5% 0 0);
-    --color-primary: oklch(92.2% 0 0);
-    --color-primary-foreground: oklch(20.5% 0 0);
+    --color-primary: oklch(0.645 0.246 16.439);
+    --color-primary-foreground: oklch(92.2% 0 0);
     --color-secondary: oklch(26.9% 0 0);
     --color-secondary-foreground: oklch(98.5% 0 0);
     --color-muted: oklch(26.9% 0 0);

@@ -35,6 +35,7 @@ export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/nip89/app-handler.js";
 export * from "./events/kinds/nutzap/index.js";
 export * from "./events/kinds/nutzap/mint-list.js";
+export * from "./events/kinds/nutzap/validation.js";
 export * from "./events/kinds/project.js";
 export * from "./events/kinds/project-template.js";
 export * from "./events/kinds/relay-list.js";

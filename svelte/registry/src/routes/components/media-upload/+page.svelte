@@ -22,14 +22,16 @@
 
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
-	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">Media Upload</h1>
-		<p class="text-lg text-muted-foreground mb-6">
-			Upload media files to Blossom servers. Support for images, videos, audio, and other file
-			types with progress tracking, drag-to-reorder, and remove capabilities.
-		</p>
-	</div>
-
+	  <div class="mb-12">
+	    <div class="flex items-start justify-between gap-4 mb-4">
+	        <h1 class="text-4xl font-bold">Media Upload</h1>
+	        <EditProps.Button>Edit Examples</EditProps.Button>
+	    </div>
+			<p class="text-lg text-muted-foreground mb-6">
+				Upload media files to Blossom servers. Support for images, videos, audio, and other file
+				types with progress tracking, drag-to-reorder, and remove capabilities.
+			</p>
+		</div>
 	<!-- Blocks Section -->
 	<section class="mb-16">
 		<h2 class="text-3xl font-bold mb-2">Blocks</h2>

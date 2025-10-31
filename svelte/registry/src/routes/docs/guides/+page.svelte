@@ -46,56 +46,7 @@
 </div>
 
 <style>
-  .docs-page {
-    max-width: 900px;
-  }
-
-  .docs-header {
-    margin-bottom: 3rem;
-  }
-
-  .docs-header h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--color-foreground);
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-  }
-
-  .subtitle {
-    font-size: 1.25rem;
-    color: var(--color-muted-foreground);
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  section {
-    margin-bottom: 4rem;
-  }
-
-  h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 1.5rem 0;
-    color: var(--color-foreground);
-    letter-spacing: -0.025em;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: var(--color-foreground);
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--color-muted-foreground);
-    margin: 0 0 1rem 0;
-  }
-
+  /* Page-specific styles */
   .coming-soon {
     padding: 3rem;
     text-align: center;

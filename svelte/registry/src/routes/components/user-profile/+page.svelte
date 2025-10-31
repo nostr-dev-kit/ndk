@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
 	// Import blocks
@@ -78,11 +78,11 @@
 				<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} />
 				<EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} />
 				<EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} />
+				<EditProps.Button>Change Sample Users</EditProps.Button>
 			</EditProps.Root>
 		{/key}
 		<div class="header-title">
 			<h1>UserProfile</h1>
-			<EditProps.Button>Change Sample Users</EditProps.Button>
 		</div>
 		<p>Composable user profile display components with multiple layout variants.</p>
 	</header>
@@ -103,9 +103,7 @@
 					code={HeroCodeRaw}
 				>
 					{#if user1}
-						<div class="w-full max-w-2xl">
-							<UserProfileHero {ndk} pubkey={user1.pubkey} />
-						</div>
+						<UserProfileHero {ndk} pubkey={user1.pubkey} class="w-full" />
 					{/if}
 				</Demo>
 			</div>

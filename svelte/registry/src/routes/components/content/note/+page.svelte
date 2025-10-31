@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
   import BasicExample from './examples/basic.svelte';
@@ -39,11 +39,14 @@ Pretty cool, right? #awesome`);
 
 <div class="component-page">
   <header>
-    <h1>Event Content</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>Event Content</h1>
+    </div>
     <p>Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.</p>
 
     <EditProps.Root>
       <EditProps.Prop name="Event content" type="text" bind:value={eventContent} />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </header>
 

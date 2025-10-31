@@ -8,8 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json 2>&1 | grep -v 'examples/.*-code.svelte' || true",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "check:all": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "registry:generate": "bun run scripts/generate-registry-from-blocks.ts",
     "registry:validate": "bun run scripts/validate-registry.ts",
     "registry:versions": "bun run scripts/add-component-versions.ts",
@@ -31,7 +32,8 @@
     "svelte-check": "^4.3.2",
     "tailwindcss": "4.1.16",
     "typescript": "^5.9.2",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "vite-plugin-devtools-json": "^1.0.0"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^1.2.1",

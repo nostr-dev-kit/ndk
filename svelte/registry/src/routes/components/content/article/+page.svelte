@@ -3,7 +3,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples
@@ -12,35 +12,24 @@
   import WithClickExample from './examples/with-click.svelte';
   import WithClickRaw from './examples/with-click.svelte?raw';
 
-  const ndk = getContext<NDKSvelte>('ndk');
-
-  let article = $state<NDKArticle | null>();
-
-  $effect(() => {
-    (async () => {
-      try {
-        const event = await ndk.fetchEvent("naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx");
-        article = event ? NDKArticle.from(event) : null;
-      } catch (error) {
-        console.error('Failed to fetch articles:', error);
-      }
-    })();
-  });
+  let article = $state<NDKArticle | null | undefined>();
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">ArticleContent</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">ArticleContent</h1>
+        <EditProps.Root>
+          <EditProps.Prop name="Sample Article" type="article" bind:value={article} default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx" />
+          <EditProps.Button>Edit Examples</EditProps.Button>
+        </EditProps.Root>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Render NIP-23 article content with markdown support, inline highlights, text selection, and
       floating avatars. Automatically subscribes to highlights and allows users to create new
       highlights by selecting text.
     </p>
-
-    <EditProps.Root>
-      <EditProps.Prop name="Sample Article" type="article" bind:value={article} />
-    </EditProps.Root>
   </div>
 
   {#if !article}

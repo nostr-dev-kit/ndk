@@ -9,6 +9,7 @@
   <ReactionButton {ndk} {event} />
   <ReactionButton {ndk} {event} emoji="🔥" />
   <ReactionButton {ndk} {event} showCount={false} />
+  <ReactionButton {ndk} {event} delayed={5} />
   ```
 -->
 <script lang="ts">
@@ -23,15 +24,16 @@
     event: NDKEvent;
     emoji?: string;
     showCount?: boolean;
+    delayed?: number;
     class?: string;
   }
 
-  let { ndk: ndkProp, event, emoji = '❤️', showCount = true, class: className = '' }: Props = $props();
+  let { ndk: ndkProp, event, emoji = '❤️', showCount = true, delayed, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
   const ndk = $derived(ndkProp || ndkContext);
 
-  const reactionState = createReactionAction(() => ({ event }), ndk);
+  const reactionState = createReactionAction(() => ({ event, delayed }), ndk);
 
   const stats = $derived(reactionState.get(emoji) ?? { count: 0, hasReacted: false, pubkeys: [], emoji });
 

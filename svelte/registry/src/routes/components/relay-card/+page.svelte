@@ -4,7 +4,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { RelayCard } from '$lib/registry/components/relay-card';
 	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/registry/components/blocks';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Code examples for blocks
@@ -42,10 +42,10 @@
 			<EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
 			<EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
 			<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
+			<EditProps.Button>Change Sample Relays</EditProps.Button>
 		</EditProps.Root>
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-4xl font-bold">RelayCard</h1>
-			<EditProps.Button>Change Sample Relays</EditProps.Button>
 		</div>
 		<p class="text-lg text-muted-foreground">
 			Composable relay display components with NIP-11 info and bookmark functionality. Build custom

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
   import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -12,18 +12,16 @@
   import UiCompositionRaw from './examples/ui-composition.svelte?raw';
   import UiPopover from './examples/ui-popover.svelte';
   import UiPopoverRaw from './examples/ui-popover.svelte?raw';
+  import UiAutocomplete from './examples/ui-autocomplete.svelte';
+  import UiAutocompleteRaw from './examples/ui-autocomplete.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
 
 <div class="component-page">
   <header>
-    <EditProps.Root>
-      <EditProps.Prop name="Component" type="text" value="EmojiPicker.List & EmojiPicker.Content" />
-    </EditProps.Root>
     <div class="header-title">
       <h1>EmojiPicker</h1>
-      <EditProps.Button>Configure Examples</EditProps.Button>
     </div>
     <p>Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys.</p>
   </header>
@@ -53,6 +51,14 @@
       code={UiPopoverRaw}
     >
       <UiPopover {ndk} />
+    </Demo>
+
+    <Demo
+      title="Textarea Autocomplete"
+      description="Type : followed by text to autocomplete with your custom emojis. Supports keyboard navigation (arrows, tab/enter to select, escape to close)."
+      code={UiAutocompleteRaw}
+    >
+      <UiAutocomplete {ndk} />
     </Demo>
   </section>
 

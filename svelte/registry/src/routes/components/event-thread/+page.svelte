@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
   import { ThreadViewTwitter } from '$lib/registry/components/blocks';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -32,7 +32,9 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">ThreadView</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">ThreadView</h1>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Display Nostr event threads with parent chains, focused events, and replies. Built using
       EventCard primitives with the createThreadView builder.
@@ -40,6 +42,7 @@
 
     <EditProps.Root>
       <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 

@@ -8,7 +8,7 @@
 		VoiceMessageCardCompact,
 		VoiceMessageCardExpanded
 	} from '$lib/registry/components/blocks';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import simplified code examples (for Code tab)
@@ -61,37 +61,39 @@
 
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
-	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">VoiceMessageCard</h1>
-		<p class="text-lg text-muted-foreground mb-6">
-			Composable voice message card components for displaying NIP-A0 voice messages with audio
-			playback and waveform visualization.
-		</p>
-
-		{#key voiceMessages}
-			<EditProps.Root>
-				<EditProps.Prop
-					name="Voice Message 1"
-					type="event"
-					bind:value={voiceMessage1}
-					options={voiceMessages}
-				/>
-				<EditProps.Prop
-					name="Voice Message 2"
-					type="event"
-					bind:value={voiceMessage2}
-					options={voiceMessages}
-				/>
-				<EditProps.Prop
-					name="Voice Message 3"
-					type="event"
-					bind:value={voiceMessage3}
-					options={voiceMessages}
-				/>
-			</EditProps.Root>
-		{/key}
-	</div>
-
+	  <div class="mb-12">
+	    <div class="flex items-start justify-between gap-4 mb-4">
+	        <h1 class="text-4xl font-bold">VoiceMessageCard</h1>
+	    </div>
+			<p class="text-lg text-muted-foreground mb-6">
+				Composable voice message card components for displaying NIP-A0 voice messages with audio
+				playback and waveform visualization.
+			</p>
+	
+			{#key voiceMessages}
+				<EditProps.Root>
+					<EditProps.Prop
+						name="Voice Message 1"
+						type="event"
+						bind:value={voiceMessage1}
+						options={voiceMessages}
+					/>
+					<EditProps.Prop
+						name="Voice Message 2"
+						type="event"
+						bind:value={voiceMessage2}
+						options={voiceMessages}
+					/>
+					<EditProps.Prop
+						name="Voice Message 3"
+						type="event"
+						bind:value={voiceMessage3}
+						options={voiceMessages}
+					/>
+					<EditProps.Button>Edit Examples</EditProps.Button>
+				</EditProps.Root>
+			{/key}
+		</div>
 	{#if loading}
 		<div class="flex items-center justify-center py-12">
 			<div class="text-muted-foreground">Loading voice messages...</div>

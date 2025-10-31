@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import Alert from '$site-components/alert.svelte';
 
@@ -18,11 +18,14 @@
 
 <div class="component-page">
   <header>
-    <h1>UserInput</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>UserInput</h1>
+    </div>
     <p>Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.</p>
 
     <EditProps.Root>
       <EditProps.Prop name="Placeholder" type="text" bind:value={placeholder} />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </header>
 

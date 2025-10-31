@@ -33,66 +33,25 @@
   let { emojis, onSelect, columns = 6, class: className = '' }: Props = $props();
 </script>
 
-<div class={cn('emoji-list', className)} style="--emoji-columns: {columns};">
+<div
+  class={cn('grid gap-2 max-w-full', className)}
+  style="grid-template-columns: repeat({columns}, minmax(0, 1fr));"
+>
   {#each emojis as emojiData}
     <button
-      class="emoji-button"
+      class="flex items-center justify-center w-full aspect-square border-0 bg-transparent cursor-pointer rounded-lg transition-all duration-150 p-2 hover:bg-accent hover:scale-110 active:scale-95"
       onclick={() => onSelect(emojiData)}
       aria-label={emojiData.shortcode || emojiData.emoji}
     >
       {#if emojiData.url}
-        <img src={emojiData.url} alt={emojiData.shortcode} class="custom-emoji" />
+        <img
+          src={emojiData.url}
+          alt={emojiData.shortcode}
+          class="max-w-6 max-h-6 w-full h-full object-contain"
+        />
       {:else}
-        <span class="emoji-char">{emojiData.emoji}</span>
+        <span class="text-2xl leading-none sm:text-xl">{emojiData.emoji}</span>
       {/if}
     </button>
   {/each}
 </div>
-
-<style>
-  .emoji-list {
-    display: grid;
-    grid-template-columns: repeat(var(--emoji-columns, 6), 1fr);
-    gap: 0.5rem;
-  }
-
-  .emoji-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    aspect-ratio: 1;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.15s;
-    padding: 0.5rem;
-  }
-
-  .emoji-button:hover {
-    background: var(--color-accent);
-    transform: scale(1.1);
-  }
-
-  .emoji-button:active {
-    transform: scale(0.95);
-  }
-
-  .emoji-char {
-    font-size: 1.75rem;
-    line-height: 1;
-  }
-
-  .custom-emoji {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  @media (max-width: 640px) {
-    .emoji-char {
-      font-size: 1.5rem;
-    }
-  }
-</style>

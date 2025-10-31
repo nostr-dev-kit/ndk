@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
   import BasicExample from './examples/zap-action-basic.svelte';
@@ -30,7 +30,9 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">ZapAction</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">ZapAction</h1>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Zap (lightning payment) button with amount display. Send sats to support events and users on Nostr.
     </p>
@@ -42,6 +44,7 @@
         default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
         bind:value={sampleEvent}
       />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 

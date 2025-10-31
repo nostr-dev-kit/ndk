@@ -1,0 +1,522 @@
+Generating NIP-61 test vectors...
+
+{
+  "version": "1.0.0",
+  "nip": "NIP-61",
+  "description": "Test vectors for NIP-61 nutzap validation",
+  "generated": "2025-10-31T22:06:05.063Z",
+  "vectors": [
+    {
+      "name": "valid_complete",
+      "description": "Valid nutzap with e and P tags in proofs (full NIP-61 compliance)",
+      "event": {
+        "created_at": 1761948365,
+        "content": "Great post!",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "proof",
+            "{\"C\":\"https://mint.example.com\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "33ddcd1a6b0feb2fb40dacd00c2b8c0be202ed2e6d3f27e8998c24a2b1b1ffa4",
+        "sig": "97349014e047b875f47d92e5954517e85ff8373cc2400b0a0e3c32c793b274fc122009ef59cc1e081cfc2b49d552dddf246aae06648b49d38cd5e598e03ba138"
+      },
+      "expectedValid": true,
+      "expectedIssues": []
+    },
+    {
+      "name": "valid_no_e_tag",
+      "description": "Valid nutzap without e tag (backwards compatible but with warnings)",
+      "event": {
+        "created_at": 1761948365,
+        "content": "Nice!",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "proof",
+            "{\"C\":\"https://mint.example.com\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "c086e1a5a603c886aa531f9a0186711f9a1ff07bc675cbdc7b97b1fa141d6466",
+        "sig": "1247373d4147e06ab5aa736aaed214c1eddea225d13d36c92d0e51f14082126ef5bb08d31f4bfe9d0ffb76273cceab03eb2328e55228891514d6fd9efbe397ef"
+      },
+      "expectedValid": true,
+      "expectedIssues": [
+        "NO_EVENT_TAG_IN_EVENT",
+        "MISSING_EVENT_TAG_IN_PROOF"
+      ]
+    },
+    {
+      "name": "valid_multiple_proofs",
+      "description": "Valid nutzap with multiple proofs",
+      "event": {
+        "created_at": 1761948365,
+        "content": "Split payment",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof1\",\"amount\":50,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof2\",\"amount\":50,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "ec95a5d92f2c08876d1f760ddca0ea52b1eb18dac8c749a828e6c5aedde55783",
+        "sig": "14a73987e1256b6b2c4d76a333d14ed926e88ced0b46600ee7d166e2ddef7584a1b6343382aef1ba988c528d4d4928c2718e391401edbd8d2599af538d7ac991"
+      },
+      "expectedValid": true,
+      "expectedIssues": []
+    },
+    {
+      "name": "invalid_no_proofs",
+      "description": "Invalid: No proofs provided",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "amount",
+            "0"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "580e826413700ffd09a312019214a14ccd5f34d56cccef0d06f7b60a6d3313f2",
+        "sig": "f44e233fcb98168dff467f8b25f2bdef828fcbefd9df615064306cd635d1b75bf2a8a4b4a5d6f0f229740b538553dc7fc5e1462f0dc3674a93dbff7842bf6150"
+      },
+      "expectedValid": false,
+      "expectedIssues": [
+        "NO_PROOFS"
+      ]
+    },
+    {
+      "name": "invalid_no_recipient",
+      "description": "Invalid: Missing recipient p tag",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "8fc1b41ebdf4231206d4c1f325ef193a707f25107522c86e0d90a80c7dfafc90",
+        "sig": "975a56e878a6e2818cd7e71c745c3065396ab8e0a21497f7b0926cde314d2e7b09e2c4411ad6e1866010a6d79c27c9ad84dd3d18bd10cd66fc88ddcc128be206"
+      },
+      "expectedValid": false,
+      "expectedIssues": [
+        "NO_RECIPIENT"
+      ]
+    },
+    {
+      "name": "invalid_multiple_recipients",
+      "description": "Invalid: Multiple recipient p tags",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "p",
+            "another_pubkey_0123456789abcdef0123456789abcdef01234567"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "b377c9837f4fa273b44fbe6a137dd8d0c63396f4c0107c63800df2d5f471ccbd",
+        "sig": "e4022fc7040a8322dc988687ba384820aaf877525f46a424fb87f2f8a9f60da61a715586b90b0adfe73d98becac63b1f58b5572233497ceb7a8ea5f0a61bff29"
+      },
+      "expectedValid": false,
+      "expectedIssues": [
+        "MULTIPLE_RECIPIENTS"
+      ]
+    },
+    {
+      "name": "invalid_no_mint",
+      "description": "Invalid: Missing mint u tag",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "f84b22b99a98b19b8d1b87a30d15ba985338eedac15fb0d0072ce12de1d0fc39",
+        "sig": "aa290f600020ab0a9a3c7da301d49d1655ec18c118ff064b1aa07c81ea3a57cef59fcfd86272f9089f560790a678d8cde557d59864515d1f3fd83aca5d498426"
+      },
+      "expectedValid": false,
+      "expectedIssues": [
+        "NO_MINT"
+      ]
+    },
+    {
+      "name": "invalid_multiple_event_tags",
+      "description": "Invalid: Multiple e tags in event",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "proof",
+            "{\"C\":\"https://mint.example.com\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "e",
+            "another_event_id_1234567890abcdef1234567890abcdef"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "88f1ed9af67658e7ff336e94e10c55d587f8946073ab7f1f72efeb2aaf318eda",
+        "sig": "e2d5458f684d7a895a43dffacb5016ca395c92a213940cefa849d3572bf9ed31ea13c597d0503901328faf7b387f95efd19721c29d14f4d24e522af8a9736ce4"
+      },
+      "expectedValid": false,
+      "expectedIssues": [
+        "MULTIPLE_EVENT_TAGS"
+      ]
+    },
+    {
+      "name": "invalid_malformed_secret",
+      "description": "Invalid: Proof secret is not valid JSON",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "proof",
+            "{\"id\":\"proof\",\"amount\":100,\"C\":\"test\",\"secret\":\"not valid json {{{\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "24deec5611053dbc0365b4ea1e63bd1d5535d41e9360a55b6b987033a504ac39",
+        "sig": "2ed17f709e450cc11a22b526f520c3432d993d6967b350a4437accd8ba6b47c21886605304caa997da2d4dfe29d843bf0740a586ee7d2cf1f9f192d5f1f70556"
+      },
+      "expectedValid": false,
+      "expectedIssues": [
+        "MALFORMED_PROOF_SECRET"
+      ]
+    },
+    {
+      "name": "warning_missing_proof_e_tag",
+      "description": "Valid with warning: Event has e tag but proof doesn't",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "dc681ee021edc03670b275f0f0434b4e74f0006da1de94d34eea958f9f9ca612",
+        "sig": "0610f961100ec2f5012236b8f565b9b25a46105660dec29ab4878c6c0294f4aa0ae195643f8a94eaab83034a2b51a4095c23ab55078c46086a8b6198e6b1377d"
+      },
+      "expectedValid": true,
+      "expectedIssues": [
+        "MISSING_EVENT_TAG_IN_PROOF"
+      ]
+    },
+    {
+      "name": "warning_mismatched_proof_e_tag",
+      "description": "Valid with warning: Proof e tag doesn't match event e tag",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"different_event_id\\\"],[\\\"P\\\",\\\"6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "b6c893522958c26bdc57245a973e5060f78739aaa77dce66a12de9e6fbf7edad",
+        "sig": "04677ce48b023f5cb940172915bd9002ac667f0e84bf7f1e11cfed4465fbc9194b1dc4334346ed6baabed57c87372682ff1150d43aa0f18cb8a714f0290406d0"
+      },
+      "expectedValid": true,
+      "expectedIssues": [
+        "MISMATCHED_EVENT_TAG_IN_PROOF"
+      ]
+    },
+    {
+      "name": "warning_missing_proof_p_tag",
+      "description": "Valid with warning: Proof missing P tag for sender verification",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "5736e6c8e437c1eb301fb66ff8f09b164daee026c9fed1ac87dc3e7a7a17f6d5",
+        "sig": "55fe4c3a35e4770c4710b235612b94ca18d6cb889f626341b9c30efe9181b6fc3c541c0ab69e54270c23c852fbef2d26698e942ac9e9110b515a76ef6aa5413a"
+      },
+      "expectedValid": true,
+      "expectedIssues": [
+        "MISSING_SENDER_TAG_IN_PROOF"
+      ]
+    },
+    {
+      "name": "warning_mismatched_proof_p_tag",
+      "description": "Valid with warning: Proof P tag doesn't match sender pubkey",
+      "event": {
+        "created_at": 1761948365,
+        "content": "",
+        "tags": [
+          [
+            "alt",
+            "This is a nutzap"
+          ],
+          [
+            "u",
+            "https://mint.example.com"
+          ],
+          [
+            "p",
+            "8e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1"
+          ],
+          [
+            "e",
+            "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+          ],
+          [
+            "proof",
+            "{\"C\":\"proof\",\"amount\":100,\"id\":\"mint\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c\\\",\\\"data\\\":\\\"028e384e85521870ed550f4c4fbcabb3b19d3802bbcaebadf9882ae8855a15d5a1\\\",\\\"tags\\\":[[\\\"e\\\",\\\"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\\\"],[\\\"P\\\",\\\"wrong_sender_pubkey\\\"]]}]\"}"
+          ],
+          [
+            "amount",
+            "100"
+          ]
+        ],
+        "kind": 9321,
+        "pubkey": "6f92ce60d4ca77bee4106ebc8412d6068080844f0dc232779d8aadaf0f1aecb3",
+        "id": "29cd04ec73dface447f4da14e9009371b28321e2384b8489445292037939ccc9",
+        "sig": "d5f979fb9a636fee93b0fc060bddc2444ce6c562e2abc39b522c60459beac41c102762cd110c1471833a9cd2e1844cc8ed82bb896476ab3f87d819320211b123"
+      },
+      "expectedValid": true,
+      "expectedIssues": [
+        "MISMATCHED_SENDER_TAG_IN_PROOF"
+      ]
+    }
+  ]
+}
+
+✓ Generated 13 test vectors:
+  - 7 valid events
+  - 6 invalid events (errors)
+  - 5 valid events with warnings

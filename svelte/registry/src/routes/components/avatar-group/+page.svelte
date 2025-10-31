@@ -1,8 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createAvatarGroup } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
   // Import examples
@@ -28,12 +27,14 @@
 
 <div class="component-page">
   <header>
-    <h1>AvatarGroup</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>AvatarGroup</h1>
+        <EditProps.Root>
+          <EditProps.Prop name="Max avatars" type="number" bind:value={maxAvatars} />
+          <EditProps.Button>Edit Examples</EditProps.Button>
+        </EditProps.Root>
+    </div>
     <p>Display multiple user avatars in a stacked group with smart ordering based on follows.</p>
-
-    <EditProps.Root>
-      <EditProps.Prop name="Max avatars" type="number" bind:value={maxAvatars} />
-    </EditProps.Root>
   </header>
 
   <section class="demo space-y-8">

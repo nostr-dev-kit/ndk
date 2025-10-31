@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
   // Import block components for preview
@@ -86,6 +86,11 @@
               <span class="text-sm text-muted-foreground w-24">No count:</span>
               <ReactionButton {ndk} event={sampleEvent} showCount={false} />
             </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">Delayed (5s):</span>
+              <ReactionButton {ndk} event={sampleEvent} delayed={5} />
+              <span class="text-xs text-muted-foreground">← Click twice to cancel</span>
+            </div>
           </div>
         </Demo>
 
@@ -104,6 +109,12 @@
             <div>
               <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
               <ReactionSlack {ndk} event={sampleEvent} variant="vertical" />
+            </div>
+
+            <div>
+              <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">With Delayed Reactions (5s)</h4>
+              <ReactionSlack {ndk} event={sampleEvent} delayed={5} />
+              <p class="text-xs text-muted-foreground mt-2">💡 Click any reaction twice within 5 seconds to cancel</p>
             </div>
           </div>
         </Demo>

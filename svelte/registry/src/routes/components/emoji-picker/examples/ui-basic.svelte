@@ -10,19 +10,25 @@
     { emoji: '🎉' },
   ];
 
-  let selected = $state<string>('');
+  let selected = $state<EmojiData | null>(null);
 
   function handleSelect(emoji: EmojiData) {
-    selected = emoji.emoji;
+    selected = emoji;
   }
 </script>
 
 <div class="space-y-4">
-  <EmojiPicker.List {emojis} onSelect={handleSelect} columns={6} />
+  <div class="max-w-xs">
+    <EmojiPicker.List {emojis} onSelect={handleSelect} columns={6} />
+  </div>
 
   {#if selected}
-    <p class="text-sm text-muted-foreground">
-      You selected: <span class="text-lg">{selected}</span>
-    </p>
+    <div class="flex items-center justify-center">
+      {#if selected.url}
+        <img src={selected.url} alt={selected.shortcode} class="w-12 h-12 object-contain" />
+      {:else}
+        <span class="text-5xl">{selected.emoji}</span>
+      {/if}
+    </div>
   {/if}
 </div>

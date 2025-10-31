@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -20,13 +20,16 @@
 
 <div class="component-page">
   <header>
-    <h1>UserProfile.Name</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>UserProfile.Name</h1>
+    </div>
     <p>Display user names with automatic fallbacks. Part of the UserProfile component system.</p>
 
     <EditProps.Root>
       <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
       <EditProps.Prop name="Size" type="select" bind:value={size} options={['sm', 'md', 'lg', 'xl']} />
       <EditProps.Prop name="Truncate" type="boolean" bind:value={truncate} />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </header>
 

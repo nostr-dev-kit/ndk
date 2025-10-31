@@ -17,6 +17,11 @@
   ```svelte
   <ReactionSlack {ndk} {event} showAvatars={false} />
   ```
+
+  @example With cancellable delayed reactions
+  ```svelte
+  <ReactionSlack {ndk} {event} delayed={5} />
+  ```
 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
@@ -39,6 +44,9 @@
     /** Show user avatars */
     showAvatars?: boolean;
 
+    /** Delay in seconds before publishing (for cancellable reactions) */
+    delayed?: number;
+
     /** Additional CSS classes */
     class?: string;
   }
@@ -48,10 +56,11 @@
     event,
     variant = 'horizontal',
     showAvatars = true,
+    delayed,
     class: className = ''
   }: Props = $props();
 
-  const reactionState = createReactionAction(() => ({ event }), ndk);
+  const reactionState = createReactionAction(() => ({ event, delayed }), ndk);
 
   async function reactWith(emoji: string) {
     await reactionState.react(emoji);

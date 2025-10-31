@@ -3,7 +3,7 @@
 	import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { ImageCard, ImageCardInstagram, ImageCardHero } from '$lib/registry/components/blocks';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -42,19 +42,21 @@
 
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
-	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">Image Content</h1>
-		<p class="text-lg text-muted-foreground mb-6">
-			Display image events with metadata and interactions. ImageContent renders images from NIP-68
-			events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt
-			text.
-		</p>
-
-		<EditProps.Root>
-			<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
-		</EditProps.Root>
-	</div>
-
+	  <div class="mb-12">
+	    <div class="flex items-start justify-between gap-4 mb-4">
+	        <h1 class="text-4xl font-bold">Image Content</h1>
+	    </div>
+			<p class="text-lg text-muted-foreground mb-6">
+				Display image events with metadata and interactions. ImageContent renders images from NIP-68
+				events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt
+				text.
+			</p>
+	
+			<EditProps.Root>
+				<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
+				<EditProps.Button>Edit Examples</EditProps.Button>
+			</EditProps.Root>
+		</div>
 	<!-- Blocks Section -->
 	<section class="mb-16">
 		<h2 class="text-3xl font-bold mb-2">Blocks</h2>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -18,11 +18,14 @@
 
 <div class="component-page">
   <header>
-    <h1>UserProfile.Nip05</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>UserProfile.Nip05</h1>
+    </div>
     <p>Display and validate user NIP-05 identifiers with optional verification badges and clickable links.</p>
 
     <EditProps.Root>
       <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </header>
 

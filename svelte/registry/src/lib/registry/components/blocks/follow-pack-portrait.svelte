@@ -28,7 +28,7 @@
 		<div class="absolute inset-0">
 			<FollowPack.Image class="w-full h-full object-cover" showGradient={true} />
 			<!-- Darkening gradient overlay for text legibility -->
-			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70"></div>
+			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/90"></div>
 		</div>
 
 		<!-- Content with relative positioning -->

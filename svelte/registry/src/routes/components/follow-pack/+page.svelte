@@ -4,6 +4,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import {
 		FollowPackPortrait,
+		FollowPackModernPortrait,
 		FollowPackHero,
 		FollowPackCompact,
 		FollowPackListItem
@@ -13,6 +14,7 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
+	import ModernPortraitCodeRaw from './examples/modern-portrait-code.svelte?raw';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
 	import CompactCodeRaw from './examples/compact-code.svelte?raw';
 	import ListItemCodeRaw from './examples/list-item-code.svelte?raw';
@@ -76,6 +78,69 @@
 		</p>
 	</div>
 
+	<!-- Blocks Showcase Section -->
+	{#if displayPacks.length > 0}
+		<section class="mb-16">
+			<h2 class="text-3xl font-bold mb-8">Blocks Showcase</h2>
+
+			<!-- Hero -->
+			<div class="mb-12">
+				<div class="mb-4">
+					<h3 class="text-lg font-semibold mb-1">Hero</h3>
+					<p class="text-sm text-muted-foreground">Featured display with full-bleed imagery</p>
+				</div>
+				{#if pack1}
+					<FollowPackHero {ndk} followPack={pack1} />
+				{/if}
+			</div>
+
+			<!-- Portrait -->
+			<div class="mb-12">
+				<div class="mb-4">
+					<h3 class="text-lg font-semibold mb-1">Portrait</h3>
+					<p class="text-sm text-muted-foreground">Vertical card layouts for grid displays</p>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{#each displayPacks.slice(0, 2) as pack}
+						<FollowPackPortrait {ndk} followPack={pack} />
+					{/each}
+					{#if displayPacks.length > 0}
+						<FollowPackModernPortrait {ndk} followPack={displayPacks[0]} />
+					{/if}
+				</div>
+			</div>
+
+			<!-- Compact & List Items -->
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				<!-- Compact -->
+				<div>
+					<div class="mb-4">
+						<h3 class="text-lg font-semibold mb-1">Compact</h3>
+						<p class="text-sm text-muted-foreground">Horizontal layouts for feeds</p>
+					</div>
+					<div class="space-y-3">
+						{#each displayPacks.slice(0, 3) as pack}
+							<FollowPackCompact {ndk} followPack={pack} />
+						{/each}
+					</div>
+				</div>
+
+				<!-- List Items -->
+				<div>
+					<div class="mb-4">
+						<h3 class="text-lg font-semibold mb-1">List Item</h3>
+						<p class="text-sm text-muted-foreground">Minimal design for sidebars</p>
+					</div>
+					<div class="space-y-2">
+						{#each displayPacks.slice(0, 4) as pack}
+							<FollowPackListItem {ndk} followPack={pack} />
+						{/each}
+					</div>
+				</div>
+			</div>
+		</section>
+	{/if}
+
 	<!-- Blocks Section -->
 	<section class="mb-16">
 		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
@@ -116,6 +181,42 @@
 				<div class="flex gap-4 flex-wrap">
 					{#each displayPacks.slice(0, 3) as pack}
 						<FollowPackPortrait {ndk} followPack={pack} />
+					{/each}
+				</div>
+			</Demo>
+
+			<Demo
+				title="Modern Portrait"
+				description="Use for premium follow pack displays with full-bleed imagery and glossy design. Features pack creator information and modern glass-morphism effects."
+				component="follow-pack-modern-portrait"
+				code={ModernPortraitCodeRaw}
+				props={[
+					{
+						name: 'ndk',
+						type: 'NDKSvelte',
+						description: 'NDK instance (optional if provided via context)'
+					},
+					{
+						name: 'followPack',
+						type: 'NDKFollowPack',
+						required: true,
+						description: 'The follow pack event (kind 39089) to display'
+					},
+					{
+						name: 'onclick',
+						type: '(e: MouseEvent) => void',
+						description: 'Optional click handler for custom actions'
+					},
+					{
+						name: 'class',
+						type: 'string',
+						description: 'Additional CSS classes to apply'
+					}
+				]}
+			>
+				<div class="flex gap-4 flex-wrap">
+					{#each displayPacks.slice(0, 3) as pack}
+						<FollowPackModernPortrait {ndk} followPack={pack} />
 					{/each}
 				</div>
 			</Demo>

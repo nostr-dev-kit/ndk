@@ -29,12 +29,21 @@
 		<!-- Gradient overlay for better text readability -->
 		<div class="absolute inset-0 z-[5] bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
-		<div class="absolute inset-0 z-10 h-full flex flex-col justify-end p-8 text-white text-left">
-			<FollowPack.Title class="text-4xl font-bold mb-3 text-left" lines={2} />
-			<FollowPack.Description class="text-base mb-6 max-w-2xl text-left" maxLength={200} lines={2} />
+		<div class="absolute inset-0 z-10 h-full flex flex-col p-8 text-white text-left">
+			<!-- Author at top, subtle -->
+			{#if followPack.pubkey}
+				<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
+					<UserProfile.Avatar {ndk} pubkey={followPack.pubkey} size={20} class="ring-1 ring-white/30" />
+					<UserProfile.Name {ndk} pubkey={followPack.pubkey} />
+				</div>
+			{/if}
 
-			<div class="flex items-center justify-between gap-5 text-sm">
-				<div class="flex items-center gap-5">
+			<!-- Main content at bottom -->
+			<div class="space-y-4">
+				<FollowPack.Title class="text-4xl font-bold text-left" lines={2} />
+				<FollowPack.Description class="text-base max-w-2xl text-left" maxLength={200} lines={2} />
+
+				<div class="flex items-center gap-4 text-sm">
 					<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={5} size={32} />
 					<div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,9 +52,6 @@
 						<FollowPack.MemberCount format="long" />
 					</div>
 				</div>
-				{#if followPack.pubkey}
-					<UserProfile.AvatarName {ndk} pubkey={followPack.pubkey} avatarSize={24} meta="Curator" />
-				{/if}
 			</div>
 		</div>
 	</button>

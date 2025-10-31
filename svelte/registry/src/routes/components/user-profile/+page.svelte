@@ -311,3 +311,13 @@
 	{/if}
 </div>
 
+<style>
+	.header-title {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+</style>
+

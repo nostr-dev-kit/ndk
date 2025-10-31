@@ -198,18 +198,9 @@ export class ReactiveSessionsStore {
 
         this.#manager.logout(targetPubkey);
 
-        // Update local state immediately
-        delete this.sessions[targetPubkey];
-        if (this.activePubkey === targetPubkey) {
-            this.activePubkey = undefined;
-        }
-
-        // If this was the last session, clear storage completely
-        if (Object.keys(this.sessions).length === 0) {
-            this.#manager.clear().catch((error) => {
-                console.error("[svelte] Failed to clear sessions from storage:", error);
-            });
-        }
+        // Note: State updates will happen via the subscription handler
+        // Don't update local state manually - let the subscription handler handle it
+        // to avoid race conditions and ensure NDK's activeUser is properly cleared
     }
 
     /**
@@ -222,14 +213,8 @@ export class ReactiveSessionsStore {
             this.#manager.logout(pubkey);
         }
 
-        // Update local state immediately
-        this.sessions = {};
-        this.activePubkey = undefined;
-
-        // Clear persisted sessions from storage
-        this.#manager.clear().catch((error) => {
-            console.error("[svelte] Failed to clear sessions from storage:", error);
-        });
+        // Note: State updates will happen via the subscription handler
+        // Don't update local state manually - let the subscription handler handle it
     }
 
     /**

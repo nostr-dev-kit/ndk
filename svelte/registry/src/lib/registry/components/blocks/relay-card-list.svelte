@@ -31,6 +31,9 @@
 		/** Show description */
 		showDescription?: boolean;
 
+		/** Compact variant - smaller icon, no URL */
+		compact?: boolean;
+
 		/** Click handler */
 		onclick?: (e: MouseEvent) => void;
 
@@ -42,6 +45,7 @@
 		ndk,
 		relayUrl,
 		showDescription = true,
+		compact = false,
 		onclick,
 		class: className = ''
 	}: Props = $props();
@@ -58,9 +62,6 @@
 	function handleClick(e: MouseEvent) {
 		if (onclick) {
 			onclick(e);
-		} else {
-			// Default: open relay URL in new tab
-			window.open(relayUrl, '_blank');
 		}
 	}
 </script>
@@ -71,44 +72,30 @@
 		onclick={handleClick}
 		class={cn(
 			'relay-card-list',
-			'group flex items-center gap-4 w-full',
-			'p-4 rounded-lg',
-			'bg-card hover:bg-muted',
+			'group flex items-center w-full',
+			'hover:bg-muted',
 			'border-b border-border last:border-b-0',
 			'transition-all duration-200',
-			'hover:shadow-sm',
 			'text-left',
+			compact ? 'gap-3 p-2' : 'gap-4 p-4',
 			className
 		)}
 	>
 		<!-- Icon -->
 		<div class="flex-shrink-0">
-			<Icon size={48} />
+			<Icon size={compact ? 32 : 48} />
 		</div>
 
 		<!-- Content -->
 		<div class="flex-1 min-w-0">
-			<!-- Name & URL -->
-			<div class="flex items-center gap-2 mb-1">
-				<Name class="text-base font-semibold truncate" />
-				<svg
-					width="14"
-					height="14"
-					class="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-					/>
-				</svg>
+			<!-- Name -->
+			<div class={cn('mb-0.5', !compact && 'mb-1')}>
+				<Name class={cn('font-semibold truncate', compact ? 'text-sm' : 'text-base')} />
 			</div>
 
-			<Url class="text-xs text-muted-foreground mb-1" showProtocol={false} />
+			{#if !compact}
+				<Url class="text-xs text-muted-foreground mb-0.5" showProtocol={false} />
+			{/if}
 
 			{#if showDescription}
 				<Description maxLines={2} class="text-xs text-muted-foreground leading-relaxed" />

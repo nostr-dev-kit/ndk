@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FollowPack — NDK Components</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #f5f5f7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .tagline {
+            font-size: clamp(21px, 3vw, 32px);
+            font-weight: 400;
+            color: #86868b;
+            max-width: 800px;
+            line-height: 1.4;
+            margin-bottom: 60px;
+        }
+
+        .hero .visual {
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 80px;
+        }
+
+        /* Section Base */
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 40px;
+            position: relative;
+        }
+
+        .section-light {
+            background: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        .section-dark {
+            background: #000;
+            color: #f5f5f7;
+        }
+
+        .section-content {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .section-header p {
+            font-size: clamp(19px, 2.5vw, 28px);
+            color: #86868b;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        .section-light .section-header p {
+            color: #6e6e73;
+        }
+
+        /* Hero Block Showcase */
+        .hero-showcase {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Portrait Grid */
+        .portrait-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 48px;
+            margin-top: 80px;
+        }
+
+        .portrait-card {
+            background: #1d1d1f;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-light .portrait-card {
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .portrait-card:hover {
+            transform: translateY(-8px);
+        }
+
+        /* Compact Layout */
+        .compact-layout {
+            max-width: 900px;
+            margin: 80px auto 0;
+        }
+
+        .compact-item {
+            background: #1d1d1f;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .section-light .compact-item {
+            background: #fff;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .compact-item:hover {
+            transform: translateX(8px);
+        }
+
+        /* List Items */
+        .list-layout {
+            max-width: 600px;
+            margin: 80px auto 0;
+        }
+
+        .list-item {
+            padding: 20px 16px;
+            border-bottom: 1px solid #2d2d2d;
+            transition: background 0.2s ease;
+        }
+
+        .section-light .list-item {
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .section-light .list-item:hover {
+            background: #f5f5f7;
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 60px;
+            margin-top: 100px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 40px;
+        }
+
+        .stat-number {
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-light .stat-number {
+            background: linear-gradient(135deg, #1d1d1f 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 21px;
+            color: #86868b;
+        }
+
+        .section-light .stat-label {
+            color: #6e6e73;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 80px 40px;
+            background: #000;
+            border-top: 1px solid #2d2d2d;
+        }
+
+        footer p {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* Placeholder for actual components */
+        .component-placeholder {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border-radius: 16px;
+            padding: 60px;
+            text-align: center;
+            color: #86868b;
+            font-size: 18px;
+        }
+
+        .section-light .component-placeholder {
+            background: linear-gradient(135deg, #f5f5f7 0%, #e8e8e8 100%);
+            color: #6e6e73;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Accent gradient */
+        .accent {
+            background: linear-gradient(90deg, #0071e3 0%, #00c7be 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>FollowPack</h1>
+        <p class="tagline">
+            Beautifully designed components for displaying<br>
+            curated people collections. Built for Nostr.
+        </p>
+        <div class="visual">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Block Variants</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number accent">5</div>
+                    <div class="stat-label">Primitives</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Possibilities</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Block -->
+    <section class="section-dark">
+        <div class="section-content">
+            <div class="section-header">
+                <h2>Hero</h2>
+                <p>Full-bleed cinematic display.<br>Make an unforgettable first impression.</p>
+            </div>
+            <div class="hero-showcase">
+                <div class="component-placeholder" style="min-height: 500px;">
+                    &lt;FollowPackHero /&gt;
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portrait -->
+    <section class="section-light">
+        <div class="section-content">
+            <div class="section-header">
+                <h2>Portrait</h2>
+                <p>Vertical elegance.<br>Perfect for grids and galleries.</p>
+            </div>
+            <div class="portrait-grid">
+                <div class="portrait-card">
+                    <div class="component-placeholder" style="min-height: 420px;">
+                        &lt;FollowPackPortrait /&gt;
+                    </div>
+                </div>
+                <div class="portrait-card">
+                    <div class="component-placeholder" style="min-height: 420px;">
+                        &lt;FollowPackPortrait /&gt;
+                    </div>
+                </div>
+                <div class="portrait-card">
+                    <div class="component-placeholder" style="min-height: 420px;">
+                        &lt;FollowPackPortrait /&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compact -->
+    <section class="section-dark">
+        <div class="section-content">
+            <div class="section-header">
+                <h2>Compact</h2>
+                <p>Information-dense.<br>Designed for feeds and content streams.</p>
+            </div>
+            <div class="compact-layout">
+                <div class="compact-item">
+                    <div class="component-placeholder" style="min-height: 120px;">
+                        &lt;FollowPackCompact /&gt;
+                    </div>
+                </div>
+                <div class="compact-item">
+                    <div class="component-placeholder" style="min-height: 120px;">
+                        &lt;FollowPackCompact /&gt;
+                    </div>
+                </div>
+                <div class="compact-item">
+                    <div class="component-placeholder" style="min-height: 120px;">
+                        &lt;FollowPackCompact /&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- List Item -->
+    <section class="section-light">
+        <div class="section-content">
+            <div class="section-header">
+                <h2>List Item</h2>
+                <p>Minimal by design.<br>Maximum impact with minimal footprint.</p>
+            </div>
+            <div class="list-layout">
+                <div class="list-item">
+                    <div class="component-placeholder" style="min-height: 60px;">
+                        &lt;FollowPackListItem /&gt;
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="component-placeholder" style="min-height: 60px;">
+                        &lt;FollowPackListItem /&gt;
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="component-placeholder" style="min-height: 60px;">
+                        &lt;FollowPackListItem /&gt;
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="component-placeholder" style="min-height: 60px;">
+                        &lt;FollowPackListItem /&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Composable -->
+    <section class="section-dark">
+        <div class="section-content">
+            <div class="section-header">
+                <h2>Infinitely <span class="accent">Composable</span></h2>
+                <p>Five primitives. Endless compositions.<br>Build exactly what you need.</p>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">FollowPack.Root</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">FollowPack.Image</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">FollowPack.Title</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">FollowPack.Description</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">FollowPack.MemberCount</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with NDK for the Nostr ecosystem</p>
+    </footer>
+
+</body>
+</html>

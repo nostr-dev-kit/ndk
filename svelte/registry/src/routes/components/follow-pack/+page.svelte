@@ -56,18 +56,18 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
+		{#key followPacks}
+			<EditProps.Root>
+				<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
+				<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+				<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+				<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+				<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+			</EditProps.Root>
+		{/key}
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-4xl font-bold">FollowPack</h1>
-			{#key followPacks}
-				<EditProps.Root>
-					<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-					<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-					<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-					<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-					<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-					<EditProps.Button>Change Sample Packs</EditProps.Button>
-				</EditProps.Root>
-			{/key}
+			<EditProps.Button>Change Sample Packs</EditProps.Button>
 		</div>
 		<p class="text-lg text-muted-foreground">
 			Display curated lists of people (kind 39089). Follow packs are collections of users grouped
@@ -78,58 +78,80 @@
 
 	<!-- Blocks Showcase Section -->
 	{#if displayPacks.length > 0}
-		<section class="mb-16">
-			<h2 class="text-3xl font-bold mb-8">Blocks Showcase</h2>
-
-			<!-- Hero -->
+		<section class="mb-32">
+			<!-- Section Header -->
 			<div class="mb-12">
-				<div class="mb-4">
-					<h3 class="text-lg font-semibold mb-1">Hero</h3>
-					<p class="text-sm text-muted-foreground">Featured display with full-bleed imagery</p>
-				</div>
-				{#if pack1}
-					<FollowPackHero {ndk} followPack={pack1} />
-				{/if}
+				<h2 class="text-3xl font-bold mb-2">Blocks Showcase</h2>
+				<p class="text-muted-foreground mb-8">
+					Four beautifully crafted variants. Each optimized for its purpose.
+					Choose the perfect presentation for your content.
+				</p>
 			</div>
 
-			<!-- Portrait -->
-			<div class="mb-12">
-				<div class="mb-4">
-					<h3 class="text-lg font-semibold mb-1">Portrait</h3>
-					<p class="text-sm text-muted-foreground">Vertical card layouts for grid displays</p>
+			<div class="space-y-0">
+				<!-- Hero -->
+				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
+					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Hero</h3>
+						<p class="text-sm text-muted-foreground leading-relaxed">
+							Featured display with full-bleed imagery. Perfect for landing pages and hero sections.
+						</p>
+					</div>
+					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center">
+						{#if pack1}
+							<div class="w-full max-w-4xl">
+								<FollowPackHero {ndk} followPack={pack1} />
+							</div>
+						{/if}
+					</div>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{#each displayPacks.slice(0, 3) as pack}
-						<FollowPackPortrait {ndk} followPack={pack} />
-					{/each}
-				</div>
-			</div>
 
-			<!-- Compact & List Items -->
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				<!-- Portrait -->
+				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
+					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Portrait</h3>
+						<p class="text-sm text-muted-foreground leading-relaxed">
+							Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.
+						</p>
+					</div>
+					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center">
+						{#if pack2}
+							<FollowPackPortrait {ndk} followPack={pack2} />
+						{/if}
+					</div>
+				</div>
+
 				<!-- Compact -->
-				<div>
-					<div class="mb-4">
-						<h3 class="text-lg font-semibold mb-1">Compact</h3>
-						<p class="text-sm text-muted-foreground">Horizontal layouts for feeds</p>
+				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
+					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Compact</h3>
+						<p class="text-sm text-muted-foreground leading-relaxed">
+							Information-dense for feeds. Optimized for content streams and horizontal layouts.
+						</p>
 					</div>
-					<div class="space-y-3">
-						{#each displayPacks.slice(0, 3) as pack}
-							<FollowPackCompact {ndk} followPack={pack} />
-						{/each}
+					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center">
+						{#if pack3}
+							<div class="w-full max-w-3xl">
+								<FollowPackCompact {ndk} followPack={pack3} />
+							</div>
+						{/if}
 					</div>
 				</div>
 
-				<!-- List Items -->
-				<div>
-					<div class="mb-4">
-						<h3 class="text-lg font-semibold mb-1">List Item</h3>
-						<p class="text-sm text-muted-foreground">Minimal design for sidebars</p>
+				<!-- List Item -->
+				<div class="grid grid-cols-1 lg:grid-cols-7">
+					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">List Item</h3>
+						<p class="text-sm text-muted-foreground leading-relaxed">
+							Minimal design for sidebars. Maximum impact with minimal footprint.
+						</p>
 					</div>
-					<div class="space-y-2">
-						{#each displayPacks.slice(0, 4) as pack}
-							<FollowPackListItem {ndk} followPack={pack} />
-						{/each}
+					<div class="lg:col-span-5 p-10 lg:p-12">
+						<div class="space-y-2 max-w-2xl">
+							{#each displayPacks.slice(0, 4) as pack}
+								<FollowPackListItem {ndk} followPack={pack} />
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>

@@ -18,12 +18,12 @@
 
 <div class="component-page">
   <header>
+    <EditProps.Root>
+      <EditProps.Prop name="Component" type="text" value="EmojiPicker.List & EmojiPicker.Content" />
+    </EditProps.Root>
     <div class="header-title">
       <h1>EmojiPicker</h1>
-      <EditProps.Root>
-        <EditProps.Prop name="Component" type="text" value="EmojiPicker.List & EmojiPicker.Content" />
-        <EditProps.Button>Configure Examples</EditProps.Button>
-      </EditProps.Root>
+      <EditProps.Button>Configure Examples</EditProps.Button>
     </div>
     <p>Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys.</p>
   </header>

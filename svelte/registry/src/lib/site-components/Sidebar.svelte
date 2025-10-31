@@ -2,42 +2,116 @@
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
   import { docs, componentCategories } from '$lib/navigation';
-  import { sidebarOpen } from '$lib/stores/sidebar';
+  import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
+  import { Tooltip } from 'bits-ui';
+  import { resolve } from '$app/paths';
 </script>
 
-<aside class="sidebar" class:open={$sidebarOpen}>
+<aside class="sidebar" class:open={$sidebarOpen} class:collapsed={$sidebarCollapsed}>
+  <Tooltip.Provider>
+    <div class="sidebar-header">
+      <button
+        class="collapse-button"
+        onclick={() => sidebarCollapsed.toggle()}
+        aria-label={$sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        title={$sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {#if $sidebarCollapsed}
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        {:else}
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        {/if}
+      </button>
+    </div>
 
-  <nav class="flex-1 overflow-auto flex flex-col px-4 pt-4 gap-6">
+    <nav class="flex-1 overflow-auto flex flex-col px-4 pt-4 gap-6">
     <div class="flex flex-col gap-1">
-      <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Documentation</h2>
-      {#each docs as doc}
-        <a
-          href={doc.path}
-          class="nav-link"
-          class:active={$page.url.pathname === doc.path}
-        >
-          <HugeiconsIcon icon={doc.icon} size={16} strokeWidth={2} />
-          {doc.name}
-        </a>
+      {#if !$sidebarCollapsed}
+        <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Documentation</h2>
+      {/if}
+      {#each docs as doc (doc.path)}
+        {#if $sidebarCollapsed}
+          <Tooltip.Root openDelay={0}>
+            <Tooltip.Trigger class="nav-link-trigger">
+              <a
+                href={resolve(doc.path)}
+                class="nav-link"
+                class:active={$page.url.pathname === doc.path}
+              >
+                <HugeiconsIcon icon={doc.icon} size={16} strokeWidth={2} />
+              </a>
+            </Tooltip.Trigger>
+            <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
+              {#if doc.title || doc.description}
+                <div class="tooltip-header">{doc.title || doc.name}</div>
+                {#if doc.description}
+                  <div class="tooltip-description">{doc.description}</div>
+                {/if}
+              {:else}
+                <div class="tooltip-title">{doc.name}</div>
+              {/if}
+            </Tooltip.Content>
+          </Tooltip.Root>
+        {:else}
+          <a
+            href={resolve(doc.path)}
+            class="nav-link"
+            class:active={$page.url.pathname === doc.path}
+          >
+            <HugeiconsIcon icon={doc.icon} size={16} strokeWidth={2} />
+            {doc.name}
+          </a>
+        {/if}
       {/each}
     </div>
 
-    {#each componentCategories as category}
+    {#each componentCategories as category (category.title)}
       <div class="flex flex-col gap-1">
-        <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{category.title}</h2>
-        {#each category.items as component}
-          <a
-            href={component.path}
-            class="nav-link"
-            class:active={$page.url.pathname === component.path}
-          >
-            <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-            {component.name}
-          </a>
+        {#if !$sidebarCollapsed}
+          <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{category.title}</h2>
+        {/if}
+        {#each category.items as component (component.path)}
+          {#if $sidebarCollapsed}
+            <Tooltip.Root openDelay={0}>
+              <Tooltip.Trigger class="nav-link-trigger">
+                <a
+                  href={resolve(component.path)}
+                  class="nav-link"
+                  class:active={$page.url.pathname === component.path}
+                >
+                  <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
+                </a>
+              </Tooltip.Trigger>
+              <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
+                {#if component.title || component.description}
+                  <div class="tooltip-header">{component.title || component.name}</div>
+                  {#if component.description}
+                    <div class="tooltip-description">{component.description}</div>
+                  {/if}
+                {:else}
+                  <div class="tooltip-title">{component.name}</div>
+                {/if}
+              </Tooltip.Content>
+            </Tooltip.Root>
+          {:else}
+            <a
+              href={resolve(component.path)}
+              class="nav-link"
+              class:active={$page.url.pathname === component.path}
+            >
+              <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
+              {component.name}
+            </a>
+          {/if}
         {/each}
       </div>
     {/each}
   </nav>
+  </Tooltip.Provider>
 </aside>
 
 <style>
@@ -50,8 +124,46 @@
     top: 3.5rem;
     height: calc(100vh - 3.5rem);
     overflow-y: auto;
-    transition: transform 300ms ease-in-out;
+    transition: width 300ms ease-in-out, transform 300ms ease-in-out;
     z-index: 900;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .sidebar.collapsed {
+    width: 64px;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .collapse-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-muted-foreground);
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .collapse-button:hover {
+    background: var(--color-accent);
+    color: var(--color-foreground);
+  }
+
+  .icon {
+    width: 1.125rem;
+    height: 1.125rem;
   }
 
   @media (max-width: 768px) {
@@ -62,6 +174,12 @@
     .sidebar.open {
       transform: translateX(0);
     }
+  }
+
+  :global(.nav-link-trigger) {
+    all: unset;
+    display: block;
+    width: 100%;
   }
 
   .nav-link {
@@ -78,6 +196,12 @@
     font-weight: 500;
   }
 
+  .sidebar.collapsed .nav-link {
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
   .nav-link:hover {
     background: color-mix(in srgb, var(--color-accent) 50%, transparent);
     color: var(--color-foreground);
@@ -87,5 +211,35 @@
     background: var(--color-muted);
     color: var(--color-foreground);
     font-weight: 600;
+  }
+
+  :global(.tooltip-content) {
+    background: var(--color-popover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    z-index: 1000;
+    min-width: 200px;
+    max-width: 320px;
+  }
+
+  :global(.tooltip-header) {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+    margin-bottom: 0.375rem;
+  }
+
+  :global(.tooltip-description) {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-muted-foreground);
+  }
+
+  :global(.tooltip-title) {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-foreground);
   }
 </style>

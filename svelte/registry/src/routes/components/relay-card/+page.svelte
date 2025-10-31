@@ -35,17 +35,17 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
+		<EditProps.Root>
+			<EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
+			<EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
+			<EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
+			<EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
+			<EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
+			<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
+		</EditProps.Root>
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-4xl font-bold">RelayCard</h1>
-			<EditProps.Root>
-				<EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
-				<EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
-				<EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
-				<EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
-				<EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
-				<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
-				<EditProps.Button>Change Sample Relays</EditProps.Button>
-			</EditProps.Root>
+			<EditProps.Button>Change Sample Relays</EditProps.Button>
 		</div>
 		<p class="text-lg text-muted-foreground">
 			Composable relay display components with NIP-11 info and bookmark functionality. Build custom
@@ -96,10 +96,23 @@
 				component="relay-card-list"
 				code={ListCodeRaw}
 			>
-				<div class="space-y-0 border border-border rounded-lg overflow-hidden">
-					{#each displayRelays.slice(0, 4) as relayUrl}
-						<RelayCardList {ndk} {relayUrl} />
-					{/each}
+				<div class="space-y-4">
+					<div>
+						<h3 class="text-sm font-semibold mb-2">Default</h3>
+						<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+							{#each displayRelays.slice(0, 4) as relayUrl}
+								<RelayCardList {ndk} {relayUrl} />
+							{/each}
+						</div>
+					</div>
+					<div>
+						<h3 class="text-sm font-semibold mb-2">Compact</h3>
+						<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+							{#each displayRelays.slice(0, 4) as relayUrl}
+								<RelayCardList {ndk} {relayUrl} compact />
+							{/each}
+						</div>
+					</div>
 				</div>
 			</Demo>
 		</div>
@@ -334,7 +347,7 @@
 					{
 						name: 'onclick',
 						type: '(e: MouseEvent) => void',
-						description: 'Click handler (default: opens relay URL in new tab)',
+						description: 'Optional click handler',
 						required: false
 					}
 				]
@@ -367,7 +380,7 @@
 					{
 						name: 'onclick',
 						type: '(e: MouseEvent) => void',
-						description: 'Click handler (default: opens relay URL in new tab)',
+						description: 'Optional click handler',
 						required: false
 					}
 				]
@@ -398,9 +411,16 @@
 						required: false
 					},
 					{
+						name: 'compact',
+						type: 'boolean',
+						default: 'false',
+						description: 'Compact variant with smaller icon (32px) and no URL display',
+						required: false
+					},
+					{
 						name: 'onclick',
 						type: '(e: MouseEvent) => void',
-						description: 'Click handler (default: opens relay URL in new tab)',
+						description: 'Optional click handler',
 						required: false
 					}
 				]

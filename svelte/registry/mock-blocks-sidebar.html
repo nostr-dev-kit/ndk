@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidebar Navigation - Blocks - NDK Svelte Registry</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #fafafa;
+      color: #1a1a1a;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: white;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 1rem 2rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+    }
+
+    .navbar h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #e5e5e5;
+      position: fixed;
+      top: 56px;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .main-content {
+      margin-left: 280px;
+      margin-top: 56px;
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .nav-section {
+      margin-bottom: 2rem;
+    }
+
+    .nav-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #666;
+      margin-bottom: 0.75rem;
+      padding: 0 0.75rem;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      color: #666;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .nav-link:hover {
+      background: #f3f4f6;
+      color: #1a1a1a;
+    }
+
+    .nav-link.active {
+      background: #ede9fe;
+      color: #6366f1;
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .content-header {
+      max-width: 1200px;
+      margin-bottom: 3rem;
+    }
+
+    .content-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .content-header p {
+      font-size: 1.125rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .highlight-box {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .highlight-box h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #92400e;
+    }
+
+    .highlight-box p {
+      color: #78350f;
+      line-height: 1.5;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid #e5e5e5;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+    }
+
+    .feature-card h4 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h1>🔷 NDK Svelte Registry</h1>
+  </nav>
+
+  <aside class="sidebar">
+    <nav>
+      <!-- Main Navigation -->
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Intro
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            Docs
+          </a>
+          <a href="#" class="nav-link active">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"/>
+            </svg>
+            Blocks
+          </a>
+        </div>
+      </div>
+
+      <!-- Blocks Categories -->
+      <div class="nav-section">
+        <div class="nav-section-title">Feeds & Discovery</div>
+        <div class="nav-links">
+          <a href="mock-blocks-feed.html" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15"/>
+            </svg>
+            Timeline Feeds
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+            </svg>
+            Thread Viewers
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Search & Explore
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            Activity Feeds
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Media Galleries
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">User Profiles</div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            Profile Headers
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            Follow Lists
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Profile Editors
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            User Analytics
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Publishing</div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Note Composers
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Article Editors
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Content Schedulers
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Messaging</div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            Chat Interfaces
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            DM Thread Lists
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            Group Chats
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Payments</div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Zap Flows
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Invoice Builders
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+            Wallet Dashboards
+          </a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-header">
+      <h1>Blocks Overview</h1>
+      <p>
+        Production-ready, composable building blocks for Nostr applications. Each block is a complete,
+        feature-rich component that you can drop into your app and customize to your needs.
+      </p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>📦 What are Blocks?</h3>
+      <p>
+        Blocks are complex, composed components that combine multiple primitives and patterns
+        into complete, production-ready features. Unlike basic components, blocks handle state
+        management, real-time updates, error handling, and edge cases out of the box.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>🎨 Multiple Variants</h4>
+        <p>Each block comes with 2-5 visual variants so you can pick the one that matches your design system.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>⚡ Real-time by Default</h4>
+        <p>All blocks support real-time updates via Nostr subscriptions with optimistic UI updates.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>🔧 Fully Customizable</h4>
+        <p>Use pre-built variants or compose your own using the builder API and primitive components.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>📱 Responsive</h4>
+        <p>Mobile-first responsive design with touch-friendly interactions and adaptive layouts.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>♿ Accessible</h4>
+        <p>Built with accessibility in mind, supporting keyboard navigation and screen readers.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>🎯 Type-Safe</h4>
+        <p>Full TypeScript support with comprehensive type definitions for props and events.</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

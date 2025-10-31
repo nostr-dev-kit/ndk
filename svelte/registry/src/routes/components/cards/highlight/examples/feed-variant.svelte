@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { HighlightCardFeed, RepostButton } from '$lib/components/ndk/blocks';
-  import { ReactionAction } from '$lib/components/ndk/actions/index.js';
+  import { HighlightCardFeed, RepostButton } from '$lib/registry/components/blocks';
+  import { ReactionAction } from '$lib/registry/components/actions/index.js';
 
   interface Props {
     ndk: NDKSvelte;

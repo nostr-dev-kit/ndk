@@ -3,14 +3,14 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
-  import { HighlightCard } from '$lib/components/ndk/highlight-card';
+  import { HighlightCard } from '$lib/registry/components/highlight-card';
   import {
     HighlightCardFeed,
     HighlightCardElegant,
     HighlightCardCompact,
     HighlightCardGrid
-  } from '$lib/components/ndk/blocks';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  } from '$lib/registry/components/blocks';
+  import { EditProps } from '$lib/registry/components/edit-props';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Code examples for blocks
@@ -205,7 +205,7 @@
         name: 'HighlightCard.Root',
         description:
           'Root container that provides context to child components. Uses createHighlight builder internally.',
-        importPath: "import { HighlightCard } from '$lib/components/ndk/highlight-card'",
+        importPath: "import { HighlightCard } from '$lib/registry/components/highlight-card'",
         props: [
           {
             name: 'ndk',
@@ -225,7 +225,7 @@
       {
         name: 'HighlightCard.Content',
         description: 'Display highlighted text with context.',
-        importPath: "import { HighlightCard } from '$lib/components/ndk/highlight-card'",
+        importPath: "import { HighlightCard } from '$lib/registry/components/highlight-card'",
         props: [
           {
             name: 'fontSize',
@@ -245,7 +245,7 @@
       {
         name: 'HighlightCard.Source',
         description: 'Display source reference badge.',
-        importPath: "import { HighlightCard } from '$lib/components/ndk/highlight-card'",
+        importPath: "import { HighlightCard } from '$lib/registry/components/highlight-card'",
         props: [
           {
             name: 'position',
@@ -266,7 +266,7 @@
         name: 'HighlightCardFeed',
         description:
           'Preset: Full-width feed layout with header, book-style text, and actions. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardFeed } from '$lib/components/ndk/blocks'",
+        importPath: "import { HighlightCardFeed } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',
@@ -300,7 +300,7 @@
         name: 'HighlightCardElegant',
         description:
           'Preset: Square elegant card with gradient background. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardElegant } from '$lib/components/ndk/blocks'",
+        importPath: "import { HighlightCardElegant } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',
@@ -334,7 +334,7 @@
         name: 'HighlightCardCompact',
         description:
           'Preset: Compact horizontal card. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardCompact } from '$lib/components/ndk/blocks'",
+        importPath: "import { HighlightCardCompact } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',
@@ -375,7 +375,7 @@
         name: 'HighlightCardGrid',
         description:
           'Preset: Square card for grid layouts. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardGrid } from '$lib/components/ndk/blocks'",
+        importPath: "import { HighlightCardGrid } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',

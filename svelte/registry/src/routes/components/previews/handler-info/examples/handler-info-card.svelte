@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { HandlerInfoEmbedded } from '$lib/components/ndk/event/content';
+  import { HandlerInfoEmbedded } from '$lib/registry/components/event/content';
 
   interface Props {
     ndk: NDKSvelte;

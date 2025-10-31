@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { EventCard, ReactionAction } from '$lib/components/ndk/event-card';
+	import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 

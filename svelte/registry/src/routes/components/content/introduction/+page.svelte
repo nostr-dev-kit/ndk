@@ -2,9 +2,9 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind, NDKArticle } from '@nostr-dev-kit/ndk';
-  import { EventContent } from '$lib/components/ndk/event/content';
-  import { ArticleContent } from '$lib/components/ndk/article-content';
-  import { ImageContent } from '$lib/components/ndk/image-content';
+  import { EventContent } from '$lib/registry/components/event/content';
+  import { ArticleContent } from '$lib/registry/components/article-content';
+  import { ImageContent } from '$lib/registry/components/image-content';
   import Demo from '$site-components/Demo.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -32,7 +32,7 @@
   });
 
   const exampleNoteCode = `<script>
-  import { EventContent } from '$lib/components/ndk/event/content';
+  import { EventContent } from '$lib/registry/components/event/content';
 
   let event; // Your NDKEvent
 <\/script>
@@ -40,7 +40,7 @@
 <EventContent {ndk} {event} />`;
 
   const exampleArticleCode = `<script>
-  import { ArticleContent } from '$lib/components/ndk/article-content';
+  import { ArticleContent } from '$lib/registry/components/article-content';
 
   let article; // Your NDKArticle
 <\/script>

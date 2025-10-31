@@ -7,8 +7,8 @@
 		FollowPackHero,
 		FollowPackCompact,
 		FollowPackListItem
-	} from '$lib/components/ndk/blocks';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	} from '$lib/registry/components/blocks';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -56,22 +56,24 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">FollowPack</h1>
-		<p class="text-lg text-muted-foreground mb-6">
+		<div class="flex items-start justify-between gap-4 mb-4">
+			<h1 class="text-4xl font-bold">FollowPack</h1>
+			{#key followPacks}
+				<EditProps.Root>
+					<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
+					<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+					<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+					<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+					<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+					<EditProps.Button>Change Sample Packs</EditProps.Button>
+				</EditProps.Root>
+			{/key}
+		</div>
+		<p class="text-lg text-muted-foreground">
 			Display curated lists of people (kind 39089). Follow packs are collections of users grouped
 			by topic, interest, or community. Perfect for showcasing recommended follows, team members, or
 			thematic user lists.
 		</p>
-
-		{#key followPacks}
-			<EditProps.Root>
-				<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-				<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-				<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-				<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-				<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-			</EditProps.Root>
-		{/key}
 	</div>
 
 	<!-- Blocks Section -->
@@ -297,7 +299,7 @@
 				name: 'FollowPack.Root',
 				description:
 					'Context provider component that wraps all FollowPack primitives. Makes NDK instance and follow pack data available to child components.',
-				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/registry/components/follow-pack'",
 				props: [
 					{
 						name: 'ndk',
@@ -335,7 +337,7 @@
 				name: 'FollowPack.Image',
 				description:
 					'Displays the follow pack image. Automatically handles missing images with a fallback icon. Supports gradient overlays for better text readability.',
-				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/registry/components/follow-pack'",
 				props: [
 					{
 						name: 'class',
@@ -362,7 +364,7 @@
 				name: 'FollowPack.Title',
 				description:
 					'Displays the follow pack title. Shows "Untitled Pack" if no title is set. Supports line clamping for overflow control.',
-				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/registry/components/follow-pack'",
 				props: [
 					{
 						name: 'class',
@@ -382,7 +384,7 @@
 				name: 'FollowPack.Description',
 				description:
 					'Displays the follow pack description. Automatically hidden if no description exists. Supports both character truncation and line clamping.',
-				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/registry/components/follow-pack'",
 				props: [
 					{
 						name: 'class',
@@ -407,7 +409,7 @@
 				name: 'FollowPack.MemberCount',
 				description:
 					'Displays the number of people in the follow pack. Counts the pubkeys array from the event. Supports both short (number only) and long (formatted with "people") formats.',
-				importPath: "import { FollowPack } from '$lib/components/ndk/follow-pack'",
+				importPath: "import { FollowPack } from '$lib/registry/components/follow-pack'",
 				props: [
 					{
 						name: 'class',

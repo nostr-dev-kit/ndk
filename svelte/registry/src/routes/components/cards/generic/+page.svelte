@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import { EventCardClassic, EventCardMenu } from '$lib/components/ndk/blocks';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	import { EventCardClassic, EventCardMenu } from '$lib/registry/components/blocks';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -232,7 +232,7 @@
 						name: 'EventCard.Root',
 						description:
 							'Root container that provides event context to all child components. Handles interactive states and threading metadata.',
-						importPath: "import { EventCard } from '$lib/components/ndk/event-card'",
+						importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 						props: [
 							{
 								name: 'ndk',
@@ -278,7 +278,7 @@
 						name: 'EventCard.Header',
 						description:
 							'Displays event author information with avatar, name, and timestamp. Supports custom actions slot.',
-						importPath: "import { EventCard } from '$lib/components/ndk/event-card'",
+						importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 						props: [
 							{
 								name: 'variant',
@@ -326,7 +326,7 @@
 						name: 'EventCard.Content',
 						description:
 							'Displays event content with optional truncation and media preview support.',
-						importPath: "import { EventCard } from '$lib/components/ndk/event-card'",
+						importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 						props: [
 							{
 								name: 'truncate',
@@ -345,7 +345,7 @@
 					{
 						name: 'EventCard.Actions',
 						description: 'Container for action buttons (reactions, reposts, etc.).',
-						importPath: "import { EventCard } from '$lib/components/ndk/event-card'",
+						importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 						props: [
 							{
 								name: 'class',
@@ -365,7 +365,7 @@
 						name: 'EventCard.ThreadLine',
 						description:
 							'Displays a vertical line connecting events in thread views. Automatically shown when threading metadata indicates.',
-						importPath: "import { EventCard } from '$lib/components/ndk/event-card'",
+						importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 						props: [
 							{
 								name: 'class',
@@ -379,7 +379,7 @@
 						name: 'ReactionAction',
 						description:
 							'Action button for reacting to events with emoji. Tracks reaction state and count.',
-						importPath: "import { ReactionAction } from '$lib/components/ndk/event-card'",
+						importPath: "import { ReactionAction } from '$lib/registry/components/event-card'",
 						props: [
 							{
 								name: 'emoji',
@@ -400,7 +400,7 @@
 						name: 'EventCardClassic',
 						description:
 							'Pre-composed event card with complete functionality including background, dropdown menu, and all action buttons.',
-						importPath: "import { EventCardClassic } from '$lib/components/ndk/blocks'",
+						importPath: "import { EventCardClassic } from '$lib/registry/components/blocks'",
 						props: [
 							{
 								name: 'ndk',
@@ -459,7 +459,7 @@
 						name: 'EventCardMenu',
 						description:
 							'Fully-styled dropdown menu for event actions including mute, report, copy, and raw event viewing.',
-						importPath: "import { EventCardMenu } from '$lib/components/ndk/blocks'",
+						importPath: "import { EventCardMenu } from '$lib/registry/components/blocks'",
 						props: [
 							{
 								name: 'ndk',

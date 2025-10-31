@@ -2,11 +2,11 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
 	// Import blocks
-	import { UserProfileHero, UserCardClassic } from '$lib/components/ndk/blocks';
+	import { UserProfileHero, UserCardClassic } from '$lib/registry/components/blocks';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
 	import ClassicCodeRaw from './examples/classic-code.svelte?raw';
 

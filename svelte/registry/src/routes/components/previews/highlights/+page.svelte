@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { EditProps } from '$lib/registry/components/edit-props';
   import Demo from '$site-components/Demo.svelte';
 
   import HighlightCardExample from './examples/highlight-card.svelte';
@@ -160,7 +160,7 @@
       <div class="p-4 bg-muted rounded font-mono text-sm space-y-2">
         <div class="text-muted-foreground">// Import the variant component</div>
         <div>import HighlightEmbeddedInline from './highlight-embedded-inline.svelte';</div>
-        <div>import {'{ KindRegistry }'} from '$lib/components/ndk/event/content';</div>
+        <div>import {'{ KindRegistry }'} from '$lib/registry/components/event/content';</div>
         <div>import {'{ NDKHighlight }'} from '@nostr-dev-kit/ndk';</div>
         <div class="h-2"></div>
         <div class="text-muted-foreground">// Create custom registry</div>

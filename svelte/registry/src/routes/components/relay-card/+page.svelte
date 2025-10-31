@@ -2,9 +2,9 @@
 	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { RelayCard } from '$lib/components/ndk/relay-card';
-	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/components/ndk/blocks';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	import { RelayCard } from '$lib/registry/components/relay-card';
+	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/registry/components/blocks';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Code examples for blocks
@@ -139,7 +139,7 @@
 				name: 'RelayCard.Root',
 				description:
 					'Root container that provides context to child components. Fetches NIP-11 relay information automatically.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'ndk',
@@ -159,7 +159,7 @@
 			{
 				name: 'RelayCard.Icon',
 				description: 'Display relay icon from NIP-11 metadata with fallback.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'size',
@@ -179,7 +179,7 @@
 			{
 				name: 'RelayCard.Name',
 				description: 'Display relay name from NIP-11 metadata.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'fallback',
@@ -199,7 +199,7 @@
 			{
 				name: 'RelayCard.Url',
 				description: 'Display relay URL with optional domain-only mode.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'showProtocol',
@@ -219,7 +219,7 @@
 			{
 				name: 'RelayCard.Description',
 				description: 'Display relay description from NIP-11 metadata with line clamping.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'maxLines',
@@ -240,7 +240,7 @@
 				name: 'RelayCard.BookmarkButton',
 				description:
 					'Toggle button for bookmarking/unbookmarking relay. Requires user authentication.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'bookmarks',
@@ -267,7 +267,7 @@
 			{
 				name: 'RelayCard.BookmarkedBy',
 				description: 'Display avatars of users who have bookmarked this relay.',
-				importPath: "import { RelayCard } from '$lib/components/ndk/relay-card'",
+				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
 				props: [
 					{
 						name: 'bookmarks',
@@ -301,7 +301,7 @@
 				name: 'RelayCardPortrait',
 				description:
 					'Preset: Vertical card with icon on top. Import from $lib/ndk/blocks for quick use.',
-				importPath: "import { RelayCardPortrait } from '$lib/components/ndk/blocks'",
+				importPath: "import { RelayCardPortrait } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -341,7 +341,7 @@
 				name: 'RelayCardCompact',
 				description:
 					'Preset: Small square card with icon and name. Import from $lib/ndk/blocks.',
-				importPath: "import { RelayCardCompact } from '$lib/components/ndk/blocks'",
+				importPath: "import { RelayCardCompact } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -374,7 +374,7 @@
 				name: 'RelayCardList',
 				description:
 					'Preset: Horizontal list card. Import from $lib/ndk/blocks.',
-				importPath: "import { RelayCardList } from '$lib/components/ndk/blocks'",
+				importPath: "import { RelayCardList } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { AppRecommendationEmbedded } from '$lib/components/ndk/event/content';
+  import { AppRecommendationEmbedded } from '$lib/registry/components/event/content';
 
   interface Props {
     ndk: NDKSvelte;

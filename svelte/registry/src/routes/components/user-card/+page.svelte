@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -12,7 +12,7 @@
 		UserCardPortrait,
 		UserCardLandscape,
 		UserCardCompact
-	} from '$lib/components/ndk/blocks';
+	} from '$lib/registry/components/blocks';
 	import ClassicCodeRaw from '../user-profile/examples/classic-code.svelte?raw';
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
 	import LandscapeCodeRaw from './examples/landscape-code.svelte?raw';
@@ -153,7 +153,7 @@
 					{
 						name: 'UserProfile.Root',
 						description: 'Root component that provides user context to all child components',
-						importPath: "import { UserProfile } from '$lib/components/ndk/user-profile'",
+						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
 							{
 								name: 'ndk',
@@ -172,7 +172,7 @@
 					{
 						name: 'UserProfile.Avatar',
 						description: 'Displays user avatar image',
-						importPath: "import { UserProfile } from '$lib/components/ndk/user-profile'",
+						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
 							{
 								name: 'size',
@@ -191,7 +191,7 @@
 					{
 						name: 'UserProfile.Name',
 						description: 'Displays user display name or handle',
-						importPath: "import { UserProfile } from '$lib/components/ndk/user-profile'",
+						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
 							{
 								name: 'class',
@@ -204,7 +204,7 @@
 					{
 						name: 'UserProfile.Bio',
 						description: 'Displays user biography text',
-						importPath: "import { UserProfile } from '$lib/components/ndk/user-profile'",
+						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
 							{
 								name: 'class',
@@ -217,7 +217,7 @@
 					{
 						name: 'FollowButton / FollowButtonPill',
 						description: 'Follow/unfollow button blocks',
-						importPath: "import { FollowButton, FollowButtonPill } from '$lib/components/ndk/blocks'",
+						importPath: "import { FollowButton, FollowButtonPill } from '$lib/registry/components/blocks'",
 						props: [
 							{
 								name: 'ndk',

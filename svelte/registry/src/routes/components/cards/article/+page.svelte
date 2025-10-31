@@ -3,14 +3,14 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-	import { ArticleCard } from '$lib/components/ndk/article-card';
+	import { ArticleCard } from '$lib/registry/components/article-card';
 	import {
 		ArticleCardPortrait,
 		ArticleCardHero,
 		ArticleCardNeon,
 		ArticleCardMedium
-	} from '$lib/components/ndk/blocks';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	} from '$lib/registry/components/blocks';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import simplified code examples (for Code tab)
@@ -217,7 +217,7 @@
 				name: 'ArticleCard.Root',
 				description:
 					'Root container that provides context to child components. Fetches author profile automatically.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'ndk',
@@ -244,7 +244,7 @@
 			{
 				name: 'ArticleCard.Image',
 				description: 'Display article cover image with fallback icon.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'showGradient',
@@ -271,7 +271,7 @@
 			{
 				name: 'ArticleCard.Title',
 				description: 'Display article title with line clamping.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'lines',
@@ -291,7 +291,7 @@
 			{
 				name: 'ArticleCard.Summary',
 				description: 'Display article summary/excerpt with truncation.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'maxLength',
@@ -318,7 +318,7 @@
 			{
 				name: 'ArticleCard.Author',
 				description: 'Display article author name from profile.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'fallback',
@@ -338,7 +338,7 @@
 			{
 				name: 'ArticleCard.Date',
 				description: 'Display article published date.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'format',
@@ -358,7 +358,7 @@
 			{
 				name: 'ArticleCard.Meta',
 				description: 'Combined author + date display.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'showIcon',
@@ -378,7 +378,7 @@
 			{
 				name: 'ArticleCard.ReadingTime',
 				description: 'Display estimated reading time based on article content length.',
-				importPath: "import { ArticleCard } from '$lib/components/ndk/article-card'",
+				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
 				props: [
 					{
 						name: 'class',
@@ -392,7 +392,7 @@
 				name: 'ArticleCardPortrait',
 				description:
 					'Preset: Vertical card with image on top. Import from $lib/ndk/blocks for quick use.',
-				importPath: "import { ArticleCardPortrait } from '$lib/components/ndk/blocks'",
+				importPath: "import { ArticleCardPortrait } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -433,7 +433,7 @@
 				name: 'ArticleCardHero',
 				description:
 					'Preset: Full-width hero card with gradient background and optional badge. Import from $lib/ndk/blocks.',
-				importPath: "import { ArticleCardHero } from '$lib/components/ndk/blocks'",
+				importPath: "import { ArticleCardHero } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -466,7 +466,7 @@
 				name: 'ArticleCardNeon',
 				description:
 					'Preset: Portrait card with subtle glossy white neon top border effect, full background image. Import from $lib/ndk/blocks.',
-				importPath: "import { ArticleCardNeon } from '$lib/components/ndk/blocks'",
+				importPath: "import { ArticleCardNeon } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -500,7 +500,7 @@
 				name: 'ArticleCardMedium',
 				description:
 					'Preset: Horizontal card with image on right. Supports three image size variants. Import from $lib/ndk/blocks.',
-				importPath: "import { ArticleCardMedium } from '$lib/components/ndk/blocks'",
+				importPath: "import { ArticleCardMedium } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',

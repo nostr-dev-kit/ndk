@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventContent } from '$lib/components/ndk/event/content';
-  import { EventCard } from '$lib/components/ndk/event-card';
+  import { EventContent } from '$lib/registry/components/event/content';
+  import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
     ndk: NDKSvelte;

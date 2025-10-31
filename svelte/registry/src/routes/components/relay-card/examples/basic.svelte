@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { RelayCard } from '$lib/components/ndk/relay-card';
+  import { RelayCard } from '$lib/registry/components/relay-card';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {

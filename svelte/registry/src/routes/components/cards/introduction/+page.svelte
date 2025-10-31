@@ -2,9 +2,9 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EventCard } from '$lib/components/ndk/event-card';
-  import { EventContent } from '$lib/components/ndk/event/content';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventContent } from '$lib/registry/components/event/content';
+  import { EditProps } from '$lib/registry/components/edit-props';
   import Demo from '$site-components/Demo.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -12,8 +12,8 @@
   let sampleEvent = $state<NDKEvent | undefined>();
 
   const eventCardExample = `<script>
-  import { EventCard } from '$lib/components/ndk/event-card';
-  import { EventContent } from '$lib/components/ndk/event/content';
+  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventContent } from '$lib/registry/components/event/content';
 
   let event; // Your NDKEvent
 <\/script>

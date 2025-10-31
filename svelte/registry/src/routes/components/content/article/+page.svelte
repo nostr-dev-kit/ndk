@@ -3,7 +3,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { EditProps } from '$lib/registry/components/edit-props';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples

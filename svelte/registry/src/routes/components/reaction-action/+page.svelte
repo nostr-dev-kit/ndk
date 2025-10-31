@@ -2,11 +2,11 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 
   // Import block components for preview
-  import { ReactionButton, ReactionSlack } from '$lib/components/ndk/blocks';
+  import { ReactionButton, ReactionSlack } from '$lib/registry/components/blocks';
 
   // Import code examples
   import MinimalCodeRaw from './examples/minimal-code.svelte?raw';

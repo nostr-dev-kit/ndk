@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { EventCard } from '$lib/components/ndk/event-card';
-  import { EventCardMenu } from '$lib/components/ndk/blocks';
+  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventCardMenu } from '$lib/registry/components/blocks';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { fly } from 'svelte/transition';

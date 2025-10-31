@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/components/ndk/user-profile';
+  import { UserProfile } from '$lib/registry/components/user-profile';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   let { ndk, pubkey }: { ndk: NDKSvelte; pubkey: string } = $props();

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';
-	import type { createMediaUpload } from './createMediaUpload.js';
+	import type { createMediaUpload } from './createMediaUpload.svelte';
 
 	interface Props {
 		multiple?: boolean;

@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { ndk } from '$lib/ndk.svelte';
   import { themeManager } from '$lib/theme.svelte';
-  import { UserProfile } from '$lib/components/ndk/user-profile';
+  import { UserProfile } from '$lib/registry/components/user-profile';
   import { sidebarOpen } from '$lib/stores/sidebar';
 
   interface Props {

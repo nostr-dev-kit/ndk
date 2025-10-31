@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ZapAction from '$lib/components/ndk/actions/zap-action.svelte';
+  import ZapAction from '$lib/registry/components/actions/zap-action.svelte';
 
   interface Props {
     ndk: NDKSvelte;

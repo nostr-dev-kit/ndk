@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { ImageCard, ImageCardInstagram, ImageCardHero } from '$lib/components/ndk/blocks';
-	import { EditProps } from '$lib/components/ndk/edit-props';
+	import { ImageCard, ImageCardInstagram, ImageCardHero } from '$lib/registry/components/blocks';
+	import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -261,7 +261,7 @@
 			{
 				name: 'ImageContent',
 				description: 'Renders image events with metadata and optional alt text.',
-				importPath: "import { ImageContent } from '$lib/components/ndk/image-content'",
+				importPath: "import { ImageContent } from '$lib/registry/components/image-content'",
 				props: [
 					{
 						name: 'ndk',
@@ -307,7 +307,7 @@
 				name: 'ImageCard',
 				description:
 					'Pre-composed card for image events. Combines EventCard primitives with ImageContent for an optimized image display experience.',
-				importPath: "import { ImageCard } from '$lib/components/ndk/blocks'",
+				importPath: "import { ImageCard } from '$lib/registry/components/blocks'",
 				props: [
 					{
 						name: 'ndk',

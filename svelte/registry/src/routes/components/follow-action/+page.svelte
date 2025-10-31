@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { EditProps } from '$lib/registry/components/edit-props';
   import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -11,7 +11,7 @@
     FollowButton,
     FollowButtonPill,
     FollowButtonCard
-  } from '$lib/components/ndk/blocks';
+  } from '$lib/registry/components/blocks';
 
   // Import code examples
   import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
@@ -324,7 +324,7 @@
       {
         name: 'FollowButton',
         description: 'Minimal follow button block with icon-first design.',
-        importPath: "import { FollowButton } from '$lib/components/ndk/blocks'",
+        importPath: "import { FollowButton } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',
@@ -360,7 +360,7 @@
       {
         name: 'FollowButtonPill',
         description: 'Pill-style follow button block with rounded design. Supports compact mode for icon-only display.',
-        importPath: "import { FollowButtonPill } from '$lib/components/ndk/blocks'",
+        importPath: "import { FollowButtonPill } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',
@@ -408,7 +408,7 @@
       {
         name: 'FollowButtonCard',
         description: 'Large card-style follow button block with gradient effects.',
-        importPath: "import { FollowButtonCard } from '$lib/components/ndk/blocks'",
+        importPath: "import { FollowButtonCard } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',

@@ -19,13 +19,13 @@
 
 <div class="component-page">
   <header>
+    <EditProps.Root>
+      <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
+      <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
+    </EditProps.Root>
     <div class="header-title">
       <h1>UserProfile.Avatar</h1>
-      <EditProps.Root>
-        <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
-        <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
-        <EditProps.Button>Edit Examples</EditProps.Button>
-      </EditProps.Root>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </div>
     <p>Display user avatars with automatic fallbacks. Part of the UserProfile component system.</p>
   </header>

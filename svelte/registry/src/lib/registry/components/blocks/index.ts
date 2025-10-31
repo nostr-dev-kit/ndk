@@ -103,6 +103,20 @@
  * <UploadButton {ndk} bind:uploads />
  * <MediaUploadCarousel {ndk} bind:uploads accept="image/*,video/*" />
  * ```
+ *
+ * @example Mention blocks:
+ * ```svelte
+ * <MentionModern {ndk} bech32="npub1..." />
+ * ```
+ *
+ * @example NoteComposer blocks:
+ * ```svelte
+ * <NoteComposerInline {ndk} />
+ * <NoteComposerInline {ndk} replyTo={event} />
+ * <NoteComposerModal {ndk} bind:open onPublish={(event) => console.log(event)} />
+ * <NoteComposerCard {ndk} title="Share your thoughts" />
+ * <NoteComposerMinimal {ndk} placeholder="Quick note..." />
+ * ```
  */
 
 // ArticleCard blocks
@@ -175,3 +189,12 @@ export { default as VoiceMessageCardExpanded } from './voice-message-card-expand
 // MediaUpload blocks
 export { default as UploadButton } from './upload-button.svelte';
 export { default as MediaUploadCarousel } from './media-upload-carousel.svelte';
+
+// Mention blocks
+export { default as MentionModern } from './mention-modern.svelte';
+
+// NoteComposer blocks
+export { default as NoteComposerInline } from './note-composer-inline.svelte';
+export { default as NoteComposerModal } from './note-composer-modal.svelte';
+export { default as NoteComposerCard } from './note-composer-card.svelte';
+export { default as NoteComposerMinimal } from './note-composer-minimal.svelte';

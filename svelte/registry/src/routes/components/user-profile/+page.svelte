@@ -71,18 +71,18 @@
 
 <div class="component-page">
 	<header>
+		{#key users}
+			<EditProps.Root>
+				<EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} />
+				<EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} />
+				<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} />
+				<EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} />
+				<EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} />
+			</EditProps.Root>
+		{/key}
 		<div class="header-title">
 			<h1>UserProfile</h1>
-			{#key users}
-				<EditProps.Root>
-					<EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} />
-					<EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} />
-					<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} />
-					<EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} />
-					<EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} />
-					<EditProps.Button>Change Sample Users</EditProps.Button>
-				</EditProps.Root>
-			{/key}
+			<EditProps.Button>Change Sample Users</EditProps.Button>
 		</div>
 		<p>Composable user profile display components with multiple layout variants.</p>
 	</header>

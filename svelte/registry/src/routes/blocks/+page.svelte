@@ -98,5 +98,27 @@
         iconGradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
       />
     </div>
+
+    <div class="flex items-center justify-between mb-6 mt-16">
+      <h2 class="text-2xl font-semibold text-foreground">Publishing</h2>
+      <span class="text-muted-foreground text-sm">1 block</span>
+    </div>
+
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6">
+      <BlockCard
+        title="Note Composer"
+        description="Composable note and reply composer with mentions, media uploads, and multiple layout options."
+        icon="✍️"
+        href="/blocks/note-composer"
+        variantCount={4}
+        badges={[
+          { label: 'Kind 1' },
+          { label: 'Kind 1111' },
+          { label: 'NIP-10', variant: 'nip' }
+        ]}
+        gradient="linear-gradient(135deg, rgba(250, 172, 70, 0.1) 0%, rgba(255, 140, 90, 0.1) 100%)"
+        iconGradient="linear-gradient(135deg, #faac46 0%, #ff8c5a 100%)"
+      />
+    </div>
   </div>
 </section>

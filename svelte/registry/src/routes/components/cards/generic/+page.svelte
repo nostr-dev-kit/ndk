@@ -29,12 +29,6 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">EventCard</h1>
-		<p class="text-lg text-muted-foreground mb-6">
-			Composable components for displaying any NDKEvent type with flexible layouts and
-			interactions. Perfect for feeds, threads, and social content.
-		</p>
-
 		<EditProps.Root>
 			<EditProps.Prop
 				name="Sample Event"
@@ -43,6 +37,14 @@
 				default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
 			/>
 		</EditProps.Root>
+		<div class="flex items-start justify-between gap-4 mb-4">
+			<h1 class="text-4xl font-bold">EventCard</h1>
+			<EditProps.Button>Change Sample Event</EditProps.Button>
+		</div>
+		<p class="text-lg text-muted-foreground">
+			Composable components for displaying any NDKEvent type with flexible layouts and
+			interactions. Perfect for feeds, threads, and social content.
+		</p>
 	</div>
 
 	<!-- Concept: The Chrome -->

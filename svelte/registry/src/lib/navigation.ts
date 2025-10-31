@@ -83,54 +83,54 @@ export const componentCategories: NavCategory[] = [
   {
     title: 'Content',
     items: [
-      { name: 'Introduction', path: '/components/content/introduction', icon: ViewIcon },
-      { name: 'Note (Kind:1)', path: '/components/content/note', icon: File01Icon },
-      { name: 'Article (NIP-23)', path: '/components/content/article', icon: NewsIcon },
-      { name: 'Image (NIP-68)', path: '/components/content/image', icon: Image02Icon },
-      { name: 'Mention', path: '/components/content/mention', icon: AtIcon },
+      { name: 'Introduction', path: '/components/content/introduction', icon: ViewIcon, title: 'Content Components', description: 'Render different types of Nostr event content with rich formatting and embedded media.' },
+      { name: 'Note (Kind:1)', path: '/components/content/note', icon: File01Icon, title: 'Event Content', description: 'Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.' },
+      { name: 'Article (NIP-23)', path: '/components/content/article', icon: NewsIcon, title: 'ArticleContent', description: 'Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars.' },
+      { name: 'Image (NIP-68)', path: '/components/content/image', icon: Image02Icon, title: 'Image Content', description: 'Display image events with metadata and interactions. Renders images from NIP-68 events (kind 20).' },
+      { name: 'Mention', path: '/components/content/mention', icon: AtIcon, title: 'Mention', description: 'Render inline user mentions with automatic profile fetching and customizable styling.' },
     ]
   },
   {
     title: 'Cards',
     items: [
-      { name: 'Introduction', path: '/components/cards/introduction', icon: ViewIcon },
-      { name: 'Generic', path: '/components/cards/generic', icon: Calendar01Icon },
-      { name: 'Article (NIP-23)', path: '/components/cards/article', icon: NewsIcon },
-      { name: 'Highlight (NIP-84)', path: '/components/cards/highlight', icon: HighlighterIcon },
-      { name: 'Voice Message (NIP-A0)', path: '/components/cards/voice-message', icon: VoiceIcon },
+      { name: 'Introduction', path: '/components/cards/introduction', icon: ViewIcon, title: 'Card Components', description: 'Composable card components for displaying different types of Nostr events with flexible layouts.' },
+      { name: 'Generic', path: '/components/cards/generic', icon: Calendar01Icon, title: 'EventCard', description: 'Composable components for displaying any NDKEvent type with flexible layouts and interactions.' },
+      { name: 'Article (NIP-23)', path: '/components/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.' },
+      { name: 'Highlight (NIP-84)', path: '/components/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.' },
+      { name: 'Voice Message (NIP-A0)', path: '/components/cards/voice-message', icon: VoiceIcon, title: 'VoiceMessageCard', description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.' },
     ]
   },
   {
     title: 'Events',
     items: [
-      { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
+      { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
     ]
   },
   {
     title: 'User',
     items: [
-      { name: 'Card', path: '/components/user-card', icon: IdentificationIcon },
-      { name: 'UserInput', path: '/components/user-input', icon: Search01Icon },
-      { name: 'UserHeader', path: '/components/user-header', icon: UserCircleIcon },
-      { name: 'Profile', path: '/components/user-profile', icon: UserIcon },
+      { name: 'Card', path: '/components/user-card', icon: IdentificationIcon, title: 'User Card', description: 'Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts.' },
+      { name: 'UserInput', path: '/components/user-input', icon: Search01Icon, title: 'UserInput', description: 'Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.' },
+      { name: 'UserHeader', path: '/components/user-header', icon: UserCircleIcon, title: 'UserHeader', description: 'User profile header components for displaying user information at the top of profile pages.' },
+      { name: 'Profile', path: '/components/user-profile', icon: UserIcon, title: 'UserProfile', description: 'Composable user profile display components with multiple layout variants.' },
     ]
   },
   {
     title: 'Relay',
     items: [
-      { name: 'Card', path: '/components/relay-card', icon: ServerStack01Icon },
+      { name: 'Card', path: '/components/relay-card', icon: ServerStack01Icon, title: 'RelayCard', description: 'Composable relay display components with NIP-11 info and bookmark functionality.' },
     ]
   },
   {
     title: 'Lists (NIP-51)',
     items: [
-      { name: 'Follow Pack', path: '/components/follow-pack', icon: UserGroupIcon },
+      { name: 'Follow Pack', path: '/components/follow-pack', icon: UserGroupIcon, title: 'FollowPack', description: 'Display curated lists of people (kind 39089). Follow packs are collections of users grouped by topic, interest, or community.' },
     ]
   },
   {
     title: 'Media',
     items: [
-      { name: 'Upload', path: '/components/media-upload', icon: CloudUploadIcon },
+      { name: 'Upload', path: '/components/media-upload', icon: CloudUploadIcon, title: 'Media Upload', description: 'Upload media files to Blossom servers. Support for images, videos, audio, and other file types with progress tracking.' },
     ]
   },
 ];

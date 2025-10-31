@@ -6,7 +6,7 @@
   import Navbar from '$site-components/Navbar.svelte';
   import Sidebar from '$site-components/Sidebar.svelte';
   import LoginModal from '$site-components/LoginModal.svelte';
-  import { sidebarOpen } from '$lib/stores/sidebar';
+  import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
   import { nip19 } from 'nostr-tools';
 
   let { children } = $props();
@@ -90,7 +90,7 @@
       <Sidebar />
     {/if}
 
-    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen}>
+    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen} class:sidebar-collapsed={$sidebarCollapsed}>
       {@render children()}
     </main>
   </div>
@@ -166,6 +166,10 @@
     max-width: 1400px;
   }
 
+  .main.has-sidebar.sidebar-collapsed {
+    margin-left: 64px;
+  }
+
   @media (max-width: 768px) {
     .main.has-sidebar {
       margin-left: 0;
@@ -173,6 +177,10 @@
 
     .main.has-sidebar.sidebar-open {
       margin-left: 280px;
+    }
+
+    .main.has-sidebar.sidebar-open.sidebar-collapsed {
+      margin-left: 64px;
     }
   }
 </style>

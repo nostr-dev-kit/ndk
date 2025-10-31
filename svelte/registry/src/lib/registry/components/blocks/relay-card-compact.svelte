@@ -56,9 +56,6 @@
 	function handleClick(e: MouseEvent) {
 		if (onclick) {
 			onclick(e);
-		} else {
-			// Default: open relay URL in new tab
-			window.open(relayUrl, '_blank');
 		}
 	}
 </script>
@@ -90,8 +87,5 @@
 
 		<!-- Name -->
 		<Name class="text-sm font-medium line-clamp-2" />
-
-		<!-- Browse indicator -->
-		<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 	</button>
 </Root>

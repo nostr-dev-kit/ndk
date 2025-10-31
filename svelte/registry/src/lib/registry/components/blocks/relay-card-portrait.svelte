@@ -64,9 +64,6 @@
 	function handleClick(e: MouseEvent) {
 		if (onclick) {
 			onclick(e);
-		} else {
-			// Default: open relay URL in new tab
-			window.open(relayUrl, '_blank');
 		}
 	}
 </script>
@@ -143,17 +140,7 @@
 				<Url class="text-sm text-muted-foreground mb-3" showProtocol={false} />
 
 				<!-- Description -->
-				<Description maxLines={2} class="text-sm leading-relaxed mb-4" />
-
-				<!-- Browse button - always visible, at bottom -->
-				<div class="mt-auto border-t border-border/50">
-					<div class="flex items-center justify-center gap-1 text-sm text-primary">
-						<span>Browse</span>
-						<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-						</svg>
-					</div>
-				</div>
+				<Description maxLines={2} class="text-sm leading-relaxed" />
 			</div>
 		</div>
 	</button>

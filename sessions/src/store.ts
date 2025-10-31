@@ -331,9 +331,6 @@ export function createSessionStore() {
         removeSession: (pubkey: Hexpubkey) => {
             const state = get();
 
-            // Stop subscription
-            get().stopSession(pubkey);
-
             // Remove from maps
             const newSessions = new Map(state.sessions);
             const newSigners = new Map(state.signers);
@@ -345,22 +342,30 @@ export function createSessionStore() {
                 signers: newSigners,
             };
 
-            // If this was the active session, handle active state
+            // If this was the active session, clear NDK state BEFORE triggering subscriptions
+            // This prevents race conditions where subscription handlers try to re-set the signer
             if (state.activePubkey === pubkey) {
                 const remainingSessions = Array.from(newSessions.keys());
+
                 if (remainingSessions.length === 0) {
-                    // No sessions left, clear active state
+                    // No sessions left, clear NDK state immediately
                     updates.activePubkey = undefined;
+
                     if (state.ndk) {
+                        // Clear NDK state directly to prevent async side effects
                         state.ndk.signer = undefined;
+                        state.ndk.activeUser = undefined;
                         state.ndk.muteFilter = undefined;
                         state.ndk.relayConnectionFilter = undefined;
                     }
                 }
             }
 
-            // Apply the session removal
+            // Apply the session removal (triggers subscriptions)
             set(updates);
+
+            // Stop subscription after state is updated
+            get().stopSession(pubkey);
 
             // After removing, switch to another session if needed
             if (state.activePubkey === pubkey) {

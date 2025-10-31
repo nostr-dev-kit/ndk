@@ -15,7 +15,7 @@ export const ndk = createNDK({
     'wss://relay.nostr.band',
     'wss://nos.lol'
   ],
-  // cacheAdapter,
+  cacheAdapter,
   session: {
     autoSave: true,
     storage: new LocalStorage(),

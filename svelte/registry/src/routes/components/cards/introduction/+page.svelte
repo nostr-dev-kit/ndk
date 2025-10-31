@@ -4,7 +4,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EventCard } from '$lib/registry/components/event-card';
   import { EventContent } from '$lib/registry/components/event/content';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
   import Demo from '$site-components/Demo.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -39,21 +39,23 @@
 </EventCard.Root>`;
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>Card Components</h1>
-    <p class="text-lg text-muted-foreground mb-8">
+<div class="docs-page">
+  <header class="docs-header">
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>Card Components</h1>
+      <EditProps.Root>
+        <EditProps.Prop
+          name="Sample Event"
+          type="event"
+          bind:value={sampleEvent}
+          default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        />
+        <EditProps.Button>Edit Examples</EditProps.Button>
+      </EditProps.Root>
+    </div>
+    <p class="subtitle">
       Understanding the chrome: consistent visual frames for Nostr events
     </p>
-
-    <EditProps.Root>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        bind:value={sampleEvent}
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-      />
-    </EditProps.Root>
   </header>
 
   <section class="prose prose-lg max-w-none mb-12">

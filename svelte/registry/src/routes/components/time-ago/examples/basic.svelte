@@ -32,6 +32,6 @@
 
   <div class="flex items-center gap-2">
     <span class="text-muted-foreground">As semantic time element:</span>
-    <TimeAgo timestamp={twoHoursAgo} element="time" class="font-semibold text-primary" />
+    <TimeAgo timestamp={twoHoursAgo} element="time" class="font-semibold" />
   </div>
 </div>

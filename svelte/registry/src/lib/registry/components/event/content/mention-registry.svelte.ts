@@ -11,86 +11,32 @@ export type MentionComponent = Component<{
 }>;
 
 /**
- * MentionRegistry - Configure which mention component to use globally
+ * Default mention component to use globally
  *
- * This allows you to set a default mention component that will be used
- * throughout your app without needing to provide custom snippets everywhere.
- *
- * @example Basic usage:
- * ```ts
- * import { defaultMentionRegistry } from '$lib/ndk/event/content';
- * import { MentionModern } from '$lib/ndk/blocks';
- *
- * // Set globally at app startup
- * defaultMentionRegistry.set(MentionModern);
- * ```
- *
- * @example Using in EventContent:
- * ```svelte
- * <EventContent {ndk} {event} />
- * <!-- Will automatically use MentionModern if registered -->
- * ```
- *
- * @example Custom registry per component:
- * ```svelte
- * <script>
- *   import { MentionRegistry } from '$lib/ndk/event/content';
- *   import { MentionModern } from '$lib/ndk/blocks';
- *
- *   const customRegistry = new MentionRegistry();
- *   customRegistry.set(MentionModern);
- * </script>
- *
- * <EventContent {ndk} {event} mentionRegistry={customRegistry} />
- * ```
+ * Set this to customize how mentions are rendered throughout your app.
  */
-export class MentionRegistry {
-  private component: MentionComponent | null = null;
-
-  /**
-   * Set the mention component to use
-   *
-   * @param component - Svelte component that accepts ndk, bech32, and optional class props
-   */
-  set(component: MentionComponent): void {
-    this.component = component;
-  }
-
-  /**
-   * Get the registered mention component
-   *
-   * @returns The registered component, or null if none is set
-   */
-  get(): MentionComponent | null {
-    return this.component;
-  }
-
-  /**
-   * Check if a component is registered
-   */
-  has(): boolean {
-    return this.component !== null;
-  }
-
-  /**
-   * Clear the registered component
-   */
-  clear(): void {
-    this.component = null;
-  }
-}
+let defaultMentionComponent = $state<MentionComponent | null>(null);
 
 /**
- * Default global mention registry instance
- *
- * Use this to set the mention component globally for your entire app.
+ * Set the default mention component globally
  *
  * @example
  * ```ts
- * import { defaultMentionRegistry } from '$lib/ndk/event/content';
- * import { MentionModern } from '$lib/ndk/blocks';
+ * import { setDefaultMention } from '$lib/registry/components/event/content';
+ * import { MentionModern } from '$lib/registry/components/blocks';
  *
- * defaultMentionRegistry.set(MentionModern);
+ * setDefaultMention(MentionModern);
  * ```
  */
-export const defaultMentionRegistry = new MentionRegistry();
+export function setDefaultMention(component: MentionComponent | null): void {
+  defaultMentionComponent = component;
+}
+
+/**
+ * Get the current default mention component
+ *
+ * @internal - Used by EventContent component
+ */
+export function getDefaultMention(): MentionComponent | null {
+  return defaultMentionComponent;
+}

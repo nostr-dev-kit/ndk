@@ -58,7 +58,8 @@
 
   // Use builder with closure pattern
   const emojiState = createEmojiPicker(() => ({
-    defaults: defaults ?? hardcodedDefaults
+    defaults: defaults ?? hardcodedDefaults,
+    from: ndk.$follows
   }), ndk);
 
   // Split emojis into user's and defaults
@@ -106,6 +107,8 @@
 <style>
   .emoji-picker-content {
     width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .emoji-section {

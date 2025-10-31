@@ -51,7 +51,7 @@ currentEvent = events[1];`} />
 
     <h3>Event Builders</h3>
 
-    <p><code>createThreadView(() => ({ focusedEvent, maxDepth }), ndk)</code> - Thread navigation with parent chain and replies.</p>
+    <p><code>createThreadView(() => ({'{ focusedEvent, maxDepth }'}), ndk)</code> - Thread navigation with parent chain and replies.</p>
     <details>
       <summary>Show details</summary>
       <CodeBlock lang="typescript" code={`const thread = createThreadView(() => ({ focusedEvent: event, maxDepth: 20 }), ndk);
@@ -64,7 +64,7 @@ thread.focusedEventId // string | null - ID of focused event
 thread.focusOn(event) // Navigate to different event`} />
     </details>
 
-    <p><code>createEmbeddedEvent(() => ({ bech32 }), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
+    <p><code>createEmbeddedEvent(() => ({'{ bech32 }'}), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
     <details>
       <summary>Show details</summary>
       <CodeBlock lang="typescript" code={`const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
@@ -76,7 +76,7 @@ embedded.error    // Error message if failed`} />
 
     <h3>Profile & Social</h3>
 
-    <p><code>createProfileFetcher(() => ({ user }), ndk)</code> - Fetches user profiles with automatic deduplication.</p>
+    <p><code>createProfileFetcher(() => ({'{ user }'}), ndk)</code> - Fetches user profiles with automatic deduplication.</p>
     <details>
       <summary>Show details</summary>
       <CodeBlock lang="typescript" code={`const profile = createProfileFetcher(() => ({ user }), ndk);
@@ -86,7 +86,7 @@ profile.profile?.displayName
 profile.loading`} />
     </details>
 
-    <p><code>createFollowAction(() => ({ target }), ndk)</code> - Follow/unfollow state for users or hashtags.</p>
+    <p><code>createFollowAction(() => ({'{ target }'}), ndk)</code> - Follow/unfollow state for users or hashtags.</p>
     <details>
       <summary>Show details</summary>
       <CodeBlock lang="typescript" code={`const followAction = createFollowAction(() => ({ target: user }), ndk);
@@ -97,7 +97,7 @@ await followAction.follow();`} />
 
     <h3>Relays</h3>
 
-    <p><code>createRelayInfo(() => ({ relayUrl }), ndk)</code> - Fetches NIP-11 relay information.</p>
+    <p><code>createRelayInfo(() => ({'{ relayUrl }'}), ndk)</code> - Fetches NIP-11 relay information.</p>
     <details>
       <summary>Show details</summary>
       <CodeBlock lang="typescript" code={`const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
@@ -205,130 +205,3 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
     </div>
   </section>
 </div>
-
-<style>
-  .docs-page {
-    max-width: 900px;
-  }
-
-  .docs-header {
-    margin-bottom: 3rem;
-  }
-
-  .docs-header h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--color-foreground);
-    letter-spacing: -0.025em;
-  }
-
-  .subtitle {
-    font-size: 1.25rem;
-    color: var(--color-muted-foreground);
-    margin: 0;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--color-foreground);
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 2rem 0 1rem 0;
-    color: var(--color-foreground);
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--color-muted-foreground);
-    margin: 0 0 1rem 0;
-  }
-
-  code {
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-    font-size: 0.875rem;
-    background: var(--color-muted);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    color: var(--color-foreground);
-  }
-
-  pre {
-    margin: 1rem 0;
-    padding: 1.5rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  pre code {
-    background: none;
-    padding: 0;
-    line-height: 1.7;
-    display: block;
-  }
-
-  details {
-    margin: 1rem 0;
-  }
-
-  summary {
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-primary);
-    padding: 0.5rem 0;
-    user-select: none;
-  }
-
-  summary:hover {
-    text-decoration: underline;
-  }
-
-  .next-section {
-    border-top: 1px solid var(--color-border);
-    padding-top: 3rem;
-  }
-
-  .next-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .next-card {
-    padding: 1.5rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: border-color 0.2s;
-  }
-
-  .next-card:hover {
-    border-color: var(--color-primary);
-  }
-
-  .next-card h3 {
-    margin: 0 0 0.5rem 0;
-    color: var(--color-primary);
-    font-size: 1.125rem;
-  }
-
-  .next-card p {
-    margin: 0;
-    font-size: 0.9375rem;
-  }
-</style>

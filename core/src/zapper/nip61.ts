@@ -24,6 +24,12 @@ export type CashuPaymentInfo = {
     p2pk?: string;
 
     /**
+     * Tags to include in the proof secrets (e.g., [["e", "event-id"], ["P", "sender-pubkey"]])
+     * These tags will be added to the P2PK lock structure for replay protection and sender verification.
+     */
+    proofTags?: [string, string][];
+
+    /**
      * Intramint fallback allowed:
      *
      * When set to true, if cross-mint payments fail, we will

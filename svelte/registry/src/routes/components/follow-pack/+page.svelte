@@ -8,7 +8,7 @@
 		FollowPackCompact,
 		FollowPackListItem
 	} from '$lib/registry/components/blocks';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -56,18 +56,19 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
-		{#key followPacks}
-			<EditProps.Root>
-				<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-				<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-				<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-				<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-				<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-			</EditProps.Root>
-		{/key}
+		
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-4xl font-bold">FollowPack</h1>
-			<EditProps.Button>Change Sample Packs</EditProps.Button>
+			{#key followPacks}
+				<EditProps.Root>
+					<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
+					<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+					<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+					<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+					<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+					<EditProps.Button>Change Sample Packs</EditProps.Button>
+				</EditProps.Root>
+			{/key}
 		</div>
 		<p class="text-lg text-muted-foreground">
 			Display curated lists of people (kind 39089). Follow packs are collections of users grouped
@@ -90,49 +91,47 @@
 
 			<div class="space-y-0">
 				<!-- Hero -->
-				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
-					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Hero</h3>
-						<p class="text-sm text-muted-foreground leading-relaxed">
+				<div class="border-b border-border/50 pb-12">
+					<div class="text-center">
+						<h3 class="text-7xl font-black mb-3 tracking-tight">Hero</h3>
+						<p class="text-sm text-muted-foreground leading-relaxed mb-8">
 							Featured display with full-bleed imagery. Perfect for landing pages and hero sections.
 						</p>
 					</div>
-					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center">
+					<div class="!pr-0">
 						{#if pack1}
-							<div class="w-full max-w-4xl">
-								<FollowPackHero {ndk} followPack={pack1} />
-							</div>
+							<FollowPackHero {ndk} followPack={pack1} />
 						{/if}
 					</div>
 				</div>
 
 				<!-- Portrait -->
 				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
-					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+					<div class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right">
 						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Portrait</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
 							Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.
 						</p>
 					</div>
-					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center">
-						{#if pack2}
-							<FollowPackPortrait {ndk} followPack={pack2} />
+					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center !pr-0">
+						{#if pack1}
+							<FollowPackPortrait {ndk} followPack={pack1} />
 						{/if}
 					</div>
 				</div>
 
 				<!-- Compact -->
 				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
-					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+					<div class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right">
 						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Compact</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
 							Information-dense for feeds. Optimized for content streams and horizontal layouts.
 						</p>
 					</div>
-					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center">
-						{#if pack3}
+					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center !pr-0">
+						{#if pack1}
 							<div class="w-full max-w-3xl">
-								<FollowPackCompact {ndk} followPack={pack3} />
+								<FollowPackCompact {ndk} followPack={pack1} />
 							</div>
 						{/if}
 					</div>
@@ -140,7 +139,7 @@
 
 				<!-- List Item -->
 				<div class="grid grid-cols-1 lg:grid-cols-7">
-					<div class="lg:col-span-2 p-10 lg:p-12 lg:border-r border-border/50">
+					<div class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right">
 						<h3 class="text-2xl font-semibold mb-3 tracking-tight">List Item</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
 							Minimal design for sidebars. Maximum impact with minimal footprint.

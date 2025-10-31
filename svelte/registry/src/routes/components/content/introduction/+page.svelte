@@ -6,6 +6,7 @@
   import { ArticleContent } from '$lib/registry/components/article-content';
   import { ImageContent } from '$lib/registry/components/image-content';
   import Demo from '$site-components/Demo.svelte';
+  import { EditProps } from '$lib/site-components/edit-props';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -48,15 +49,18 @@
 <ArticleContent {ndk} {article} />`;
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>Content Components</h1>
-    <p class="text-lg text-muted-foreground mb-8">
+<div class="docs-page">
+  <header class="docs-header">
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>Content Components</h1>
+        <EditProps.Button>Edit Examples</EditProps.Button>
+    </div>
+    <p class="subtitle">
       Understanding content rendering in NDK Components
     </p>
   </header>
 
-  <section class="prose prose-lg max-w-none mb-12">
+  <section>
     <h2>What are Content Components?</h2>
     <p>
       Content components are specialized renderers that transform raw Nostr event data into rich,
@@ -74,7 +78,7 @@
       all without you writing any parsing logic.
     </p>
 
-    <h2>Content vs Cards: When to Use Each</h2>
+    <h3>Content vs Cards: When to Use Each</h3>
     <p>
       <strong>Use Content components when:</strong>
     </p>
@@ -102,8 +106,8 @@
     </p>
   </section>
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">Available Content Components</h2>
+  <section>
+    <h2>Available Content Components</h2>
 
     <Demo
       title="EventContent - Note (Kind:1)"
@@ -145,12 +149,3 @@
     </p>
   </section>
 </div>
-
-<style>
-  .prose :global(code) {
-    background: hsl(var(--muted));
-    padding: 0.2em 0.4em;
-    border-radius: 0.25rem;
-    font-size: 0.9em;
-  }
-</style>

@@ -10,7 +10,7 @@
     HighlightCardCompact,
     HighlightCardGrid
   } from '$lib/registry/components/blocks';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Code examples for blocks
@@ -74,7 +74,9 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">HighlightCard</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">HighlightCard</h1>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable
       layouts. Automatically extracts and displays source references.
@@ -87,6 +89,7 @@
         <EditProps.Prop name="Highlight 3" type="highlight" bind:value={highlight3} options={highlights} />
         <EditProps.Prop name="Highlight 4" type="highlight" bind:value={highlight4} options={highlights} />
         <EditProps.Prop name="Highlight 5" type="highlight" bind:value={highlight5} options={highlights} />
+      	<EditProps.Button>Edit Examples</EditProps.Button>
       </EditProps.Root>
     {/key}
   </div>

@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
+  import { EditProps } from '$lib/site-components/edit-props';
 
   import HowItWorksCode from './examples/how-it-works-code.svelte?raw';
   import AddingHandlerCode from './examples/adding-handler-code.svelte?raw';
@@ -15,7 +16,10 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">Embedded Event Previews</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">Embedded Event Previews</h1>
+        <EditProps.Button>Edit Examples</EditProps.Button>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Automatically render rich previews of embedded Nostr events based on their kind.
       When content includes event references (note1, nevent1, naddr1), they are detected

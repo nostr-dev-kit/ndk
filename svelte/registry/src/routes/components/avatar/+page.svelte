@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -22,10 +22,10 @@
     <EditProps.Root>
       <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
       <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
     <div class="header-title">
       <h1>UserProfile.Avatar</h1>
-      <EditProps.Button>Edit Examples</EditProps.Button>
     </div>
     <p>Display user avatars with automatic fallbacks. Part of the UserProfile component system.</p>
   </header>

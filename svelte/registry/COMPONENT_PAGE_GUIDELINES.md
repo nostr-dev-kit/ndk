@@ -1186,7 +1186,7 @@ For a simple component with only primitives:
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { Component } from '$lib/ndk/component';
-	import { EditProps } from '$lib/ndk/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -1240,7 +1240,7 @@ For a component with blocks, primitives, and builder:
 	import { getContext } from 'svelte';
 	import { Component } from '$lib/ndk/component';
 	import { ComponentBlock1, ComponentBlock2 } from '$lib/ndk/blocks';
-	import { EditProps } from '$lib/ndk/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 

@@ -23,6 +23,7 @@ export async function createToken(
     amount: number,
     recipientMints?: MintUrl[],
     p2pk?: string,
+    proofTags?: [string, string][],
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     console.log("[createToken] Starting token creation", {
         amount,
@@ -47,7 +48,7 @@ export async function createToken(
     for (const mint of mintsInCommon) {
         console.log("[createToken] Attempting to create token in mint", mint);
         try {
-            const res = await createTokenInMint(wallet, mint, amount, p2pk);
+            const res = await createTokenInMint(wallet, mint, amount, p2pk, proofTags);
 
             if (res) {
                 console.log("[createToken] Successfully created token in mint", mint);
@@ -61,7 +62,7 @@ export async function createToken(
 
     if (hasRecipientMints) {
         console.log("[createToken] Attempting cross-mint transfer");
-        return await createTokenWithMintTransfer(wallet, amount, recipientMints, p2pk);
+        return await createTokenWithMintTransfer(wallet, amount, recipientMints, p2pk, proofTags);
     }
 
     console.error("[createToken] All token creation attempts failed");
@@ -79,6 +80,7 @@ async function createTokenInMint(
     mint: MintUrl,
     amount: number,
     p2pk?: string,
+    proofTags?: [string, string][],
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     console.log("[createTokenInMint] Starting", { mint, amount, p2pk });
 
@@ -101,6 +103,7 @@ async function createTokenInMint(
                 const sendResult = await cashuWallet.send(amount, proofsToUse, {
                     pubkey: p2pk,
                     proofsWeHave: allOurProofs,
+                    ...(proofTags && proofTags.length > 0 ? { tags: proofTags } : {}),
                 });
 
                 console.log("[createTokenInMint] Send result", {
@@ -137,6 +140,7 @@ async function createTokenWithMintTransfer(
     amount: number,
     recipientMints: MintUrl[],
     p2pk?: string,
+    proofTags?: [string, string][],
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
@@ -175,7 +179,7 @@ async function createTokenWithMintTransfer(
         return null;
     }
 
-    const { proofs, mint } = await mintProofs(targetMintWallet, quote, amount, targetMint, p2pk);
+    const { proofs, mint } = await mintProofs(targetMintWallet, quote, amount, targetMint, p2pk, proofTags);
 
     return {
         ...payLNResult,

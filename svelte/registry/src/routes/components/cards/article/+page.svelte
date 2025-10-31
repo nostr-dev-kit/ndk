@@ -10,7 +10,7 @@
 		ArticleCardNeon,
 		ArticleCardMedium
 	} from '$lib/registry/components/blocks';
-	import { EditProps } from '$lib/registry/components/edit-props';
+	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import simplified code examples (for Code tab)
@@ -75,18 +75,18 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
-		{#key articles}
-			<EditProps.Root>
-				<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
-				<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />
-				<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} />
-				<EditProps.Prop name="Article 4" type="article" bind:value={article4} options={articles} />
-				<EditProps.Prop name="Article 5" type="article" bind:value={article5} options={articles} />
-			</EditProps.Root>
-		{/key}
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-4xl font-bold">ArticleCard</h1>
-			<EditProps.Button>Change Sample Articles</EditProps.Button>
+			{#key articles}
+				<EditProps.Root>
+					<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
+					<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />
+					<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} />
+					<EditProps.Prop name="Article 4" type="article" bind:value={article4} options={articles} />
+					<EditProps.Prop name="Article 5" type="article" bind:value={article5} options={articles} />
+					<EditProps.Button>Change Sample Articles</EditProps.Button>
+				</EditProps.Root>
+			{/key}
 		</div>
 		<p class="text-lg text-muted-foreground">
 			Composable article card components for displaying NDKArticle content with customizable

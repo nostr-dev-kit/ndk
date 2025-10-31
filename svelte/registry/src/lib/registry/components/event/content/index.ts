@@ -14,6 +14,14 @@
  * <EventContent {ndk} {event} />
  * ```
  *
+ * @example Set default mention component globally:
+ * ```ts
+ * import { setDefaultMention } from '$lib/registry/components/event/content';
+ * import { MentionModern } from '$lib/registry/components/blocks';
+ *
+ * setDefaultMention(MentionModern);
+ * ```
+ *
  * @example With custom snippets:
  * ```svelte
  * <EventContent {ndk} {event}>
@@ -73,7 +81,9 @@ export { default as EmbeddedEvent } from './event/event.svelte';
 // Registry system
 export { KindRegistry, defaultKindRegistry } from './registry.svelte';
 export type { NDKWrapper, HandlerInfo } from './registry.svelte';
-export { MentionRegistry, defaultMentionRegistry } from './mention-registry.svelte';
+
+// Mention component configuration
+export { setDefaultMention, getDefaultMention } from './mention-registry.svelte';
 export type { MentionComponent } from './mention-registry.svelte';
 
 // Kind-specific embedded renderers

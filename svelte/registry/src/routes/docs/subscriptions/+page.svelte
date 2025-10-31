@@ -330,77 +330,11 @@ const popular = ndk.$metaSubscribe(() => ({
 </div>
 
 <style>
-	.docs-page {
-		max-width: 900px;
-	}
-
-	.docs-header {
-		margin-bottom: 3rem;
-	}
-
-	.docs-header h1 {
-		font-size: 3rem;
-		font-weight: 700;
-		margin: 0 0 1rem 0;
-		color: var(--color-foreground);
-		letter-spacing: -0.025em;
-	}
-
-	.subtitle {
-		font-size: 1.25rem;
-		color: var(--color-muted-foreground);
-		margin: 0;
-	}
-
-	section {
-		margin-bottom: 3rem;
-	}
-
-	h2 {
-		font-size: 1.875rem;
-		font-weight: 700;
-		margin: 0 0 1rem 0;
-		color: var(--color-foreground);
-	}
-
-	h3 {
-		font-size: 1.25rem;
-		font-weight: 600;
-		margin: 2rem 0 1rem 0;
-		color: var(--color-foreground);
-	}
-
+	/* Page-specific styles */
 	h4 {
 		font-size: 1rem;
 		font-weight: 600;
 		margin: 0 0 0.5rem 0;
-		color: var(--color-foreground);
-	}
-
-	p {
-		font-size: 1rem;
-		line-height: 1.7;
-		color: var(--color-muted-foreground);
-		margin: 0 0 1rem 0;
-	}
-
-	ul {
-		margin: 1rem 0;
-		padding-left: 1.5rem;
-		color: var(--color-muted-foreground);
-		line-height: 1.7;
-	}
-
-	li {
-		margin-bottom: 0.5rem;
-	}
-
-	code {
-		font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-		font-size: 0.875rem;
-		background: var(--color-muted);
-		padding: 0.125rem 0.375rem;
-		border-radius: 0.25rem;
 		color: var(--color-foreground);
 	}
 

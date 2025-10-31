@@ -5,8 +5,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createEventContent, type ParsedSegment } from '@nostr-dev-kit/svelte';
   import type { KindRegistry } from './registry.svelte';
-  import type { MentionRegistry } from './mention-registry.svelte';
-  import { defaultMentionRegistry } from './mention-registry.svelte';
+  import { getDefaultMention } from './mention-registry.svelte';
   import Mention from './mention/mention.svelte';
   import Hashtag from './hashtag/hashtag.svelte';
   import EmbeddedEvent from './event/event.svelte';
@@ -18,7 +17,6 @@
     emojiTags?: string[][];
     class?: string;
     kindRegistry?: KindRegistry;
-    mentionRegistry?: MentionRegistry;
     mention?: Snippet<[{ bech32: string }]>;
     eventRef?: Snippet<[{ bech32: string }]>;
     hashtag?: Snippet<[{ tag: string }]>;
@@ -35,7 +33,6 @@
     emojiTags,
     class: className = '',
     kindRegistry,
-    mentionRegistry,
     mention,
     eventRef,
     hashtag,
@@ -45,12 +42,8 @@
     imageGrid,
   }: EventContentProps = $props();
 
-  // Determine which mention component to use (priority: snippet > custom registry > default registry > built-in)
-  const MentionComponent = $derived.by(() => {
-    if (mention) return null; // Snippet takes precedence
-    const registry = mentionRegistry || defaultMentionRegistry;
-    return registry.get();
-  });
+  // Get default mention component (snippet takes precedence)
+  const DefaultMention = mention ? null : getDefaultMention();
 
   const parsed = createEventContent(() => ({
     event,
@@ -67,8 +60,8 @@
       {#if segment.data && typeof segment.data === 'string'}
         {#if mention}
           {@render mention({ bech32: segment.data })}
-        {:else if MentionComponent}
-          <MentionComponent {ndk} bech32={segment.data} />
+        {:else if DefaultMention}
+          <DefaultMention {ndk} bech32={segment.data} />
         {:else}
           <Mention {ndk} bech32={segment.data} />
         {/if}

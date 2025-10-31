@@ -4,6 +4,7 @@
   import { MentionModern } from '$lib/registry/components/blocks';
   import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
+  import { EditProps } from '$lib/site-components/edit-props';
 
   import UIBasic from './examples/ui-basic.svelte';
   import UIBasicRaw from './examples/ui-basic.svelte?raw';
@@ -16,7 +17,10 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">Mention</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">Mention</h1>
+        <EditProps.Button>Edit Examples</EditProps.Button>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Render inline user mentions with automatic profile fetching. Display user references
       in event content with customizable styling and interactive features.
@@ -68,13 +72,13 @@
       <div class="p-6 bg-blue-500/10 border border-blue-500/20 rounded-lg">
         <h3 class="text-lg font-semibold mb-2">💡 Using as Default Mention Renderer (Recommended)</h3>
         <p class="text-muted-foreground mb-4">
-          Set the mention component globally using the registry. This applies to all <code>EventContent</code> components in your app:
+          Set the mention component globally with one line. This applies to all <code>EventContent</code> components in your app:
         </p>
         <pre class="bg-muted p-4 rounded-lg text-sm overflow-x-auto"><code>{`// In your app initialization (e.g., +layout.svelte or main entry)
-import { defaultMentionRegistry } from '$lib/registry/components/event/content';
+import { setDefaultMention } from '$lib/registry/components/event/content';
 import { MentionModern } from '$lib/registry/components/blocks';
 
-defaultMentionRegistry.set(MentionModern);
+setDefaultMention(MentionModern);
 
 // Now all EventContent components will use MentionModern
 <EventContent {ndk} {event} />

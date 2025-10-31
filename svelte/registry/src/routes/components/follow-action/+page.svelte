@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/registry/components/edit-props';
+  import { EditProps } from '$lib/site-components/edit-props';
   import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -30,7 +30,9 @@
 <div class="container mx-auto p-8 max-w-7xl">
   <!-- Header -->
   <div class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">FollowAction</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1 class="text-4xl font-bold">FollowAction</h1>
+    </div>
     <p class="text-lg text-muted-foreground mb-6">
       Follow/unfollow buttons for users and hashtags. Choose from pre-built block variants or
       compose custom layouts using primitives.
@@ -43,6 +45,7 @@
         default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
         bind:value={sampleUser}
       />
+    	<EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 

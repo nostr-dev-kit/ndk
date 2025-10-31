@@ -12,10 +12,10 @@
   @installation
   To use as default mention renderer globally (recommended):
   ```ts
-  import { defaultMentionRegistry } from '$lib/registry/components/event/content';
+  import { setDefaultMention } from '$lib/registry/components/event/content';
   import { MentionModern } from '$lib/registry/components/blocks';
 
-  defaultMentionRegistry.set(MentionModern);
+  setDefaultMention(MentionModern);
   ```
 
   Or use with custom snippet per component:

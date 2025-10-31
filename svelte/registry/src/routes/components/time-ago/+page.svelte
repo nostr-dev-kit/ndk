@@ -10,7 +10,9 @@
 
 <div class="component-page">
   <header>
-    <h1>TimeAgo</h1>
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <h1>TimeAgo</h1>
+    </div>
     <p>Display relative timestamps that automatically update every minute.</p>
   </header>
 

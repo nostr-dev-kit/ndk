@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { MediaUploadResult } from '$lib/components/ndk/media-upload';
-	import { UploadButton, MediaUploadCarousel } from '$lib/components/ndk/blocks';
+	import type { MediaUploadResult } from '$lib/registry/components/media-upload';
+	import { UploadButton, MediaUploadCarousel } from '$lib/registry/components/blocks';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -181,7 +181,7 @@
 		<div class="bg-muted/50 rounded-lg p-6 space-y-4">
 			<h3 class="text-lg font-semibold">Basic Usage</h3>
 			<pre class="bg-background p-4 rounded-md overflow-x-auto"><code
-					class="text-sm">{`import { createMediaUpload } from '$lib/components/ndk/media-upload';
+					class="text-sm">{`import { createMediaUpload } from '$lib/registry/components/media-upload';
 
 const mediaUpload = createMediaUpload(ndk, {
   fallbackServer: 'https://blossom.primal.net',
@@ -213,7 +213,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 					name: 'MediaUpload.Root',
 					description:
 						'Root component that initializes the upload context and manages upload state.',
-					importPath: "import { MediaUpload } from '$lib/components/ndk/media-upload'",
+					importPath: "import { MediaUpload } from '$lib/registry/components/media-upload'",
 					props: [
 						{
 							name: 'ndk',
@@ -251,7 +251,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'MediaUpload.Button',
 					description: 'File picker button that triggers the upload flow.',
-					importPath: "import { MediaUpload } from '$lib/components/ndk/media-upload'",
+					importPath: "import { MediaUpload } from '$lib/registry/components/media-upload'",
 					props: [
 						{
 							name: 'multiple',
@@ -279,7 +279,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'MediaUpload.Preview',
 					description: 'Displays preview of uploaded media with appropriate rendering for images, videos, and audio.',
-					importPath: "import { MediaUpload } from '$lib/components/ndk/media-upload'",
+					importPath: "import { MediaUpload } from '$lib/registry/components/media-upload'",
 					props: [
 						{
 							name: 'upload',
@@ -306,7 +306,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'MediaUpload.Carousel',
 					description: 'Container for displaying multiple media items in a scrollable layout.',
-					importPath: "import { MediaUpload } from '$lib/components/ndk/media-upload'",
+					importPath: "import { MediaUpload } from '$lib/registry/components/media-upload'",
 					props: [
 						{
 							name: 'itemClass',
@@ -319,7 +319,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'MediaUpload.Item',
 					description: 'Individual carousel item with drag-to-reorder and remove capabilities.',
-					importPath: "import { MediaUpload } from '$lib/components/ndk/media-upload'",
+					importPath: "import { MediaUpload } from '$lib/registry/components/media-upload'",
 					props: [
 						{
 							name: 'upload',
@@ -350,7 +350,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'UploadButton',
 					description: 'Simple upload button block without preview UI.',
-					importPath: "import { UploadButton } from '$lib/components/ndk/blocks'",
+					importPath: "import { UploadButton } from '$lib/registry/components/blocks'",
 					props: [
 						{
 							name: 'ndk',
@@ -403,7 +403,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'MediaUploadCarousel',
 					description: 'Carousel block with + button, previews, and drag-to-reorder.',
-					importPath: "import { MediaUploadCarousel } from '$lib/components/ndk/blocks'",
+					importPath: "import { MediaUploadCarousel } from '$lib/registry/components/blocks'",
 					props: [
 						{
 							name: 'ndk',

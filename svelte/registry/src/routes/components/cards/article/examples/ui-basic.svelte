@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArticleCard } from '$lib/components/ndk/article-card';
+	import { ArticleCard } from '$lib/registry/components/article-card';
 
 	let { ndk, article } = $props();
 </script>

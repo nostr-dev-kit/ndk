@@ -2,8 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { ThreadViewTwitter } from '$lib/components/ndk/blocks';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { ThreadViewTwitter } from '$lib/registry/components/blocks';
+  import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -145,7 +145,7 @@ thread.focusOn(event)  // Navigate to different event`}
         name: 'ThreadViewTwitter',
         description:
           'Twitter-style thread view block with vertical connector lines and focused event highlighting.',
-        importPath: "import { ThreadViewTwitter } from '$lib/components/ndk/blocks'",
+        importPath: "import { ThreadViewTwitter } from '$lib/registry/components/blocks'",
         props: [
           {
             name: 'ndk',

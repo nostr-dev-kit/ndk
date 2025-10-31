@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { Snippet } from 'svelte';
 	import { setContext, getContext } from 'svelte';
-	import { createMediaUpload, type MediaUploadOptions, type MediaUploadResult } from './createMediaUpload.svelte.js';
+	import { createMediaUpload, type MediaUploadOptions, type MediaUploadResult } from './createMediaUpload.svelte';
 
 	interface Props {
 		ndk?: NDKSvelte;

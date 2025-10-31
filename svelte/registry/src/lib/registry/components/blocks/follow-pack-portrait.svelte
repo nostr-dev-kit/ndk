@@ -4,6 +4,7 @@
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '../follow-pack';
 	import AvatarGroup from '../avatar-group/avatar-group.svelte';
+	import { UserProfile } from '../user-profile';
 	import { getNDKFromContext } from '../ndk-context.svelte';
 
 	interface Props {
@@ -29,7 +30,7 @@
 			<FollowPack.Title class="text-base font-semibold mb-2" lines={2} />
 			<FollowPack.Description class="text-xs text-muted-foreground mb-3" maxLength={100} lines={3} />
 
-			<div class="mt-auto pt-3 border-t border-border space-y-2">
+			<div class="mt-auto pt-3 border-t border-border space-y-3">
 				<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={4} size={24} />
 				<div class="flex items-center gap-2 text-xs text-muted-foreground">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,6 +38,11 @@
 					</svg>
 					<FollowPack.MemberCount format="long" />
 				</div>
+				{#if followPack.pubkey}
+					<div class="text-xs">
+						<UserProfile.AvatarName {ndk} pubkey={followPack.pubkey} avatarSize={20} meta="Pack creator" />
+					</div>
+				{/if}
 			</div>
 		</div>
 	</button>

@@ -28,17 +28,17 @@ function transformItem(item: any) {
     ...item,
     files: item.files.map((file: any) => {
       // Read the actual file content
-      // Convert registry/ndk/ path to lib/components/ndk/ for actual file location
-      const actualPath = file.path.replace(/^registry\/ndk\//, 'lib/components/ndk/');
+      // Convert registry/ndk/ path to lib/registry/components/ for actual file location
+      const actualPath = file.path.replace(/^registry\/ndk\//, 'lib/registry/components/');
       const filePath = join(process.cwd(), 'src', actualPath);
       let content = '';
 
       try {
         content = readFileSync(filePath, 'utf-8');
 
-        // Transform import paths: replace $lib/ndk/ with correct relative path
+        // Transform import paths: replace $lib/registry/components/ with correct relative path
         // For registry:ui files, they get installed to ui/ subdirectory by shadcn-svelte
-        content = content.replace(/\$lib\/ndk\/([^\s'"]+)/g, (match, importPath) => {
+        content = content.replace(/\$lib\/registry\/components\/([^\s'"]+)/g, (match, importPath) => {
           // Check if the import target is a registry:ui file
           if (uiFileMap.has(importPath)) {
             // Add ui/ prefix for registry:ui files

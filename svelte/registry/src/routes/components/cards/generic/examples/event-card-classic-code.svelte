@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte, ThreadingMetadata } from '@nostr-dev-kit/svelte';
-	import { EventCard, ReactionAction } from '$lib/components/ndk/event-card';
-	import { RepostButton } from '$lib/components/ndk/blocks';
+	import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
+	import { RepostButton } from '$lib/registry/components/blocks';
 	import { cn } from '$lib/utils';
 
 	interface Props {

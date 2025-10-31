@@ -2,9 +2,9 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle } from '@nostr-dev-kit/ndk';
-  import { EventContent, KindRegistry } from '$lib/components/ndk/event/content';
-  import ArticleEmbeddedInline from '$lib/components/ndk/event/content/kinds/article-embedded/article-embedded-inline.svelte';
-  import { EventCard } from '$lib/components/ndk/event-card';
+  import { EventContent, KindRegistry } from '$lib/registry/components/event/content';
+  import ArticleEmbeddedInline from '$lib/registry/components/event/content/kinds/article-embedded/article-embedded-inline.svelte';
+  import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
     ndk: NDKSvelte;

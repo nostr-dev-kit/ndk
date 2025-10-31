@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TimeAgo from '$lib/components/ndk/time-ago/time-ago.svelte';
+  import TimeAgo from '$lib/registry/components/time-ago/time-ago.svelte';
 
   // Create a timestamp that's 30 seconds ago to demonstrate the auto-update
   const thirtySecondsAgo = Math.floor(Date.now() / 1000) - 30;

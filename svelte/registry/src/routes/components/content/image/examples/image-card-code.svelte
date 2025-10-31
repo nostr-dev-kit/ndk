@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { EventCard, ReactionAction } from '$lib/components/ndk/event-card';
-	import { ImageContent } from '$lib/components/ndk/image-content';
-	import RepostButton from '$lib/components/ndk/blocks/repost-button.svelte';
+	import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
+	import { ImageContent } from '$lib/registry/components/image-content';
+	import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

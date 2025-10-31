@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TimeAgo from '$lib/components/ndk/time-ago/time-ago.svelte';
+  import TimeAgo from '$lib/registry/components/time-ago/time-ago.svelte';
 
   // Different timestamps for demonstration
   const now = Math.floor(Date.now() / 1000);

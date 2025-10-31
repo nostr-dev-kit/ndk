@@ -43,7 +43,7 @@
 	);
 
 	const usageSnippet = $derived(`<${'script'}>
-  import { ${pascalCaseName} } from '$lib/components/ndk/blocks';
+  import { ${pascalCaseName} } from '$lib/registry/components/blocks';
 </${'script'}>
 
 <${pascalCaseName} {ndk} target={user} />`);

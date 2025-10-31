@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { EditProps } from '$lib/registry/components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -19,13 +19,15 @@
 
 <div class="component-page">
   <header>
-    <h1>UserProfile.Avatar</h1>
+    <div class="header-title">
+      <h1>UserProfile.Avatar</h1>
+      <EditProps.Root>
+        <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
+        <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
+        <EditProps.Button>Edit Examples</EditProps.Button>
+      </EditProps.Root>
+    </div>
     <p>Display user avatars with automatic fallbacks. Part of the UserProfile component system.</p>
-
-    <EditProps.Root>
-      <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
-      <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
-    </EditProps.Root>
   </header>
 
   <section class="demo space-y-8">
@@ -62,6 +64,14 @@
 </div>
 
 <style>
+  .header-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .info {
     padding: 2rem;
     background: var(--color-card);

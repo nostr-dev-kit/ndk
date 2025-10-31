@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { UserProfile } from '$lib/components/ndk/user-profile';
-	import { FollowButton } from '$lib/components/ndk/blocks';
+	import { UserProfile } from '$lib/registry/components/user-profile';
+	import { FollowButton } from '$lib/registry/components/blocks';
 
 	interface Props {
 		ndk: NDKSvelte;

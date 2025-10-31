@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import EventContent from '$lib/components/ndk/event/content/event-content.svelte';
-  import Mention from '$lib/components/ndk/event/content/mention/mention.svelte';
-  import Hashtag from '$lib/components/ndk/event/content/hashtag/hashtag.svelte';
-  import EmbeddedEvent from '$lib/components/ndk/event/content/event/event.svelte';
+  import EventContent from '$lib/registry/components/event/content/event-content.svelte';
+  import Mention from '$lib/registry/components/event/content/mention/mention.svelte';
+  import Hashtag from '$lib/registry/components/event/content/hashtag/hashtag.svelte';
+  import EmbeddedEvent from '$lib/registry/components/event/content/event/event.svelte';
 
   interface Props {
     ndk: NDKSvelte;

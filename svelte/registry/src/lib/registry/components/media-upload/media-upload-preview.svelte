@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { MediaUploadResult } from './createMediaUpload.js';
+	import type { MediaUploadResult } from './createMediaUpload.svelte';
 
 	interface Props {
 		upload: MediaUploadResult;

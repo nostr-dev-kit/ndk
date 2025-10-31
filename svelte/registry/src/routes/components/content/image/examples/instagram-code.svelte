@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { UserProfile } from '$lib/components/ndk/user-profile';
-	import RepostButton from '$lib/components/ndk/blocks/repost-button.svelte';
-	import { ReactionButton, ZapButton } from '$lib/components/ndk/blocks';
+	import { UserProfile } from '$lib/registry/components/user-profile';
+	import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
+	import { ReactionButton, ZapButton } from '$lib/registry/components/blocks';
 	import { DotsHorizontalIcon } from '@hugeicons/core-free-icons';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 

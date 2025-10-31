@@ -35,20 +35,22 @@
 <div class="container mx-auto p-8 max-w-7xl">
 	<!-- Header -->
 	<div class="mb-12">
-		<h1 class="text-4xl font-bold mb-4">RelayCard</h1>
-		<p class="text-lg text-muted-foreground mb-6">
+		<div class="flex items-start justify-between gap-4 mb-4">
+			<h1 class="text-4xl font-bold">RelayCard</h1>
+			<EditProps.Root>
+				<EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
+				<EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
+				<EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
+				<EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
+				<EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
+				<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
+				<EditProps.Button>Change Sample Relays</EditProps.Button>
+			</EditProps.Root>
+		</div>
+		<p class="text-lg text-muted-foreground">
 			Composable relay display components with NIP-11 info and bookmark functionality. Build custom
 			relay cards with flexible primitive components.
 		</p>
-
-		<EditProps.Root>
-			<EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
-			<EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
-			<EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
-			<EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
-			<EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
-			<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
-		</EditProps.Root>
 	</div>
 
 	<!-- Blocks Section -->

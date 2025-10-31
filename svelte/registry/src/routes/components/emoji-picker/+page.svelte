@@ -18,12 +18,14 @@
 
 <div class="component-page">
   <header>
-    <h1>EmojiPicker</h1>
+    <div class="header-title">
+      <h1>EmojiPicker</h1>
+      <EditProps.Root>
+        <EditProps.Prop name="Component" type="text" value="EmojiPicker.List & EmojiPicker.Content" />
+        <EditProps.Button>Configure Examples</EditProps.Button>
+      </EditProps.Root>
+    </div>
     <p>Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys.</p>
-
-    <EditProps.Root>
-      <EditProps.Prop name="Component" type="text" value="EmojiPicker.List & EmojiPicker.Content" />
-    </EditProps.Root>
   </header>
 
   <section class="demo space-y-8">
@@ -107,6 +109,14 @@
 </div>
 
 <style>
+  .header-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .info {
     padding: 2rem;
     background: var(--color-card);

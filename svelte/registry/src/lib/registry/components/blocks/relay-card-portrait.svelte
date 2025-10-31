@@ -134,7 +134,7 @@
 		</div>
 
 		<!-- Content -->
-		<div class="relative z-[1] px-6 pb-6 flex flex-col flex-1 min-h-0 text-center">
+		<div class="relative z-[1] px-6 pb-6 flex flex-col flex-1 min-h-0 text-left">
 			<div class="relative z-[1] flex flex-col flex-1">
 				<!-- Name -->
 				<Name class="text-lg font-semibold mb-1" />

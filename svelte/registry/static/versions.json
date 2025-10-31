@@ -1,13 +1,13 @@
 {
   "registry": {
     "name": "ndk-svelte",
-    "version": "4.0.0-beta.25",
-    "generated": "2025-10-31T00:43:15.020Z"
+    "version": "4.0.0-beta.27",
+    "generated": "2025-10-31T09:10:47.399Z"
   },
   "components": {
     "actions": {
-      "version": "0.9.0",
-      "lastModified": "2025-10-30T19:04:10.000Z",
+      "version": "0.10.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Actions",
       "dependencies": [
@@ -17,8 +17,8 @@
       "registryDependencies": []
     },
     "article-card": {
-      "version": "0.13.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.14.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "Article Card",
       "dependencies": [
@@ -28,8 +28,8 @@
       "registryDependencies": []
     },
     "article-card-hero": {
-      "version": "0.4.0",
-      "lastModified": "2025-10-29T21:50:58.000Z",
+      "version": "0.5.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Article Card Hero",
       "dependencies": [
@@ -39,8 +39,8 @@
       "registryDependencies": []
     },
     "article-card-medium": {
-      "version": "0.4.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.5.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Article Card Medium",
       "dependencies": [
@@ -50,8 +50,8 @@
       "registryDependencies": []
     },
     "article-card-neon": {
-      "version": "0.5.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.6.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Article Card Neon",
       "dependencies": [
@@ -61,8 +61,8 @@
       "registryDependencies": []
     },
     "article-card-portrait": {
-      "version": "0.3.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Article Card Portrait",
       "dependencies": [
@@ -72,8 +72,8 @@
       "registryDependencies": []
     },
     "article-content": {
-      "version": "0.3.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Article Content",
       "dependencies": [
@@ -95,8 +95,8 @@
       "registryDependencies": []
     },
     "blocks": {
-      "version": "0.14.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.15.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:lib",
       "title": "Blocks",
       "dependencies": [
@@ -110,8 +110,8 @@
       ]
     },
     "embedded-event": {
-      "version": "0.8.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.9.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Embedded Event",
       "dependencies": [
@@ -121,8 +121,8 @@
       "registryDependencies": []
     },
     "emoji-picker": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "Emoji Picker",
       "dependencies": [
@@ -133,8 +133,8 @@
       "registryDependencies": []
     },
     "event-card": {
-      "version": "0.20.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.21.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "Event Card",
       "dependencies": [
@@ -150,8 +150,8 @@
       ]
     },
     "event-card-classic": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T13:52:10.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Event Card Classic",
       "dependencies": [
@@ -161,8 +161,8 @@
       "registryDependencies": []
     },
     "event-card-menu": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Event Card Menu",
       "dependencies": [
@@ -172,8 +172,8 @@
       "registryDependencies": []
     },
     "event-content": {
-      "version": "0.7.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.8.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Event Content",
       "dependencies": [
@@ -187,8 +187,8 @@
       ]
     },
     "follow-button": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Button",
       "dependencies": [
@@ -198,8 +198,8 @@
       "registryDependencies": []
     },
     "follow-button-card": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Button Card",
       "dependencies": [
@@ -209,8 +209,8 @@
       "registryDependencies": []
     },
     "follow-button-pill": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Button Pill",
       "dependencies": [
@@ -220,8 +220,8 @@
       "registryDependencies": []
     },
     "follow-pack-compact": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Pack Compact",
       "dependencies": [
@@ -231,8 +231,8 @@
       "registryDependencies": []
     },
     "follow-pack-hero": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T23:48:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Pack Hero",
       "dependencies": [
@@ -242,8 +242,8 @@
       "registryDependencies": []
     },
     "follow-pack-list-item": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Pack List Item",
       "dependencies": [
@@ -253,8 +253,8 @@
       "registryDependencies": []
     },
     "follow-pack-portrait": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Follow Pack Portrait",
       "dependencies": [
@@ -275,8 +275,8 @@
       "registryDependencies": []
     },
     "hashtag-preview": {
-      "version": "0.5.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.6.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Hashtag Preview",
       "dependencies": [
@@ -286,8 +286,8 @@
       "registryDependencies": []
     },
     "highlight-card": {
-      "version": "0.7.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.8.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "Highlight Card",
       "dependencies": [
@@ -297,8 +297,8 @@
       "registryDependencies": []
     },
     "highlight-card-compact": {
-      "version": "0.4.0",
-      "lastModified": "2025-10-29T21:50:58.000Z",
+      "version": "0.5.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Highlight Card Compact",
       "dependencies": [
@@ -308,8 +308,8 @@
       "registryDependencies": []
     },
     "highlight-card-elegant": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Highlight Card Elegant",
       "dependencies": [
@@ -319,8 +319,8 @@
       "registryDependencies": []
     },
     "highlight-card-feed": {
-      "version": "0.3.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Highlight Card Feed",
       "dependencies": [
@@ -330,8 +330,8 @@
       "registryDependencies": []
     },
     "highlight-card-grid": {
-      "version": "0.3.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Highlight Card Grid",
       "dependencies": [
@@ -341,8 +341,8 @@
       "registryDependencies": []
     },
     "image-card": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T14:23:23.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Image Card",
       "dependencies": [
@@ -352,8 +352,8 @@
       "registryDependencies": []
     },
     "image-card-hero": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Image Card Hero",
       "dependencies": [
@@ -363,8 +363,8 @@
       "registryDependencies": []
     },
     "image-card-instagram": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Image Card Instagram",
       "dependencies": [
@@ -373,9 +373,20 @@
       ],
       "registryDependencies": []
     },
+    "login-compact": {
+      "version": "0.0.0",
+      "lastModified": "2025-10-31T09:10:43.432Z",
+      "type": "registry:block",
+      "title": "Login Compact",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
     "media-upload-carousel": {
       "version": "0.0.0",
-      "lastModified": "2025-10-31T00:43:11.598Z",
+      "lastModified": "2025-10-31T09:10:43.545Z",
       "type": "registry:component",
       "title": "Media Upload Carousel",
       "dependencies": [
@@ -385,8 +396,8 @@
       "registryDependencies": []
     },
     "mention-preview": {
-      "version": "0.6.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.7.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Mention Preview",
       "dependencies": [
@@ -396,8 +407,8 @@
       "registryDependencies": []
     },
     "mute-button": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Mute Button",
       "dependencies": [
@@ -407,8 +418,8 @@
       "registryDependencies": []
     },
     "ndk-context": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-29T09:24:58.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "NDK Context",
       "dependencies": [
@@ -429,8 +440,8 @@
       "registryDependencies": []
     },
     "reaction-button": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Reaction Button",
       "dependencies": [
@@ -440,8 +451,8 @@
       "registryDependencies": []
     },
     "reaction-slack": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Reaction Slack",
       "dependencies": [
@@ -452,7 +463,7 @@
     },
     "reactions": {
       "version": "0.0.0",
-      "lastModified": "2025-10-31T00:43:12.203Z",
+      "lastModified": "2025-10-31T09:10:44.226Z",
       "type": "registry:component",
       "title": "Reactions",
       "dependencies": [
@@ -462,8 +473,8 @@
       "registryDependencies": []
     },
     "relay-card": {
-      "version": "0.7.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.8.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Relay Card",
       "dependencies": [
@@ -473,8 +484,8 @@
       "registryDependencies": []
     },
     "relay-card-compact": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-29T13:35:57.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Relay Card Compact",
       "dependencies": [
@@ -484,8 +495,8 @@
       "registryDependencies": []
     },
     "relay-card-list": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-29T13:35:57.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Relay Card List",
       "dependencies": [
@@ -495,8 +506,8 @@
       "registryDependencies": []
     },
     "relay-card-portrait": {
-      "version": "0.6.0",
-      "lastModified": "2025-10-30T19:04:10.000Z",
+      "version": "0.7.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Relay Card Portrait",
       "dependencies": [
@@ -506,8 +517,8 @@
       "registryDependencies": []
     },
     "relay-connection-status": {
-      "version": "0.3.0",
-      "lastModified": "2025-10-29T14:25:24.000Z",
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Relay Connection Status",
       "dependencies": [
@@ -550,8 +561,8 @@
       "registryDependencies": []
     },
     "repost-button": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Repost Button",
       "dependencies": [
@@ -561,8 +572,8 @@
       "registryDependencies": []
     },
     "repost-button-pill": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Repost Button Pill",
       "dependencies": [
@@ -585,8 +596,8 @@
       ]
     },
     "thread-view-twitter": {
-      "version": "0.4.0",
-      "lastModified": "2025-10-30T19:04:10.000Z",
+      "version": "0.5.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Thread View Twitter",
       "dependencies": [
@@ -596,8 +607,8 @@
       "registryDependencies": []
     },
     "time-ago": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-29T21:50:58.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Time Ago",
       "dependencies": [
@@ -608,7 +619,7 @@
     },
     "upload-button": {
       "version": "0.0.0",
-      "lastModified": "2025-10-31T00:43:13.428Z",
+      "lastModified": "2025-10-31T09:10:45.595Z",
       "type": "registry:component",
       "title": "Upload Button",
       "dependencies": [
@@ -629,8 +640,8 @@
       "registryDependencies": []
     },
     "user-card-classic": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Card Classic",
       "dependencies": [
@@ -640,8 +651,8 @@
       "registryDependencies": []
     },
     "user-card-compact": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Card Compact",
       "dependencies": [
@@ -651,8 +662,8 @@
       "registryDependencies": []
     },
     "user-card-landscape": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Card Landscape",
       "dependencies": [
@@ -662,8 +673,8 @@
       "registryDependencies": []
     },
     "user-card-portrait": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Card Portrait",
       "dependencies": [
@@ -673,8 +684,8 @@
       "registryDependencies": []
     },
     "user-header": {
-      "version": "0.6.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.7.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "User Header",
       "dependencies": [
@@ -684,8 +695,8 @@
       "registryDependencies": []
     },
     "user-header-compact": {
-      "version": "0.6.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.7.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Header Compact",
       "dependencies": [
@@ -697,8 +708,8 @@
       ]
     },
     "user-header-full": {
-      "version": "0.6.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.7.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Header Full",
       "dependencies": [
@@ -710,8 +721,8 @@
       ]
     },
     "user-input": {
-      "version": "0.6.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.7.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "User Input",
       "dependencies": [
@@ -721,8 +732,8 @@
       "registryDependencies": []
     },
     "user-profile": {
-      "version": "0.15.0",
-      "lastModified": "2025-10-30T21:49:34.000Z",
+      "version": "0.16.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:block",
       "title": "User Profile",
       "dependencies": [
@@ -732,8 +743,8 @@
       "registryDependencies": []
     },
     "user-profile-avatar-name": {
-      "version": "0.5.0",
-      "lastModified": "2025-10-30T09:22:33.000Z",
+      "version": "0.6.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Profile Avatar Name",
       "dependencies": [
@@ -745,8 +756,8 @@
       ]
     },
     "user-profile-hero": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-30T13:17:29.000Z",
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "User Profile Hero",
       "dependencies": [
@@ -756,8 +767,8 @@
       "registryDependencies": []
     },
     "voice-message-card-compact": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Voice Message Card Compact",
       "dependencies": [
@@ -767,8 +778,8 @@
       "registryDependencies": []
     },
     "voice-message-card-expanded": {
-      "version": "0.1.0",
-      "lastModified": "2025-10-30T23:44:56.000Z",
+      "version": "0.2.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
       "type": "registry:component",
       "title": "Voice Message Card Expanded",
       "dependencies": [
@@ -779,7 +790,7 @@
     },
     "zap-button": {
       "version": "0.0.0",
-      "lastModified": "2025-10-31T00:43:14.965Z",
+      "lastModified": "2025-10-31T09:10:47.332Z",
       "type": "registry:component",
       "title": "Zap Button",
       "dependencies": [

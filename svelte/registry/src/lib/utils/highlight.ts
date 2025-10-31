@@ -7,7 +7,8 @@ export async function highlightCode(code: string, lang: string = 'typescript') {
 			themes: {
 				light: 'github-light',
 				dark: 'github-dark'
-			}
+			},
+			defaultColor: false
 		});
 		return { html, isLoading: false };
 	} catch (error) {

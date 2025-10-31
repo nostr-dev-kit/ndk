@@ -45,7 +45,7 @@
 				{#if followPack.author}
 					<div class="flex items-center gap-1 text-xs text-white/70">
 						<span>by</span>
-						<UserProfile.Name {ndk} user={followPack.author} class="font-medium text-white/90" />
+						<UserProfile.Name {ndk} user={followPack.author} class="text-xs font-medium text-white/90" />
 					</div>
 				{/if}
 			</div>

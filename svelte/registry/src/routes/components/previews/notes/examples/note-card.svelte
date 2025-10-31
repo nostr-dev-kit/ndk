@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventContent, KindRegistry } from '$lib/ndk/event/content';
-  import NoteEmbeddedCard from '$lib/ndk/event/content/kinds/note-embedded/note-embedded-card.svelte';
-  import { EventCard } from '$lib/ndk/event-card';
+  import { EventContent, KindRegistry } from '$lib/components/ndk/event/content';
+  import NoteEmbeddedCard from '$lib/components/ndk/event/content/kinds/note-embedded/note-embedded-card.svelte';
+  import { EventCard } from '$lib/components/ndk/event-card';
 
   interface Props {
     ndk: NDKSvelte;

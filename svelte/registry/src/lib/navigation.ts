@@ -23,7 +23,8 @@ import {
   Image02Icon,
   ViewIcon,
   VoiceIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  CloudUploadIcon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -59,13 +60,6 @@ export const componentCategories: NavCategory[] = [
     ]
   },
   {
-    title: 'Events',
-    items: [
-      { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
-      { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
-    ]
-  },
-  {
     title: 'Previews',
     items: [
       { name: 'Introduction', path: '/components/previews/introduction', icon: ViewIcon },
@@ -75,6 +69,32 @@ export const componentCategories: NavCategory[] = [
       { name: 'App Recommendations', path: '/components/previews/app-recommendations', icon: ViewIcon },
       { name: 'Handler Info', path: '/components/previews/handler-info', icon: ViewIcon },
       { name: 'Generic', path: '/components/previews/generic', icon: ViewIcon },
+    ]
+  },
+  // Components organized by type (Content/Cards) then by NIP/Kind
+  {
+    title: 'Content',
+    items: [
+      { name: 'Introduction', path: '/components/content/introduction', icon: ViewIcon },
+      { name: 'Note (Kind:1)', path: '/components/content/note', icon: File01Icon },
+      { name: 'Article (NIP-23)', path: '/components/content/article', icon: NewsIcon },
+      { name: 'Image (NIP-68)', path: '/components/content/image', icon: Image02Icon },
+    ]
+  },
+  {
+    title: 'Cards',
+    items: [
+      { name: 'Introduction', path: '/components/cards/introduction', icon: ViewIcon },
+      { name: 'Generic', path: '/components/cards/generic', icon: Calendar01Icon },
+      { name: 'Article (NIP-23)', path: '/components/cards/article', icon: NewsIcon },
+      { name: 'Highlight (NIP-84)', path: '/components/cards/highlight', icon: File01Icon },
+      { name: 'Voice Message (NIP-A0)', path: '/components/cards/voice-message', icon: VoiceIcon },
+    ]
+  },
+  {
+    title: 'Events',
+    items: [
+      { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
     ]
   },
   {
@@ -92,42 +112,16 @@ export const componentCategories: NavCategory[] = [
       { name: 'Card', path: '/components/relay-card', icon: ServerStack01Icon },
     ]
   },
-  // NIP/Kind-specific components are organized as: [Title] (NIP-XX or Kind:xx) > {Card, Content, ...}
-  {
-    title: 'Note (Kind:1)',
-    items: [
-      { name: 'Content', path: '/components/event-content', icon: File01Icon },
-    ]
-  },
-  {
-    title: 'Article (NIP-23)',
-    items: [
-      { name: 'Card', path: '/components/article-card', icon: NewsIcon },
-      { name: 'Content', path: '/components/article-content', icon: File01Icon },
-    ]
-  },
-  {
-    title: 'Image (NIP-68)',
-    items: [
-      { name: 'Content', path: '/components/image-content', icon: Image02Icon },
-    ]
-  },
-  {
-    title: 'Highlight (NIP-84)',
-    items: [
-      { name: 'Card', path: '/components/highlight-card', icon: File01Icon },
-    ]
-  },
-  {
-    title: 'Voice Message (NIP-A0)',
-    items: [
-      { name: 'Card', path: '/components/voice-message-card', icon: VoiceIcon },
-    ]
-  },
   {
     title: 'Lists (NIP-51)',
     items: [
       { name: 'Follow Pack', path: '/components/follow-pack', icon: UserGroupIcon },
+    ]
+  },
+  {
+    title: 'Media',
+    items: [
+      { name: 'Upload', path: '/components/media-upload', icon: CloudUploadIcon },
     ]
   },
 ];

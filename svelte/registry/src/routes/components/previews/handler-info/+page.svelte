@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/ndk/edit-props';
+  import { EditProps } from '$lib/components/ndk/edit-props';
   import Demo from '$site-components/Demo.svelte';
 
   import HandlerInfoCardExample from './examples/handler-info-card.svelte';

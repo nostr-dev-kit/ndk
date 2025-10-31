@@ -3,7 +3,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { Tooltip } from 'bits-ui';
-  import AvatarGroup from '$lib/ndk/avatar-group/avatar-group.svelte';
+  import AvatarGroup from '$lib/components/ndk/avatar-group/avatar-group.svelte';
 
   interface Props {
     ndk: NDKSvelte;

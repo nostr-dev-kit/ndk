@@ -41,7 +41,7 @@
 
     <h3>Basic Usage</h3>
     <pre><code>{`<script>
-  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
+  import TimeAgo from '$lib/components/ndk/time-ago/time-ago.svelte';
 </script>
 
 <TimeAgo timestamp={event.created_at} />`}</code></pre>

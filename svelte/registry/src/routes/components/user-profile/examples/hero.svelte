@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { UserProfileHero } from '$lib/ndk/blocks';
+  import { UserProfileHero } from '$lib/components/ndk/blocks';
 
   interface Props {
     ndk: NDKSvelte;

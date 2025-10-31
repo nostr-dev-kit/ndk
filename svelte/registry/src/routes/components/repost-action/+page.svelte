@@ -2,8 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/ndk/edit-props';
-  import { RepostButton, RepostButtonPill } from '$lib/ndk/blocks';
+  import { EditProps } from '$lib/components/ndk/edit-props';
+  import { RepostButton, RepostButtonPill } from '$lib/components/ndk/blocks';
 	import Demo from '$site-components/Demo.svelte';
 
   // Import code examples

@@ -1,6 +1,6 @@
 import { NDKEvent, NDKPrivateKeySigner, NDKRelayFeedList } from "@nostr-dev-kit/ndk";
 import { beforeEach, describe, expect, it } from "vitest";
-import { createNDK } from "./ndk-svelte.svelte.js";
+import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
 
 describe("NDKSvelte Reactive Getters", () => {
     let ndk: NDKSvelte;
@@ -232,6 +232,29 @@ describe("NDKSvelte Reactive Getters", () => {
 
             // Note: activeUser might still be set after logout if no event fires
             // This is OK since there's no active session anyway
+        });
+
+        it("should clear $currentUser and $currentPubkey after logout", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            // Initial state - nothing set
+            expect(ndk.$currentUser).toBeUndefined();
+            expect(ndk.$currentPubkey).toBeUndefined();
+
+            // Login - user and pubkey should be set
+            await ndk.$sessions?.login(signer, { setActive: true });
+
+            expect(ndk.$currentUser).toBeDefined();
+            expect(ndk.$currentUser?.pubkey).toBe(user.pubkey);
+            expect(ndk.$currentPubkey).toBe(user.pubkey);
+
+            // Logout - user and pubkey should be cleared
+            ndk.$sessions?.logout(user.pubkey);
+
+            // After logout, activeUser and pubkey should be cleared
+            expect(ndk.$currentUser).toBeUndefined();
+            expect(ndk.$currentPubkey).toBeUndefined();
         });
     });
 

@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReactionAction } from '$lib/ndk/event-card/index.js';
-  import Avatar from '$lib/ndk/user-profile/user-profile-avatar.svelte';
-  import RepostButton from '$lib/ndk/blocks/repost-button.svelte';
+  import { EventCard, ReactionAction } from '$lib/components/ndk/event-card/index.js';
+  import Avatar from '$lib/components/ndk/user-profile/user-profile-avatar.svelte';
+  import RepostButton from '$lib/components/ndk/blocks/repost-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;

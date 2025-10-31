@@ -33,19 +33,23 @@
 
 		<!-- Content with relative positioning -->
 		<div class="relative flex flex-col flex-1 p-4">
-			<FollowPack.Title class="text-base font-semibold mb-2 text-left text-white" lines={2} />
-			<FollowPack.Description class="text-xs text-white/80 mb-3 text-left" maxLength={100} lines={3} />
+			<!-- Title and description positioned at the bottom, above avatars -->
+			<div class="mt-auto space-y-2 mb-3">
+				<FollowPack.Title class="text-base font-semibold text-left text-white line-clamp-2" lines={2} />
+				<FollowPack.Description class="text-xs text-white/80 text-left line-clamp-2" maxLength={100} lines={2} />
+			</div>
 
-			<div class="mt-auto pt-3 border-t border-white/20 space-y-2">
+			<!-- Avatar group and member info -->
+			<div class="space-y-2">
 				<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={4} size={24} />
 				<div class="flex items-center gap-2 text-xs text-white/70">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
 					</svg>
 					<FollowPack.MemberCount format="long" />
-					{#if followPack.pubkey}
+					{#if followPack.author}
 						<span>by</span>
-						<UserProfile.Name {ndk} pubkey={followPack.pubkey} class="font-medium text-white/90" />
+						<UserProfile.Name {ndk} user={followPack.author} class="font-medium text-white/90" />
 					{/if}
 				</div>
 			</div>

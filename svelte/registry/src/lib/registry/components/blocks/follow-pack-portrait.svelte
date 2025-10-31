@@ -27,8 +27,8 @@
 		<FollowPack.Image class="h-56 w-full" showGradient={true} />
 
 		<div class="p-4 flex flex-col flex-1">
-			<FollowPack.Title class="text-base font-semibold mb-2" lines={2} />
-			<FollowPack.Description class="text-xs text-muted-foreground mb-3" maxLength={100} lines={3} />
+			<FollowPack.Title class="text-base font-semibold mb-2 text-left" lines={2} />
+			<FollowPack.Description class="text-xs text-muted-foreground mb-3 text-left" maxLength={100} lines={3} />
 
 			<div class="mt-auto pt-3 border-t border-border space-y-2">
 				<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={4} size={24} />

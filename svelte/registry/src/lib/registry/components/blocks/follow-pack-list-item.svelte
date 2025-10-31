@@ -31,9 +31,9 @@
 					</svg>
 					<FollowPack.MemberCount format="short" />
 				</div>
-				{#if followPack.pubkey}
+				{#if followPack.author}
 					<span class="text-muted-foreground/50">•</span>
-					<UserProfile.Name {ndk} pubkey={followPack.pubkey} class="truncate" />
+					<UserProfile.Name {ndk} user={followPack.author} class="truncate" />
 				{/if}
 			</div>
 		</div>

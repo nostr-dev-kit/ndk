@@ -4,7 +4,6 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import {
 		FollowPackPortrait,
-		FollowPackModernPortrait,
 		FollowPackHero,
 		FollowPackCompact,
 		FollowPackListItem
@@ -14,7 +13,6 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
-	import ModernPortraitCodeRaw from './examples/modern-portrait-code.svelte?raw';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
 	import CompactCodeRaw from './examples/compact-code.svelte?raw';
 	import ListItemCodeRaw from './examples/list-item-code.svelte?raw';
@@ -101,12 +99,9 @@
 					<p class="text-sm text-muted-foreground">Vertical card layouts for grid displays</p>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{#each displayPacks.slice(0, 2) as pack}
+					{#each displayPacks.slice(0, 3) as pack}
 						<FollowPackPortrait {ndk} followPack={pack} />
 					{/each}
-					{#if displayPacks.length > 0}
-						<FollowPackModernPortrait {ndk} followPack={displayPacks[0]} />
-					{/if}
 				</div>
 			</div>
 

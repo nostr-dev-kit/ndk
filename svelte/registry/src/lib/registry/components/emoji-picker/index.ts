@@ -38,11 +38,13 @@
 
 import List from './emoji-picker-list.svelte';
 import Content from './emoji-picker-content.svelte';
+import Item from './emoji-picker-item.svelte';
 
 // Export as namespace for dot notation
 export const EmojiPicker = {
   List,
   Content,
+  Item,
 };
 
 // Export types from the builder

@@ -29,6 +29,7 @@
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { Tooltip } from 'bits-ui';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
+  import { Reaction } from '../reaction';
   import { cn } from '../../../utils.js';
 
   interface Props {
@@ -88,7 +89,7 @@
               )}
               onclick={() => reactWith(reaction.emoji)}
             >
-              <span class="text-base">{reaction.emoji}</span>
+              <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} size={18} />
               <span class="text-sm font-medium">{reaction.count}</span>
             </button>
           </Tooltip.Trigger>
@@ -120,7 +121,7 @@
         )}
         onclick={() => reactWith(reaction.emoji)}
       >
-        <span class="text-base">{reaction.emoji}</span>
+        <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} size={18} />
         <span class="text-sm font-medium">{reaction.count}</span>
         <AvatarGroup
           {ndk}
@@ -144,7 +145,7 @@
         )}
         onclick={() => reactWith(reaction.emoji)}
       >
-        <span class="text-base">{reaction.emoji}</span>
+        <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} size={18} />
         <span class="text-sm font-medium">{reaction.count}</span>
       </button>
     {/each}

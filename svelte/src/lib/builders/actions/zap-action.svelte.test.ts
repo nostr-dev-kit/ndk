@@ -18,8 +18,8 @@ describe("createZapAction", () => {
         ndk.signer = signer;
 
         // Create test users
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as NDK);
+        bob = await UserGenerator.getUser("bob", ndk as NDK);
         testUser = bob;
 
         // Create test event with ID
@@ -219,7 +219,7 @@ describe("createZapAction", () => {
 
             await action.zap(10); // 10 sats
 
-            expect(testEvent.zap).toHaveBeenCalledWith(10000, undefined); // 10000 millisats
+            expect((testEvent as any).zap).toHaveBeenCalledWith(10000, undefined); // 10000 millisats
         });
 
         it("should pass comment to target.zap", async () => {
@@ -230,7 +230,7 @@ describe("createZapAction", () => {
 
             await action.zap(5, "Great post!");
 
-            expect(testEvent.zap).toHaveBeenCalledWith(5000, "Great post!");
+            expect((testEvent as any).zap).toHaveBeenCalledWith(5000, "Great post!");
         });
 
         it("should work with user targets", async () => {
@@ -241,7 +241,7 @@ describe("createZapAction", () => {
 
             await action.zap(21);
 
-            expect(testUser.zap).toHaveBeenCalledWith(21000, undefined);
+            expect((testUser as any).zap).toHaveBeenCalledWith(21000, undefined);
         });
     });
 });

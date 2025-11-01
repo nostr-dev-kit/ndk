@@ -1,6 +1,6 @@
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createNDK } from "./ndk-svelte.svelte.js";
+import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
 import { createFetchUser, createZapInfo } from "./user.svelte.js";
 
 describe("User Validation", () => {
@@ -22,33 +22,28 @@ describe("User Validation", () => {
     describe("createFetchUser validation", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchUser(ndk, "npub1test");
+                createFetchUser(ndk, () => "npub1test");
             }).toThrow(TypeError);
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchUser(ndk, "npub1test");
+                createFetchUser(ndk, () => "npub1test");
             }).toThrow("$fetchUser expects identifier to be a function");
         });
 
         it("should throw TypeError when passed object", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchUser(ndk, { npub: "npub1test" });
+                createFetchUser(ndk, () => ({ npub: "npub1test" }));
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchUser(ndk, null);
+                createFetchUser(ndk, () => null);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed undefined", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchUser(ndk, undefined);
+                createFetchUser(ndk, () => undefined);
             }).toThrow(TypeError);
         });
 
@@ -73,33 +68,28 @@ describe("User Validation", () => {
         it("should throw TypeError when passed non-function", () => {
             const user = ndk.getUser({ npub: "npub1test" });
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createZapInfo(user);
+                createZapInfo(() => user);
             }).toThrow(TypeError);
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createZapInfo(user);
+                createZapInfo(() => user);
             }).toThrow("createZapInfo expects user to be a function");
         });
 
         it("should throw TypeError when passed string", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createZapInfo("npub1test");
+                createZapInfo(() => "npub1test");
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createZapInfo(null);
+                createZapInfo(() => null);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed undefined", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createZapInfo(undefined);
+                createZapInfo(() => undefined);
             }).toThrow(TypeError);
         });
 

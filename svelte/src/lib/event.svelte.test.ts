@@ -2,7 +2,7 @@ import { NDKArticle, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-k
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createFetchEvent, createFetchEvents } from "./event.svelte.js";
-import { createNDK } from "./ndk-svelte.svelte.js";
+import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
 
 describe("Event Fetching", () => {
     let ndk: NDKSvelte;
@@ -24,23 +24,19 @@ describe("Event Fetching", () => {
     describe("createFetchEvent", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvent(ndk, "note1test");
+                createFetchEvent(ndk, () => "note1test");
             }).toThrow(TypeError);
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvent(ndk, "note1test");
+                createFetchEvent(ndk, () => "note1test");
             }).toThrow("$fetchEvent expects idOrFilter to be a function");
         });
 
         it("should throw TypeError when passed object directly", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvent(ndk, { kinds: [1] });
+                createFetchEvent(ndk, () => ({ kinds: [1] }));
             }).toThrow(TypeError);
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvent(ndk, { kinds: [1] });
+                createFetchEvent(ndk, () => ({ kinds: [1] }));
             }).toThrow("$fetchEvent expects idOrFilter to be a function");
         });
 
@@ -127,10 +123,8 @@ describe("Event Fetching", () => {
                 .mockResolvedValueOnce(event2);
 
             let event: any;
-            let setEventId: (id: string) => void;
+            let eventId = $state(event1.encode());
             cleanup = $effect.root(() => {
-                let eventId = $state(event1.encode());
-                setEventId = (id: string) => { eventId = id; };
                 event = createFetchEvent(ndk, () => eventId);
             });
 
@@ -138,7 +132,7 @@ describe("Event Fetching", () => {
             expect(event.content).toBe("First note");
 
             // Change the event ID
-            setEventId(event2.encode());
+            eventId = event2.encode();
             flushSync();
             await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -155,10 +149,8 @@ describe("Event Fetching", () => {
             vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
 
             let event: any;
-            let setEventId: (id: string | undefined) => void;
+            let eventId = $state<string | undefined>(testEvent.encode());
             cleanup = $effect.root(() => {
-                let eventId = $state<string | undefined>(testEvent.encode());
-                setEventId = (id: string | undefined) => { eventId = id; };
                 event = createFetchEvent(ndk, () => eventId);
             });
 
@@ -166,7 +158,7 @@ describe("Event Fetching", () => {
             expect(event.content).toBe("Test note");
 
             // Set to undefined
-            setEventId(undefined);
+            eventId = undefined;
             flushSync();
             await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -177,23 +169,19 @@ describe("Event Fetching", () => {
     describe("createFetchEvents", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvents(ndk, { kinds: [1] });
+                createFetchEvents(ndk, () => ({ kinds: [1] }));
             }).toThrow(TypeError);
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvents(ndk, { kinds: [1] });
+                createFetchEvents(ndk, () => ({ kinds: [1] }));
             }).toThrow("$fetchEvents expects config to be a function");
         });
 
         it("should throw TypeError when passed array directly", () => {
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvents(ndk, [{ kinds: [1] }]);
+                createFetchEvents(ndk, () => [{ kinds: [1] }]);
             }).toThrow(TypeError);
             expect(() => {
-                // @ts-expect-error - Testing runtime validation
-                createFetchEvents(ndk, [{ kinds: [1] }]);
+                createFetchEvents(ndk, () => [{ kinds: [1] }]);
             }).toThrow("$fetchEvents expects config to be a function");
         });
 
@@ -293,10 +281,8 @@ describe("Event Fetching", () => {
                 .mockResolvedValueOnce(new Set([event2]));
 
             let events: any;
-            let setAuthor: (a: string) => void;
+            let author = $state("author1");
             cleanup = $effect.root(() => {
-                let author = $state("author1");
-                setAuthor = (a: string) => { author = a; };
                 events = createFetchEvents(ndk, () => ({
                     kinds: [1],
                     authors: [author],
@@ -309,7 +295,7 @@ describe("Event Fetching", () => {
             expect(events[0].content).toBe("First batch");
 
             // Change the filter
-            setAuthor("author2");
+            author = "author2";
             flushSync();
             await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -327,10 +313,8 @@ describe("Event Fetching", () => {
             vi.spyOn(ndk, "fetchEvents").mockResolvedValue(new Set([event1]));
 
             let events: any;
-            let setFilter: (f: any) => void;
+            let filter = $state<any>({ kinds: [1] });
             cleanup = $effect.root(() => {
-                let filter = $state<any>({ kinds: [1] });
-                setFilter = (f: any) => { filter = f; };
                 events = createFetchEvents(ndk, () => filter);
             });
 
@@ -338,7 +322,7 @@ describe("Event Fetching", () => {
             expect(events).toHaveLength(1);
 
             // Set to undefined
-            setFilter(undefined);
+            filter = undefined;
             flushSync();
             await new Promise((resolve) => setTimeout(resolve, 10));
 

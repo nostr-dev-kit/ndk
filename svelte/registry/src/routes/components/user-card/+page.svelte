@@ -11,12 +11,14 @@
 		UserCardClassic,
 		UserCardPortrait,
 		UserCardLandscape,
-		UserCardCompact
+		UserCardCompact,
+		UserListItem
 	} from '$lib/registry/components/blocks';
 	import ClassicCodeRaw from '../user-profile/examples/classic-code.svelte?raw';
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
 	import LandscapeCodeRaw from './examples/landscape-code.svelte?raw';
 	import CompactCodeRaw from './examples/compact-code.svelte?raw';
+	import ListItemCodeRaw from './examples/list-item-code.svelte?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -111,6 +113,19 @@
 					<div class="space-y-2 max-w-sm">
 						{#each displayUsers as user (user.pubkey)}
 							<UserCardCompact {ndk} pubkey={user.pubkey} />
+						{/each}
+					</div>
+				</Demo>
+
+				<Demo
+					title="List Item"
+					description="Ultra-compact list item showing avatar, name, and follow status badge. Perfect for dense user lists and search results."
+					component="user-list-item"
+					code={ListItemCodeRaw}
+				>
+					<div class="max-w-sm border border-border rounded-lg overflow-hidden">
+						{#each displayUsers as user (user.pubkey)}
+							<UserListItem {ndk} pubkey={user.pubkey} />
 						{/each}
 					</div>
 				</Demo>

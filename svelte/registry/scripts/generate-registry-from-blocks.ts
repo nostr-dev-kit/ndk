@@ -72,7 +72,7 @@ function detectDependencies(filePath: string): string[] {
     if (content.includes("from '$lib/ndk/user-profile'")) {
       deps.push('user-profile');
     }
-    if (content.includes("from '$lib/ndk/relay-card'")) {
+    if (content.includes("from '../src/lib/registry/components/relay/index.js'")) {
       deps.push('relay-card');
     }
 

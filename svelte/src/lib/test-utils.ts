@@ -28,7 +28,6 @@ export {
     withTimeControl,
     mockNutzap,
     mockProof,
-    type Names,
 } from "@nostr-dev-kit/ndk/test";
 
 import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";

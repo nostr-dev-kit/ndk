@@ -38,7 +38,7 @@
 
 <UserProfile.Root {ndk} {pubkey}>
   <div class={cn(
-    'flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-muted',
+    'flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-muted w-full',
     className
   )}>
     <UserProfile.Avatar size={48} />

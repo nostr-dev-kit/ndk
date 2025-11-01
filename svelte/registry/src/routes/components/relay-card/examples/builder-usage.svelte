@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RelayCard } from '$lib/registry/components/relay-card';
+	import { Relay } from '$lib/registry/components/relay';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
@@ -33,18 +33,18 @@
 	{:else}
 		<div class="space-y-2">
 			{#each topRelays as relay}
-				<RelayCard.Root {ndk} relayUrl={relay.url}>
+				<Relay.Root {ndk} relayUrl={relay.url}>
 					<div class="flex items-center gap-3 p-3 bg-card border border-border rounded-lg">
-						<RelayCard.Icon size={40} />
+						<Relay.Icon size={40} />
 						<div class="flex-1 min-w-0">
-							<RelayCard.Name class="font-medium truncate" />
-							<RelayCard.Url class="text-sm text-muted-foreground truncate" />
+							<Relay.Name class="font-medium truncate" />
+							<Relay.Url class="text-sm text-muted-foreground truncate" />
 						</div>
 						<div class="text-xs text-muted-foreground">
 							{relay.count} {relay.count === 1 ? 'follow' : 'follows'}
 						</div>
 					</div>
-				</RelayCard.Root>
+				</Relay.Root>
 			{/each}
 		</div>
 	{/if}

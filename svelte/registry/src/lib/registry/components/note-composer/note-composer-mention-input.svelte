@@ -3,7 +3,7 @@
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
-	import { UserInput } from '../user-input';
+	import { Input } from '../input';
 	import { cn } from '../../../utils';
 
 	interface Props {
@@ -21,12 +21,12 @@
 </script>
 
 <div class={cn('note-composer-mention-input', className)}>
-	<UserInput.Root onSelect={handleUserSelect}>
-		<UserInput.Search placeholder="Search users to mention..." />
-		<UserInput.Results>
+	<Input.Root onSelect={handleUserSelect}>
+		<Input.Search placeholder="Search users to mention..." />
+		<Input.Results>
 			{#snippet resultItem(user)}
-				<UserInput.ResultItem {user} />
+				<Input.ResultItem {user} />
 			{/snippet}
-		</UserInput.Results>
-	</UserInput.Root>
+		</Input.Results>
+	</Input.Root>
 </div>

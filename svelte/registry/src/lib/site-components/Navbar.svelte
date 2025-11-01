@@ -4,6 +4,7 @@
   import { themeManager } from '$lib/theme.svelte';
   import { UserProfile } from '$lib/registry/components/user-profile';
   import { sidebarOpen } from '$lib/stores/sidebar';
+  import { mainNav } from '$lib/navigation';
 
   interface Props {
     onLoginClick: () => void;
@@ -42,27 +43,15 @@
 
       <!-- Desktop Navigation -->
       <div class="nav-links">
-        <a
-          href="/"
-          class="nav-link"
-          class:active={$page.url.pathname === '/'}
-        >
-          Intro
-        </a>
-        <a
-          href="/docs"
-          class="nav-link"
-          class:active={$page.url.pathname.startsWith('/docs')}
-        >
-          Docs
-        </a>
-        <a
-          href="/blocks"
-          class="nav-link"
-          class:active={$page.url.pathname.startsWith('/blocks')}
-        >
-          Blocks
-        </a>
+        {#each mainNav as navItem (navItem.path)}
+          <a
+            href={navItem.path}
+            class="nav-link"
+            class:active={navItem.path === '/' ? $page.url.pathname === '/' : $page.url.pathname.startsWith(navItem.path)}
+          >
+            {navItem.name}
+          </a>
+        {/each}
       </div>
     </div>
 

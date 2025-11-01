@@ -18,8 +18,8 @@ describe("createReplyAction", () => {
         ndk.signer = signer;
 
         // Create test users
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as NDK);
+        bob = await UserGenerator.getUser("bob", ndk as NDK);
 
         // Create test event with ID
         testEvent = new NDKEvent(ndk);

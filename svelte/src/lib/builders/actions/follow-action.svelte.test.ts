@@ -15,8 +15,8 @@ describe("createFollowAction", () => {
         ndk.signer = NDKPrivateKeySigner.generate();
 
         // Create test users
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as NDK);
+        bob = await UserGenerator.getUser("bob", ndk as NDK);
 
         // Mock the follows store getter
         const mockFollows = {

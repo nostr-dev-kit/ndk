@@ -9,6 +9,8 @@ export interface EmojiReaction {
     hasReacted: boolean;
     pubkeys: string[];
     userReaction?: NDKEvent;
+    url?: string;
+    shortcode?: string;
 }
 
 export interface ReactionActionConfig {
@@ -89,12 +91,19 @@ export function createReactionAction(
     const all = $derived.by((): EmojiReaction[] => {
         const sub = reactionsSub;
         const reactions = sub?.events || [];
-        const byEmoji = new SvelteMap<string, { count: number; hasReacted: boolean; pubkeys: string[]; userReaction?: NDKEvent }>();
+        const byEmoji = new SvelteMap<string, { count: number; hasReacted: boolean; pubkeys: string[]; userReaction?: NDKEvent; url?: string; shortcode?: string }>();
 
         for (const reaction of reactions) {
             const emoji = reaction.content;
             const data = byEmoji.get(emoji) || { count: 0, hasReacted: false, pubkeys: [] };
             data.count++;
+
+            // Extract NIP-30 custom emoji data if present
+            const emojiTag = reaction.tags.find(t => t[0] === 'emoji');
+            if (emojiTag && emojiTag[1] && emojiTag[2]) {
+                data.shortcode = emojiTag[1];
+                data.url = emojiTag[2];
+            }
 
             // Track all pubkeys who reacted
             if (!data.pubkeys.includes(reaction.pubkey)) {
@@ -112,6 +121,13 @@ export function createReactionAction(
         // Include pending reactions in the state (optimistic update)
         for (const [emoji, { event: pendingEvent }] of pendingReactions.entries()) {
             const data = byEmoji.get(emoji) || { count: 0, hasReacted: false, pubkeys: [] };
+
+            // Extract emoji tag from pending event if present
+            const emojiTag = pendingEvent.tags.find(t => t[0] === 'emoji');
+            if (emojiTag && emojiTag[1] && emojiTag[2]) {
+                data.shortcode = emojiTag[1];
+                data.url = emojiTag[2];
+            }
 
             // Only add if not already reacted with a published reaction
             if (!data.hasReacted) {

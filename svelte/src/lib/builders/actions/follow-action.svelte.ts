@@ -48,6 +48,7 @@ export function createFollowAction(
         // String = hashtag
         if (typeof target === 'string') {
             const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList, { create: true });
+            if (!interestList) return false;
             return interestList.hasInterest(target.toLowerCase());
         }
 
@@ -68,6 +69,7 @@ export function createFollowAction(
         // String = hashtag
         if (typeof target === 'string') {
             const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList, { create: true });
+            if (!interestList) return;
 
             const hashtag = target.toLowerCase();
             if (isFollowing) {

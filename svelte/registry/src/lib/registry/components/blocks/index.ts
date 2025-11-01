@@ -1,123 +1,4 @@
 // @ndk-version: blocks@0.14.0
-/**
- * Block Components - Preset layouts for NDK components
- *
- * Blocks are pre-composed layouts that combine UI components
- * into complete, ready-to-use designs.
- *
- * @example ArticleCard blocks:
- * ```svelte
- * <ArticleCardPortrait {ndk} {article} />
- * <ArticleCardMedium {ndk} {article} imageSize="large" />
- * <ArticleCardHero {ndk} {article} />
- * <ArticleCardNeon {ndk} {article} />
- * ```
- *
- * @example HighlightCard blocks:
- * ```svelte
- * <HighlightCardFeed {ndk} {event} />
- * <HighlightCardCompact {ndk} {event} />
- * <HighlightCardGrid {ndk} {event} />
- * <HighlightCardElegant {ndk} {event} />
- * ```
- *
- * @example EventCard blocks:
- * ```svelte
- * <EventCardClassic {ndk} {event} />
- * <EventCardMenu {ndk} {event} />
- * ```
- *
- * @example ImageCard blocks:
- * ```svelte
- * <ImageCard {ndk} {image} />
- * <ImageCard {ndk} {image} imageHeight="h-96" />
- * ```
- *
- * @example ThreadView blocks:
- * ```svelte
- * <script>
- *   import { createThreadView } from '@nostr-dev-kit/svelte';
- *   const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
- * </script>
- * <ThreadViewTwitter {ndk} {thread} />
- * ```
- *
- * @example RelayCard blocks:
- * ```svelte
- * <RelayCardPortrait {ndk} relayUrl="wss://relay.damus.io" />
- * <RelayCardCompact {ndk} relayUrl="wss://relay.damus.io" />
- * <RelayCardList {ndk} relayUrl="wss://relay.damus.io" />
- * ```
- *
- * @example RepostButton blocks:
- * ```svelte
- * <RepostButton {ndk} {event} />
- * <RepostButtonPill {ndk} {event} variant="outline" />
- * ```
- *
- * @example ReactionButton blocks:
- * ```svelte
- * <ReactionButton {ndk} {event} />
- * <ReactionButton {ndk} {event} emoji="🔥" />
- * ```
- *
- * @example ReactionSlack blocks:
- * ```svelte
- * <ReactionSlack {ndk} {event} />
- * <ReactionSlack {ndk} {event} variant="vertical" />
- * <ReactionSlack {ndk} {event} showAvatars={false} />
- * ```
- *
- * @example FollowButton blocks:
- * ```svelte
- * <FollowButton {ndk} target={user} />
- * <FollowButtonPill {ndk} target={user} variant="outline" />
- * <FollowButtonCard {ndk} target={user} variant="gradient" />
- * ```
- *
- * @example MuteButton blocks:
- * ```svelte
- * <MuteButton {ndk} target={user} />
- * <MuteButton {ndk} target={user} showTarget={true} />
- * ```
- *
- * @example UserCard blocks:
- * ```svelte
- * <UserCardClassic {ndk} {pubkey} />
- * <UserCardPortrait {ndk} {pubkey} />
- * <UserCardLandscape {ndk} {pubkey} />
- * <UserCardCompact {ndk} {pubkey} />
- * ```
- *
- * @example FollowPack blocks:
- * ```svelte
- * <FollowPackPortrait {ndk} {followPack} />
- * <FollowPackModernPortrait {ndk} {followPack} />
- * <FollowPackHero {ndk} {followPack} />
- * <FollowPackCompact {ndk} {followPack} />
- * <FollowPackListItem {ndk} {followPack} />
- * ```
- *
- * @example MediaUpload blocks:
- * ```svelte
- * <UploadButton {ndk} bind:uploads />
- * <MediaUploadCarousel {ndk} bind:uploads accept="image/*,video/*" />
- * ```
- *
- * @example Mention blocks:
- * ```svelte
- * <MentionModern {ndk} bech32="npub1..." />
- * ```
- *
- * @example NoteComposer blocks:
- * ```svelte
- * <NoteComposerInline {ndk} />
- * <NoteComposerInline {ndk} replyTo={event} />
- * <NoteComposerModal {ndk} bind:open onPublish={(event) => console.log(event)} />
- * <NoteComposerCard {ndk} title="Share your thoughts" />
- * <NoteComposerMinimal {ndk} placeholder="Quick note..." />
- * ```
- */
 
 // ArticleCard blocks
 export { default as ArticleCardPortrait } from './article-card-portrait.svelte';
@@ -147,6 +28,9 @@ export { default as ThreadViewTwitter } from './thread-view-twitter.svelte';
 export { default as RelayCardPortrait } from './relay-card-portrait.svelte';
 export { default as RelayCardCompact } from './relay-card-compact.svelte';
 export { default as RelayCardList } from './relay-card-list.svelte';
+export { default as RelayInputBlock } from './relay-input-block.svelte';
+export { default as RelaySelectorPopover } from './relay-selector-popover.svelte';
+export { default as RelaySelectorInline } from './relay-selector-inline.svelte';
 
 // RepostButton blocks
 export { default as RepostButton } from './repost-button.svelte';
@@ -154,6 +38,7 @@ export { default as RepostButtonPill } from './repost-button-pill.svelte';
 
 // ReactionButton blocks
 export { default as ReactionButton } from './reaction-button.svelte';
+export { default as ReactionEmojiButton } from './reaction-emoji-button.svelte';
 
 // ReactionSlack blocks
 export { default as ReactionSlack } from './reaction-slack.svelte';
@@ -161,7 +46,7 @@ export { default as ReactionSlack } from './reaction-slack.svelte';
 // FollowButton blocks
 export { default as FollowButton } from './follow-button.svelte';
 export { default as FollowButtonPill } from './follow-button-pill.svelte';
-export { default as FollowButtonCard } from './follow-button-card.svelte';
+export { default as FollowButtonAnimated } from './follow-button-animated.svelte';
 
 // MuteButton blocks
 export { default as MuteButton } from './mute-button.svelte';
@@ -174,6 +59,8 @@ export { default as UserCardClassic } from './user-card-classic.svelte';
 export { default as UserCardPortrait } from './user-card-portrait.svelte';
 export { default as UserCardLandscape } from './user-card-landscape.svelte';
 export { default as UserCardCompact } from './user-card-compact.svelte';
+export { default as UserListItem } from './user-list-item.svelte';
+export { default as UserSearchCombobox } from './user-search-combobox.svelte';
 
 // FollowPack blocks
 export { default as FollowPackPortrait } from './follow-pack-portrait.svelte';
@@ -198,3 +85,6 @@ export { default as NoteComposerInline } from './note-composer-inline.svelte';
 export { default as NoteComposerModal } from './note-composer-modal.svelte';
 export { default as NoteComposerCard } from './note-composer-card.svelte';
 export { default as NoteComposerMinimal } from './note-composer-minimal.svelte';
+
+// Re-export primitives for convenience
+export { Reaction } from '../reaction';

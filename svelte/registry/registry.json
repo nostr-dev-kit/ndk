@@ -27,62 +27,15 @@
           "type": "registry:lib"
         },
         {
-          "path": "registry/ndk/actions/reaction-action.svelte",
+          "path": "registry/ndk/actions/reaction.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/actions/zap-action.svelte",
+          "path": "registry/ndk/actions/zap.svelte",
           "type": "registry:component"
         }
       ],
       "version": "0.10.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
-    },
-    {
-      "name": "edit-props",
-      "type": "registry:component",
-      "title": "Edit Props",
-      "description": "A component to edit props of other components.",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "site-components/edit-props/index.ts",
-          "type": "registry:lib"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-context.svelte.ts",
-            "type": "registry:lib"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-fetcher.ts",
-            "type": "registry:lib"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-root.svelte",
-            "type": "registry:component"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-prop.svelte",
-            "type": "registry:component"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-dialog.svelte",
-            "type": "registry:component"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-preview.svelte",
-            "type": "registry:component"
-        },
-        {
-            "path": "site-components/edit-props/edit-props-button.svelte",
-            "type": "registry:component"
-        }
-      ],
-      "version": "0.1.0",
       "updatedAt": "2025-10-31T07:15:56.000Z"
     },
     {
@@ -285,6 +238,53 @@
       ],
       "version": "0.15.0",
       "updatedAt": "2025-10-31T07:15:56.000Z"
+    },
+    {
+      "name": "edit-props",
+      "type": "registry:component",
+      "title": "Edit Props",
+      "description": "A component to edit props of other components.",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "site-components/edit-props/index.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-context.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-fetcher.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-root.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-prop.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-dialog.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-preview.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "site-components/edit-props/edit-props-button.svelte",
+          "type": "registry:component"
+        }
+      ],
+      "version": "0.0.0",
+      "updatedAt": "2025-11-01T10:50:42.299Z"
     },
     {
       "name": "embedded-event",
@@ -803,7 +803,7 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-31T09:10:43.432Z"
+      "updatedAt": "2025-11-01T10:50:45.232Z"
     },
     {
       "name": "media-upload-carousel",
@@ -822,7 +822,7 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-31T09:10:43.545Z"
+      "updatedAt": "2025-11-01T10:50:45.371Z"
     },
     {
       "name": "mention-preview",
@@ -955,7 +955,7 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-31T09:10:44.226Z"
+      "updatedAt": "2025-11-01T10:50:46.192Z"
     },
     {
       "name": "relay-card",
@@ -1227,7 +1227,7 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-31T09:10:45.595Z"
+      "updatedAt": "2025-11-01T10:50:47.795Z"
     },
     {
       "name": "user-card",
@@ -1530,8 +1530,8 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-10-31T09:10:47.332Z"
+      "updatedAt": "2025-11-01T10:50:49.505Z"
     }
   ],
-  "version": "4.0.0-beta.27"
+  "version": "4.0.0-beta.28"
 }

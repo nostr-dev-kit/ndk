@@ -14,13 +14,13 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
-	import { RELAY_CARD_CONTEXT_KEY, type RelayCardContext } from '../relay-card/context.svelte.js';
-	import Root from '../relay-card/relay-card-root.svelte';
-	import Icon from '../relay-card/relay-card-icon.svelte';
-	import Name from '../relay-card/relay-card-name.svelte';
-	import Url from '../relay-card/relay-card-url.svelte';
-	import Description from '../relay-card/relay-card-description.svelte';
-	import BookmarkButton from '../relay-card/relay-card-bookmark-button.svelte';
+	import { RELAY_CONTEXT_KEY, type RelayContext } from '../relay/context.svelte.js';
+	import Root from '../relay/relay-root.svelte';
+	import Icon from '../relay/relay-icon.svelte';
+	import Name from '../relay/relay-name.svelte';
+	import Url from '../relay/relay-url.svelte';
+	import Description from '../relay/relay-description.svelte';
+	import BookmarkButton from '../relay/relay-bookmark-button.svelte';
 	import { cn } from '../../../utils.js';
 
 	interface Props {
@@ -69,7 +69,7 @@
 </script>
 
 <Root {ndk} {relayUrl}>
-	{@const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY)}
+	{@const context = getContext<RelayContext>(RELAY_CONTEXT_KEY)}
 	{@const banner = context?.relayInfo.nip11?.banner}
 	{@const hasBanner = banner != null && banner !== ''}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { RelayCard } from '$lib/registry/components/relay-card';
+  import { Relay } from '$lib/registry/components/relay';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
@@ -10,12 +10,12 @@
   let { ndk, relayUrl }: Props = $props();
 </script>
 
-<RelayCard.Root {ndk} {relayUrl}>
+<Relay.Root {ndk} {relayUrl}>
   <div class="flex items-center gap-3 p-4 bg-card border border-border rounded-lg">
-    <RelayCard.Icon size={48} />
+    <Relay.Icon size={48} />
     <div class="flex-1">
-      <RelayCard.Name class="font-semibold text-foreground" />
-      <RelayCard.Url class="text-sm text-muted-foreground" />
+      <Relay.Name class="font-semibold text-foreground" />
+      <Relay.Url class="text-sm text-muted-foreground" />
     </div>
   </div>
-</RelayCard.Root>
+</Relay.Root>

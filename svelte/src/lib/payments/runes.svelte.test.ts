@@ -22,7 +22,7 @@ describe("payments runes", () => {
         const signer = NDKPrivateKeySigner.generate();
         ndk.signer = signer;
 
-        alice = await UserGenerator.getUser("alice", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as NDK);
 
         testEvent = new NDKEvent(ndk);
         testEvent.kind = NDKKind.Text;
@@ -137,7 +137,7 @@ describe("payments runes", () => {
             ];
 
             const mockPayments = ndk.$payments;
-            mockPayments.pending = mockPending;
+            mockPayments.pending = mockPending as any;
 
             let pending: any;
             cleanup = $effect.root(() => {
@@ -158,7 +158,7 @@ describe("payments runes", () => {
 
         beforeEach(() => {
             const mockPayments = ndk.$payments;
-            mockPayments.history = mockHistory;
+            mockPayments.history = mockHistory as any;
         });
 
         it("should return all transactions when no filters", () => {

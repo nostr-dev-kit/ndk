@@ -3,5 +3,5 @@
 // For mute functionality, use createMuteAction directly
 // For reply functionality, use createReplyAction directly
 
-export { default as ReactionAction } from './reaction-action.svelte';
-export { default as ZapAction } from './zap-action.svelte';
+export { default as ReactionAction } from './reaction.svelte';
+export { default as ZapAction } from './zap.svelte';

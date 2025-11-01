@@ -1,4 +1,4 @@
-import { NDKPrivateKeySigner, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKPrivateKeySigner, NDKUser, NDK } from "@nostr-dev-kit/ndk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMuteAction } from "./mute-action.svelte.js";
 import { createTestNDK, UserGenerator, waitForEffects } from "../../test-utils.js";
@@ -15,8 +15,8 @@ describe("createMuteAction", () => {
         ndk.signer = NDKPrivateKeySigner.generate();
 
         // Create test users
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as NDK);
+        bob = await UserGenerator.getUser("bob", ndk as NDK);
 
         // Mock the mutes store getter
         const mockMutes = {
@@ -44,7 +44,7 @@ describe("createMuteAction", () => {
         });
 
         it("should return false when target is not muted", () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
             vi.mocked(mockMutes.has).mockReturnValue(false);
 
             let action: any;
@@ -53,12 +53,12 @@ describe("createMuteAction", () => {
             });
 
             expect(action.isMuted).toBe(false);
-            expect(mockMutes.has).toHaveBeenCalledWith(bob.pubkey);
+            expect(mockMutes!.has).toHaveBeenCalledWith(bob.pubkey);
         });
 
         it("should return true when target is muted", () => {
-            const mockMutes = ndk.$mutes;
-            vi.mocked(mockMutes.has).mockReturnValue(true);
+            const mockMutes = ndk.$mutes!;
+            vi.mocked(mockMutes!.has).mockReturnValue(true);
 
             let action: any;
             cleanup = $effect.root(() => {
@@ -66,12 +66,12 @@ describe("createMuteAction", () => {
             });
 
             expect(action.isMuted).toBe(true);
-            expect(mockMutes.has).toHaveBeenCalledWith(bob.pubkey);
+            expect(mockMutes!.has).toHaveBeenCalledWith(bob.pubkey);
         });
 
         it("should work with string pubkey", () => {
-            const mockMutes = ndk.$mutes;
-            vi.mocked(mockMutes.has).mockReturnValue(true);
+            const mockMutes = ndk.$mutes!;
+            vi.mocked(mockMutes!.has).mockReturnValue(true);
 
             let action: any;
             cleanup = $effect.root(() => {
@@ -108,7 +108,7 @@ describe("createMuteAction", () => {
 
     describe("mute function", () => {
         it("should do nothing when target is undefined", async () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
 
             let action: any;
             cleanup = $effect.root(() => {
@@ -117,7 +117,7 @@ describe("createMuteAction", () => {
 
             await action.mute();
 
-            expect(mockMutes.toggle).not.toHaveBeenCalled();
+            expect(mockMutes!.toggle).not.toHaveBeenCalled();
         });
 
         it("should throw error when user not logged in", async () => {
@@ -132,7 +132,7 @@ describe("createMuteAction", () => {
         });
 
         it("should call toggle with pubkey when target is NDKUser", async () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
 
             let action: any;
             cleanup = $effect.root(() => {
@@ -141,11 +141,11 @@ describe("createMuteAction", () => {
 
             await action.mute();
 
-            expect(mockMutes.toggle).toHaveBeenCalledWith(bob.pubkey);
+            expect(mockMutes!.toggle).toHaveBeenCalledWith(bob.pubkey);
         });
 
         it("should call toggle with pubkey when target is string", async () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
 
             let action: any;
             cleanup = $effect.root(() => {
@@ -154,11 +154,11 @@ describe("createMuteAction", () => {
 
             await action.mute();
 
-            expect(mockMutes.toggle).toHaveBeenCalledWith(bob.pubkey);
+            expect(mockMutes!.toggle).toHaveBeenCalledWith(bob.pubkey);
         });
 
         it("should toggle mute status (mute when not muted)", async () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
             vi.mocked(mockMutes.has).mockReturnValue(false);
 
             let action: any;
@@ -170,11 +170,11 @@ describe("createMuteAction", () => {
 
             await action.mute();
 
-            expect(mockMutes.toggle).toHaveBeenCalledWith(bob.pubkey);
+            expect(mockMutes!.toggle).toHaveBeenCalledWith(bob.pubkey);
         });
 
         it("should toggle mute status (unmute when already muted)", async () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
             vi.mocked(mockMutes.has).mockReturnValue(true);
 
             let action: any;
@@ -186,13 +186,13 @@ describe("createMuteAction", () => {
 
             await action.mute();
 
-            expect(mockMutes.toggle).toHaveBeenCalledWith(bob.pubkey);
+            expect(mockMutes!.toggle).toHaveBeenCalledWith(bob.pubkey);
         });
     });
 
     describe("reactive updates", () => {
         it("should react to changes in mute status", async () => {
-            const mockMutes = ndk.$mutes;
+            const mockMutes = ndk.$mutes!;
             // Start with not muted
             vi.mocked(mockMutes.has).mockReturnValue(false);
 
@@ -204,8 +204,7 @@ describe("createMuteAction", () => {
             await waitForEffects();
             expect(action.isMuted).toBe(false);
 
-            // Simulate muting the user
-            vi.mocked(mockMutes.has).mockReturnValue(true);
+            vi.mocked(mockMutes!.has).mockReturnValue(true);
 
             // The isMuted is derived, so it should update when checked again
             // Note: In real usage, the store change would trigger reactivity

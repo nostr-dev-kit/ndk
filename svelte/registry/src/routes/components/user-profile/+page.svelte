@@ -296,7 +296,6 @@
 						<ul class="list-disc list-inside space-y-1 text-muted-foreground">
 							<li><code>FollowButton</code> - Minimal text-style button</li>
 							<li><code>FollowButtonPill</code> - Rounded pill-style button with variants</li>
-							<li><code>FollowButtonCard</code> - Large card-style button with gradients</li>
 						</ul>
 					</div>
 				</div>

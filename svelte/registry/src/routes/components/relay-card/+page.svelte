@@ -2,7 +2,7 @@
 	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { RelayCard } from '$lib/registry/components/relay-card';
+	import { Relay } from '$lib/registry/components/relay';
 	import { RelayCardPortrait, RelayCardCompact, RelayCardList } from '$lib/registry/components/blocks';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
@@ -130,7 +130,7 @@
 			<!-- Basic Usage -->
 			<Demo
 				title="Basic Usage"
-				description="Minimal example with RelayCard.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy."
+				description="Minimal example with Relay.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy."
 				code={BasicExampleRaw}
 			>
 				<BasicExample {ndk} relayUrl={exampleRelay} />
@@ -151,10 +151,10 @@
 	<ComponentAPI
 		components={[
 			{
-				name: 'RelayCard.Root',
+				name: 'Relay.Root',
 				description:
 					'Root container that provides context to child components. Fetches NIP-11 relay information automatically.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'ndk',
@@ -172,9 +172,9 @@
 				]
 			},
 			{
-				name: 'RelayCard.Icon',
+				name: 'Relay.Icon',
 				description: 'Display relay icon from NIP-11 metadata with fallback.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'size',
@@ -192,9 +192,9 @@
 				]
 			},
 			{
-				name: 'RelayCard.Name',
+				name: 'Relay.Name',
 				description: 'Display relay name from NIP-11 metadata.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'fallback',
@@ -212,9 +212,9 @@
 				]
 			},
 			{
-				name: 'RelayCard.Url',
+				name: 'Relay.Url',
 				description: 'Display relay URL with optional domain-only mode.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'showProtocol',
@@ -232,9 +232,9 @@
 				]
 			},
 			{
-				name: 'RelayCard.Description',
+				name: 'Relay.Description',
 				description: 'Display relay description from NIP-11 metadata with line clamping.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'maxLines',
@@ -252,10 +252,10 @@
 				]
 			},
 			{
-				name: 'RelayCard.BookmarkButton',
+				name: 'Relay.BookmarkButton',
 				description:
 					'Toggle button for bookmarking/unbookmarking relay. Requires user authentication.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'bookmarks',
@@ -280,9 +280,9 @@
 				]
 			},
 			{
-				name: 'RelayCard.BookmarkedBy',
+				name: 'Relay.BookmarkedBy',
 				description: 'Display avatars of users who have bookmarked this relay.',
-				importPath: "import { RelayCard } from '$lib/registry/components/relay-card'",
+				importPath: "import { Relay } from '$lib/registry/components/relay'",
 				props: [
 					{
 						name: 'bookmarks',

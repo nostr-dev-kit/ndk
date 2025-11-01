@@ -95,6 +95,6 @@
   setContext(USER_PROFILE_CONTEXT_KEY, context);
 </script>
 
-<div class="inline-block {className}">
+<div class="{className}">
   {@render children()}
 </div>

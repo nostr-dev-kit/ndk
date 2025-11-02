@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import RelaySelectorPopover from '$lib/registry/blocks/relay-selector-popover.svelte';
+	import RelaySelectorPopover from '$lib/registry/components/relay-selector/relay-selector-popover.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 

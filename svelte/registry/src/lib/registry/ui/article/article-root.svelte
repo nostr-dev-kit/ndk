@@ -35,11 +35,11 @@
   const ndk = getNDKFromContext(providedNdk);
 
   // Create reactive context with getters
-  const context = {
+  const context = $state.raw({
     get ndk() { return ndk; },
     get article() { return article; },
     get onclick() { return onclick; }
-  };
+  });
 
   setContext(ARTICLE_CONTEXT_KEY, context);
 </script>

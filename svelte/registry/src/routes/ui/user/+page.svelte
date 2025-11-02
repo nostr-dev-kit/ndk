@@ -1,6 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKUser } from '@nostr-dev-kit/ndk';
+  import { EditProps } from '$lib/site-components/edit-props';
   import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -12,6 +14,10 @@
   import CompositionRaw from './examples/composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  let user = $state<NDKUser | undefined>();
+
+  const userPubkey = $derived(user?.pubkey || 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft');
 </script>
 
 <svelte:head>
@@ -21,6 +27,10 @@
 
 <div class="component-page">
   <header>
+    <EditProps.Root>
+      <EditProps.Prop name="User" type="user" bind:value={user} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+      <EditProps.Button>Change Sample User</EditProps.Button>
+    </EditProps.Root>
     <div class="header-badge">
       <span class="badge">UI Primitive</span>
     </div>
@@ -59,7 +69,7 @@
       description="Minimal example showing User.Root with basic components."
       code={BasicRaw}
     >
-      <Basic />
+      <Basic {ndk} {userPubkey} />
     </Demo>
 
     <Demo
@@ -67,7 +77,7 @@
       description="Compose multiple User components to create custom profile displays."
       code={StandaloneRaw}
     >
-      <Standalone />
+      <Standalone {ndk} {userPubkey} />
     </Demo>
 
     <Demo
@@ -75,7 +85,7 @@
       description="Build a complete user profile card with banner, avatar, and metadata."
       code={CompositionRaw}
     >
-      <Composition />
+      <Composition {ndk} {userPubkey} />
     </Demo>
   </section>
 

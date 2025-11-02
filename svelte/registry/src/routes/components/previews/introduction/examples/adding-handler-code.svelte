@@ -1,12 +1,12 @@
 <script lang="ts">
   import { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
-  import ArticleEmbedded from '$lib/registry/components/event/content/kinds/article-embedded/article-embedded.svelte';
-  import NoteEmbedded from '$lib/registry/components/event/content/kinds/note-embedded/note-embedded.svelte';
-  import HighlightEmbedded from '$lib/registry/components/event/content/kinds/highlight-embedded/highlight-embedded.svelte';
+  import { ArticleEmbedded } from '$lib/registry/components/article-embedded';
+  import { NoteEmbedded } from '$lib/registry/components/note-embedded';
+  import { HighlightEmbedded } from '$lib/registry/components/highlight-embedded';
 
   // Step 1: Import NDK wrapper class and your new handler
   // import { NDKVideo } from '@nostr-dev-kit/ndk';
-  // import VideoEmbedded from '$lib/registry/components/event/content/kinds/video-embedded.svelte';
+  // import { VideoEmbedded } from '$lib/registry/components/video-embedded';
 
   // Step 2: Add to CLASS_HANDLERS array
   const CLASS_HANDLERS = [

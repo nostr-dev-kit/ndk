@@ -79,15 +79,15 @@
 
   const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);
 
-  // Create reactive context with getters
-  const context = {
+  // Create reactive context using $state.raw() to preserve reactivity
+  const context = $state.raw({
     get ndk() { return ndk; },
     get user() { return user; },
     get ndkUser() { return ndkUser; },
     get profile() { return profile; },
     get showHoverCard() { return false; },
     get onclick() { return onclick; }
-  };
+  });
 
   setContext(USER_CONTEXT_KEY, context);
 </script>

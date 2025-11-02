@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import EventCardClassic from '$lib/registry/blocks/event-card-classic.svelte';
-import EventCardMenu from '$lib/registry/blocks/event-card-menu.svelte';
+	import EventCardClassic from '$lib/registry/components/event-card/event-card-classic.svelte';
+import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';

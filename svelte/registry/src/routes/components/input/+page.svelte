@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import UserSearchCombobox from '$lib/registry/blocks/user-search-combobox.svelte';
+	import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte';
 
 	import SearchComboboxCodeRaw from './examples/search-combobox-code.svelte?raw';
 

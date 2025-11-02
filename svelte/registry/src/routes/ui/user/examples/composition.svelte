@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '$lib/registry/ui';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  interface Props {
+    ndk: NDKSvelte;
+    userPubkey: string;
+  }
 
-  const userPubkey = ndk.$currentUser?.pubkey || 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
+  let { ndk, userPubkey }: Props = $props();
 </script>
 
 <div class="user-card">
-  <User.Root {ndk} user={userPubkey}>
+  <User.Root {ndk} pubkey={userPubkey}>
     <div class="user-header">
       <User.Banner class="banner" />
       <User.Avatar size={80} class="avatar" />

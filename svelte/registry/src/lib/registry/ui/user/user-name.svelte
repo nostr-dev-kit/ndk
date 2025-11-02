@@ -29,12 +29,10 @@
     throw new Error('User.Name must be used within User.Root');
   }
 
-  const { ndkUser, profile } = context;
-
   const userPubkey = $derived.by(() => {
-    if (ndkUser) {
+    if (context.ndkUser) {
       try {
-        return ndkUser.pubkey;
+        return context.ndkUser.pubkey;
       } catch {
         return undefined;
       }
@@ -43,15 +41,15 @@
   });
 
   const displayText = $derived.by(() => {
-    if (!profile) return userPubkey?.slice(0, 8) + '...' || 'Unknown';
+    if (!context.profile) return userPubkey?.slice(0, 8) + '...' || 'Unknown';
 
     if (field === 'name') {
-      return profile.name || userPubkey?.slice(0, 8) + '...';
+      return context.profile.name || userPubkey?.slice(0, 8) + '...';
     } else if (field === 'displayName') {
-      return profile.displayName || profile.name || userPubkey?.slice(0, 8) + '...';
+      return context.profile.displayName || context.profile.name || userPubkey?.slice(0, 8) + '...';
     } else if (field === 'both') {
-      const displayName = profile.displayName || profile.name;
-      const name = profile.name && profile.name !== profile.displayName ? profile.name : null;
+      const displayName = context.profile.displayName || context.profile.name;
+      const name = context.profile.name && context.profile.name !== context.profile.displayName ? context.profile.name : null;
       return name ? `${displayName} (@${name})` : displayName || userPubkey?.slice(0, 8) + '...';
     }
 

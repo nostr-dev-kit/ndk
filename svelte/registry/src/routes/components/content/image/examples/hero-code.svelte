@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '$lib/registry/ui/user';
-	import FollowButton from '$lib/registry/blocks/follow-button.svelte';
+	import FollowButton from '$lib/registry/components/actions/follow-button.svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

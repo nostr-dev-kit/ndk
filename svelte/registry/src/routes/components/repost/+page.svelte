@@ -3,8 +3,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import RepostButton from '$lib/registry/blocks/repost-button.svelte';
-  import RepostButtonPill from '$lib/registry/blocks/repost-button-pill.svelte';
+  import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
+  import RepostButtonPill from '$lib/registry/components/actions/repost-button-pill.svelte';
 	import Demo from '$site-components/Demo.svelte';
 
   // Import code examples

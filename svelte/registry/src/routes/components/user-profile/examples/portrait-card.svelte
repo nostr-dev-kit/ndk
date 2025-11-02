@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { User } from '$lib/registry/ui/user';
-	import FollowButtonPill from '$lib/registry/blocks/follow-button-pill.svelte';
+	import FollowButtonPill from '$lib/registry/components/actions/follow-button-pill.svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 	interface Props {

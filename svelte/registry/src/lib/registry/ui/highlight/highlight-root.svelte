@@ -55,7 +55,7 @@
   const state = createHighlight(() => ({ event }), ndk);
 
   // Create context with getters for reactivity
-  const context: HighlightContext = {
+  const context: HighlightContext = $state.raw({
     get ndk() {
       return ndk;
     },
@@ -68,7 +68,7 @@
     get variant() {
       return variant;
     },
-  };
+  });
 
   setContext(HIGHLIGHT_CONTEXT_KEY, context);
 </script>

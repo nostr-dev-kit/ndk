@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { Mention } from '$lib/registry/components/event/content';
+  import { Mention } from '$lib/registry/components/mention';
 
   interface Props {
     ndk: NDKSvelte;

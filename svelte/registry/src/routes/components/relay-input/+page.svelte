@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '$lib/registry/ui/relay';
-	import RelayInputBlock from '$lib/registry/blocks/relay-input-block.svelte';
+	import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Examples

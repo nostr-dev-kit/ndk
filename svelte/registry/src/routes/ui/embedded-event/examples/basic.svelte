@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EmbeddedEvent } from '$lib/registry/ui';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  interface Props {
+    ndk: NDKSvelte;
+    eventBech32: string;
+  }
 
-  // Example event reference (nevent)
-  const eventBech32 = 'nevent1qqsxvfxz4g7x9y4x9y4x9y4x9y4x9y4x9y4x9y4x9y4x9y4x9y4x9';
+  let { ndk, eventBech32 }: Props = $props();
 </script>
 
 <div class="embedded-demo">

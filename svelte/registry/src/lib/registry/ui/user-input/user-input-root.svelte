@@ -46,7 +46,7 @@
   }), ndk);
 
   // Create reactive context with getters
-  const context: UserInputContext = {
+  const context: UserInputContext = $state.raw({
     get ndk() { return ndk; },
     get query() { return query; },
     setQuery(newQuery: string) { query = newQuery; },
@@ -56,7 +56,7 @@
     clear: userInputState.clear,
     get loading() { return userInputState.loading; },
     get onSelect() { return onSelect; }
-  };
+  });
 
   setContext(USER_INPUT_CONTEXT_KEY, context);
 </script>

@@ -1,6 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { EditProps } from '$lib/site-components/edit-props';
   import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
@@ -10,6 +12,10 @@
   import VariantsRaw from './examples/variants.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  let event = $state<NDKEvent | undefined>();
+
+  const eventBech32 = $derived(event?.encode() || 'nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
 </script>
 
 <svelte:head>
@@ -19,6 +25,10 @@
 
 <div class="component-page">
   <header>
+    <EditProps.Root>
+      <EditProps.Prop name="Event" type="event" bind:value={event} default="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j" />
+      <EditProps.Button>Change Sample Event</EditProps.Button>
+    </EditProps.Root>
     <div class="header-badge">
       <span class="badge">UI Primitive</span>
     </div>
@@ -57,7 +67,7 @@
       description="EmbeddedEvent loads and displays events from bech32 references (nevent, note1)."
       code={BasicRaw}
     >
-      <Basic />
+      <Basic {ndk} {eventBech32} />
     </Demo>
 
     <Demo
@@ -65,7 +75,7 @@
       description="EmbeddedEvent supports three display variants: card (default), compact, and inline."
       code={VariantsRaw}
     >
-      <Variants />
+      <Variants {ndk} {eventBech32} />
     </Demo>
   </section>
 

@@ -177,8 +177,10 @@
 
   <section class="info">
     <h2>User.Bio</h2>
+    <p class="mb-4">Display user's about/bio text with automatic line clamping.</p>
     <ApiTable
       rows={[
+        { name: 'maxLines', type: 'number', default: '3', description: 'Maximum number of lines to show (uses line-clamp CSS)' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

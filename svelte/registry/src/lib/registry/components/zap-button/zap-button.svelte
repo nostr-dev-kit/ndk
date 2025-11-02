@@ -7,8 +7,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/index.js';
-  import * as ZapSend from './zap-send/index.js';
-  import * as Zaps from './zaps/index.js';
+  import * as ZapSend from '../zap-send/index.js';
+  import * as Zaps from '../zaps/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

@@ -30,29 +30,22 @@
 		<div class="absolute inset-0 z-[5] bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
 		<div class="absolute inset-0 z-10 h-full flex flex-col p-8 text-white text-left">
-			<!-- Author at top, subtle -->
-			{#if followPack.author}
-				<User.Root {ndk} user={followPack.author}>
-					<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
-						<User.Avatar size={20} class="ring-1 ring-white/30" />
-						<User.Name field="displayName" />
-					</div>
-				</User.Root>
-			{/if}
-
 			<!-- Main content at bottom -->
-			<div class="space-y-4">
+			<div class="space-y-4 flex flex-col h-full justify-end">
 				<FollowPack.Title class="text-4xl font-bold text-left" lines={2} />
 				<FollowPack.Description class="text-base max-w-2xl text-left" maxLength={200} lines={2} />
 
 				<div class="flex items-center gap-4 text-sm">
-					<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={5} size={32} />
-					<div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-						</svg>
-						<FollowPack.MemberCount format="long" />
-					</div>
+					<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={5} size={32} spacing="loose" />
+
+					{#if followPack.author}
+						<User.Root {ndk} user={followPack.author} class="flex-1 flex flex-col items-end">
+							<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
+								<User.Avatar size={20} />
+								<User.Name class="text-xs" />
+							</div>
+						</User.Root>
+					{/if}
 				</div>
 			</div>
 		</div>

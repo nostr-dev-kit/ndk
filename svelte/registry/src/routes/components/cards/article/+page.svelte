@@ -8,12 +8,8 @@
 	import ArticleCardNeon from '$lib/registry/components/article-card/article-card-neon.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
-	import { BentoGrid, BentoGridItem } from '$lib/site-components/bento';
+	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import Demo from '$site-components/Demo.svelte';
-	import PortraitGridPreview from './previews/portrait-grid-preview.svelte';
-	import HeroPreview from './previews/hero-preview.svelte';
-	import NeonPreview from './previews/neon-preview.svelte';
-	import MediumFeedPreview from './previews/medium-feed-preview.svelte';
 
 	// Import code examples
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
@@ -119,11 +115,15 @@
 			]
 		}
 	};
+
+	const displayArticles = $derived(
+		[article1, article2, article3].filter(Boolean) as NDKArticle[]
+	);
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="container -mx-8 -mt-12">
 	<!-- Header -->
-	<div class="mb-16">
+	<section class="mb-16 bg-neutral-900 p-16">
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-5xl font-bold">Article Card</h1>
 			{#key articles}
@@ -149,42 +149,79 @@
 				maintaining full customization through the underlying primitive layer.
 			</p>
 		</div>
-	</div>
-
-	<!-- Bento Grid Showcase -->
-	<section class="mb-24">
-		<h2 class="text-3xl font-bold mb-8">Showcase</h2>
-
-		<BentoGrid>
-			<!-- Portrait Grid (Large) -->
-			<BentoGridItem class="md:col-span-2 md:row-span-2">
-				{#snippet header()}
-					<PortraitGridPreview />
-				{/snippet}
-			</BentoGridItem>
-
-			<!-- Hero (Tall) -->
-			<BentoGridItem class="md:col-span-1 md:row-span-2">
-				{#snippet header()}
-					<HeroPreview />
-				{/snippet}
-			</BentoGridItem>
-
-			<!-- Medium Feed -->
-			<BentoGridItem class="md:col-span-1">
-				{#snippet header()}
-					<MediumFeedPreview />
-				{/snippet}
-			</BentoGridItem>
-
-			<!-- Neon -->
-			<BentoGridItem class="md:col-span-2">
-				{#snippet header()}
-					<NeonPreview />
-				{/snippet}
-			</BentoGridItem>
-		</BentoGrid>
 	</section>
+
+	<!-- Blocks Showcase Section -->
+	{#if !loading && article1}
+		{#snippet portraitPreview()}
+			{#if article1}
+				<ArticleCardPortrait {ndk} article={article1} />
+			{/if}
+		{/snippet}
+
+		{#snippet heroPreview()}
+			{#if article1}
+				<div class="min-w-[800px]">
+					<ArticleCardHero {ndk} article={article1} />
+				</div>
+			{/if}
+		{/snippet}
+
+		{#snippet mediumPreview()}
+			<div class="w-full max-w-3xl space-y-4">
+				{#each displayArticles.slice(0, 2) as article}
+					<ArticleCardMedium {ndk} {article} />
+				{/each}
+			</div>
+		{/snippet}
+
+		{#snippet neonPreview()}
+			{#if article1}
+				<div class="w-full max-w-3xl">
+					<ArticleCardNeon {ndk} article={article1} />
+				</div>
+			{/if}
+		{/snippet}
+
+		<ComponentsShowcase
+			title="Blocks Showcase"
+			description="Four beautifully crafted variants. Each optimized for its purpose. Choose the perfect presentation for your content."
+			blocks={[
+				{
+					name: 'Portrait',
+					description: 'Portrait-style layout with vertical orientation. Ideal for grid layouts and featured content displays.',
+					command: 'npx shadcn@latest add article-card-portrait',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardPortrait</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: portraitPreview
+				},
+				{
+					name: 'Hero',
+					description: 'Full-width hero card with overlay content. Perfect for featured articles and landing pages.',
+					command: 'npx shadcn@latest add article-card-hero',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardHero</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: heroPreview
+				},
+				{
+					name: 'Medium',
+					description: 'Compact horizontal card with side image. Optimized for article lists and content feeds.',
+					command: 'npx shadcn@latest add article-card-medium',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardMedium</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: mediumPreview
+				},
+				{
+					name: 'Neon',
+					description: 'Modern design with vibrant neon accents and gradients. Striking visual impact.',
+					command: 'npx shadcn@latest add article-card-neon',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardNeon</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: neonPreview
+				}
+			]}
+		/>
+	{/if}
 
 	{#if !loading}
 

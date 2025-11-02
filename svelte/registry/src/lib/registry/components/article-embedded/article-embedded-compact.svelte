@@ -22,7 +22,7 @@
       <div class="article-content">
         <Article.Title class="text-sm font-semibold" lines={1} />
         <div class="article-meta">
-          <Article.Meta class="text-xs" />
+          <Article.ReadingTime class="text-xs" />
         </div>
       </div>
     </div>

@@ -70,9 +70,9 @@
       </div>
     </section>
 
-    <!-- UI Components Section -->
+    <!-- UI Primitives Section -->
     <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">UI Components</h2>
+      <h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
       <p class="text-muted-foreground mb-8">
         Primitive components for building custom thread layouts. Mix and match EventCard
         primitives with createThreadView data to create your own designs.

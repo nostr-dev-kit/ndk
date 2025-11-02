@@ -29,7 +29,7 @@
 
       <div class="article-content">
         <Article.Title class="article-title" />
-        <Article.Meta class="article-meta" />
+        <Article.ReadingTime class="article-meta" />
         <Article.Summary class="article-summary" />
         <Article.ReadingTime class="article-reading-time" />
       </div>

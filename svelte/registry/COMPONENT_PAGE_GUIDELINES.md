@@ -65,7 +65,7 @@ Every component page MUST follow this exact order:
    - Description paragraph
    - Block examples with hierarchical subsections
 
-3. UI Components Section (h2)
+3. UI Primitives Section (h2)
    - Description paragraph
    - Primitive composition examples
 
@@ -197,14 +197,14 @@ Example for `<FollowButton>`:
 - Code: Shows full implementation with createFollowAction builder and button markup
 - Usage: Shows how to install and use the finished component in user's project
 
-### 2. UI Components Section
+### 2. UI Primitives Section
 
 **Purpose:** Demonstrate how to compose custom layouts using primitive components.
 
 **Structure:**
 ```svelte
 <section class="mb-16">
-	<h2 class="text-3xl font-bold mb-2">UI Components</h2>
+	<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
 	<p class="text-muted-foreground mb-8">
 		Primitive components for building custom [component] layouts. Mix and match to create your own designs.
 	</p>
@@ -1020,9 +1020,9 @@ interface PropDoc {
 
 ### 🔍 Structure Verification
 
-- [ ] Sections in order: Header → Blocks → UI Components → Builder (optional) → Component API → Builder API (optional)
+- [ ] Sections in order: Header → Blocks → UI Primitives → Builder (optional) → Component API → Builder API (optional)
 - [ ] Blocks section has description about pre-composed layouts
-- [ ] UI Components section has exactly 2 examples (Basic, Full Composition)
+- [ ] UI Primitives section has exactly 2 examples (Basic, Full Composition)
 - [ ] All blocks have `component` prop (enables Usage tab)
 - [ ] UI examples do NOT have `component` prop (no Usage tab)
 
@@ -1050,7 +1050,7 @@ Use this comprehensive checklist before marking any component page as complete.
 - [ ] EditProps wrapped in {#key} if using options
 - [ ] EditProps has multiple props if showing multiple instances
 - [ ] Blocks section with description
-- [ ] UI Components section with description
+- [ ] UI Primitives section with description
 - [ ] Builder section (if applicable)
 - [ ] Component API section
 - [ ] Builder API section (if applicable)
@@ -1095,7 +1095,7 @@ Use this comprehensive checklist before marking any component page as complete.
 - [ ] No TODO comments or technical debt
 - [ ] File passes TypeScript type checking with no errors
 
-### 📋 UI Components Section Checklist
+### 📋 UI Primitives Section Checklist
 
 - [ ] Exactly 2 examples (Basic, Full Composition)
 - [ ] Each example uses `Demo` component
@@ -1212,9 +1212,9 @@ For a simple component with only primitives:
 		</EditProps.Root>
 	</div>
 
-	<!-- UI Components Section -->
+	<!-- UI Primitives Section -->
 	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">UI Components</h2>
+		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
 		<p class="text-muted-foreground mb-8">
 			Primitive components for building custom layouts.
 		</p>
@@ -1307,9 +1307,9 @@ For a component with blocks, primitives, and builder:
 		</div>
 	</section>
 
-	<!-- UI Components Section -->
+	<!-- UI Primitives Section -->
 	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">UI Components</h2>
+		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
 		<p class="text-muted-foreground mb-8">
 			Primitive components for building custom layouts.
 		</p>
@@ -1413,7 +1413,7 @@ For a component with blocks, primitives, and builder:
 - Updated guidelines to prefer interactive controls over hierarchical subsections
 - Added controls snippet support to Demo component
 - Updated ArticleCard Medium example to use interactive controls
-- Simplified UI Components section to only Basic and Full Composition (removed styling examples)
+- Simplified UI Primitives section to only Basic and Full Composition (removed styling examples)
 - Clarified that UI section should focus on composition, not styling variations
 - Added EditProps Patterns section documenting single vs multiple instance patterns
 - Added EditProps.Prop options support for dropdown selection

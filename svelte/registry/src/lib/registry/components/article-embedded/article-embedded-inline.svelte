@@ -17,14 +17,14 @@
 <div class="article-embedded-inline">
   <Article.Root {ndk} {article}>
     <div class="article-layout">
-      <Article.Image class="h-32" showGradient={true} />
+      <Article.Image class="h-32" />
 
       <div class="article-content">
         <Article.Title class="text-sm font-semibold" lines={2} />
         <Article.Summary class="text-xs text-muted-foreground" maxLength={80} lines={2} />
 
         <div class="article-meta">
-          <Article.Meta class="text-xs" />
+          <Article.ReadingTime class="text-xs" />
         </div>
       </div>
     </div>

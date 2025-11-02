@@ -65,7 +65,7 @@
       "name": "article-card",
       "type": "registry:block",
       "title": "Article Card",
-      "description": "Composable article card components for NDKArticle - UI components only, blocks sold separately",
+      "description": "Composable article card components for NDKArticle - UI Primitives only, blocks sold separately",
       "registryDependencies": [],
       "dependencies": [
         "@nostr-dev-kit/ndk",
@@ -348,7 +348,7 @@
       "name": "event-card",
       "type": "registry:block",
       "title": "Event Card",
-      "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions. UI components only, blocks sold separately",
+      "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions. UI Primitives only, blocks sold separately",
       "registryDependencies": [
         "user-profile",
         "event-content",
@@ -632,7 +632,7 @@
       "name": "highlight-card",
       "type": "registry:block",
       "title": "Highlight Card",
-      "description": "Display Nostr highlight events (kind 9802) - UI components only, blocks sold separately",
+      "description": "Display Nostr highlight events (kind 9802) - UI Primitives only, blocks sold separately",
       "registryDependencies": [],
       "dependencies": [
         "@nostr-dev-kit/ndk",

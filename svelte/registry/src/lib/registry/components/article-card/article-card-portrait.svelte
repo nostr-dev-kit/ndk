@@ -1,15 +1,4 @@
 <!-- @ndk-version: article-card-portrait@0.3.0 -->
-<!--
-  @component ArticleCard.Portrait
-  Portrait-style article card preset (vertical layout with image on top)
-
-  Ideal for grid layouts and featured content displays.
-
-  @example
-  ```svelte
-  <ArticleCard.Portrait {ndk} {article} />
-  ```
--->
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
@@ -95,7 +84,6 @@
       <!-- Summary -->
       <Summary class="text-xs mb-3 leading-relaxed flex-1 text-left line-clamp-3" maxLength={100} />
 
-      <!-- Meta -->
       <div class="mt-auto pt-2 border-t border-border">
         <div class="flex items-center justify-between">
           <ReadingTime class="text-xs" />

@@ -323,7 +323,7 @@ const popular = ndk.$metaSubscribe(() => ({
 			</a>
 			<a href="/docs/components" class="next-card">
 				<h3>Components</h3>
-				<p>Explore ready-to-use UI components</p>
+				<p>Explore ready-to-use UI Primitives</p>
 			</a>
 		</div>
 	</section>

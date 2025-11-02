@@ -39,7 +39,7 @@
         {/if}
 
         <div class="article-meta">
-          <Article.Meta class="text-xs" />
+          <Article.ReadingTime class="text-xs" />
         </div>
       </div>
     </div>

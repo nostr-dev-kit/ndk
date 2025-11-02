@@ -99,9 +99,9 @@ defaultContentRenderer.mentionComponent = MentionModern;
     </div>
   </section>
 
-  <!-- UI Components Section -->
+  <!-- UI Primitives Section -->
   <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">UI Components</h2>
+    <h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
     <p class="text-muted-foreground mb-8">
       Primitive mention component for building custom inline user references. Use to create your own mention designs.
     </p>

@@ -318,26 +318,6 @@
 				]
 			},
 			{
-				name: 'ArticleCard.Meta',
-				description: 'Combined author + date display.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
-				props: [
-					{
-						name: 'showIcon',
-						type: 'boolean',
-						default: 'false',
-						description: 'Show author avatar icon',
-						required: false
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
-					}
-				]
-			},
-			{
 				name: 'ArticleCard.ReadingTime',
 				description: 'Display estimated reading time based on article content length.',
 				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",

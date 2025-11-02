@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import EventContent from '$lib/registry/components/event/content/event-content.svelte';
+  import { EventContent } from '$lib/registry/ui';
   import Mention from '$lib/registry/components/event/content/mention/mention.svelte';
   import Hashtag from '$lib/registry/components/event/content/hashtag/hashtag.svelte';
   import EmbeddedEvent from '$lib/registry/components/event/content/event/event.svelte';

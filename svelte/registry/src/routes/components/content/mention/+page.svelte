@@ -75,10 +75,10 @@
           Set the mention component globally with one line. This applies to all <code>EventContent</code> components in your app:
         </p>
         <pre class="bg-muted p-4 rounded-lg text-sm overflow-x-auto"><code>{`// In your app initialization (e.g., +layout.svelte or main entry)
-import { setDefaultMention } from '$lib/registry/components/event/content';
+import { defaultContentRenderer } from '$lib/registry/ui';
 import MentionModern from '$lib/registry/components/blocks/mention-modern.svelte';
 
-setDefaultMention(MentionModern);
+defaultContentRenderer.mentionComponent = MentionModern;
 
 // Now all EventContent components will use MentionModern
 <EventContent {ndk} {event} />

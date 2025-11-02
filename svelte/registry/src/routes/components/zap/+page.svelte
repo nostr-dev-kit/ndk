@@ -59,15 +59,15 @@
       <div class="space-y-12">
         <Demo
           title="Basic Usage"
-          description="Simple zap button with automatic amount tracking using the ZapAction component."
+          description="Simple zap button with automatic amount tracking using the ZapButton component."
           code={BasicExampleRaw}
         >
           <BasicExample {ndk} event={sampleEvent} />
         </Demo>
 
         <Demo
-          title="Using the Builder"
-          description="Build custom zap buttons using createZapAction() for full control over styling and behavior."
+          title="Custom Implementation"
+          description="Build custom zap buttons using ZapSend and Zaps namespaces for full control over styling and behavior."
           code={BuilderExampleRaw}
         >
           <BuilderExample {ndk} event={sampleEvent} />

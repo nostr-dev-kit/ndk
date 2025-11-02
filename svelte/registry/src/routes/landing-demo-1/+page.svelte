@@ -7,7 +7,7 @@
 	import ArticleCardMedium from '$lib/registry/components/blocks/article-card-medium.svelte';
 	import ThreadViewTwitter from '$lib/registry/components/blocks/thread-view-twitter.svelte';
 	import ReactionButton from '$lib/registry/components/blocks/reaction-button.svelte';
-	import ZapAction from '$lib/registry/components/actions/zap-action.svelte';
+	import ZapButton from '$lib/registry/components/zap-button.svelte';
 	import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
 
 	// Sample data for components - will be initialized in onMount
@@ -312,7 +312,7 @@
 				{:else if node.component === 'Zap'}
 					<div class="glass-card rounded-xl bg-yellow-950/30 backdrop-blur-xl border border-yellow-800/30 p-3">
 						{#if sampleEvent}
-							<ZapAction {ndk} event={sampleEvent} />
+							<ZapButton {ndk} event={sampleEvent} />
 						{:else}
 							<div class="text-sm text-yellow-400">⚡ Zap</div>
 						{/if}

@@ -319,7 +319,7 @@
         {
           name: 'EmbeddedEvent',
           description: 'Main orchestrator component that fetches events and routes to kind-specific handlers.',
-          importPath: "import { EmbeddedEvent } from '$lib/registry/components/event/content'",
+          importPath: "import { EmbeddedEvent } from '$lib/registry/ui'",
           props: [
             {
               name: 'ndk',
@@ -349,7 +349,7 @@
         {
           name: 'Kind Handlers',
           description: 'Individual components for each supported kind. Typically not used directly - the EmbeddedEvent orchestrator selects the appropriate handler.',
-          importPath: "import { ArticleEmbedded, NoteEmbedded, HighlightEmbedded, GenericEmbedded } from '$lib/registry/components/event/content'",
+          importPath: "import { ArticleEmbedded } from '$lib/registry/components/article-embedded'; import { NoteEmbedded } from '$lib/registry/components/note-embedded'; import { HighlightEmbedded } from '$lib/registry/components/highlight-embedded'",
           props: [
             {
               name: 'ndk',

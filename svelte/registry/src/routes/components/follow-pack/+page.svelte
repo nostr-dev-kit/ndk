@@ -2,10 +2,10 @@
 	import { getContext } from 'svelte';
 	import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import FollowPackPortrait from '$lib/registry/blocks/follow-pack-portrait.svelte';
-	import FollowPackHero from '$lib/registry/blocks/follow-pack-hero.svelte';
-	import FollowPackCompact from '$lib/registry/blocks/follow-pack-compact.svelte';
-	import FollowPackListItem from '$lib/registry/blocks/follow-pack-list-item.svelte';
+	import FollowPackPortrait from '$lib/registry/components/follow-pack/follow-pack-portrait.svelte';
+	import FollowPackHero from '$lib/registry/components/follow-pack/follow-pack-hero.svelte';
+	import FollowPackCompact from '$lib/registry/components/follow-pack/follow-pack-compact.svelte';
+	import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';

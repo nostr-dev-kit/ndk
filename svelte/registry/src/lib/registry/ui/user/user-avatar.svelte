@@ -29,16 +29,14 @@
     throw new Error('User.Avatar must be used within User.Root');
   }
 
-  const { ndkUser, profile } = context;
-
-  const imageUrl = $derived(profile?.picture || fallback);
+  const imageUrl = $derived(context.profile?.picture || fallback);
   const displayName = $derived(
-    alt || profile?.displayName || profile?.name || 'Anon'
+    alt || context.profile?.displayName || context.profile?.name || 'Anon'
   );
 
   const avatarGradient = $derived(
-    ndkUser?.pubkey
-      ? deterministicPubkeyGradient(ndkUser.pubkey)
+    context.ndkUser?.pubkey
+      ? deterministicPubkeyGradient(context.ndkUser.pubkey)
       : 'var(--color-primary)'
   );
 </script>

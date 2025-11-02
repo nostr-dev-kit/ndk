@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EventCard } from '$lib/registry/components/event-card';
-  import { EventContent } from '$lib/registry/components/event/content';
+  import { EventContent } from '$lib/registry/ui';
   import { EditProps } from '$lib/site-components/edit-props';
   import Demo from '$site-components/Demo.svelte';
 
@@ -13,7 +13,7 @@
 
   const eventCardExample = `<script>
   import { EventCard } from '$lib/registry/components/event-card';
-  import { EventContent } from '$lib/registry/components/event/content';
+  import { EventContent } from '$lib/registry/ui';
 
   let event; // Your NDKEvent
 <\/script>

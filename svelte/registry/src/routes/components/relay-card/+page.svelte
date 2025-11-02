@@ -3,9 +3,9 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '$lib/registry/ui/relay';
-	import RelayCardPortrait from '$lib/registry/components/relay-card-portrait.svelte';
-	import RelayCardCompact from '$lib/registry/components/relay-card-compact.svelte';
-	import RelayCardList from '$lib/registry/components/relay-card-list.svelte';
+	import RelayCardPortrait from '$lib/registry/components/relay-card/relay-card-portrait.svelte';
+	import RelayCardCompact from '$lib/registry/components/relay-card/relay-card-compact.svelte';
+	import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 

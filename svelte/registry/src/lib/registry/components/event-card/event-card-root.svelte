@@ -50,11 +50,11 @@
   const ndk = getNDKFromContext(providedNdk);
 
   // Create a reactive context object that updates when props change
-  const context: EventCardContext = {
+  const context: EventCardContext = $state.raw({
     get ndk() { return ndk; },
     get event() { return event; },
     get interactive() { return interactive; }
-  };
+  });
 
   setContext(EVENT_CARD_CONTEXT_KEY, context);
 

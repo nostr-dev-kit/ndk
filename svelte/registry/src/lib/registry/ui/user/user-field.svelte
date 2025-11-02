@@ -31,9 +31,7 @@
     throw new Error('User.Field must be used within User.Root');
   }
 
-  const { profile } = context;
-
-  const fieldValue = $derived(profile?.[field]);
+  const fieldValue = $derived(context.profile?.[field]);
 </script>
 
 {#if field === 'about'}

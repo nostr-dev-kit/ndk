@@ -39,12 +39,12 @@
   const ndk = getNDKFromContext(providedNdk);
 
   // Create reactive context with getters
-  const context = {
+  const context = $state.raw({
     get ndk() { return ndk; },
     get voiceMessage() { return voiceMessage; },
     get interactive() { return interactive; },
     get onclick() { return onclick; }
-  };
+  });
 
   setContext(VOICE_MESSAGE_CONTEXT_KEY, context);
 </script>

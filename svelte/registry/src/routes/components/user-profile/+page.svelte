@@ -6,8 +6,8 @@
 	import Demo from '$site-components/Demo.svelte';
 
 	// Import blocks
-	import UserProfileHero from '$lib/registry/blocks/user-profile-hero.svelte';
-	import UserCardClassic from '$lib/registry/blocks/user-card-classic.svelte';
+	import UserProfileHero from '$lib/registry/components/user-profile/user-profile-hero.svelte';
+	import UserCardClassic from '$lib/registry/components/user-card/user-card-classic.svelte';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
 	import ClassicCodeRaw from './examples/classic-code.svelte?raw';
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import RelaySelectorInline from '$lib/registry/blocks/relay-selector-inline.svelte';
+	import RelaySelectorInline from '$lib/registry/components/relay-selector/relay-selector.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 

@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind, NDKArticle } from '@nostr-dev-kit/ndk';
-  import { EventContent } from '$lib/registry/components/event/content';
+  import { EventContent } from '$lib/registry/ui';
   import { ArticleContent } from '$lib/registry/components/article-content';
   import { ImageContent } from '$lib/registry/components/image-content';
   import Demo from '$site-components/Demo.svelte';
@@ -33,7 +33,7 @@
   });
 
   const exampleNoteCode = `<script>
-  import { EventContent } from '$lib/registry/components/event/content';
+  import { EventContent } from '$lib/registry/ui';
 
   let event; // Your NDKEvent
 <\/script>

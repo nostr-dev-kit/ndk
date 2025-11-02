@@ -70,14 +70,6 @@
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/article-card/article-card-author.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/article-card/article-card-date.svelte",
-          "type": "registry:component"
-        },
-        {
           "path": "registry/ndk/article-card/article-card-meta.svelte",
           "type": "registry:component"
         },

@@ -35,8 +35,6 @@ import Root from './article-card-root.svelte';
 import Image from './article-card-image.svelte';
 import Title from './article-card-title.svelte';
 import Summary from './article-card-summary.svelte';
-import Author from './article-card-author.svelte';
-import Date from './article-card-date.svelte';
 import Meta from './article-card-meta.svelte';
 import ReadingTime from './article-card-reading-time.svelte';
 
@@ -46,8 +44,6 @@ export const ArticleCard = {
   Image,
   Title,
   Summary,
-  Author,
-  Date,
   Meta,
   ReadingTime,
 };

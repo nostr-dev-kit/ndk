@@ -15,7 +15,7 @@
  *     <div class="p-4">
  *       <ArticleCard.Title />
  *       <ArticleCard.Summary maxLength={200} />
- *       <ArticleCard.Meta />
+ *       <ArticleCard.ReadingTime />
  *     </div>
  *   </div>
  * </ArticleCard.Root>
@@ -35,7 +35,6 @@ import Root from './article-card-root.svelte';
 import Image from './article-card-image.svelte';
 import Title from './article-card-title.svelte';
 import Summary from './article-card-summary.svelte';
-import Meta from './article-card-meta.svelte';
 import ReadingTime from './article-card-reading-time.svelte';
 
 // Export as namespace for dot notation
@@ -44,7 +43,6 @@ export const ArticleCard = {
   Image,
   Title,
   Summary,
-  Meta,
   ReadingTime,
 };
 

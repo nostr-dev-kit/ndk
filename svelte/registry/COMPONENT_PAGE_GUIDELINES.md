@@ -387,7 +387,7 @@ Example for `<FollowButton>`:
 			<ArticleCard.Summary class="text-xs mb-3" maxLength={100} lines={3} />
 
 			<div class="mt-auto pt-2 border-t">
-				<ArticleCard.Meta class="text-xs" />
+				<ArticleCard.ReadingTime class="text-xs" />
 			</div>
 		</div>
 	</button>

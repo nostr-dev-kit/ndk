@@ -4,7 +4,7 @@
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '../follow-pack';
 	import AvatarGroup from '../avatar-group/avatar-group.svelte';
-	import { UserProfile } from '../user-profile';
+	import { User } from '../../ui/user';
 	import { getNDKFromContext } from '../ndk-context.svelte';
 
 	interface Props {

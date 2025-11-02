@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   let { ndk, pubkey, size }: { ndk: NDKSvelte; pubkey: string; size: number } = $props();
 </script>
 
 <div class="flex items-center gap-4">
-  <UserProfile.Root {ndk} {pubkey}>
-    <UserProfile.Avatar {size} />
-  </UserProfile.Root>
+  <User.Root {ndk} {pubkey}>
+    <User.Avatar {size} />
+  </User.Root>
   <span class="text-sm text-muted-foreground">{size}px</span>
 </div>

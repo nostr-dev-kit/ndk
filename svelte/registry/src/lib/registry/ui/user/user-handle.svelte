@@ -1,19 +1,6 @@
-<!-- @ndk-version: user-profile@0.15.0 -->
-<!--
-  @component UserProfile.Handle
-  Displays user's handle (username with @), reads from UserProfile context.
-
-  @example
-  ```svelte
-  <UserProfile.Root {ndk} {pubkey}>
-    <UserProfile.Handle />
-    <UserProfile.Handle class="text-sm text-muted-foreground" />
-  </UserProfile.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
   import { cn } from '../../../utils.js';
 
   interface Props {
@@ -33,15 +20,14 @@
     truncate = true
   }: Props = $props();
 
-  const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  const context = getContext<UserContext>(USER_CONTEXT_KEY);
   if (!context) {
-    throw new Error('UserProfile.Handle must be used within UserProfile.Root');
+    throw new Error('User.Handle must be used within User.Root');
   }
 
   const handle = $derived.by(() => {
     if (context.profile?.name) return context.profile.name;
 
-    // Fallback to pubkey
     try {
       return context.ndkUser?.pubkey?.slice(0, 8) || 'unknown';
     } catch {

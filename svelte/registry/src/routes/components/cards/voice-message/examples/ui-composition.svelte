@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import { VoiceMessage } from '$lib/registry/ui/voice-message';
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
 
   interface Props {
     ndk: NDKSvelte;
@@ -37,10 +37,10 @@
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
   <div class="flex flex-col gap-4 p-4 bg-card border border-border rounded-xl max-w-md">
-    <UserProfile.Root {ndk} user={voiceMessage.author}>
-      <UserProfile.Avatar size={32} />
-      <UserProfile.Name />
-    </UserProfile.Root>
+    <User.Root {ndk} user={voiceMessage.author}>
+      <User.Avatar size={32} />
+      <User.Name />
+    </User.Root>
     <VoiceMessage.Waveform height={50} {progress} />
     <div class="flex items-center gap-3">
       <VoiceMessage.Player bind:audioRef />

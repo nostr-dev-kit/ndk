@@ -13,7 +13,7 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { UserProfile } from '../user-profile';
+	import { User } from '../../ui/user';
 	import { getNDKFromContext } from '../ndk-context.svelte.js';
 	import RepostButton from './repost-button.svelte';
 	import { ReactionButton } from './index.js';
@@ -52,15 +52,15 @@
 <div class={cn('instagram-card', className)}>
 	<!-- Header -->
 	<div class="instagram-header">
-		<UserProfile.Root {ndk} pubkey={image.pubkey}>
+		<User.Root {ndk} pubkey={image.pubkey}>
 			<div class="instagram-user-info">
-				<UserProfile.Avatar class="w-10 h-10" />
+				<User.Avatar class="w-10 h-10" />
 				<div class="flex-1">
-					<UserProfile.Name class="font-semibold text-sm" />
-					<UserProfile.RelativeTime event={image} class="text-xs text-muted-foreground" />
+					<User.Name class="font-semibold text-sm" />
+					<User.RelativeTime event={image} class="text-xs text-muted-foreground" />
 				</div>
 			</div>
-		</UserProfile.Root>
+		</User.Root>
 
 		{#if showDropdown}
 			<button class="instagram-menu-btn" aria-label="Options">
@@ -94,9 +94,9 @@
 	<!-- Caption -->
 	{#if caption}
 		<div class="instagram-caption">
-			<UserProfile.Root {ndk} pubkey={image.pubkey}>
-				<UserProfile.Name class="font-semibold text-sm inline" />
-			</UserProfile.Root>
+			<User.Root {ndk} pubkey={image.pubkey}>
+				<User.Name class="font-semibold text-sm inline" />
+			</User.Root>
 			<span class="text-sm ml-2">{caption}</span>
 		</div>
 	{/if}

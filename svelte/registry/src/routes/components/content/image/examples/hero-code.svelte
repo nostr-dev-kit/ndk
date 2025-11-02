@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { UserProfile } from '$lib/registry/components/user-profile';
+	import { User } from '$lib/registry/ui/user';
 	import FollowButton from '$lib/registry/components/blocks/follow-button.svelte';
 
 	interface Props {
@@ -34,15 +34,15 @@
 		{/if}
 
 		<div class="flex items-center justify-between gap-4">
-			<UserProfile.Root {ndk} pubkey={image.pubkey}>
+			<User.Root {ndk} pubkey={image.pubkey}>
 				<div class="flex items-center gap-3">
-					<UserProfile.Avatar class="w-12 h-12" />
+					<User.Avatar class="w-12 h-12" />
 					<div>
-						<UserProfile.Name class="font-semibold text-lg" />
-						<UserProfile.RelativeTime event={image} class="text-sm opacity-80" />
+						<User.Name class="font-semibold text-lg" />
+						<User.RelativeTime event={image} class="text-sm opacity-80" />
 					</div>
 				</div>
-			</UserProfile.Root>
+			</User.Root>
 
 			<FollowButton {ndk} target={image.pubkey} />
 		</div>

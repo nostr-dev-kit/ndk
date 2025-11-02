@@ -163,7 +163,7 @@
 
 			<div class="space-y-8">
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Root</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Root</h3>
 					<p class="text-muted-foreground mb-4">
 						Root component that provides user context to all child components. Fetches and manages user profile data.
 					</p>
@@ -182,7 +182,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Avatar</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Avatar</h3>
 					<p class="text-muted-foreground mb-4">
 						Displays user avatar image with configurable size.
 					</p>
@@ -198,7 +198,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Name</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Name</h3>
 					<p class="text-muted-foreground mb-4">
 						Displays user display name with fallback to username or truncated pubkey.
 					</p>
@@ -214,7 +214,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Handle</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Handle</h3>
 					<p class="text-muted-foreground mb-4">
 						Displays user handle (username) with @ prefix.
 					</p>
@@ -229,7 +229,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Nip05</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Nip05</h3>
 					<p class="text-muted-foreground mb-4">
 						Displays NIP-05 identifier with verification status.
 					</p>
@@ -244,7 +244,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Bio</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Bio</h3>
 					<p class="text-muted-foreground mb-4">
 						Displays user biography/about text.
 					</p>
@@ -258,7 +258,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Banner</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Banner</h3>
 					<p class="text-muted-foreground mb-4">
 						Displays user banner image with gradient fallback.
 					</p>
@@ -272,7 +272,7 @@
 				</div>
 
 				<div>
-					<h3 class="text-xl font-semibold mb-2">UserProfile.Field</h3>
+					<h3 class="text-xl font-semibold mb-2">User.Field</h3>
 					<p class="text-muted-foreground mb-4">
 						Generic component to display any profile field.
 					</p>

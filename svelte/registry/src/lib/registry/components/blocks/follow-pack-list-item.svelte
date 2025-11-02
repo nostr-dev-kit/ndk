@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '../follow-pack';
-	import { UserProfile } from '../user-profile';
+	import { User } from '../../ui/user';
 
 	interface Props {
 		ndk?: NDKSvelte;

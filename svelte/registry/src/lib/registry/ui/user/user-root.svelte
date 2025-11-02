@@ -1,16 +1,14 @@
-<!-- @ndk-version: user-profile@0.15.0 -->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
-  import { getNDKFromContext } from '../ndk-context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance (optional, falls back to context) */
-    ndk?: NDKSvelte;
+    /** NDK instance (required) */
+    ndk: NDKSvelte;
 
     /** User instance */
     user?: NDKUser;
@@ -32,7 +30,7 @@
   }
 
   let {
-    ndk: providedNdk,
+    ndk,
     user,
     pubkey,
     profile: propProfile,
@@ -40,8 +38,6 @@
     class: className = '',
     children
   }: Props = $props();
-
-  const ndk = getNDKFromContext(providedNdk);
 
   // Resolve NDKUser from either user prop or pubkey
   const ndkUser = $derived.by(() => {
@@ -89,10 +85,11 @@
     get user() { return user; },
     get ndkUser() { return ndkUser; },
     get profile() { return profile; },
+    get showHoverCard() { return false; },
     get onclick() { return onclick; }
   };
 
-  setContext(USER_PROFILE_CONTEXT_KEY, context);
+  setContext(USER_CONTEXT_KEY, context);
 </script>
 
 <div class="{className}">

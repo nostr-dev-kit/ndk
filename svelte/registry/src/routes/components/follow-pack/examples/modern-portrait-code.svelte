@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '$lib/registry/components/follow-pack';
-	import UserProfile from '$lib/registry/components/user-profile/user-profile-root.svelte';
+	import { User } from '$lib/registry/ui/user';
 
 	interface Props {
 		ndk: NDKSvelte;
@@ -54,10 +54,10 @@
 				class="flex items-center gap-3 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/20"
 			>
 				{#if followPack.pubkey}
-					<UserProfile {ndk} pubkey={followPack.pubkey}>
+					<User {ndk} pubkey={followPack.pubkey}>
 						<div class="flex items-center gap-2 min-w-0 flex-1">
 							<div class="flex-shrink-0 w-10 h-10 rounded-full bg-white/20 border border-white/30 overflow-hidden">
-								<UserProfile.Avatar
+								<User.Avatar
 									{ndk}
 									size={40}
 									class="w-full h-full"
@@ -65,14 +65,14 @@
 							</div>
 							<div class="min-w-0 flex-1">
 								<div class="text-xs font-semibold truncate">
-									<UserProfile.Name field="displayName" />
+									<User.Name field="displayName" />
 								</div>
 								<div class="text-xs text-white/70 truncate">
 									Pack creator
 								</div>
 							</div>
 						</div>
-					</UserProfile>
+					</User>
 				{/if}
 			</div>
 		</div>

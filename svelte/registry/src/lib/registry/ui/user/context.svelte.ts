@@ -1,11 +1,10 @@
-// @ndk-version: user-profile@0.15.0
 import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 /**
- * Context shared between UserProfile components
+ * Context shared between User components
  */
-export interface UserProfileContext {
+export interface UserContext {
     /** NDK instance */
     ndk: NDKSvelte;
 
@@ -25,4 +24,4 @@ export interface UserProfileContext {
     onclick?: (e: MouseEvent) => void;
 }
 
-export const USER_PROFILE_CONTEXT_KEY = Symbol('user-profile');
+export const USER_CONTEXT_KEY = Symbol('user');

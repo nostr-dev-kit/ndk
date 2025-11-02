@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
@@ -10,6 +10,6 @@
   let { ndk, pubkey }: Props = $props();
 </script>
 
-<UserProfile.Root {ndk} {pubkey}>
-  <UserProfile.Nip05 />
-</UserProfile.Root>
+<User.Root {ndk} {pubkey}>
+  <User.Nip05 />
+</User.Root>

@@ -13,7 +13,7 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { UserProfile } from '../user-profile';
+	import { User } from '../../ui/user';
 	import { FollowButton } from './index.js';
 	import { getNDKFromContext } from '../ndk-context.svelte.js';
 	import { cn } from '../../../utils.js';
@@ -70,15 +70,15 @@
 		{/if}
 
 		<div class="hero-author-bar">
-			<UserProfile.Root {ndk} pubkey={image.pubkey}>
+			<User.Root {ndk} pubkey={image.pubkey}>
 				<div class="hero-author">
-					<UserProfile.Avatar class="w-12 h-12" />
+					<User.Avatar class="w-12 h-12" />
 					<div>
-						<UserProfile.Name class="font-semibold text-lg" />
-						<UserProfile.RelativeTime event={image} class="text-sm opacity-80" />
+						<User.Name class="font-semibold text-lg" />
+						<User.RelativeTime event={image} class="text-sm opacity-80" />
 					</div>
 				</div>
-			</UserProfile.Root>
+			</User.Root>
 
 			{#if showFollow}
 				<FollowButton {ndk} target={image.pubkey} />

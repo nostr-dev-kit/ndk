@@ -17,7 +17,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
   import { EventCard, ReactionAction } from '../event-card/index.js';
-  import Avatar from '../user-profile/user-profile-avatar.svelte';
+  import Avatar from '../../ui/user/user-avatar.svelte';
   import RepostButton from './repost-button.svelte';
 
   interface Props {

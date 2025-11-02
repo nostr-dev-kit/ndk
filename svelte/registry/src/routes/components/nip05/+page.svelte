@@ -19,7 +19,7 @@
 <div class="component-page">
   <header>
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1>UserProfile.Nip05</h1>
+        <h1>User.Nip05</h1>
     </div>
     <p>Display and validate user NIP-05 identifiers with optional verification badges and clickable links.</p>
 
@@ -42,7 +42,7 @@
 
     <Demo
       title="Standalone Mode"
-      description="Use without UserProfile.Root context by passing ndk and user directly. Useful when building custom components outside the UserProfile system."
+      description="Use without User.Root context by passing ndk and user directly. Useful when building custom components outside the UserProfile system."
       code={Nip05StandaloneExampleRaw}
     >
       <Nip05StandaloneExample {ndk} pubkey={examplePubkey} />
@@ -56,7 +56,7 @@
       <li><strong>Verification States:</strong> Shows different indicators for verifying (⋯), verified (✓), or invalid (✗)</li>
       <li><strong>Smart Formatting:</strong> Always hides username for default identifiers (_@domain shows as just domain)</li>
       <li><strong>Simple API:</strong> Just two props - showNip05 and showVerified (both default to true)</li>
-      <li><strong>Dual Mode:</strong> Works in context mode (within UserProfile.Root) or standalone</li>
+      <li><strong>Dual Mode:</strong> Works in context mode (within User.Root) or standalone</li>
     </ul>
 
     <h2>Props</h2>

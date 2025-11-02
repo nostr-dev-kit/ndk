@@ -5,7 +5,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import { getNDKFromContext } from '../ndk-context.svelte.js';
-  import { UserProfile } from '../user-profile';
+  import { User } from '../../ui/user';
   import HighlightToolbar from './highlight-toolbar.svelte';
 
   interface Props {
@@ -309,9 +309,9 @@
       class="highlight-avatar"
       style="position: absolute; top: {top}px; right: {right};"
     >
-      <UserProfile.Root {ndk} {pubkey}>
-        <UserProfile.Avatar class="w-8 h-8 rounded-full ring-2 ring-background shadow-lg" />
-      </UserProfile.Root>
+      <User.Root {ndk} {pubkey}>
+        <User.Avatar class="w-8 h-8 rounded-full ring-2 ring-background shadow-lg" />
+      </User.Root>
     </div>
   {/each}
 </div>

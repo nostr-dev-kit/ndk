@@ -4,7 +4,7 @@
   import { createUserInput } from '@nostr-dev-kit/svelte';
   import { Combobox } from 'bits-ui';
   import { cn } from '$lib/utils.js';
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
 
   interface Props {
     ndk: NDKSvelte;
@@ -83,14 +83,14 @@
             'data-[highlighted]:bg-muted/50 transition-colors outline-none'
           )}
         >
-          <UserProfile.Root {ndk} pubkey={result.user.pubkey}>
+          <User.Root {ndk} pubkey={result.user.pubkey}>
             <div class="flex items-center gap-3 w-full">
-              <UserProfile.Avatar size={40} />
+              <User.Avatar size={40} />
               <div class="flex-1 min-w-0">
-                <UserProfile.Name field="displayName" size="sm" truncate={true} />
+                <User.Name field="displayName" size="sm" truncate={true} />
               </div>
             </div>
-          </UserProfile.Root>
+          </User.Root>
         </Combobox.Item>
       {/each}
     {:else if query.trim().length > 0 && !userInputState.loading}

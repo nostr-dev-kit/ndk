@@ -30,7 +30,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { UserProfile } from '../user-profile';
+  import { User } from '../../ui/user';
   import UserCardClassic from './user-card-classic.svelte';
   import { Popover } from 'bits-ui';
   import { cn } from '../../../utils.js';
@@ -68,9 +68,9 @@
         'inline-flex items-center gap-1.5 text-primary hover:underline cursor-pointer transition-all',
         className
       )}>
-        <UserProfile.Root {ndk} {pubkey}>
-          <UserProfile.Avatar size={20} class="inline-block" />
-        </UserProfile.Root>
+        <User.Root {ndk} {pubkey}>
+          <User.Avatar size={20} class="inline-block" />
+        </User.Root>
         <span>@{profile?.name || profile?.displayName || bech32.slice(0, 8)}</span>
       </span>
     </Popover.Trigger>

@@ -25,7 +25,7 @@
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createAvatarGroup } from '@nostr-dev-kit/svelte';
-  import { UserProfile } from '../user-profile/index.js';
+  import { User } from '../../ui/user';
   import { cn } from '../../../utils.js';
 
   interface Props {
@@ -106,7 +106,7 @@
           onclick={() => onAvatarClick?.(user)}
           class="avatar-group-button"
         >
-          <UserProfile.Avatar
+          <User.Avatar
             {ndk}
             {user}
             {size}
@@ -114,7 +114,7 @@
           />
         </button>
       {:else}
-        <UserProfile.Avatar
+        <User.Avatar
           {ndk}
           {user}
           {size}

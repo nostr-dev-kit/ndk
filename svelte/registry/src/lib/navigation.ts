@@ -135,7 +135,6 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'Card', path: '/components/user-card', icon: IdentificationIcon, title: 'User Card', description: 'Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts.' },
       { name: 'Input', path: '/components/input', icon: Search01Icon, title: 'Input', description: 'Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.' },
-      { name: 'Profile', path: '/components/user-profile', icon: UserIcon, title: 'UserProfile', description: 'Composable user profile display components with multiple layout variants.' },
       { name: 'Avatar Group', path: '/components/avatar-group', icon: UserGroupIcon, title: 'Avatar Group', description: 'Display a group of avatars.' },
     ]
   },

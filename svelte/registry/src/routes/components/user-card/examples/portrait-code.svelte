@@ -2,14 +2,14 @@
   const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
-<UserProfile.Root {ndk} {pubkey}>
+<User.Root {ndk} {pubkey}>
   <div class="flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl w-80 shrink-0">
-    <UserProfile.Avatar size={96} />
+    <User.Avatar size={96} />
     <div class="flex flex-col items-center gap-1 min-w-0">
-      <UserProfile.Name field="displayName" size="lg" />
-      <UserProfile.Field field="name" size="sm" class="text-muted-foreground" />
+      <User.Name field="displayName" size="lg" />
+      <User.Field field="name" size="sm" class="text-muted-foreground" />
     </div>
-    <UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
+    <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
     <div class="flex items-center gap-3 text-sm shrink-0">
       <div class="flex flex-col items-center">
         <span class="font-semibold text-foreground">234</span>
@@ -23,4 +23,4 @@
     </div>
     <FollowButtonPill {ndk} target={user} variant="solid" />
   </div>
-</UserProfile.Root>
+</User.Root>

@@ -57,7 +57,7 @@
 <VoiceMessage.Root {ndk} {voiceMessage}>
   <div class="voice-message-expanded {className}">
     <div class="header">
-      <User.Root {ndk} user={voiceMessage.author}>
+      <User.Root user={voiceMessage.author}>
         <User.Avatar size={40} />
         <User.Name />
       </User.Root>

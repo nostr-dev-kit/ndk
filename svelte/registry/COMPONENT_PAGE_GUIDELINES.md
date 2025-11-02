@@ -646,12 +646,12 @@ The Demo component serves dual purposes:
 
 Where `FollowButtonCodeRaw` contains simplified implementation:
 ```svelte
-<UserProfile.Root {ndk} {user}>
+<User.Root {ndk} {user}>
 	<button class="...">
-		<UserProfile.Avatar />
-		<UserProfile.Name />
+		<User.Avatar />
+		<User.Name />
 	</button>
-</UserProfile.Root>
+</User.Root>
 ```
 
 The Usage tab will automatically show:

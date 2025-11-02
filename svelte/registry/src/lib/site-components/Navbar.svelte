@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { ndk } from '$lib/ndk.svelte';
   import { themeManager } from '$lib/theme.svelte';
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui';
   import { sidebarOpen } from '$lib/stores/sidebar';
   import { mainNav } from '$lib/navigation';
 
@@ -90,7 +90,7 @@
             onclick={(e) => { e.stopPropagation(); showUserDropdown = !showUserDropdown; }}
             aria-label="User menu"
           >
-            <UserProfile.Avatar
+            <User.Avatar
               pubkey={ndk.$currentPubkey}
               size={32}
             />
@@ -99,7 +99,7 @@
           {#if showUserDropdown}
             <div class="user-dropdown" onclick={(e) => e.stopPropagation()}>
               <div class="user-info">
-                <UserProfile.AvatarName
+                <User.AvatarName
                   pubkey={ndk.$currentPubkey}
                   avatarSize={40}
                   meta="handle"

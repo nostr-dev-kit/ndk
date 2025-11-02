@@ -66,10 +66,10 @@
     aria-label={muteAction.isMuted ? 'Unmute user' : 'Mute user'}
   >
     {#if showTarget && typeof target !== 'string'}
-      <Avatar {ndk} user={target as NDKUser} size={20} />
+      <Avatar user={target as NDKUser} size={20} />
       <span class="text-sm inline-flex items-baseline gap-1">
         <span class="font-bold">{muteAction.isMuted ? 'Unmute' : 'Mute'}</span>
-        <Name {ndk} user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
+        <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
       </span>
     {:else}
       {#if showIcon}

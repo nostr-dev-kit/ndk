@@ -17,7 +17,7 @@
   <div class="thread flex flex-col w-full divide-y rounded-xl overflow-hidden">
     {#each thread.events as node}
       {#if node.event}
-        <EventCard.Root {ndk} event={node.event} threading={node.threading} class="py-0 !rounded-none hover:!bg-muted">
+        <EventCard.Root {ndk} event={node.event} class="py-0 !rounded-none hover:!bg-muted">
           <div class="flex w-full flex-row">
             <div class="w-full">
               <EventCard.Header variant="compact" class="pt-4" />

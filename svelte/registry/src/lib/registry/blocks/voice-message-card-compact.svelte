@@ -31,7 +31,7 @@
   <div class="voice-message-compact {className}">
     {#if showAuthor}
       <div class="author-section">
-        <User.Root {ndk} user={voiceMessage.author}>
+        <User.Root user={voiceMessage.author}>
           <User.Avatar size={32} />
           <User.Name />
         </User.Root>

@@ -365,20 +365,6 @@ import EventCardMenu from '$lib/registry/blocks/event-card-menu.svelte';
 						]
 					},
 					{
-						name: 'EventCard.ThreadLine',
-						description:
-							'Displays a vertical line connecting events in thread views. Automatically shown when threading metadata indicates.',
-						importPath: "import { EventCard } from '$lib/registry/components/event-card'",
-						props: [
-							{
-								name: 'class',
-								type: 'string',
-								description: 'Additional CSS classes',
-								required: false
-							}
-						]
-					},
-					{
 						name: 'ReactionAction',
 						description:
 							'Action button for reacting to events with emoji. Tracks reaction state and count.',

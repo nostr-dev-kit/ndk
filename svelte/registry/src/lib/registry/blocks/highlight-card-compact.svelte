@@ -16,7 +16,7 @@
   import { cn } from '../../utils.js';
   import { Highlight } from '../ui/highlight/index.js';
   import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../ui/highlight/context.svelte.js';
-  import { createTimeAgo } from '../../utils/time-ago.svelte.js';
+  import { createTimeAgo } from '../utils/time-ago.svelte.js';
 
   interface Props {
     /** NDK instance */

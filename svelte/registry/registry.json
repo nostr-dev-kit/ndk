@@ -656,7 +656,7 @@
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/highlight-card/index.ts",
+          "path": "registry/ndk/highlight/index.ts",
           "type": "registry:lib"
         }
       ],

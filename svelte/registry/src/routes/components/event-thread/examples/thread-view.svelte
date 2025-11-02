@@ -1,8 +1,7 @@
 <script lang="ts">
   import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte, ThreadingMetadata } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import type { ThreadingMetadata } from '$lib/registry/components/event-card';
 
   interface Props {
     ndk: NDKSvelte;
@@ -16,21 +15,41 @@
 </script>
 
 <!-- Parent -->
-<EventCard.Root {ndk} event={threadNote} threading={threadingMetadata}>
-  <EventCard.ThreadLine />
-  <EventCard.Header variant="compact" />
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>
+<div class="relative">
+  {#if threadingMetadata?.showLineToNext}
+    <div class="thread-line" style:left="20px" aria-hidden="true" />
+  {/if}
+  <EventCard.Root {ndk} event={threadNote}>
+    <EventCard.Header variant="compact" />
+    <EventCard.Content />
+    <EventCard.Actions>
+      <ReactionAction />
+    </EventCard.Actions>
+  </EventCard.Root>
+</div>
 
 <!-- Self-thread reply -->
-<EventCard.Root {ndk} event={selfThreadNote} threading={selfThreadingMetadata}>
-  <EventCard.ThreadLine />
-  <EventCard.Header variant="compact" />
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReactionAction emoji="❤️" />
-  </EventCard.Actions>
-</EventCard.Root>
+<div class="relative">
+  {#if selfThreadingMetadata?.showLineToNext}
+    <div class="thread-line" style:left="20px" aria-hidden="true" />
+  {/if}
+  <EventCard.Root {ndk} event={selfThreadNote}>
+    <EventCard.Header variant="compact" />
+    <EventCard.Content />
+    <EventCard.Actions>
+      <ReactionAction emoji="❤️" />
+    </EventCard.Actions>
+  </EventCard.Root>
+</div>
+
+<style>
+  .thread-line {
+    position: absolute;
+    top: 48px;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

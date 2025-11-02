@@ -15,7 +15,7 @@
 -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { type NDKSvelte, type ThreadingMetadata } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
   import { getNDKFromContext } from '../../ui/ndk-context.svelte.js';
@@ -28,9 +28,6 @@
 
     /** The event to display (any kind) */
     event: NDKEvent;
-
-    /** Threading metadata for UI rendering */
-    threading?: ThreadingMetadata;
 
     /** Whether clicking the card navigates to event page */
     interactive?: boolean;
@@ -45,7 +42,6 @@
   let {
     ndk: providedNdk,
     event,
-    threading,
     interactive = false,
     class: className = '',
     children
@@ -57,7 +53,6 @@
   const context: EventCardContext = {
     get ndk() { return ndk; },
     get event() { return event; },
-    get threading() { return threading; },
     get interactive() { return interactive; }
   };
 

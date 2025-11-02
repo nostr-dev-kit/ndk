@@ -8,7 +8,7 @@
 
   @example
   ```svelte
-  <UserProfile.Hero {ndk} {pubkey} />
+  <User.Hero {ndk} {pubkey} />
   ```
 -->
 <script lang="ts">

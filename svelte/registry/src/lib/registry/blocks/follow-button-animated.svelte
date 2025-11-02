@@ -100,9 +100,9 @@
                 </svg>
                 <span>Following #{target}</span>
               {:else}
-                <Avatar {ndk} user={target as NDKUser} size={16} />
+                <Avatar user={target as NDKUser} size={16} />
                 <span>Following</span>
-                <Name {ndk} user={target as NDKUser} size="text-sm" truncate={false} />
+                <Name user={target as NDKUser} size="text-sm" truncate={false} />
               {/if}
             {:else}
               Following
@@ -152,9 +152,9 @@
                 </svg>
                 <span>Follow #{target}</span>
               {:else}
-                <Avatar {ndk} user={target as NDKUser} size={16} />
+                <Avatar user={target as NDKUser} size={16} />
                 <span>Follow</span>
-                <Name {ndk} user={target as NDKUser} size="text-sm" truncate={false} />
+                <Name user={target as NDKUser} size="text-sm" truncate={false} />
               {/if}
             {:else}
               Follow

@@ -5,7 +5,7 @@
   import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
   import { Tooltip } from 'bits-ui';
   import { resolve } from '$app/paths';
-  import NipBadge from '$lib/registry/ui/nip-badge.svelte';
+  import NipBadge from '$lib/site-components/nip-badge.svelte';
 
   const isDocsRoute = $derived($page.url.pathname.startsWith('/docs'));
   const isComponentsRoute = $derived($page.url.pathname.startsWith('/components'));

@@ -13,7 +13,7 @@
 -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { type NDKSvelte, type ThreadingMetadata } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EventCard, ReactionAction } from '../components/event-card/index.js';
   import RepostButton from './repost-button.svelte';
   import { cn } from '../../utils.js';
@@ -24,9 +24,6 @@
 
     /** The event to display */
     event: NDKEvent;
-
-    /** Threading metadata for thread views */
-    threading?: ThreadingMetadata;
 
     /** Make card clickable to navigate */
     interactive?: boolean;
@@ -47,7 +44,6 @@
   let {
     ndk,
     event,
-    threading,
     interactive = false,
     showActions = true,
     showDropdown = true,
@@ -59,7 +55,6 @@
 <EventCard.Root
   {ndk}
   {event}
-  {threading}
   {interactive}
   class={cn(
     'p-4 rounded-lg border border-border bg-card',
@@ -67,10 +62,6 @@
     className
   )}
 >
-  {#if threading?.showLineToNext}
-    <EventCard.ThreadLine />
-  {/if}
-
   <div class="flex items-start justify-between gap-2">
     <EventCard.Header />
     {#if showDropdown}

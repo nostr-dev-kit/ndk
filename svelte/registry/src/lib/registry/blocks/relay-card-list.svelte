@@ -1,15 +1,4 @@
 <!-- @ndk-version: relay-card-list@0.1.0 -->
-<!--
-  @component RelayCard.List
-  List-style relay card preset (horizontal layout)
-
-  Ideal for relay lists and feeds. Compact horizontal design perfect for stacking.
-
-  @example
-  ```svelte
-  <RelayCard.List {ndk} relayUrl="wss://relay.damus.io" />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';

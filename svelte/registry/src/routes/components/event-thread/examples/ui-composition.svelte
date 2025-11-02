@@ -19,19 +19,23 @@
         {#key node.event.id}
           {@const isFocused = node.event.id === thread.focusedEventId}
 
-          <EventCard.Root {ndk} event={node.event} threading={node.threading}>
-            <div
-              class="relative border-b border-border transition-colors cursor-pointer {isFocused
-                ? 'bg-accent/10 border-l-4 border-primary'
-                : 'hover:bg-accent/5'}"
-              onclick={() => thread.focusOn(node.id)}
-              role="button"
-              tabindex="0"
-            >
-              {#if node.threading?.showLineToNext}
-                <EventCard.ThreadLine />
-              {/if}
+          <div
+            class="relative border-b border-border transition-colors cursor-pointer {isFocused
+              ? 'bg-accent/10 border-l-4 border-primary'
+              : 'hover:bg-accent/5'}"
+            onclick={() => thread.focusOn(node.id)}
+            role="button"
+            tabindex="0"
+          >
+            {#if node.threading?.showLineToNext}
+              <div
+                class="thread-line"
+                style:left="20px"
+                aria-hidden="true"
+              />
+            {/if}
 
+            <EventCard.Root {ndk} event={node.event}>
               <div class="p-4">
                 <EventCard.Header variant={isFocused ? 'default' : 'compact'} />
                 <EventCard.Content class={isFocused ? 'text-lg' : ''} />
@@ -43,8 +47,8 @@
                   </EventCard.Actions>
                 {/if}
               </div>
-            </div>
-          </EventCard.Root>
+            </EventCard.Root>
+          </div>
         {/key}
       {:else}
         <div class="border-b border-border p-4 bg-background text-muted-foreground text-sm">
@@ -109,3 +113,15 @@
     <div class="text-muted-foreground">Loading thread...</div>
   </div>
 {/if}
+
+<style>
+  .thread-line {
+    position: absolute;
+    top: 48px;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

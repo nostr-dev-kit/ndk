@@ -31,7 +31,7 @@
 				</div>
 
 				<div class="pt-4 border-t border-white/10">
-					<UserProfile.AvatarName
+					<User.AvatarName
 						{ndk}
 						user={article.author}
 						avatarSize={36}
@@ -40,7 +40,7 @@
 						{#snippet meta()}
 							<Article.ReadingTime class="text-xs text-white/70" />
 						{/snippet}
-					</UserProfile.AvatarName>
+					</User.AvatarName>
 				</div>
 			</div>
 		</div>

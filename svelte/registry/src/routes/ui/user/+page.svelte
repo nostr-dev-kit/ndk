@@ -188,10 +188,11 @@
 
   <section class="info">
     <h2>User.Banner</h2>
+    <p class="mb-4">Display user's banner image. Shows gradient background when no banner is available.</p>
     <ApiTable
       rows={[
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-        { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL' }
+        { name: 'height', type: 'string', default: "'12rem'", description: 'Banner height (CSS height value)' },
+        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />
   </section>

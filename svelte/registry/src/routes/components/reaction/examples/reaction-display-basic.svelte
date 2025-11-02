@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Reaction } from '$lib/registry/components/reaction';
+  import { Reaction } from '$lib/registry/ui/reaction';
 </script>
 
 <div class="flex flex-wrap items-center gap-6">

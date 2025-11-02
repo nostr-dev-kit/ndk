@@ -7,11 +7,9 @@
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import block components for preview
-  import {
-    FollowButton,
-    FollowButtonPill,
-    FollowButtonAnimated
-  } from '$lib/registry/components/blocks';
+  import FollowButton from '$lib/registry/components/blocks/follow-button.svelte';
+  import FollowButtonPill from '$lib/registry/components/blocks/follow-button-pill.svelte';
+  import FollowButtonAnimated from '$lib/registry/components/blocks/follow-button-animated.svelte';
 
   // Import code examples
   import MinimalCodeRaw from './examples/minimal-code.svelte?raw';

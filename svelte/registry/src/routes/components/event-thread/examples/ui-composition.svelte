@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
   import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
-  import { RepostButton } from '$lib/registry/components/blocks';
+  import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
 
   let { ndk, nevent }: { ndk: NDKSvelte; nevent: string } = $props();
 

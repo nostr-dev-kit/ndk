@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { ThreadViewTwitter } from '$lib/registry/components/blocks';
+  import ThreadViewTwitter from '$lib/registry/components/blocks/thread-view-twitter.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';

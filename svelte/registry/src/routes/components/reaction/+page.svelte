@@ -6,7 +6,9 @@
 	import Demo from '$site-components/Demo.svelte';
 
   // Import block components for preview
-  import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components/blocks';
+  import ReactionButton from '$lib/registry/components/blocks/reaction-button.svelte';
+  import ReactionSlack from '$lib/registry/components/blocks/reaction-slack.svelte';
+  import ReactionEmojiButton from '$lib/registry/components/blocks/reaction-emoji-button.svelte';
 
   // Import primitives for examples
   import { Reaction } from '$lib/registry/components/reaction';

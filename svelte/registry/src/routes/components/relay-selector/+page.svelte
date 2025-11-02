@@ -2,7 +2,8 @@
 	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { RelaySelectorPopover, RelaySelectorInline } from '$lib/registry/components/blocks';
+	import RelaySelectorPopover from '$lib/registry/components/blocks/relay-selector-popover.svelte';
+	import RelaySelectorInline from '$lib/registry/components/blocks/relay-selector-inline.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Block code examples

@@ -4,12 +4,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import { HighlightCard } from '$lib/registry/components/highlight-card';
-  import {
-    HighlightCardFeed,
-    HighlightCardElegant,
-    HighlightCardCompact,
-    HighlightCardGrid
-  } from '$lib/registry/components/blocks';
+  import HighlightCardFeed from '$lib/registry/components/blocks/highlight-card-feed.svelte';
+  import HighlightCardElegant from '$lib/registry/components/blocks/highlight-card-elegant.svelte';
+  import HighlightCardCompact from '$lib/registry/components/blocks/highlight-card-compact.svelte';
+  import HighlightCardGrid from '$lib/registry/components/blocks/highlight-card-grid.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentAPI from '$site-components/component-api.svelte';
 

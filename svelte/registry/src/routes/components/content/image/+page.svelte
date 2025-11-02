@@ -2,7 +2,9 @@
 	import { getContext } from 'svelte';
 	import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { ImageCard, ImageCardInstagram, ImageCardHero } from '$lib/registry/components/blocks';
+	import ImageCard from '$lib/registry/components/blocks/image-card.svelte';
+import ImageCardInstagram from '$lib/registry/components/blocks/image-card-instagram.svelte';
+import ImageCardHero from '$lib/registry/components/blocks/image-card-hero.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';

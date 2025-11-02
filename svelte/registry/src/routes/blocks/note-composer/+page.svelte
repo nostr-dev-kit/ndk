@@ -3,12 +3,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import Demo from '$site-components/Demo.svelte';
-  import {
-    NoteComposerInline,
-    NoteComposerModal,
-    NoteComposerCard,
-    NoteComposerMinimal
-  } from '$lib/registry/components/blocks';
+  import NoteComposerInline from '$lib/registry/components/blocks/note-composer-inline.svelte';
+  import NoteComposerModal from '$lib/registry/components/blocks/note-composer-modal.svelte';
+  import NoteComposerCard from '$lib/registry/components/blocks/note-composer-card.svelte';
+  import NoteComposerMinimal from '$lib/registry/components/blocks/note-composer-minimal.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

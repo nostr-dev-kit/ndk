@@ -39,6 +39,29 @@
       "updatedAt": "2025-10-31T07:15:56.000Z"
     },
     {
+      "name": "avatar-group",
+      "type": "registry:component",
+      "title": "Avatar Group",
+      "description": "Display multiple user avatars in a stacked group with smart ordering",
+      "registryDependencies": ["user-profile"],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/avatar-group/avatar-group.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/avatar-group/index.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "version": "0.1.0",
+      "updatedAt": "2025-11-02T07:15:56.000Z"
+    },
+    {
       "name": "article-card",
       "type": "registry:block",
       "title": "Article Card",
@@ -1348,10 +1371,6 @@
         },
         {
           "path": "registry/ndk/user-profile/user-profile-avatar.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/user-profile/avatar-group.svelte",
           "type": "registry:component"
         },
         {

@@ -4,7 +4,7 @@
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';
-  import { getNDKFromContext } from '../../components/ndk-context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
 
   interface Props {

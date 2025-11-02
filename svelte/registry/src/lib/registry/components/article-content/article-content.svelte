@@ -4,7 +4,7 @@
   import { NDKHighlight, NDKKind, type NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
-  import { getNDKFromContext } from '../ndk-context.svelte.js';
+  import { getNDKFromContext } from '../../ui/ndk-context.svelte.js';
   import { User } from '../../ui/user';
   import HighlightToolbar from './highlight-toolbar.svelte';
 

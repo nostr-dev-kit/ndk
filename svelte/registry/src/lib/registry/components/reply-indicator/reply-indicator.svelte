@@ -17,7 +17,7 @@
   import type { NDKEvent, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { getNDKFromContext } from '../ndk-context.svelte.js';
+  import { getNDKFromContext } from '../../ui/ndk-context.svelte.js';
 
   interface Props {
     /** NDK instance (optional, falls back to context) */

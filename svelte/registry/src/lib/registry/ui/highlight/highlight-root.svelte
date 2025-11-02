@@ -22,7 +22,7 @@
     HIGHLIGHT_CONTEXT_KEY,
     type HighlightContext,
   } from './context.svelte.js';
-  import { getNDKFromContext } from '../../components/ndk-context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
 
   interface Props {
     /** NDK instance (optional, falls back to context) */

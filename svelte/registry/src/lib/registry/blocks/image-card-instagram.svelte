@@ -14,7 +14,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../ui/user';
-	import { getNDKFromContext } from '../components/ndk-context.svelte.js';
+	import { getNDKFromContext } from '../ui/ndk-context.svelte.js';
 	import RepostButton from './repost-button.svelte';
 	import { ReactionButton } from './index.js';
 	// import { ZapButton } from '../components/zap/index.js'; // TODO: Add ZapButton when available

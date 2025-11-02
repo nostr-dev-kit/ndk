@@ -2,7 +2,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
-	import { FollowPack } from '../components/follow-pack';
+	import { FollowPack } from '../ui/follow-pack';
 	import AvatarGroup from '../components/avatar-group/avatar-group.svelte';
 	import { User } from '../ui/user';
 	import { getNDKFromContext } from '../components/ndk-context.svelte';

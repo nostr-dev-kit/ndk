@@ -16,9 +16,10 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReactionAction } from '../components/event-card/index.js';
+  import { EventCard } from '../ui/event-card/index.js';
+  import { ReactionAction } from '../ui/reaction/index.js';
   import { User } from '../ui/user/index.js';
-  import RepostButton from './repost-button.svelte';
+  import RepostButton from './actions/repost-button.svelte';
 
   interface Props {
     /** NDK instance */

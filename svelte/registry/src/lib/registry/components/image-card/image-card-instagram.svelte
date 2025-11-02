@@ -15,8 +15,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../../ui/user';
 	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
-	import RepostButton from './repost-button.svelte';
-	import { ReactionButton } from './index.js';
+	import RepostButton from '../actions/repost-button.svelte';
+	import { ReactionButton } from '../actions/index.js';
 	// import { ZapButton } from '../../components/zap/index.js'; // TODO: Add ZapButton when available
 	import { cn } from '../../utils/index.js';
 
@@ -55,10 +55,7 @@
 		<User.Root {ndk} pubkey={image.pubkey}>
 			<div class="instagram-user-info">
 				<User.Avatar class="w-10 h-10" />
-				<div class="flex-1">
-					<User.Name class="font-semibold text-sm" />
-					<User.RelativeTime event={image} class="text-xs text-muted-foreground" />
-				</div>
+				<User.Name class="font-semibold text-sm" />
 			</div>
 		</User.Root>
 

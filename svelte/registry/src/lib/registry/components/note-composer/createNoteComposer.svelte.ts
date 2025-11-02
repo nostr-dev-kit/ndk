@@ -1,6 +1,6 @@
 import { NDKEvent, type NDKEventId, type NDKUser } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import type { MediaUploadResult } from '../media-upload/createMediaUpload.svelte';
+import type { MediaUploadResult } from '../../ui/media-upload/createMediaUpload.svelte';
 
 export interface NoteComposerState {
 	content: string;

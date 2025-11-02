@@ -14,7 +14,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';
   import { User } from '../../ui/user';
-  import FollowButton from './follow-button.svelte';
+  import FollowButton from '../actions/follow-button.svelte';
 
   interface Props {
     /** NDK instance */

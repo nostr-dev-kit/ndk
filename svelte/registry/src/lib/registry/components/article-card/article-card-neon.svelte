@@ -18,7 +18,7 @@
   import Title from '../../ui/article/article-title.svelte';
   import Summary from '../../ui/article/article-summary.svelte';
   import ReadingTime from '../../ui/article/article-reading-time.svelte';
-  import UserAvatarName from '../../components/user-avatar-name.svelte';
+  import UserAvatarName from '../../components/user-avatar-name/user-avatar-name.svelte';
   import { cn } from '../../utils/index.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/context.svelte.js';

@@ -14,7 +14,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../../ui/user';
-	import { FollowButton } from './index.js';
+	import { FollowButton } from '../actions/index.js';
 	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import { cn } from '../../utils/index.js';
 
@@ -73,10 +73,7 @@
 			<User.Root {ndk} pubkey={image.pubkey}>
 				<div class="hero-author">
 					<User.Avatar class="w-12 h-12" />
-					<div>
-						<User.Name class="font-semibold text-lg" />
-						<User.RelativeTime event={image} class="text-sm opacity-80" />
-					</div>
+					<User.Name class="font-semibold text-lg" />
 				</div>
 			</User.Root>
 

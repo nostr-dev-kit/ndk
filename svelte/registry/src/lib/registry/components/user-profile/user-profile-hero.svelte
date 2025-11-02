@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
-  import FollowButtonPill from './follow-button-pill.svelte';
+  import FollowButtonPill from '../actions/follow-button-pill.svelte';
 
   interface Props {
     /** NDK instance */

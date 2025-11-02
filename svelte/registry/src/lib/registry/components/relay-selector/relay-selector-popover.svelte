@@ -198,7 +198,8 @@
 
 						{#if showAddRelay}
 							<div class="border-t pt-4">
-								<Relay.Selector.AddForm showAsButton={true} class="w-full" />
+								<!-- TODO: Add relay form component -->
+								<!-- <Relay.Selector.AddForm showAsButton={true} class="w-full" /> -->
 							</div>
 						{/if}
 					</div>

@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { VoiceMessageCard } from '../voice-message-card/index.js';
+  import { VoiceMessage } from '../../ui/voice-message/index.js';
   import { UserProfile } from '../user-profile/index.js';
 
   interface Props {
@@ -54,27 +54,27 @@
   const progress = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
 </script>
 
-<VoiceMessageCard.Root {ndk} {voiceMessage}>
+<VoiceMessage.Root {ndk} {voiceMessage}>
   <div class="voice-message-expanded {className}">
     <div class="header">
       <UserProfile.Root {ndk} user={voiceMessage.author}>
         <UserProfile.Avatar size={40} />
         <UserProfile.Name />
       </UserProfile.Root>
-      <VoiceMessageCard.Duration {currentTime} showCurrent={true} />
+      <VoiceMessage.Duration {currentTime} showCurrent={true} />
     </div>
 
     {#if showWaveform}
       <div class="waveform-section">
-        <VoiceMessageCard.Waveform height={waveformHeight} {progress} />
+        <VoiceMessage.Waveform height={waveformHeight} {progress} />
       </div>
     {/if}
 
     <div class="controls">
-      <VoiceMessageCard.Player bind:audioRef />
+      <VoiceMessage.Player bind:audioRef />
     </div>
   </div>
-</VoiceMessageCard.Root>
+</VoiceMessage.Root>
 
 <style>
   .voice-message-expanded {

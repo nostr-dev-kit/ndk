@@ -1,7 +1,7 @@
-<!-- @ndk-version: voice-message-card@0.1.0 -->
+<!-- @ndk-version: voice-message@0.1.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { VOICE_MESSAGE_CARD_CONTEXT_KEY, type VoiceMessageCardContext } from './context.svelte.js';
+  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
 
   interface Props {
     /** Additional CSS classes */
@@ -32,7 +32,7 @@
     progress = 0
   }: Props = $props();
 
-  const context = getContext<VoiceMessageCardContext>(VOICE_MESSAGE_CARD_CONTEXT_KEY);
+  const context = getContext<VoiceMessageContext>(VOICE_MESSAGE_CONTEXT_KEY);
 
   const waveform = $derived(context.voiceMessage.waveform || []);
   const hasWaveform = $derived(waveform.length > 0);
@@ -75,20 +75,14 @@
 
   .waveform-bar {
     flex: 1;
-    border-radius: 2px;
-    transition: background 0.2s;
   }
 
   .placeholder {
-    gap: 4px;
     justify-content: center;
   }
 
   .placeholder-bar {
-    width: 3px;
     height: 60%;
-    border-radius: 2px;
-    opacity: 0.3;
   }
 
   .placeholder-bar:nth-child(2) {

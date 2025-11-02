@@ -1,7 +1,7 @@
-<!-- @ndk-version: voice-message-card@0.1.0 -->
+<!-- @ndk-version: voice-message@0.1.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { VOICE_MESSAGE_CARD_CONTEXT_KEY, type VoiceMessageCardContext } from './context.svelte.js';
+  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
   import PlayIcon from '../../../icons/play.svelte';
   import PauseIcon from '../../../icons/pause.svelte';
 
@@ -22,7 +22,7 @@
     audioRef = $bindable()
   }: Props = $props();
 
-  const context = getContext<VoiceMessageCardContext>(VOICE_MESSAGE_CARD_CONTEXT_KEY);
+  const context = getContext<VoiceMessageContext>(VOICE_MESSAGE_CONTEXT_KEY);
 
   let audioElement: HTMLAudioElement;
   let isPlaying = $state(false);
@@ -102,44 +102,23 @@
   .voice-message-player {
     display: flex;
     align-items: center;
-    gap: 12px;
     width: 100%;
   }
 
   .play-button {
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--foreground);
     cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .play-button:hover {
-    background: var(--accent);
-    color: var(--accent-foreground);
   }
 
   .progress-container {
     flex: 1;
-    height: 6px;
-    background: var(--muted);
-    border-radius: 3px;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
   }
 
   .progress-bar {
     height: 100%;
-    background: var(--primary);
-    border-radius: 3px;
-    transition: width 0.1s linear;
   }
 </style>

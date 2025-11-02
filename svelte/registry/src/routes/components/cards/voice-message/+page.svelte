@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKVoiceMessage, NDKKind } from '@nostr-dev-kit/ndk';
-	import { VoiceMessageCard } from '$lib/registry/components/voice-message-card';
+	import { VoiceMessage } from '$lib/registry/ui/voice-message';
 	import VoiceMessageCardCompact from '$lib/registry/components/blocks/voice-message-card-compact.svelte';
 	import VoiceMessageCardExpanded from '$lib/registry/components/blocks/voice-message-card-expanded.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
@@ -61,7 +61,7 @@
 	<!-- Header -->
 	  <div class="mb-12">
 	    <div class="flex items-start justify-between gap-4 mb-4">
-	        <h1 class="text-4xl font-bold">VoiceMessageCard</h1>
+	        <h1 class="text-4xl font-bold">VoiceMessage</h1>
 	    </div>
 			<p class="text-lg text-muted-foreground mb-6">
 				Composable voice message card components for displaying NIP-A0 voice messages with audio
@@ -217,10 +217,10 @@
 	<ComponentAPI
 		components={[
 			{
-				name: 'VoiceMessageCard.Root',
+				name: 'VoiceMessage.Root',
 				description:
-					'Root context provider for voice message card. Wraps child components and provides shared context.',
-				importPath: "import { VoiceMessageCard } from '$lib/registry/components/voice-message-card'",
+					'Root context provider for voice message. Wraps child components and provides shared context.',
+				importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
 				props: [
 					{
 						name: 'ndk',
@@ -253,10 +253,10 @@
 				]
 			},
 			{
-				name: 'VoiceMessageCard.Player',
+				name: 'VoiceMessage.Player',
 				description:
 					'Audio player with play/pause button and progress bar. Handles audio playback controls.',
-				importPath: "import { VoiceMessageCard } from '$lib/registry/components/voice-message-card'",
+				importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
 				props: [
 					{
 						name: 'class',
@@ -278,10 +278,10 @@
 				]
 			},
 			{
-				name: 'VoiceMessageCard.Waveform',
+				name: 'VoiceMessage.Waveform',
 				description:
 					'Waveform visualization component. Displays amplitude data from imeta tag or placeholder.',
-				importPath: "import { VoiceMessageCard } from '$lib/registry/components/voice-message-card'",
+				importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
 				props: [
 					{
 						name: 'class',
@@ -322,9 +322,9 @@
 				]
 			},
 			{
-				name: 'VoiceMessageCard.Duration',
+				name: 'VoiceMessage.Duration',
 				description: 'Displays duration or current time of the voice message.',
-				importPath: "import { VoiceMessageCard } from '$lib/registry/components/voice-message-card'",
+				importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
 				props: [
 					{
 						name: 'class',

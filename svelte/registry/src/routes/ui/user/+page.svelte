@@ -211,10 +211,12 @@
 
   <section class="info">
     <h2>User.Field</h2>
-    <p class="mb-4">Display a custom field from user profile metadata.</p>
+    <p class="mb-4">Display any custom field from user profile metadata. Supports all NDKUserProfile fields.</p>
     <ApiTable
       rows={[
-        { name: 'field', type: 'string', default: 'required', description: 'Field name to display' },
+        { name: 'field', type: 'keyof NDKUserProfile', default: 'required', description: 'Profile field name to display (e.g., "website", "lud16", "about")' },
+        { name: 'size', type: 'string', default: "'text-sm'", description: 'Text size CSS classes' },
+        { name: 'maxLines', type: 'number', default: 'undefined', description: 'Maximum number of lines to show (uses line-clamp)' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

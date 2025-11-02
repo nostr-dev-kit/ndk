@@ -29,7 +29,7 @@
   let { ndk: ndkProp, event, variant = 'solid', showCount = true, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const repostState = createRepostAction(() => ({ event }), ndk);
 

@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relay Card - Live Playground Approach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            height: 56px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .component-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .edit-props {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .examples-dropdown {
+            position: relative;
+        }
+
+        .examples-button {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .examples-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 220px;
+            display: none;
+            z-index: 100;
+        }
+
+        .examples-menu.open {
+            display: block;
+        }
+
+        .example-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .example-item:last-child {
+            border-bottom: none;
+        }
+
+        .example-item:hover {
+            background: #f5f5f5;
+        }
+
+        .example-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .example-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .install-button {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .install-button:hover {
+            background: #f5f5f5;
+        }
+
+        /* Main Layout */
+        .main-container {
+            height: calc(100vh - 56px);
+            display: grid;
+            grid-template-columns: 55% 45%;
+        }
+
+        /* Code Editor Pane */
+        .editor-pane {
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            border-right: 1px solid #333;
+        }
+
+        .editor-tabs {
+            display: flex;
+            background: #2d2d2d;
+            border-bottom: 1px solid #333;
+            padding: 0 12px;
+            gap: 4px;
+        }
+
+        .editor-tab {
+            padding: 10px 16px;
+            font-size: 12px;
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            position: relative;
+        }
+
+        .editor-tab:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .editor-tab.active {
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .editor-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #0066cc;
+        }
+
+        .code-editor {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #d4d4d4;
+            overflow: auto;
+        }
+
+        .code-line {
+            display: flex;
+            gap: 16px;
+        }
+
+        .line-number {
+            color: #858585;
+            text-align: right;
+            width: 30px;
+            user-select: none;
+        }
+
+        .line-content {
+            flex: 1;
+        }
+
+        .keyword { color: #569cd6; }
+        .string { color: #ce9178; }
+        .component { color: #4ec9b0; }
+        .prop { color: #9cdcfe; }
+        .comment { color: #6a9955; }
+        .bracket { color: #ffd700; }
+
+        .autocomplete-hint {
+            position: absolute;
+            background: #2d2d2d;
+            border: 1px solid #454545;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 11px;
+            color: #d4d4d4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 300px;
+            display: none;
+        }
+
+        .autocomplete-hint.visible {
+            display: block;
+        }
+
+        .hint-title {
+            color: #4ec9b0;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .hint-type {
+            color: #569cd6;
+            font-size: 10px;
+            margin-bottom: 6px;
+        }
+
+        .hint-desc {
+            color: #999;
+            line-height: 1.4;
+        }
+
+        /* Preview Pane */
+        .preview-pane {
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .preview-toolbar {
+            height: 48px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 16px;
+        }
+
+        .toolbar-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .device-toggle {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .device-button {
+            padding: 4px 12px;
+            background: none;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .device-button.active {
+            background: #0066cc;
+            color: white;
+        }
+
+        .preview-viewport {
+            flex: 1;
+            overflow: auto;
+            padding: 40px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .preview-content {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .mock-relay-card {
+            text-align: center;
+        }
+
+        .mock-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            margin: 0 auto 16px;
+        }
+
+        .mock-name {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .mock-url {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .mock-metadata {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .mock-badge {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .mock-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .mock-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .mock-button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .mock-button.primary {
+            background: #0066cc;
+            color: white;
+            border: none;
+        }
+
+        .mock-button.secondary {
+            background: white;
+            color: #666;
+            border: 1px solid #d0d0d0;
+        }
+
+        /* Bottom Panel */
+        .bottom-panel {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 45%;
+            height: 240px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .bottom-panel.open {
+            transform: translateY(0);
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0 20px;
+            gap: 8px;
+        }
+
+        .panel-tab {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .panel-tab.active {
+            color: #0066cc;
+            border-bottom-color: #0066cc;
+        }
+
+        .panel-content {
+            padding: 20px;
+            height: calc(240px - 48px);
+            overflow: auto;
+        }
+
+        .props-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .prop-doc {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .prop-doc-name {
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 4px;
+        }
+
+        .prop-doc-type {
+            font-family: 'Monaco', monospace;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .prop-doc-desc {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .component-tree {
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+        }
+
+        .tree-node {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #e0e0e0;
+        }
+
+        .tree-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 10px;
+            margin-right: 4px;
+        }
+
+        .tree-component {
+            color: #0066cc;
+        }
+
+        .tree-primitive {
+            color: #666;
+        }
+
+        .toggle-panel {
+            position: absolute;
+            bottom: 240px;
+            right: 20px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 8px 16px;
+            border-radius: 6px 6px 0 0;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+
+        .toggle-panel:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <span class="component-title">Relay Card</span>
+            <button class="edit-props">Edit Props</button>
+
+            <div class="examples-dropdown">
+                <button class="examples-button" onclick="toggleExamples()">
+                    Examples ▼
+                </button>
+                <div class="examples-menu" id="examples-menu">
+                    <div class="example-item" onclick="loadExample('basic')">
+                        <div class="example-name">Basic Portrait</div>
+                        <div class="example-desc">Simple relay card with icon and name</div>
+                    </div>
+                    <div class="example-item" onclick="loadExample('full')">
+                        <div class="example-name">Full Featured</div>
+                        <div class="example-desc">All primitives with metadata and actions</div>
+                    </div>
+                    <div class="example-item" onclick="loadExample('minimal')">
+                        <div class="example-name">Minimal</div>
+                        <div class="example-desc">Just name and status</div>
+                    </div>
+                    <div class="example-item" onclick="loadExample('custom')">
+                        <div class="example-name">Custom Layout</div>
+                        <div class="example-desc">Build your own with primitives</div>
+                    </div>
+                    <div class="example-item" onclick="loadExample('list')">
+                        <div class="example-name">List View</div>
+                        <div class="example-desc">Horizontal compact layout</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-bar-right">
+            <button class="install-button">📋 Copy Code</button>
+            <button class="install-button">⬇️ Install Component</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Code Editor Pane -->
+        <div class="editor-pane">
+            <div class="editor-tabs">
+                <button class="editor-tab active">RelayCard.svelte</button>
+                <button class="editor-tab">+page.svelte</button>
+            </div>
+
+            <div class="code-editor">
+                <div class="code-line">
+                    <span class="line-number">1</span>
+                    <span class="line-content"><span class="keyword">&lt;script&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">2</span>
+                    <span class="line-content">  <span class="keyword">import</span> { <span class="component">Relay</span> } <span class="keyword">from</span> <span class="string">'@nostr-svelte/ui'</span>;</span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">3</span>
+                    <span class="line-content">  <span class="keyword">import</span> <span class="component">NDK</span> <span class="keyword">from</span> <span class="string">'@nostr-dev-kit/ndk'</span>;</span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">4</span>
+                    <span class="line-content"></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">5</span>
+                    <span class="line-content">  <span class="keyword">const</span> ndk = <span class="keyword">new</span> <span class="component">NDK</span>();</span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">6</span>
+                    <span class="line-content">  <span class="keyword">const</span> url = <span class="string">"wss://relay.damus.io"</span>;</span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">7</span>
+                    <span class="line-content"><span class="keyword">&lt;/script&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">8</span>
+                    <span class="line-content"></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">9</span>
+                    <span class="line-content"><span class="keyword">&lt;</span><span class="component">Relay.Root</span> <span class="bracket">{</span><span class="prop">ndk</span><span class="bracket">}</span> <span class="bracket">{</span><span class="prop">url</span><span class="bracket">}</span><span class="keyword">&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">10</span>
+                    <span class="line-content">  <span class="keyword">&lt;</span><span class="component">Relay.Icon</span> <span class="prop">size</span>=<span class="bracket">{</span><span class="string">80</span><span class="bracket">}</span> <span class="keyword">/&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">11</span>
+                    <span class="line-content">  <span class="keyword">&lt;</span><span class="component">Relay.Header</span> <span class="prop">showUrl</span>=<span class="bracket">{</span><span class="keyword">true</span><span class="bracket">}</span> <span class="keyword">/&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">12</span>
+                    <span class="line-content">  <span class="keyword">&lt;</span><span class="component">Relay.Metadata</span> <span class="keyword">/&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">13</span>
+                    <span class="line-content">  <span class="keyword">&lt;</span><span class="component">Relay.Description</span> <span class="prop">maxLength</span>=<span class="bracket">{</span><span class="string">200</span><span class="bracket">}</span> <span class="keyword">/&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">14</span>
+                    <span class="line-content">  <span class="keyword">&lt;</span><span class="component">Relay.Actions</span><span class="keyword">&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">15</span>
+                    <span class="line-content">    <span class="keyword">&lt;</span><span class="component">button</span><span class="keyword">&gt;</span>Connect<span class="keyword">&lt;/</span><span class="component">button</span><span class="keyword">&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">16</span>
+                    <span class="line-content">    <span class="keyword">&lt;</span><span class="component">button</span><span class="keyword">&gt;</span>Copy URL<span class="keyword">&lt;/</span><span class="component">button</span><span class="keyword">&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">17</span>
+                    <span class="line-content">  <span class="keyword">&lt;/</span><span class="component">Relay.Actions</span><span class="keyword">&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">18</span>
+                    <span class="line-content"><span class="keyword">&lt;/</span><span class="component">Relay.Root</span><span class="keyword">&gt;</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">19</span>
+                    <span class="line-content"></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">20</span>
+                    <span class="line-content"><span class="comment">// Hover over components to see props</span></span>
+                </div>
+                <div class="code-line">
+                    <span class="line-number">21</span>
+                    <span class="line-content"><span class="comment">// Click examples dropdown to try variations</span></span>
+                </div>
+
+                <!-- Autocomplete Hint (appears on hover) -->
+                <div class="autocomplete-hint" style="top: 260px; left: 160px;">
+                    <div class="hint-title">Relay.Icon</div>
+                    <div class="hint-type">Props: size, fallback, class</div>
+                    <div class="hint-desc">Displays relay icon or favicon with automatic fallback handling and loading states.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Pane -->
+        <div class="preview-pane">
+            <div class="preview-toolbar">
+                <span class="toolbar-label">Preview</span>
+                <div class="device-toggle">
+                    <button class="device-button active">Desktop</button>
+                    <button class="device-button">Mobile</button>
+                </div>
+            </div>
+
+            <div class="preview-viewport">
+                <div class="preview-content">
+                    <div class="mock-relay-card">
+                        <div class="mock-icon"></div>
+                        <div class="mock-name">relay.damus.io</div>
+                        <div class="mock-url">wss://relay.damus.io</div>
+                        <div class="mock-metadata">
+                            <span class="mock-badge">NIP-01</span>
+                            <span class="mock-badge">NIP-11</span>
+                            <span class="mock-badge">strfry</span>
+                        </div>
+                        <div class="mock-description">
+                            A public Nostr relay operated by Damus. Supports basic event types and provides reliable service to the Nostr network.
+                        </div>
+                        <div class="mock-actions">
+                            <button class="mock-button primary">Connect</button>
+                            <button class="mock-button secondary">Copy URL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Panel -->
+    <div class="bottom-panel" id="bottom-panel">
+        <div class="panel-tabs">
+            <button class="panel-tab active" onclick="switchPanelTab('props')">Props</button>
+            <button class="panel-tab" onclick="switchPanelTab('anatomy')">Anatomy</button>
+            <button class="panel-tab" onclick="switchPanelTab('install')">Install</button>
+        </div>
+
+        <div class="panel-content" id="panel-props">
+            <div class="props-grid">
+                <div class="prop-doc">
+                    <div class="prop-doc-name">ndk</div>
+                    <div class="prop-doc-type">NDK</div>
+                    <div class="prop-doc-desc">NDK instance for fetching relay metadata</div>
+                </div>
+                <div class="prop-doc">
+                    <div class="prop-doc-name">url</div>
+                    <div class="prop-doc-type">string</div>
+                    <div class="prop-doc-desc">WebSocket URL of the relay</div>
+                </div>
+                <div class="prop-doc">
+                    <div class="prop-doc-name">size</div>
+                    <div class="prop-doc-type">number</div>
+                    <div class="prop-doc-desc">Icon size in pixels (Relay.Icon)</div>
+                </div>
+                <div class="prop-doc">
+                    <div class="prop-doc-name">showUrl</div>
+                    <div class="prop-doc-type">boolean</div>
+                    <div class="prop-doc-desc">Display the relay URL (Relay.Header)</div>
+                </div>
+                <div class="prop-doc">
+                    <div class="prop-doc-name">maxLength</div>
+                    <div class="prop-doc-type">number</div>
+                    <div class="prop-doc-desc">Max character length (Relay.Description)</div>
+                </div>
+                <div class="prop-doc">
+                    <div class="prop-doc-name">expandable</div>
+                    <div class="prop-doc-type">boolean</div>
+                    <div class="prop-doc-desc">Allow expanding truncated text</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-content" id="panel-anatomy" style="display: none;">
+            <div class="component-tree">
+                <div class="tree-node">
+                    <span class="tree-toggle">▼</span>
+                    <span class="tree-component">Relay.Root</span>
+                </div>
+                <div class="tree-node" style="padding-left: 40px;">
+                    <span class="tree-toggle">▼</span>
+                    <span class="tree-primitive">Relay.Icon</span>
+                </div>
+                <div class="tree-node" style="padding-left: 40px;">
+                    <span class="tree-toggle">▼</span>
+                    <span class="tree-primitive">Relay.Header</span>
+                </div>
+                <div class="tree-node" style="padding-left: 40px;">
+                    <span class="tree-toggle">▼</span>
+                    <span class="tree-primitive">Relay.Metadata</span>
+                </div>
+                <div class="tree-node" style="padding-left: 40px;">
+                    <span class="tree-toggle">▼</span>
+                    <span class="tree-primitive">Relay.Description</span>
+                </div>
+                <div class="tree-node" style="padding-left: 40px;">
+                    <span class="tree-toggle">▼</span>
+                    <span class="tree-primitive">Relay.Actions</span>
+                </div>
+                <div class="tree-node" style="padding-left: 60px;">
+                    <span class="tree-primitive">&lt;button&gt;</span>
+                </div>
+                <div class="tree-node" style="padding-left: 60px;">
+                    <span class="tree-primitive">&lt;button&gt;</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-content" id="panel-install" style="display: none;">
+            <div style="background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; font-family: Monaco, monospace; font-size: 13px;">
+                npx shadcn-svelte@latest add relay-card
+            </div>
+            <p style="margin-top: 16px; font-size: 13px; color: #666;">
+                This will install all Relay primitives and the RelayCard component to your project.
+            </p>
+        </div>
+    </div>
+
+    <button class="toggle-panel" onclick="toggleBottomPanel()">
+        ⌃ Props & Docs
+    </button>
+
+    <script>
+        function toggleExamples() {
+            const menu = document.getElementById('examples-menu');
+            menu.classList.toggle('open');
+        }
+
+        function loadExample(type) {
+            console.log('Loading example:', type);
+            document.getElementById('examples-menu').classList.remove('open');
+        }
+
+        function toggleBottomPanel() {
+            document.getElementById('bottom-panel').classList.toggle('open');
+        }
+
+        function switchPanelTab(tab) {
+            document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('panel-props').style.display = 'none';
+            document.getElementById('panel-anatomy').style.display = 'none';
+            document.getElementById('panel-install').style.display = 'none';
+
+            document.getElementById('panel-' + tab).style.display = 'block';
+        }
+
+        // Close examples dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.examples-dropdown')) {
+                document.getElementById('examples-menu').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

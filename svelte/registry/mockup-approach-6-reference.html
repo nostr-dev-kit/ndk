@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relay Card - API Reference Approach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            color: #1a1a1a;
+            line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            background: #f8f8f8;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .search-box {
+            padding: 12px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .nav-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 20px;
+        }
+
+        .nav-section-title {
+            padding: 8px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #888;
+        }
+
+        .nav-item {
+            padding: 8px 20px;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f0f0f0;
+            color: #0066cc;
+        }
+
+        .nav-item.active {
+            background: white;
+            color: #0066cc;
+            font-weight: 600;
+            border-left-color: #0066cc;
+        }
+
+        .nav-item-icon {
+            font-size: 14px;
+        }
+
+        .nav-sub-item {
+            padding: 6px 20px 6px 44px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .nav-sub-item:hover {
+            background: #f0f0f0;
+            color: #0066cc;
+        }
+
+        .nav-sub-item.active {
+            background: white;
+            color: #0066cc;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 20px 40px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .breadcrumb-link {
+            color: #0066cc;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-button {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .header-button.primary {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        /* Documentation Styles */
+        .doc-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .doc-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .doc-description {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 32px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .doc-section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-anchor {
+            color: #0066cc;
+            text-decoration: none;
+            opacity: 0;
+            margin-left: 12px;
+            font-size: 20px;
+        }
+
+        .section-title:hover .section-anchor {
+            opacity: 1;
+        }
+
+        .prop-table {
+            width: 100%;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .prop-table th {
+            background: #f8f8f8;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #666;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .prop-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .prop-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prop-name {
+            font-family: 'Monaco', monospace;
+            font-weight: 600;
+            color: #0066cc;
+            font-size: 14px;
+        }
+
+        .prop-type {
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .prop-required {
+            color: #d73a49;
+            font-size: 11px;
+            font-weight: 700;
+            background: #ffeef0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+
+        .prop-default {
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .code-example {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .code-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .copy-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .copy-button:hover {
+            background: #444;
+        }
+
+        .code-content {
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #d4d4d4;
+        }
+
+        .keyword { color: #569cd6; }
+        .component { color: #4ec9b0; }
+        .prop { color: #9cdcfe; }
+        .string { color: #ce9178; }
+        .bracket { color: #ffd700; }
+        .comment { color: #6a9955; }
+
+        .info-box {
+            background: #f0f8ff;
+            border: 1px solid #b0d4ff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #fffbf0;
+            border: 1px solid #ffb700;
+        }
+
+        .method-signature {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-family: 'Monaco', monospace;
+            font-size: 14px;
+        }
+
+        .return-type {
+            color: #0066cc;
+        }
+
+        .param {
+            color: #d73a49;
+        }
+
+        .see-also {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 32px;
+        }
+
+        .see-also-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .see-also-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .see-also-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .see-also-link:hover {
+            text-decoration: underline;
+        }
+
+        .primitive-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .primitive-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .primitive-name {
+            font-family: 'Monaco', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0066cc;
+        }
+
+        .primitive-since {
+            font-size: 11px;
+            color: #999;
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .primitive-description {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .quick-nav {
+            background: #f8f8f8;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 32px;
+        }
+
+        .quick-nav-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #666;
+        }
+
+        .quick-nav-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .quick-nav-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .quick-nav-link:hover {
+            background: #e6f2ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Relay Card</div>
+                <div class="sidebar-subtitle">API Reference</div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search...">
+            </div>
+
+            <div class="nav-tree">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-item active">
+                        <span class="nav-item-icon">📖</span>
+                        Introduction
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">🚀</span>
+                        Getting Started
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">💡</span>
+                        Examples
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Components</div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">📦</span>
+                        RelayCardPortrait
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">📦</span>
+                        RelayCardList
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">📦</span>
+                        RelayCardCompact
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Primitives</div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">⚙️</span>
+                        Relay.Root
+                    </div>
+                    <div class="nav-sub-item">Props</div>
+                    <div class="nav-sub-item">Context</div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">⚙️</span>
+                        Relay.Icon
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">⚙️</span>
+                        Relay.Header
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">⚙️</span>
+                        Relay.Metadata
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">⚙️</span>
+                        Relay.Description
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">⚙️</span>
+                        Relay.Actions
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Types</div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">📝</span>
+                        RelayMetadata
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">📝</span>
+                        RelayContext
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Utilities</div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">🔧</span>
+                        fetchRelayInfo
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-item-icon">🔧</span>
+                        validateRelayUrl
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <div class="breadcrumbs">
+                    <a href="#" class="breadcrumb-link">Relay Card</a>
+                    <span>/</span>
+                    <span>Introduction</span>
+                </div>
+                <div class="header-actions">
+                    <button class="header-button">Edit Props</button>
+                    <button class="header-button primary">Install</button>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <h1 class="doc-title">Relay Card</h1>
+                <p class="doc-subtitle">A versatile card component for displaying Nostr relay information</p>
+                <p class="doc-description">
+                    The Relay Card component provides multiple ready-made variants for displaying relay metadata, status, and actions. Built using composable headless primitives, it supports NIP-11 metadata fetching, connection status indicators, and interactive relay management.
+                </p>
+
+                <div class="quick-nav">
+                    <div class="quick-nav-title">On this page</div>
+                    <div class="quick-nav-list">
+                        <a href="#installation" class="quick-nav-link">Installation</a>
+                        <a href="#usage" class="quick-nav-link">Basic Usage</a>
+                        <a href="#primitives" class="quick-nav-link">Primitives</a>
+                        <a href="#api" class="quick-nav-link">API Reference</a>
+                        <a href="#examples" class="quick-nav-link">Examples</a>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="installation">
+                    <h2 class="section-title">
+                        Installation
+                        <a href="#installation" class="section-anchor">#</a>
+                    </h2>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-label">Terminal</span>
+                            <button class="copy-button">Copy</button>
+                        </div>
+                        <div class="code-content">
+npx shadcn-svelte@latest add relay-card
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-title">
+                            ℹ️ Note
+                        </div>
+                        <div class="info-box-content">
+                            This will install all Relay primitives and the RelayCard component to your project.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="usage">
+                    <h2 class="section-title">
+                        Basic Usage
+                        <a href="#usage" class="section-anchor">#</a>
+                    </h2>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-label">Example</span>
+                            <button class="copy-button">Copy</button>
+                        </div>
+                        <div class="code-content">
+<span class="keyword">&lt;script&gt;</span>
+  <span class="keyword">import</span> { <span class="component">Relay</span> } <span class="keyword">from</span> <span class="string">'@nostr-svelte/ui'</span>;
+  <span class="keyword">import</span> <span class="component">NDK</span> <span class="keyword">from</span> <span class="string">'@nostr-dev-kit/ndk'</span>;
+
+  <span class="keyword">const</span> ndk = <span class="keyword">new</span> <span class="component">NDK</span>();
+  <span class="keyword">const</span> url = <span class="string">"wss://relay.damus.io"</span>;
+<span class="keyword">&lt;/script&gt;</span>
+
+<span class="keyword">&lt;</span><span class="component">Relay.Root</span> <span class="bracket">{</span><span class="prop">ndk</span><span class="bracket">}</span> <span class="bracket">{</span><span class="prop">url</span><span class="bracket">}</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Icon</span> <span class="prop">size</span>=<span class="bracket">{</span><span class="string">80</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Header</span> <span class="prop">showUrl</span>=<span class="bracket">{</span><span class="keyword">true</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Metadata</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Description</span> <span class="keyword">/&gt;</span>
+<span class="keyword">&lt;/</span><span class="component">Relay.Root</span><span class="keyword">&gt;</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="primitives">
+                    <h2 class="section-title">
+                        Primitives
+                        <a href="#primitives" class="section-anchor">#</a>
+                    </h2>
+
+                    <div class="primitive-card">
+                        <div class="primitive-header">
+                            <div class="primitive-name">Relay.Root</div>
+                            <div class="primitive-since">Since v1.0.0</div>
+                        </div>
+                        <p class="primitive-description">
+                            Root container component that provides relay context and manages state for all child primitives. Must wrap all other Relay primitives.
+                        </p>
+
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Props</h3>
+                        <table class="prop-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="prop-name">ndk</span>
+                                        <span class="prop-required">required</span>
+                                    </td>
+                                    <td><span class="prop-type">NDK</span></td>
+                                    <td>-</td>
+                                    <td>NDK instance for fetching relay metadata</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="prop-name">url</span>
+                                        <span class="prop-required">required</span>
+                                    </td>
+                                    <td><span class="prop-type">string</span></td>
+                                    <td>-</td>
+                                    <td>WebSocket URL of the relay</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="prop-name">autoFetch</span></td>
+                                    <td><span class="prop-type">boolean</span></td>
+                                    <td><span class="prop-default">true</span></td>
+                                    <td>Automatically fetch NIP-11 metadata on mount</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="prop-name">onLoad</span></td>
+                                    <td><span class="prop-type">(metadata: RelayMetadata) => void</span></td>
+                                    <td>-</td>
+                                    <td>Callback fired when metadata loads</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="primitive-card">
+                        <div class="primitive-header">
+                            <div class="primitive-name">Relay.Icon</div>
+                            <div class="primitive-since">Since v1.0.0</div>
+                        </div>
+                        <p class="primitive-description">
+                            Displays relay icon or favicon with automatic fallback handling and loading states.
+                        </p>
+
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Props</h3>
+                        <table class="prop-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="prop-name">size</span></td>
+                                    <td><span class="prop-type">number</span></td>
+                                    <td><span class="prop-default">64</span></td>
+                                    <td>Icon size in pixels</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="prop-name">fallback</span></td>
+                                    <td><span class="prop-type">string</span></td>
+                                    <td>-</td>
+                                    <td>Fallback icon URL if relay icon fails to load</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="prop-name">class</span></td>
+                                    <td><span class="prop-type">string</span></td>
+                                    <td>-</td>
+                                    <td>Additional CSS classes to apply</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="primitive-card">
+                        <div class="primitive-header">
+                            <div class="primitive-name">Relay.Header</div>
+                            <div class="primitive-since">Since v1.0.0</div>
+                        </div>
+                        <p class="primitive-description">
+                            Renders relay name and URL with optional link handling and metadata display.
+                        </p>
+
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Props</h3>
+                        <table class="prop-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="prop-name">showUrl</span></td>
+                                    <td><span class="prop-type">boolean</span></td>
+                                    <td><span class="prop-default">false</span></td>
+                                    <td>Display the relay WebSocket URL</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="prop-name">truncate</span></td>
+                                    <td><span class="prop-type">boolean</span></td>
+                                    <td><span class="prop-default">false</span></td>
+                                    <td>Truncate long URLs with ellipsis</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="prop-name">linkable</span></td>
+                                    <td><span class="prop-type">boolean</span></td>
+                                    <td><span class="prop-default">false</span></td>
+                                    <td>Make the URL a clickable link</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="doc-section" id="examples">
+                    <h2 class="section-title">
+                        Examples
+                        <a href="#examples" class="section-anchor">#</a>
+                    </h2>
+
+                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">List View</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-label">Compact list display</span>
+                            <button class="copy-button">Copy</button>
+                        </div>
+                        <div class="code-content">
+<span class="keyword">&lt;</span><span class="component">Relay.Root</span> <span class="bracket">{</span><span class="prop">ndk</span><span class="bracket">}</span> <span class="bracket">{</span><span class="prop">url</span><span class="bracket">}</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">div</span> <span class="prop">class</span>=<span class="string">"flex items-center gap-3"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;</span><span class="component">Relay.Icon</span> <span class="prop">size</span>=<span class="bracket">{</span><span class="string">40</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+    <span class="keyword">&lt;</span><span class="component">Relay.Header</span> <span class="prop">showUrl</span>=<span class="bracket">{</span><span class="keyword">true</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;/</span><span class="component">div</span><span class="keyword">&gt;</span>
+<span class="keyword">&lt;/</span><span class="component">Relay.Root</span><span class="keyword">&gt;</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="see-also">
+                    <div class="see-also-title">See Also</div>
+                    <div class="see-also-list">
+                        <a href="#" class="see-also-link">→ RelayCardPortrait Component</a>
+                        <a href="#" class="see-also-link">→ RelayMetadata Type Reference</a>
+                        <a href="#" class="see-also-link">→ fetchRelayInfo Utility</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

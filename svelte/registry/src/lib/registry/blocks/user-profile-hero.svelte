@@ -1,16 +1,4 @@
 <!-- @ndk-version: user-profile-hero@0.2.0 -->
-<!--
-  @component UserProfile.Hero
-  Hero-style user profile preset for profile page headers
-
-  Features banner image, overlapping avatar, name, handle, bio, and follow button.
-  Ideal for user profile pages and community member showcases.
-
-  @example
-  ```svelte
-  <User.Hero {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../ui/user';

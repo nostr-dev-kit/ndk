@@ -92,7 +92,7 @@
 {/if}
 
 <style>
-	@reference '../../../../app.css';
+	/* CSS styles for image content component */
 
 	.image-content {
 		display: flex;
@@ -122,7 +122,9 @@
 	}
 
 	.image-alt {
-		@apply text-sm text-muted-foreground italic;
+		font-size: 0.875rem;
+		color: var(--color-muted-foreground);
+		font-style: italic;
 		margin: 0;
 		padding: 0 0.25rem;
 	}
@@ -135,19 +137,31 @@
 	}
 
 	.meta-badge {
-		@apply inline-flex items-center gap-1 px-2 py-1 text-xs rounded;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.25rem 0.5rem;
+		font-size: 0.75rem;
+		border-radius: 0.25rem;
 		background-color: var(--color-muted);
 		color: var(--color-muted-foreground);
 		font-family: var(--font-mono);
 	}
 
 	.image-content-empty {
-		@apply flex flex-col items-center justify-center gap-3 p-12 rounded-lg;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		padding: 3rem;
+		border-radius: 0.5rem;
 		background-color: var(--color-muted);
 		color: var(--color-muted-foreground);
 	}
 
 	.image-content-empty p {
-		@apply m-0 text-sm;
+		margin: 0;
+		font-size: 0.875rem;
 	}
 </style>

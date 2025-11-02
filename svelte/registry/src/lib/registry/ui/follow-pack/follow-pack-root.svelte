@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { setContext } from 'svelte';
-	import { getNDKFromContext } from '../ndk-context.svelte.js';
+	import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
 	import { FOLLOW_PACK_CONTEXT_KEY } from './follow-pack.context.js';
 	import type { FollowPackContext } from './follow-pack.context.js';
 

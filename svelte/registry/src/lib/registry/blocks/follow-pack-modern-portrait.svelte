@@ -4,7 +4,7 @@
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '../ui/follow-pack';
 	import { User } from '../ui/user';
-	import { getNDKFromContext } from '../ui/ndk-context.svelte';
+	import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
 
 	interface Props {
 		ndk?: NDKSvelte;

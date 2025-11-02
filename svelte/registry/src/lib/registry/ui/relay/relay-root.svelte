@@ -15,7 +15,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createRelayInfo } from '@nostr-dev-kit/svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';
-  import { getNDKFromContext } from '../ndk-context.svelte.js';
+  import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
 
   interface Props {

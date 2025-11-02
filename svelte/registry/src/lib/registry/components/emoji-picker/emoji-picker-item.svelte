@@ -1,20 +1,36 @@
-<!-- @ndk-version: emoji-picker@0.2.0 -->
+<!-- @ndk-version: emoji-picker@0.3.0 -->
 <!--
   @component EmojiPicker.Item
-  Individual emoji button for picker grids. Uses Reaction.Display for consistent rendering.
+  Headless emoji button for picker grids.
 
-  @example
+  @example Basic usage:
   ```svelte
   <EmojiPicker.Item
     emoji={{ emoji: '❤️' }}
     onSelect={(emoji) => console.log(emoji)}
   />
   ```
+
+  @example Custom button:
+  ```svelte
+  <EmojiPicker.Item emoji={emojiData} {onSelect}>
+    {#snippet child({ props, emoji })}
+      <button {...props} class="custom-emoji-btn">
+        <img src={emoji.url} alt={emoji.shortcode} />
+      </button>
+    {/snippet}
+  </EmojiPicker.Item>
+  ```
 -->
 <script lang="ts">
   import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { Reaction } from '../reaction';
-  import { cn } from '../../../utils.js';
+  import type { Snippet } from 'svelte';
+  import { mergeProps } from '../../../utils.js';
+
+  interface EmojiSnippetProps {
+    emoji: EmojiData;
+  }
 
   interface Props {
     /** Emoji data to display */
@@ -25,23 +41,48 @@
 
     /** Additional CSS classes */
     class?: string;
+
+    /** Child snippet for custom element rendering */
+    child?: Snippet<[{ props: any } & EmojiSnippetProps]>;
+
+    /** Content snippet for custom content */
+    children?: Snippet<[EmojiSnippetProps]>;
   }
 
-  let { emoji, onSelect, class: className = '' }: Props = $props();
+  let {
+    emoji,
+    onSelect,
+    class: className = '',
+    child,
+    children,
+    ...restProps
+  }: Props = $props();
+
+  const mergedProps = $derived(mergeProps(restProps, {
+    type: 'button',
+    onclick: () => onSelect(emoji),
+    'aria-label': emoji.shortcode || emoji.emoji,
+    'data-emoji': emoji.emoji,
+    'data-shortcode': emoji.shortcode,
+    class: className
+  }));
+
+  const snippetProps = $derived({ emoji });
 </script>
 
-<button
-  class={cn(
-    'flex items-center justify-center w-full aspect-square border-0 bg-transparent cursor-pointer rounded-lg transition-all duration-150 p-2 hover:bg-accent hover:scale-110 active:scale-95',
-    className
-  )}
-  onclick={() => onSelect(emoji)}
-  aria-label={emoji.shortcode || emoji.emoji}
->
-  <Reaction.Display
-    emoji={emoji.emoji}
-    url={emoji.url}
-    shortcode={emoji.shortcode}
-    size={24}
-  />
-</button>
+{#if child}
+  {@render child({ props: mergedProps, ...snippetProps })}
+{:else}
+  <button {...mergedProps}>
+    {#if children}
+      {@render children(snippetProps)}
+    {:else}
+      <Reaction.Display
+        emoji={emoji.emoji}
+        url={emoji.url}
+        shortcode={emoji.shortcode}
+        size={24}
+      />
+    {/if}
+  </button>
+{/if}

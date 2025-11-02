@@ -96,10 +96,6 @@
         <code>Article.ReadingTime</code>
         <p>Estimates and displays reading time.</p>
       </div>
-      <div class="component-item">
-        <code>Article.Meta</code>
-        <p>Displays article metadata (publication date, etc.).</p>
-      </div>
     </div>
   </section>
 
@@ -158,16 +154,6 @@
       rows={[
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
         { name: 'wordsPerMinute', type: 'number', default: '200', description: 'Reading speed for calculation' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>Article.Meta</h2>
-    <p class="mb-4">Displays article metadata like publication date.</p>
-    <ApiTable
-      rows={[
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />
   </section>

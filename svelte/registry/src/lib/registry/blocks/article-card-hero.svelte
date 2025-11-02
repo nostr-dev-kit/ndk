@@ -20,7 +20,7 @@
   import { cn } from '../../utils.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../ui/article/context.svelte.js';
-  import TimeAgo from '../components/time-ago/time-ago.svelte';
+  import { createTimeAgo } from '../../utils/time-ago.svelte.js';
 
   interface Props {
     /** NDK instance */
@@ -59,6 +59,13 @@
       window.location.href = `/a/${naddr}`;
     }
   }
+
+  // Get article context to access publishedAt
+  const context = $derived(getContext<ArticleContext>(ARTICLE_CONTEXT_KEY));
+  const publishedAt = $derived(context?.article?.published_at);
+
+  // Create reactive time ago string
+  const timeAgo = $derived(publishedAt ? createTimeAgo(publishedAt) : null);
 </script>
 
 <Root {ndk} {article}>
@@ -135,8 +142,8 @@
             {authorProfile?.profile?.name || authorProfile?.profile?.displayName || 'Anonymous'}
           </span>
           <div class="flex items-center gap-2 text-sm">
-            {#if publishedAt}
-              <span>Published <TimeAgo timestamp={publishedAt} element="time" /></span>
+            {#if timeAgo}
+              <time>Published {timeAgo}</time>
               <span>•</span>
             {/if}
             <ReadingTime />

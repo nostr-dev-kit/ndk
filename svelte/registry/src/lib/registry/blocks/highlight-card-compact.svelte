@@ -16,7 +16,7 @@
   import { cn } from '../../utils.js';
   import { Highlight } from '../ui/highlight/index.js';
   import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../ui/highlight/context.svelte.js';
-  import TimeAgo from '../components/time-ago/time-ago.svelte';
+  import { createTimeAgo } from '../../utils/time-ago.svelte.js';
 
   interface Props {
     /** NDK instance */
@@ -55,6 +55,9 @@
       profileFetcher.profile?.name ||
       'Anonymous'
   );
+
+  // Create reactive time ago string
+  const timeAgo = createTimeAgo(event.created_at);
 </script>
 
 <Highlight.Root {ndk} {event} variant="compact" class={cn(className)}>
@@ -82,7 +85,7 @@
             {/if}
             {#if showTimestamp}
               <span>·</span>
-              <TimeAgo timestamp={event.created_at} />
+              <time>{timeAgo}</time>
             {/if}
             {#if showSource && ctx.state.source}
               <span>·</span>

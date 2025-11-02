@@ -1,14 +1,14 @@
-<!-- @ndk-version: highlight-card@0.7.0 -->
+<!-- @ndk-version: highlight@0.7.0 -->
 <!--
-  @component HighlightCard.Root
-  Root container for highlight card that provides context to child components.
+  @component Highlight.Root
+  Root container for highlight that provides context to child components.
 
   @example
   ```svelte
-  <HighlightCard.Root {ndk} {event} variant="feed">
-    <HighlightCard.Content />
-    <HighlightCard.Source />
-  </HighlightCard.Root>
+  <Highlight.Root {ndk} {event} variant="feed">
+    <Highlight.Content />
+    <Highlight.Source />
+  </Highlight.Root>
   ```
 -->
 <script lang="ts">
@@ -19,10 +19,10 @@
   import type { Snippet } from 'svelte';
   import { cn } from '../../../utils.js';
   import {
-    HIGHLIGHT_CARD_CONTEXT_KEY,
-    type HighlightCardContext,
+    HIGHLIGHT_CONTEXT_KEY,
+    type HighlightContext,
   } from './context.svelte.js';
-  import { getNDKFromContext } from '../ndk-context.svelte.js';
+  import { getNDKFromContext } from '../../components/ndk-context.svelte.js';
 
   interface Props {
     /** NDK instance (optional, falls back to context) */
@@ -55,7 +55,7 @@
   const state = createHighlight(() => ({ event }), ndk);
 
   // Create context with getters for reactivity
-  const context: HighlightCardContext = {
+  const context: HighlightContext = {
     get ndk() {
       return ndk;
     },
@@ -70,10 +70,10 @@
     },
   };
 
-  setContext(HIGHLIGHT_CARD_CONTEXT_KEY, context);
+  setContext(HIGHLIGHT_CONTEXT_KEY, context);
 </script>
 
-<div class={cn('highlight-card-root', className)}>
+<div class={className}>
   {#if children}
     {@render children()}
   {/if}

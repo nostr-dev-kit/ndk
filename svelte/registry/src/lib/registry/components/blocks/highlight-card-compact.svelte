@@ -14,9 +14,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../utils.js';
-  import Root from '../highlight-card/highlight-card-root.svelte';
-  import Content from '../highlight-card/highlight-card-content.svelte';
-  import { HIGHLIGHT_CARD_CONTEXT_KEY, type HighlightCardContext } from '../highlight-card/context.svelte.js';
+  import { Highlight } from '../../ui/highlight/index.js';
+  import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../../ui/highlight/context.svelte.js';
   import TimeAgo from '../time-ago/time-ago.svelte';
 
   interface Props {
@@ -58,7 +57,7 @@
   );
 </script>
 
-<Root {ndk} {event} variant="compact" class={cn(className)}>
+<Highlight.Root {ndk} {event} variant="compact" class={cn(className)}>
   <div
     class="block p-4 hover:bg-card/30 transition-colors rounded-lg group"
   >
@@ -71,12 +70,12 @@
       <div class="pl-4">
         <!-- Highlighted text -->
         <div class="mb-3 relative">
-          <Content fontSize="text-base" class="text-foreground leading-relaxed font-serif italic" />
+          <Highlight.Content class="text-foreground leading-relaxed font-serif italic text-base" />
         </div>
 
         <!-- Meta information -->
         {#snippet context()}
-          {@const ctx = getContext<HighlightCardContext>(HIGHLIGHT_CARD_CONTEXT_KEY)}
+          {@const ctx = getContext<HighlightContext>(HIGHLIGHT_CONTEXT_KEY)}
           <div class="flex items-center gap-2 text-xs text-muted-foreground">
             {#if showAuthor}
               <span>{authorName}</span>
@@ -126,4 +125,4 @@
       </div>
     </div>
   </div>
-</Root>
+</Highlight.Root>

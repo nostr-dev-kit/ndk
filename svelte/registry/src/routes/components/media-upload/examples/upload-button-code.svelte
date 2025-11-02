@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { MediaUploadResult } from '$lib/registry/components/media-upload';
-	import { MediaUpload } from '$lib/registry/components/media-upload';
+	import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
+	import { MediaUpload } from '$lib/registry/ui/media-upload';
 
 	interface Props {
 		ndk: NDKSvelte;

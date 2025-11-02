@@ -59,7 +59,7 @@
   });
 
   async function handleExtensionLogin() {
-    if (!ndk) return;
+    if (!ndk || !ndk.$sessions) return;
 
     try {
       isLoading = true;
@@ -74,7 +74,7 @@
   }
 
   async function handleCredentialLogin() {
-    if (!ndk || !credentialInput.trim()) return;
+    if (!ndk || !ndk.$sessions || !credentialInput.trim()) return;
 
     try {
       isLoading = true;

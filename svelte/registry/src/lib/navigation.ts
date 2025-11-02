@@ -127,7 +127,6 @@ export const componentCategories: NavCategory[] = [
   {
     title: 'Bits',
     items: [
-      { name: 'Time Ago', path: '/components/time-ago', icon: Calendar01Icon, title: 'Time Ago', description: 'Display time in a human-readable format.'},
       { name: 'Threads', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
     ]
   },

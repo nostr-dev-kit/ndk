@@ -61,9 +61,6 @@ export { default as NoteComposerMinimal } from './note-composer-minimal.svelte';
 export { default as NoteComposerModal } from './note-composer-modal.svelte';
 
 // Relay Components
-export { default as RelayCardCompact } from '../components/relay-card-compact.svelte';
-export { default as RelayCardList } from '../components/relay-card-list.svelte';
-export { default as RelayCardPortrait } from '../components/relay-card-portrait.svelte';
 export { default as RelayInputBlock } from './relay-input-block.svelte';
 export { default as RelaySelectorInline } from './relay-selector-inline.svelte';
 export { default as RelaySelectorPopover } from './relay-selector-popover.svelte';

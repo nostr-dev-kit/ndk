@@ -126,8 +126,11 @@
     <p class="mb-4">Context provider for all user primitives. Optional if using standalone mode.</p>
     <ApiTable
       rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-        { name: 'user', type: 'string | NDKUser', default: 'required', description: 'User pubkey, npub, or NDKUser instance' },
+        { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance' },
+        { name: 'user', type: 'NDKUser', default: 'undefined', description: 'NDKUser instance' },
+        { name: 'pubkey', type: 'string', default: 'undefined', description: 'User pubkey (alternative to user prop)' },
+        { name: 'profile', type: 'NDKUserProfile', default: 'undefined', description: 'Pre-loaded profile data (avoids fetch)' },
+        { name: 'onclick', type: '(e: MouseEvent) => void', default: 'undefined', description: 'Click handler for the root element' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
         { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
       ]}

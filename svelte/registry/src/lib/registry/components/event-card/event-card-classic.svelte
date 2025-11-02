@@ -15,7 +15,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EventCard, ReactionAction } from '../../components/event-card/index.js';
-  import RepostButton from './repost-button.svelte';
+  import RepostButton from '../actions/repost-button.svelte';
   import { cn } from '../../utils/index.js';
 
   interface Props {

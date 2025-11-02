@@ -1,27 +1,7 @@
-<!-- @ndk-version: user-profile@0.15.0 -->
-<!--
-  @component UserProfile.Nip05
-  Displays user's NIP-05 identifier with optional verification.
-  Must be used within UserProfile.Root context.
-
-  When showVerified is true, the component actually verifies the NIP-05 by fetching from the domain
-  and checking if the pubkey matches. Shows different states: verifying (⋯), verified (✓), or invalid (✗).
-
-  Default identifiers (_@domain) always show as just the domain.
-
-  @example
-  ```svelte
-  <UserProfile.Root {ndk} {pubkey}>
-    <UserProfile.Nip05 />
-    <UserProfile.Nip05 showVerified={false} />
-  </UserProfile.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
 
-  // NIP-05 regex from core
   const NIP05_REGEX = /^(?:([\w.+-]+)@)?([\w.-]+)$/;
 
   interface Props {
@@ -41,9 +21,9 @@
     class: className = ''
   }: Props = $props();
 
-  const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  const context = getContext<UserContext>(USER_CONTEXT_KEY);
   if (!context) {
-    throw new Error('UserProfile.Nip05 must be used within UserProfile.Root');
+    throw new Error('User.Nip05 must be used within User.Root');
   }
 
   const profile = $derived(context.profile);

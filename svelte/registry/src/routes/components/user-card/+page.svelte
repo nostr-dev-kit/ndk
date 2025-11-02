@@ -166,7 +166,7 @@
 			<ComponentAPI
 				components={[
 					{
-						name: 'UserProfile.Root',
+						name: 'User.Root',
 						description: 'Root component that provides user context to all child components',
 						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
@@ -185,7 +185,7 @@
 						]
 					},
 					{
-						name: 'UserProfile.Avatar',
+						name: 'User.Avatar',
 						description: 'Displays user avatar image',
 						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
@@ -204,7 +204,7 @@
 						]
 					},
 					{
-						name: 'UserProfile.Name',
+						name: 'User.Name',
 						description: 'Displays user display name or handle',
 						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [
@@ -217,7 +217,7 @@
 						]
 					},
 					{
-						name: 'UserProfile.Bio',
+						name: 'User.Bio',
 						description: 'Displays user biography text',
 						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
 						props: [

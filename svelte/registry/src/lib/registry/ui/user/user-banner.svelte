@@ -1,19 +1,6 @@
-<!-- @ndk-version: user-profile@0.15.0 -->
-<!--
-  @component UserProfile.Banner
-  Displays user banner image with gradient fallback.
-  Must be used within UserProfile.Root context.
-
-  @example
-  ```svelte
-  <UserProfile.Root {ndk} {user}>
-    <UserProfile.Banner />
-  </UserProfile.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
 
   interface Props {
@@ -29,9 +16,9 @@
     class: className = ''
   }: Props = $props();
 
-  const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  const context = getContext<UserContext>(USER_CONTEXT_KEY);
   if (!context) {
-    throw new Error('UserProfile.Banner must be used within UserProfile.Root');
+    throw new Error('User.Banner must be used within User.Root');
   }
 
   const profile = $derived(context.profile);
@@ -40,16 +27,14 @@
   let imageLoaded = $state(false);
   let imageError = $state(false);
 
-  // Always show gradient background
   const backgroundStyle = $derived.by(() => {
     const resolvedPubkey = ndkUser?.pubkey;
     if (resolvedPubkey) {
       return `background: ${deterministicPubkeyGradient(resolvedPubkey)}`;
     }
-    return 'background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 80%, var(--color-foreground) 20%) 100%)';
+    return 'background: var(--color-primary)';
   });
 
-  // Reset image state when banner URL changes
   $effect(() => {
     if (profile?.banner) {
       imageLoaded = false;
@@ -71,7 +56,7 @@
 </script>
 
 <div
-  class="user-profile-banner {className}"
+  class="relative w-full {className}"
   style="{backgroundStyle}; height: {height}"
 >
   {#if profile?.banner}
@@ -85,10 +70,3 @@
     />
   {/if}
 </div>
-
-<style>
-  .user-profile-banner {
-    position: relative;
-    width: 100%;
-  }
-</style>

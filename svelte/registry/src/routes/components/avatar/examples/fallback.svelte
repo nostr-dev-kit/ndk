@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   let { ndk }: { ndk: NDKSvelte } = $props();
@@ -17,9 +17,9 @@
 
   <div class="flex items-center gap-4">
     {#each fallbackPubkeys as pubkey}
-      <UserProfile.Root {ndk} {pubkey}>
-        <UserProfile.Avatar size={48} />
-      </UserProfile.Root>
+      <User.Root {ndk} {pubkey}>
+        <User.Avatar size={48} />
+      </User.Root>
     {/each}
   </div>
 </div>

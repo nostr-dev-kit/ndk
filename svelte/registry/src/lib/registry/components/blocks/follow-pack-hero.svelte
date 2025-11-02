@@ -4,7 +4,7 @@
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '../follow-pack';
 	import AvatarGroup from '../avatar-group/avatar-group.svelte';
-	import { UserProfile } from '../user-profile';
+	import { User } from '../../ui/user';
 	import { getNDKFromContext } from '../ndk-context.svelte';
 
 	interface Props {
@@ -33,8 +33,8 @@
 			<!-- Author at top, subtle -->
 			{#if followPack.author}
 				<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
-					<UserProfile.Avatar {ndk} user={followPack.author} size={20} class="ring-1 ring-white/30" />
-					<UserProfile.Name {ndk} user={followPack.author} />
+					<User.Avatar {ndk} user={followPack.author} size={20} class="ring-1 ring-white/30" />
+					<User.Name {ndk} user={followPack.author} />
 				</div>
 			{/if}
 

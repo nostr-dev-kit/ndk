@@ -18,15 +18,15 @@
 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import Avatar from '../user-profile/user-profile-avatar.svelte';
-  import Name from '../user-profile/user-profile-name.svelte';
-  import Field from '../user-profile/user-profile-field.svelte';
-  import Nip05 from '../user-profile/user-profile-nip05.svelte';
+  import Avatar from '../../ui/user/user-avatar.svelte';
+  import Name from '../../ui/user/user-name.svelte';
+  import Field from '../../ui/user/user-field.svelte';
+  import Nip05 from '../../ui/user/user-nip05.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../utils.js';
   import { createTimeAgo } from '../../../utils/time-ago.svelte.js';
-  import { UserProfile } from '../user-profile/index.js';
+  import { User } from '../../ui/user';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -115,7 +115,7 @@
       {:else if variant === 'compact'}
         <!-- Compact: name and handle inline -->
         <div class="flex items-center gap-2 min-w-0">
-          <UserProfile.Root user={context.event.author}>
+          <User.Root user={context.event.author}>
             <Name
               ndk={context.ndk}
               user={context.event.author}
@@ -123,7 +123,7 @@
               field="displayName"
               class="font-semibold text-[15px] text-foreground truncate"
             />
-          </UserProfile.Root>
+          </User.Root>
         </div>
       {:else}
         <!-- Minimal: just name -->

@@ -17,8 +17,8 @@
   import { createMuteAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../../../utils.js';
-  import Avatar from '../user-profile/user-profile-avatar.svelte';
-  import Name from '../user-profile/user-profile-name.svelte';
+  import Avatar from '../../ui/user/user-avatar.svelte';
+  import Name from '../../ui/user/user-name.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

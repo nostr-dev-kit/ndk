@@ -13,7 +13,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../utils.js';
-  import { UserProfile } from '../user-profile';
+  import { User } from '../../ui/user';
 
   interface Props {
     /** NDK instance */
@@ -59,19 +59,19 @@
   });
 </script>
 
-<UserProfile.Root {ndk} {pubkey}>
+<User.Root {ndk} {pubkey}>
   <div class={cn(
     'w-80 shrink-0 bg-card border border-border rounded-xl shadow-2xl overflow-hidden',
     className
   )}>
     <!-- Banner section -->
-    <UserProfile.Banner height="5rem" />
+    <User.Banner height="5rem" />
 
     <!-- Profile content -->
     <div class="relative px-5 pb-5 -mt-10">
       <!-- Avatar -->
       <div class="relative inline-block mb-3">
-        <UserProfile.Avatar
+        <User.Avatar
           size={80}
           class="border-4 border-card shadow-lg"
         />
@@ -79,12 +79,12 @@
 
       <!-- Name and verification -->
       <div class="mb-3 flex flex-col gap-0.5">
-        <UserProfile.Name class="text-base font-semibold" />
-        <UserProfile.Nip05 class="text-sm text-muted-foreground" />
+        <User.Name class="text-base font-semibold" />
+        <User.Nip05 class="text-sm text-muted-foreground" />
       </div>
 
       <!-- Bio -->
-      <UserProfile.Bio
+      <User.Bio
         maxLines={3}
         class="mb-4 text-sm text-muted-foreground"
       />
@@ -102,4 +102,4 @@
       </div>
     </div>
   </div>
-</UserProfile.Root>
+</User.Root>

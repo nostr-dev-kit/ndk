@@ -14,7 +14,7 @@
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../utils.js';
   import { Highlight } from '../../ui/highlight/index.js';
-  import { UserProfile } from '../user-profile/index.js';
+  import { User } from '../../ui/user';
 
   interface Props {
     /** NDK instance */
@@ -92,7 +92,7 @@
     <!-- Author info below -->
     {#if showAuthor}
       <div class="flex items-center gap-2 mt-2 px-1">
-        <UserProfile.Avatar {ndk} user={event.author} size={20} class="rounded-full" />
+        <User.Avatar {ndk} user={event.author} size={20} class="rounded-full" />
         <span class="text-xs text-muted-foreground truncate">{authorName}</span>
       </div>
     {/if}

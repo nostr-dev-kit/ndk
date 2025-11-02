@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
   import FollowButton from '$lib/registry/components/blocks/follow-button.svelte';
   import FollowButtonPill from '$lib/registry/components/blocks/follow-button-pill.svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
@@ -21,26 +21,26 @@
 </script>
 
 <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
-  <UserProfile.Root {ndk} pubkey={examplePubkeys[0]}>
+  <User.Root {ndk} pubkey={examplePubkeys[0]}>
     <div class="flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl">
-      <UserProfile.Avatar size={96} />
+      <User.Avatar size={96} />
       <div class="flex flex-col items-center gap-1">
-        <UserProfile.Name field="displayName" size="lg" />
+        <User.Name field="displayName" size="lg" />
         <span class="inline-flex items-center px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium">Following</span>
       </div>
-      <UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
+      <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
       <FollowButton {ndk} target={user1} showIcon={false} />
     </div>
-  </UserProfile.Root>
+  </User.Root>
 
-  <UserProfile.Root {ndk} pubkey={examplePubkeys[1]}>
+  <User.Root {ndk} pubkey={examplePubkeys[1]}>
     <div class="flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl">
-      <UserProfile.Avatar size={96} />
+      <User.Avatar size={96} />
       <div class="flex flex-col items-center gap-1">
-        <UserProfile.Name field="displayName" size="lg" />
+        <User.Name field="displayName" size="lg" />
       </div>
-      <UserProfile.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
+      <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
       <FollowButtonPill {ndk} target={user2} variant="solid" />
     </div>
-  </UserProfile.Root>
+  </User.Root>
 </div>

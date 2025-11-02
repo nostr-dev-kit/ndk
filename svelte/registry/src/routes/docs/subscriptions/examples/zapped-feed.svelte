@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '$lib/registry/components/event-card';
-	import { UserProfile } from '$lib/registry/components/user-profile';
+	import { User } from '$lib/registry/ui/user';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 	interface Props {
@@ -119,7 +119,7 @@
 						<div class="reposters-avatars">
 							{#each reposters.slice(0, 5) as reposter}
 								<div class="avatar-wrapper">
-									<UserProfile.Avatar {ndk} pubkey={reposter.pubkey} size={28} />
+									<User.Avatar {ndk} pubkey={reposter.pubkey} size={28} />
 								</div>
 							{/each}
 							{#if reposters.length > 5}

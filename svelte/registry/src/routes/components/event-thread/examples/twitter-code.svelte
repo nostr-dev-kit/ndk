@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
   import { EventCard, ReactionAction } from '$lib/registry/components/event-card/index.js';
-  import Avatar from '$lib/registry/components/user-profile/user-profile-avatar.svelte';
+  import { User } from '$lib/registry/ui/user';
   import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
 
   interface Props {
@@ -37,7 +37,7 @@
       {#each thread.replies as reply}
         <EventCard.Root {ndk} event={reply}>
           <div class="flex">
-            <Avatar {ndk} user={reply.author} size={40} />
+            <User.Avatar {ndk} pubkey={reply.author.pubkey} size={40} />
             <div class="flex-1">
               <EventCard.Header variant="compact" showAvatar={false} />
               <EventCard.Content />

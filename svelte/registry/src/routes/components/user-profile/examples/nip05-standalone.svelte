@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
@@ -12,5 +12,5 @@
   const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
-<!-- Standalone mode without UserProfile.Root -->
-<UserProfile.Nip05 {ndk} {user} />
+<!-- Standalone mode without User.Root -->
+<User.Nip05 {ndk} {user} />

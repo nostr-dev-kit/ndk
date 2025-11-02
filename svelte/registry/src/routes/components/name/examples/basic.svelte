@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UserProfile } from '$lib/registry/components/user-profile';
+  import { User } from '$lib/registry/ui/user';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   let { ndk, pubkey }: { ndk: NDKSvelte; pubkey: string } = $props();
@@ -8,22 +8,22 @@
 <div class="flex flex-col gap-4">
   <div>
     <div class="text-sm text-muted-foreground mb-1">Display Name</div>
-    <UserProfile.Root {ndk} {pubkey}>
-      <UserProfile.Name field="displayName" />
-    </UserProfile.Root>
+    <User.Root {ndk} {pubkey}>
+      <User.Name field="displayName" />
+    </User.Root>
   </div>
 
   <div>
     <div class="text-sm text-muted-foreground mb-1">Username</div>
-    <UserProfile.Root {ndk} {pubkey}>
-      <UserProfile.Name field="name" />
-    </UserProfile.Root>
+    <User.Root {ndk} {pubkey}>
+      <User.Name field="name" />
+    </User.Root>
   </div>
 
   <div>
     <div class="text-sm text-muted-foreground mb-1">Both</div>
-    <UserProfile.Root {ndk} {pubkey}>
-      <UserProfile.Name field="both" />
-    </UserProfile.Root>
+    <User.Root {ndk} {pubkey}>
+      <User.Name field="both" />
+    </User.Root>
   </div>
 </div>

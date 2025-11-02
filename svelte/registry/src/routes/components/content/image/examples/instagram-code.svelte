@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { UserProfile } from '$lib/registry/components/user-profile';
+	import { User } from '$lib/registry/ui/user';
 	import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
 	import ReactionButton from '$lib/registry/components/blocks/reaction-button.svelte';
 import ZapButton from '$lib/registry/components/blocks/zap-button.svelte';
@@ -23,15 +23,15 @@ import ZapButton from '$lib/registry/components/blocks/zap-button.svelte';
 <div class="bg-card border border-border rounded-xl overflow-hidden">
 	<!-- Header -->
 	<div class="p-3 flex items-center justify-between border-b border-border">
-		<UserProfile.Root {ndk} pubkey={image.pubkey}>
+		<User.Root {ndk} pubkey={image.pubkey}>
 			<div class="flex items-center gap-3 flex-1">
-				<UserProfile.Avatar class="w-10 h-10" />
+				<User.Avatar class="w-10 h-10" />
 				<div class="flex-1">
-					<UserProfile.Name class="font-semibold text-sm" />
-					<UserProfile.RelativeTime event={image} class="text-xs text-muted-foreground" />
+					<User.Name class="font-semibold text-sm" />
+					<User.RelativeTime event={image} class="text-xs text-muted-foreground" />
 				</div>
 			</div>
-		</UserProfile.Root>
+		</User.Root>
 
 		<button class="p-2 hover:bg-accent rounded-full" aria-label="Options">
 			<HugeiconsIcon icon={DotsHorizontalIcon} size={20} />
@@ -55,9 +55,9 @@ import ZapButton from '$lib/registry/components/blocks/zap-button.svelte';
 	<!-- Caption -->
 	{#if caption}
 		<div class="px-4 pb-4 text-sm leading-relaxed">
-			<UserProfile.Root {ndk} pubkey={image.pubkey}>
-				<UserProfile.Name class="font-semibold text-sm inline" />
-			</UserProfile.Root>
+			<User.Root {ndk} pubkey={image.pubkey}>
+				<User.Name class="font-semibold text-sm inline" />
+			</User.Root>
 			<span class="ml-2">{caption}</span>
 		</div>
 	{/if}

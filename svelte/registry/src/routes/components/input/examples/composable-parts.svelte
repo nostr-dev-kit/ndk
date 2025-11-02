@@ -19,7 +19,9 @@
 
     <UserInput.Results maxResults={10}>
       {#snippet children(result)}
-        <UserInput.ResultItem {result} />
+        <UserInput.Item {result}>
+          <span>{result.user.profile?.name || result.user.npub}</span>
+        </UserInput.Item>
       {/snippet}
 
       {#snippet empty()}

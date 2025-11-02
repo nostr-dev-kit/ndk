@@ -20,12 +20,12 @@
 -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import type { NDKSvelte, EmojiData } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../../../utils.js';
   import { Popover } from 'bits-ui';
-  import { EmojiPicker } from '../emoji-picker';
+  import { EmojiPicker, type EmojiData } from '../../ui/emoji-picker';
 
   interface Props {
     /** NDKSvelte instance (optional if used in EventCard) */

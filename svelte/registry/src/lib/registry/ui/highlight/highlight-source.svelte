@@ -1,11 +1,22 @@
-<!-- @ndk-version: highlight@0.7.0 -->
+<!-- @ndk-version: highlight@0.8.0 -->
 <!--
   @component Highlight.Source
   Displays the source for the highlight (web URL, article, or event).
 
-  @example
+  @example Basic usage:
   ```svelte
   <Highlight.Source />
+  ```
+
+  @example With custom element:
+  ```svelte
+  <Highlight.Source>
+    {#snippet child({ props, source })}
+      <a {...props} href={source.url} class="custom-link">
+        View source: {source.displayText}
+      </a>
+    {/snippet}
+  </Highlight.Source>
   ```
 -->
 <script lang="ts">
@@ -15,6 +26,11 @@
     type HighlightContext,
   } from './context.svelte.js';
   import type { Snippet } from 'svelte';
+  import { mergeProps } from '../../../utils.js';
+
+  interface SourceSnippetProps {
+    source: typeof context.state.source;
+  }
 
   interface Props {
     /** Additional CSS classes */
@@ -23,14 +39,19 @@
     /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Custom children slot */
-    children?: Snippet<[{ source: typeof context.state.source }]>;
+    /** Child snippet for custom element rendering */
+    child?: Snippet<[{ props: any; source: typeof context.state.source }]>;
+
+    /** Content snippet for custom content */
+    children?: Snippet<[SourceSnippetProps]>;
   }
 
   let {
     class: className = '',
     onclick,
+    child,
     children,
+    ...restProps
   }: Props = $props();
 
   const context = getContext<HighlightContext>(HIGHLIGHT_CONTEXT_KEY);
@@ -46,18 +67,24 @@
       window.open(context.state.source.url, '_blank', 'noopener,noreferrer');
     }
   }
+
+  const mergedProps = $derived(mergeProps(restProps, {
+    type: 'button',
+    onclick: handleClick,
+    class: className
+  }));
 </script>
 
 {#if context.state.source}
-  <button
-    type="button"
-    onclick={handleClick}
-    class={className}
-  >
-    {#if children}
-      {@render children({ source: context.state.source })}
-    {:else}
-      {context.state.source.displayText}
-    {/if}
-  </button>
+  {#if child}
+    {@render child({ props: mergedProps, source: context.state.source })}
+  {:else}
+    <button {...mergedProps}>
+      {#if children}
+        {@render children({ source: context.state.source })}
+      {:else}
+        {context.state.source.displayText}
+      {/if}
+    </button>
+  {/if}
 {/if}

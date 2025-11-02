@@ -19,11 +19,11 @@
 -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import type { NDKSvelte, EmojiData } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { getContext, type Snippet } from 'svelte';
   import { Popover } from 'bits-ui';
-  import { EmojiPicker } from '../emoji-picker';
+  import { EmojiPicker, type EmojiData } from '../ui/emoji-picker';
   import ReactionButton from './reaction-button.svelte';
 
   interface Props {

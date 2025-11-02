@@ -23,8 +23,11 @@
   <UserInput.Root {ndk} onSelect={handleSelect}>
     <UserInput.Search placeholder="Search by name, NIP-05, or npub..." />
     <UserInput.Results>
-      {#snippet resultItem(user)}
-        <UserInput.ResultItem {user} />
+      {#snippet children(result)}
+        <UserInput.Item {result}>
+          <!-- Default rendering - UserListItem will be used in a real example -->
+          <span>{result.user.profile?.name || result.user.npub}</span>
+        </UserInput.Item>
       {/snippet}
     </UserInput.Results>
   </UserInput.Root>

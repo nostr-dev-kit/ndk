@@ -224,8 +224,8 @@
 					]
 				},
 				{
-					name: 'UserInput.ResultItem',
-					description: 'Individual result item with avatar, name, and follow status',
+					name: 'UserInput.Item',
+					description: 'Headless item primitive for user selection with bits-ui pattern support',
 					importPath: "import { UserInput } from '$lib/registry/ui/user-input'",
 					props: [
 						{
@@ -233,6 +233,21 @@
 							type: 'UserInputResult',
 							required: true,
 							description: 'Result object containing user and metadata'
+						},
+						{
+							name: 'child',
+							type: 'Snippet<[{ props: Record<string, any>; result: UserInputResult }]>',
+							description: 'Custom rendering with access to merged props (bits-ui pattern)'
+						},
+						{
+							name: 'children',
+							type: 'Snippet<[{ result: UserInputResult }]>',
+							description: 'Default children rendering'
+						},
+						{
+							name: 'onclick',
+							type: '(e: MouseEvent) => void',
+							description: 'Custom click handler (merged with selection logic)'
 						},
 						{
 							name: 'class',

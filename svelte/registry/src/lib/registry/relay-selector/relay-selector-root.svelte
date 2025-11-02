@@ -1,4 +1,4 @@
-<!-- @ndk-version: relay-selector-root@0.1.0 -->
+<!-- @ndk-version: relay-selector-root@0.2.0 -->
 <!--
   @component Relay.Selector.Root
   Root context provider for relay selector primitives
@@ -6,8 +6,16 @@
   @example
   ```svelte
   <Relay.Selector.Root {ndk} bind:selected={selectedRelays} multiple={true}>
-    <Relay.Selector.List />
-    <Relay.Selector.AddForm />
+    {#snippet children(context)}
+      {#each context.connectedRelays as relay}
+        <button onclick={() => context.toggleRelay(relay)} data-selected={context.isSelected(relay)}>
+          <Relay.Root relayUrl={relay}>
+            <Relay.Name />
+          </Relay.Root>
+        </button>
+      {/each}
+      <Relay.Selector.AddForm />
+    {/snippet}
   </Relay.Selector.Root>
   ```
 -->
@@ -31,8 +39,8 @@
 		/** Additional CSS classes */
 		class?: string;
 
-		/** Child components */
-		children: Snippet;
+		/** Child components with context */
+		children: Snippet<[RelaySelectorContext]>;
 	}
 
 	let {
@@ -50,6 +58,10 @@
 		const relays = Array.from(ndk.$pool?.relays?.keys() || []);
 		return relays.filter(url => url.startsWith('ws'));
 	});
+
+	// Computed values
+	const hasSelection = $derived(selected.length > 0);
+	const selectionCount = $derived(selected.length);
 
 	// Toggle relay selection
 	function toggleRelay(relayUrl: string) {
@@ -96,6 +108,15 @@
 		selected = [];
 	}
 
+	// Select all connected relays
+	function selectAll() {
+		if (multiple) {
+			selected = [...connectedRelays];
+		} else if (connectedRelays.length > 0) {
+			selected = [connectedRelays[0]];
+		}
+	}
+
 	// Create reactive context
 	const context: RelaySelectorContext = {
 		get ndk() {
@@ -110,18 +131,25 @@
 		get connectedRelays() {
 			return connectedRelays;
 		},
+		get hasSelection() {
+			return hasSelection;
+		},
+		get selectionCount() {
+			return selectionCount;
+		},
 		toggleRelay,
 		addRelay,
 		removeRelay,
 		isSelected,
-		clearSelection
+		clearSelection,
+		selectAll
 	};
 
 	setContext(RELAY_SELECTOR_CONTEXT_KEY, context);
 </script>
 
 <div class="relay-selector-root {className}">
-	{@render children()}
+	{@render children(context)}
 </div>
 
 <style>

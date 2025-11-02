@@ -283,7 +283,7 @@
 			},
 			{
 				name: 'Relay.BookmarkedBy',
-				description: 'Display avatars of users who have bookmarked this relay.',
+				description: 'Headless component that exposes bookmark data (pubkeys and count) via snippet for custom rendering.',
 				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
@@ -293,24 +293,10 @@
 						required: true
 					},
 					{
-						name: 'maxAvatars',
-						type: 'number',
-						default: '5',
-						description: 'Maximum number of avatars to display',
-						required: false
-					},
-					{
-						name: 'avatarSize',
-						type: 'number',
-						default: '32',
-						description: 'Avatar size in pixels',
-						required: false
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
+						name: 'children',
+						type: 'Snippet<[{ pubkeys: string[]; count: number }]>',
+						description: 'Snippet that receives bookmark data for custom rendering',
+						required: true
 					}
 				]
 			},

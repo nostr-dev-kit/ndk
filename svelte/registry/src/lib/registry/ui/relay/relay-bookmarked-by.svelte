@@ -1,6 +1,6 @@
 <!--
   @component Relay.BookmarkedBy
-  Shows avatars of users who have bookmarked this relay.
+  Headless component that exposes bookmark data via snippet.
 
   @example
   ```svelte
@@ -9,7 +9,14 @@
   </script>
 
   <Relay.Root {ndk} {relayUrl}>
-    <Relay.BookmarkedBy {bookmarks} max={5} />
+    <Relay.BookmarkedBy {bookmarks}>
+      {#snippet children({ pubkeys, count })}
+        <div class="flex items-center gap-2">
+          <AvatarGroup {pubkeys} max={5} />
+          <span>{count} bookmarks</span>
+        </div>
+      {/snippet}
+    </Relay.BookmarkedBy>
   </Relay.Root>
   ```
 -->
@@ -17,37 +24,17 @@
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';
   import type { BookmarkedRelayListState } from '@nostr-dev-kit/svelte';
-  import { AvatarGroup } from '../avatar-group';
-  import { cn } from '../../../utils.js';
+  import type { Snippet } from 'svelte';
 
   interface Props {
     /** Bookmarked relay list state */
     bookmarks: BookmarkedRelayListState;
 
-    /** Maximum number of avatars to show */
-    max?: number;
-
-    /** Show count label */
-    showCount?: boolean;
-
-    /** Avatar size in pixels */
-    size?: number;
-
-    /** Avatar spacing */
-    spacing?: 'tight' | 'normal' | 'loose';
-
-    /** Additional CSS classes */
-    class?: string;
+    /** Child snippet with bookmark data */
+    children: Snippet<[{ pubkeys: string[]; count: number }]>;
   }
 
-  let {
-    bookmarks,
-    max = 5,
-    showCount = true,
-    size = 32,
-    spacing = 'normal',
-    class: className = ''
-  }: Props = $props();
+  let { bookmarks, children }: Props = $props();
 
   const context = getContext<RelayContext>(RELAY_CONTEXT_KEY);
   if (!context) {
@@ -56,15 +43,9 @@
 
   const stats = $derived(bookmarks.getRelayStats(context.relayInfo.url));
   const pubkeys = $derived(stats?.pubkeys || []);
+  const count = $derived(stats?.count || 0);
 </script>
 
 {#if pubkeys.length > 0}
-  <div class={cn('flex items-center gap-3', className)}>
-    <AvatarGroup ndk={context.ndk} {pubkeys} {max} {size} {spacing} />
-    {#if showCount && stats}
-      <span class="text-sm text-muted-foreground">
-        {stats.count} {stats.count === 1 ? 'follow' : 'follows'}
-      </span>
-    {/if}
-  </div>
+  {@render children({ pubkeys, count })}
 {/if}

@@ -39,7 +39,7 @@
   const hasQuery = $derived(context.query.trim().length > 0);
 </script>
 
-<div class="user-input-results {className}">
+<div class="user-input-results {className}" role="listbox">
   {#if hasResults && children}
     {#each displayedResults as result (result.user.pubkey)}
       {@render children(result)}

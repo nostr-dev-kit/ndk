@@ -86,8 +86,8 @@
         <p>Results list container with custom item rendering.</p>
       </div>
       <div class="component-item">
-        <code>UserInput.ResultItem</code>
-        <p>Default result item with avatar and name.</p>
+        <code>UserInput.Item</code>
+        <p>Headless item primitive with bits-ui pattern support.</p>
       </div>
     </div>
   </section>
@@ -130,11 +130,14 @@
   </section>
 
   <section class="info">
-    <h2>UserInput.ResultItem</h2>
-    <p class="mb-4">Default result item component displaying user avatar, name, and NIP-05.</p>
+    <h2>UserInput.Item</h2>
+    <p class="mb-4">Headless item primitive following the bits-ui pattern. Supports both default and custom rendering.</p>
     <ApiTable
       rows={[
-        { name: 'user', type: 'NDKUser', default: 'required', description: 'User to display' },
+        { name: 'result', type: 'UserInputResult', default: 'required', description: 'Result object containing user and metadata' },
+        { name: 'child', type: 'Snippet<[{ props, result }]>', default: 'optional', description: 'Custom rendering with merged props (bits-ui pattern)' },
+        { name: 'children', type: 'Snippet<[{ result }]>', default: 'optional', description: 'Default children rendering' },
+        { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Custom click handler (merged with selection)' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

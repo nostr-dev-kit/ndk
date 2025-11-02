@@ -13,7 +13,7 @@
   ```
 -->
 <script lang="ts">
-  import type { EmojiData } from '@nostr-dev-kit/svelte';
+  import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { cn } from '../../../utils.js';
   import Item from './emoji-picker-item.svelte';
 

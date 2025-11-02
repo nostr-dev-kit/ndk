@@ -18,7 +18,7 @@
   import Title from '../ui/article/article-title.svelte';
   import Summary from '../ui/article/article-summary.svelte';
   import ReadingTime from '../ui/article/article-reading-time.svelte';
-  import { User } from '../ui/user';
+  import UserAvatarName from '../components/user-avatar-name.svelte';
   import { cn } from '../../utils.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../ui/article/context.svelte.js';
@@ -124,7 +124,8 @@
 
         <!-- Author & Reading Time -->
         <div class="pt-4 border-t border-white/10">
-          <User.AvatarName
+          <UserAvatarName
+            {ndk}
             user={context.article.author}
             avatarSize={36}
             class="text-white [&_.text-muted-foreground]:text-white/70 [&_img]:ring-2 [&_img]:ring-white/20 [&_.bg-muted]:bg-white/10 [&_.bg-muted]:backdrop-blur-sm [&_.bg-muted]:ring-2 [&_.bg-muted]:ring-white/20"
@@ -132,7 +133,7 @@
             {#snippet meta()}
               <ReadingTime class="text-xs text-white/70" />
             {/snippet}
-          </User.AvatarName>
+          </UserAvatarName>
         </div>
       </div>
     </div>

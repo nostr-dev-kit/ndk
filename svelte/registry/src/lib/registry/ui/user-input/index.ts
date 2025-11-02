@@ -11,8 +11,12 @@
  * <UserInput.Root onSelect={(user) => console.log(user)}>
  *   <UserInput.Search placeholder="Search users..." />
  *   <UserInput.Results>
- *     {#snippet resultItem(user)}
- *       <UserInput.ResultItem {user} />
+ *     {#snippet children(result)}
+ *       <UserInput.Item {result}>
+ *         <User.Root user={result.user}>
+ *           <User.AvatarName />
+ *         </User.Root>
+ *       </UserInput.Item>
  *     {/snippet}
  *   </UserInput.Results>
  * </UserInput.Root>
@@ -22,13 +26,13 @@
 import Root from './user-input-root.svelte';
 import Search from './user-input-search.svelte';
 import Results from './user-input-results.svelte';
-import ResultItem from './user-input-result-item.svelte';
+import Item from './user-input-item.svelte';
 
 export const UserInput = {
   Root,
   Search,
   Results,
-  ResultItem,
+  Item,
 };
 
 export type { UserInputContext } from './context.svelte.js';

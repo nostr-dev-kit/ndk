@@ -16,6 +16,12 @@ export interface RelaySelectorContext {
 	/** Connected relays from NDK pool */
 	connectedRelays: string[];
 
+	/** Whether any relays are selected */
+	hasSelection: boolean;
+
+	/** Number of selected relays */
+	selectionCount: number;
+
 	/** Toggle relay selection */
 	toggleRelay: (relayUrl: string) => void;
 
@@ -30,6 +36,9 @@ export interface RelaySelectorContext {
 
 	/** Clear all selections */
 	clearSelection: () => void;
+
+	/** Select all connected relays */
+	selectAll: () => void;
 }
 
 export const RELAY_SELECTOR_CONTEXT_KEY = Symbol('relay-selector');

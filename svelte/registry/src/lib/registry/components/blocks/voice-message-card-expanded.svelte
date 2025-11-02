@@ -3,6 +3,7 @@
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { VoiceMessageCard } from '../voice-message-card/index.js';
+  import { UserProfile } from '../user-profile/index.js';
 
   interface Props {
     /** NDK instance */
@@ -56,7 +57,10 @@
 <VoiceMessageCard.Root {ndk} {voiceMessage}>
   <div class="voice-message-expanded {className}">
     <div class="header">
-      <VoiceMessageCard.Author showAvatar={true} avatarSize={40} />
+      <UserProfile.Root {ndk} user={voiceMessage.author}>
+        <UserProfile.Avatar size={40} />
+        <UserProfile.Name />
+      </UserProfile.Root>
       <VoiceMessageCard.Duration {currentTime} showCurrent={true} />
     </div>
 
@@ -89,6 +93,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
   }
 
   .waveform-section {

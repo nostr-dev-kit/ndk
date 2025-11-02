@@ -11,7 +11,6 @@
  * ```svelte
  * <VoiceMessageCard.Root {voiceMessage}>
  *   <div class="card">
- *     <VoiceMessageCard.Author showAvatar={true} />
  *     <VoiceMessageCard.Waveform height={60} />
  *     <VoiceMessageCard.Player />
  *     <VoiceMessageCard.Duration />
@@ -33,7 +32,6 @@ import Root from './voice-message-card-root.svelte';
 import Player from './voice-message-card-player.svelte';
 import Waveform from './voice-message-card-waveform.svelte';
 import Duration from './voice-message-card-duration.svelte';
-import Author from './voice-message-card-author.svelte';
 
 // Export as namespace for dot notation
 export const VoiceMessageCard = {
@@ -41,7 +39,6 @@ export const VoiceMessageCard = {
   Player,
   Waveform,
   Duration,
-  Author,
 };
 
 // Export types

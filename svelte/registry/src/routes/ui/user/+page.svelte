@@ -199,9 +199,11 @@
 
   <section class="info">
     <h2>User.Nip05</h2>
-    <p class="mb-4">Displays verified NIP-05 identifier with checkmark.</p>
+    <p class="mb-4">Displays NIP-05 identifier with verification status. Automatically validates and shows checkmark/X based on verification.</p>
     <ApiTable
       rows={[
+        { name: 'showNip05', type: 'boolean', default: 'true', description: 'Whether to show the NIP-05 identifier' },
+        { name: 'showVerified', type: 'boolean', default: 'true', description: 'Whether to verify and show verification status (✓/✗)' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

@@ -222,8 +222,8 @@ function handleEmojiSelect(emojiData: EmojiData) &#123;
   <section class="info">
     <h2>Related</h2>
     <div class="related-grid">
-      <a href="/ui/emoji-picker" class="related-card">
-        <strong>Emoji Picker Primitives</strong>
+      <a href="/components/emoji-picker" class="related-card">
+        <strong>Emoji Picker Component</strong>
         <span>For selecting emojis to react with</span>
       </a>
       <a href="/components/reaction" class="related-card">

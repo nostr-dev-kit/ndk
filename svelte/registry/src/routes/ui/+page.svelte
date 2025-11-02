@@ -165,7 +165,7 @@
         </div>
       </a>
 
-      <a href="/ui/emoji-picker" class="primitive-card">
+      <a href="/components/emoji-picker" class="primitive-card">
         <h3>Emoji Picker</h3>
         <p>Select emojis from custom sets</p>
         <div class="primitive-components">

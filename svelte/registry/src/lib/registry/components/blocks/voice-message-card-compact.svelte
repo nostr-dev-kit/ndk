@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { VoiceMessageCard } from '../voice-message-card/index.js';
+  import { VoiceMessage } from '../../ui/voice-message/index.js';
   import { UserProfile } from '../user-profile/index.js';
 
   interface Props {
@@ -27,7 +27,7 @@
   }: Props = $props();
 </script>
 
-<VoiceMessageCard.Root {ndk} {voiceMessage}>
+<VoiceMessage.Root {ndk} {voiceMessage}>
   <div class="voice-message-compact {className}">
     {#if showAuthor}
       <div class="author-section">
@@ -39,11 +39,11 @@
     {/if}
 
     <div class="player-section">
-      <VoiceMessageCard.Player showButton={true} />
-      <VoiceMessageCard.Duration />
+      <VoiceMessage.Player showButton={true} />
+      <VoiceMessage.Duration />
     </div>
   </div>
-</VoiceMessageCard.Root>
+</VoiceMessage.Root>
 
 <style>
   .voice-message-compact {

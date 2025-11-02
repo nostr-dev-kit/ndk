@@ -1,7 +1,7 @@
-<!-- @ndk-version: voice-message-card@0.1.0 -->
+<!-- @ndk-version: voice-message@0.1.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { VOICE_MESSAGE_CARD_CONTEXT_KEY, type VoiceMessageCardContext } from './context.svelte.js';
+  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
 
   interface Props {
     /** Additional CSS classes */
@@ -20,7 +20,7 @@
     currentTime = 0
   }: Props = $props();
 
-  const context = getContext<VoiceMessageCardContext>(VOICE_MESSAGE_CARD_CONTEXT_KEY);
+  const context = getContext<VoiceMessageContext>(VOICE_MESSAGE_CONTEXT_KEY);
 
   function formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
@@ -38,8 +38,6 @@
 
 <style>
   .voice-message-duration {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
     font-variant-numeric: tabular-nums;
   }
 </style>

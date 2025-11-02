@@ -9,6 +9,7 @@
 
   const isDocsRoute = $derived($page.url.pathname.startsWith('/docs'));
   const isComponentsRoute = $derived($page.url.pathname.startsWith('/components'));
+  const isUiRoute = $derived($page.url.pathname.startsWith('/ui'));
 </script>
 
 <aside class="sidebar" class:open={$sidebarOpen} class:collapsed={$sidebarCollapsed}>
@@ -61,8 +62,62 @@
       </div>
     {/if}
 
+    {#if isUiRoute}
+      {#each componentCategories.filter(cat => cat.title === 'UI Primitives') as category (category.title)}
+        <div class="flex flex-col gap-1">
+          {#if !$sidebarCollapsed}
+            <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              {category.title}
+              {#if category.nip}
+                <NipBadge nip={category.nip} />
+              {/if}
+            </h2>
+          {/if}
+          {#each category.items as component (component.path)}
+            {#if $sidebarCollapsed}
+              <Tooltip.Root openDelay={0}>
+                <Tooltip.Trigger class="nav-link-trigger">
+                  <a
+                    href={resolve(component.path)}
+                    class="nav-link"
+                    class:active={$page.url.pathname === component.path}
+                  >
+                    <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
+                  </a>
+                </Tooltip.Trigger>
+                <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
+                  {#if component.title || component.description}
+                    <div class="tooltip-header">{component.title || component.name}</div>
+                    {#if component.description}
+                      <div class="tooltip-description">{component.description}</div>
+                    {/if}
+                  {:else}
+                    <div class="tooltip-title">{component.name}</div>
+                  {/if}
+                </Tooltip.Content>
+              </Tooltip.Root>
+            {:else}
+              <div class="nav-item-wrapper">
+                <a
+                  href={resolve(component.path)}
+                  class="nav-link"
+                  class:active={$page.url.pathname === component.path}
+                >
+                  <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
+                  <span class="nav-link-text">{component.name}</span>
+                </a>
+                {#if component.nip}
+                  <NipBadge nip={component.nip} />
+                {/if}
+              </div>
+            {/if}
+          {/each}
+        </div>
+      {/each}
+    {/if}
+
     {#if isComponentsRoute}
-      {#each componentCategories as category (category.title)}
+      {#each componentCategories.filter(cat => cat.title !== 'UI Primitives') as category (category.title)}
         <div class="flex flex-col gap-1">
           {#if !$sidebarCollapsed}
             <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">

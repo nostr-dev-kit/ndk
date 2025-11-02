@@ -9,14 +9,16 @@
   const userPubkey = ndk.$currentUser?.pubkey || 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
 </script>
 
-<!-- User.Avatar supports standalone mode without Root wrapper -->
-<div class="flex items-center gap-3">
-  <User.Avatar {ndk} user={userPubkey} size={40} class="rounded-full" />
-  <div>
-    <div class="font-medium">Standalone Avatar</div>
-    <div class="text-sm text-gray-500">No Root wrapper needed</div>
+<!-- User.Avatar with minimal Root wrapper for standalone usage -->
+<User.Root {ndk} pubkey={userPubkey}>
+  <div class="flex items-center gap-3">
+    <User.Avatar size={40} class="rounded-full" />
+    <div>
+      <div class="font-medium">Avatar with Root</div>
+      <div class="text-sm text-gray-500">Minimal wrapper for context</div>
+    </div>
   </div>
-</div>
+</User.Root>
 
 <style>
   .flex {

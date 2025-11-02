@@ -31,7 +31,7 @@
   let { ndk: ndkProp, event, emoji = '❤️', showCount = true, delayed, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const reactionState = createReactionAction(() => ({ event, delayed }), ndk);
 

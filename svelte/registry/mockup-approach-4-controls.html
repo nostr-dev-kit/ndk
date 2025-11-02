@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relay Card - Interactive Controls Approach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            height: 100vh;
+        }
+
+        /* Main Preview Area */
+        .preview-area {
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .preview-header {
+            padding: 20px 32px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-button {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .header-button.primary {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+
+        .preview-canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: repeating-conic-gradient(#f5f5f5 0% 25%, white 0% 50%) 50% / 20px 20px;
+            padding: 40px;
+            overflow: auto;
+        }
+
+        .canvas-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .mock-relay-card {
+            text-align: center;
+        }
+
+        .mock-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            margin: 0 auto 16px;
+            transition: all 0.3s;
+        }
+
+        .mock-name {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .mock-url {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .mock-metadata {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .mock-badge {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .mock-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .mock-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .mock-button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mock-button.primary {
+            background: #0066cc;
+            color: white;
+            border: none;
+        }
+
+        .mock-button.secondary {
+            background: white;
+            color: #666;
+            border: 1px solid #d0d0d0;
+        }
+
+        .preview-footer {
+            padding: 16px 32px;
+            border-top: 1px solid #e0e0e0;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .zoom-button {
+            background: white;
+            border: 1px solid #d0d0d0;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-level {
+            font-size: 13px;
+            color: #666;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .controls-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .controls-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .controls-subtitle {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .controls-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0 20px;
+        }
+
+        .controls-tab {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .controls-tab.active {
+            color: #0066cc;
+            border-bottom-color: #0066cc;
+        }
+
+        .controls-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .control-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .label-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .label-type {
+            font-size: 11px;
+            color: #999;
+            font-family: 'Monaco', monospace;
+        }
+
+        .control-input input[type="text"],
+        .control-input input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .control-input input[type="range"] {
+            width: 100%;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #0066cc;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .control-description {
+            font-size: 11px;
+            color: #666;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .primitive-tree {
+            margin-bottom: 20px;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tree-item:hover {
+            background: #f5f5f5;
+        }
+
+        .tree-item.active {
+            background: #e6f2ff;
+        }
+
+        .tree-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .tree-icon {
+            font-size: 14px;
+        }
+
+        .tree-name {
+            font-size: 13px;
+            font-family: 'Monaco', monospace;
+            color: #0066cc;
+        }
+
+        .code-output {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .code-output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .code-output-title {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .code-copy-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .code-output-content {
+            font-family: 'Monaco', monospace;
+            font-size: 11px;
+            line-height: 1.6;
+            color: #d4d4d4;
+        }
+
+        .keyword { color: #569cd6; }
+        .component { color: #4ec9b0; }
+        .prop { color: #9cdcfe; }
+        .string { color: #ce9178; }
+        .bracket { color: #ffd700; }
+
+        .install-box {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .install-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .install-command {
+            background: #1e1e1e;
+            color: #0066cc;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .preset-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .preset-btn.active {
+            background: #e6f2ff;
+            border-color: #0066cc;
+        }
+
+        .preset-name {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .preset-desc {
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Preview Area -->
+        <div class="preview-area">
+            <div class="preview-header">
+                <div>
+                    <h1 class="preview-title">Relay Card</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="header-button">Edit Props</button>
+                    <button class="header-button primary">Install Component</button>
+                </div>
+            </div>
+
+            <div class="preview-canvas">
+                <div class="canvas-content">
+                    <div class="mock-relay-card">
+                        <div class="mock-icon" id="preview-icon"></div>
+                        <div class="mock-name" id="preview-name">relay.damus.io</div>
+                        <div class="mock-url" id="preview-url">wss://relay.damus.io</div>
+                        <div class="mock-metadata" id="preview-metadata">
+                            <span class="mock-badge">NIP-01</span>
+                            <span class="mock-badge">NIP-11</span>
+                            <span class="mock-badge">strfry</span>
+                        </div>
+                        <div class="mock-description" id="preview-description">
+                            A public Nostr relay operated by Damus. Supports basic event types and provides reliable service to the Nostr network.
+                        </div>
+                        <div class="mock-actions" id="preview-actions">
+                            <button class="mock-button primary">Connect</button>
+                            <button class="mock-button secondary">Copy URL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-footer">
+                <div class="zoom-controls">
+                    <button class="zoom-button">−</button>
+                    <span class="zoom-level">100%</span>
+                    <button class="zoom-button">+</button>
+                </div>
+                <div style="font-size: 12px; color: #666;">
+                    Changes apply instantly
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <div class="controls-header">
+                <div class="controls-title">Component Controls</div>
+                <div class="controls-subtitle">Configure and customize in real-time</div>
+            </div>
+
+            <div class="controls-tabs">
+                <button class="controls-tab active" onclick="switchControlsTab('props')">Props</button>
+                <button class="controls-tab" onclick="switchControlsTab('primitives')">Primitives</button>
+                <button class="controls-tab" onclick="switchControlsTab('code')">Code</button>
+            </div>
+
+            <div class="controls-content" id="controls-props">
+                <div class="preset-buttons">
+                    <button class="preset-btn active">
+                        <span class="preset-name">Full</span>
+                        <span class="preset-desc">All features enabled</span>
+                    </button>
+                    <button class="preset-btn">
+                        <span class="preset-name">Minimal</span>
+                        <span class="preset-desc">Name only</span>
+                    </button>
+                    <button class="preset-btn">
+                        <span class="preset-name">Compact</span>
+                        <span class="preset-desc">List view</span>
+                    </button>
+                    <button class="preset-btn">
+                        <span class="preset-name">Status</span>
+                        <span class="preset-desc">Connection state</span>
+                    </button>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Basic</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Relay URL</span>
+                            <span class="label-type">string</span>
+                        </div>
+                        <div class="control-input">
+                            <input type="text" value="wss://relay.damus.io" onchange="updatePreview()">
+                        </div>
+                        <div class="control-description">WebSocket URL of the relay to display</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Icon</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Icon Size</span>
+                            <span class="label-type">number</span>
+                        </div>
+                        <div class="control-input">
+                            <input type="range" min="40" max="120" value="80" oninput="updateIconSize(this.value)">
+                            <div style="text-align: right; font-size: 11px; color: #666; margin-top: 4px;">
+                                <span id="icon-size-value">80</span>px
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Show Icon</span>
+                            <span class="label-type">boolean</span>
+                        </div>
+                        <div class="control-input">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked onchange="toggleIcon(this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Header</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Show URL</span>
+                            <span class="label-type">boolean</span>
+                        </div>
+                        <div class="control-input">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked onchange="toggleUrl(this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="control-description">Display the full WebSocket URL below the name</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Metadata</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Show Metadata</span>
+                            <span class="label-type">boolean</span>
+                        </div>
+                        <div class="control-input">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked onchange="toggleMetadata(this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="control-description">Show NIP support and software badges</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Description</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Show Description</span>
+                            <span class="label-type">boolean</span>
+                        </div>
+                        <div class="control-input">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked onchange="toggleDescription(this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Max Length</span>
+                            <span class="label-type">number</span>
+                        </div>
+                        <div class="control-input">
+                            <input type="number" value="200" min="50" max="500" step="50">
+                        </div>
+                        <div class="control-description">Maximum characters before truncation</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Actions</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="label-name">Show Actions</span>
+                            <span class="label-type">boolean</span>
+                        </div>
+                        <div class="control-input">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked onchange="toggleActions(this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="control-description">Display action buttons (Connect, Copy URL)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-content" id="controls-primitives" style="display: none;">
+                <div class="control-section">
+                    <div class="section-title">Component Tree</div>
+                    <div class="primitive-tree">
+                        <div class="tree-item active">
+                            <input type="checkbox" class="tree-checkbox" checked>
+                            <span class="tree-icon">📦</span>
+                            <span class="tree-name">Relay.Root</span>
+                        </div>
+                        <div class="tree-item active" style="padding-left: 32px;">
+                            <input type="checkbox" class="tree-checkbox" checked onclick="toggleIcon(this.checked)">
+                            <span class="tree-icon">🎨</span>
+                            <span class="tree-name">Relay.Icon</span>
+                        </div>
+                        <div class="tree-item active" style="padding-left: 32px;">
+                            <input type="checkbox" class="tree-checkbox" checked>
+                            <span class="tree-icon">📝</span>
+                            <span class="tree-name">Relay.Header</span>
+                        </div>
+                        <div class="tree-item active" style="padding-left: 32px;">
+                            <input type="checkbox" class="tree-checkbox" checked onclick="toggleMetadata(this.checked)">
+                            <span class="tree-icon">🏷️</span>
+                            <span class="tree-name">Relay.Metadata</span>
+                        </div>
+                        <div class="tree-item active" style="padding-left: 32px;">
+                            <input type="checkbox" class="tree-checkbox" checked onclick="toggleDescription(this.checked)">
+                            <span class="tree-icon">📄</span>
+                            <span class="tree-name">Relay.Description</span>
+                        </div>
+                        <div class="tree-item active" style="padding-left: 32px;">
+                            <input type="checkbox" class="tree-checkbox" checked onclick="toggleActions(this.checked)">
+                            <span class="tree-icon">⚡</span>
+                            <span class="tree-name">Relay.Actions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Primitive Documentation</div>
+                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                        <p style="margin-bottom: 12px;">Enable or disable primitives to see how they compose together. Each primitive is headless and fully customizable.</p>
+                        <p>Click on a primitive to see its full API documentation and props.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-content" id="controls-code" style="display: none;">
+                <div class="install-box">
+                    <div class="install-title">Installation</div>
+                    <div class="install-command">npx shadcn-svelte@latest add relay-card</div>
+                </div>
+
+                <div class="code-output">
+                    <div class="code-output-header">
+                        <span class="code-output-title">Generated Code</span>
+                        <button class="code-copy-btn">Copy</button>
+                    </div>
+                    <div class="code-output-content">
+<span class="keyword">&lt;script&gt;</span>
+  <span class="keyword">import</span> { <span class="component">Relay</span> } <span class="keyword">from</span> <span class="string">'@nostr-svelte/ui'</span>;
+  <span class="keyword">import</span> <span class="component">NDK</span> <span class="keyword">from</span> <span class="string">'@nostr-dev-kit/ndk'</span>;
+
+  <span class="keyword">const</span> ndk = <span class="keyword">new</span> <span class="component">NDK</span>();
+<span class="keyword">&lt;/script&gt;</span>
+
+<span class="keyword">&lt;</span><span class="component">Relay.Root</span> <span class="bracket">{</span><span class="prop">ndk</span><span class="bracket">}</span> <span class="prop">url</span>=<span class="string">"wss://relay.damus.io"</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Icon</span> <span class="prop">size</span>=<span class="bracket">{</span><span class="string">80</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Header</span> <span class="prop">showUrl</span>=<span class="bracket">{</span><span class="keyword">true</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Metadata</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Description</span> <span class="prop">maxLength</span>=<span class="bracket">{</span><span class="string">200</span><span class="bracket">}</span> <span class="keyword">/&gt;</span>
+  <span class="keyword">&lt;</span><span class="component">Relay.Actions</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;</span><span class="component">button</span><span class="keyword">&gt;</span>Connect<span class="keyword">&lt;/</span><span class="component">button</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;</span><span class="component">button</span><span class="keyword">&gt;</span>Copy URL<span class="keyword">&lt;/</span><span class="component">button</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;/</span><span class="component">Relay.Actions</span><span class="keyword">&gt;</span>
+<span class="keyword">&lt;/</span><span class="component">Relay.Root</span><span class="keyword">&gt;</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 12px; color: #666; line-height: 1.6;">
+                    <p>Code updates automatically as you change props and primitives. Copy and paste directly into your project.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchControlsTab(tab) {
+            document.querySelectorAll('.controls-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('controls-props').style.display = 'none';
+            document.getElementById('controls-primitives').style.display = 'none';
+            document.getElementById('controls-code').style.display = 'none';
+
+            document.getElementById('controls-' + tab).style.display = 'block';
+        }
+
+        function updateIconSize(value) {
+            document.getElementById('icon-size-value').textContent = value;
+            document.getElementById('preview-icon').style.width = value + 'px';
+            document.getElementById('preview-icon').style.height = value + 'px';
+        }
+
+        function toggleIcon(checked) {
+            document.getElementById('preview-icon').style.display = checked ? 'block' : 'none';
+        }
+
+        function toggleUrl(checked) {
+            document.getElementById('preview-url').style.display = checked ? 'block' : 'none';
+        }
+
+        function toggleMetadata(checked) {
+            document.getElementById('preview-metadata').style.display = checked ? 'flex' : 'none';
+        }
+
+        function toggleDescription(checked) {
+            document.getElementById('preview-description').style.display = checked ? 'block' : 'none';
+        }
+
+        function toggleActions(checked) {
+            document.getElementById('preview-actions').style.display = checked ? 'flex' : 'none';
+        }
+
+        function updatePreview() {
+            console.log('Preview updated');
+        }
+    </script>
+</body>
+</html>

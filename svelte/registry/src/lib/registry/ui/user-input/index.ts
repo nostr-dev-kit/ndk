@@ -1,6 +1,6 @@
-// @ndk-version: input@0.6.0
+// @ndk-version: user-input@0.6.0
 /**
- * Input - Composable user search/input components
+ * UserInput - Headless user search/input primitives
  *
  * A flexible system for searching and selecting Nostr users with NIP-05 and npub support.
  *
@@ -8,14 +8,14 @@
  *
  * @example Basic usage (ndk from context):
  * ```svelte
- * <Input.Root onSelect={(user) => console.log(user)}>
- *   <Input.Search placeholder="Search users..." />
- *   <Input.Results>
+ * <UserInput.Root onSelect={(user) => console.log(user)}>
+ *   <UserInput.Search placeholder="Search users..." />
+ *   <UserInput.Results>
  *     {#snippet resultItem(user)}
- *       <Input.ResultItem {user} />
+ *       <UserInput.ResultItem {user} />
  *     {/snippet}
- *   </Input.Results>
- * </Input.Root>
+ *   </UserInput.Results>
+ * </UserInput.Root>
  * ```
  */
 
@@ -24,11 +24,11 @@ import Search from './user-input-search.svelte';
 import Results from './user-input-results.svelte';
 import ResultItem from './user-input-result-item.svelte';
 
-export const Input = {
+export const UserInput = {
   Root,
   Search,
   Results,
   ResultItem,
 };
 
-export type { UserInputContext as InputContext } from './context.svelte.js';
+export type { UserInputContext } from './context.svelte.js';

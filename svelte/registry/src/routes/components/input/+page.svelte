@@ -160,7 +160,7 @@
 				{
 					name: 'UserInput.Root',
 					description: 'Root component that provides user input context to all child components',
-					importPath: "import { UserInput } from '$lib/registry/components/user-input'",
+					importPath: "import { UserInput } from '$lib/registry/ui/user-input'",
 					props: [
 						{
 							name: 'ndk',
@@ -183,7 +183,7 @@
 				{
 					name: 'UserInput.Search',
 					description: 'Search input field with loading indicator',
-					importPath: "import { UserInput } from '$lib/registry/components/user-input'",
+					importPath: "import { UserInput } from '$lib/registry/ui/user-input'",
 					props: [
 						{
 							name: 'placeholder',
@@ -208,7 +208,7 @@
 				{
 					name: 'UserInput.Results',
 					description: 'Container for search results with empty state',
-					importPath: "import { UserInput } from '$lib/registry/components/user-input'",
+					importPath: "import { UserInput } from '$lib/registry/ui/user-input'",
 					props: [
 						{
 							name: 'maxResults',
@@ -226,7 +226,7 @@
 				{
 					name: 'UserInput.ResultItem',
 					description: 'Individual result item with avatar, name, and follow status',
-					importPath: "import { UserInput } from '$lib/registry/components/user-input'",
+					importPath: "import { UserInput } from '$lib/registry/ui/user-input'",
 					props: [
 						{
 							name: 'result',

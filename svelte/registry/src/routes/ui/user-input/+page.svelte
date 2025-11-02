@@ -123,7 +123,9 @@
     <p class="mb-4">Results list container that displays search results.</p>
     <ApiTable
       rows={[
-        { name: 'resultItem', type: 'Snippet<[NDKUser]>', default: 'required', description: 'Snippet for rendering each result item' },
+        { name: 'children', type: 'Snippet<[UserInputResult]>', default: 'optional', description: 'Snippet for rendering each result (receives UserInputResult)' },
+        { name: 'empty', type: 'Snippet', default: 'optional', description: 'Empty state snippet when no results found' },
+        { name: 'maxResults', type: 'number', default: 'undefined', description: 'Maximum number of results to display' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />
@@ -175,16 +177,20 @@
 
   <section class="info">
     <h2>Custom Result Items</h2>
-    <p class="mb-4">Customize how results are displayed using the resultItem snippet:</p>
+    <p class="mb-4">Customize how results are displayed using UserInput.Item with the bits-ui pattern:</p>
     <pre><code>&lt;UserInput.Results&gt;
-  &#123;#snippet resultItem(user)&#125;
-    &lt;div class="custom-item"&gt;
-      &lt;User.Avatar &#123;ndk&#125; &#123;user&#125; size=&#123;40&#125; /&gt;
-      &lt;div&gt;
-        &lt;div class="name"&gt;&#123;user.profile?.name&#125;&lt;/div&gt;
-        &lt;div class="nip05"&gt;&#123;user.profile?.nip05&#125;&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+  &#123;#snippet children(result)&#125;
+    &lt;UserInput.Item &#123;result&#125;&gt;
+      &#123;#snippet child(&#123; props &#125;)&#125;
+        &lt;div &#123;...props&#125; class="custom-item"&gt;
+          &lt;User.Avatar &#123;ndk&#125; user=&#123;result.user&#125; size=&#123;40&#125; /&gt;
+          &lt;div&gt;
+            &lt;div class="name"&gt;&#123;result.user.profile?.name&#125;&lt;/div&gt;
+            &lt;div class="nip05"&gt;&#123;result.user.profile?.nip05&#125;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &#123;/snippet&#125;
+    &lt;/UserInput.Item&gt;
   &#123;/snippet&#125;
 &lt;/UserInput.Results&gt;</code></pre>
   </section>

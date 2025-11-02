@@ -2,8 +2,8 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle } from '@nostr-dev-kit/ndk';
-  import { EventContent, KindRegistry } from '$lib/registry/components/event/content';
-  import ArticleEmbeddedInline from '$lib/registry/components/event/content/kinds/article-embedded/article-embedded-inline.svelte';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui';
+  import ArticleEmbeddedInline from '$lib/registry/components/article-embedded/article-embedded-inline.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
@@ -13,16 +13,16 @@
 
   let { ndk, event }: Props = $props();
 
-  // Create custom registry for inline variant
-  const inlineRegistry = new KindRegistry();
-  inlineRegistry.add(NDKArticle, ArticleEmbeddedInline);
+  // Create custom renderer for inline variant
+  const inlineRenderer = new ContentRenderer();
+  inlineRenderer.addKind(NDKArticle, ArticleEmbeddedInline);
 </script>
 
 <div class="max-w-2xl">
   <EventCard.Root {ndk} {event}>
     <EventCard.Header variant="full" showTimestamp={true} />
     <div class="p-4">
-      <EventContent {ndk} {event} kindRegistry={inlineRegistry} />
+      <EventContent {ndk} {event} renderer={inlineRenderer} />
     </div>
   </EventCard.Root>
 </div>

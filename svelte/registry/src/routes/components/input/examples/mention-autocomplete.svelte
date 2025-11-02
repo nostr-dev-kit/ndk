@@ -3,7 +3,7 @@
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import { createUserInput } from '@nostr-dev-kit/svelte';
   import UserListItem from '$lib/registry/components/blocks/user-list-item.svelte';
-  import EventContent from '$lib/registry/components/event/content/event-content.svelte';
+  import { EventContent } from '$lib/registry/ui';
   import { Popover } from 'bits-ui';
 
   interface Props {

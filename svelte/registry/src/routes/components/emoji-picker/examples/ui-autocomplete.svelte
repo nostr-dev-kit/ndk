@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte, EmojiData } from '@nostr-dev-kit/svelte';
   import { createEmojiPicker } from '@nostr-dev-kit/svelte';
-  import EventContent from '$lib/registry/components/event/content/event-content.svelte';
+  import { EventContent } from '$lib/registry/ui';
 
   interface Props {
     ndk: NDKSvelte;

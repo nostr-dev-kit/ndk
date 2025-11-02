@@ -3,7 +3,6 @@
   import { setContext } from 'svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from './context.svelte.js';
   import { getNDKFromContext } from '../ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
@@ -39,22 +38,10 @@
 
   const ndk = getNDKFromContext(providedNdk);
 
-  // Fetch author profile (reactive to article changes)
-  let authorProfile = $state<ReturnType<typeof createProfileFetcher> | null>(null);
-
-  $effect(() => {
-    if (article.author) {
-      authorProfile = createProfileFetcher(() => ({ user: article.author }), ndk);
-    } else {
-      authorProfile = null;
-    }
-  });
-
   // Create reactive context with getters
   const context = {
     get ndk() { return ndk; },
     get article() { return article; },
-    get authorProfile() { return authorProfile; },
     get interactive() { return interactive; },
     get onclick() { return onclick; }
   };

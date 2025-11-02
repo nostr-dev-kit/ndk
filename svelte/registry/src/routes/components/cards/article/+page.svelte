@@ -318,46 +318,6 @@
 				]
 			},
 			{
-				name: 'ArticleCard.Author',
-				description: 'Display article author name from profile.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
-				props: [
-					{
-						name: 'fallback',
-						type: 'string',
-						default: '"Anonymous"',
-						description: 'Fallback text when author name is unavailable',
-						required: false
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
-					}
-				]
-			},
-			{
-				name: 'ArticleCard.Date',
-				description: 'Display article published date.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
-				props: [
-					{
-						name: 'format',
-						type: '"relative" | "short" | "full"',
-						default: '"relative"',
-						description: 'Date format style',
-						required: false
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
-					}
-				]
-			},
-			{
 				name: 'ArticleCard.Meta',
 				description: 'Combined author + date display.',
 				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",

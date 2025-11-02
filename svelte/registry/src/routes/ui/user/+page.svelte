@@ -224,11 +224,11 @@
 
   <section class="info">
     <h2>User.AvatarName</h2>
-    <p class="mb-4">Combined avatar and name display.</p>
+    <p class="mb-4">Combined avatar and name display with optional metadata line below.</p>
     <ApiTable
       rows={[
         { name: 'avatarSize', type: 'number', default: '40', description: 'Avatar size in pixels' },
-        { name: 'meta', type: "'handle' | 'nip05'", default: 'undefined', description: 'Additional metadata to show below name' },
+        { name: 'meta', type: "'handle' | 'about' | string | Snippet", default: 'undefined', description: 'Metadata to show below name. Use "handle" for @handle, "about" for bio, custom string, or a Snippet for full control' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

@@ -152,8 +152,12 @@
 
   <section class="info">
     <h2>User.Name</h2>
+    <p class="mb-4">Display user's name. Supports different field options and automatic truncation.</p>
     <ApiTable
       rows={[
+        { name: 'field', type: "'displayName' | 'name' | 'both'", default: "'displayName'", description: 'Which name field to display. "both" shows "DisplayName (@name)"' },
+        { name: 'size', type: 'string', default: "'text-base'", description: 'Text size CSS classes (e.g., "text-lg", "text-sm")' },
+        { name: 'truncate', type: 'boolean', default: 'true', description: 'Whether to truncate long names with ellipsis' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

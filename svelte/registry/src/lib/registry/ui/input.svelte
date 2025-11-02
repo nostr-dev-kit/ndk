@@ -3,7 +3,7 @@
   Base input component following shadcn-svelte patterns
 -->
 <script lang="ts">
-	import { cn } from '../../utils.js';
+	import { cn } from '../utils/index.js';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props extends HTMLInputAttributes {

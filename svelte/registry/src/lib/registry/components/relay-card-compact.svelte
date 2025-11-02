@@ -17,7 +17,7 @@
 	import Icon from '../ui/relay/relay-icon.svelte';
 	import Name from '../ui/relay/relay-name.svelte';
 	import BookmarkButton from '../ui/relay/relay-bookmark-button.svelte';
-	import { cn } from '../../utils.js';
+	import { cn } from '../utils/index.js';
 
 	interface Props {
 		/** NDK instance */

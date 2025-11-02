@@ -33,7 +33,7 @@
   import { User } from '../ui/user';
   import UserCardClassic from './user-card-classic.svelte';
   import { Popover } from 'bits-ui';
-  import { cn } from '../../utils.js';
+  import { cn } from '../utils/index.js';
 
   interface Props {
     /** NDK instance */

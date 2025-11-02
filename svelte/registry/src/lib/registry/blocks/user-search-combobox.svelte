@@ -33,7 +33,7 @@
   import type { Snippet } from 'svelte';
   import { createUserInput } from '@nostr-dev-kit/svelte';
   import { Combobox } from 'bits-ui';
-  import { cn } from '../../utils.js';
+  import { cn } from '../utils/index.js';
   import { User } from '../ui/user';
 
   interface Props {

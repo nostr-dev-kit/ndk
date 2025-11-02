@@ -273,43 +273,6 @@
 					]
 				},
 				{
-					name: 'Relay.Selector.AddForm',
-					description:
-						'Form for adding new relay URLs. Includes URL validation and NIP-11 preview.',
-					importPath: "import { Relay } from '$lib/registry/ui/relay'",
-					props: [
-						{
-							name: 'autoSelect',
-							type: 'boolean',
-							description: 'Automatically select relay after adding',
-							default: 'true'
-						},
-						{
-							name: 'placeholder',
-							type: 'string',
-							description: 'Placeholder text for input',
-							default: 'wss://relay.example.com'
-						},
-						{
-							name: 'showAsButton',
-							type: 'boolean',
-							description: 'Show as button that opens form on click',
-							default: 'false'
-						},
-						{
-							name: 'buttonText',
-							type: 'string',
-							description: 'Button text when showAsButton is true',
-							default: 'Add Relay'
-						},
-						{
-							name: 'class',
-							type: 'string',
-							description: 'Additional CSS classes'
-						}
-					]
-				},
-				{
 					name: 'RelaySelectorPopover',
 					description: 'Popover block for relay selection with customizable trigger button.',
 					importPath: "import { RelaySelectorPopover } from '$lib/registry/blocks'",

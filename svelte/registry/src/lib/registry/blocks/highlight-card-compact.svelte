@@ -13,7 +13,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../utils.js';
+  import { cn } from '../utils/index.js';
   import { Highlight } from '../ui/highlight/index.js';
   import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../ui/highlight/context.svelte.js';
   import { createTimeAgo } from '../utils/time-ago.svelte.js';

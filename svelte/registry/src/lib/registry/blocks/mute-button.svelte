@@ -16,7 +16,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createMuteAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils.js';
+  import { cn } from '../utils/index.js';
   import Avatar from '../ui/user/user-avatar.svelte';
   import Name from '../ui/user/user-name.svelte';
 

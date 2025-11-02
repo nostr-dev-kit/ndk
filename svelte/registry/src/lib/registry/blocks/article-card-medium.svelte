@@ -19,7 +19,7 @@
   import Title from '../ui/article/article-title.svelte';
   import Summary from '../ui/article/article-summary.svelte';
   import ReadingTime from '../ui/article/article-reading-time.svelte';
-  import { cn } from '../../utils.js';
+  import { cn } from '../utils/index.js';
 
   interface Props {
     /** NDK instance */

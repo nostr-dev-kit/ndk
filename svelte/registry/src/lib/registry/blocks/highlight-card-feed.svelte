@@ -12,7 +12,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { cn } from '../../utils.js';
+  import { cn } from '../utils/index.js';
   import { Highlight } from '../ui/highlight/index.js';
   import { EventCard } from '../components/event-card/index.js';
 

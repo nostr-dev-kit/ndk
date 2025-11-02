@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EmojiPicker, type EmojiData } from '$lib/registry/ui';
+  import { EmojiPicker, type EmojiData } from '$lib/registry/components/emoji-picker';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

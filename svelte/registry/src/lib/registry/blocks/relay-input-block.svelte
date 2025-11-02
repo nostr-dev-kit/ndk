@@ -11,7 +11,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../ui/relay/index.js';
-	import { cn } from '../../utils.js';
+	import { cn } from '../utils/index.js';
 
 	interface Props {
 		/** NDK instance */

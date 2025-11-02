@@ -12,7 +12,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../ui/relay/index.js';
 	import { Popover } from 'bits-ui';
-	import { cn } from '../../utils.js';
+	import { cn } from '../utils/index.js';
 	import type { Snippet } from 'svelte';
 
 	interface Props {

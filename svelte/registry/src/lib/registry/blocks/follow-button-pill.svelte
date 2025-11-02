@@ -18,8 +18,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils.js';
-  import UserAddIcon from '../../../icons/user-add.svelte';
+  import { cn } from '../utils/index.js';
+  import UserAddIcon from '../icons/user-add.svelte';
   import Avatar from '../ui/user/user-avatar.svelte';
   import Name from '../ui/user/user-name.svelte';
 

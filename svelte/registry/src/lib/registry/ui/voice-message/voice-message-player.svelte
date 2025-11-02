@@ -2,8 +2,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
-  import PlayIcon from '../../../icons/play.svelte';
-  import PauseIcon from '../../../icons/pause.svelte';
+  import PlayIcon from '../../icons/play.svelte';
+  import PauseIcon from '../../icons/pause.svelte';
 
   interface Props {
     /** Additional CSS classes */

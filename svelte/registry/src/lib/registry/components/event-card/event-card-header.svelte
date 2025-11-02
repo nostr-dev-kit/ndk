@@ -25,7 +25,7 @@
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../utils.js';
-  import TimeAgo from '../time-ago/time-ago.svelte';
+  import { createTimeAgo } from '../../../utils/time-ago.svelte.js';
   import { UserProfile } from '../user-profile/index.js';
   import type { Snippet } from 'svelte';
 
@@ -65,6 +65,9 @@
 
   // Fetch author profile directly
   const profileFetcher = createProfileFetcher(() => ({ user: context.event.author }), context.ndk);
+
+  // Create reactive time ago string
+  const timeAgo = createTimeAgo(context.event.created_at);
 
   // Stop propagation on interactive elements
   function stopPropagation(e: Event) {
@@ -138,11 +141,12 @@
   <!-- Timestamp and Custom Actions -->
   <div class="flex items-center gap-3">
     {#if showTimestamp}
-      <TimeAgo
-        timestamp={context.event.created_at}
-        element="time"
+      <time
+        datetime={new Date(context.event.created_at * 1000).toISOString()}
         class="text-sm text-muted-foreground/70"
-      />
+      >
+        {timeAgo}
+      </time>
     {/if}
 
     {#if children}

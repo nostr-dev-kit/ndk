@@ -340,7 +340,6 @@
       "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions. UI components only, blocks sold separately",
       "registryDependencies": [
         "user-profile",
-        "time-ago",
         "event-content",
         "actions",
         "ndk-context"
@@ -1185,29 +1184,6 @@
         }
       ],
       "version": "0.5.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
-    },
-    {
-      "name": "time-ago",
-      "type": "registry:component",
-      "title": "Time Ago",
-      "description": "Human-readable relative time display component",
-      "registryDependencies": [],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/time-ago/index.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "registry/ndk/time-ago/time-ago.svelte",
-          "type": "registry:component"
-        }
-      ],
-      "version": "0.2.0",
       "updatedAt": "2025-10-31T07:15:56.000Z"
     },
     {

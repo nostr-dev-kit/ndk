@@ -120,7 +120,7 @@
           <span class="font-normal">#{target}</span>
         </span>
       {:else}
-        <User.Root {ndk} user={target as NDKUser}>
+        <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
           <User.Avatar size={20} />
           <span class="inline-flex items-baseline gap-1">
             <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
@@ -147,7 +147,7 @@
             <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
           </svg>
         {:else}
-          <User.Root {ndk} user={target as NDKUser}>
+          <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
             <User.Avatar size={16} class="flex-shrink-0" />
           </User.Root>
         {/if}
@@ -196,7 +196,7 @@
           {#if isHashtag}
             <span class="font-normal">#{target}</span>
           {:else}
-            <User.Root {ndk} user={target as NDKUser}>
+            <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
               <User.Name field="displayName" class="text-sm font-normal" />
             </User.Root>
           {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import UserSearchCombobox from '$lib/registry/components/blocks/user-search-combobox.svelte';
+	import UserSearchCombobox from '$lib/registry/blocks/user-search-combobox.svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

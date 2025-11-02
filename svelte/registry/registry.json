@@ -116,7 +116,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/article-card-hero.svelte",
+          "path": "registry/registry/blocks/article-card-hero.svelte",
           "type": "registry:ui"
         }
       ],
@@ -135,7 +135,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/article-card-medium.svelte",
+          "path": "registry/registry/blocks/article-card-medium.svelte",
           "type": "registry:ui"
         }
       ],
@@ -154,7 +154,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/article-card-neon.svelte",
+          "path": "registry/registry/blocks/article-card-neon.svelte",
           "type": "registry:ui"
         }
       ],
@@ -173,7 +173,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/article-card-portrait.svelte",
+          "path": "registry/registry/blocks/article-card-portrait.svelte",
           "type": "registry:ui"
         }
       ],
@@ -243,7 +243,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/index.ts",
+          "path": "registry/registry/blocks/index.ts",
           "type": "registry:lib"
         }
       ],
@@ -408,7 +408,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/event-card-classic.svelte",
+          "path": "registry/registry/blocks/event-card-classic.svelte",
           "type": "registry:ui"
         }
       ],
@@ -427,7 +427,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/event-card-menu.svelte",
+          "path": "registry/registry/blocks/event-card-menu.svelte",
           "type": "registry:ui"
         }
       ],
@@ -469,7 +469,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-button.svelte",
+          "path": "registry/registry/blocks/follow-button.svelte",
           "type": "registry:ui"
         }
       ],
@@ -488,7 +488,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-button-card.svelte",
+          "path": "registry/registry/blocks/follow-button-card.svelte",
           "type": "registry:ui"
         }
       ],
@@ -507,7 +507,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-button-pill.svelte",
+          "path": "registry/registry/blocks/follow-button-pill.svelte",
           "type": "registry:ui"
         }
       ],
@@ -526,7 +526,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-pack-compact.svelte",
+          "path": "registry/registry/blocks/follow-pack-compact.svelte",
           "type": "registry:ui"
         }
       ],
@@ -545,7 +545,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-pack-hero.svelte",
+          "path": "registry/registry/blocks/follow-pack-hero.svelte",
           "type": "registry:ui"
         }
       ],
@@ -564,7 +564,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-pack-list-item.svelte",
+          "path": "registry/registry/blocks/follow-pack-list-item.svelte",
           "type": "registry:ui"
         }
       ],
@@ -583,7 +583,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/follow-pack-portrait.svelte",
+          "path": "registry/registry/blocks/follow-pack-portrait.svelte",
           "type": "registry:ui"
         }
       ],
@@ -675,7 +675,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/highlight-card-compact.svelte",
+          "path": "registry/registry/blocks/highlight-card-compact.svelte",
           "type": "registry:ui"
         }
       ],
@@ -694,7 +694,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/highlight-card-elegant.svelte",
+          "path": "registry/registry/blocks/highlight-card-elegant.svelte",
           "type": "registry:ui"
         }
       ],
@@ -713,7 +713,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/highlight-card-feed.svelte",
+          "path": "registry/registry/blocks/highlight-card-feed.svelte",
           "type": "registry:ui"
         }
       ],
@@ -732,7 +732,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/highlight-card-grid.svelte",
+          "path": "registry/registry/blocks/highlight-card-grid.svelte",
           "type": "registry:ui"
         }
       ],
@@ -751,7 +751,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/image-card.svelte",
+          "path": "registry/registry/blocks/image-card.svelte",
           "type": "registry:ui"
         }
       ],
@@ -770,7 +770,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/image-card-hero.svelte",
+          "path": "registry/registry/blocks/image-card-hero.svelte",
           "type": "registry:ui"
         }
       ],
@@ -789,7 +789,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/image-card-instagram.svelte",
+          "path": "registry/registry/blocks/image-card-instagram.svelte",
           "type": "registry:ui"
         }
       ],
@@ -808,7 +808,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/login-compact.svelte",
+          "path": "registry/registry/blocks/login-compact.svelte",
           "type": "registry:ui"
         }
       ],
@@ -827,7 +827,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/media-upload-carousel.svelte",
+          "path": "registry/registry/blocks/media-upload-carousel.svelte",
           "type": "registry:ui"
         }
       ],
@@ -865,7 +865,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/mute-button.svelte",
+          "path": "registry/registry/blocks/mute-button.svelte",
           "type": "registry:ui"
         }
       ],
@@ -922,7 +922,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/reaction-button.svelte",
+          "path": "registry/registry/blocks/reaction-button.svelte",
           "type": "registry:ui"
         }
       ],
@@ -941,7 +941,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/reaction-slack.svelte",
+          "path": "registry/registry/blocks/reaction-slack.svelte",
           "type": "registry:ui"
         }
       ],
@@ -998,7 +998,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/relay-card-compact.svelte",
+          "path": "registry/registry/blocks/relay-card-compact.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1017,7 +1017,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/relay-card-list.svelte",
+          "path": "registry/registry/blocks/relay-card-list.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1036,7 +1036,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/relay-card-portrait.svelte",
+          "path": "registry/registry/blocks/relay-card-portrait.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1131,7 +1131,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/repost-button.svelte",
+          "path": "registry/registry/blocks/repost-button.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1150,7 +1150,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/repost-button-pill.svelte",
+          "path": "registry/registry/blocks/repost-button-pill.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1171,7 +1171,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/simple-event-card.svelte",
+          "path": "registry/registry/blocks/simple-event-card.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1190,7 +1190,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/thread-view-twitter.svelte",
+          "path": "registry/registry/blocks/thread-view-twitter.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1209,7 +1209,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/upload-button.svelte",
+          "path": "registry/registry/blocks/upload-button.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1247,7 +1247,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/user-card-classic.svelte",
+          "path": "registry/registry/blocks/user-card-classic.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1266,7 +1266,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/user-card-compact.svelte",
+          "path": "registry/registry/blocks/user-card-compact.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1285,7 +1285,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/user-card-landscape.svelte",
+          "path": "registry/registry/blocks/user-card-landscape.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1304,7 +1304,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/user-card-portrait.svelte",
+          "path": "registry/registry/blocks/user-card-portrait.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1450,7 +1450,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/user-profile-hero.svelte",
+          "path": "registry/registry/blocks/user-profile-hero.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1469,7 +1469,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/voice-message-card-compact.svelte",
+          "path": "registry/registry/blocks/voice-message-card-compact.svelte",
           "type": "registry:ui"
         }
       ],
@@ -1488,7 +1488,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/blocks/voice-message-card-expanded.svelte",
+          "path": "registry/registry/blocks/voice-message-card-expanded.svelte",
           "type": "registry:ui"
         }
       ],

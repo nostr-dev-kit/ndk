@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
-  import ArticleCardMedium from '$lib/registry/components/blocks/article-card-medium.svelte';
+  import ArticleCardMedium from '$lib/registry/blocks/article-card-medium.svelte';
 
   interface Props {
     ndk: NDKSvelte;

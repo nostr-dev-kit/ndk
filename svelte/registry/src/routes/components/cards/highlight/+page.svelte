@@ -4,10 +4,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import { HighlightCard } from '$lib/registry/components/highlight-card';
-  import HighlightCardFeed from '$lib/registry/components/blocks/highlight-card-feed.svelte';
-  import HighlightCardElegant from '$lib/registry/components/blocks/highlight-card-elegant.svelte';
-  import HighlightCardCompact from '$lib/registry/components/blocks/highlight-card-compact.svelte';
-  import HighlightCardGrid from '$lib/registry/components/blocks/highlight-card-grid.svelte';
+  import HighlightCardFeed from '$lib/registry/blocks/highlight-card-feed.svelte';
+  import HighlightCardElegant from '$lib/registry/blocks/highlight-card-elegant.svelte';
+  import HighlightCardCompact from '$lib/registry/blocks/highlight-card-compact.svelte';
+  import HighlightCardGrid from '$lib/registry/blocks/highlight-card-grid.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -267,7 +267,7 @@
         name: 'HighlightCardFeed',
         description:
           'Preset: Full-width feed layout with header, book-style text, and actions. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardFeed } from '$lib/registry/components/blocks'",
+        importPath: "import { HighlightCardFeed } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',
@@ -301,7 +301,7 @@
         name: 'HighlightCardElegant',
         description:
           'Preset: Square elegant card with gradient background. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardElegant } from '$lib/registry/components/blocks'",
+        importPath: "import { HighlightCardElegant } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',
@@ -335,7 +335,7 @@
         name: 'HighlightCardCompact',
         description:
           'Preset: Compact horizontal card. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardCompact } from '$lib/registry/components/blocks'",
+        importPath: "import { HighlightCardCompact } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',
@@ -376,7 +376,7 @@
         name: 'HighlightCardGrid',
         description:
           'Preset: Square card for grid layouts. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardGrid } from '$lib/registry/components/blocks'",
+        importPath: "import { HighlightCardGrid } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',

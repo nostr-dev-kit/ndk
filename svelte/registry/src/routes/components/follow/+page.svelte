@@ -7,9 +7,9 @@
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import block components for preview
-  import FollowButton from '$lib/registry/components/blocks/follow-button.svelte';
-  import FollowButtonPill from '$lib/registry/components/blocks/follow-button-pill.svelte';
-  import FollowButtonAnimated from '$lib/registry/components/blocks/follow-button-animated.svelte';
+  import FollowButton from '$lib/registry/blocks/follow-button.svelte';
+  import FollowButtonPill from '$lib/registry/blocks/follow-button-pill.svelte';
+  import FollowButtonAnimated from '$lib/registry/blocks/follow-button-animated.svelte';
 
   // Import code examples
   import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
@@ -324,7 +324,7 @@
       {
         name: 'FollowButton',
         description: 'Minimal follow button block with icon-first design.',
-        importPath: "import { FollowButton } from '$lib/registry/components/blocks'",
+        importPath: "import { FollowButton } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',
@@ -360,7 +360,7 @@
       {
         name: 'FollowButtonPill',
         description: 'Pill-style follow button block with rounded design. Supports compact mode for icon-only display.',
-        importPath: "import { FollowButtonPill } from '$lib/registry/components/blocks'",
+        importPath: "import { FollowButtonPill } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',
@@ -408,7 +408,7 @@
       {
         name: 'FollowButtonAnimated',
         description: 'Animated follow button with smooth transitions and visual feedback. Features icon animations, checkmark confirmation, and particle effects.',
-        importPath: "import { FollowButtonAnimated } from '$lib/registry/components/blocks'",
+        importPath: "import { FollowButtonAnimated } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',

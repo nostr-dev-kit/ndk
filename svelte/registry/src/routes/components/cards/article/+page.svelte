@@ -4,10 +4,10 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import { Article } from '$lib/registry/ui/article';
-	import ArticleCardPortrait from '$lib/registry/components/blocks/article-card-portrait.svelte';
-	import ArticleCardHero from '$lib/registry/components/blocks/article-card-hero.svelte';
-	import ArticleCardNeon from '$lib/registry/components/blocks/article-card-neon.svelte';
-	import ArticleCardMedium from '$lib/registry/components/blocks/article-card-medium.svelte';
+	import ArticleCardPortrait from '$lib/registry/blocks/article-card-portrait.svelte';
+	import ArticleCardHero from '$lib/registry/blocks/article-card-hero.svelte';
+	import ArticleCardNeon from '$lib/registry/blocks/article-card-neon.svelte';
+	import ArticleCardMedium from '$lib/registry/blocks/article-card-medium.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -317,7 +317,7 @@
 				name: 'ArticleCardPortrait',
 				description:
 					'Preset: Vertical card with image on top. Import from $lib/ndk/blocks for quick use.',
-				importPath: "import { ArticleCardPortrait } from '$lib/registry/components/blocks'",
+				importPath: "import { ArticleCardPortrait } from '$lib/registry/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -358,7 +358,7 @@
 				name: 'ArticleCardHero',
 				description:
 					'Preset: Full-width hero card with gradient background and optional badge. Import from $lib/ndk/blocks.',
-				importPath: "import { ArticleCardHero } from '$lib/registry/components/blocks'",
+				importPath: "import { ArticleCardHero } from '$lib/registry/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -391,7 +391,7 @@
 				name: 'ArticleCardNeon',
 				description:
 					'Preset: Portrait card with subtle glossy white neon top border effect, full background image. Import from $lib/ndk/blocks.',
-				importPath: "import { ArticleCardNeon } from '$lib/registry/components/blocks'",
+				importPath: "import { ArticleCardNeon } from '$lib/registry/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -425,7 +425,7 @@
 				name: 'ArticleCardMedium',
 				description:
 					'Preset: Horizontal card with image on right. Supports three image size variants. Import from $lib/ndk/blocks.',
-				importPath: "import { ArticleCardMedium } from '$lib/registry/components/blocks'",
+				importPath: "import { ArticleCardMedium } from '$lib/registry/blocks'",
 				props: [
 					{
 						name: 'ndk',

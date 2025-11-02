@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '$lib/registry/ui/user';
-  import UserCardClassic from '$lib/registry/components/blocks/user-card-classic.svelte';
+  import UserCardClassic from '$lib/registry/blocks/user-card-classic.svelte';
   import { Popover } from 'bits-ui';
   import HoverCard from './hover-card.svelte';
 

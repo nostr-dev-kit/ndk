@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { Input } from '$lib/registry/components/input/index.js';
+  import { UserInput } from '$lib/registry/ui/user-input/index.js';
 
   interface Props {
     ndk: NDKSvelte;
@@ -14,12 +14,12 @@
 </script>
 
 <div class="example-container">
-  <Input.Root {ndk} onSelect={handleSelect}>
-    <Input.Search placeholder="Search users..." autofocus />
+  <UserInput.Root {ndk} onSelect={handleSelect}>
+    <UserInput.Search placeholder="Search users..." autofocus />
 
-    <Input.Results maxResults={10}>
+    <UserInput.Results maxResults={10}>
       {#snippet children(result)}
-        <Input.ResultItem {result} />
+        <UserInput.ResultItem {result} />
       {/snippet}
 
       {#snippet empty()}
@@ -32,8 +32,8 @@
           <p class="hint">Try searching by name, NIP-05, or npub</p>
         </div>
       {/snippet}
-    </Input.Results>
-  </Input.Root>
+    </UserInput.Results>
+  </UserInput.Root>
 </div>
 
 

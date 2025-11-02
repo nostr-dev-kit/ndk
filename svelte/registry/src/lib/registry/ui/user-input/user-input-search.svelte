@@ -21,6 +21,9 @@
   }: Props = $props();
 
   const context = getContext<UserInputContext>(USER_INPUT_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('UserInput.Search must be used within UserInput.Root');
+  }
 
   let query = $derived(context.query);
 
@@ -52,28 +55,12 @@
 <style>
   .user-input-search {
     position: relative;
+    display: inline-block;
     width: 100%;
   }
 
   .user-input-search-input {
     width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.375rem;
-    background-color: hsl(var(--color-background));
-    color: hsl(var(--color-foreground));
-    font-size: 0.875rem;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .user-input-search-input:focus {
-    border-color: hsl(var(--color-ring));
-    box-shadow: 0 0 0 2px hsl(var(--color-ring) / 0.2);
-  }
-
-  .user-input-search-input.loading {
-    padding-right: 2.5rem;
   }
 
   .user-input-search-loading {
@@ -81,40 +68,6 @@
     right: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .spinner {
-    animation: rotate 2s linear infinite;
-    width: 100%;
-    height: 100%;
-  }
-
-  .spinner circle {
-    stroke: hsl(var(--color-primary));
-    stroke-linecap: round;
-    animation: dash 1.5s ease-in-out infinite;
-  }
-
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes dash {
-    0% {
-      stroke-dasharray: 1, 150;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -35;
-    }
-    100% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -124;
-    }
+    pointer-events: none;
   }
 </style>

@@ -2,7 +2,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { UserInputResult } from '@nostr-dev-kit/svelte';
-  import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.ts';
+  import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';
   import UserListItem from '$lib/registry/components/blocks/user-list-item.svelte';
 
   interface Props {
@@ -19,6 +19,9 @@
   }: Props = $props();
 
   const context = getContext<UserInputContext>(USER_INPUT_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('UserInput.ResultItem must be used within UserInput.Root');
+  }
   const ndk = context.ndk;
 
   function handleClick() {
@@ -36,20 +39,9 @@
 
 <style>
   .user-input-result-item {
+    all: unset;
+    display: block;
     width: 100%;
-    padding: 0;
-    border: none;
-    background: transparent;
     cursor: pointer;
-    transition: background-color 0.15s;
-  }
-
-  .user-input-result-item:hover {
-    background-color: hsl(var(--color-accent));
-  }
-
-  .user-input-result-item:focus {
-    outline: none;
-    background-color: hsl(var(--color-accent));
   }
 </style>

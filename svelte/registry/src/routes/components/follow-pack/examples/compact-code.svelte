@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
-	import { FollowPack } from '$lib/registry/components/follow-pack';
+	import { FollowPack } from '$lib/registry/ui/follow-pack';
 
 	interface Props {
 		ndk: NDKSvelte;

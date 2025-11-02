@@ -1,22 +1,52 @@
+<!--
+  @component MediaUpload.Button
+  Headless file upload trigger button.
+
+  @example Basic usage:
+  ```svelte
+  <MediaUpload.Button />
+  ```
+
+  @example Custom button:
+  ```svelte
+  <MediaUpload.Button>
+    {#snippet child({ props, isUploading })}
+      <button {...props} class="custom-upload-btn">
+        <Icon name="upload" />
+        {isUploading ? 'Processing...' : 'Choose Files'}
+      </button>
+    {/snippet}
+  </MediaUpload.Button>
+  ```
+-->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';
 	import type { createMediaUpload } from './createMediaUpload.svelte';
+	import { mergeProps } from '../../../utils.js';
+
+	interface UploadSnippetProps {
+		isUploading: boolean;
+		uploadCount: number;
+	}
 
 	interface Props {
 		multiple?: boolean;
 		accept?: string;
 		disabled?: boolean;
-		children?: Snippet;
 		class?: string;
+		child?: Snippet<[{ props: any } & UploadSnippetProps]>;
+		children?: Snippet<[UploadSnippetProps]>;
 	}
 
 	let {
 		multiple = true,
 		accept = '*/*',
 		disabled = false,
+		class: className = '',
+		child,
 		children,
-		class: className
+		...restProps
 	}: Props = $props();
 
 	const mediaUpload = getContext<ReturnType<typeof createMediaUpload>>('mediaUpload');
@@ -36,6 +66,20 @@
 	function openFilePicker() {
 		fileInput?.click();
 	}
+
+	const mergedProps = $derived(mergeProps(restProps, {
+		type: 'button',
+		onclick: openFilePicker,
+		disabled: disabled || mediaUpload.isUploading,
+		'aria-label': mediaUpload.isUploading ? 'Uploading files' : 'Upload files',
+		'data-uploading': mediaUpload.isUploading,
+		class: className
+	}));
+
+	const snippetProps = $derived({
+		isUploading: mediaUpload.isUploading,
+		uploadCount: mediaUpload.uploadedMedia?.length || 0
+	});
 </script>
 
 <input
@@ -44,18 +88,18 @@
 	{multiple}
 	{accept}
 	onchange={handleFileChange}
-	class="hidden"
+	style="display: none;"
+	aria-hidden="true"
 />
 
-<button
-	type="button"
-	onclick={openFilePicker}
-	disabled={disabled || mediaUpload.isUploading}
-	class={className}
->
-	{#if children}
-		{@render children()}
-	{:else}
-		{mediaUpload.isUploading ? 'Uploading...' : 'Upload Files'}
-	{/if}
-</button>
+{#if child}
+	{@render child({ props: mergedProps, ...snippetProps })}
+{:else}
+	<button {...mergedProps}>
+		{#if children}
+			{@render children(snippetProps)}
+		{:else}
+			{mediaUpload.isUploading ? 'Uploading...' : 'Upload Files'}
+		{/if}
+	</button>
+{/if}

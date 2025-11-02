@@ -22,7 +22,7 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { getNDKFromContext } from '../ndk-context.svelte.js';
+	import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
 	import { RELAY_SELECTOR_CONTEXT_KEY, type RelaySelectorContext } from './relay-selector-context.svelte.js';
 	import type { Snippet } from 'svelte';
 

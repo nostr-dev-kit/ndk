@@ -17,8 +17,7 @@
   import { getContext } from 'svelte';
   import { Motion } from 'svelte-motion';
   import { cn } from '../utils/index.js';
-  import Avatar from '../ui/user/user-avatar.svelte';
-  import Name from '../ui/user/user-name.svelte';
+  import { User } from '../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -35,7 +34,7 @@
   }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const isHashtag = typeof target === 'string';
   const isOwnProfile = $derived.by(() => {
@@ -100,9 +99,11 @@
                 </svg>
                 <span>Following #{target}</span>
               {:else}
-                <Avatar user={target as NDKUser} size={16} />
-                <span>Following</span>
-                <Name user={target as NDKUser} size="text-sm" truncate={false} />
+                <User.Root {ndk} user={target as NDKUser}>
+                  <User.Avatar size={16} />
+                  <span>Following</span>
+                  <User.Name field="displayName" class="text-sm" />
+                </User.Root>
               {/if}
             {:else}
               Following
@@ -152,9 +153,11 @@
                 </svg>
                 <span>Follow #{target}</span>
               {:else}
-                <Avatar user={target as NDKUser} size={16} />
-                <span>Follow</span>
-                <Name user={target as NDKUser} size="text-sm" truncate={false} />
+                <User.Root {ndk} user={target as NDKUser}>
+                  <User.Avatar size={16} />
+                  <span>Follow</span>
+                  <User.Name field="displayName" class="text-sm" />
+                </User.Root>
               {/if}
             {:else}
               Follow

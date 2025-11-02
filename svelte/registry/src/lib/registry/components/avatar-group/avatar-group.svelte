@@ -26,7 +26,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createAvatarGroup } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
 
   interface Props {
     /** NDK instance */
@@ -100,27 +100,25 @@
       style:margin-left={index === 0 ? '0' : `${marginLeft}px`}
       style:z-index={visibleUsers.length - index}
     >
-      {#if onAvatarClick}
-        <button
-          type="button"
-          onclick={() => onAvatarClick?.(user)}
-          class="avatar-group-button"
-        >
+      <User.Root {ndk} {user}>
+        {#if onAvatarClick}
+          <button
+            type="button"
+            onclick={() => onAvatarClick?.(user)}
+            class="avatar-group-button"
+          >
+            <User.Avatar
+              {size}
+              class="ring-2 ring-background"
+            />
+          </button>
+        {:else}
           <User.Avatar
-            {ndk}
-            {user}
             {size}
             class="ring-2 ring-background"
           />
-        </button>
-      {:else}
-        <User.Avatar
-          {ndk}
-          {user}
-          {size}
-          class="ring-2 ring-background"
-        />
-      {/if}
+        {/if}
+      </User.Root>
     </div>
   {/each}
 

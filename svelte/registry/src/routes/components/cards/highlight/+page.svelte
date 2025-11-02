@@ -3,7 +3,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
-  import { HighlightCard } from '$lib/registry/ui/highlight-card';
+  import { Highlight as HighlightCard } from '$lib/registry/ui/highlight';
   import HighlightCardFeed from '$lib/registry/blocks/highlight-card-feed.svelte';
   import HighlightCardElegant from '$lib/registry/blocks/highlight-card-elegant.svelte';
   import HighlightCardCompact from '$lib/registry/blocks/highlight-card-compact.svelte';
@@ -206,7 +206,7 @@
         name: 'HighlightCard.Root',
         description:
           'Root container that provides context to child components. Uses createHighlight builder internally.',
-        importPath: "import { HighlightCard } from '$lib/registry/ui/highlight-card'",
+        importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
         props: [
           {
             name: 'ndk',
@@ -226,7 +226,7 @@
       {
         name: 'HighlightCard.Content',
         description: 'Display highlighted text with context.',
-        importPath: "import { HighlightCard } from '$lib/registry/ui/highlight-card'",
+        importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
         props: [
           {
             name: 'fontSize',
@@ -246,7 +246,7 @@
       {
         name: 'HighlightCard.Source',
         description: 'Display source reference badge.',
-        importPath: "import { HighlightCard } from '$lib/registry/ui/highlight-card'",
+        importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
         props: [
           {
             name: 'position',

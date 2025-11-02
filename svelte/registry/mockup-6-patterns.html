@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relay Card - Pattern Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        /* Pattern Filter */
+        .pattern-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            padding: 0.5rem 1.25rem;
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-pill:hover {
+            border-color: #666;
+        }
+
+        .filter-pill.active {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+
+        .filter-pill .count {
+            display: inline-block;
+            margin-left: 0.5rem;
+            padding: 0.125rem 0.5rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 100px;
+            font-size: 0.75rem;
+        }
+
+        .filter-pill.active .count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Pattern Grid */
+        .patterns-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .pattern-card {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .pattern-card:hover {
+            border-color: #666;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .pattern-header {
+            padding: 1.5rem;
+            background: #f8f8f8;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .pattern-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .pattern-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .pattern-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pattern-tag {
+            padding: 0.25rem 0.75rem;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .pattern-description {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        /* Pattern Content */
+        .pattern-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .pattern-preview {
+            padding: 2rem;
+            background: #fafafa;
+            border-right: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .pattern-preview-label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .pattern-code {
+            position: relative;
+            background: #1a1a1a;
+            color: #e5e5e5;
+            padding: 0;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #2a2a2a;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-language {
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-action {
+            padding: 0.25rem 0.75rem;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #999;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .code-action:hover {
+            background: #444;
+            color: white;
+        }
+
+        .code-content {
+            padding: 1.5rem;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.8125rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Pattern Variations */
+        .pattern-variations {
+            padding: 1.5rem;
+            background: #f0f8ff;
+            border-top: 1px solid #b0d4ff;
+        }
+
+        .variations-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .variation-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .variation-item {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #b0d4ff;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .variation-item:hover {
+            background: #e6f2ff;
+        }
+
+        /* Quick Copy Section */
+        .quick-copy {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            transform: translateX(500px);
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .quick-copy.visible {
+            transform: translateX(0);
+        }
+
+        .quick-copy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .quick-copy-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .quick-copy-close {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .quick-copy-content {
+            background: #f8f8f8;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Pattern Categories */
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 3rem 0 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .category-count {
+            margin-left: auto;
+            padding: 0.25rem 0.75rem;
+            background: #f0f0f0;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Pattern Stats */
+        .pattern-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e5e5e5;
+            font-size: 0.8125rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.5;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        /* Installation Guide */
+        .install-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .install-command {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .install-copy {
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+            color: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        /* Mock Components */
+        .mock-relay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .mock-relay-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .mock-relay-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .mock-relay-list-item {
+            padding: 1rem;
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mock-relay-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .mock-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+        }
+
+        .mock-icon-small {
+            width: 32px;
+            height: 32px;
+        }
+
+        .mock-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .mock-subtext {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* Syntax Highlighting */
+        .code-content .comment { color: #6a737d; }
+        .code-content .keyword { color: #d73a49; }
+        .code-content .string { color: #032f62; }
+        .code-content .function { color: #6f42c1; }
+        .code-content .tag { color: #22863a; }
+        .code-content .attr { color: #6f42c1; }
+        .code-content .value { color: #032f62; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Relay Card Patterns</h1>
+            <p>Ready-to-copy patterns for common relay card implementations</p>
+        </header>
+
+        <!-- Quick Install -->
+        <div class="install-banner">
+            <h2 style="margin-bottom: 0.5rem;">Quick Start</h2>
+            <p style="opacity: 0.9; font-size: 0.875rem;">Install the relay card component to use these patterns</p>
+            <div class="install-command">
+                <code>npx ndk-svelte add relay-card-portrait</code>
+                <button class="install-copy">Copy</button>
+            </div>
+        </div>
+
+        <!-- Pattern Filter -->
+        <div class="pattern-filter">
+            <button class="filter-pill active">
+                All Patterns
+                <span class="count">12</span>
+            </button>
+            <button class="filter-pill">
+                Grids
+                <span class="count">3</span>
+            </button>
+            <button class="filter-pill">
+                Lists
+                <span class="count">2</span>
+            </button>
+            <button class="filter-pill">
+                Selectors
+                <span class="count">2</span>
+            </button>
+            <button class="filter-pill">
+                Status
+                <span class="count">2</span>
+            </button>
+            <button class="filter-pill">
+                Minimal
+                <span class="count">3</span>
+            </button>
+        </div>
+
+        <!-- Layout Patterns -->
+        <div class="category-header">
+            <div class="category-icon">📐</div>
+            <h2 class="category-title">Layout Patterns</h2>
+            <span class="category-count">5 patterns</span>
+        </div>
+
+        <div class="patterns-grid">
+            <!-- Pattern: Responsive Grid -->
+            <div class="pattern-card">
+                <div class="pattern-header">
+                    <div class="pattern-meta">
+                        <h3 class="pattern-title">Responsive Relay Grid</h3>
+                        <div class="pattern-tags">
+                            <span class="pattern-tag">Grid</span>
+                            <span class="pattern-tag">Responsive</span>
+                        </div>
+                    </div>
+                    <p class="pattern-description">Auto-adjusting grid that reflows based on viewport width</p>
+                </div>
+
+                <div class="pattern-content">
+                    <div class="pattern-preview">
+                        <span class="pattern-preview-label">Preview</span>
+                        <div class="mock-relay-grid">
+                            <div class="mock-relay-card">
+                                <div class="mock-icon"></div>
+                                <div class="mock-text">Relay 1</div>
+                            </div>
+                            <div class="mock-relay-card">
+                                <div class="mock-icon"></div>
+                                <div class="mock-text">Relay 2</div>
+                            </div>
+                            <div class="mock-relay-card">
+                                <div class="mock-icon"></div>
+                                <div class="mock-text">Relay 3</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pattern-code">
+                        <div class="code-header">
+                            <span class="code-language">Svelte</span>
+                            <div class="code-actions">
+                                <button class="code-action" onclick="copyPattern('grid')">Copy</button>
+                                <button class="code-action">StackBlitz</button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+&lt;script&gt;
+  import { RelayCardPortrait } from '$lib/registry/components'
+
+  const relays = [
+    'wss://relay.damus.io',
+    'wss://relay.snort.social',
+    'wss://nos.lol'
+  ]
+&lt;/script&gt;
+
+&lt;div class="relay-grid"&gt;
+  {#each relays as relayUrl}
+    &lt;RelayCardPortrait {ndk} {relayUrl} /&gt;
+  {/each}
+&lt;/div&gt;
+
+&lt;style&gt;
+  .relay-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .relay-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+&lt;/style&gt;
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pattern-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">📦</span>
+                        <span class="stat-value">4.2KB</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⚡</span>
+                        <span class="stat-value">No JS</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">📱</span>
+                        <span class="stat-value">Mobile Ready</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">♿</span>
+                        <span class="stat-value">A11y</span>
+                    </div>
+                </div>
+
+                <div class="pattern-variations">
+                    <div class="variations-title">Variations</div>
+                    <div class="variation-list">
+                        <div class="variation-item">3 Column Fixed</div>
+                        <div class="variation-item">Masonry Layout</div>
+                        <div class="variation-item">With Filtering</div>
+                        <div class="variation-item">Infinite Scroll</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pattern: Relay List -->
+            <div class="pattern-card">
+                <div class="pattern-header">
+                    <div class="pattern-meta">
+                        <h3 class="pattern-title">Relay Management List</h3>
+                        <div class="pattern-tags">
+                            <span class="pattern-tag">List</span>
+                            <span class="pattern-tag">Management</span>
+                        </div>
+                    </div>
+                    <p class="pattern-description">Full-width list with actions for relay management</p>
+                </div>
+
+                <div class="pattern-content">
+                    <div class="pattern-preview">
+                        <span class="pattern-preview-label">Preview</span>
+                        <div class="mock-relay-list" style="width: 100%;">
+                            <div class="mock-relay-list-item">
+                                <div class="mock-icon mock-icon-small"></div>
+                                <div style="flex: 1;">
+                                    <div class="mock-text">relay.damus.io</div>
+                                    <div class="mock-subtext">Public relay</div>
+                                </div>
+                                <button style="padding: 0.25rem 0.75rem; background: #f0f0f0; border: 1px solid #e5e5e5; border-radius: 4px; font-size: 0.75rem;">Remove</button>
+                            </div>
+                            <div class="mock-relay-list-item">
+                                <div class="mock-icon mock-icon-small"></div>
+                                <div style="flex: 1;">
+                                    <div class="mock-text">nos.lol</div>
+                                    <div class="mock-subtext">Fast relay</div>
+                                </div>
+                                <button style="padding: 0.25rem 0.75rem; background: #f0f0f0; border: 1px solid #e5e5e5; border-radius: 4px; font-size: 0.75rem;">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pattern-code">
+                        <div class="code-header">
+                            <span class="code-language">Svelte</span>
+                            <div class="code-actions">
+                                <button class="code-action" onclick="copyPattern('list')">Copy</button>
+                                <button class="code-action">StackBlitz</button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+&lt;script&gt;
+  import { RelayCardList } from '$lib/registry/components'
+
+  let userRelays = $state([
+    'wss://relay.damus.io',
+    'wss://nos.lol',
+    'wss://relay.nostr.band'
+  ])
+
+  function removeRelay(url) {
+    userRelays = userRelays.filter(r => r !== url)
+  }
+&lt;/script&gt;
+
+&lt;div class="relay-list"&gt;
+  {#each userRelays as relayUrl}
+    &lt;div class="relay-item"&gt;
+      &lt;RelayCardList {ndk} {relayUrl} compact /&gt;
+      &lt;button onclick={() => removeRelay(relayUrl)}&gt;
+        Remove
+      &lt;/button&gt;
+    &lt;/div&gt;
+  {/each}
+&lt;/div&gt;
+
+&lt;style&gt;
+  .relay-list {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .relay-item {
+    display: flex;
+    align-items: center;
+    padding-right: 1rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .relay-item:last-child {
+    border-bottom: none;
+  }
+&lt;/style&gt;
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pattern-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">📦</span>
+                        <span class="stat-value">3.5KB</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⚡</span>
+                        <span class="stat-value">Interactive</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔄</span>
+                        <span class="stat-value">Reactive</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Patterns -->
+        <div class="category-header">
+            <div class="category-icon">⚡</div>
+            <h2 class="category-title">Interactive Patterns</h2>
+            <span class="category-count">4 patterns</span>
+        </div>
+
+        <div class="patterns-grid">
+            <!-- Pattern: Multi-Select -->
+            <div class="pattern-card">
+                <div class="pattern-header">
+                    <div class="pattern-meta">
+                        <h3 class="pattern-title">Multi-Select Relay Picker</h3>
+                        <div class="pattern-tags">
+                            <span class="pattern-tag">Selector</span>
+                            <span class="pattern-tag">Form</span>
+                        </div>
+                    </div>
+                    <p class="pattern-description">Checkbox-based relay selection for forms</p>
+                </div>
+
+                <div class="pattern-content">
+                    <div class="pattern-preview">
+                        <span class="pattern-preview-label">Preview</span>
+                        <div style="width: 100%; max-width: 300px;">
+                            <div style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem;">
+                                <label style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; cursor: pointer;">
+                                    <input type="checkbox" checked>
+                                    <div class="mock-icon mock-icon-small"></div>
+                                    <div>
+                                        <div class="mock-text">relay.damus.io</div>
+                                        <div class="mock-subtext">2,451 users</div>
+                                    </div>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                                    <input type="checkbox">
+                                    <div class="mock-icon mock-icon-small"></div>
+                                    <div>
+                                        <div class="mock-text">nos.lol</div>
+                                        <div class="mock-subtext">1,823 users</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pattern-code">
+                        <div class="code-header">
+                            <span class="code-language">Svelte</span>
+                            <div class="code-actions">
+                                <button class="code-action" onclick="copyPattern('selector')">Copy</button>
+                                <button class="code-action">StackBlitz</button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+&lt;script&gt;
+  import { Relay } from '$lib/registry/ui/relay'
+
+  let availableRelays = [
+    { url: 'wss://relay.damus.io', selected: true },
+    { url: 'wss://nos.lol', selected: false },
+    { url: 'wss://relay.nostr.band', selected: false }
+  ]
+
+  $: selectedRelays = availableRelays
+    .filter(r => r.selected)
+    .map(r => r.url)
+&lt;/script&gt;
+
+&lt;div class="relay-selector"&gt;
+  {#each availableRelays as relay}
+    &lt;label class="relay-option"&gt;
+      &lt;input
+        type="checkbox"
+        bind:checked={relay.selected}
+      /&gt;
+      &lt;Relay.Root {ndk} relayUrl={relay.url}&gt;
+        &lt;div class="relay-info"&gt;
+          &lt;Relay.Icon size={32} /&gt;
+          &lt;div&gt;
+            &lt;Relay.Name /&gt;
+            &lt;Relay.Url showProtocol={false} /&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/Relay.Root&gt;
+    &lt;/label&gt;
+  {/each}
+&lt;/div&gt;
+
+&lt;style&gt;
+  .relay-selector {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .relay-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+
+  .relay-option:hover {
+    background: #f8f8f8;
+  }
+
+  .relay-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+&lt;/style&gt;
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pattern-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">📦</span>
+                        <span class="stat-value">2.8KB</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-value">Multi-select</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">📝</span>
+                        <span class="stat-value">Form Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More patterns... -->
+        </div>
+
+        <!-- Status Patterns -->
+        <div class="category-header">
+            <div class="category-icon">🟢</div>
+            <h2 class="category-title">Status Patterns</h2>
+            <span class="category-count">3 patterns</span>
+        </div>
+
+        <div class="patterns-grid">
+            <!-- Connection status pattern -->
+            <div class="pattern-card">
+                <div class="pattern-header">
+                    <div class="pattern-meta">
+                        <h3 class="pattern-title">Connection Status Indicator</h3>
+                        <div class="pattern-tags">
+                            <span class="pattern-tag">Status</span>
+                            <span class="pattern-tag">Real-time</span>
+                        </div>
+                    </div>
+                    <p class="pattern-description">Shows real-time connection status with visual indicators</p>
+                </div>
+
+                <div class="pattern-content">
+                    <div class="pattern-preview">
+                        <span class="pattern-preview-label">Preview</span>
+                        <div style="background: white; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; width: 250px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div class="mock-icon mock-icon-small"></div>
+                                    <div>
+                                        <div class="mock-text">relay.damus.io</div>
+                                        <div class="mock-subtext">43ms latency</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.25rem;">
+                                    <div style="width: 8px; height: 8px; background: #0f9d58; border-radius: 50%;"></div>
+                                    <span style="font-size: 0.75rem; color: #0f9d58;">Connected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pattern-code">
+                        <div class="code-header">
+                            <span class="code-language">Svelte</span>
+                            <div class="code-actions">
+                                <button class="code-action" onclick="copyPattern('status')">Copy</button>
+                                <button class="code-action">StackBlitz</button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+&lt;script&gt;
+  import { Relay } from '$lib/registry/ui/relay'
+
+  // Connection states from NDK
+  let connectionStatus = $state('connected')
+  let latency = $state(43)
+&lt;/script&gt;
+
+&lt;Relay.Root {ndk} {relayUrl}&gt;
+  &lt;div class="status-card"&gt;
+    &lt;div class="relay-info"&gt;
+      &lt;Relay.Icon size={32} /&gt;
+      &lt;div&gt;
+        &lt;Relay.Name /&gt;
+        &lt;span class="latency"&gt;{latency}ms latency&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="status-indicator {connectionStatus}"&gt;
+      &lt;span class="status-dot"&gt;&lt;/span&gt;
+      &lt;span class="status-text"&gt;
+        {connectionStatus === 'connected' ? 'Connected' : 'Offline'}
+      &lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/Relay.Root&gt;
+
+&lt;style&gt;
+  .status-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #999;
+  }
+
+  .connected .status-dot {
+    background: #0f9d58;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+&lt;/style&gt;
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Copy Panel -->
+    <div class="quick-copy" id="quick-copy">
+        <div class="quick-copy-header">
+            <span class="quick-copy-title">Copied to clipboard!</span>
+            <button class="quick-copy-close" onclick="hideQuickCopy()">✕</button>
+        </div>
+        <div class="quick-copy-content" id="quick-copy-content">
+            <!-- Code will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        function copyPattern(pattern) {
+            const panel = document.getElementById('quick-copy');
+            panel.classList.add('visible');
+
+            // Simulate copy
+            setTimeout(() => {
+                panel.classList.remove('visible');
+            }, 3000);
+        }
+
+        function hideQuickCopy() {
+            document.getElementById('quick-copy').classList.remove('visible');
+        }
+    </script>
+</body>
+</html>

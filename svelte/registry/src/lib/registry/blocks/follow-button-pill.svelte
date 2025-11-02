@@ -20,8 +20,7 @@
   import { getContext } from 'svelte';
   import { cn } from '../utils/index.js';
   import UserAddIcon from '../icons/user-add.svelte';
-  import Avatar from '../ui/user/user-avatar.svelte';
-  import Name from '../ui/user/user-name.svelte';
+  import { User } from '../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -44,7 +43,7 @@
   }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const isHashtag = typeof target === 'string';
   const isOwnProfile = $derived.by(() => {
@@ -121,11 +120,13 @@
           <span class="font-normal">#{target}</span>
         </span>
       {:else}
-        <Avatar user={target as NDKUser} size={20} />
-        <span class="inline-flex items-baseline gap-1">
-          <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
-          <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
-        </span>
+        <User.Root {ndk} user={target as NDKUser}>
+          <User.Avatar size={20} />
+          <span class="inline-flex items-baseline gap-1">
+            <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+            <User.Name field="displayName" class="text-sm font-normal" />
+          </span>
+        </User.Root>
       {/if}
     {:else}
       {#if compact && showTarget}
@@ -146,7 +147,9 @@
             <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
           </svg>
         {:else}
-          <Avatar user={target as NDKUser} size={16} class="flex-shrink-0" />
+          <User.Root {ndk} user={target as NDKUser}>
+            <User.Avatar size={16} class="flex-shrink-0" />
+          </User.Root>
         {/if}
       {:else if showIcon}
         <!-- Regular icons -->
@@ -193,7 +196,9 @@
           {#if isHashtag}
             <span class="font-normal">#{target}</span>
           {:else}
-            <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
+            <User.Root {ndk} user={target as NDKUser}>
+              <User.Name field="displayName" class="text-sm font-normal" />
+            </User.Root>
           {/if}
         </span>
       {:else}

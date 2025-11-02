@@ -20,7 +20,7 @@
 -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
 
   interface Props {
     /** Direct emoji data (Option 1) */

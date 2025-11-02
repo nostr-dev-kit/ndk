@@ -16,7 +16,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
 
   interface Props {
     /** Additional CSS classes */
@@ -117,7 +117,9 @@
     <div
       class="dropdown-menu"
       onclick={(e) => e.stopPropagation()}
+      onkeydown={(e) => e.stopPropagation()}
       role="menu"
+      tabindex="-1"
     >
       <!-- Mute button -->
       <button
@@ -219,11 +221,11 @@
       role="button"
       tabindex="-1"
       aria-label="Close modal"
-    />
+    ></div>
     <div class="modal-content">
       <div class="modal-header">
         <h3>Raw Event</h3>
-        <button onclick={() => showRawEventModal = false} class="modal-close">
+        <button onclick={() => showRawEventModal = false} class="modal-close" aria-label="Close modal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>

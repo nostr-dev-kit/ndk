@@ -31,7 +31,7 @@
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';
   import type { BookmarkedRelayListState } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { mergeProps } from '../../../utils.js';
+  import { mergeProps } from '../../utils/index.js';
 
   interface BookmarkSnippetProps {
     isBookmarked: boolean;

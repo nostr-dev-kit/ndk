@@ -17,8 +17,7 @@
   import { createMuteAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../utils/index.js';
-  import Avatar from '../ui/user/user-avatar.svelte';
-  import Name from '../ui/user/user-name.svelte';
+  import { User } from '../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -31,7 +30,7 @@
   let { ndk: ndkProp, target, showIcon = true, showTarget = false, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const isOwnProfile = $derived.by(() => {
     if (!ndk?.$currentPubkey || typeof target === 'string') return false;
@@ -66,11 +65,13 @@
     aria-label={muteAction.isMuted ? 'Unmute user' : 'Mute user'}
   >
     {#if showTarget && typeof target !== 'string'}
-      <Avatar user={target as NDKUser} size={20} />
-      <span class="text-sm inline-flex items-baseline gap-1">
-        <span class="font-bold">{muteAction.isMuted ? 'Unmute' : 'Mute'}</span>
-        <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
-      </span>
+      <User.Root {ndk} user={target as NDKUser}>
+        <User.Avatar size={20} />
+        <span class="text-sm inline-flex items-baseline gap-1">
+          <span class="font-bold">{muteAction.isMuted ? 'Unmute' : 'Mute'}</span>
+          <User.Name field="displayName" class="text-sm font-normal" />
+        </span>
+      </User.Root>
     {:else}
       {#if showIcon}
         {#if muteAction.isMuted}

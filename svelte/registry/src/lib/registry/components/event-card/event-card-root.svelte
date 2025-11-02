@@ -18,8 +18,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
-  import { getNDKFromContext } from '../../ui/ndk-context.svelte.js';
-  import { cn } from '../../../utils.js';
+  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { cn } from '../../utils/index.js';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -71,22 +71,28 @@
   const isClickable = $derived(interactive);
 </script>
 
-<article
-  class={cn(
-    'relative flex flex-col gap-2',
-    className
-  )}
-  onclick={isClickable ? handleClick : undefined}
-  role={isClickable ? 'button' : undefined}
-  tabindex={isClickable ? 0 : undefined}
-  onkeydown={isClickable ? (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick();
-    }
-  } : undefined}
->
-  {#if children}
-    {@render children()}
-  {/if}
-</article>
+{#if isClickable}
+  <button
+    class={cn(
+      'relative flex flex-col gap-2 cursor-pointer w-full text-left bg-transparent border-none p-0',
+      className
+    )}
+    onclick={handleClick}
+    type="button"
+  >
+    {#if children}
+      {@render children()}
+    {/if}
+  </button>
+{:else}
+  <article
+    class={cn(
+      'relative flex flex-col gap-2',
+      className
+    )}
+  >
+    {#if children}
+      {@render children()}
+    {/if}
+  </article>
+{/if}

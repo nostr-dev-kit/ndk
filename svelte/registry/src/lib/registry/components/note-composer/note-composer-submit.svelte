@@ -2,8 +2,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
-	import LoadingIcon from '../icons/loading.svelte';
-	import { cn } from '../../../utils';
+	import LoadingIcon from '../../icons/loading.svelte';
+	import { cn } from '../../utils/index.js';
 
 	interface Props {
 		/** Button text */

@@ -12,7 +12,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
 
   interface Props {
     /** Icon size in pixels */

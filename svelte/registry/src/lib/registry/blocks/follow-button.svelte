@@ -19,8 +19,7 @@
   import { getContext } from 'svelte';
   import { cn } from '../utils/index.js';
   import UserAddIcon from '../icons/user-add.svelte';
-  import Avatar from '../ui/user/user-avatar.svelte';
-  import Name from '../ui/user/user-name.svelte';
+  import { User } from '../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -33,7 +32,7 @@
   let { ndk: ndkProp, target, showIcon = true, showTarget = false, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const isHashtag = typeof target === 'string';
   const isOwnProfile = $derived.by(() => {
@@ -95,11 +94,13 @@
           <span class="font-normal">#{target}</span>
         </span>
       {:else}
-        <Avatar user={target as NDKUser} size={20} />
-        <span class="text-sm inline-flex items-baseline gap-1">
-          <span class="font-bold">{followAction.isFollowing ? 'Unfollow' : 'Follow'}</span>
-          <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
-        </span>
+        <User.Root {ndk} user={target as NDKUser}>
+          <User.Avatar size={20} />
+          <span class="text-sm inline-flex items-baseline gap-1">
+            <span class="font-bold">{followAction.isFollowing ? 'Unfollow' : 'Follow'}</span>
+            <User.Name field="displayName" class="font-normal text-sm" />
+          </span>
+        </User.Root>
       {/if}
     {:else}
       {#if showIcon}

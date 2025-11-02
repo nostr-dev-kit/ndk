@@ -29,7 +29,7 @@
   ```
 -->
 <script lang="ts">
-  import { mergeProps } from 'svelte-toolbelt';
+  import { mergeProps } from '../../utils/index.js';
   import { getContext } from 'svelte';
   import type { Snippet } from 'svelte';
   import type { UserInputResult } from '@nostr-dev-kit/svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ReactionAction from '$lib/registry/components/actions/reaction-action.svelte';
+  import ReactionAction from '$lib/registry/components/actions/reaction.svelte';
 
   interface Props {
     ndk: NDKSvelte;

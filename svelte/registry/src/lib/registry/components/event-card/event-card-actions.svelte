@@ -12,7 +12,7 @@
   ```
 -->
 <script lang="ts">
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -45,6 +45,8 @@
     className
   )}
   onclick={stopPropagation}
+  onkeydown={(e) => e.stopPropagation()}
+  role="presentation"
 >
   {#if children}
     {@render children()}

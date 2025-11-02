@@ -43,10 +43,12 @@
 			<div class="flex items-center justify-between">
 				<AvatarGroup {ndk} pubkeys={followPack.pubkeys} max={4} size={24} />
 				{#if followPack.author}
-					<div class="flex items-center gap-1 text-xs text-white/70">
-						<span>by</span>
-						<User.Name user={followPack.author} class="text-xs font-medium text-white/90" />
-					</div>
+					<User.Root {ndk} user={followPack.author}>
+						<div class="flex items-center gap-1 text-xs text-white/70">
+							<span>by</span>
+							<User.Name field="displayName" class="text-xs font-medium text-white/90" />
+						</div>
+					</User.Root>
 				{/if}
 			</div>
 		</div>

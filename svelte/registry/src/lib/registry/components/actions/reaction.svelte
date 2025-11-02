@@ -23,7 +23,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
   import { Popover } from 'bits-ui';
   import { EmojiPicker, type EmojiData } from '../emoji-picker';
 

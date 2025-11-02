@@ -4,4 +4,3 @@
 // For reply functionality, use createReplyAction directly
 
 export { default as ReactionAction } from './reaction.svelte';
-export { default as ZapAction } from './zap.svelte';

@@ -91,10 +91,12 @@
 
     <!-- Author info below -->
     {#if showAuthor}
-      <div class="flex items-center gap-2 mt-2 px-1">
-        <User.Avatar user={event.author} size={20} class="rounded-full" />
-        <span class="text-xs text-muted-foreground truncate">{authorName}</span>
-      </div>
+      <User.Root {ndk} user={event.author}>
+        <div class="flex items-center gap-2 mt-2 px-1">
+          <User.Avatar size={20} class="rounded-full" />
+          <span class="text-xs text-muted-foreground truncate">{authorName}</span>
+        </div>
+      </User.Root>
     {/if}
   </article>
 </Highlight.Root>

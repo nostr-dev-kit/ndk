@@ -32,10 +32,12 @@
 		<div class="absolute inset-0 z-10 h-full flex flex-col p-8 text-white text-left">
 			<!-- Author at top, subtle -->
 			{#if followPack.author}
-				<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
-					<User.Avatar user={followPack.author} size={20} class="ring-1 ring-white/30" />
-					<User.Name user={followPack.author} />
-				</div>
+				<User.Root {ndk} user={followPack.author}>
+					<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
+						<User.Avatar size={20} class="ring-1 ring-white/30" />
+						<User.Name field="displayName" />
+					</div>
+				</User.Root>
 			{/if}
 
 			<!-- Main content at bottom -->

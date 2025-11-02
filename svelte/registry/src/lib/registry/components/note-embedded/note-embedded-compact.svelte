@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventCard } from '../../../../event-card';
+  import { EventCard } from '../event-card';
 
   interface Props {
     ndk: NDKSvelte;

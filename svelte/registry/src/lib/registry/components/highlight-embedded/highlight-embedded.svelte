@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { Highlight } from '../../../../../ui/highlight/index.js';
+  import { Highlight } from '../../ui/highlight/index.js';
 
   interface Props {
     ndk: NDKSvelte;

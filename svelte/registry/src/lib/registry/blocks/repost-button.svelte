@@ -16,7 +16,7 @@
   import { createRepostAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../utils/index.js';
-  import RepostIcon from '../components/icons/repost.svelte';
+  import RepostIcon from '../icons/repost.svelte';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -28,7 +28,7 @@
   let { ndk: ndkProp, event, showCount = true, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = $derived(ndkProp || ndkContext);
+  const ndk = ndkProp || ndkContext;
 
   const repostState = createRepostAction(() => ({ event }), ndk);
 

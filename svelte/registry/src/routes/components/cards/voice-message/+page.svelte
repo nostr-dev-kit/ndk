@@ -4,10 +4,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKVoiceMessage, NDKKind } from '@nostr-dev-kit/ndk';
 	import { VoiceMessageCard } from '$lib/registry/components/voice-message-card';
-	import {
-		VoiceMessageCardCompact,
-		VoiceMessageCardExpanded
-	} from '$lib/registry/components/blocks';
+	import VoiceMessageCardCompact from '$lib/registry/components/blocks/voice-message-card-compact.svelte';
+	import VoiceMessageCardExpanded from '$lib/registry/components/blocks/voice-message-card-expanded.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 

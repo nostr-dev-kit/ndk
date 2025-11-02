@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { MentionModern } from '$lib/registry/components/blocks';
+  import MentionModern from '$lib/registry/components/blocks/mention-modern.svelte';
   import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
@@ -76,7 +76,7 @@
         </p>
         <pre class="bg-muted p-4 rounded-lg text-sm overflow-x-auto"><code>{`// In your app initialization (e.g., +layout.svelte or main entry)
 import { setDefaultMention } from '$lib/registry/components/event/content';
-import { MentionModern } from '$lib/registry/components/blocks';
+import MentionModern from '$lib/registry/components/blocks/mention-modern.svelte';
 
 setDefaultMention(MentionModern);
 

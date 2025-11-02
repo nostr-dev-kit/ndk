@@ -8,7 +8,7 @@
   import Alert from '$site-components/alert.svelte';
 
   // Import block components for preview
-  import { MuteButton } from '$lib/registry/components/blocks';
+  import MuteButton from '$lib/registry/components/blocks/mute-button.svelte';
 
   // Import code examples
   import MinimalCodeRaw from './examples/minimal-code.svelte?raw';

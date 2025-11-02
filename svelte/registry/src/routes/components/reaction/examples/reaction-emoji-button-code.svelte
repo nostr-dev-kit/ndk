@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { ReactionEmojiButton } from '$lib/registry/components/blocks';
+  import ReactionEmojiButton from '$lib/registry/components/blocks/reaction-emoji-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;

@@ -13,7 +13,7 @@
   To use as default mention renderer globally (recommended):
   ```ts
   import { setDefaultMention } from '$lib/registry/components/event/content';
-  import { MentionModern } from '$lib/registry/components/blocks';
+  import MentionModern from '$lib/registry/components/blocks/mention-modern.svelte';
 
   setDefaultMention(MentionModern);
   ```

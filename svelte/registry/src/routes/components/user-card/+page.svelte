@@ -7,13 +7,11 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import blocks
-	import {
-		UserCardClassic,
-		UserCardPortrait,
-		UserCardLandscape,
-		UserCardCompact,
-		UserListItem
-	} from '$lib/registry/components/blocks';
+	import UserCardClassic from '$lib/registry/components/blocks/user-card-classic.svelte';
+	import UserCardPortrait from '$lib/registry/components/blocks/user-card-portrait.svelte';
+	import UserCardLandscape from '$lib/registry/components/blocks/user-card-landscape.svelte';
+	import UserCardCompact from '$lib/registry/components/blocks/user-card-compact.svelte';
+	import UserListItem from '$lib/registry/components/blocks/user-list-item.svelte';
 	import ClassicCodeRaw from '../user-profile/examples/classic-code.svelte?raw';
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
 	import LandscapeCodeRaw from './examples/landscape-code.svelte?raw';

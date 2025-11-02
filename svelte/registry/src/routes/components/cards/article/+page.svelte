@@ -4,12 +4,10 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import { ArticleCard } from '$lib/registry/components/article-card';
-	import {
-		ArticleCardPortrait,
-		ArticleCardHero,
-		ArticleCardNeon,
-		ArticleCardMedium
-	} from '$lib/registry/components/blocks';
+	import ArticleCardPortrait from '$lib/registry/components/blocks/article-card-portrait.svelte';
+	import ArticleCardHero from '$lib/registry/components/blocks/article-card-hero.svelte';
+	import ArticleCardNeon from '$lib/registry/components/blocks/article-card-neon.svelte';
+	import ArticleCardMedium from '$lib/registry/components/blocks/article-card-medium.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 

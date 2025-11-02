@@ -2,7 +2,8 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { MediaUploadResult } from '$lib/registry/components/media-upload';
-	import { UploadButton, MediaUploadCarousel } from '$lib/registry/components/blocks';
+	import UploadButton from '$lib/registry/components/blocks/upload-button.svelte';
+	import MediaUploadCarousel from '$lib/registry/components/blocks/media-upload-carousel.svelte';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 

@@ -3,7 +3,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { UserProfile } from '$lib/registry/components/user-profile';
 	import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
-	import { ReactionButton, ZapButton } from '$lib/registry/components/blocks';
+	import ReactionButton from '$lib/registry/components/blocks/reaction-button.svelte';
+import ZapButton from '$lib/registry/components/blocks/zap-button.svelte';
 	import { DotsHorizontalIcon } from '@hugeicons/core-free-icons';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 

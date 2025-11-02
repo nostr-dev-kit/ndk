@@ -18,7 +18,7 @@
   import { type NDKSvelte, type ThreadingMetadata } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
-  import { getNDKFromContext } from '../ndk-context.svelte.js';
+  import { getNDKFromContext } from '../../ui/ndk-context.svelte.js';
   import { cn } from '../../../utils.js';
   import type { Snippet } from 'svelte';
 

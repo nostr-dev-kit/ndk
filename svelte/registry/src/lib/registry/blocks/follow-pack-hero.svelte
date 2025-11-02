@@ -5,7 +5,7 @@
 	import { FollowPack } from '../ui/follow-pack';
 	import AvatarGroup from '../components/avatar-group/avatar-group.svelte';
 	import { User } from '../ui/user';
-	import { getNDKFromContext } from '../components/ndk-context.svelte';
+	import { getNDKFromContext } from '../ui/ndk-context.svelte';
 
 	interface Props {
 		ndk?: NDKSvelte;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ZapAction from '$lib/registry/components/actions/zap-action.svelte';
+  import ZapButton from '$lib/registry/components/zap-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -16,6 +16,6 @@
     <p class="m-0 leading-relaxed">{event.content}</p>
   </div>
   <div class="flex gap-2 pt-4 border-t border-border">
-    <ZapAction {ndk} event={event} />
+    <ZapButton {ndk} {event} />
   </div>
 </div>

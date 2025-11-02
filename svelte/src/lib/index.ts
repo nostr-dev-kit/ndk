@@ -32,7 +32,6 @@ export {
     createTargetTransactions,
     createTransactions,
     createZapAmount,
-    zap,
 } from "./payments/runes.svelte.js";
 export type {
     PendingPayment,
@@ -69,6 +68,7 @@ export {
     type ZapMethod,
     type ZapSubscription,
 } from "./zaps.svelte.js";
+export type { ProcessedZap } from "./zaps/types.js";
 // WoT runes
 export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.svelte.js";
 
@@ -167,20 +167,17 @@ export {
     createReplyAction,
     createRepostAction,
     createMuteAction,
-    createZapAction,
     createEmojiPicker,
     type FollowActionConfig,
     type ReactionActionConfig,
     type ReplyActionConfig,
     type RepostActionConfig,
     type MuteActionConfig,
-    type ZapActionConfig,
     type EmojiReaction,
     type EmojiData,
     type EmojiPickerConfig,
     type ReplyStats,
     type RepostStats,
-    type ZapStats,
 } from "./builders/actions/index.js";
 
 // Content parsing utilities

@@ -1,4 +1,4 @@
-import { NDKEvent, type NDKUser, NDKZapper } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../ndk-svelte.svelte.js";
 import { targetToId } from "./types.js";
 
@@ -120,43 +120,3 @@ export function createTransactions(ndk: NDKSvelte, opts?: { direction?: "in" | "
     };
 }
 
-/**
- * Zap action (returns Promise)
- *
- * @example
- * ```ts
- * await zap(ndk, event, 1000, { comment: 'Great post!' });
- * ```
- */
-export async function zap(
-    ndk: NDKSvelte,
-    target: NDKEvent | NDKUser,
-    amount: number,
-    opts?: { comment?: string; delay?: number },
-) {
-    if (!ndk.wallet) {
-        throw new Error("No wallet connected");
-    }
-
-    if (!ndk.$currentPubkey) {
-        throw new Error("No active session");
-    }
-
-    const zapper = new NDKZapper(target, amount, "msat", {
-        comment: opts?.comment,
-    });
-
-    // Auto-track
-    ndk.$payments.addPending(zapper, ndk.$currentPubkey);
-
-    // Execute with optional delay
-    if (opts?.delay) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                zapper.zap().then(resolve).catch(reject);
-            }, opts.delay);
-        });
-    }
-
-    return await zapper.zap();
-}

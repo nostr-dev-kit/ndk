@@ -12,7 +12,7 @@
 
   let { children } = $props();
 
-  const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/components'));
+  const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
 
   let isInitialized = $state(false);
   let showLoginModal = $state(false);

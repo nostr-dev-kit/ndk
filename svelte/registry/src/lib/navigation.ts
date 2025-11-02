@@ -47,6 +47,7 @@ export interface NavCategory {
 export const mainNav: NavItem[] = [
   { name: 'Intro', path: '/', icon: Home01Icon },
   { name: 'Docs', path: '/docs', icon: Book02Icon },
+  { name: 'UI', path: '/ui', icon: PaintBoardIcon },
   { name: 'Components', path: '/components', icon: CodeIcon },
   { name: 'Blocks', path: '/blocks', icon: Layers01Icon },
 ];

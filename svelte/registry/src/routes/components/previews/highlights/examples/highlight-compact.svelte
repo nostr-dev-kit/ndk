@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
-  import { EventContent, ContentRenderer} from '$lib/registry/ui';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui';
   import HighlightEmbeddeducompact from '$lib/registry/components/highlight-embedded/highlight-embedded-compact.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
@@ -13,7 +13,7 @@
 
   let { ndk, event }: Props = $props();
 
-  // Create custom registry for compact variant
+  // Create custom renderer for compact variant
   const compactRenderer = new ContentRenderer();
   compactRenderer.addKind(NDKHighlight, HighlightEmbeddedCompact);
 </script>

@@ -131,11 +131,11 @@
 
 const renderer = new ContentRenderer();
 
-// Set custom components
-renderer.setMentionComponent(MyCustomMention);
-renderer.setHashtagComponent(MyCustomHashtag);
-renderer.setLinkComponent(MyCustomLink);
-renderer.setMediaComponent(MyCustomMedia);
+// Set custom components (direct property assignment)
+renderer.mentionComponent = MyCustomMention;
+renderer.hashtagComponent = MyCustomHashtag;
+renderer.linkComponent = MyCustomLink;
+renderer.mediaComponent = MyCustomMedia;
 
 // Register embedded event handlers by kind
 renderer.addKind([1, 1111], MyNoteComponent);
@@ -143,13 +143,13 @@ renderer.addKind([30023], MyArticleComponent);</code></pre>
   </section>
 
   <section class="info">
-    <h2>ContentRenderer Methods</h2>
+    <h2>ContentRenderer Properties & Methods</h2>
     <ApiTable
       rows={[
-        { name: 'setMentionComponent', type: '(component: MentionComponent) => void', default: '', description: 'Set custom component for npub/nprofile mentions' },
-        { name: 'setHashtagComponent', type: '(component: HashtagComponent) => void', default: '', description: 'Set custom component for hashtags' },
-        { name: 'setLinkComponent', type: '(component: LinkComponent) => void', default: '', description: 'Set custom component for links' },
-        { name: 'setMediaComponent', type: '(component: MediaComponent) => void', default: '', description: 'Set custom component for media (images, videos)' },
+        { name: 'mentionComponent', type: 'MentionComponent | null', default: 'null', description: 'Component for npub/nprofile mentions (set directly)' },
+        { name: 'hashtagComponent', type: 'HashtagComponent | null', default: 'null', description: 'Component for hashtags (set directly)' },
+        { name: 'linkComponent', type: 'LinkComponent | null', default: 'null', description: 'Component for links (set directly)' },
+        { name: 'mediaComponent', type: 'MediaComponent | null', default: 'null', description: 'Component for media - images, videos (set directly)' },
         { name: 'addKind', type: '(kinds: number[], component: Component) => void', default: '', description: 'Register embedded event handler for specific event kinds' }
       ]}
     />

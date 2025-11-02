@@ -3,6 +3,7 @@
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { VoiceMessageCard } from '../voice-message-card/index.js';
+  import { UserProfile } from '../user-profile/index.js';
 
   interface Props {
     /** NDK instance */
@@ -30,7 +31,10 @@
   <div class="voice-message-compact {className}">
     {#if showAuthor}
       <div class="author-section">
-        <VoiceMessageCard.Author showAvatar={true} avatarSize={32} />
+        <UserProfile.Root {ndk} user={voiceMessage.author}>
+          <UserProfile.Avatar size={32} />
+          <UserProfile.Name />
+        </UserProfile.Root>
       </div>
     {/if}
 
@@ -55,6 +59,9 @@
   }
 
   .author-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }

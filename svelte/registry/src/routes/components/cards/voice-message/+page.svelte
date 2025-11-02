@@ -349,31 +349,6 @@
 				]
 			},
 			{
-				name: 'VoiceMessageCard.Author',
-				description: 'Displays author information with optional avatar.',
-				importPath: "import { VoiceMessageCard } from '$lib/registry/components/voice-message-card'",
-				props: [
-					{
-						name: 'class',
-						type: 'string',
-						default: "''",
-						description: 'Additional CSS classes'
-					},
-					{
-						name: 'showAvatar',
-						type: 'boolean',
-						default: 'false',
-						description: 'Show author avatar'
-					},
-					{
-						name: 'avatarSize',
-						type: 'number',
-						default: '24',
-						description: 'Avatar size in pixels'
-					}
-				]
-			},
-			{
 				name: 'VoiceMessageCardCompact',
 				description: 'Compact pre-composed block for inline voice message display',
 				importPath: "import { VoiceMessageCardCompact } from '$lib/registry/components/blocks'",

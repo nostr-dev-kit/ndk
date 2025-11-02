@@ -165,8 +165,11 @@
 
   <section class="info">
     <h2>User.Handle</h2>
+    <p class="mb-4">Display user's handle (name field or shortened pubkey). Shows with @ prefix by default.</p>
     <ApiTable
       rows={[
+        { name: 'showAt', type: 'boolean', default: 'true', description: 'Whether to show @ prefix before handle' },
+        { name: 'truncate', type: 'boolean', default: 'true', description: 'Whether to truncate long handles with ellipsis' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

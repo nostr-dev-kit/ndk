@@ -2,8 +2,8 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
-  import { EventContent, ContentRenderer} from '$lib/registry/ui';
-  import HighlightEmbeddeduinline from '$lib/registry/components/highlight-embedded/highlight-embedded-inline.svelte';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui';
+  import HighlightEmbeddedInline from '$lib/registry/components/highlight-embedded/highlight-embedded-inline.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
@@ -13,7 +13,7 @@
 
   let { ndk, event }: Props = $props();
 
-  // Create custom registry for inline variant
+  // Create custom renderer for inline variant
   const inlineRenderer = new ContentRenderer();
   inlineRenderer.addKind(NDKHighlight, HighlightEmbeddedInline);
 </script>

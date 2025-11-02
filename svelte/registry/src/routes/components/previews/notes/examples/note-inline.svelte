@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventContent, ContentRenderer} from '$lib/registry/ui'';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui';
   import NoteEmbedded from '$lib/registry/components/note-embedded/note-embedded-inline.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
@@ -12,9 +12,9 @@
 
   let { ndk, event }: Props = $props();
 
-  // Create custom registry for inline variant
+  // Create custom renderer for inline variant
   const inlineRenderer = new ContentRenderer();
-  inlineRenderer.add([1, 1111], NoteEmbeddedInline);
+  inlineRenderer.addKind([1, 1111], NoteEmbeddedInline);
 </script>
 
 <div class="max-w-2xl">

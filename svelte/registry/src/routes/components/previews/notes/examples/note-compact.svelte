@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventContent, ContentRenderer} from '$lib/registry/ui'';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui';
   import NoteEmbedded from '$lib/registry/components/note-embedded/note-embedded-compact.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
@@ -12,9 +12,9 @@
 
   let { ndk, event }: Props = $props();
 
-  // Create custom registry for compact variant
+  // Create custom renderer for compact variant
   const compactRenderer = new ContentRenderer();
-  compactRenderer.add([1, 1111], NoteEmbeddedCompact);
+  compactRenderer.addKind([1, 1111], NoteEmbeddedCompact);
 </script>
 
 <div class="max-w-2xl">

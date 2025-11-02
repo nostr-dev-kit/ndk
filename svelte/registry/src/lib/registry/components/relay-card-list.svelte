@@ -8,7 +8,7 @@
 	import Url from '../ui/relay/relay-url.svelte';
 	import Description from '../ui/relay/relay-description.svelte';
 	import BookmarkButton from '../ui/relay/relay-bookmark-button.svelte';
-	import { cn } from '../../utils.js';
+	import { cn } from '../utils/index.js';
 
 	interface Props {
 		/** NDK instance */

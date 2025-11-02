@@ -24,7 +24,7 @@
   import Nip05 from '../../ui/user/user-nip05.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';
   import { User } from '../../ui/user';
   import type { Snippet } from 'svelte';

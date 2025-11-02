@@ -18,7 +18,7 @@
 	import RepostButton from './repost-button.svelte';
 	import { ReactionButton } from './index.js';
 	// import { ZapButton } from '../components/zap/index.js'; // TODO: Add ZapButton when available
-	import { cn } from '../../utils.js';
+	import { cn } from '../utils/index.js';
 
 	interface Props {
 		/** NDK instance */

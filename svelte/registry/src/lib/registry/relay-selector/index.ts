@@ -23,7 +23,6 @@
  *         </Relay.Root>
  *       </button>
  *     {/each}
- *     <Relay.Selector.AddForm />
  *   {/snippet}
  * </Relay.Selector.Root>
  * ```
@@ -44,13 +43,11 @@
 
 import Root from './relay-selector-root.svelte';
 import Trigger from './relay-selector-trigger.svelte';
-import AddForm from './relay-selector-add-form.svelte';
 
 // Export as namespace for dot notation
 export const Selector = {
   Root,
   Trigger,
-  AddForm,
 };
 
 // Export types

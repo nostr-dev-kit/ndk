@@ -23,7 +23,7 @@
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { getContext, type Snippet } from 'svelte';
   import { Popover } from 'bits-ui';
-  import { EmojiPicker, type EmojiData } from '../ui/emoji-picker';
+  import { EmojiPicker, type EmojiData } from '../components/emoji-picker';
   import ReactionButton from './reaction-button.svelte';
 
   interface Props {

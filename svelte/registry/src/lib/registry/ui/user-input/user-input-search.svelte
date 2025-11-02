@@ -1,7 +1,35 @@
-<!-- @ndk-version: user-input@0.6.0 -->
+<!-- @ndk-version: user-input@0.7.0 -->
+<!--
+  @component UserInput.Search
+  Headless search input that connects to UserInput context.
+
+  @example Basic usage:
+  ```svelte
+  <UserInput.Search />
+  ```
+
+  @example Custom input:
+  ```svelte
+  <UserInput.Search>
+    {#snippet child({ props, loading })}
+      <div class="custom-wrapper">
+        <input {...props} class="custom-input" />
+        {#if loading}<span>Searching...</span>{/if}
+      </div>
+    {/snippet}
+  </UserInput.Search>
+  ```
+-->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';
+  import type { Snippet } from 'svelte';
+  import { mergeProps } from '../../../utils.js';
+
+  interface SearchSnippetProps {
+    query: string;
+    loading: boolean;
+  }
 
   interface Props {
     /** Placeholder text */
@@ -12,12 +40,21 @@
 
     /** Whether to autofocus */
     autofocus?: boolean;
+
+    /** Child snippet for custom element rendering */
+    child?: Snippet<[{ props: any } & SearchSnippetProps]>;
+
+    /** Content snippet for custom content */
+    children?: Snippet<[SearchSnippetProps]>;
   }
 
   let {
     placeholder = 'Search users by name, NIP-05, npub...',
     class: className = '',
-    autofocus = false
+    autofocus = false,
+    child,
+    children,
+    ...restProps
   }: Props = $props();
 
   const context = getContext<UserInputContext>(USER_INPUT_CONTEXT_KEY);
@@ -26,48 +63,31 @@
   }
 
   let query = $derived(context.query);
+  let loading = $derived(context.loading);
 
   function handleInput(event: Event) {
     const target = event.target as HTMLInputElement;
     context.setQuery(target.value);
   }
+
+  const mergedProps = $derived(mergeProps(restProps, {
+    type: 'text',
+    value: query,
+    oninput: handleInput,
+    placeholder,
+    autofocus,
+    class: className,
+    'data-loading': loading
+  }));
+
+  const snippetProps = $derived({ query, loading });
 </script>
 
-<div class="user-input-search {className}">
-  <input
-    type="text"
-    value={query}
-    oninput={handleInput}
-    {placeholder}
-    {autofocus}
-    class="user-input-search-input"
-    class:loading={context.loading}
-  />
-  {#if context.loading}
-    <div class="user-input-search-loading">
-      <svg class="spinner" viewBox="0 0 50 50">
-        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-      </svg>
-    </div>
+{#if child}
+  {@render child({ props: mergedProps, ...snippetProps })}
+{:else}
+  <input {...mergedProps}>
+  {#if children}
+    {@render children(snippetProps)}
   {/if}
-</div>
-
-<style>
-  .user-input-search {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
-
-  .user-input-search-input {
-    width: 100%;
-  }
-
-  .user-input-search-loading {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-</style>
+{/if}

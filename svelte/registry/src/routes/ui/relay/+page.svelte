@@ -129,10 +129,6 @@
         <code>Relay.Selector.Item</code>
         <p>Individual relay list item.</p>
       </div>
-      <div class="component-item">
-        <code>Relay.Selector.AddForm</code>
-        <p>Form to add new relay URLs.</p>
-      </div>
     </div>
   </section>
 

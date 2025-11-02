@@ -28,7 +28,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { NoteComposer } from '../components/note-composer';
-	import { cn } from '../../utils';
+	import { cn } from '../utils/index.js';
 
 	interface Props {
 		/** NDK instance */

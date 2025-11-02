@@ -140,7 +140,7 @@
   <section class="info">
     <h2>Builder: createEmojiPicker</h2>
     <p class="mb-4">For advanced use cases, use the builder directly to aggregate emojis from multiple sources:</p>
-    <pre><code>import &#123; createEmojiPicker &#125; from '$lib/registry/ui/emoji-picker';
+    <pre><code>import &#123; createEmojiPicker &#125; from '$lib/registry/components/emoji-picker';
 
 const emojiPicker = createEmojiPicker(() => (&#123;
   defaults: [&#123; emoji: '❤️' &#125;, &#123; emoji: '👍' &#125;],

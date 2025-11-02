@@ -2,7 +2,7 @@
 	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { Relay } from '$lib/registry/components/relay';
+	import { Relay } from '$lib/registry/ui/relay';
 	import RelayCardPortrait from '$lib/registry/blocks/relay-card-portrait.svelte';
 	import RelayCardCompact from '$lib/registry/blocks/relay-card-compact.svelte';
 	import RelayCardList from '$lib/registry/blocks/relay-card-list.svelte';
@@ -156,7 +156,7 @@
 				name: 'Relay.Root',
 				description:
 					'Root container that provides context to child components. Fetches NIP-11 relay information automatically.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'ndk',
@@ -176,7 +176,7 @@
 			{
 				name: 'Relay.Icon',
 				description: 'Display relay icon from NIP-11 metadata with fallback.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'size',
@@ -196,7 +196,7 @@
 			{
 				name: 'Relay.Name',
 				description: 'Display relay name from NIP-11 metadata.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'fallback',
@@ -216,7 +216,7 @@
 			{
 				name: 'Relay.Url',
 				description: 'Display relay URL with optional domain-only mode.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'showProtocol',
@@ -236,7 +236,7 @@
 			{
 				name: 'Relay.Description',
 				description: 'Display relay description from NIP-11 metadata with line clamping.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'maxLines',
@@ -257,7 +257,7 @@
 				name: 'Relay.BookmarkButton',
 				description:
 					'Toggle button for bookmarking/unbookmarking relay. Requires user authentication.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'bookmarks',
@@ -284,7 +284,7 @@
 			{
 				name: 'Relay.BookmarkedBy',
 				description: 'Display avatars of users who have bookmarked this relay.',
-				importPath: "import { Relay } from '$lib/registry/components/relay'",
+				importPath: "import { Relay } from '$lib/registry/ui/relay'",
 				props: [
 					{
 						name: 'bookmarks',

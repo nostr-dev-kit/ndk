@@ -60,7 +60,7 @@ function detectDependencies(filePath: string): string[] {
     if (content.includes("from '$lib/ndk/event-card'")) deps.push('event-card');
     if (content.includes("from '$lib/ndk/highlight-card'")) deps.push('highlight-card');
     if (content.includes("from '$lib/ndk/user-profile'")) deps.push('user-profile');
-    if (content.includes("from '../src/lib/registry/components/relay/index.js'
+    if (content.includes("from '../src/lib/registry/ui/relay/index.js'
 
     return [...new Set(deps)];
   } catch (error) {

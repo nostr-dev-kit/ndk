@@ -3,9 +3,9 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '$lib/registry/ui/relay';
-	import RelayCardPortrait from '$lib/registry/blocks/relay-card-portrait.svelte';
-	import RelayCardCompact from '$lib/registry/blocks/relay-card-compact.svelte';
-	import RelayCardList from '$lib/registry/blocks/relay-card-list.svelte';
+	import RelayCardPortrait from '$lib/registry/components/relay-card-portrait.svelte';
+	import RelayCardCompact from '$lib/registry/components/relay-card-compact.svelte';
+	import RelayCardList from '$lib/registry/components/relay-card-list.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -303,8 +303,8 @@
 			{
 				name: 'RelayCardPortrait',
 				description:
-					'Preset: Vertical card with icon on top. Import from $lib/ndk/blocks for quick use.',
-				importPath: "import { RelayCardPortrait } from '$lib/registry/blocks'",
+					'Component: Vertical card with icon on top. Import from $lib/ndk/components for quick use.',
+				importPath: "import { RelayCardPortrait } from '$lib/registry/components'",
 				props: [
 					{
 						name: 'ndk',
@@ -343,8 +343,8 @@
 			{
 				name: 'RelayCardCompact',
 				description:
-					'Preset: Small square card with icon and name. Import from $lib/ndk/blocks.',
-				importPath: "import { RelayCardCompact } from '$lib/registry/blocks'",
+					'Component: Small square card with icon and name. Import from $lib/ndk/components.',
+				importPath: "import { RelayCardCompact } from '$lib/registry/components'",
 				props: [
 					{
 						name: 'ndk',
@@ -376,8 +376,8 @@
 			{
 				name: 'RelayCardList',
 				description:
-					'Preset: Horizontal list card. Import from $lib/ndk/blocks.',
-				importPath: "import { RelayCardList } from '$lib/registry/blocks'",
+					'Component: Horizontal list card. Import from $lib/ndk/components.',
+				importPath: "import { RelayCardList } from '$lib/registry/components'",
 				props: [
 					{
 						name: 'ndk',

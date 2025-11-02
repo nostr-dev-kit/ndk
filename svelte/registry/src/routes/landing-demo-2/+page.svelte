@@ -6,7 +6,7 @@
 	// Import actual blocks
 	import EventCardClassic from '$lib/registry/blocks/event-card-classic.svelte';
 	import UserCardCompact from '$lib/registry/blocks/user-card-compact.svelte';
-	import RelayCardCompact from '$lib/registry/blocks/relay-card-compact.svelte';
+	import RelayCardCompact from '$lib/registry/components/relay-card-compact.svelte';
 	import ArticleCardHero from '$lib/registry/blocks/article-card-hero.svelte';
 	import HighlightCardElegant from '$lib/registry/blocks/highlight-card-elegant.svelte';
 	import FollowButton from '$lib/registry/blocks/follow-button.svelte';

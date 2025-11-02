@@ -1,7 +1,20 @@
 <!-- @ndk-version: relay-card@0.7.0 -->
+<!--
+  @component RelayCard
+  Full-featured relay card component with expandable sections and connection stats.
+
+  Uses Relay primitives for consistent rendering of relay information.
+
+  @example
+  ```svelte
+  <RelayCard {relay} expanded={true} />
+  ```
+-->
 <script lang="ts">
   import type { BookmarkedRelayWithStats, NDKRelayInformation, RelayStatus } from '@nostr-dev-kit/svelte';
-  import RelayConnectionStatus from '../relay-connection-status/relay-connection-status.svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { getContext } from 'svelte';
+  import { Relay } from '../ui/relay';
 
   interface ExtendedRelayStats extends BookmarkedRelayWithStats {
     nip11?: NDKRelayInformation | null;
@@ -19,6 +32,7 @@
   }
 
   interface Props {
+    ndk?: NDKSvelte;
     relay: ExtendedRelayStats;
     onFetchInfo?: (url: string) => void;
     onRemove?: (url: string) => void;
@@ -29,6 +43,7 @@
   }
 
   let {
+    ndk = getContext('ndk'),
     relay,
     onFetchInfo,
     onRemove,
@@ -84,204 +99,192 @@
     if (attempts === 0) return 0;
     return Math.round((success / attempts) * 100);
   });
-
-  const displayUrl = $derived.by(() => {
-    return relay.url.replace(/^wss?:\/\//, '');
-  });
 </script>
 
-<div class="relay-card">
-  <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
-    <div class="relay-card-header-left">
-      <RelayConnectionStatus status={relay.status || 'disconnected'} size="md" />
-      {#if relay.nip11?.icon}
-        <img src={relay.nip11.icon} alt="{relay.nip11.name || relay.url} icon" class="relay-icon" />
-      {/if}
-      <div class="relay-card-title">
-        <div class="relay-card-name">
-          {#if relay.nip11?.name}
-            <span class="font-semibold">{relay.nip11.name}</span>
-          {:else}
-            <span class="font-mono text-sm">{displayUrl}</span>
-          {/if}
+<Relay.Root {ndk} relayUrl={relay.url} nip11={relay.nip11}>
+  <div class="relay-card">
+    <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
+      <div class="relay-card-header-left">
+        <Relay.ConnectionStatus status={relay.status || 'disconnected'} size="md" />
+        <Relay.Icon class="relay-icon" />
+        <div class="relay-card-title">
+          <div class="relay-card-name">
+            <Relay.Name class="font-semibold" />
+          </div>
+          <Relay.Url class="relay-card-url" showProtocol={false} />
         </div>
-        {#if relay.nip11?.name}
-          <div class="relay-card-url">{displayUrl}</div>
+      </div>
+
+      <div class="relay-card-badges">
+        {#if relay.isRead}
+          <span class="badge badge-read">Read</span>
+        {/if}
+        {#if relay.isWrite}
+          <span class="badge badge-write">Write</span>
+        {/if}
+        {#if relay.isBoth}
+          <span class="badge badge-both">Both</span>
+        {/if}
+        {#if relay.isBlacklisted}
+          <span class="badge badge-blacklist">Blacklisted</span>
         {/if}
       </div>
+
+      <button class="expand-button" aria-label={isExpanded ? 'Collapse' : 'Expand'}>
+        <svg
+          class="expand-icon {isExpanded ? 'rotate-180' : ''}"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
     </div>
 
-    <div class="relay-card-badges">
-      {#if relay.isRead}
-        <span class="badge badge-read">Read</span>
-      {/if}
-      {#if relay.isWrite}
-        <span class="badge badge-write">Write</span>
-      {/if}
-      {#if relay.isBoth}
-        <span class="badge badge-both">Both</span>
-      {/if}
-      {#if relay.isBlacklisted}
-        <span class="badge badge-blacklist">Blacklisted</span>
-      {/if}
-    </div>
-
-    <button class="expand-button" aria-label={isExpanded ? 'Collapse' : 'Expand'}>
-      <svg
-        class="expand-icon {isExpanded ? 'rotate-180' : ''}"
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="m6 9 6 6 6-6" />
-      </svg>
-    </button>
-  </div>
-
-  {#if isExpanded}
-    <div class="relay-card-body">
-      {#if relay.nip11?.description}
+    {#if isExpanded}
+      <div class="relay-card-body">
         <div class="relay-section">
           <h4>Description</h4>
-          <p>{relay.nip11.description}</p>
+          <Relay.Description class="relay-section-text" />
         </div>
-      {/if}
 
-      <div class="relay-section">
-        <h4>Connection Stats</h4>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-label">Attempts</span>
-            <span class="stat-value">{relay.connectionStats?.attempts ?? 0}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Success</span>
-            <span class="stat-value">{relay.connectionStats?.success ?? 0}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Success Rate</span>
-            <span class="stat-value">{successRate}%</span>
-          </div>
-          {#if uptime}
-            <div class="stat-item">
-              <span class="stat-label">Uptime</span>
-              <span class="stat-value">{uptime}</span>
-            </div>
-          {/if}
-        </div>
-      </div>
-
-      {#if relay.nip11}
         <div class="relay-section">
-          <h4>Relay Information</h4>
-          <div class="info-grid">
-            {#if relay.nip11.software}
-              <div class="info-item">
-                <span class="info-label">Software</span>
-                <span class="info-value">{relay.nip11.software} {relay.nip11.version || ''}</span>
-              </div>
-            {/if}
-            {#if relay.nip11.contact}
-              <div class="info-item">
-                <span class="info-label">Contact</span>
-                <span class="info-value">{relay.nip11.contact}</span>
-              </div>
-            {/if}
-            {#if relay.nip11.supported_nips && relay.nip11.supported_nips.length > 0}
-              <div class="info-item">
-                <span class="info-label">Supported NIPs</span>
-                <div class="nips-list">
-                  {#each relay.nip11.supported_nips.sort((a, b) => a - b) as nip (nip)}
-                    <span class="nip-badge">{nip}</span>
-                  {/each}
-                </div>
+          <h4>Connection Stats</h4>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Attempts</span>
+              <span class="stat-value">{relay.connectionStats?.attempts ?? 0}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Success</span>
+              <span class="stat-value">{relay.connectionStats?.success ?? 0}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Success Rate</span>
+              <span class="stat-value">{successRate}%</span>
+            </div>
+            {#if uptime}
+              <div class="stat-item">
+                <span class="stat-label">Uptime</span>
+                <span class="stat-value">{uptime}</span>
               </div>
             {/if}
           </div>
         </div>
 
-        {#if relay.nip11.limitation}
+        {#if relay.nip11}
           <div class="relay-section">
-            <h4>Limitations</h4>
+            <h4>Relay Information</h4>
             <div class="info-grid">
-              {#if relay.nip11.limitation.max_message_length !== undefined}
+              {#if relay.nip11.software}
                 <div class="info-item">
-                  <span class="info-label">Max Message Length</span>
-                  <span class="info-value">{relay.nip11.limitation.max_message_length.toLocaleString()}</span>
+                  <span class="info-label">Software</span>
+                  <span class="info-value">{relay.nip11.software} {relay.nip11.version || ''}</span>
                 </div>
               {/if}
-              {#if relay.nip11.limitation.max_subscriptions !== undefined}
+              {#if relay.nip11.contact}
                 <div class="info-item">
-                  <span class="info-label">Max Subscriptions</span>
-                  <span class="info-value">{relay.nip11.limitation.max_subscriptions}</span>
+                  <span class="info-label">Contact</span>
+                  <span class="info-value">{relay.nip11.contact}</span>
                 </div>
               {/if}
-              {#if relay.nip11.limitation.max_filters !== undefined}
+              {#if relay.nip11.supported_nips && relay.nip11.supported_nips.length > 0}
                 <div class="info-item">
-                  <span class="info-label">Max Filters</span>
-                  <span class="info-value">{relay.nip11.limitation.max_filters}</span>
-                </div>
-              {/if}
-              {#if relay.nip11.limitation.auth_required}
-                <div class="info-item">
-                  <span class="info-label">Auth Required</span>
-                  <span class="info-value badge badge-warning">Yes</span>
-                </div>
-              {/if}
-              {#if relay.nip11.limitation.payment_required}
-                <div class="info-item">
-                  <span class="info-label">Payment Required</span>
-                  <span class="info-value badge badge-warning">Yes</span>
+                  <span class="info-label">Supported NIPs</span>
+                  <div class="nips-list">
+                    {#each relay.nip11.supported_nips.sort((a, b) => a - b) as nip (nip)}
+                      <span class="nip-badge">{nip}</span>
+                    {/each}
+                  </div>
                 </div>
               {/if}
             </div>
           </div>
-        {/if}
-      {/if}
 
-      {#if relay.error}
-        <div class="relay-section error">
-          <h4>Error</h4>
-          <p>{relay.error}</p>
-        </div>
-      {/if}
-
-      <div class="relay-actions">
-        <button class="action-button copy-button" onclick={handleCopy}>
-          {#if copied}
-            ✓ Copied
-          {:else}
-            Copy URL
+          {#if relay.nip11.limitation}
+            <div class="relay-section">
+              <h4>Limitations</h4>
+              <div class="info-grid">
+                {#if relay.nip11.limitation.max_message_length !== undefined}
+                  <div class="info-item">
+                    <span class="info-label">Max Message Length</span>
+                    <span class="info-value">{relay.nip11.limitation.max_message_length.toLocaleString()}</span>
+                  </div>
+                {/if}
+                {#if relay.nip11.limitation.max_subscriptions !== undefined}
+                  <div class="info-item">
+                    <span class="info-label">Max Subscriptions</span>
+                    <span class="info-value">{relay.nip11.limitation.max_subscriptions}</span>
+                  </div>
+                {/if}
+                {#if relay.nip11.limitation.max_filters !== undefined}
+                  <div class="info-item">
+                    <span class="info-label">Max Filters</span>
+                    <span class="info-value">{relay.nip11.limitation.max_filters}</span>
+                  </div>
+                {/if}
+                {#if relay.nip11.limitation.auth_required}
+                  <div class="info-item">
+                    <span class="info-label">Auth Required</span>
+                    <span class="info-value badge badge-warning">Yes</span>
+                  </div>
+                {/if}
+                {#if relay.nip11.limitation.payment_required}
+                  <div class="info-item">
+                    <span class="info-label">Payment Required</span>
+                    <span class="info-value badge badge-warning">Yes</span>
+                  </div>
+                {/if}
+              </div>
+            </div>
           {/if}
-        </button>
-
-        {#if !relay.isBlacklisted && onBlacklist}
-          <button class="action-button blacklist-button" onclick={() => onBlacklist?.(relay.url)}>
-            Blacklist
-          </button>
         {/if}
 
-        {#if relay.isBlacklisted && onUnblacklist}
-          <button class="action-button unblacklist-button" onclick={() => onUnblacklist?.(relay.url)}>
-            Remove from Blacklist
-          </button>
+        {#if relay.error}
+          <div class="relay-section error">
+            <h4>Error</h4>
+            <p>{relay.error}</p>
+          </div>
         {/if}
 
-        {#if onRemove}
-          <button class="action-button remove-button" onclick={() => onRemove?.(relay.url)}>
-            Remove
+        <div class="relay-actions">
+          <button class="action-button copy-button" onclick={handleCopy}>
+            {#if copied}
+              ✓ Copied
+            {:else}
+              Copy URL
+            {/if}
           </button>
-        {/if}
+
+          {#if !relay.isBlacklisted && onBlacklist}
+            <button class="action-button blacklist-button" onclick={() => onBlacklist?.(relay.url)}>
+              Blacklist
+            </button>
+          {/if}
+
+          {#if relay.isBlacklisted && onUnblacklist}
+            <button class="action-button unblacklist-button" onclick={() => onUnblacklist?.(relay.url)}>
+              Remove from Blacklist
+            </button>
+          {/if}
+
+          {#if onRemove}
+            <button class="action-button remove-button" onclick={() => onRemove?.(relay.url)}>
+              Remove
+            </button>
+          {/if}
+        </div>
       </div>
-    </div>
-  {/if}
-</div>
+    {/if}
+  </div>
+</Relay.Root>
 
 <style>
   .relay-card {
@@ -315,14 +318,6 @@
     gap: 0.75rem;
     flex: 1;
     min-width: 0;
-  }
-
-  .relay-icon {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.375rem;
-    object-fit: cover;
-    flex-shrink: 0;
   }
 
   .relay-card-title {
@@ -436,7 +431,8 @@
     margin: 0;
   }
 
-  .relay-section p {
+  .relay-section p,
+  .relay-section-text {
     font-size: 0.875rem;
     color: var(--muted-foreground);
     margin: 0;

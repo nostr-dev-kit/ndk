@@ -13,9 +13,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
   import { cn } from '../../../utils.js';
-  import Root from '../highlight-card/highlight-card-root.svelte';
-  import Content from '../highlight-card/highlight-card-content.svelte';
-  import Source from '../highlight-card/highlight-card-source.svelte';
+  import { Highlight } from '../../ui/highlight/index.js';
   import { EventCard } from '../event-card/index.js';
 
   interface Props {
@@ -48,7 +46,7 @@
   }: Props = $props();
 </script>
 
-<Root {ndk} {event} variant="feed" class={cn(className)}>
+<Highlight.Root {ndk} {event} variant="feed" class={cn(className)}>
   <article
     class="p-3 sm:p-4 hover:bg-card/30 transition-colors border-b border-border"
   >
@@ -70,12 +68,25 @@
         class="relative flex flex-col items-center justify-center py-12 sm:py-16 px-8 sm:px-12 min-h-[200px] max-h-[600px]"
       >
         <div class="relative z-10">
-          <Content />
+          <Highlight.Content class="text-card-foreground font-serif leading-relaxed text-center text-2xl sm:text-3xl md:text-4xl" />
         </div>
       </div>
 
       <!-- Source badge -->
-      <Source position="bottom-right" size="md" />
+      <Highlight.Source class="flex items-center gap-1.5 px-3 py-1.5 bg-background/80 backdrop-blur-sm border border-border rounded text-xs text-muted-foreground hover:bg-background transition-colors absolute bottom-2 right-2">
+        {#snippet children({ source })}
+          {#if source.type === 'web'}
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          {:else}
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          {/if}
+          <span class="truncate max-w-[200px]">{source.displayText}</span>
+        {/snippet}
+      </Highlight.Source>
     </div>
 
     <!-- Actions -->
@@ -89,4 +100,4 @@
       </EventCard.Root>
     {/if}
   </article>
-</Root>
+</Highlight.Root>

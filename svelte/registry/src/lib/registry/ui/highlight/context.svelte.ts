@@ -1,15 +1,15 @@
-// @ndk-version: highlight-card@0.7.0
+// @ndk-version: highlight@0.7.0
 /**
- * Context for HighlightCard components
+ * Context for Highlight components
  */
 
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import type { HighlightState } from '@nostr-dev-kit/svelte';
 
-export const HIGHLIGHT_CARD_CONTEXT_KEY = Symbol('highlight-card-context');
+export const HIGHLIGHT_CONTEXT_KEY = Symbol('highlight-context');
 
-export interface HighlightCardContext {
+export interface HighlightContext {
     /** NDK instance */
     ndk: NDKSvelte;
 

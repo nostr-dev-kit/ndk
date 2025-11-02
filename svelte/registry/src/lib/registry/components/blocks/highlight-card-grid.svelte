@@ -13,9 +13,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../utils.js';
-  import Root from '../highlight-card/highlight-card-root.svelte';
-  import Content from '../highlight-card/highlight-card-content.svelte';
-  import Source from '../highlight-card/highlight-card-source.svelte';
+  import { Highlight } from '../../ui/highlight/index.js';
   import { UserProfile } from '../user-profile/index.js';
 
   interface Props {
@@ -49,7 +47,7 @@
   );
 </script>
 
-<Root {ndk} {event} variant="grid" class={cn(className)}>
+<Highlight.Root {ndk} {event} variant="grid" class={cn(className)}>
   <article class="hover:bg-card/30 transition-colors w-full">
     <!-- Book page style highlight -->
     <div
@@ -60,7 +58,7 @@
         class="relative flex flex-col items-center justify-center p-4 sm:p-6 min-h-[150px]"
       >
         <div class="relative z-10">
-          <Content />
+          <Highlight.Content class="text-card-foreground font-serif leading-relaxed text-center line-clamp-6 text-base" />
         </div>
       </div>
 
@@ -75,7 +73,20 @@
       </div>
 
       <!-- Source badge -->
-      <Source position="bottom-right" size="sm" />
+      <Highlight.Source class="flex items-center gap-1.5 px-2 py-1 bg-background/80 backdrop-blur-sm border border-border rounded text-[10px] text-muted-foreground hover:bg-background transition-colors absolute bottom-2 right-2">
+        {#snippet children({ source })}
+          {#if source.type === 'web'}
+            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          {:else}
+            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          {/if}
+          <span class="truncate max-w-[100px]">{source.displayText}</span>
+        {/snippet}
+      </Highlight.Source>
     </div>
 
     <!-- Author info below -->
@@ -86,4 +97,4 @@
       </div>
     {/if}
   </article>
-</Root>
+</Highlight.Root>

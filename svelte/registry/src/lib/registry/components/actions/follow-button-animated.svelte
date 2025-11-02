@@ -99,7 +99,7 @@
                 </svg>
                 <span>Following #{target}</span>
               {:else}
-                <User.Root {ndk} user={target as NDKUser}>
+                <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
                   <User.Avatar size={16} />
                   <span>Following</span>
                   <User.Name field="displayName" class="text-sm" />
@@ -153,7 +153,7 @@
                 </svg>
                 <span>Follow #{target}</span>
               {:else}
-                <User.Root {ndk} user={target as NDKUser}>
+                <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
                   <User.Avatar size={16} />
                   <span>Follow</span>
                   <User.Name field="displayName" class="text-sm" />

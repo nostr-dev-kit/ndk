@@ -94,7 +94,7 @@
           <span class="font-normal">#{target}</span>
         </span>
       {:else}
-        <User.Root {ndk} user={target as NDKUser}>
+        <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
           <User.Avatar size={20} />
           <span class="text-sm inline-flex items-baseline gap-1">
             <span class="font-bold">{followAction.isFollowing ? 'Unfollow' : 'Follow'}</span>

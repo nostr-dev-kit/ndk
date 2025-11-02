@@ -84,7 +84,6 @@
       <li><strong>EventCard.Content</strong> — Renders the event content (uses EventContent internally)</li>
       <li><strong>EventCard.Actions</strong> — Action buttons (reply, like, repost, zap)</li>
       <li><strong>EventCard.Dropdown</strong> — Menu for additional actions (mute, copy link, etc.)</li>
-      <li><strong>EventCard.ThreadLine</strong> — Visual indicator for threaded conversations</li>
     </ul>
 
     <h2>Cards vs Content: The Separation</h2>

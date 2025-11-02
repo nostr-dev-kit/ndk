@@ -13,7 +13,7 @@
  * Individual handlers can also be imported separately:
  * ```ts
  * import '$lib/registry/components/article-embedded';
- * import '$lib/registry/components/highlight-embedded';
+ * import '$lib/registry/ui/highlight-embedded';
  * import '$lib/registry/components/note-embedded';
  * ```
  */

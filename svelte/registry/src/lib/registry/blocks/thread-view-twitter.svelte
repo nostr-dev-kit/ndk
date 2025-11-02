@@ -44,7 +44,7 @@
           {@const isLast = i === thread.events.length - 1}
           {@const isContinuation = node.threading?.isSelfThread}
 
-          <EventCard.Root {ndk} event={node.event} threading={node.threading}
+          <EventCard.Root {ndk} event={node.event}
             class={`py-0 !rounded-none hover:!bg-muted ${isFirst ? '!rounded-t-2xl' : ''}`}
           >
             <div
@@ -76,7 +76,7 @@
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
-                <Avatar {ndk} user={reply.author} size={40} class="avatar" />
+                <Avatar user={reply.author} size={40} class="avatar" />
               </div>
 
               <div class="tweet-content">
@@ -100,7 +100,7 @@
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
-                <Avatar {ndk} user={reply.author} size={40} class="avatar" />
+                <Avatar user={reply.author} size={40} class="avatar" />
               </div>
 
               <div class="tweet-content">

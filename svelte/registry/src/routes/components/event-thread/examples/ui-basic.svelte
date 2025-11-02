@@ -14,7 +14,7 @@
   <div class="border border-border rounded-lg overflow-hidden">
     {#each thread.events as node}
       {#if node.event}
-        <EventCard.Root {ndk} event={node.event} threading={node.threading}>
+        <EventCard.Root {ndk} event={node.event}>
           <div class="border-b border-border p-4">
             <EventCard.Header variant="compact" />
             <EventCard.Content />

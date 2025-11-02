@@ -37,7 +37,7 @@
  * </script>
  *
  * {#each avatarGroup.users.slice(0, 5) as user}
- *   <UserProfile.Avatar {ndk} {user} />
+ *   <User.Avatar {ndk} {user} />
  * {/each}
  * ```
  */

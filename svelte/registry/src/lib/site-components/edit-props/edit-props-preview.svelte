@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { PropType } from './edit-props-context.svelte';
-	import { UserProfile } from '$lib/registry/components/user-profile';
+	import { User } from '$lib/registry/ui';
 
 	interface Props {
 		type: PropType;
@@ -22,17 +22,17 @@
 <div class="preview">
 	{#if type === 'user' && value instanceof Object && 'profile' in value}
 		{@const user = value as NDKUser}
-		<UserProfile.Root {ndk} pubkey={user.pubkey}>
+		<User.Root {ndk} pubkey={user.pubkey}>
 			<div class="preview-user">
-				<UserProfile.Avatar size={40} />
+				<User.Avatar size={40} />
 				<div class="preview-user-info">
 					<div class="preview-user-name">
-						<UserProfile.Name field="displayName" />
+						<User.Name field="displayName" />
 					</div>
-					<UserProfile.Nip05 class="preview-user-nip05" />
+					<User.Nip05 class="preview-user-nip05" />
 				</div>
 			</div>
-		</UserProfile.Root>
+		</User.Root>
 	{:else if type === 'article' && value instanceof Object && 'title' in value}
 		{@const article = value as NDKArticle}
 		<div class="preview-article">

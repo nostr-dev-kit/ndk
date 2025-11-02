@@ -42,22 +42,20 @@
             </EventCard.Root>
           </div>
         {:else}
-          <EventCard.Root
-            {ndk}
-            event={node.event}
-            threading={node.threading}
+          <div
+            class="relative border-b border-border transition-colors cursor-pointer"
+            onclick={() => thread.focusOn(node.id)}
+            role="button"
+            tabindex="0"
           >
-            <div
-              class="relative border-b border-border transition-colors cursor-pointer"
-              onclick={() => thread.focusOn(node.id)}
-              role="button"
-              tabindex="0"
-            >
-              <EventCard.ThreadLine />
+            {#if node.threading?.showLineToNext}
+              <div class="thread-line" style:left="20px" aria-hidden="true" />
+            {/if}
+            <EventCard.Root {ndk} event={node.event}>
               <EventCard.Header variant="compact" />
               <EventCard.Content />
-            </div>
-          </EventCard.Root>
+            </EventCard.Root>
+          </div>
         {/if}
         {/key}
       {:else}
@@ -123,3 +121,15 @@
     <div class="text-muted-foreground">Loading thread...</div>
   </div>
 {/if}
+
+<style>
+  .thread-line {
+    position: absolute;
+    top: 48px;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>

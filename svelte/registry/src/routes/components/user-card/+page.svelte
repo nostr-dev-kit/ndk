@@ -168,7 +168,7 @@
 					{
 						name: 'User.Root',
 						description: 'Root component that provides user context to all child components',
-						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
+						importPath: "import { User } from '$lib/registry/ui'",
 						props: [
 							{
 								name: 'ndk',
@@ -187,7 +187,7 @@
 					{
 						name: 'User.Avatar',
 						description: 'Displays user avatar image',
-						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
+						importPath: "import { User } from '$lib/registry/ui'",
 						props: [
 							{
 								name: 'size',
@@ -206,7 +206,7 @@
 					{
 						name: 'User.Name',
 						description: 'Displays user display name or handle',
-						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
+						importPath: "import { User } from '$lib/registry/ui'",
 						props: [
 							{
 								name: 'class',
@@ -219,7 +219,7 @@
 					{
 						name: 'User.Bio',
 						description: 'Displays user biography text',
-						importPath: "import { UserProfile } from '$lib/registry/components/user-profile'",
+						importPath: "import { User } from '$lib/registry/ui'",
 						props: [
 							{
 								name: 'class',

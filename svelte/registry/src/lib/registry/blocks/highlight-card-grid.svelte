@@ -92,7 +92,7 @@
     <!-- Author info below -->
     {#if showAuthor}
       <div class="flex items-center gap-2 mt-2 px-1">
-        <User.Avatar {ndk} user={event.author} size={20} class="rounded-full" />
+        <User.Avatar user={event.author} size={20} class="rounded-full" />
         <span class="text-xs text-muted-foreground truncate">{authorName}</span>
       </div>
     {/if}

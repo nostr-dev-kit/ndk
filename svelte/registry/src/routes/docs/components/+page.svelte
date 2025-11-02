@@ -162,14 +162,14 @@
     </p>
 
     <CodeBlock lang="svelte" code={`<!-- Composed - gets data from context -->
-<UserProfile.Root {ndk} {user}>
-  <UserProfile.Avatar />
-  <UserProfile.Name />
-</UserProfile.Root>
+<User.Root {ndk} {user}>
+  <User.Avatar />
+  <User.Name />
+</User.Root>
 
 <!-- Standalone - provide data directly -->
-<UserProfile.Avatar {ndk} {user} size={64} />
-<UserProfile.Name {ndk} {user} field="displayName" />`} />
+<User.Avatar {ndk} {user} size={64} />
+<User.Name {ndk} {user} field="displayName" />`} />
 
     <p>
       Check the component props - optional props mean it supports standalone usage and will fall back to context.

@@ -22,8 +22,8 @@
 
     <!-- Author info below -->
     <div class="flex items-center gap-2 mt-2 px-1">
-      <UserProfile.Avatar {ndk} user={event.author} size={20} class="rounded-full" />
-      <UserProfile.Name {ndk} user={event.author} class="text-xs text-muted-foreground truncate" />
+      <User.Avatar {ndk} user={event.author} size={20} class="rounded-full" />
+      <User.Name {ndk} user={event.author} class="text-xs text-muted-foreground truncate" />
     </div>
   </article>
 </HighlightCard.Root>

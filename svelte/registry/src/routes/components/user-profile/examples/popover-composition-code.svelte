@@ -47,12 +47,12 @@
 <!-- Usage -->
 <HoverCard>
   {#snippet trigger()}
-    <UserProfile.Root {ndk} {pubkey}>
+    <User.Root {ndk} {pubkey}>
       <div class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
-        <UserProfile.Avatar size={32} />
-        <UserProfile.Name class="text-sm font-medium" />
+        <User.Avatar size={32} />
+        <User.Name class="text-sm font-medium" />
       </div>
-    </UserProfile.Root>
+    </User.Root>
   {/snippet}
   {#snippet content()}
     <UserCardClassic {ndk} {pubkey} />

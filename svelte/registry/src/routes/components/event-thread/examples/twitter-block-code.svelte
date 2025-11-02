@@ -4,7 +4,7 @@
       <!-- Parent Chain + Focused Event -->
       {#each thread.events as node, i}
         {#if node.event}
-          <EventCard.Root {ndk} event={node.event} threading={node.threading} class="tweet-event-card">
+          <EventCard.Root {ndk} event={node.event} class="tweet-event-card">
             <div
               class="tweet"
               class:tweet--focused={node.event.id === thread.focusedEventId}

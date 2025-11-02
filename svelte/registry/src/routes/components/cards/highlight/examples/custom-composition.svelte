@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { HighlightCard } from '$lib/registry/components/highlight-card/index.js';
+  import { Highlight } from '$lib/registry/ui/highlight/index.js';
 
   interface Props {
     ndk: NDKSvelte;
@@ -11,11 +11,11 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<HighlightCard.Root {ndk} {event} variant="feed">
+<Highlight.Root {ndk} {event} variant="feed">
   <div class="p-4 border border-border rounded-lg">
     <div class="bg-card p-6 rounded-lg relative">
-      <HighlightCard.Content fontSize="text-lg" />
-      <HighlightCard.Source position="bottom-right" />
+      <Highlight.Content class="text-lg" />
+      <Highlight.Source />
     </div>
   </div>
-</HighlightCard.Root>
+</Highlight.Root>

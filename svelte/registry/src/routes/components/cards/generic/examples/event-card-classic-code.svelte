@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import type { NDKSvelte, ThreadingMetadata } from '@nostr-dev-kit/svelte';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
 	import RepostButton from '$lib/registry/blocks/repost-button.svelte';
 	import { cn } from '$lib/utils';
@@ -8,7 +8,6 @@
 	interface Props {
 		ndk: NDKSvelte;
 		event: NDKEvent;
-		threading?: ThreadingMetadata;
 		interactive?: boolean;
 		showActions?: boolean;
 		showDropdown?: boolean;
@@ -18,7 +17,6 @@
 	let {
 		ndk,
 		event,
-		threading,
 		interactive = false,
 		showActions = true,
 		showDropdown = true,
@@ -29,17 +27,12 @@
 <EventCard.Root
 	{ndk}
 	{event}
-	{threading}
 	{interactive}
 	class={cn(
 		'p-4 rounded-lg border border-border bg-card',
 		'hover:bg-accent/50 transition-colors'
 	)}
 >
-	{#if threading?.showLineToNext}
-		<EventCard.ThreadLine />
-	{/if}
-
 	<div class="flex items-start justify-between gap-2">
 		<EventCard.Header />
 		{#if showDropdown}

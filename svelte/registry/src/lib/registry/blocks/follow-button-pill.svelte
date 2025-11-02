@@ -121,10 +121,10 @@
           <span class="font-normal">#{target}</span>
         </span>
       {:else}
-        <Avatar {ndk} user={target as NDKUser} size={20} />
+        <Avatar user={target as NDKUser} size={20} />
         <span class="inline-flex items-baseline gap-1">
           <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
-          <Name {ndk} user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
+          <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
         </span>
       {/if}
     {:else}
@@ -146,7 +146,7 @@
             <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
           </svg>
         {:else}
-          <Avatar {ndk} user={target as NDKUser} size={16} class="flex-shrink-0" />
+          <Avatar user={target as NDKUser} size={16} class="flex-shrink-0" />
         {/if}
       {:else if showIcon}
         <!-- Regular icons -->
@@ -193,7 +193,7 @@
           {#if isHashtag}
             <span class="font-normal">#{target}</span>
           {:else}
-            <Name {ndk} user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
+            <Name user={target as NDKUser} size="text-sm" class="font-normal" truncate={false} />
           {/if}
         </span>
       {:else}

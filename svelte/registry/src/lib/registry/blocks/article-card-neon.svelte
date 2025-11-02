@@ -125,7 +125,6 @@
         <!-- Author & Reading Time -->
         <div class="pt-4 border-t border-white/10">
           <User.AvatarName
-            {ndk}
             user={context.article.author}
             avatarSize={36}
             class="text-white [&_.text-muted-foreground]:text-white/70 [&_img]:ring-2 [&_img]:ring-white/20 [&_.bg-muted]:bg-white/10 [&_.bg-muted]:backdrop-blur-sm [&_.bg-muted]:ring-2 [&_.bg-muted]:ring-white/20"

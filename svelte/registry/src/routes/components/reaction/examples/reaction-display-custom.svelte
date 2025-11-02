@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { Reaction } from '$lib/registry/components/reaction';
+  import { Reaction } from '$lib/registry/ui/reaction';
 
   let { event }: { event: NDKEvent } = $props();
 </script>

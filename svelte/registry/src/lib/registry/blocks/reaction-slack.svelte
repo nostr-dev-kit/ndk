@@ -29,7 +29,7 @@
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { Tooltip } from 'bits-ui';
   import AvatarGroup from '../components/avatar-group/avatar-group.svelte';
-  import { Reaction } from '../components/reaction';
+  import { Reaction } from '../ui/reaction';
   import { cn } from '../../utils.js';
 
   interface Props {

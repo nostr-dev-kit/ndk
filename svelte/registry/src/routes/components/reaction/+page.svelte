@@ -11,7 +11,7 @@
   import ReactionEmojiButton from '$lib/registry/blocks/reaction-emoji-button.svelte';
 
   // Import primitives for examples
-  import { Reaction } from '$lib/registry/components/reaction';
+  import { Reaction } from '$lib/registry/ui/reaction';
 
   // Import primitive examples
   import ReactionDisplayBasic from './examples/reaction-display-basic.svelte';

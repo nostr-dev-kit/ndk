@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createRepostAction } from '@nostr-dev-kit/svelte';
-  import RepostIcon from '$lib/registry/components/icons/repost.svelte';
+  import RepostIcon from '$lib/registry/icons/repost.svelte';
 
   interface Props {
     ndk: NDKSvelte;

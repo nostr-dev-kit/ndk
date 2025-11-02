@@ -46,10 +46,7 @@ import ConnectionStatus from './relay-connection-status.svelte';
 import Input from './relay-input.svelte';
 
 // Selector primitives
-import SelectorRoot from './relay-selector-root.svelte';
-import SelectorList from './relay-selector-list.svelte';
-import SelectorItem from './relay-selector-item.svelte';
-import SelectorAddForm from './relay-selector-add-form.svelte';
+import { Selector } from '../../relay-selector/index.js';
 
 // Export as namespace for dot notation
 export const Relay = {
@@ -62,13 +59,9 @@ export const Relay = {
   BookmarkedBy,
   ConnectionStatus,
   Input,
-  Selector: {
-    Root: SelectorRoot,
-    List: SelectorList,
-    Item: SelectorItem,
-    AddForm: SelectorAddForm,
-  },
+  Selector,
 };
 
 // Export types
 export type { RelayContext } from './context.svelte.js';
+export type { RelaySelectorContext } from '../../relay-selector/index.js';

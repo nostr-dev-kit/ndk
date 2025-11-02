@@ -24,6 +24,23 @@
       <Relay.BookmarkButton bookmarks={bookmarksWithToggle} size="lg" />
     </div>
     <Relay.Description maxLines={3} class="mt-3" />
-    <Relay.BookmarkedBy bookmarks={followsBookmarks} />
+    <Relay.BookmarkedBy bookmarks={followsBookmarks}>
+      {#snippet children({ pubkeys, count })}
+        <div class="flex items-center gap-3 mt-3">
+          <div class="flex -space-x-2">
+            {#each pubkeys.slice(0, 5) as pubkey}
+              <img
+                src="https://api.dicebear.com/7.x/identicon/svg?seed={pubkey}"
+                alt="Avatar"
+                class="w-8 h-8 rounded-full border-2 border-background"
+              />
+            {/each}
+          </div>
+          <span class="text-sm text-muted-foreground">
+            {count} {count === 1 ? 'follow' : 'follows'}
+          </span>
+        </div>
+      {/snippet}
+    </Relay.BookmarkedBy>
   </div>
 </Relay.Root>

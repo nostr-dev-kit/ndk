@@ -13,7 +13,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKNip07Signer, NDKPrivateKeySigner, NDKNip46Signer, nip19 } from '@nostr-dev-kit/ndk';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/utils.js';
+  import { cn } from '$lib/registry/utils/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

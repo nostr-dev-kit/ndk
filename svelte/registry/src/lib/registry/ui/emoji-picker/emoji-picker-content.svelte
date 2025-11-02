@@ -13,8 +13,9 @@
   ```
 -->
 <script lang="ts">
-  import type { NDKSvelte, EmojiData } from '@nostr-dev-kit/svelte';
-  import { createEmojiPicker } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { EmojiData } from './createEmojiPicker.svelte.js';
+  import { createEmojiPicker } from './createEmojiPicker.svelte.js';
   import { cn } from '../../../utils.js';
   import { getNDKFromContext } from '../ndk-context.svelte.js';
   import List from './emoji-picker-list.svelte';

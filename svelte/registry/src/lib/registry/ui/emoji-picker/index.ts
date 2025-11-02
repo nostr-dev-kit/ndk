@@ -47,5 +47,6 @@ export const EmojiPicker = {
   Item,
 };
 
-// Export types from the builder
-export type { EmojiData, EmojiPickerConfig } from '@nostr-dev-kit/svelte';
+// Export hook and types
+export { createEmojiPicker } from './createEmojiPicker.svelte.js';
+export type { EmojiData, EmojiPickerConfig } from './createEmojiPicker.svelte.js';

@@ -27,16 +27,20 @@
   <UserInput.Root {ndk} onSelect={handleSelect}>
     <UserInput.Search placeholder="Search users..." />
     <UserInput.Results>
-      {#snippet resultItem(user)}
-        <div class="custom-result-item">
-          <User.Avatar {ndk} {user} size={40} />
-          <div class="user-info">
-            <div class="user-name">{user.profile?.name || 'Anonymous'}</div>
-            {#if user.profile?.nip05}
-              <div class="nip05">{user.profile.nip05}</div>
-            {/if}
-          </div>
-        </div>
+      {#snippet children(result)}
+        <UserInput.Item {result}>
+          {#snippet child({ props })}
+            <div {...props} class="custom-result-item">
+              <User.Avatar {ndk} user={result.user} size={40} />
+              <div class="user-info">
+                <div class="user-name">{result.user.profile?.name || 'Anonymous'}</div>
+                {#if result.user.profile?.nip05}
+                  <div class="nip05">{result.user.profile.nip05}</div>
+                {/if}
+              </div>
+            </div>
+          {/snippet}
+        </UserInput.Item>
       {/snippet}
     </UserInput.Results>
   </UserInput.Root>

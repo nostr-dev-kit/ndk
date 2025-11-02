@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import EventCardClassic from '$lib/registry/components/blocks/event-card-classic.svelte';
-import EventCardMenu from '$lib/registry/components/blocks/event-card-menu.svelte';
+	import EventCardClassic from '$lib/registry/blocks/event-card-classic.svelte';
+import EventCardMenu from '$lib/registry/blocks/event-card-menu.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
@@ -403,7 +403,7 @@ import EventCardMenu from '$lib/registry/components/blocks/event-card-menu.svelt
 						name: 'EventCardClassic',
 						description:
 							'Pre-composed event card with complete functionality including background, dropdown menu, and all action buttons.',
-						importPath: "import { EventCardClassic } from '$lib/registry/components/blocks'",
+						importPath: "import { EventCardClassic } from '$lib/registry/blocks'",
 						props: [
 							{
 								name: 'ndk',
@@ -462,7 +462,7 @@ import EventCardMenu from '$lib/registry/components/blocks/event-card-menu.svelt
 						name: 'EventCardMenu',
 						description:
 							'Fully-styled dropdown menu for event actions including mute, report, copy, and raw event viewing.',
-						importPath: "import { EventCardMenu } from '$lib/registry/components/blocks'",
+						importPath: "import { EventCardMenu } from '$lib/registry/blocks'",
 						props: [
 							{
 								name: 'ndk',

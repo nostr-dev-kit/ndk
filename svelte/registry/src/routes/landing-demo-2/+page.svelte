@@ -4,12 +4,12 @@
 	import { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
 
 	// Import actual blocks
-	import EventCardClassic from '$lib/registry/components/blocks/event-card-classic.svelte';
-	import UserCardCompact from '$lib/registry/components/blocks/user-card-compact.svelte';
-	import RelayCardCompact from '$lib/registry/components/blocks/relay-card-compact.svelte';
-	import ArticleCardHero from '$lib/registry/components/blocks/article-card-hero.svelte';
-	import HighlightCardElegant from '$lib/registry/components/blocks/highlight-card-elegant.svelte';
-	import FollowButton from '$lib/registry/components/blocks/follow-button.svelte';
+	import EventCardClassic from '$lib/registry/blocks/event-card-classic.svelte';
+	import UserCardCompact from '$lib/registry/blocks/user-card-compact.svelte';
+	import RelayCardCompact from '$lib/registry/blocks/relay-card-compact.svelte';
+	import ArticleCardHero from '$lib/registry/blocks/article-card-hero.svelte';
+	import HighlightCardElegant from '$lib/registry/blocks/highlight-card-elegant.svelte';
+	import FollowButton from '$lib/registry/blocks/follow-button.svelte';
 
 	let mounted = $state(false);
 

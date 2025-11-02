@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { MediaUploadResult } from '$lib/registry/components/media-upload';
-	import UploadButton from '$lib/registry/components/blocks/upload-button.svelte';
-	import MediaUploadCarousel from '$lib/registry/components/blocks/media-upload-carousel.svelte';
+	import UploadButton from '$lib/registry/blocks/upload-button.svelte';
+	import MediaUploadCarousel from '$lib/registry/blocks/media-upload-carousel.svelte';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -353,7 +353,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'UploadButton',
 					description: 'Simple upload button block without preview UI.',
-					importPath: "import { UploadButton } from '$lib/registry/components/blocks'",
+					importPath: "import { UploadButton } from '$lib/registry/blocks'",
 					props: [
 						{
 							name: 'ndk',
@@ -406,7 +406,7 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 				{
 					name: 'MediaUploadCarousel',
 					description: 'Carousel block with + button, previews, and drag-to-reorder.',
-					importPath: "import { MediaUploadCarousel } from '$lib/registry/components/blocks'",
+					importPath: "import { MediaUploadCarousel } from '$lib/registry/blocks'",
 					props: [
 						{
 							name: 'ndk',

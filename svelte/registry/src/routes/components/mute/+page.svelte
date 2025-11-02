@@ -8,7 +8,7 @@
   import Alert from '$site-components/alert.svelte';
 
   // Import block components for preview
-  import MuteButton from '$lib/registry/components/blocks/mute-button.svelte';
+  import MuteButton from '$lib/registry/blocks/mute-button.svelte';
 
   // Import code examples
   import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
@@ -137,7 +137,7 @@
       {
         name: 'MuteButton',
         description: 'Minimal mute button block with icon-first design.',
-        importPath: "import { MuteButton } from '$lib/registry/components/blocks'",
+        importPath: "import { MuteButton } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',

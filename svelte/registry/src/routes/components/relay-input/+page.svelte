@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '$lib/registry/components/relay';
-	import RelayInputBlock from '$lib/registry/components/blocks/relay-input-block.svelte';
+	import RelayInputBlock from '$lib/registry/blocks/relay-input-block.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Examples
@@ -211,7 +211,7 @@
 				{
 					name: 'RelayInputBlock',
 					description: 'Opinionated relay input with label and helper text',
-					importPath: "import { RelayInputBlock } from '$lib/registry/components/blocks'",
+					importPath: "import { RelayInputBlock } from '$lib/registry/blocks'",
 					props: [
 						{
 							name: 'ndk',

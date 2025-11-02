@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import MentionModern from '$lib/registry/components/blocks/mention-modern.svelte';
+  import MentionModern from '$lib/registry/blocks/mention-modern.svelte';
   import Demo from '$site-components/Demo.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
@@ -76,7 +76,7 @@
         </p>
         <pre class="bg-muted p-4 rounded-lg text-sm overflow-x-auto"><code>{`// In your app initialization (e.g., +layout.svelte or main entry)
 import { defaultContentRenderer } from '$lib/registry/ui';
-import MentionModern from '$lib/registry/components/blocks/mention-modern.svelte';
+import MentionModern from '$lib/registry/blocks/mention-modern.svelte';
 
 defaultContentRenderer.mentionComponent = MentionModern;
 
@@ -160,7 +160,7 @@ defaultContentRenderer.mentionComponent = MentionModern;
       {
         name: 'MentionModern',
         description: 'Modern inline mention with avatar and user card popover on hover.',
-        importPath: "import { MentionModern } from '$lib/registry/components/blocks'",
+        importPath: "import { MentionModern } from '$lib/registry/blocks'",
         props: [
           {
             name: 'ndk',

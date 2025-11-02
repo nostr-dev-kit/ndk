@@ -2,8 +2,8 @@
 	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import RelaySelectorPopover from '$lib/registry/components/blocks/relay-selector-popover.svelte';
-	import RelaySelectorInline from '$lib/registry/components/blocks/relay-selector-inline.svelte';
+	import RelaySelectorPopover from '$lib/registry/blocks/relay-selector-popover.svelte';
+	import RelaySelectorInline from '$lib/registry/blocks/relay-selector-inline.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Block code examples
@@ -312,7 +312,7 @@
 				{
 					name: 'RelaySelectorPopover',
 					description: 'Popover block for relay selection with customizable trigger button.',
-					importPath: "import { RelaySelectorPopover } from '$lib/registry/components/blocks'",
+					importPath: "import { RelaySelectorPopover } from '$lib/registry/blocks'",
 					props: [
 						{
 							name: 'ndk',
@@ -370,7 +370,7 @@
 				{
 					name: 'RelaySelectorInline',
 					description: 'Inline block for relay selection without popover trigger.',
-					importPath: "import { RelaySelectorInline } from '$lib/registry/components/blocks'",
+					importPath: "import { RelaySelectorInline } from '$lib/registry/blocks'",
 					props: [
 						{
 							name: 'ndk',

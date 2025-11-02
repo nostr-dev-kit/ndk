@@ -3,7 +3,7 @@
   import { getContext } from 'svelte';
   import type { UserInputResult } from '@nostr-dev-kit/svelte';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';
-  import UserListItem from '$lib/registry/components/blocks/user-list-item.svelte';
+  import UserListItem from '$lib/registry/blocks/user-list-item.svelte';
 
   interface Props {
     /** Result to display */

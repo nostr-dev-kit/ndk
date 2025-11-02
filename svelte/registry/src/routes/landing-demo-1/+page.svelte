@@ -2,13 +2,13 @@
 	import { onMount } from 'svelte';
 	import { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { ndk } from '$lib/ndk.svelte.js';
-	import UserCard from '$lib/registry/components/blocks/user-card-compact.svelte';
-	import EventCardClassic from '$lib/registry/components/blocks/event-card-classic.svelte';
-	import ArticleCardMedium from '$lib/registry/components/blocks/article-card-medium.svelte';
-	import ThreadViewTwitter from '$lib/registry/components/blocks/thread-view-twitter.svelte';
-	import ReactionButton from '$lib/registry/components/blocks/reaction-button.svelte';
+	import UserCard from '$lib/registry/blocks/user-card-compact.svelte';
+	import EventCardClassic from '$lib/registry/blocks/event-card-classic.svelte';
+	import ArticleCardMedium from '$lib/registry/blocks/article-card-medium.svelte';
+	import ThreadViewTwitter from '$lib/registry/blocks/thread-view-twitter.svelte';
+	import ReactionButton from '$lib/registry/blocks/reaction-button.svelte';
 	import ZapButton from '$lib/registry/components/zap-button.svelte';
-	import RepostButton from '$lib/registry/components/blocks/repost-button.svelte';
+	import RepostButton from '$lib/registry/blocks/repost-button.svelte';
 
 	// Sample data for components - will be initialized in onMount
 	let sampleEvent: NDKEvent | null = null;

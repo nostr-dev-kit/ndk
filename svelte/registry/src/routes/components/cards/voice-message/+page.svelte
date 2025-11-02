@@ -4,8 +4,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKVoiceMessage, NDKKind } from '@nostr-dev-kit/ndk';
 	import { VoiceMessage } from '$lib/registry/ui/voice-message';
-	import VoiceMessageCardCompact from '$lib/registry/components/blocks/voice-message-card-compact.svelte';
-	import VoiceMessageCardExpanded from '$lib/registry/components/blocks/voice-message-card-expanded.svelte';
+	import VoiceMessageCardCompact from '$lib/registry/blocks/voice-message-card-compact.svelte';
+	import VoiceMessageCardExpanded from '$lib/registry/blocks/voice-message-card-expanded.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
@@ -349,7 +349,7 @@
 			{
 				name: 'VoiceMessageCardCompact',
 				description: 'Compact pre-composed block for inline voice message display',
-				importPath: "import { VoiceMessageCardCompact } from '$lib/registry/components/blocks'",
+				importPath: "import { VoiceMessageCardCompact } from '$lib/registry/blocks'",
 				props: [
 					{
 						name: 'ndk',
@@ -380,7 +380,7 @@
 			{
 				name: 'VoiceMessageCardExpanded',
 				description: 'Expanded pre-composed block with waveform visualization',
-				importPath: "import { VoiceMessageCardExpanded } from '$lib/registry/components/blocks'",
+				importPath: "import { VoiceMessageCardExpanded } from '$lib/registry/blocks'",
 				props: [
 					{
 						name: 'ndk',

@@ -70,7 +70,6 @@ export const componentCategories: NavCategory[] = [
       { name: 'User', path: '/ui/user', icon: UserIcon, title: 'User Primitives', description: 'Headless primitives for displaying user profiles and metadata.' },
       { name: 'Highlight', path: '/ui/highlight', icon: HighlighterIcon, title: 'Highlight Primitives', description: 'Headless primitives for displaying text highlights (NIP-84).', nip: 'NIP-84' },
       { name: 'Relay', path: '/ui/relay', icon: ServerStack01Icon, title: 'Relay Primitives', description: 'Headless primitives for displaying relay information and controls.' },
-      { name: 'Emoji Picker', path: '/ui/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker Primitives', description: 'Headless primitives for selecting emojis from custom sets.' },
       { name: 'Media Upload', path: '/ui/media-upload', icon: CloudUploadIcon, title: 'Media Upload Primitives', description: 'Headless primitives for uploading files to Blossom servers.' },
       { name: 'Reaction', path: '/ui/reaction', icon: FavouriteIcon, title: 'Reaction Primitives', description: 'Headless primitives for displaying event reactions.' },
       { name: 'Follow Pack', path: '/ui/follow-pack', icon: UserGroupIcon, title: 'Follow Pack Primitives', description: 'Headless primitives for displaying curated user lists.' },

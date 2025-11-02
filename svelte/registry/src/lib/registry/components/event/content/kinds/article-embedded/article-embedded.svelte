@@ -2,7 +2,7 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { ArticleCard } from '../../../../article-card';
+  import { Article } from '../../../../ui/article';
 
   interface Props {
     ndk: NDKSvelte;
@@ -17,21 +17,21 @@
 </script>
 
 <div class="article-embedded" data-variant={variant}>
-  <ArticleCard.Root {ndk} {article}>
+  <Article.Root {ndk} {article}>
     <div class="article-layout">
-      <ArticleCard.Image
+      <Article.Image
         class={variant === 'compact' ? 'h-24' : variant === 'inline' ? 'h-32' : 'h-40'}
         showGradient={true}
       />
 
       <div class="article-content">
-        <ArticleCard.Title
+        <Article.Title
           class="text-sm font-semibold"
           lines={variant === 'compact' ? 1 : 2}
         />
 
         {#if variant !== 'compact'}
-          <ArticleCard.Summary
+          <Article.Summary
             class="text-xs text-muted-foreground"
             maxLength={variant === 'inline' ? 80 : 120}
             lines={variant === 'inline' ? 2 : 3}
@@ -39,11 +39,11 @@
         {/if}
 
         <div class="article-meta">
-          <ArticleCard.Meta class="text-xs" />
+          <Article.Meta class="text-xs" />
         </div>
       </div>
     </div>
-  </ArticleCard.Root>
+  </Article.Root>
 </div>
 
 <style>

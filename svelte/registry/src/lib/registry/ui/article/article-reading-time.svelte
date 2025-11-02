@@ -1,19 +1,18 @@
-<!-- @ndk-version: article-card@0.13.0 -->
+<!-- @ndk-version: article@0.14.0 -->
 <!--
-  @component ArticleCard.ReadingTime
+  @component Article.ReadingTime
   Display estimated reading time for the article
 
   @example
   ```svelte
-  <ArticleCard.ReadingTime />
-  <ArticleCard.ReadingTime showSuffix={false} />
-  <ArticleCard.ReadingTime wordsPerMinute={250} />
+  <Article.ReadingTime />
+  <Article.ReadingTime showSuffix={false} />
+  <Article.ReadingTime wordsPerMinute={250} />
   ```
 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from './context.svelte.js';
-  import { cn } from '../../../utils.js';
+  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';
 
   interface Props {
     /** Words per minute reading speed (default: 200) */
@@ -32,9 +31,9 @@
     class: className = ''
   }: Props = $props();
 
-  const context = getContext<ArticleCardContext>(ARTICLE_CARD_CONTEXT_KEY);
+  const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY);
   if (!context) {
-    throw new Error('ArticleCard.ReadingTime must be used within ArticleCard.Root');
+    throw new Error('Article.ReadingTime must be used within Article.Root');
   }
 
   const readingTime = $derived.by(() => {
@@ -49,7 +48,7 @@
 </script>
 
 {#if readingTime}
-  <span class={cn('article-card-reading-time', className)}>
+  <span class={className}>
     {readingTime}
   </span>
 {/if}

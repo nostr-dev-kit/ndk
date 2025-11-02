@@ -1,25 +1,21 @@
-<!-- @ndk-version: article-card@0.13.0 -->
+<!-- @ndk-version: article@0.14.0 -->
 <!--
-  @component ArticleCard.Summary
+  @component Article.Summary
   Display article summary/excerpt
 
   @example
   ```svelte
-  <ArticleCard.Summary />
-  <ArticleCard.Summary maxLength={200} lines={3} />
+  <Article.Summary />
+  <Article.Summary maxLength={200} />
   ```
 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from './context.svelte.js';
-  import { cn } from '../../../utils.js';
+  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';
 
   interface Props {
     /** Maximum character length */
     maxLength?: number;
-
-    /** Number of lines to clamp */
-    lines?: number;
 
     /** Additional CSS classes */
     class?: string;
@@ -27,13 +23,12 @@
 
   let {
     maxLength = 150,
-    lines = 3,
     class: className = ''
   }: Props = $props();
 
-  const context = getContext<ArticleCardContext>(ARTICLE_CARD_CONTEXT_KEY);
+  const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY);
   if (!context) {
-    throw new Error('ArticleCard.Summary must be used within ArticleCard.Root');
+    throw new Error('Article.Summary must be used within Article.Root');
   }
 
   const excerpt = $derived.by(() => {
@@ -41,10 +36,8 @@
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + '...';
   });
-
-  const lineClampClass = $derived(`line-clamp-${lines}`);
 </script>
 
-<p class={cn(lineClampClass, className)}>
+<p class={className}>
   {excerpt}
 </p>

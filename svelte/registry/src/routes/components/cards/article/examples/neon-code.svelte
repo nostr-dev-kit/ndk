@@ -1,4 +1,4 @@
-<ArticleCard.Root {ndk} {article}>
+<Article.Root {ndk} {article}>
 	<button
 		type="button"
 		class="group relative flex flex-col flex-shrink-0 w-[320px] h-[480px] overflow-hidden rounded-2xl text-left"
@@ -8,7 +8,7 @@
 		></div>
 
 		<div class="absolute inset-0 z-0">
-			<ArticleCard.Image class="absolute inset-0 h-full" />
+			<Article.Image class="absolute inset-0 w-full h-full object-cover" />
 			<div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/90"></div>
 		</div>
 
@@ -23,11 +23,10 @@
 
 			<div class="mt-auto space-y-4">
 				<div>
-					<ArticleCard.Title class="text-xl font-bold text-white mb-2 leading-tight" lines={2} />
-					<ArticleCard.Summary
-						class="text-sm text-white/80 leading-relaxed"
+					<Article.Title class="text-xl font-bold text-white mb-2 leading-tight line-clamp-2" />
+					<Article.Summary
+						class="text-sm text-white/80 leading-relaxed line-clamp-2"
 						maxLength={100}
-						lines={2}
 					/>
 				</div>
 
@@ -39,11 +38,11 @@
 						class="text-white [&_.text-muted-foreground]:text-white/70 [&_img]:ring-2 [&_img]:ring-white/20"
 					>
 						{#snippet meta()}
-							<ArticleCard.ReadingTime class="text-xs text-white/70" />
+							<Article.ReadingTime class="text-xs text-white/70" />
 						{/snippet}
 					</UserProfile.AvatarName>
 				</div>
 			</div>
 		</div>
 	</button>
-</ArticleCard.Root>
+</Article.Root>

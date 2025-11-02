@@ -14,11 +14,11 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Root from '../article-card/article-card-root.svelte';
-  import Image from '../article-card/article-card-image.svelte';
-  import Title from '../article-card/article-card-title.svelte';
-  import Summary from '../article-card/article-card-summary.svelte';
-  import Meta from '../article-card/article-card-meta.svelte';
+  import Root from '../ui/article/article-root.svelte';
+  import Image from '../ui/article/article-image.svelte';
+  import Title from '../ui/article/article-title.svelte';
+  import Summary from '../ui/article/article-summary.svelte';
+  import ReadingTime from '../ui/article/article-reading-time.svelte';
   import { cn } from '../../../utils.js';
 
   interface Props {
@@ -85,14 +85,14 @@
     <div class="flex items-start gap-4 sm:gap-6">
       <!-- Content -->
       <div class="flex-1 min-w-0">
-        <Title class="text-xl sm:text-2xl mb-2 font-serif" lines={2} />
-        <Summary class="text-sm sm:text-base mb-4 leading-relaxed" maxLength={150} lines={3} />
-        <Meta class="text-xs sm:text-sm" showIcon={true} />
+        <Title class="text-xl sm:text-2xl mb-2 font-serif line-clamp-2" />
+        <Summary class="text-sm sm:text-base mb-4 leading-relaxed line-clamp-3" maxLength={150} />
+        <ReadingTime class="text-xs sm:text-sm" />
       </div>
 
       <!-- Image -->
       <div class={cn('flex-shrink-0 rounded-lg overflow-hidden', imageSizeClass)}>
-        <Image class="w-full h-full" iconSize="w-8 h-8 sm:w-10 sm:h-10" />
+        <Image class="w-full h-full object-cover" />
       </div>
     </div>
   </button>

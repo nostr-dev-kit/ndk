@@ -78,7 +78,7 @@
     <h2>EmojiPicker.Content Props</h2>
     <ApiTable
       rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance for fetching custom emojis' },
+        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional, falls back to context)' },
         { name: 'onSelect', type: '(emoji: EmojiData) => void', default: 'required', description: 'Callback when emoji is selected' },
         { name: 'defaults', type: 'EmojiData[]', default: 'hardcoded 12 emojis', description: 'Default emojis to show (can be overridden)' },
         { name: 'columns', type: 'number', default: '6 (5 on mobile)', description: 'Number of columns in grid' },

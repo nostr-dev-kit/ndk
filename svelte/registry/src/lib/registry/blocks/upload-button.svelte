@@ -1,8 +1,8 @@
 <!-- @ndk-version: upload-button@0.0.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { MediaUploadResult } from '../components/media-upload/createMediaUpload.svelte';
-	import { MediaUpload } from '../components/media-upload/index.js';
+	import type { MediaUploadResult } from '../ui/media-upload/createMediaUpload.svelte';
+	import { MediaUpload } from '../ui/media-upload/index.js';
 	import { getContext } from 'svelte';
 
 	interface Props {

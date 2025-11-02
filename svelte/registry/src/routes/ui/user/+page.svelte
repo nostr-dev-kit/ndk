@@ -28,7 +28,7 @@
       <h1>User</h1>
     </div>
     <p class="header-description">
-      Headless, composable primitives for displaying user profiles and metadata. Supports standalone mode for individual components.
+      Headless, composable primitives for displaying user profiles and metadata.
     </p>
     <div class="header-info">
       <div class="info-card">
@@ -36,8 +36,8 @@
         <span>No styling opinions - bring your own CSS</span>
       </div>
       <div class="info-card">
-        <strong>Standalone Mode</strong>
-        <span>Avatar and other components work without Root</span>
+        <strong>Composable</strong>
+        <span>Mix and match components for your use case</span>
       </div>
       <div class="info-card">
         <strong>Reactive</strong>
@@ -63,8 +63,8 @@
     </Demo>
 
     <Demo
-      title="Standalone Mode"
-      description="User.Avatar (and other components) support standalone mode - they work without a Root wrapper by accepting ndk and user props directly."
+      title="Profile Composition"
+      description="Compose multiple User components to create custom profile displays."
       code={StandaloneRaw}
     >
       <Standalone />
@@ -84,11 +84,11 @@
     <div class="components-grid">
       <div class="component-item">
         <code>User.Root</code>
-        <p>Context provider for user primitives. Optional for Avatar and other components that support standalone mode.</p>
+        <p>Context provider for user primitives. Required wrapper for all User components.</p>
       </div>
       <div class="component-item">
         <code>User.Avatar</code>
-        <p>User avatar image. Supports standalone mode.</p>
+        <p>User avatar image with gradient fallback.</p>
       </div>
       <div class="component-item">
         <code>User.Name</code>
@@ -123,7 +123,7 @@
 
   <section class="info">
     <h2>User.Root</h2>
-    <p class="mb-4">Context provider for all user primitives. Optional if using standalone mode.</p>
+    <p class="mb-4">Context provider for all user primitives. Manages profile fetching and provides context to child components.</p>
     <ApiTable
       rows={[
         { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance' },
@@ -139,15 +139,13 @@
 
   <section class="info">
     <h2>User.Avatar</h2>
-    <p class="mb-4">Display user avatar image. Supports standalone mode.</p>
+    <p class="mb-4">Display user avatar image. Shows initials with gradient background when no image is available.</p>
     <ApiTable
       rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: '(Standalone) NDK instance' },
-        { name: 'user', type: 'string | NDKUser', default: 'from context', description: '(Standalone) User to display' },
         { name: 'size', type: 'number', default: '48', description: 'Avatar size in pixels' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-        { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL' },
-        { name: 'alt', type: 'string', default: 'user name', description: 'Image alt text' }
+        { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if profile.picture is missing' },
+        { name: 'alt', type: 'string', default: 'undefined', description: 'Image alt text (defaults to user display name)' }
       ]}
     />
   </section>
@@ -220,12 +218,6 @@
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />
-  </section>
-
-  <section class="info">
-    <h2>Standalone Mode</h2>
-    <p class="mb-4">User.Avatar and other primitives support standalone mode - use them without User.Root by passing ndk and user props:</p>
-    <pre><code>&lt;User.Avatar ndk=&#123;ndk&#125; user=&#123;pubkey&#125; size=&#123;48&#125; /&gt;</code></pre>
   </section>
 
   <section class="info">

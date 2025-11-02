@@ -24,9 +24,9 @@
 -->
 <script lang="ts">
   import type { EmojiData } from './createEmojiPicker.svelte.js';
-  import { Reaction } from '../reaction';
+  import { Reaction } from '../../ui/reaction';
   import type { Snippet } from 'svelte';
-  import { mergeProps } from '../../../utils.js';
+  import { mergeProps } from '../../utils/index.js';
 
   interface EmojiSnippetProps {
     emoji: EmojiData;
@@ -59,7 +59,7 @@
   }: Props = $props();
 
   const mergedProps = $derived(mergeProps(restProps, {
-    type: 'button',
+    type: 'button' as const,
     onclick: () => onSelect(emoji),
     'aria-label': emoji.shortcode || emoji.emoji,
     'data-emoji': emoji.emoji,

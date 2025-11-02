@@ -64,7 +64,6 @@
 						<div class="flex items-center gap-2 min-w-0 flex-1">
 							<div class="flex-shrink-0 w-10 h-10 rounded-full bg-white/20 border border-white/30 overflow-hidden">
 								<User.Avatar
-									{ndk}
 									size={40}
 									class="w-full h-full"
 								/>

@@ -13,6 +13,7 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import Root from '../ui/article/article-root.svelte';
   import Title from '../ui/article/article-title.svelte';
   import Summary from '../ui/article/article-summary.svelte';
@@ -60,19 +61,23 @@
     }
   }
 
-  // Get article context to access publishedAt
-  const context = $derived(getContext<ArticleContext>(ARTICLE_CONTEXT_KEY));
-  const publishedAt = $derived(context?.article?.published_at);
+  // Fetch author profile for avatar/name display
+  const profileFetcher = $derived.by(() => {
+    const user = article.author;
+    if (!user) return null;
+    return createProfileFetcher(() => ({ user }), ndk);
+  });
+
+  const authorProfile = $derived(profileFetcher?.profile);
+
+  const publishedAt = $derived(article.published_at);
+  const articleImage = $derived(article.image);
 
   // Create reactive time ago string
   const timeAgo = $derived(publishedAt ? createTimeAgo(publishedAt) : null);
 </script>
 
 <Root {ndk} {article}>
-  {@const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY)}
-  {@const authorProfile = context.authorProfile}
-  {@const publishedAt = context.article.published_at}
-  {@const articleImage = context.article.image}
 
   <button
     type="button"
@@ -93,7 +98,7 @@
       <div class="absolute inset-0">
         <img
           src={articleImage}
-          alt={context.article.title || 'Article'}
+          alt={article.title || 'Article'}
           class="w-full h-full object-cover"
         />
       </div>
@@ -114,18 +119,18 @@
       {/if}
 
       <!-- Title -->
-      <Title class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight" lines={3} />
+      <Title class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight line-clamp-3" />
 
       <!-- Summary -->
-      <Summary class="text-base md:text-lg text-white/90 mb-6 leading-relaxed max-w-3xl" maxLength={200} lines={2} />
+      <Summary class="text-base md:text-lg text-white/90 mb-6 leading-relaxed max-w-3xl line-clamp-2" maxLength={200} />
 
       <!-- Author & Meta -->
       <div class="flex items-center gap-3 text-white/80">
         <!-- Avatar -->
-        {#if authorProfile?.profile?.image}
+        {#if authorProfile?.image}
           <img
-            src={authorProfile.profile.image}
-            alt={authorProfile.profile?.name || 'Author'}
+            src={authorProfile.image}
+            alt={authorProfile.name || 'Author'}
             class="w-10 h-10 rounded-full object-cover bg-white/10"
           />
         {:else}
@@ -139,7 +144,7 @@
         <!-- Author Name & Meta Info -->
         <div class="flex flex-col">
           <span class="font-semibold text-white">
-            {authorProfile?.profile?.name || authorProfile?.profile?.displayName || 'Anonymous'}
+            {authorProfile?.name || authorProfile?.displayName || 'Anonymous'}
           </span>
           <div class="flex items-center gap-2 text-sm">
             {#if timeAgo}

@@ -105,7 +105,12 @@
   }
 </script>
 
-<div class={cn('relative flex-shrink-0', className)} onclick={stopPropagation}>
+<div
+  class={cn('relative flex-shrink-0', className)}
+  onclick={stopPropagation}
+  onkeydown={(e) => e.stopPropagation()}
+  role="presentation"
+>
   <!-- Trigger Button -->
   <button
     onclick={(e) => { e.stopPropagation(); showMenu = !showMenu; }}
@@ -133,6 +138,8 @@
         'z-10 max-h-96 overflow-y-auto'
       )}
       onclick={(e) => e.stopPropagation()}
+      onkeydown={(e) => e.stopPropagation()}
+      role="presentation"
     >
       <!-- Mute button -->
       <button
@@ -264,7 +271,11 @@
     <div
       class="absolute inset-0 bg-black/50"
       onclick={() => showRawEventModal = false}
-    />
+      onkeydown={(e) => e.key === 'Escape' && (showRawEventModal = false)}
+      role="button"
+      tabindex="-1"
+      aria-label="Close modal"
+    ></div>
 
     <!-- Modal Content -->
     <div class="relative bg-background border border-border rounded-lg w-[90%] max-w-4xl max-h-[80vh] flex flex-col overflow-hidden shadow-2xl">
@@ -277,6 +288,7 @@
             'p-2 border-none bg-transparent cursor-pointer rounded',
             'text-muted-foreground hover:bg-muted'
           )}
+          aria-label="Close modal"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"/>

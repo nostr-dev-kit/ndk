@@ -91,10 +91,9 @@
             onclick={(e) => { e.stopPropagation(); showUserDropdown = !showUserDropdown; }}
             aria-label="User menu"
           >
-            <User.Avatar
-              pubkey={ndk.$currentPubkey}
-              size={32}
-            />
+            <User.Root {ndk} pubkey={ndk.$currentPubkey}>
+              <User.Avatar size={32} />
+            </User.Root>
           </button>
 
           {#if showUserDropdown}

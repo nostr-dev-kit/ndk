@@ -31,4 +31,4 @@ export { Relay, type RelayContext } from './relay/index.js';
 export { Amount as ZapAmount, Content as ZapContent } from './zap/index.js';
 
 // Shared utilities
-export { getNDKFromContext } from './ndk-context.svelte.js';
+export { getNDKFromContext } from '../utils/ndk-context.svelte.js';

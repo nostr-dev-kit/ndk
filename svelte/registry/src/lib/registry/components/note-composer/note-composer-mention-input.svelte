@@ -3,8 +3,8 @@
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
-	import { Input } from '../input';
-	import { cn } from '../../../utils';
+	import Input from '../../ui/input.svelte';
+	import { cn } from '../../utils/index.js';
 
 	interface Props {
 		/** Additional CSS classes */

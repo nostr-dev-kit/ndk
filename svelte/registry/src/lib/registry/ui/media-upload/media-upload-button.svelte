@@ -23,7 +23,7 @@
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';
 	import type { createMediaUpload } from './createMediaUpload.svelte';
-	import { mergeProps } from '../../../utils.js';
+	import { mergeProps } from '../../utils/index.js';
 
 	interface UploadSnippetProps {
 		isUploading: boolean;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
 
   interface Props {
     /** Which field to display */

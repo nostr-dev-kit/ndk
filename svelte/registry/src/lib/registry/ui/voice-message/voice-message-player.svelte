@@ -1,28 +1,81 @@
 <!-- @ndk-version: voice-message@0.1.0 -->
+<!--
+  @component VoiceMessage.Player
+  Headless audio player for voice messages.
+
+  @example Basic usage:
+  ```svelte
+  <VoiceMessage.Player />
+  ```
+
+  @example Custom player:
+  ```svelte
+  <VoiceMessage.Player>
+    {#snippet child({ props, isPlaying, progress, currentTime, duration, togglePlayPause, seek })}
+      <div {...props} class="custom-player">
+        <button onclick={togglePlayPause}>
+          {isPlaying ? 'Pause' : 'Play'}
+        </button>
+        <div class="progress" onclick={seek}>
+          <div class="bar" style="width: {progress}%"></div>
+        </div>
+        <span>{currentTime}s / {duration}s</span>
+      </div>
+    {/snippet}
+  </VoiceMessage.Player>
+  ```
+
+  @example Content-only customization:
+  ```svelte
+  <VoiceMessage.Player>
+    {#snippet children({ isPlaying, progress })}
+      <Icon name={isPlaying ? 'pause' : 'play'} />
+      <ProgressBar value={progress} />
+    {/snippet}
+  </VoiceMessage.Player>
+  ```
+-->
 <script lang="ts">
   import { getContext } from 'svelte';
+  import type { Snippet } from 'svelte';
   import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
-  import PlayIcon from '../../icons/play.svelte';
-  import PauseIcon from '../../icons/pause.svelte';
+  import { mergeProps } from '../../utils/index.js';
+
+  interface PlayerSnippetProps {
+    isPlaying: boolean;
+    progress: number;
+    currentTime: number;
+    duration: number;
+    togglePlayPause: () => void;
+    seek: (e: MouseEvent) => void;
+  }
 
   interface Props {
     /** Additional CSS classes */
     class?: string;
 
-    /** Show play/pause button */
-    showButton?: boolean;
-
     /** Audio element ref (for external control) */
     audioRef?: HTMLAudioElement | undefined;
+
+    /** Child snippet for custom element rendering */
+    child?: Snippet<[{ props: any } & PlayerSnippetProps]>;
+
+    /** Content snippet for custom content */
+    children?: Snippet<[PlayerSnippetProps]>;
   }
 
   let {
     class: className = '',
-    showButton = true,
-    audioRef = $bindable()
+    audioRef = $bindable(),
+    child,
+    children,
+    ...restProps
   }: Props = $props();
 
   const context = getContext<VoiceMessageContext>(VOICE_MESSAGE_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('VoiceMessage.Player must be used within VoiceMessage.Root');
+  }
 
   let audioElement: HTMLAudioElement;
   let isPlaying = $state(false);
@@ -64,61 +117,62 @@
   }
 
   const progress = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
+
+  const mergedProps = $derived(mergeProps(restProps, {
+    'aria-label': isPlaying ? 'Pause voice message' : 'Play voice message',
+    'data-playing': isPlaying,
+    'data-progress': Math.round(progress),
+    class: className
+  }));
+
+  const snippetProps = $derived({
+    isPlaying,
+    progress,
+    currentTime: Math.round(currentTime),
+    duration: Math.round(duration),
+    togglePlayPause,
+    seek: handleSeek
+  });
 </script>
 
-<div class="voice-message-player {className}">
-  {#if showButton}
-    <button
-      type="button"
-      class="play-button"
-      onclick={togglePlayPause}
-      aria-label={isPlaying ? 'Pause' : 'Play'}
-    >
-      {#if isPlaying}
-        <PauseIcon size={20} />
-      {:else}
-        <PlayIcon size={20} />
-      {/if}
-    </button>
-  {/if}
-
-  <div class="progress-container" onclick={handleSeek}>
-    <div class="progress-bar" style="width: {progress}%"></div>
+{#if child}
+  {@render child({ props: mergedProps, ...snippetProps })}
+{:else}
+  <div {...mergedProps}>
+    {#if children}
+      {@render children(snippetProps)}
+    {:else}
+      <button
+        type="button"
+        onclick={togglePlayPause}
+        aria-label={isPlaying ? 'Pause' : 'Play'}
+      >
+        {isPlaying ? '⏸' : '▶'}
+      </button>
+      <div
+        onclick={handleSeek}
+        role="slider"
+        aria-label="Seek"
+        aria-valuenow={Math.round(currentTime)}
+        aria-valuemin="0"
+        aria-valuemax={Math.round(duration)}
+        tabindex="0"
+        style="flex: 1; cursor: pointer;"
+      >
+        <div style="width: {progress}%; background: currentColor; height: 2px;"></div>
+      </div>
+    {/if}
   </div>
+{/if}
 
-  <audio
-    bind:this={audioElement}
-    src={context.voiceMessage.url}
-    ontimeupdate={handleTimeUpdate}
-    onloadedmetadata={handleLoadedMetadata}
-    onplay={handlePlay}
-    onpause={handlePause}
-  >
-    <track kind="captions" />
-  </audio>
-</div>
-
-<style>
-  .voice-message-player {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-
-  .play-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .progress-container {
-    flex: 1;
-    cursor: pointer;
-    position: relative;
-  }
-
-  .progress-bar {
-    height: 100%;
-  }
-</style>
+<audio
+  bind:this={audioElement}
+  src={context.voiceMessage.url}
+  ontimeupdate={handleTimeUpdate}
+  onloadedmetadata={handleLoadedMetadata}
+  onplay={handlePlay}
+  onpause={handlePause}
+  style="display: none;"
+>
+  <track kind="captions" />
+</audio>

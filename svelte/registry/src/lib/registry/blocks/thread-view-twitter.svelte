@@ -17,7 +17,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
   import { EventCard, ReactionAction } from '../components/event-card/index.js';
-  import Avatar from '../ui/user/user-avatar.svelte';
+  import { User } from '../ui/user/index.js';
   import RepostButton from './repost-button.svelte';
 
   interface Props {
@@ -76,7 +76,9 @@
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
-                <Avatar user={reply.author} size={40} class="avatar" />
+                <User.Root {ndk} user={reply.author}>
+                  <User.Avatar size={40} class="avatar" />
+                </User.Root>
               </div>
 
               <div class="tweet-content">
@@ -100,7 +102,9 @@
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
-                <Avatar user={reply.author} size={40} class="avatar" />
+                <User.Root {ndk} user={reply.author}>
+                  <User.Avatar size={40} class="avatar" />
+                </User.Root>
               </div>
 
               <div class="tweet-content">

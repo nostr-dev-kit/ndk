@@ -11,9 +11,9 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createRelayInfo } from '@nostr-dev-kit/svelte';
-	import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
+	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import Input from '../../ui/input.svelte';
-	import { cn } from '../../../utils.js';
+	import { cn } from '../../utils/index.js';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props extends Omit<HTMLInputAttributes, 'type' | 'placeholder'> {

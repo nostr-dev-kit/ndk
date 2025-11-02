@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relay Card - Anatomy & Layers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        /* Anatomy Section */
+        .anatomy-viewer {
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .anatomy-visual {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .anatomy-card {
+            position: relative;
+            width: 320px;
+            margin: 0 auto;
+        }
+
+        .anatomy-base {
+            width: 100%;
+            height: 400px;
+            background: #f8f8f8;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Anatomy Layers */
+        .anatomy-layer {
+            position: absolute;
+            border: 2px dashed transparent;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .anatomy-layer.active {
+            border-color: #0052cc;
+            background: rgba(0, 82, 204, 0.05);
+            z-index: 10;
+        }
+
+        .anatomy-layer.icon {
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+        }
+
+        .anatomy-layer.name {
+            top: 130px;
+            left: 2rem;
+            right: 2rem;
+            height: 32px;
+        }
+
+        .anatomy-layer.url {
+            top: 170px;
+            left: 2rem;
+            right: 2rem;
+            height: 24px;
+        }
+
+        .anatomy-layer.description {
+            top: 210px;
+            left: 2rem;
+            right: 2rem;
+            bottom: 80px;
+        }
+
+        .anatomy-layer.bookmark {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+        }
+
+        .anatomy-layer.actions {
+            bottom: 2rem;
+            left: 2rem;
+            right: 2rem;
+            height: 40px;
+        }
+
+        /* Layer indicator */
+        .layer-indicator {
+            position: absolute;
+            background: #0052cc;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .anatomy-layer.active .layer-indicator {
+            opacity: 1;
+        }
+
+        /* Anatomy Details */
+        .anatomy-details {
+            padding-top: 2rem;
+        }
+
+        .layer-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e5e5e5;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+
+        .layer-section.active {
+            opacity: 1;
+        }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .layer-number {
+            width: 32px;
+            height: 32px;
+            background: #000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .layer-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .layer-primitive {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.8125rem;
+            margin-left: 0.5rem;
+        }
+
+        .layer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .layer-info h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .layer-code {
+            background: #1a1a1a;
+            color: #e5e5e5;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+        }
+
+        .layer-props {
+            background: #f8f8f8;
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .prop-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e5e5;
+            font-size: 0.8125rem;
+        }
+
+        .prop-item:last-child {
+            border-bottom: none;
+        }
+
+        .prop-name {
+            font-family: 'SF Mono', monospace;
+            font-weight: 600;
+        }
+
+        .prop-type {
+            color: #666;
+        }
+
+        /* State Diagram */
+        .state-diagram {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .state-diagram h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .state-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .state-node {
+            flex: 1;
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .state-node.active {
+            border-color: #0052cc;
+            background: #f0f8ff;
+        }
+
+        .state-arrow {
+            width: 40px;
+            text-align: center;
+            color: #666;
+        }
+
+        .state-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .state-time {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* Build Your Own */
+        .build-section {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .build-header {
+            margin-bottom: 2rem;
+        }
+
+        .build-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .layer-toggles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .layer-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layer-toggle:hover {
+            border-color: #666;
+        }
+
+        .layer-toggle.selected {
+            border-color: #0052cc;
+            background: #f0f8ff;
+        }
+
+        .layer-toggle input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .build-output {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .build-preview {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .build-code {
+            background: #1a1a1a;
+            color: #e5e5e5;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+        }
+
+        /* Dependencies Map */
+        .dependencies {
+            margin: 3rem 0;
+        }
+
+        .dependencies h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .dep-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .dep-card {
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .dep-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .dep-list {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .dep-list li {
+            padding: 0.25rem 0;
+        }
+
+        /* Layer navigation */
+        .layer-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .layer-nav-item {
+            display: block;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 0.8125rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layer-nav-item:hover {
+            color: #000;
+        }
+
+        .layer-nav-item.active {
+            color: #0052cc;
+            font-weight: 600;
+        }
+
+        .layer-nav-item.active::before {
+            content: '→';
+            margin-right: 0.5rem;
+        }
+
+        /* Size comparison */
+        .size-comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .size-item {
+            text-align: center;
+        }
+
+        .size-visual {
+            display: inline-block;
+            background: #f0f0f0;
+            border: 2px solid #e5e5e5;
+            margin-bottom: 0.5rem;
+        }
+
+        .size-visual.portrait {
+            width: 140px;
+            height: 160px;
+        }
+
+        .size-visual.compact {
+            width: 80px;
+            height: 80px;
+        }
+
+        .size-visual.list {
+            width: 200px;
+            height: 60px;
+        }
+
+        .size-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .size-dimensions {
+            font-size: 0.75rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Relay Card</h1>
+            <p>Display Nostr relay information with NIP-11 metadata</p>
+        </header>
+
+        <!-- Interactive Anatomy -->
+        <div class="anatomy-viewer">
+            <div class="anatomy-visual">
+                <div class="anatomy-card">
+                    <div class="anatomy-base">
+                        <!-- Interactive layers -->
+                        <div class="anatomy-layer icon" onclick="selectLayer('icon')">
+                            <span class="layer-indicator" style="top: -30px; left: 50%; transform: translateX(-50%);">Relay.Icon</span>
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px;"></div>
+                        </div>
+
+                        <div class="anatomy-layer name" onclick="selectLayer('name')">
+                            <span class="layer-indicator" style="top: -30px; left: 0;">Relay.Name</span>
+                            <div style="font-weight: 600; font-size: 1.125rem;">relay.damus.io</div>
+                        </div>
+
+                        <div class="anatomy-layer url" onclick="selectLayer('url')">
+                            <span class="layer-indicator" style="top: -30px; left: 0;">Relay.Url</span>
+                            <div style="font-size: 0.875rem; color: #666;">wss://relay.damus.io</div>
+                        </div>
+
+                        <div class="anatomy-layer description" onclick="selectLayer('description')">
+                            <span class="layer-indicator" style="bottom: -30px; left: 0;">Relay.Description</span>
+                            <div style="font-size: 0.875rem; color: #999; line-height: 1.5;">A public relay supporting the Nostr protocol with global reach and high availability.</div>
+                        </div>
+
+                        <div class="anatomy-layer bookmark" onclick="selectLayer('bookmark')">
+                            <span class="layer-indicator" style="top: -30px; right: 0;">Relay.BookmarkButton</span>
+                            <div style="width: 100%; height: 100%; background: white; border: 2px solid #e5e5e5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">⭐</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="size-comparison">
+                    <div class="size-item">
+                        <div class="size-visual portrait"></div>
+                        <div class="size-label">Portrait</div>
+                        <div class="size-dimensions">280×320px</div>
+                    </div>
+                    <div class="size-item">
+                        <div class="size-visual compact"></div>
+                        <div class="size-label">Compact</div>
+                        <div class="size-dimensions">160×160px</div>
+                    </div>
+                    <div class="size-item">
+                        <div class="size-visual list"></div>
+                        <div class="size-label">List</div>
+                        <div class="size-dimensions">Full×80px</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="anatomy-details">
+                <!-- Icon Layer -->
+                <div class="layer-section active" id="layer-icon">
+                    <div class="layer-header">
+                        <span class="layer-number">1</span>
+                        <h3 class="layer-title">Icon Layer</h3>
+                        <code class="layer-primitive">Relay.Icon</code>
+                    </div>
+                    <div class="layer-content">
+                        <div>
+                            <div class="layer-info">
+                                <h4>Purpose</h4>
+                                <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                                    Displays the relay's icon from NIP-11 metadata. Falls back to a generated icon based on the relay URL if no icon is provided.
+                                </p>
+                            </div>
+                            <div class="layer-code">
+&lt;Relay.Icon
+  size={48}
+  fallback="/default-relay.svg"
+  class="rounded-lg"
+/&gt;
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layer-info">
+                                <h4>Props</h4>
+                            </div>
+                            <div class="layer-props">
+                                <div class="prop-item">
+                                    <span class="prop-name">size</span>
+                                    <span class="prop-type">number</span>
+                                </div>
+                                <div class="prop-item">
+                                    <span class="prop-name">fallback</span>
+                                    <span class="prop-type">string</span>
+                                </div>
+                                <div class="prop-item">
+                                    <span class="prop-name">class</span>
+                                    <span class="prop-type">string</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Name Layer -->
+                <div class="layer-section" id="layer-name">
+                    <div class="layer-header">
+                        <span class="layer-number">2</span>
+                        <h3 class="layer-title">Name Layer</h3>
+                        <code class="layer-primitive">Relay.Name</code>
+                    </div>
+                    <div class="layer-content">
+                        <div>
+                            <div class="layer-info">
+                                <h4>Purpose</h4>
+                                <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                                    Shows the relay's human-readable name from NIP-11. Falls back to domain name if not provided.
+                                </p>
+                            </div>
+                            <div class="layer-code">
+&lt;Relay.Name
+  fallback="Unnamed Relay"
+  class="font-semibold"
+/&gt;
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layer-info">
+                                <h4>Props</h4>
+                            </div>
+                            <div class="layer-props">
+                                <div class="prop-item">
+                                    <span class="prop-name">fallback</span>
+                                    <span class="prop-type">string</span>
+                                </div>
+                                <div class="prop-item">
+                                    <span class="prop-name">class</span>
+                                    <span class="prop-type">string</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL Layer -->
+                <div class="layer-section" id="layer-url">
+                    <div class="layer-header">
+                        <span class="layer-number">3</span>
+                        <h3 class="layer-title">URL Layer</h3>
+                        <code class="layer-primitive">Relay.Url</code>
+                    </div>
+                    <div class="layer-content">
+                        <div>
+                            <div class="layer-info">
+                                <h4>Purpose</h4>
+                                <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                                    Displays the relay's WebSocket URL. Can show full URL or just domain.
+                                </p>
+                            </div>
+                            <div class="layer-code">
+&lt;Relay.Url
+  showProtocol={false}
+  class="text-muted"
+/&gt;
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layer-info">
+                                <h4>Props</h4>
+                            </div>
+                            <div class="layer-props">
+                                <div class="prop-item">
+                                    <span class="prop-name">showProtocol</span>
+                                    <span class="prop-type">boolean</span>
+                                </div>
+                                <div class="prop-item">
+                                    <span class="prop-name">class</span>
+                                    <span class="prop-type">string</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Layer -->
+                <div class="layer-section" id="layer-description">
+                    <div class="layer-header">
+                        <span class="layer-number">4</span>
+                        <h3 class="layer-title">Description Layer</h3>
+                        <code class="layer-primitive">Relay.Description</code>
+                    </div>
+                    <div class="layer-content">
+                        <div>
+                            <div class="layer-info">
+                                <h4>Purpose</h4>
+                                <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                                    Shows relay description from NIP-11. Supports line clamping for consistent layouts.
+                                </p>
+                            </div>
+                            <div class="layer-code">
+&lt;Relay.Description
+  maxLines={3}
+  class="text-sm"
+/&gt;
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layer-info">
+                                <h4>Props</h4>
+                            </div>
+                            <div class="layer-props">
+                                <div class="prop-item">
+                                    <span class="prop-name">maxLines</span>
+                                    <span class="prop-type">number</span>
+                                </div>
+                                <div class="prop-item">
+                                    <span class="prop-name">class</span>
+                                    <span class="prop-type">string</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookmark Layer -->
+                <div class="layer-section" id="layer-bookmark">
+                    <div class="layer-header">
+                        <span class="layer-number">5</span>
+                        <h3 class="layer-title">Bookmark Layer</h3>
+                        <code class="layer-primitive">Relay.BookmarkButton</code>
+                    </div>
+                    <div class="layer-content">
+                        <div>
+                            <div class="layer-info">
+                                <h4>Purpose</h4>
+                                <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                                    Allows users to bookmark/unbookmark relays. Publishes kind 10002 events.
+                                </p>
+                            </div>
+                            <div class="layer-code">
+&lt;Relay.BookmarkButton
+  bookmarks={bookmarkList}
+  size="sm"
+/&gt;
+                            </div>
+                        </div>
+                        <div>
+                            <div class="layer-info">
+                                <h4>Props</h4>
+                            </div>
+                            <div class="layer-props">
+                                <div class="prop-item">
+                                    <span class="prop-name">bookmarks</span>
+                                    <span class="prop-type">BookmarkList</span>
+                                </div>
+                                <div class="prop-item">
+                                    <span class="prop-name">size</span>
+                                    <span class="prop-type">"sm" | "md" | "lg"</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layer Navigation -->
+        <div class="layer-nav">
+            <button class="layer-nav-item active" onclick="selectLayer('icon')">Icon</button>
+            <button class="layer-nav-item" onclick="selectLayer('name')">Name</button>
+            <button class="layer-nav-item" onclick="selectLayer('url')">URL</button>
+            <button class="layer-nav-item" onclick="selectLayer('description')">Description</button>
+            <button class="layer-nav-item" onclick="selectLayer('bookmark')">Bookmark</button>
+        </div>
+
+        <!-- State Diagram -->
+        <div class="state-diagram">
+            <h3>Component Lifecycle</h3>
+            <div class="state-flow">
+                <div class="state-node">
+                    <div class="state-name">Mount</div>
+                    <div class="state-time">0ms</div>
+                </div>
+                <div class="state-arrow">→</div>
+                <div class="state-node">
+                    <div class="state-name">Fetch NIP-11</div>
+                    <div class="state-time">~200ms</div>
+                </div>
+                <div class="state-arrow">→</div>
+                <div class="state-node active">
+                    <div class="state-name">Render</div>
+                    <div class="state-time">~10ms</div>
+                </div>
+                <div class="state-arrow">→</div>
+                <div class="state-node">
+                    <div class="state-name">Interactive</div>
+                    <div class="state-time">Ready</div>
+                </div>
+            </div>
+
+            <div style="background: white; border: 1px solid #e5e5e5; border-radius: 6px; padding: 1rem; margin-top: 1.5rem;">
+                <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">Data Flow</h4>
+                <ol style="font-size: 0.8125rem; color: #666; margin-left: 1.5rem;">
+                    <li>Component receives <code>relayUrl</code> prop</li>
+                    <li>Relay.Root fetches NIP-11 metadata from <code>{relayUrl}/.well-known/nostr.json</code></li>
+                    <li>Metadata stored in context, available to all child primitives</li>
+                    <li>Each primitive reads specific fields from context</li>
+                    <li>User interactions (bookmark) publish events via NDK</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Build Your Own -->
+        <div class="build-section">
+            <div class="build-header">
+                <h2>Layer Composer</h2>
+                <p style="color: #666; font-size: 0.875rem;">Toggle layers to build your custom relay card</p>
+            </div>
+
+            <div class="layer-toggles">
+                <label class="layer-toggle selected">
+                    <input type="checkbox" checked> Icon
+                </label>
+                <label class="layer-toggle selected">
+                    <input type="checkbox" checked> Name
+                </label>
+                <label class="layer-toggle selected">
+                    <input type="checkbox" checked> URL
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox"> Description
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox"> Connection Status
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox"> Bookmark
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox"> User Count
+                </label>
+                <label class="layer-toggle">
+                    <input type="checkbox"> Paid Badge
+                </label>
+            </div>
+
+            <div class="build-output">
+                <div class="build-preview">
+                    [Live preview based on selection]
+                </div>
+                <div class="build-code">
+&lt;Relay.Root {ndk} {relayUrl}&gt;
+  &lt;div class="my-relay-card"&gt;
+    &lt;Relay.Icon size={48} /&gt;
+    &lt;Relay.Name /&gt;
+    &lt;Relay.Url showProtocol={false} /&gt;
+  &lt;/div&gt;
+&lt;/Relay.Root&gt;
+
+/* Bundle impact: ~2.3KB */
+                </div>
+            </div>
+        </div>
+
+        <!-- Dependencies -->
+        <div class="dependencies">
+            <h3>Layer Dependencies</h3>
+            <div class="dep-grid">
+                <div class="dep-card">
+                    <h4>Relay.Root</h4>
+                    <ul class="dep-list">
+                        <li>Required: Always</li>
+                        <li>Provides: Context</li>
+                        <li>Fetches: NIP-11 metadata</li>
+                        <li>Size: 1.8KB</li>
+                    </ul>
+                </div>
+                <div class="dep-card">
+                    <h4>Child Primitives</h4>
+                    <ul class="dep-list">
+                        <li>Require: Relay.Root context</li>
+                        <li>Independent of each other</li>
+                        <li>Can be used in any order</li>
+                        <li>Size: ~0.5KB each</li>
+                    </ul>
+                </div>
+                <div class="dep-card">
+                    <h4>Bookmark System</h4>
+                    <ul class="dep-list">
+                        <li>Requires: NDK instance</li>
+                        <li>Requires: User authentication</li>
+                        <li>Publishes: Kind 10002</li>
+                        <li>Size: 1.2KB</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectLayer(layer) {
+            // Update visual
+            document.querySelectorAll('.anatomy-layer').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('.anatomy-layer.' + layer).classList.add('active');
+
+            // Update details
+            document.querySelectorAll('.layer-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('layer-' + layer).classList.add('active');
+
+            // Update nav
+            document.querySelectorAll('.layer-nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

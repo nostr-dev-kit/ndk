@@ -39,7 +39,7 @@
   ```
 -->
 <script lang="ts">
-	import { mergeProps } from 'svelte-toolbelt';
+	import { mergeProps } from '../../utils/index.js';
 	import type { Snippet } from 'svelte';
 	import type { MediaUploadResult } from './createMediaUpload.svelte';
 

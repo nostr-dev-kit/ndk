@@ -1,5 +1,5 @@
 import type { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
-import { NDKKind, NDKNutzap, NDKZap } from "@nostr-dev-kit/ndk";
+import { NDKKind, NDKNutzap } from "@nostr-dev-kit/ndk";
 import type { ProcessedZap } from "@nostr-dev-kit/svelte";
 import { getZapAmount, getZapComment, getZapSender } from "@nostr-dev-kit/svelte";
 
@@ -28,7 +28,8 @@ export function toProcessedZap(
 
     // Add typed instances based on kind
     if (event.kind === NDKKind.Zap) {
-        processedZap.zap = NDKZap.from(event);
+        // TODO: NDKZap is not exported from NDK package
+        // processedZap.zap = NDKZap.from(event);
     } else if (event.kind === NDKKind.Nutzap) {
         processedZap.nutzap = NDKNutzap.from(event);
     }

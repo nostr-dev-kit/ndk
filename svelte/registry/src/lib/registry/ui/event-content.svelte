@@ -41,7 +41,8 @@
 		{:else if segment.type === 'npub' || segment.type === 'nprofile'}
 			{#if segment.data && typeof segment.data === 'string'}
 				{#if renderer.mentionComponent}
-					<svelte:component this={renderer.mentionComponent} {ndk} bech32={segment.data} />
+					{@const Component = renderer.mentionComponent}
+					<Component {ndk} bech32={segment.data} />
 				{:else}
 					{segment.content}
 				{/if}
@@ -53,14 +54,16 @@
 		{:else if segment.type === 'hashtag'}
 			{#if segment.data && typeof segment.data === 'string'}
 				{#if renderer.hashtagComponent}
-					<svelte:component this={renderer.hashtagComponent} tag={segment.data} />
+					{@const Component = renderer.hashtagComponent}
+					<Component tag={segment.data} />
 				{:else}
 					#{segment.data}
 				{/if}
 			{/if}
 		{:else if segment.type === 'link'}
 			{#if renderer.linkComponent}
-				<svelte:component this={renderer.linkComponent} url={segment.content} />
+				{@const Component = renderer.linkComponent}
+				<Component url={segment.content} />
 			{:else}
 				<!-- svelte-ignore a11y_invalid_attribute -->
 				<a href={segment.content} target="_blank" rel="noopener noreferrer" class="link">
@@ -69,7 +72,8 @@
 			{/if}
 		{:else if segment.type === 'media'}
 			{#if renderer.mediaComponent}
-				<svelte:component this={renderer.mediaComponent} url={segment.content} />
+				{@const Component = renderer.mediaComponent}
+				<Component url={segment.content} />
 			{:else}
 				{#if segment.content.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
 					<img src={segment.content} alt="" class="media-image" />

@@ -82,65 +82,55 @@
   )}
 >
   <!-- Avatar and Author Info -->
-  <div class="flex items-center gap-3 flex-1 min-w-0" onclick={stopPropagation}>
-    {#if showAvatar}
-      <Avatar
-        ndk={context.ndk}
-        user={context.event.author}
-        profile={profileFetcher.profile}
-        size={avatarSize === 'sm' ? 32 : avatarSize === 'md' ? 40 : 48}
-        class="flex-shrink-0"
-      />
-    {/if}
+  <User.Root ndk={context.ndk} user={context.event.author} profile={profileFetcher.profile ?? undefined}>
+    <div
+      class="flex items-center gap-3 flex-1 min-w-0"
+      onclick={stopPropagation}
+      onkeydown={(e) => e.stopPropagation()}
+      role="presentation"
+    >
+      {#if showAvatar}
+        <Avatar
+          size={avatarSize === 'sm' ? 32 : avatarSize === 'md' ? 40 : 48}
+          class="flex-shrink-0"
+        />
+      {/if}
 
-    <div class="flex-1 min-w-0">
-      {#if variant === 'full'}
-        <!-- Full variant: name on top, handle below -->
-        <div class="flex flex-col">
-          <Name
-            ndk={context.ndk}
-            user={context.event.author}
-            profile={profileFetcher.profile}
-            field="displayName"
-            class="font-semibold text-[15px] text-foreground truncate"
-          />
-          <Field
-            ndk={context.ndk}
-            user={context.event.author}
-            profile={profileFetcher.profile}
-            field="nip05"
-            class="text-sm text-muted-foreground truncate"
-          />
-        </div>
-      {:else if variant === 'compact'}
-        <!-- Compact: name and handle inline -->
-        <div class="flex items-center gap-2 min-w-0">
-          <User.Root user={context.event.author}>
+      <div class="flex-1 min-w-0">
+        {#if variant === 'full'}
+          <!-- Full variant: name on top, handle below -->
+          <div class="flex flex-col">
             <Name
-              ndk={context.ndk}
-              user={context.event.author}
-              profile={profileFetcher.profile}
               field="displayName"
               class="font-semibold text-[15px] text-foreground truncate"
             />
-          </User.Root>
-        </div>
-      {:else}
-        <!-- Minimal: just name -->
-        <Name
-          ndk={context.ndk}
-          user={context.event.author}
-          profile={profileFetcher.profile}
-          field="displayName"
-          class="font-semibold text-[15px] text-foreground truncate"
-        />
-      {/if}
+            <Field
+              field="nip05"
+              class="text-sm text-muted-foreground truncate"
+            />
+          </div>
+        {:else if variant === 'compact'}
+          <!-- Compact: name and handle inline -->
+          <div class="flex items-center gap-2 min-w-0">
+            <Name
+              field="displayName"
+              class="font-semibold text-[15px] text-foreground truncate"
+            />
+          </div>
+        {:else}
+          <!-- Minimal: just name -->
+          <Name
+            field="displayName"
+            class="font-semibold text-[15px] text-foreground truncate"
+          />
+        {/if}
+      </div>
     </div>
-  </div>
+  </User.Root>
 
   <!-- Timestamp and Custom Actions -->
   <div class="flex items-center gap-3">
-    {#if showTimestamp}
+    {#if showTimestamp && context.event.created_at}
       <time
         datetime={new Date(context.event.created_at * 1000).toISOString()}
         class="text-sm text-muted-foreground/70"

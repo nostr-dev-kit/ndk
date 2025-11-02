@@ -17,12 +17,12 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createHighlight } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { cn } from '../../../utils.js';
+  import { cn } from '../../utils/index.js';
   import {
     HIGHLIGHT_CONTEXT_KEY,
     type HighlightContext,
   } from './context.svelte.js';
-  import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
+  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 
   interface Props {
     /** NDK instance (optional, falls back to context) */

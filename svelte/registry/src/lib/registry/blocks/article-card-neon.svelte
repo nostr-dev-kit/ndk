@@ -22,7 +22,7 @@
   import { cn } from '../utils/index.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../ui/article/context.svelte.js';
-  import FileIcon from '../components/icons/file.svelte';
+  import FileIcon from '../icons/file.svelte';
 
   interface Props {
     /** NDK instance */
@@ -118,8 +118,8 @@
       <div class="mt-auto space-y-4">
         <!-- Title & Summary -->
         <div>
-          <Title class="text-xl font-bold text-white mb-2 leading-tight" lines={2} />
-          <Summary class="text-sm text-white/80 leading-relaxed" maxLength={100} lines={2} />
+          <Title class="text-xl font-bold text-white mb-2 leading-tight line-clamp-2" />
+          <Summary class="text-sm text-white/80 leading-relaxed line-clamp-2" maxLength={100} />
         </div>
 
         <!-- Author & Reading Time -->

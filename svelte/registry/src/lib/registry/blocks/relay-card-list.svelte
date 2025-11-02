@@ -13,12 +13,12 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
-	import Root from '../components/relay/relay-root.svelte';
-	import Icon from '../components/relay/relay-icon.svelte';
-	import Name from '../components/relay/relay-name.svelte';
-	import Url from '../components/relay/relay-url.svelte';
-	import Description from '../components/relay/relay-description.svelte';
-	import BookmarkButton from '../components/relay/relay-bookmark-button.svelte';
+	import Root from '../ui/relay/relay-root.svelte';
+	import Icon from '../ui/relay/relay-icon.svelte';
+	import Name from '../ui/relay/relay-name.svelte';
+	import Url from '../ui/relay/relay-url.svelte';
+	import Description from '../ui/relay/relay-description.svelte';
+	import BookmarkButton from '../ui/relay/relay-bookmark-button.svelte';
 	import { cn } from '../../utils.js';
 
 	interface Props {

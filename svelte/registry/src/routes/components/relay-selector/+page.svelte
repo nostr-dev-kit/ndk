@@ -207,7 +207,7 @@
 					name: 'Relay.Selector.Root',
 					description:
 						'Context provider that manages relay selection state. Wraps all relay selector primitives.',
-					importPath: "import { Relay } from '$lib/registry/components/relay'",
+					importPath: "import { Relay } from '$lib/registry/ui/relay'",
 					props: [
 						{
 							name: 'ndk',
@@ -238,7 +238,7 @@
 					name: 'Relay.Selector.List',
 					description:
 						'Displays list of connected relays from NDK pool. Shows checkmarks for selected relays.',
-					importPath: "import { Relay } from '$lib/registry/components/relay'",
+					importPath: "import { Relay } from '$lib/registry/ui/relay'",
 					props: [
 						{
 							name: 'compact',
@@ -257,7 +257,7 @@
 					name: 'Relay.Selector.Item',
 					description:
 						'Individual selectable relay item. Use for custom relay list implementations.',
-					importPath: "import { Relay } from '$lib/registry/components/relay'",
+					importPath: "import { Relay } from '$lib/registry/ui/relay'",
 					props: [
 						{
 							name: 'relayUrl',
@@ -276,7 +276,7 @@
 					name: 'Relay.Selector.AddForm',
 					description:
 						'Form for adding new relay URLs. Includes URL validation and NIP-11 preview.',
-					importPath: "import { Relay } from '$lib/registry/components/relay'",
+					importPath: "import { Relay } from '$lib/registry/ui/relay'",
 					props: [
 						{
 							name: 'autoSelect',

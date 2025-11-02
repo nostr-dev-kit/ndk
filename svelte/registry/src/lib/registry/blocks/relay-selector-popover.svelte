@@ -10,9 +10,9 @@
 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import Root from '../components/relay/relay-selector-root.svelte';
-	import List from '../components/relay/relay-selector-list.svelte';
-	import AddForm from '../components/relay/relay-selector-add-form.svelte';
+	import Root from '../ui/relay/relay-selector-root.svelte';
+	import List from '../ui/relay/relay-selector-list.svelte';
+	import AddForm from '../ui/relay/relay-selector-add-form.svelte';
 	import { Popover } from 'bits-ui';
 	import { cn } from '../../utils.js';
 	import type { Snippet } from 'svelte';

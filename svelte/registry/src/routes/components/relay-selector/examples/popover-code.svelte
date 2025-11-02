@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { Relay } from '$lib/registry/components/relay';
+	import { Relay } from '$lib/registry/ui/relay';
 	import { Popover } from 'bits-ui';
 
 	interface Props {

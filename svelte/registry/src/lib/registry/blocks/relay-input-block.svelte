@@ -10,7 +10,7 @@
 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { Relay } from '../components/relay/index.js';
+	import { Relay } from '../ui/relay/index.js';
 	import { cn } from '../../utils.js';
 
 	interface Props {

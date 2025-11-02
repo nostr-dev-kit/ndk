@@ -63,6 +63,25 @@ export const docs: NavItem[] = [
 
 export const componentCategories: NavCategory[] = [
   {
+    title: 'UI Primitives',
+    items: [
+      { name: 'Introduction', path: '/ui', icon: PaintBoardIcon, title: 'UI Primitives', description: 'Headless, composable building blocks for creating Nostr interfaces.' },
+      { name: 'Article', path: '/ui/article', icon: NewsIcon, title: 'Article Primitives', description: 'Headless primitives for displaying long-form articles (NIP-23).', nip: 'NIP-23' },
+      { name: 'User', path: '/ui/user', icon: UserIcon, title: 'User Primitives', description: 'Headless primitives for displaying user profiles and metadata.' },
+      { name: 'Highlight', path: '/ui/highlight', icon: HighlighterIcon, title: 'Highlight Primitives', description: 'Headless primitives for displaying text highlights (NIP-84).', nip: 'NIP-84' },
+      { name: 'Relay', path: '/ui/relay', icon: ServerStack01Icon, title: 'Relay Primitives', description: 'Headless primitives for displaying relay information and controls.' },
+      { name: 'Emoji Picker', path: '/ui/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker Primitives', description: 'Headless primitives for selecting emojis from custom sets.' },
+      { name: 'Media Upload', path: '/ui/media-upload', icon: CloudUploadIcon, title: 'Media Upload Primitives', description: 'Headless primitives for uploading files to Blossom servers.' },
+      { name: 'Reaction', path: '/ui/reaction', icon: FavouriteIcon, title: 'Reaction Primitives', description: 'Headless primitives for displaying event reactions.' },
+      { name: 'Follow Pack', path: '/ui/follow-pack', icon: UserGroupIcon, title: 'Follow Pack Primitives', description: 'Headless primitives for displaying curated user lists.' },
+      { name: 'User Input', path: '/ui/user-input', icon: Search01Icon, title: 'User Input Primitives', description: 'Headless primitives for searching and selecting users.' },
+      { name: 'Voice Message', path: '/ui/voice-message', icon: VoiceIcon, title: 'Voice Message Primitives', description: 'Headless primitives for playing voice messages with waveforms.' },
+      { name: 'Zap', path: '/ui/zap', icon: ZapIcon, title: 'Zap Primitives', description: 'Headless primitives for displaying lightning payments.' },
+      { name: 'Event Content', path: '/ui/event-content', icon: File01Icon, title: 'Event Content Primitive', description: 'Render event content with rich formatting, mentions, and embedded media.' },
+      { name: 'Embedded Event', path: '/ui/embedded-event', icon: ViewIcon, title: 'Embedded Event Primitive', description: 'Load and display embedded Nostr events.' },
+    ]
+  },
+  {
     title: 'Actions',
     items: [
       { name: 'Follow', path: '/components/follow', icon: UserAdd01Icon, title: 'Follow', description: 'Follow/unfollow buttons for users. Choose from pre-built block variants or compose custom layouts using the builder.' },

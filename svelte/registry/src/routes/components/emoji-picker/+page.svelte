@@ -27,7 +27,7 @@
   </header>
 
   <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">UI Components</h2>
+    <h2 class="text-2xl font-semibold mb-4">UI Primitives</h2>
 
     <Demo
       title="Basic List"

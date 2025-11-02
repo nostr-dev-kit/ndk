@@ -19,7 +19,7 @@
   </header>
 
   <div class="categories-grid">
-    {#each componentCategories as category (category.title)}
+    {#each componentCategories.filter(cat => cat.title !== 'UI Primitives') as category (category.title)}
       <section class="category-section">
         <div class="category-header">
           <h2 class="category-title">{category.title}</h2>

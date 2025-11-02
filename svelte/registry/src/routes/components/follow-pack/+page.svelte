@@ -9,6 +9,7 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
+	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
@@ -77,82 +78,255 @@
 
 	<!-- Blocks Showcase Section -->
 	{#if displayPacks.length > 0}
-		<section class="mb-32">
-			<!-- Section Header -->
-			<div class="mb-12">
-				<h2 class="text-3xl font-bold mb-2">Blocks Showcase</h2>
-				<p class="text-muted-foreground mb-8">
-					Four beautifully crafted variants. Each optimized for its purpose.
-					Choose the perfect presentation for your content.
-				</p>
+		{#snippet heroPreview()}
+			{#if pack1}
+				<div class="min-w-[800px]">
+					<FollowPackHero {ndk} followPack={pack1} />
+				</div>
+			{/if}
+		{/snippet}
+
+		{#snippet portraitPreview()}
+			{#if pack1}
+				<FollowPackPortrait {ndk} followPack={pack1} />
+			{/if}
+		{/snippet}
+
+		{#snippet compactPreview()}
+			{#if pack1}
+				<div class="w-full max-w-3xl">
+					<FollowPackCompact {ndk} followPack={pack1} />
+				</div>
+			{/if}
+		{/snippet}
+
+		{#snippet listItemPreview()}
+			<div class="space-y-2 max-w-2xl">
+				{#each displayPacks.slice(0, 4) as pack}
+					<FollowPackListItem {ndk} followPack={pack} />
+				{/each}
 			</div>
+		{/snippet}
 
-			<div class="space-y-0">
-				<!-- Hero -->
-				<div class="border-b border-border/50 pb-12">
-					<div class="text-center">
-						<h3 class="text-7xl font-black mb-3 tracking-tight">Hero</h3>
-						<p class="text-sm text-muted-foreground leading-relaxed mb-8">
-							Featured display with full-bleed imagery. Perfect for landing pages and hero sections.
-						</p>
-					</div>
-					<div class="!pr-0">
-						{#if pack1}
-							<FollowPackHero {ndk} followPack={pack1} />
-						{/if}
-					</div>
-				</div>
-
-				<!-- Portrait -->
-				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
-					<div class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right">
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Portrait</h3>
-						<p class="text-sm text-muted-foreground leading-relaxed">
-							Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.
-						</p>
-					</div>
-					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center !pr-0">
-						{#if pack1}
-							<FollowPackPortrait {ndk} followPack={pack1} />
-						{/if}
-					</div>
-				</div>
-
-				<!-- Compact -->
-				<div class="grid grid-cols-1 lg:grid-cols-7 border-b border-border/50">
-					<div class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right">
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">Compact</h3>
-						<p class="text-sm text-muted-foreground leading-relaxed">
-							Information-dense for feeds. Optimized for content streams and horizontal layouts.
-						</p>
-					</div>
-					<div class="lg:col-span-5 p-10 lg:p-12 flex items-center !pr-0">
-						{#if pack1}
-							<div class="w-full max-w-3xl">
-								<FollowPackCompact {ndk} followPack={pack1} />
-							</div>
-						{/if}
-					</div>
-				</div>
-
-				<!-- List Item -->
-				<div class="grid grid-cols-1 lg:grid-cols-7">
-					<div class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right">
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">List Item</h3>
-						<p class="text-sm text-muted-foreground leading-relaxed">
-							Minimal design for sidebars. Maximum impact with minimal footprint.
-						</p>
-					</div>
-					<div class="lg:col-span-5 p-10 lg:p-12">
-						<div class="space-y-2 max-w-2xl">
-							{#each displayPacks.slice(0, 4) as pack}
-								<FollowPackListItem {ndk} followPack={pack} />
-							{/each}
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+		<ComponentsShowcase
+			title="Blocks Showcase"
+			description="Four beautifully crafted variants. Each optimized for its purpose. Choose the perfect presentation for your content."
+			blocks={[
+				{
+					name: 'Hero',
+					description: 'Featured display with full-bleed imagery. Perfect for landing pages and hero sections.',
+					command: 'npx shadcn@latest add follow-pack-hero',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowPackHero</span> <span class="text-cyan-400">followPack</span><span class="text-gray-500">=&#123;</span>pack<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: heroPreview,
+					cardData: {
+						name: 'follow-pack-hero',
+						title: 'Follow Pack Hero',
+						description: 'Featured display with full-bleed imagery. Perfect for landing pages and hero sections.',
+						richDescription: 'The Follow Pack Hero component is designed to showcase follow packs in a dramatic, full-width layout. It features large imagery with overlaid text, making it perfect for landing pages, featured sections, and hero areas where you want to make a strong visual impact.',
+						command: 'npx shadcn@latest add follow-pack-hero',
+						dependencies: ['@nostr-dev-kit/ndk', '@nostr-dev-kit/svelte'],
+						registryDependencies: ['user-card', 'avatar'],
+						apiDocs: [
+							{
+								name: 'FollowPackHero',
+								description: 'Hero-style follow pack display component with full-bleed imagery and overlaid content.',
+								importPath: "import FollowPackHero from '$lib/registry/components/follow-pack/follow-pack-hero.svelte'",
+								props: [
+									{
+										name: 'ndk',
+										type: 'NDKSvelte',
+										description: 'NDK instance (optional if provided via context)'
+									},
+									{
+										name: 'followPack',
+										type: 'NDKFollowPack',
+										required: true,
+										description: 'The follow pack event (kind 39089) to display'
+									},
+									{
+										name: 'onclick',
+										type: '(e: MouseEvent) => void',
+										description: 'Optional click handler for custom actions'
+									},
+									{
+										name: 'class',
+										type: 'string',
+										description: 'Additional CSS classes to apply'
+									}
+								]
+							}
+						],
+						relatedComponents: [
+							{ name: 'portrait', title: 'Follow Pack Portrait', path: '#portrait' },
+							{ name: 'compact', title: 'Follow Pack Compact', path: '#compact' },
+							{ name: 'list-item', title: 'Follow Pack List Item', path: '#list' }
+						],
+						version: '0.16.0'
+					}
+				},
+				{
+					name: 'Portrait',
+					description: 'Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.',
+					command: 'npx shadcn@latest add follow-pack-portrait',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowPackPortrait</span> <span class="text-cyan-400">followPack</span><span class="text-gray-500">=&#123;</span>pack<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: portraitPreview,
+					cardData: {
+						name: 'follow-pack-portrait',
+						title: 'Follow Pack Portrait',
+						description: 'Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.',
+						richDescription: 'The Follow Pack Portrait component presents follow packs in a vertical card format, perfect for grid layouts and gallery displays. Its portrait orientation makes it ideal for showing multiple packs side-by-side while maintaining full visibility of imagery and details.',
+						command: 'npx shadcn@latest add follow-pack-portrait',
+						dependencies: ['@nostr-dev-kit/ndk', '@nostr-dev-kit/svelte'],
+						registryDependencies: ['user-card', 'avatar'],
+						apiDocs: [
+							{
+								name: 'FollowPackPortrait',
+								description: 'Vertical card-style follow pack display optimized for grid layouts.',
+								importPath: "import FollowPackPortrait from '$lib/registry/components/follow-pack/follow-pack-portrait.svelte'",
+								props: [
+									{
+										name: 'ndk',
+										type: 'NDKSvelte',
+										description: 'NDK instance (optional if provided via context)'
+									},
+									{
+										name: 'followPack',
+										type: 'NDKFollowPack',
+										required: true,
+										description: 'The follow pack event (kind 39089) to display'
+									},
+									{
+										name: 'onclick',
+										type: '(e: MouseEvent) => void',
+										description: 'Optional click handler for custom actions'
+									},
+									{
+										name: 'class',
+										type: 'string',
+										description: 'Additional CSS classes to apply'
+									}
+								]
+							}
+						],
+						relatedComponents: [
+							{ name: 'hero', title: 'Follow Pack Hero', path: '#hero' },
+							{ name: 'compact', title: 'Follow Pack Compact', path: '#compact' },
+							{ name: 'list-item', title: 'Follow Pack List Item', path: '#list' }
+						],
+						version: '0.16.0'
+					}
+				},
+				{
+					name: 'Compact',
+					description:
+						'Information-dense for feeds. Optimized for content streams and horizontal layouts.',
+					command: 'npx shadcn@latest add follow-pack-compact',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowPackCompact</span> <span class="text-cyan-400">followPack</span><span class="text-gray-500">=&#123;</span>pack<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: compactPreview,
+					cardData: {
+						name: 'follow-pack-compact',
+						title: 'Follow Pack Compact',
+						description: 'Information-dense for feeds. Optimized for content streams and horizontal layouts.',
+						richDescription: 'The Follow Pack Compact component provides a horizontal, information-dense display perfect for content feeds and streams. It efficiently uses horizontal space while presenting all essential information, making it ideal for timeline-style layouts.',
+						command: 'npx shadcn@latest add follow-pack-compact',
+						dependencies: ['@nostr-dev-kit/ndk', '@nostr-dev-kit/svelte'],
+						registryDependencies: ['user-card', 'avatar'],
+						apiDocs: [
+							{
+								name: 'FollowPackCompact',
+								description: 'Horizontal compact follow pack display for feed and timeline layouts.',
+								importPath: "import FollowPackCompact from '$lib/registry/components/follow-pack/follow-pack-compact.svelte'",
+								props: [
+									{
+										name: 'ndk',
+										type: 'NDKSvelte',
+										description: 'NDK instance (optional if provided via context)'
+									},
+									{
+										name: 'followPack',
+										type: 'NDKFollowPack',
+										required: true,
+										description: 'The follow pack event (kind 39089) to display'
+									},
+									{
+										name: 'onclick',
+										type: '(e: MouseEvent) => void',
+										description: 'Optional click handler for custom actions'
+									},
+									{
+										name: 'class',
+										type: 'string',
+										description: 'Additional CSS classes to apply'
+									}
+								]
+							}
+						],
+						relatedComponents: [
+							{ name: 'hero', title: 'Follow Pack Hero', path: '#hero' },
+							{ name: 'portrait', title: 'Follow Pack Portrait', path: '#portrait' },
+							{ name: 'list-item', title: 'Follow Pack List Item', path: '#list' }
+						],
+						version: '0.16.0'
+					}
+				},
+				{
+					name: 'List Item',
+					description: 'Minimal design for sidebars. Maximum impact with minimal footprint.',
+					command: 'npx shadcn@latest add follow-pack-list-item',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowPackListItem</span> <span class="text-cyan-400">followPack</span><span class="text-gray-500">=&#123;</span>pack<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: listItemPreview,
+					cardData: {
+						name: 'follow-pack-list-item',
+						title: 'Follow Pack List Item',
+						description: 'Minimal design for sidebars. Maximum impact with minimal footprint.',
+						richDescription: 'The Follow Pack List Item component provides a minimal, space-efficient display designed for sidebar navigation and compact lists. It delivers essential information in a clean, unobtrusive format that integrates seamlessly into tight spaces.',
+						command: 'npx shadcn@latest add follow-pack-list-item',
+						dependencies: ['@nostr-dev-kit/ndk', '@nostr-dev-kit/svelte'],
+						registryDependencies: ['user-card', 'avatar'],
+						apiDocs: [
+							{
+								name: 'FollowPackListItem',
+								description: 'Minimal list item display for sidebar and navigation use.',
+								importPath: "import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte'",
+								props: [
+									{
+										name: 'ndk',
+										type: 'NDKSvelte',
+										description: 'NDK instance (optional if provided via context)'
+									},
+									{
+										name: 'followPack',
+										type: 'NDKFollowPack',
+										required: true,
+										description: 'The follow pack event (kind 39089) to display'
+									},
+									{
+										name: 'onclick',
+										type: '(e: MouseEvent) => void',
+										description: 'Optional click handler for custom actions'
+									},
+									{
+										name: 'class',
+										type: 'string',
+										description: 'Additional CSS classes to apply'
+									}
+								]
+							}
+						],
+						relatedComponents: [
+							{ name: 'hero', title: 'Follow Pack Hero', path: '#hero' },
+							{ name: 'portrait', title: 'Follow Pack Portrait', path: '#portrait' },
+							{ name: 'compact', title: 'Follow Pack Compact', path: '#compact' }
+						],
+						version: '0.16.0'
+					}
+				}
+			]}
+		/>
 	{/if}
 
 	<!-- Blocks Section -->
@@ -307,9 +481,9 @@
 		</div>
 	</section>
 
-	<!-- UI Components Section -->
+	<!-- UI Primitives Section -->
 	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">UI Components</h2>
+		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
 		<p class="text-muted-foreground mb-8">
 			Primitive components for building custom follow pack layouts. Mix and match to create your
 			own designs.

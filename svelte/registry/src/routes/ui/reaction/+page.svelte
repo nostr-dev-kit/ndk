@@ -228,7 +228,7 @@ function handleEmojiSelect(emojiData: EmojiData) &#123;
       </a>
       <a href="/components/reaction" class="related-card">
         <strong>Reaction Components</strong>
-        <span>Pre-built reaction UI components</span>
+        <span>Pre-built reaction UI Primitives</span>
       </a>
     </div>
   </section>

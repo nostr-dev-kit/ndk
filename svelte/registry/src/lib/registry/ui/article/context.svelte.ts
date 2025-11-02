@@ -1,22 +1,19 @@
-// @ndk-version: article-card@0.13.0
+// @ndk-version: article@0.14.0
 import type { NDKArticle } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 /**
- * Context shared between ArticleCard components
+ * Context shared between Article components
  */
-export interface ArticleCardContext {
+export interface ArticleContext {
     /** NDK instance */
     ndk: NDKSvelte;
 
     /** The article being displayed */
     article: NDKArticle;
 
-    /** Whether the card is interactive (clickable) */
-    interactive: boolean;
-
     /** Click handler */
     onclick?: (e: MouseEvent) => void;
 }
 
-export const ARTICLE_CARD_CONTEXT_KEY = Symbol('article-card');
+export const ARTICLE_CONTEXT_KEY = Symbol('article');

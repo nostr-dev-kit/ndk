@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-	import { ArticleCard } from '$lib/registry/components/article-card';
+	import { Article } from '$lib/registry/ui/article';
 	import ArticleCardPortrait from '$lib/registry/components/blocks/article-card-portrait.svelte';
 	import ArticleCardHero from '$lib/registry/components/blocks/article-card-hero.svelte';
 	import ArticleCardNeon from '$lib/registry/components/blocks/article-card-neon.svelte';
@@ -74,7 +74,7 @@
 	<!-- Header -->
 	<div class="mb-12">
 		<div class="flex items-start justify-between gap-4 mb-4">
-			<h1 class="text-4xl font-bold">ArticleCard</h1>
+			<h1 class="text-4xl font-bold">Article</h1>
 			{#key articles}
 				<EditProps.Root>
 					<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
@@ -87,7 +87,7 @@
 			{/key}
 		</div>
 		<p class="text-lg text-muted-foreground">
-			Composable article card components for displaying NDKArticle content with customizable
+			Headless UI primitives for displaying NDKArticle content with customizable
 			layouts.
 		</p>
 	</div>
@@ -214,10 +214,10 @@
 	<ComponentAPI
 		components={[
 			{
-				name: 'ArticleCard.Root',
+				name: 'Article.Root',
 				description:
-					'Root container that provides context to child components. Fetches author profile automatically.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
+					'Root container that provides context to child components.',
+				importPath: "import { Article } from '$lib/registry/ui/article'",
 				props: [
 					{
 						name: 'ndk',
@@ -233,33 +233,18 @@
 						required: true
 					},
 					{
-						name: 'interactive',
-						type: 'boolean',
-						default: 'false',
-						description: 'Enable interactive features like click handlers',
+						name: 'onclick',
+						type: '(e: MouseEvent) => void',
+						description: 'Click handler',
 						required: false
 					}
 				]
 			},
 			{
-				name: 'ArticleCard.Image',
-				description: 'Display article cover image with fallback icon.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
+				name: 'Article.Image',
+				description: 'Display article cover image.',
+				importPath: "import { Article } from '$lib/registry/ui/article'",
 				props: [
-					{
-						name: 'showGradient',
-						type: 'boolean',
-						default: 'false',
-						description: 'Add a gradient overlay on the image',
-						required: false
-					},
-					{
-						name: 'iconSize',
-						type: 'string',
-						default: '"w-16 h-16"',
-						description: 'Tailwind classes for fallback icon size',
-						required: false
-					},
 					{
 						name: 'class',
 						type: 'string',
@@ -269,29 +254,22 @@
 				]
 			},
 			{
-				name: 'ArticleCard.Title',
-				description: 'Display article title with line clamping.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
+				name: 'Article.Title',
+				description: 'Display article title.',
+				importPath: "import { Article } from '$lib/registry/ui/article'",
 				props: [
-					{
-						name: 'lines',
-						type: 'number',
-						default: '2',
-						description: 'Maximum number of lines to display',
-						required: false
-					},
 					{
 						name: 'class',
 						type: 'string',
-						description: 'Additional CSS classes',
+						description: 'Additional CSS classes (use line-clamp-* for clamping)',
 						required: false
 					}
 				]
 			},
 			{
-				name: 'ArticleCard.Summary',
+				name: 'Article.Summary',
 				description: 'Display article summary/excerpt with truncation.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
+				importPath: "import { Article } from '$lib/registry/ui/article'",
 				props: [
 					{
 						name: 'maxLength',
@@ -301,25 +279,32 @@
 						required: false
 					},
 					{
-						name: 'lines',
-						type: 'number',
-						default: '3',
-						description: 'Maximum number of lines to display',
-						required: false
-					},
-					{
 						name: 'class',
 						type: 'string',
-						description: 'Additional CSS classes',
+						description: 'Additional CSS classes (use line-clamp-* for clamping)',
 						required: false
 					}
 				]
 			},
 			{
-				name: 'ArticleCard.ReadingTime',
+				name: 'Article.ReadingTime',
 				description: 'Display estimated reading time based on article content length.',
-				importPath: "import { ArticleCard } from '$lib/registry/components/article-card'",
+				importPath: "import { Article } from '$lib/registry/ui/article'",
 				props: [
+					{
+						name: 'wordsPerMinute',
+						type: 'number',
+						default: '200',
+						description: 'Words per minute reading speed',
+						required: false
+					},
+					{
+						name: 'showSuffix',
+						type: 'boolean',
+						default: 'true',
+						description: 'Show "min read" suffix',
+						required: false
+					},
 					{
 						name: 'class',
 						type: 'string',

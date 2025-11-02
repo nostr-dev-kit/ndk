@@ -13,11 +13,11 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Root from '../article-card/article-card-root.svelte';
-  import Image from '../article-card/article-card-image.svelte';
-  import Title from '../article-card/article-card-title.svelte';
-  import Summary from '../article-card/article-card-summary.svelte';
-  import Meta from '../article-card/article-card-meta.svelte';
+  import Root from '../ui/article/article-root.svelte';
+  import Image from '../ui/article/article-image.svelte';
+  import Title from '../ui/article/article-title.svelte';
+  import Summary from '../ui/article/article-summary.svelte';
+  import ReadingTime from '../ui/article/article-reading-time.svelte';
   import { cn } from '../../../utils.js';
 
   interface Props {
@@ -82,20 +82,23 @@
     )}
   >
     <!-- Cover Image -->
-    <Image class={imageHeight} showGradient={true} />
+    <div class={cn('relative overflow-hidden', imageHeight)}>
+      <Image class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+    </div>
 
     <!-- Content -->
     <div class="p-4 flex flex-col flex-1 min-h-0 text-left">
       <!-- Title -->
-      <Title class="text-base mb-2 leading-snug font-serif text-left" lines={2} />
+      <Title class="text-base mb-2 leading-snug font-serif text-left line-clamp-2" />
 
       <!-- Summary -->
-      <Summary class="text-xs mb-3 leading-relaxed flex-1 text-left" maxLength={100} lines={3} />
+      <Summary class="text-xs mb-3 leading-relaxed flex-1 text-left line-clamp-3" maxLength={100} />
 
       <!-- Meta -->
       <div class="mt-auto pt-2 border-t border-border">
         <div class="flex items-center justify-between">
-          <Meta class="text-xs" />
+          <ReadingTime class="text-xs" />
           <svg width="16" height="16" class="text-primary opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>

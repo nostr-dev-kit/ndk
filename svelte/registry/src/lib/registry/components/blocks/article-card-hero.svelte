@@ -13,13 +13,13 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Root from '../article-card/article-card-root.svelte';
-  import Title from '../article-card/article-card-title.svelte';
-  import Summary from '../article-card/article-card-summary.svelte';
-  import ReadingTime from '../article-card/article-card-reading-time.svelte';
+  import Root from '../ui/article/article-root.svelte';
+  import Title from '../ui/article/article-title.svelte';
+  import Summary from '../ui/article/article-summary.svelte';
+  import ReadingTime from '../ui/article/article-reading-time.svelte';
   import { cn } from '../../../utils.js';
   import { getContext } from 'svelte';
-  import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from '../article-card/context.svelte.js';
+  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../ui/article/context.svelte.js';
   import TimeAgo from '../time-ago/time-ago.svelte';
 
   interface Props {
@@ -62,7 +62,7 @@
 </script>
 
 <Root {ndk} {article}>
-  {@const context = getContext<ArticleCardContext>(ARTICLE_CARD_CONTEXT_KEY)}
+  {@const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY)}
   {@const authorProfile = context.authorProfile}
   {@const publishedAt = context.article.published_at}
   {@const articleImage = context.article.image}

@@ -195,25 +195,69 @@
 
 <style>
 	.modal-header {
-		padding: 2rem;
+		padding: 2rem 2rem 1.5rem 2rem;
 		border-bottom: 1px solid var(--color-border);
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
-		background: var(--color-muted);
+		gap: 2rem;
+	}
+
+	.header-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 	}
 
 	.modal-title {
-		font-size: 1.875rem;
-		font-weight: 700;
+		font-size: 2.5rem;
+		font-weight: 800;
 		color: var(--color-foreground);
+		margin: 0;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+	}
+
+	.author-header {
 		margin: 0;
 	}
 
-	.modal-subtitle {
-		font-size: 1rem;
+	.author-attribution {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	:global(.author-avatar-small) {
+		width: 32px;
+		height: 32px;
+		border-radius: 9999px;
+		flex-shrink: 0;
+	}
+
+	.author-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.9375rem;
+	}
+
+	.author-label {
 		color: var(--color-muted-foreground);
-		margin: 0.5rem 0 0 0;
+		font-weight: 400;
+	}
+
+	:global(.author-name-header) {
+		color: var(--color-foreground);
+		font-weight: 600;
+	}
+
+	.modal-subtitle {
+		font-size: 1.0625rem;
+		color: var(--color-muted-foreground);
+		margin: 0;
+		line-height: 1.6;
 	}
 
 	.modal-close {

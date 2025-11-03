@@ -27,7 +27,7 @@
 		<UserInput.Results>
 			{#snippet children(result)}
 				<UserInput.Item {result}>
-					<User.Root user={result.user}>
+					<User.Root ndk={composer.ndk} user={result.user}>
 						<User.Avatar class="w-8 h-8" />
 						<User.Name />
 					</User.Root>

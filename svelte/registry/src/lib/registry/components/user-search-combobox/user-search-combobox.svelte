@@ -111,7 +111,6 @@
     bind:value={selectedValue}
     onValueChange={handleValueChange}
     {items}
-    inputValue={query}
   >
     <div class="relative">
     {#if input}

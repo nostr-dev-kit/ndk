@@ -5,6 +5,7 @@
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
   import type { Snippet } from 'svelte';
+  import { cn } from "../../utils/cn.js";
 
   interface Props {
     /** NDK instance (required) */
@@ -52,18 +53,6 @@
     return null;
   });
 
-  const resolvedPubkey = $derived.by(() => {
-    if (pubkey) return pubkey;
-    if (ndkUser) {
-      try {
-        return ndkUser.pubkey || '';
-      } catch {
-        return '';
-      }
-    }
-    return '';
-  });
-
   // Fetch profile if not provided (reactive to ndkUser changes)
   let profileFetcher = $state<ReturnType<typeof createProfileFetcher> | null>(null);
 
@@ -80,18 +69,18 @@
   const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);
 
   // Create reactive context using $state.raw() to preserve reactivity
-  const context = $state.raw({
+  const context = {
     get ndk() { return ndk; },
     get user() { return user; },
     get ndkUser() { return ndkUser; },
     get profile() { return profile; },
     get showHoverCard() { return false; },
     get onclick() { return onclick; }
-  });
+  };
 
   setContext(USER_CONTEXT_KEY, context);
 </script>
 
-<div class="{className}">
+<div class={cn("contents", className)}>
   {@render children()}
 </div>

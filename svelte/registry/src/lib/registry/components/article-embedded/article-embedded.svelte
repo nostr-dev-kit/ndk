@@ -21,20 +21,17 @@
     <div class="article-layout">
       <Article.Image
         class={variant === 'compact' ? 'h-24' : variant === 'inline' ? 'h-32' : 'h-40'}
-        showGradient={true}
       />
 
       <div class="article-content">
         <Article.Title
           class="text-sm font-semibold"
-          lines={variant === 'compact' ? 1 : 2}
         />
 
         {#if variant !== 'compact'}
           <Article.Summary
             class="text-xs text-muted-foreground"
             maxLength={variant === 'inline' ? 80 : 120}
-            lines={variant === 'inline' ? 2 : 3}
           />
         {/if}
 

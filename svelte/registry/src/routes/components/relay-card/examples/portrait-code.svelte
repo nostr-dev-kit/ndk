@@ -3,7 +3,7 @@
 		<!-- Background Icon with Gradient - covers entire card -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
 			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50 scale-[2.5]">
-				<Relay.Icon size={200} />
+				<Relay.Icon class="w-[200px] h-[200px]" />
 			</div>
 			<div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15"></div>
 			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-card/60"></div>
@@ -17,7 +17,7 @@
 		<div class="relative flex items-center justify-center pt-8 pb-4 z-[1]">
 			<div class="relative">
 				<div class="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
-				<Relay.Icon size={80} class="relative z-[1]" />
+				<Relay.Icon class="relative z-[1] w-20 h-20" />
 			</div>
 		</div>
 

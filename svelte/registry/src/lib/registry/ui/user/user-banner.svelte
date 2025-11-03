@@ -4,15 +4,11 @@
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
 
   interface Props {
-    /** Height of the banner */
-    height?: string;
-
     /** Additional CSS classes */
     class?: string;
   }
 
   let {
-    height = '12rem',
     class: className = ''
   }: Props = $props();
 
@@ -56,8 +52,8 @@
 </script>
 
 <div
-  class="relative w-full {className}"
-  style="{backgroundStyle}; height: {height}"
+  class="relative w-full h-48 {className}"
+  style="{backgroundStyle}"
 >
   {#if profile?.banner}
     <img

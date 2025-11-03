@@ -35,7 +35,7 @@
 			{#each topRelays as relay}
 				<Relay.Root {ndk} relayUrl={relay.url}>
 					<div class="flex items-center gap-3 p-3 bg-card border border-border rounded-lg">
-						<Relay.Icon size={40} />
+						<Relay.Icon class="w-10 h-10" />
 						<div class="flex-1 min-w-0">
 							<Relay.Name class="font-medium truncate" />
 							<Relay.Url class="text-sm text-muted-foreground truncate" />

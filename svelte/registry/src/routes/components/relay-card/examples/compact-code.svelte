@@ -4,7 +4,7 @@
 			<Relay.BookmarkButton {bookmarks} size="sm" />
 		</div>
 
-		<Relay.Icon size={48} />
+		<Relay.Icon />
 		<Relay.Name class="text-sm font-medium line-clamp-2" />
 	</button>
 </Relay.Root>

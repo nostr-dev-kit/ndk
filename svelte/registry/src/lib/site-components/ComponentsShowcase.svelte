@@ -62,6 +62,7 @@
 	}: Props = $props();
 
 	let activeBlockIndex = $state<number | null>(null);
+	let hoveredBlockIndex = $state<number | null>(null);
 	let blockRefs: HTMLDivElement[] = [];
 
 	// Modal state
@@ -134,12 +135,13 @@
 		{#each blocks as block, index}
 			{@const isNotLast = index < blocks.length - 1}
 			{@const borderClass = isNotLast ? 'border-b border-border/50' : ''}
+			{@const isFocused = hoveredBlockIndex === index || activeBlockIndex === index}
 			<div
 				bind:this={blockRefs[index]}
 				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out {borderClass}"
 				class:cursor-pointer={block.cardData}
-				style:filter={activeBlockIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
-				style:opacity={activeBlockIndex !== index ? '0.6' : '1'}
+				style:filter={!isFocused ? 'grayscale(1)' : 'grayscale(0)'}
+				style:opacity={!isFocused ? '0.6' : '1'}
 				role={block.cardData ? 'button' : undefined}
 				tabindex={block.cardData ? 0 : undefined}
 				onclick={() => handleBlockClick(block)}
@@ -149,6 +151,8 @@
 						handleBlockClick(block);
 					}
 				}}
+				onmouseenter={() => (hoveredBlockIndex = index)}
+				onmouseleave={() => (hoveredBlockIndex = null)}
 			>
 				<div
 					class={cn(
@@ -167,8 +171,8 @@
 
 					<div
 						class="mt-6 space-y-4 transition-all duration-700 ease-out"
-						style:opacity={activeBlockIndex === index ? '1' : '0.1'}
-						style:filter={activeBlockIndex === index ? 'grayscale(0)' : 'grayscale(1)'}
+						style:opacity={isFocused ? '1' : '0.1'}
+						style:filter={isFocused ? 'grayscale(0)' : 'grayscale(1)'}
 					>
 						<div class="font-mono text-sm text-foreground">
 							<span class="text-muted-foreground">$</span>

@@ -26,7 +26,7 @@
   <div class="emoji-row">
     {#each customEmojis as { emoji, url, shortcode }}
       <div class="emoji-item">
-        <Reaction.Display {emoji} {url} {shortcode} size={32} />
+        <Reaction.Display {emoji} {url} {shortcode} class="w-8 h-8" />
         <span class="shortcode">{shortcode}</span>
       </div>
     {/each}

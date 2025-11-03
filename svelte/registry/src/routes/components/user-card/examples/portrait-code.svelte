@@ -10,17 +10,6 @@
       <User.Field field="name" size="sm" class="text-muted-foreground" />
     </div>
     <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
-    <div class="flex items-center gap-3 text-sm shrink-0">
-      <div class="flex flex-col items-center">
-        <span class="font-semibold text-foreground">234</span>
-        <span class="text-muted-foreground text-xs">notes</span>
-      </div>
-      <div class="text-muted-foreground">•</div>
-      <div class="flex flex-col items-center">
-        <span class="font-semibold text-foreground">1.5K</span>
-        <span class="text-muted-foreground text-xs">followers</span>
-      </div>
-    </div>
     <FollowButtonPill {ndk} target={user} variant="solid" />
   </div>
 </User.Root>

@@ -4,19 +4,19 @@
 
 <div class="reaction-demo">
   <div class="emoji-row">
-    <Reaction.Display emoji="❤️" size={24} />
-    <Reaction.Display emoji="🔥" size={24} />
-    <Reaction.Display emoji="👍" size={24} />
-    <Reaction.Display emoji="🚀" size={24} />
-    <Reaction.Display emoji="💯" size={24} />
+    <Reaction.Display emoji="❤️" class="text-2xl" />
+    <Reaction.Display emoji="🔥" class="text-2xl" />
+    <Reaction.Display emoji="👍" class="text-2xl" />
+    <Reaction.Display emoji="🚀" class="text-2xl" />
+    <Reaction.Display emoji="💯" class="text-2xl" />
   </div>
 
   <div class="size-demo">
     <span>Different sizes:</span>
-    <Reaction.Display emoji="💜" size={16} />
-    <Reaction.Display emoji="💜" size={20} />
-    <Reaction.Display emoji="💜" size={24} />
-    <Reaction.Display emoji="💜" size={32} />
+    <Reaction.Display emoji="💜" class="text-base" />
+    <Reaction.Display emoji="💜" />
+    <Reaction.Display emoji="💜" class="text-2xl" />
+    <Reaction.Display emoji="💜" class="text-3xl" />
   </div>
 </div>
 

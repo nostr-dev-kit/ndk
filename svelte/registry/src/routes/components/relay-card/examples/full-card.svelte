@@ -16,7 +16,7 @@
 <Relay.Root {ndk} {relayUrl}>
   <div class="p-4 bg-card border border-border rounded-lg">
     <div class="flex items-center gap-3 mb-3">
-      <Relay.Icon size={64} />
+      <Relay.Icon class="w-16 h-16" />
       <div class="flex-1">
         <Relay.Name class="font-semibold text-foreground" />
         <Relay.Url class="text-sm text-muted-foreground" />

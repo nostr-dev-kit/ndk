@@ -298,10 +298,10 @@ userInput.clear()       // Function</code></pre>
   .badge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
-    background: var(--color-muted);
+    background: var(--muted);
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .badge-nip {
@@ -322,7 +322,7 @@ userInput.clear()       // Function</code></pre>
   .header-description {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 1rem 0 1.5rem 0;
   }
 
@@ -337,18 +337,18 @@ userInput.clear()       // Function</code></pre>
     flex-direction: column;
     gap: 0.25rem;
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 
   .info-card strong {
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .info-card span {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .installation h2 {
@@ -359,7 +359,7 @@ userInput.clear()       // Function</code></pre>
 
   .installation pre {
     padding: 1rem;
-    background: var(--color-muted);
+    background: var(--muted);
     border-radius: 0.5rem;
   }
 
@@ -381,7 +381,7 @@ userInput.clear()       // Function</code></pre>
 
   .component-item {
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 
@@ -396,7 +396,7 @@ userInput.clear()       // Function</code></pre>
 
   .component-item p {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -408,7 +408,7 @@ userInput.clear()       // Function</code></pre>
 
   .search-type-item {
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 
@@ -421,7 +421,7 @@ userInput.clear()       // Function</code></pre>
 
   .search-type-item p {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
     line-height: 1.5;
   }
@@ -437,7 +437,7 @@ userInput.clear()       // Function</code></pre>
     flex-direction: column;
     gap: 0.25rem;
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     text-decoration: none;
     transition: all 0.2s;
@@ -450,18 +450,18 @@ userInput.clear()       // Function</code></pre>
 
   .related-card strong {
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .related-card span {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   pre {
     margin: 1rem 0;
     padding: 1rem;
-    background: var(--color-muted);
+    background: var(--muted);
     border-radius: 0.5rem;
     overflow-x: auto;
   }

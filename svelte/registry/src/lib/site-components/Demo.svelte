@@ -197,15 +197,15 @@
 		gap: 0.5rem;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.controls :global(select) {
 		padding: 0.375rem 0.75rem;
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		border-radius: 0.375rem;
-		background: var(--color-background);
-		color: var(--color-foreground);
+		background: var(--background);
+		color: var(--foreground);
 		font-size: 0.875rem;
 		cursor: pointer;
 		transition: border-color 0.2s;

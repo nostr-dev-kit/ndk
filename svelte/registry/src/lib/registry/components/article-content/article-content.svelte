@@ -345,25 +345,25 @@
   }
 
   :global(.article-content) {
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content h1) {
     @apply text-3xl sm:text-4xl font-bold mt-12 mb-6;
     font-family: var(--font-serif);
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content h2) {
     @apply text-2xl sm:text-3xl font-bold mt-10 mb-5;
     font-family: var(--font-serif);
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content h3) {
     @apply text-xl sm:text-2xl font-bold mt-8 mb-4;
     font-family: var(--font-serif);
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   /* Remove top margin from first heading */
@@ -379,7 +379,7 @@
   :global(.article-content p) {
     @apply text-lg leading-[1.8] mb-6;
     font-family: var(--font-serif);
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content a) {
@@ -393,13 +393,13 @@
   :global(.article-content ul) {
     @apply list-disc pl-6 mb-6 space-y-2 text-lg;
     font-family: var(--font-serif);
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content ol) {
     @apply list-decimal pl-6 mb-6 space-y-2 text-lg;
     font-family: var(--font-serif);
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content li) {
@@ -409,14 +409,14 @@
   :global(.article-content blockquote) {
     @apply border-l-4 pl-6 my-8 italic text-xl leading-[1.8];
     font-family: var(--font-serif);
-    border-color: var(--color-border);
-    color: var(--color-muted-foreground);
+    border-color: var(--border);
+    color: var(--muted-foreground);
   }
 
   :global(.article-content code) {
     @apply px-1.5 py-0.5 rounded text-sm font-mono;
-    background-color: var(--color-muted);
-    color: var(--color-foreground);
+    background-color: var(--muted);
+    color: var(--foreground);
   }
 
   :global(.article-content pre) {
@@ -425,18 +425,18 @@
 
   :global(.article-content pre code) {
     @apply block border rounded-lg p-4 overflow-x-auto text-sm font-mono leading-relaxed;
-    background-color: var(--color-background);
-    border-color: var(--color-border);
+    background-color: var(--background);
+    border-color: var(--border);
   }
 
   :global(.article-content hr) {
     @apply my-12 border-t;
-    border-color: var(--color-border);
+    border-color: var(--border);
   }
 
   :global(.article-content strong) {
     @apply font-bold;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   :global(.article-content em) {
@@ -447,7 +447,7 @@
   :global(mark.nostr-highlight) {
     background-color: color-mix(in srgb, var(--primary) 20%, transparent);
     border-bottom: 2px solid color-mix(in srgb, var(--primary) 60%, transparent);
-    color: var(--color-foreground);
+    color: var(--foreground);
     @apply transition-all duration-200;
     @apply cursor-pointer;
     padding: 0.125rem 0;

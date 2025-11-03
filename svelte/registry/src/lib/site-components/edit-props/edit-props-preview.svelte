@@ -24,7 +24,7 @@
 		{@const user = value as NDKUser}
 		<User.Root {ndk} pubkey={user.pubkey}>
 			<div class="preview-user">
-				<User.Avatar size={40} />
+				<User.Avatar class="w-10 h-10" />
 				<div class="preview-user-info">
 					<div class="preview-user-name">
 						<User.Name field="displayName" />
@@ -81,12 +81,12 @@
 
 	.preview-user-name {
 		font-weight: 500;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.preview-user-nip05 {
 		font-size: 0.75rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.preview-article,
@@ -98,20 +98,20 @@
 
 	.preview-article-title {
 		font-weight: 500;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.preview-article-summary,
 	.preview-event-content {
 		font-size: 0.75rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		line-height: 1.4;
 	}
 
 	.preview-article-date,
 	.preview-event-date {
 		font-size: 0.75rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.preview-event-kind {
@@ -121,12 +121,12 @@
 	}
 
 	.preview-text-value {
-		color: var(--color-foreground);
+		color: var(--foreground);
 		font-family: monospace;
 	}
 
 	.preview-unknown {
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		font-style: italic;
 	}
 </style>

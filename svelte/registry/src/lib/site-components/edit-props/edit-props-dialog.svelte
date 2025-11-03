@@ -193,7 +193,7 @@
 <style>
 	.modal-header {
 		padding: 1.5rem;
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--border);
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
@@ -202,13 +202,13 @@
 	.modal-title {
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0;
 	}
 
 	.modal-subtitle {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0.25rem 0 0 0;
 	}
 
@@ -219,12 +219,12 @@
 		cursor: pointer;
 		border-radius: 0.375rem;
 		transition: background 0.2s;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.modal-close:hover {
-		background: var(--color-accent);
-		color: var(--color-accent-foreground);
+		background: var(--accent);
+		color: var(--accent-foreground);
 	}
 
 	.modal-close svg {
@@ -241,7 +241,7 @@
 
 	.modal-footer {
 		padding: 1.5rem;
-		border-top: 1px solid var(--color-border);
+		border-top: 1px solid var(--border);
 		display: flex;
 		justify-content: flex-end;
 		gap: 0.75rem;
@@ -256,22 +256,22 @@
 	.prop-label {
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.prop-type {
 		font-size: 0.75rem;
 		font-weight: 400;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin-left: 0.25rem;
 	}
 
 	.prop-input {
 		width: 100%;
 		padding: 0.5rem 0.75rem;
-		border: 1px solid var(--color-input);
-		background: var(--color-background);
-		color: var(--color-foreground);
+		border: 1px solid var(--input);
+		background: var(--background);
+		color: var(--foreground);
 		border-radius: 0.375rem;
 		font-size: 0.875rem;
 		transition: all 0.2s;
@@ -283,33 +283,33 @@
 
 	.prop-input:focus {
 		outline: none;
-		border-color: var(--color-ring);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) calc(0.2 * 100%), transparent);
+		border-color: var(--ring);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) calc(0.2 * 100%), transparent);
 	}
 
 	.prop-input.error {
-		border-color: var(--color-destructive);
+		border-color: var(--destructive);
 	}
 
 	.prop-input.error:focus {
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-destructive) calc(0.2 * 100%), transparent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--destructive) calc(0.2 * 100%), transparent);
 	}
 
 	.prop-loading {
 		font-size: 0.75rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		font-style: italic;
 	}
 
 	.prop-error {
 		font-size: 0.75rem;
-		color: var(--color-destructive);
+		color: var(--destructive);
 	}
 
 	.prop-preview {
 		padding: 0.75rem;
-		background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
-		border: 1px solid var(--color-border);
+		background: color-mix(in srgb, var(--muted) calc(0.3 * 100%), transparent);
+		border: 1px solid var(--border);
 		border-radius: 0.375rem;
 	}
 
@@ -324,13 +324,13 @@
 	}
 
 	.btn-secondary {
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		background: transparent;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.btn-secondary:hover {
-		background: var(--color-accent);
+		background: var(--accent);
 	}
 
 	.btn-primary {

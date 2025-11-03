@@ -109,6 +109,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+html {
+	scroll-behavior: smooth;
+}
+
+* {
+	overscroll-behavior: none;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

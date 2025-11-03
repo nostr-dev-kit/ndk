@@ -32,7 +32,7 @@
     {#if showAuthor}
       <div class="author-section">
         <User.Root user={voiceMessage.author}>
-          <User.Avatar size={32} />
+          <User.Avatar class="w-8 h-8" />
           <User.Name />
         </User.Root>
       </div>

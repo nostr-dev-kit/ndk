@@ -181,8 +181,8 @@
   .avatar-group-overflow {
     position: relative;
     border-radius: 50%;
-    background: var(--color-muted);
-    border: 2px solid var(--color-background);
+    background: var(--muted);
+    border: 2px solid var(--background);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,7 +208,7 @@
 
   .avatar-group-overflow-button:hover {
     background: var(--muted-hover);
-    color: var(--color-foreground);
+    color: var(--foreground);
     transform: scale(1.1);
   }
 

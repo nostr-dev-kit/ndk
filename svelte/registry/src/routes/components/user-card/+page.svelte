@@ -569,7 +569,7 @@
 												<div class="text-sm text-muted-foreground">Wraps all primitives</div>
 											</div>
 										{:else if id === 'avatar'}
-											<User.Avatar size="lg" class="w-16 h-16" />
+											<User.Avatar class="w-16 h-16" />
 										{:else if id === 'name'}
 											<User.Name class="text-xl font-bold text-center" />
 										{:else if id === 'bio'}

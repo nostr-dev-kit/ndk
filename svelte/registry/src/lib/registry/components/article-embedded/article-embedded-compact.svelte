@@ -33,8 +33,8 @@
   .article-embedded-compact {
     border-radius: 0.5rem;
     overflow: hidden;
-    border: 1px solid var(--color-border);
-    background: var(--color-card);
+    border: 1px solid var(--border);
+    background: var(--card);
   }
 
   .article-layout {

@@ -108,7 +108,7 @@
 	.section-title {
 		font-size: 1.5rem;
 		font-weight: 700;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 1.5rem 0;
 	}
 
@@ -119,8 +119,8 @@
 	}
 
 	.component-card {
-		background: var(--color-card);
-		border: 1px solid var(--color-border);
+		background: var(--card);
+		border: 1px solid var(--border);
 		border-radius: 0.75rem;
 		padding: 1.5rem;
 	}
@@ -132,15 +132,15 @@
 	.component-name {
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 0.5rem 0;
 	}
 
 	.import-path {
 		display: inline-block;
 		font-size: 0.75rem;
-		color: var(--color-muted-foreground);
-		background: var(--color-muted);
+		color: var(--muted-foreground);
+		background: var(--muted);
 		padding: 0.25rem 0.5rem;
 		border-radius: 0.25rem;
 		font-family: 'Monaco', 'Courier New', monospace;
@@ -148,7 +148,7 @@
 
 	.component-description {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0 0 1.5rem 0;
 		line-height: 1.6;
 	}
@@ -156,7 +156,7 @@
 	.api-section {
 		margin-top: 1.5rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid var(--color-border);
+		border-top: 1px solid var(--border);
 	}
 
 	.api-section:first-of-type {
@@ -168,7 +168,7 @@
 	.api-section-title {
 		font-size: 1rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 1rem 0;
 	}
 
@@ -183,10 +183,10 @@
 	.prop-item,
 	.event-item,
 	.slot-item {
-		background: color-mix(in srgb, var(--color-muted) calc(0.3 * 100%), transparent);
+		background: color-mix(in srgb, var(--muted) calc(0.3 * 100%), transparent);
 		padding: 1rem;
 		border-radius: 0.5rem;
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 	}
 
 	.prop-header {
@@ -208,8 +208,8 @@
 	.required-badge {
 		font-size: 0.6875rem;
 		font-weight: 600;
-		color: var(--color-destructive-foreground);
-		background: var(--color-destructive);
+		color: var(--destructive-foreground);
+		background: var(--destructive);
 		padding: 0.125rem 0.375rem;
 		border-radius: 0.25rem;
 		text-transform: uppercase;
@@ -219,8 +219,8 @@
 	.prop-type {
 		display: block;
 		font-size: 0.8125rem;
-		color: var(--color-foreground);
-		background: var(--color-muted);
+		color: var(--foreground);
+		background: var(--muted);
 		padding: 0.5rem;
 		border-radius: 0.25rem;
 		font-family: 'Monaco', 'Courier New', monospace;
@@ -233,7 +233,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		font-size: 0.8125rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0.5rem 0;
 	}
 
@@ -243,7 +243,7 @@
 
 	.prop-default code {
 		font-family: 'Monaco', 'Courier New', monospace;
-		background: var(--color-muted);
+		background: var(--muted);
 		padding: 0.125rem 0.375rem;
 		border-radius: 0.25rem;
 	}
@@ -252,7 +252,7 @@
 	.event-description,
 	.slot-description {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0.5rem 0 0 0;
 		line-height: 1.6;
 	}

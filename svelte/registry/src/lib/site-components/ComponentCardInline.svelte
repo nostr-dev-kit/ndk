@@ -128,8 +128,8 @@
 <style>
 	.component-card-inline {
 		padding: 2rem;
-		background: var(--color-card);
-		border: 1px solid var(--color-border);
+		background: var(--card);
+		border: 1px solid var(--border);
 		border-radius: 0.75rem;
 		display: flex;
 		flex-direction: column;
@@ -138,19 +138,19 @@
 
 	.card-header {
 		padding-bottom: 1.5rem;
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--border);
 	}
 
 	.card-title {
 		font-size: 1.875rem;
 		font-weight: 700;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 0.5rem 0;
 	}
 
 	.card-description {
 		font-size: 1rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0;
 	}
 
@@ -163,14 +163,14 @@
 	.section-title {
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0;
 	}
 
 	.preview-container {
 		padding: 2rem;
-		background: var(--color-background);
-		border: 1px solid var(--color-border);
+		background: var(--background);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		display: flex;
 		justify-content: center;
@@ -180,7 +180,7 @@
 	.description-text {
 		font-size: 1rem;
 		line-height: 1.6;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0;
 	}
 
@@ -188,8 +188,8 @@
 		font-family: monospace;
 		font-size: 0.875rem;
 		padding: 1rem 1.25rem;
-		background: var(--color-muted);
-		border: 1px solid var(--color-border);
+		background: var(--muted);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		display: flex;
 		gap: 0.5rem;
@@ -197,11 +197,11 @@
 	}
 
 	.prompt {
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.install-command code {
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.dependencies {
@@ -211,7 +211,7 @@
 	.dependencies-title {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 0.5rem 0;
 	}
 
@@ -228,9 +228,9 @@
 		font-family: monospace;
 		font-size: 0.75rem;
 		padding: 0.25rem 0.5rem;
-		background: var(--color-accent);
+		background: var(--accent);
 		border-radius: 0.25rem;
-		color: var(--color-accent-foreground);
+		color: var(--accent-foreground);
 	}
 
 	.related-grid {
@@ -241,8 +241,8 @@
 
 	.related-card {
 		padding: 1rem;
-		background: var(--color-muted);
-		border: 1px solid var(--color-border);
+		background: var(--muted);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		text-decoration: none;
 		transition: all 0.2s;
@@ -251,18 +251,18 @@
 
 	.related-card:hover {
 		border-color: var(--primary);
-		background: var(--color-accent);
+		background: var(--accent);
 	}
 
 	.related-card-title {
 		font-size: 1rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin-bottom: 0.25rem;
 	}
 
 	.related-card-name {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 </style>

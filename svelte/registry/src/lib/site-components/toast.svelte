@@ -43,13 +43,13 @@ Use for: temporary notifications, success messages, status updates.
 	.toast {
 		position: fixed;
 		padding: 1rem 1.5rem;
-		background: var(--color-card);
-		border: 1px solid var(--color-border);
+		background: var(--card);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
-		box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-foreground) calc(0.1 * 100%), transparent);
+		box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) calc(0.1 * 100%), transparent);
 		z-index: 100;
 		font-size: 0.875rem;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		max-width: 400px;
 	}
 

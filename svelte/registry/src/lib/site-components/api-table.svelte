@@ -62,13 +62,13 @@ Use for: component API documentation across all component pages.
 	.api-table-title {
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 2rem 0 1rem 0;
 	}
 
 	.api-table-container {
 		margin: 1rem 0 2rem 0;
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		overflow: hidden;
 	}
@@ -76,26 +76,26 @@ Use for: component API documentation across all component pages.
 	.api-table {
 		width: 100%;
 		border-collapse: collapse;
-		background: var(--color-card);
+		background: var(--card);
 		font-size: 0.875rem;
 	}
 
 	.api-table thead {
-		background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
+		background: color-mix(in srgb, var(--muted) calc(0.5 * 100%), transparent);
 	}
 
 	.api-table th {
 		text-align: left;
 		padding: 0.75rem 1rem;
 		font-weight: 600;
-		color: var(--color-foreground);
-		border-bottom: 1px solid var(--color-border);
+		color: var(--foreground);
+		border-bottom: 1px solid var(--border);
 	}
 
 	.api-table td {
 		padding: 0.75rem 1rem;
-		color: var(--color-muted-foreground);
-		border-bottom: 1px solid var(--color-border);
+		color: var(--muted-foreground);
+		border-bottom: 1px solid var(--border);
 		vertical-align: top;
 	}
 
@@ -104,7 +104,7 @@ Use for: component API documentation across all component pages.
 	}
 
 	.api-table code {
-		background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
+		background: color-mix(in srgb, var(--muted) calc(0.5 * 100%), transparent);
 		padding: 0.125rem 0.375rem;
 		border-radius: 0.25rem;
 		font-size: 0.8125rem;
@@ -117,28 +117,28 @@ Use for: component API documentation across all component pages.
 	}
 
 	.prop-type {
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.prop-default {
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.prop-description {
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		line-height: 1.5;
 	}
 
 	.no-default {
-		color: color-mix(in srgb, var(--color-muted-foreground) calc(0.5 * 100%), transparent);
+		color: color-mix(in srgb, var(--muted-foreground) calc(0.5 * 100%), transparent);
 	}
 
 	.required-badge {
 		display: inline-block;
 		margin-left: 0.5rem;
 		padding: 0.125rem 0.375rem;
-		background: color-mix(in srgb, var(--color-destructive) calc(0.1 * 100%), transparent);
-		color: var(--color-destructive);
+		background: color-mix(in srgb, var(--destructive) calc(0.1 * 100%), transparent);
+		color: var(--destructive);
 		border-radius: 0.25rem;
 		font-size: 0.6875rem;
 		font-weight: 600;
@@ -166,7 +166,7 @@ Use for: component API documentation across all component pages.
 			.api-table tr {
 				display: block;
 				margin-bottom: 1rem;
-				border: 1px solid var(--color-border);
+				border: 1px solid var(--border);
 				border-radius: 0.375rem;
 				overflow: hidden;
 			}
@@ -174,7 +174,7 @@ Use for: component API documentation across all component pages.
 			.api-table td {
 				display: block;
 				padding: 0.5rem 0.75rem;
-				border-bottom: 1px solid var(--color-border);
+				border-bottom: 1px solid var(--border);
 			}
 
 			.api-table td:last-child {
@@ -184,7 +184,7 @@ Use for: component API documentation across all component pages.
 			.api-table td::before {
 				content: attr(data-label);
 				font-weight: 600;
-				color: var(--color-foreground);
+				color: var(--foreground);
 				display: block;
 				margin-bottom: 0.25rem;
 			}

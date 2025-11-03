@@ -120,7 +120,7 @@
     top: 48px;
     bottom: 0;
     width: 2px;
-    background: var(--color-border);
+    background: var(--border);
     pointer-events: none;
     z-index: 0;
   }

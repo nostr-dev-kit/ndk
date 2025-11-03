@@ -11,14 +11,14 @@
 <style>
   .nip-badge {
     display: inline-flex;
-    align-items: center;
+    align-items: center;  
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     font-size: 0.625rem;
     font-weight: 500;
     line-height: 1;
     background: color-mix(in srgb, var(--primary) 15%, transparent);
-    color: color-mix(in srgb, var(--primary) 70%, var(--color-muted-foreground));
+    color: color-mix(in srgb, var(--primary) 70%, var(--muted-foreground));
     opacity: 0.7;
     pointer-events: none;
     flex-shrink: 0;

@@ -111,7 +111,7 @@
 		width: 100%;
 		overflow: hidden;
 		border-radius: 0.5rem;
-		background-color: var(--color-muted);
+		background-color: var(--muted);
 	}
 
 	.image {
@@ -123,7 +123,7 @@
 
 	.image-alt {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		font-style: italic;
 		margin: 0;
 		padding: 0 0.25rem;
@@ -143,8 +143,8 @@
 		padding: 0.25rem 0.5rem;
 		font-size: 0.75rem;
 		border-radius: 0.25rem;
-		background-color: var(--color-muted);
-		color: var(--color-muted-foreground);
+		background-color: var(--muted);
+		color: var(--muted-foreground);
 		font-family: var(--font-mono);
 	}
 
@@ -156,8 +156,8 @@
 		gap: 0.75rem;
 		padding: 3rem;
 		border-radius: 0.5rem;
-		background-color: var(--color-muted);
-		color: var(--color-muted-foreground);
+		background-color: var(--muted);
+		color: var(--muted-foreground);
 	}
 
 	.image-content-empty p {

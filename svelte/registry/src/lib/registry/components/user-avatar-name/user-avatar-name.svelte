@@ -12,7 +12,7 @@
 
   @example With metadata:
   ```svelte
-  <UserAvatarName {ndk} pubkey={user.pubkey} avatarSize={48} meta="handle" />
+  <UserAvatarName {ndk} pubkey={user.pubkey} avatarClass="w-12 h-12" meta="handle" />
   ```
 -->
 <script lang="ts">
@@ -34,8 +34,8 @@
     /** Pre-loaded profile (optional, avoids fetch) */
     profile?: NDKUserProfile;
 
-    /** Avatar size in pixels */
-    avatarSize?: number;
+    /** Avatar CSS classes (for sizing use w-* h-* classes) */
+    avatarClass?: string;
 
     /** Metadata to show below name: "handle", "about", custom string, or snippet */
     meta?: 'handle' | 'about' | string | Snippet;
@@ -52,7 +52,7 @@
     user,
     pubkey,
     profile,
-    avatarSize = 40,
+    avatarClass = '',
     meta,
     onclick,
     class: className = ''
@@ -61,7 +61,7 @@
 
 <User.Root {ndk} {user} {pubkey} {profile} {onclick}>
   <div class="flex items-center gap-3 {className}">
-    <User.Avatar size={avatarSize} />
+    <User.Avatar class={avatarClass} />
     {#if meta}
       <div class="flex flex-col">
         <User.Name />

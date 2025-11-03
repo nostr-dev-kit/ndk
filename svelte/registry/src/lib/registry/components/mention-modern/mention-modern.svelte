@@ -69,7 +69,7 @@
         className
       )}>
         <User.Root {ndk} {pubkey}>
-          <User.Avatar size={20} class="inline-block" />
+          <User.Avatar class="w-5 h-5 inline-block" />
         </User.Root>
         <span>@{profile?.name || profile?.displayName || bech32.slice(0, 8)}</span>
       </span>

@@ -109,7 +109,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: hsl(var(--color-muted));
+		background-color: hsl(var(--muted));
 	}
 
 	.hero-content {

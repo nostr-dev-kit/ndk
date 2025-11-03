@@ -28,15 +28,15 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 0.5rem;
-		background-color: hsl(var(--color-background));
-		border: 1px solid hsl(var(--color-border));
-		color: hsl(var(--color-foreground));
+		background-color: hsl(var(--background));
+		border: 1px solid hsl(var(--border));
+		color: hsl(var(--foreground));
 		cursor: pointer;
 		transition: all 150ms ease;
 	}
 
 	.hamburger-button:hover {
-		background-color: hsl(var(--color-muted));
+		background-color: hsl(var(--muted));
 	}
 
 	.hamburger-button:active {

@@ -274,7 +274,7 @@
   }
 
   .dropdown-trigger:hover {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .dropdown-icon {
@@ -288,10 +288,10 @@
     right: 0;
     margin-top: 0.25rem;
     width: 18rem;
-    background: var(--color-popover);
-    border: 1px solid var(--color-border);
+    background: var(--popover);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-foreground) 10%, transparent);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent);
     z-index: 10;
     max-height: 24rem;
     overflow-y: auto;
@@ -302,7 +302,7 @@
     padding: 0.75rem 1rem;
     text-align: left;
     font-size: 0.875rem;
-    color: var(--color-foreground);
+    color: var(--foreground);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -318,15 +318,15 @@
   }
 
   .dropdown-item:hover {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .dropdown-item--danger {
-    color: var(--color-destructive);
+    color: var(--destructive);
   }
 
   .dropdown-item--warning {
-    color: var(--color-warning);
+    color: var(--warning);
   }
 
   .dropdown-item-icon {
@@ -336,7 +336,7 @@
   }
 
   .dropdown-divider {
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--border);
     margin: 0.25rem 0;
   }
 
@@ -359,7 +359,7 @@
 
   .dropdown-relay-badge {
     padding: 0.25rem 0.5rem;
-    background: var(--color-accent);
+    background: var(--accent);
     border-radius: 0.25rem;
     font-size: 0.75rem;
     overflow: hidden;
@@ -380,13 +380,13 @@
   .modal-backdrop {
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    background: color-mix(in srgb, var(--foreground) 50%, transparent);
   }
 
   .modal-content {
     position: relative;
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
+    background: var(--background);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     width: 90%;
     max-width: 56rem;
@@ -401,14 +401,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
   }
 
   .modal-header h3 {
     margin: 0;
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .modal-close {
@@ -421,7 +421,7 @@
   }
 
   .modal-close:hover {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .modal-close svg {
@@ -433,7 +433,7 @@
     flex: 1;
     overflow: auto;
     padding: 1.5rem;
-    background: var(--color-muted);
+    background: var(--muted);
   }
 
   .raw-event-content {
@@ -450,7 +450,7 @@
     justify-content: flex-end;
     gap: 0.5rem;
     padding: 1.5rem;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--border);
   }
 
   .modal-button {
@@ -464,12 +464,12 @@
 
   .modal-button--secondary {
     background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-foreground);
+    border: 1px solid var(--border);
+    color: var(--foreground);
   }
 
   .modal-button--secondary:hover {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .modal-button--primary {

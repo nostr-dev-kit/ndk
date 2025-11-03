@@ -100,14 +100,14 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 	.code-title {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin-bottom: 0.5rem;
 	}
 
 	.code-container {
 		position: relative;
-		background: color-mix(in srgb, var(--color-muted) calc(0.5 * 100%), transparent);
-		border: 1px solid var(--color-border);
+		background: color-mix(in srgb, var(--muted) calc(0.5 * 100%), transparent);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		overflow: hidden;
 	}
@@ -118,14 +118,14 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 		justify-content: center;
 		gap: 0.5rem;
 		padding: 2rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		font-size: 0.875rem;
 	}
 
 	.spinner {
 		width: 1rem;
 		height: 1rem;
-		border: 2px solid color-mix(in srgb, var(--color-muted-foreground) calc(0.3 * 100%), transparent);
+		border: 2px solid color-mix(in srgb, var(--muted-foreground) calc(0.3 * 100%), transparent);
 		border-top-color: var(--primary);
 		border-radius: 50%;
 		animation: spin 0.6s linear infinite;
@@ -142,17 +142,17 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 		top: 0.75rem;
 		right: 0.75rem;
 		padding: 0.5rem;
-		background: var(--color-card);
-		border: 1px solid var(--color-border);
+		background: var(--card);
+		border: 1px solid var(--border);
 		border-radius: 0.375rem;
 		cursor: pointer;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		transition: all 0.2s;
 		z-index: 10;
 	}
 
 	.copy-button:hover {
-		background: var(--color-muted);
+		background: var(--muted);
 	}
 
 	.copy-button:active {

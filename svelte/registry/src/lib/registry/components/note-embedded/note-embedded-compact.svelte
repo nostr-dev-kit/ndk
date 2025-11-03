@@ -23,9 +23,9 @@
 
 <style>
   .note-embedded-compact {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.375rem;
-    background: var(--color-card);
+    background: var(--card);
     padding: 0.5rem;
     font-size: 0.875rem;
     line-height: 1.4;

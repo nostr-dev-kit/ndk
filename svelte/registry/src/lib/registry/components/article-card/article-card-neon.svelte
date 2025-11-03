@@ -18,11 +18,9 @@
   import Title from '../../ui/article/article-title.svelte';
   import Summary from '../../ui/article/article-summary.svelte';
   import ReadingTime from '../../ui/article/article-reading-time.svelte';
-  import UserAvatarName from '../../components/user-avatar-name/user-avatar-name.svelte';
   import { cn } from '../../utils/index.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/context.svelte.js';
-  import FileIcon from '../../icons/file.svelte';
 
   interface Props {
     /** NDK instance */
@@ -101,19 +99,6 @@
 
     <!-- Content Overlay -->
     <div class="relative z-10 flex flex-col h-full p-6">
-      <!-- Top badges -->
-      <div class="flex items-start justify-between mb-auto">
-        <div class="w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
-          <FileIcon class="w-5 h-5 text-white" />
-        </div>
-
-        <div class="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <svg width="14" height="14" class="text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </div>
-
       <!-- Bottom content -->
       <div class="mt-auto space-y-4">
         <!-- Title & Summary -->
@@ -123,17 +108,11 @@
         </div>
 
         <!-- Author & Reading Time -->
-        <div class="pt-4 border-t border-white/10">
-          <UserAvatarName
-            {ndk}
-            user={context.article.author}
-            avatarSize={36}
-            class="text-white [&_.text-muted-foreground]:text-white/70 [&_img]:ring-2 [&_img]:ring-white/20 [&_.bg-muted]:bg-white/10 [&_.bg-muted]:backdrop-blur-sm [&_.bg-muted]:ring-2 [&_.bg-muted]:ring-white/20"
-          >
-            {#snippet meta()}
-              <ReadingTime class="text-xs text-white/70" />
-            {/snippet}
-          </UserAvatarName>
+        <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+          <div class="text-sm text-white/80">
+            by {context.article.author.profile?.displayName || context.article.author.profile?.name || 'Anonymous'}
+          </div>
+          <ReadingTime class="text-sm text-white/70" />
         </div>
       </div>
     </div>

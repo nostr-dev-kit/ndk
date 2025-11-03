@@ -58,7 +58,7 @@
   <div class="voice-message-expanded {className}">
     <div class="header">
       <User.Root user={voiceMessage.author}>
-        <User.Avatar size={40} />
+        <User.Avatar class="w-10 h-10" />
         <User.Name />
       </User.Root>
       <VoiceMessage.Duration {currentTime} showCurrent={true} />

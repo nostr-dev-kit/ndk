@@ -193,7 +193,7 @@
 <style>
   .sidebar {
     width: 280px;
-    background: var(--color-background);
+    background: var(--background);
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -202,7 +202,7 @@
     overflow-y: auto;
     transition: width 300ms ease-in-out, transform 300ms ease-in-out;
     z-index: 900;
-    border-right: 1px solid var(--color-border);
+    border-right: 1px solid var(--border);
   }
 
   .sidebar.collapsed {
@@ -218,7 +218,7 @@
     padding: 0;
     border: none;
     background: transparent;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     border-radius: 0.375rem;
     cursor: pointer;
     transition: all 0.15s ease-in-out;
@@ -235,8 +235,8 @@
   }
 
   .collapse-button:hover {
-    background: var(--color-accent);
-    color: var(--color-foreground);
+    background: var(--accent);
+    color: var(--foreground);
   }
 
   .icon {
@@ -272,7 +272,7 @@
     gap: 0.5rem;
     padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     text-decoration: none;
     transition: all 0.15s ease-in-out;
     font-size: 0.85rem;
@@ -291,19 +291,19 @@
   }
 
   .nav-link:hover {
-    background: color-mix(in srgb, var(--color-accent) 50%, transparent);
-    color: var(--color-foreground);
+    background: color-mix(in srgb, var(--accent) 50%, transparent);
+    color: var(--foreground);
   }
 
   .nav-link.active {
-    background: var(--color-muted);
-    color: var(--color-foreground);
+    background: var(--muted);
+    color: var(--foreground);
     font-weight: 600;
   }
 
   :global(.tooltip-content) {
-    background: var(--color-popover);
-    border: 1px solid var(--color-border);
+    background: var(--popover);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 0.75rem;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -315,19 +315,19 @@
   :global(.tooltip-header) {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
     margin-bottom: 0.375rem;
   }
 
   :global(.tooltip-description) {
     font-size: 0.8125rem;
     line-height: 1.5;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   :global(.tooltip-title) {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 </style>

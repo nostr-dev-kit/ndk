@@ -303,10 +303,10 @@ sub.on('event', (event) => &#123;
   .badge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
-    background: var(--color-muted);
+    background: var(--muted);
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .badge-nip {
@@ -327,7 +327,7 @@ sub.on('event', (event) => &#123;
   .header-description {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 1rem 0 1.5rem 0;
   }
 
@@ -342,18 +342,18 @@ sub.on('event', (event) => &#123;
     flex-direction: column;
     gap: 0.25rem;
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 
   .info-card strong {
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .info-card span {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .installation h2 {
@@ -364,7 +364,7 @@ sub.on('event', (event) => &#123;
 
   .installation pre {
     padding: 1rem;
-    background: var(--color-muted);
+    background: var(--muted);
     border-radius: 0.5rem;
   }
 
@@ -386,7 +386,7 @@ sub.on('event', (event) => &#123;
 
   .component-item {
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 
@@ -401,7 +401,7 @@ sub.on('event', (event) => &#123;
 
   .component-item p {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -416,7 +416,7 @@ sub.on('event', (event) => &#123;
     flex-direction: column;
     gap: 0.25rem;
     padding: 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     text-decoration: none;
     transition: all 0.2s;
@@ -429,18 +429,18 @@ sub.on('event', (event) => &#123;
 
   .related-card strong {
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .related-card span {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   pre {
     margin: 1rem 0;
     padding: 1rem;
-    background: var(--color-muted);
+    background: var(--muted);
     border-radius: 0.5rem;
     overflow-x: auto;
   }
@@ -456,13 +456,13 @@ sub.on('event', (event) => &#123;
   }
 
   ul li {
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     line-height: 1.6;
   }
 
   code {
     font-family: 'Monaco', 'Menlo', monospace;
-    background: var(--color-muted);
+    background: var(--muted);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     font-size: 0.875em;

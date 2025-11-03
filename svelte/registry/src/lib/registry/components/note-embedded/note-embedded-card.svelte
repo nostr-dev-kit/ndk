@@ -21,9 +21,9 @@
 
 <style>
   .note-embedded-card {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
-    background: var(--color-card);
+    background: var(--card);
     padding: 1rem;
     overflow: hidden;
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);

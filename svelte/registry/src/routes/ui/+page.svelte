@@ -328,7 +328,7 @@
   .page-description {
     font-size: 1.25rem;
     line-height: 1.7;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -343,13 +343,13 @@
     font-size: 2rem;
     font-weight: 600;
     margin: 0 0 1rem 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .section-intro {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0 0 2rem 0;
   }
 
@@ -361,9 +361,9 @@
 
   .philosophy-card {
     padding: 2rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
-    background: var(--color-background);
+    background: var(--background);
   }
 
   .philosophy-card .card-icon {
@@ -382,13 +382,13 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .philosophy-card p {
     font-size: 0.9375rem;
     line-height: 1.6;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -401,17 +401,17 @@
 
   .layer-card {
     padding: 1.5rem;
-    border: 2px solid var(--color-border);
+    border: 2px solid var(--border);
     border-radius: 0.75rem;
-    background: var(--color-background);
+    background: var(--background);
     position: relative;
   }
 
   .layer-card.ui-layer {
     border-color: var(--primary);
     background: linear-gradient(135deg,
-      color-mix(in srgb, var(--primary) 3%, var(--color-background)),
-      var(--color-background) 50%
+      color-mix(in srgb, var(--primary) 3%, var(--background)),
+      var(--background) 50%
     );
   }
 
@@ -446,7 +446,7 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0 0 0.25rem 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .layer-path {
@@ -459,7 +459,7 @@
   .layer-description {
     font-size: 0.9375rem;
     line-height: 1.6;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0 0 1rem 0;
   }
 
@@ -472,10 +472,10 @@
   .layer-examples code {
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
-    background: var(--color-muted);
+    background: var(--muted);
     font-family: monospace;
     font-size: 0.8125rem;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .primitives-grid {
@@ -489,9 +489,9 @@
     flex-direction: column;
     gap: 0.75rem;
     padding: 1.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
-    background: var(--color-background);
+    background: var(--background);
     text-decoration: none;
     transition: all 0.2s ease-in-out;
   }
@@ -506,13 +506,13 @@
     font-size: 1.125rem;
     font-weight: 600;
     margin: 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .primitive-card p {
     font-size: 0.875rem;
     line-height: 1.5;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -526,10 +526,10 @@
   .primitive-components span {
     padding: 0.125rem 0.5rem;
     border-radius: 0.25rem;
-    background: var(--color-muted);
+    background: var(--muted);
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .getting-started-content {
@@ -539,24 +539,24 @@
   }
 
   .code-example {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     overflow: hidden;
   }
 
   .code-header {
     padding: 0.75rem 1rem;
-    background: var(--color-muted);
-    border-bottom: 1px solid var(--color-border);
+    background: var(--muted);
+    border-bottom: 1px solid var(--border);
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .code-example pre {
     margin: 0;
     padding: 1rem;
-    background: var(--color-background);
+    background: var(--background);
     overflow-x: auto;
   }
 
@@ -564,7 +564,7 @@
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 0.875rem;
     line-height: 1.6;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   @media (max-width: 768px) {

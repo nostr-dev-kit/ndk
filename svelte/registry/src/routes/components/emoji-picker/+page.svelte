@@ -125,8 +125,8 @@
 
   .info {
     padding: 2rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
     margin-top: 2rem;
   }
@@ -135,17 +135,17 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .info h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   code {
-    background: var(--color-accent);
+    background: var(--accent);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     font-size: 0.875em;

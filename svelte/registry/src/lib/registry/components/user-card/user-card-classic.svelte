@@ -65,7 +65,7 @@
     className
   )}>
     <!-- Banner section -->
-    <User.Banner height="5rem" />
+    <User.Banner class="h-20" />
 
     <!-- Profile content -->
     <div class="relative px-5 pb-5 -mt-10">

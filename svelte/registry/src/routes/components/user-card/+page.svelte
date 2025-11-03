@@ -379,7 +379,12 @@
 		{/snippet}
 
 		{#snippet glassControl()}
-			<div class="flex flex-col gap-2">
+			<div
+				class="flex flex-col gap-2"
+				onclick={(e) => e.stopPropagation()}
+				onkeydown={(e) => e.stopPropagation()}
+				role="none"
+			>
 				<label class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Variant</label>
 				<Select.Root
 					selected={{ value: glassVariant, label: glassVariant === 'gradient' ? 'Gradient' : 'Transparent' }}
@@ -388,33 +393,47 @@
 					}}
 				>
 					<Select.Trigger
-						class="flex h-9 w-full items-center justify-between rounded-md border border-border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+						class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						<Select.Value placeholder="Select variant" />
-						<svg class="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<Select.Value placeholder="Select variant" class="text-left">
+							{glassVariant === 'gradient' ? 'Gradient' : 'Transparent'}
+						</Select.Value>
+						<svg class="h-4 w-4 opacity-50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
 						</svg>
 					</Select.Trigger>
 					<Select.Content
-						class="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md"
+						class="z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
 						sideOffset={5}
 					>
-						<div class="p-1">
-							<Select.Item
-								value="gradient"
-								label="Gradient"
-								class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-							>
-								Gradient
-							</Select.Item>
-							<Select.Item
-								value="transparent"
-								label="Transparent"
-								class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-							>
-								Transparent
-							</Select.Item>
-						</div>
+						<Select.Item
+							value="gradient"
+							label="Gradient"
+							class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+						>
+							<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+								{#if glassVariant === 'gradient'}
+									<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+									</svg>
+								{/if}
+							</span>
+							Gradient
+						</Select.Item>
+						<Select.Item
+							value="transparent"
+							label="Transparent"
+							class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+						>
+							<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+								{#if glassVariant === 'transparent'}
+									<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+									</svg>
+								{/if}
+							</span>
+							Transparent
+						</Select.Item>
 					</Select.Content>
 				</Select.Root>
 			</div>

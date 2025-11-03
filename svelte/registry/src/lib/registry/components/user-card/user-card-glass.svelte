@@ -29,8 +29,11 @@
     /** Card height (default: h-[380px]) */
     height?: string;
 
-    /** Primary color for gradient (default: #6366f1 - indigo-500) */
+    /** Primary color for gradient (default: derived from pubkey) */
     primaryColor?: string;
+
+    /** Background variant: 'gradient' (default) or 'transparent' */
+    variant?: 'gradient' | 'transparent';
 
     /** Click handler */
     onclick?: (e: MouseEvent) => void;
@@ -45,6 +48,7 @@
     width = 'w-[280px]',
     height = 'h-[380px]',
     primaryColor,
+    variant = 'gradient',
     onclick,
     class: className = ''
   }: Props = $props();
@@ -184,11 +188,13 @@
     <div class="relative z-10 flex flex-col items-center justify-center h-full px-6 py-8">
       <!-- Frosted glass card -->
       <div class="glass-card rounded-3xl p-6 flex flex-col items-center gap-4 w-full backdrop-blur-xl overflow-hidden">
-        <!-- Animated gradient mesh background -->
-        <div class="absolute inset-0 glass-gradient -z-10"></div>
+        {#if variant === 'gradient'}
+          <!-- Animated gradient mesh background -->
+          <div class="absolute inset-0 glass-gradient -z-10"></div>
 
-        <!-- Noise texture overlay -->
-        <div class="absolute inset-0 noise-texture opacity-30 -z-10"></div>
+          <!-- Noise texture overlay -->
+          <div class="absolute inset-0 noise-texture opacity-30 -z-10"></div>
+        {/if}
 
         <!-- Avatar with glow -->
         <div class="relative">

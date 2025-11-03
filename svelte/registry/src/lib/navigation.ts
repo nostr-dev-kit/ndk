@@ -27,7 +27,7 @@ import {
   CloudUploadIcon,
   AtIcon,
   HighlighterIcon,
-  Hashtag01Icon
+  Tag01Icon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -142,7 +142,7 @@ export const componentCategories: NavCategory[] = [
   {
     title: 'Hashtag',
     items: [
-      { name: 'Card', path: '/components/hashtag-card', icon: Hashtag01Icon, title: 'Hashtag Card', description: 'Display hashtag activity and statistics. Track conversations, see contributors, and follow topics with portrait and compact variants.' },
+      { name: 'Card', path: '/components/hashtag-card', icon: Tag01Icon, title: 'Hashtag Card', description: 'Display hashtag activity and statistics. Track conversations, see contributors, and follow topics with portrait and compact variants.' },
     ]
   },
   {

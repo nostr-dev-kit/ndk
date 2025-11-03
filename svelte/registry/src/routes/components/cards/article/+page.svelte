@@ -11,6 +11,7 @@
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import ComponentCardInline from '$site-components/ComponentCardInline.svelte';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
+	import * as ComponentAnatomy from '$site-components/component-anatomy';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -51,13 +52,8 @@
 		})();
 	});
 
-	// Anatomy interaction state
-	let selectedLayer = $state<string | null>(null);
+	// Anatomy layer data
 	let focusedPrimitive = $state<string | null>(null);
-
-	function toggleLayer(layerId: string) {
-		selectedLayer = selectedLayer === layerId ? null : layerId;
-	}
 
 	function openPrimitiveDrawer(primitiveId: string) {
 		focusedPrimitive = primitiveId;
@@ -66,6 +62,33 @@
 	function closePrimitiveDrawer() {
 		focusedPrimitive = null;
 	}
+
+	const anatomyLayers: Record<string, ComponentAnatomy.AnatomyLayer> = {
+		image: {
+			id: 'image',
+			label: 'Article.Image',
+			description: 'Displays the article cover image with automatic loading states and fallback handling.',
+			props: ['class']
+		},
+		title: {
+			id: 'title',
+			label: 'Article.Title',
+			description: 'Renders the article title from NDK article metadata.',
+			props: ['class']
+		},
+		summary: {
+			id: 'summary',
+			label: 'Article.Summary',
+			description: 'Shows article summary or excerpt with configurable length and truncation.',
+			props: ['maxLength', 'class']
+		},
+		readingTime: {
+			id: 'readingTime',
+			label: 'Article.ReadingTime',
+			description: 'Calculates and displays estimated reading time based on content length.',
+			props: ['wordsPerMinute', 'showSuffix', 'class']
+		}
+	};
 
 	const primitiveData = {
 		root: {
@@ -299,154 +322,35 @@
 	{#if !loading}
 
 		<!-- Anatomy Section -->
-		<section class="mb-24">
-			<h2 class="text-3xl font-bold mb-4">Anatomy</h2>
-			<p class="text-muted-foreground mb-8">Click on any layer to see its details and props</p>
+		<ComponentAnatomy.Root>
+			<ComponentAnatomy.Preview>
+				{#if article1}
+					<div class="relative bg-card border border-border rounded-xl overflow-hidden">
+						<Article.Root {ndk} article={article1}>
+							<ComponentAnatomy.Layer id="image" label="Article.Image" class="h-48 overflow-hidden" absolute={true}>
+								<Article.Image class="w-full h-full object-cover" />
+							</ComponentAnatomy.Layer>
 
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-				<!-- Card Preview -->
-				<div class="flex items-center justify-center lg:justify-end">
-					<div class="max-w-md w-full relative">
-						{#if article1}
-							<!-- The actual card preview -->
-							<div class="relative bg-card border border-border rounded-xl overflow-hidden">
-								<Article.Root {ndk} article={article1}>
-									<div class="relative h-48 overflow-hidden">
-										<Article.Image class="w-full h-full object-cover" />
-										<!-- Image Layer Overlay -->
-										<button
-											type="button"
-											class="group absolute inset-0 border-2 border-dashed border-primary/60 transition-all cursor-pointer {selectedLayer ===
-											'image'
-												? 'bg-primary/20 border-primary'
-												: 'hover:bg-primary/5'}"
-											onclick={() => toggleLayer('image')}
-										>
-											<span
-												class="absolute -bottom-8 right-2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-											>
-												Article.Image
-											</span>
-										</button>
-									</div>
+							<div class="p-4 space-y-3">
+								<ComponentAnatomy.Layer id="title" label="Article.Title">
+									<Article.Title class="text-lg font-semibold" />
+								</ComponentAnatomy.Layer>
 
-									<div class="p-4 space-y-3">
-										<!-- Title Layer -->
-										<div class="relative">
-											<Article.Title class="text-lg font-semibold" />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {selectedLayer ===
-												'title'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('title')}
-											>
-												<span
-													class="absolute -bottom-7 right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-												>
-													Article.Title
-												</span>
-											</button>
-										</div>
+								<ComponentAnatomy.Layer id="summary" label="Article.Summary">
+									<Article.Summary class="text-sm text-muted-foreground" maxLength={100} />
+								</ComponentAnatomy.Layer>
 
-										<!-- Summary Layer -->
-										<div class="relative">
-											<Article.Summary class="text-sm text-muted-foreground" maxLength={100} />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {selectedLayer ===
-												'summary'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('summary')}
-											>
-												<span
-													class="absolute -bottom-7 right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-												>
-													Article.Summary
-												</span>
-											</button>
-										</div>
-
-										<!-- Reading Time Layer -->
-										<div class="relative w-fit">
-											<Article.ReadingTime class="text-xs text-muted-foreground" />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {selectedLayer ===
-												'readingTime'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('readingTime')}
-											>
-												<span
-													class="absolute -bottom-7 right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity"
-												>
-													Article.ReadingTime
-												</span>
-											</button>
-										</div>
-									</div>
-								</Article.Root>
+								<ComponentAnatomy.Layer id="readingTime" label="Article.ReadingTime" class="w-fit">
+									<Article.ReadingTime class="text-xs text-muted-foreground" />
+								</ComponentAnatomy.Layer>
 							</div>
-						{/if}
+						</Article.Root>
 					</div>
-				</div>
+				{/if}
+			</ComponentAnatomy.Preview>
 
-				<!-- Detail Panel (Always Visible, Reserved Space) -->
-				<div class="flex flex-col justify-start">
-					{#if selectedLayer === 'image'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">Article.Image</h3>
-							<p class="text-muted-foreground mb-4">
-								Displays the article cover image with automatic loading states and fallback handling.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else if selectedLayer === 'title'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">Article.Title</h3>
-							<p class="text-muted-foreground mb-4">
-								Renders the article title from NDK article metadata.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else if selectedLayer === 'summary'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">Article.Summary</h3>
-							<p class="text-muted-foreground mb-4">
-								Shows article summary or excerpt with configurable length and truncation.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">maxLength</code>
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else if selectedLayer === 'readingTime'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">Article.ReadingTime</h3>
-							<p class="text-muted-foreground mb-4">
-								Calculates and displays estimated reading time based on content length.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">wordsPerMinute</code>
-								<code class="bg-muted px-2 py-1 rounded text-sm">showSuffix</code>
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else}
-						<div class="text-muted-foreground text-sm">
-							Hover and click on a layer to see its details
-						</div>
-					{/if}
-				</div>
-			</div>
-		</section>
+			<ComponentAnatomy.DetailPanel layers={anatomyLayers} />
+		</ComponentAnatomy.Root>
 
 		<!-- Components Section -->
 		<section class="mb-24">

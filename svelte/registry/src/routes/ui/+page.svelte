@@ -194,6 +194,14 @@
         </div>
       </a>
 
+      <a href="/ui/event" class="primitive-card">
+        <h3>Event</h3>
+        <p>Display event metadata and relationships</p>
+        <div class="primitive-components">
+          <span>ReplyIndicator</span>
+        </div>
+      </a>
+
       <a href="/ui/follow-pack" class="primitive-card">
         <h3>Follow Pack</h3>
         <p>Display curated user lists</p>

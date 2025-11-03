@@ -10,6 +10,8 @@
 	import Demo from '$site-components/Demo.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
+	import * as ComponentAnatomy from '$site-components/component-anatomy';
+	import { FollowPack } from '$lib/registry/ui/follow-pack';
 
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
@@ -50,6 +52,34 @@
 	const displayPacks = $derived(
 		[pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]
 	);
+
+	// Anatomy layer data
+	const anatomyLayers: Record<string, ComponentAnatomy.AnatomyLayer> = {
+		image: {
+			id: 'image',
+			label: 'FollowPack.Image',
+			description: 'Displays the follow pack image. Automatically handles missing images with a fallback icon. Supports gradient overlays for better text readability.',
+			props: ['class', 'showGradient', 'fallback']
+		},
+		title: {
+			id: 'title',
+			label: 'FollowPack.Title',
+			description: 'Displays the follow pack title. Shows "Untitled Pack" if no title is set. Supports line clamping for overflow control.',
+			props: ['class', 'lines']
+		},
+		description: {
+			id: 'description',
+			label: 'FollowPack.Description',
+			description: 'Displays the follow pack description. Automatically hidden if no description exists. Supports both character truncation and line clamping.',
+			props: ['class', 'maxLength', 'lines']
+		},
+		memberCount: {
+			id: 'memberCount',
+			label: 'FollowPack.MemberCount',
+			description: 'Displays the number of people in the follow pack. Counts the pubkeys array from the event. Supports both short (number only) and long (formatted with "people") formats.',
+			props: ['class', 'format']
+		}
+	};
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -326,6 +356,37 @@
 				}
 			]}
 		/>
+	{/if}
+
+	<!-- Anatomy Section -->
+	{#if pack1}
+		<ComponentAnatomy.Root>
+			<ComponentAnatomy.Preview>
+				<div class="relative bg-card border border-border rounded-xl overflow-hidden">
+					<FollowPack.Root {ndk} followPack={pack1}>
+						<ComponentAnatomy.Layer id="image" label="FollowPack.Image" class="h-48 overflow-hidden" absolute={true}>
+							<FollowPack.Image class="w-full h-full object-cover" />
+						</ComponentAnatomy.Layer>
+
+						<div class="p-4 space-y-3">
+							<ComponentAnatomy.Layer id="title" label="FollowPack.Title">
+								<FollowPack.Title class="text-lg font-semibold" />
+							</ComponentAnatomy.Layer>
+
+							<ComponentAnatomy.Layer id="description" label="FollowPack.Description">
+								<FollowPack.Description class="text-sm text-muted-foreground" maxLength={100} />
+							</ComponentAnatomy.Layer>
+
+							<ComponentAnatomy.Layer id="memberCount" label="FollowPack.MemberCount" class="w-fit">
+								<FollowPack.MemberCount class="text-xs text-muted-foreground" format="long" />
+							</ComponentAnatomy.Layer>
+						</div>
+					</FollowPack.Root>
+				</div>
+			</ComponentAnatomy.Preview>
+
+			<ComponentAnatomy.DetailPanel layers={anatomyLayers} />
+		</ComponentAnatomy.Root>
 	{/if}
 
 	<!-- Blocks Section -->

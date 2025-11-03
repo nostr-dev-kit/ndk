@@ -2,17 +2,11 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
-  // Import examples
-  import BasicExample from './examples/basic.svelte';
-  import BasicExampleRaw from './examples/basic.svelte?raw';
-  import WithOverflowExample from './examples/with-overflow.svelte';
-  import WithOverflowExampleRaw from './examples/with-overflow.svelte?raw';
-  import WithTextOverflowExample from './examples/with-text-overflow.svelte';
-  import WithTextOverflowExampleRaw from './examples/with-text-overflow.svelte?raw';
-  import WithSnippetExample from './examples/with-snippet.svelte';
-  import WithSnippetExampleRaw from './examples/with-snippet.svelte?raw';
+  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -27,59 +21,94 @@
     'c48e29f04b482cc01ca1f9ef8c86ef8318c059e0e9353235162f080f26e14c11',
     '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
   ];
+
+  const cardData = {
+    name: 'avatar-group',
+    title: 'AvatarGroup',
+    description: 'Display multiple user avatars with overflow count.',
+    richDescription: 'Displays multiple user avatars in a stacked group with smart ordering (prioritizes followed users) and flexible overflow display options.',
+    command: 'npx shadcn@latest add avatar-group',
+    apiDocs: []
+  };
 </script>
 
-<div class="component-page">
-  <header>
+<div class="px-8">
+  <!-- Header -->
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1>AvatarGroup</h1>
-        <EditProps.Root>
-          <EditProps.Prop name="Max avatars" type="number" bind:value={maxAvatars} />
-          <EditProps.Button>Edit Examples</EditProps.Button>
-        </EditProps.Root>
+      <h1 class="text-4xl font-bold">AvatarGroup</h1>
     </div>
-    <p>Display multiple user avatars in a stacked group with smart ordering based on follows.</p>
-  </header>
+    <p class="text-lg text-muted-foreground mb-6">
+      Display multiple user avatars in a stacked group with smart ordering and flexible overflow display options.
+    </p>
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+    <EditProps.Root>
+      <EditProps.Prop name="Max avatars" type="number" bind:value={maxAvatars} />
+      <EditProps.Button>Edit Examples</EditProps.Button>
+    </EditProps.Root>
+  </div>
 
-    <Demo
-      title="Basic"
-      description="Simple avatar group showing multiple users with smart ordering. Users you follow appear first."
-      component="avatar-group"
-      code={BasicExampleRaw}
-    >
-      <BasicExample {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
-    </Demo>
+  <!-- ComponentsShowcase Section -->
+  {#snippet defaultPreview()}
+    <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
+  {/snippet}
 
-    <Demo
-      title="With Overflow"
-      description="Shows overflow count when there are more users than max. Adjust the max avatars field above to see the effect."
-      component="avatar-group"
-      code={WithOverflowExampleRaw}
-    >
-      <WithOverflowExample {ndk} pubkeys={examplePubkeys} max={maxAvatars} />
-    </Demo>
+  {#snippet withOverflowPreview()}
+    <AvatarGroup {ndk} pubkeys={examplePubkeys} max={maxAvatars} />
+  {/snippet}
 
-    <Demo
-      title="Text Overflow Variant"
-      description="Display the overflow count as text to the side instead of in a circular avatar."
-      component="avatar-group"
-      code={WithTextOverflowExampleRaw}
-    >
-      <WithTextOverflowExample {ndk} pubkeys={examplePubkeys} />
-    </Demo>
+  {#snippet textOverflowPreview()}
+    <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
+  {/snippet}
 
-    <Demo
-      title="Custom Overflow with Snippet"
-      description="Use a snippet to completely customize how the overflow count is displayed."
-      component="avatar-group"
-      code={WithSnippetExampleRaw}
-    >
-      <WithSnippetExample {ndk} pubkeys={examplePubkeys} />
-    </Demo>
-  </section>
+  {#snippet snippetPreview()}
+    <AvatarGroup {ndk} pubkeys={examplePubkeys} max={4}>
+      {#snippet overflowSnippet(count)}
+        <div class="flex items-center gap-1 ml-2">
+          <span class="font-bold text-primary">+{count}</span>
+          <span class="text-sm text-muted-foreground">more</span>
+        </div>
+      {/snippet}
+    </AvatarGroup>
+  {/snippet}
+
+  <ComponentPageSectionTitle
+    title="Showcase"
+    description="Avatar group variants with different overflow display options."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Default',
+        description: 'Basic stacked avatars with smart ordering',
+        command: 'npx shadcn@latest add avatar-group',
+        preview: defaultPreview,
+        cardData
+      },
+      {
+        name: 'With Overflow',
+        description: 'Circular badge for overflow count',
+        command: 'npx shadcn@latest add avatar-group',
+        preview: withOverflowPreview,
+        cardData
+      },
+      {
+        name: 'Text Overflow',
+        description: 'Text-based overflow display',
+        command: 'npx shadcn@latest add avatar-group',
+        preview: textOverflowPreview,
+        cardData
+      },
+      {
+        name: 'Custom Snippet',
+        description: 'Fully customizable overflow rendering',
+        command: 'npx shadcn@latest add avatar-group',
+        preview: snippetPreview,
+        cardData
+      }
+    ]}
+  />
 
   <section class="usage">
     <h2>Usage</h2>

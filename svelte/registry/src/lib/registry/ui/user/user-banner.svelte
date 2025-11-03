@@ -32,7 +32,7 @@
     if (resolvedPubkey) {
       return `background: ${deterministicPubkeyGradient(resolvedPubkey)}`;
     }
-    return 'background: var(--color-primary)';
+    return 'background: var(--primary)';
   });
 
   $effect(() => {

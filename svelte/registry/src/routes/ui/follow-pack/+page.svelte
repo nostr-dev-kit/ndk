@@ -266,7 +266,7 @@ const members: NDKUser[] = followPack.members;
 // Render member list
 &#123;#each members as member&#125;
   &lt;User.Root &#123;ndk&#125; user=&#123;member&#125;&gt;
-    &lt;User.Avatar size=&#123;40&#125; /&gt;
+    &lt;User.Avatar class="w-10 h-10" /&gt;
     &lt;User.Name /&gt;
   &lt;/User.Root&gt;
 &#123;/each&#125;</code></pre>
@@ -341,7 +341,7 @@ const members: NDKUser[] = followPack.members;
   }
 
   .badge-nip {
-    background: var(--color-primary);
+    background: var(--primary);
     color: white;
   }
 
@@ -349,7 +349,7 @@ const members: NDKUser[] = followPack.members;
     font-size: 3rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -425,7 +425,7 @@ const members: NDKUser[] = followPack.members;
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--primary);
     display: block;
     margin-bottom: 0.5rem;
   }
@@ -454,7 +454,7 @@ const members: NDKUser[] = followPack.members;
   }
 
   .related-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
   }
 

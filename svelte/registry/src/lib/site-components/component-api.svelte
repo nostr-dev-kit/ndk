@@ -201,7 +201,7 @@
 	.slot-name {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: var(--color-primary);
+		color: var(--primary);
 		font-family: 'Monaco', 'Courier New', monospace;
 	}
 

@@ -83,7 +83,7 @@
 	.loading-spinner {
 		width: 1rem;
 		height: 1rem;
-		border: 2px solid var(--color-primary);
+		border: 2px solid var(--primary);
 		border-top-color: transparent;
 		border-radius: 50%;
 		animation: spin 0.6s linear infinite;
@@ -113,7 +113,7 @@
 
 	.kind-badge {
 		padding: 0.25rem 0.5rem;
-		background: var(--color-primary);
+		background: var(--primary);
 		color: var(--primary-foreground);
 		border-radius: 0.25rem;
 		font-weight: 600;

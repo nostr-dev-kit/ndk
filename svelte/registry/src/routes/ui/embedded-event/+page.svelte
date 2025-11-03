@@ -264,7 +264,7 @@ embedded.event    // NDKEvent | null</code></pre>
   }
 
   .badge-nip {
-    background: var(--color-primary);
+    background: var(--primary);
     color: white;
   }
 
@@ -272,7 +272,7 @@ embedded.event    // NDKEvent | null</code></pre>
     font-size: 3rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -349,7 +349,7 @@ embedded.event    // NDKEvent | null</code></pre>
   .variant-item strong,
   .state-item strong {
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--primary);
     display: block;
     margin-bottom: 0.25rem;
   }
@@ -380,7 +380,7 @@ embedded.event    // NDKEvent | null</code></pre>
   }
 
   .related-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
   }
 

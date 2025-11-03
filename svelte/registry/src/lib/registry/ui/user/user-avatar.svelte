@@ -4,9 +4,6 @@
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
 
   interface Props {
-    /** Size in pixels */
-    size?: number;
-
     /** Additional CSS classes */
     class?: string;
 
@@ -18,7 +15,6 @@
   }
 
   let {
-    size = 48,
     class: className = '',
     fallback,
     alt
@@ -37,7 +33,7 @@
   const avatarGradient = $derived(
     context.ndkUser?.pubkey
       ? deterministicPubkeyGradient(context.ndkUser.pubkey)
-      : 'var(--color-primary)'
+      : 'var(--primary)'
   );
 </script>
 
@@ -45,13 +41,12 @@
   <img
     src={imageUrl}
     alt={displayName}
-    class="rounded-full object-cover block {className}"
-    style="width: {size}px; height: {size}px;"
+    class="rounded-full object-cover block w-12 h-12 {className}"
   />
 {:else}
   <div
-    class="rounded-full flex items-center justify-center {className}"
-    style="width: {size}px; height: {size}px; background: {avatarGradient};"
+    class="rounded-full flex items-center justify-center w-12 h-12 {className}"
+    style="background: {avatarGradient};"
   >
     {displayName.slice(0, 2).toUpperCase()}
   </div>

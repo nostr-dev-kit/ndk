@@ -11,7 +11,7 @@
 </script>
 
 <User.Root {ndk} pubkey={userPubkey}>
-  <User.Avatar size={48} class="rounded-full" />
+  <User.Avatar class="rounded-full" />
   <User.Name class="font-semibold" />
   <User.Handle class="text-sm text-gray-500" />
 </User.Root>

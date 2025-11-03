@@ -16,7 +16,7 @@
 <div class="custom-user-input-demo">
   {#if selectedUser}
     <div class="selected-display">
-      <User.Avatar {ndk} user={selectedUser} size={32} />
+      <User.Avatar {ndk} user={selectedUser} class="w-8 h-8" />
       <div>
         <div class="name">{selectedUser.profile?.name || 'Anonymous'}</div>
         <div class="npub">{selectedUser.npub.slice(0, 16)}...</div>
@@ -31,7 +31,7 @@
         <UserInput.Item {result}>
           {#snippet child({ props })}
             <div {...props} class="custom-result-item">
-              <User.Avatar {ndk} user={result.user} size={40} />
+              <User.Avatar {ndk} user={result.user} class="w-10 h-10" />
               <div class="user-info">
                 <div class="user-name">{result.user.profile?.name || 'Anonymous'}</div>
                 {#if result.user.profile?.nip05}

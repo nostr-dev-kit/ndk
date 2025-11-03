@@ -236,7 +236,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
 &#123;#each zaps as zap&#125;
   &lt;div class="zap-with-sender"&gt;
     &lt;User.Root &#123;ndk&#125; pubkey=&#123;zap.sender.pubkey&#125;&gt;
-      &lt;User.Avatar size=&#123;32&#125; /&gt;
+      &lt;User.Avatar class="w-8 h-8" /&gt;
       &lt;User.Name /&gt;
     &lt;/User.Root&gt;
 
@@ -311,7 +311,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
   }
 
   .badge-nip {
-    background: var(--color-primary);
+    background: var(--primary);
     color: white;
   }
 
@@ -319,7 +319,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
     font-size: 3rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -395,7 +395,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--primary);
     display: block;
     margin-bottom: 0.5rem;
   }
@@ -424,7 +424,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
   }
 
   .related-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
   }
 

@@ -13,7 +13,7 @@
 <!-- User.Avatar with minimal Root wrapper for standalone usage -->
 <User.Root {ndk} pubkey={userPubkey}>
   <div class="flex items-center gap-3">
-    <User.Avatar size={40} class="rounded-full" />
+    <User.Avatar class="rounded-full w-10 h-10" />
     <div>
       <div class="font-medium">Avatar with Root</div>
       <div class="text-sm text-gray-500">Minimal wrapper for context</div>

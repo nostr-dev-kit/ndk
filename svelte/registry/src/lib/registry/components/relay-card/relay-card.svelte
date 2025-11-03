@@ -357,8 +357,8 @@
   }
 
   .badge-read {
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
   }
 
   .badge-write {
@@ -477,8 +477,8 @@
 
   .nip-badge {
     padding: 0.125rem 0.5rem;
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
     border-radius: 0.375rem;
     font-size: 0.75rem;
     font-weight: 600;
@@ -509,7 +509,7 @@
 
   .copy-button:hover {
     background: var(--color-accent);
-    border-color: var(--color-primary);
+    border-color: var(--primary);
   }
 
   .blacklist-button {

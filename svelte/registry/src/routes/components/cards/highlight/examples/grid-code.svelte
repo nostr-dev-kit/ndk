@@ -22,7 +22,7 @@
 
     <!-- Author info below -->
     <div class="flex items-center gap-2 mt-2 px-1">
-      <User.Avatar {ndk} user={event.author} size={20} class="rounded-full" />
+      <User.Avatar {ndk} user={event.author} class="rounded-full w-5 h-5" />
       <User.Name {ndk} user={event.author} class="text-xs text-muted-foreground truncate" />
     </div>
   </article>

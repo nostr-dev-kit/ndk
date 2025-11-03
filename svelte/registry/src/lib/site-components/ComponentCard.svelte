@@ -6,6 +6,7 @@
 	import { nip19 } from '@nostr-dev-kit/ndk';
 	import { User } from '$lib/registry/ui';
 	import ComponentAPI from '$site-components/component-api.svelte';
+	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
 
 	interface ComponentDoc {
 		name: string;
@@ -76,31 +77,8 @@
 			class="fixed left-[50%] top-[50%] z-[9999] w-[95%] max-w-[1200px] max-h-[95vh] translate-x-[-50%] translate-y-[-50%] overflow-y-auto rounded-lg border border-border bg-card shadow-lg"
 		>
 			{#if data}
-				<!-- Header -->
+				<!-- Header - Just close button -->
 				<div class="modal-header">
-					<div class="header-content">
-						<Dialog.Title class="modal-title">{data.title}</Dialog.Title>
-
-						<!-- Author attribution -->
-						{#if authorPubkey}
-							<div class="author-header">
-								<User.Root {ndk} pubkey={authorPubkey}>
-									<div class="author-attribution">
-										<User.Avatar class="author-avatar-small" />
-										<div class="author-meta">
-											<span class="author-label">by</span>
-											<User.Name class="author-name-header" />
-										</div>
-									</div>
-								</User.Root>
-							</div>
-						{/if}
-
-						<Dialog.Description class="modal-subtitle">
-							{data.description}
-						</Dialog.Description>
-					</div>
-
 					<Dialog.Close class="modal-close">
 						<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
@@ -116,6 +94,27 @@
 
 				<!-- Body -->
 				<div class="modal-body">
+					<!-- Title and Author -->
+					<div class="title-section">
+						<h1 class="component-title">{data.title}</h1>
+
+						<!-- Author attribution -->
+						{#if authorPubkey}
+							<div class="author-header">
+								<User.Root {ndk} pubkey={authorPubkey}>
+									<div class="author-attribution">
+										<User.Avatar class="!w-6 !h-6" />
+										<div class="author-meta">
+											<span class="author-label">by</span>
+											<User.Name class="author-name-header" />
+										</div>
+									</div>
+								</User.Root>
+							</div>
+						{/if}
+
+						<p class="component-description">{data.description}</p>
+					</div>
 					<!-- Live Preview -->
 					{#if preview}
 						<section class="section">
@@ -137,10 +136,7 @@
 					<!-- Installation -->
 					<section class="section">
 						<h3 class="section-title">Installation</h3>
-						<div class="install-command">
-							<span class="prompt">$</span>
-							<code>{data.command}</code>
-						</div>
+						<PMCommand command="execute" args={['shadcn@latest', 'add', data.name]} />
 
 						{#if data.dependencies && data.dependencies.length > 0}
 							<div class="dependencies">
@@ -195,28 +191,28 @@
 
 <style>
 	.modal-header {
-		padding: 2rem 2rem 1.5rem 2rem;
-		border-bottom: 1px solid var(--color-border);
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 2rem;
+		position: absolute;
+		top: 1.5rem;
+		right: 1.5rem;
+		z-index: 10;
 	}
 
-	.header-content {
-		flex: 1;
+	.title-section {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: 1rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid var(--color-border);
+		margin-bottom: 2rem;
 	}
 
-	.modal-title {
-		font-size: 2.5rem;
-		font-weight: 800;
+	.component-title {
+		font-size: 3.5rem;
+		font-weight: 900;
 		color: var(--color-foreground);
 		margin: 0;
-		line-height: 1.2;
-		letter-spacing: -0.02em;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
 	}
 
 	.author-header {
@@ -230,8 +226,8 @@
 	}
 
 	:global(.author-avatar-small) {
-		width: 32px;
-		height: 32px;
+		width: 36px;
+		height: 36px;
 		border-radius: 9999px;
 		flex-shrink: 0;
 	}
@@ -240,7 +236,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		font-size: 0.9375rem;
+		font-size: 1rem;
 	}
 
 	.author-label {
@@ -253,11 +249,12 @@
 		font-weight: 600;
 	}
 
-	.modal-subtitle {
-		font-size: 1.0625rem;
+	.component-description {
+		font-size: 1.125rem;
 		color: var(--color-muted-foreground);
 		margin: 0;
-		line-height: 1.6;
+		line-height: 1.7;
+		max-width: 800px;
 	}
 
 	.modal-close {
@@ -281,7 +278,7 @@
 	}
 
 	.modal-body {
-		padding: 2rem;
+		padding: 3rem 2.5rem 2.5rem 2.5rem;
 		display: flex;
 		flex-direction: column;
 		gap: 3rem;
@@ -315,26 +312,6 @@
 		line-height: 1.6;
 		color: var(--color-foreground);
 		margin: 0;
-	}
-
-	.install-command {
-		font-family: monospace;
-		font-size: 0.875rem;
-		padding: 1rem 1.25rem;
-		background: var(--color-muted);
-		border: 1px solid var(--color-border);
-		border-radius: 0.5rem;
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	.prompt {
-		color: var(--color-muted-foreground);
-	}
-
-	.install-command code {
-		color: var(--color-foreground);
 	}
 
 	.dependencies {
@@ -383,7 +360,7 @@
 	}
 
 	.related-card:hover {
-		border-color: var(--color-primary);
+		border-color: var(--primary);
 		background: var(--color-accent);
 	}
 
@@ -399,65 +376,6 @@
 		color: var(--color-muted-foreground);
 	}
 
-	.author-container {
-		padding: 1.5rem;
-		background: var(--color-muted);
-		border: 1px solid var(--color-border);
-		border-radius: 0.5rem;
-	}
-
-	.author-card {
-		display: flex;
-		gap: 1rem;
-		align-items: start;
-	}
-
-	.author-info {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	:global(.author-avatar) {
-		width: 64px;
-		height: 64px;
-		flex-shrink: 0;
-	}
-
-	:global(.author-name) {
-		font-size: 1.125rem;
-		font-weight: 600;
-		color: var(--color-foreground);
-	}
-
-	:global(.author-bio) {
-		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
-		line-height: 1.5;
-	}
-
-	.metadata {
-		flex-direction: row;
-		gap: 2rem;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
-	}
-
-	.metadata-item {
-		display: flex;
-		gap: 0.5rem;
-		font-size: 0.875rem;
-	}
-
-	.metadata-label {
-		font-weight: 600;
-		color: var(--color-muted-foreground);
-	}
-
-	.metadata-value {
-		color: var(--color-foreground);
-	}
 
 	.sr-only {
 		position: absolute;

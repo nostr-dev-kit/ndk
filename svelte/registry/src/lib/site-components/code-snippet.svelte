@@ -126,7 +126,7 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 		width: 1rem;
 		height: 1rem;
 		border: 2px solid color-mix(in srgb, var(--color-muted-foreground) calc(0.3 * 100%), transparent);
-		border-top-color: var(--color-primary);
+		border-top-color: var(--primary);
 		border-radius: 50%;
 		animation: spin 0.6s linear infinite;
 	}

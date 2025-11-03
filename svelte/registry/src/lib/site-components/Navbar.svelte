@@ -173,7 +173,7 @@
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: var(--color-primary);
+    color: var(--primary);
   }
 
   .logo-icon {
@@ -261,7 +261,7 @@
   }
 
   .user-trigger:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
   }
 
   .user-dropdown {
@@ -312,7 +312,7 @@
   .login-button {
     padding: 0.5rem 1rem;
     border: none;
-    background: var(--color-primary);
+    background: var(--primary);
     color: var(--primary-foreground);
     font-size: 0.875rem;
     font-weight: 500;

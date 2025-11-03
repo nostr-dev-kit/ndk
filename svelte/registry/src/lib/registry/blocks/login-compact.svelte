@@ -342,7 +342,7 @@
 
   input:focus {
     outline: none;
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
   }
 
@@ -377,7 +377,7 @@
   }
 
   .qr-button:hover:not(:disabled) {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     background: var(--color-muted);
   }
 
@@ -394,8 +394,8 @@
   .primary-button {
     width: 100%;
     padding: 0.875rem;
-    background: var(--color-primary);
-    color: var(--color-primary-foreground);
+    background: var(--primary);
+    color: var(--primary-foreground);
     border: none;
     border-radius: 0.5rem;
     font-size: 0.875rem;
@@ -410,7 +410,7 @@
   }
 
   .primary-button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--color-primary) 90%, transparent);
+    background: color-mix(in srgb, var(--primary) 90%, transparent);
   }
 
   .primary-button:disabled {
@@ -436,7 +436,7 @@
   }
 
   .secondary-button:hover:not(:disabled) {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     background: var(--color-muted);
   }
 

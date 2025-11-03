@@ -189,13 +189,13 @@
   }
 
   .button-primary {
-    background: var(--color-primary);
+    background: var(--primary);
     color: var(--primary-foreground);
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
 
   .button-primary:hover {
-    background: color-mix(in srgb, var(--color-primary) 90%, transparent);
+    background: color-mix(in srgb, var(--primary) 90%, transparent);
   }
 
   .button-secondary {

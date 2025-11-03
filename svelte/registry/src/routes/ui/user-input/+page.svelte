@@ -183,7 +183,7 @@
     &lt;UserInput.Item &#123;result&#125;&gt;
       &#123;#snippet child(&#123; props &#125;)&#125;
         &lt;div &#123;...props&#125; class="custom-item"&gt;
-          &lt;User.Avatar &#123;ndk&#125; user=&#123;result.user&#125; size=&#123;40&#125; /&gt;
+          &lt;User.Avatar &#123;ndk&#125; user=&#123;result.user&#125; class="w-10 h-10" /&gt;
           &lt;div&gt;
             &lt;div class="name"&gt;&#123;result.user.profile?.name&#125;&lt;/div&gt;
             &lt;div class="nip05"&gt;&#123;result.user.profile?.nip05&#125;&lt;/div&gt;
@@ -305,7 +305,7 @@ userInput.clear()       // Function</code></pre>
   }
 
   .badge-nip {
-    background: var(--color-primary);
+    background: var(--primary);
     color: white;
   }
 
@@ -313,7 +313,7 @@ userInput.clear()       // Function</code></pre>
     font-size: 3rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -389,7 +389,7 @@ userInput.clear()       // Function</code></pre>
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--primary);
     display: block;
     margin-bottom: 0.5rem;
   }
@@ -414,7 +414,7 @@ userInput.clear()       // Function</code></pre>
 
   .search-type-item strong {
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--primary);
     display: block;
     margin-bottom: 0.25rem;
   }
@@ -444,7 +444,7 @@ userInput.clear()       // Function</code></pre>
   }
 
   .related-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
   }
 

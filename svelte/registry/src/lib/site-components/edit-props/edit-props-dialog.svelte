@@ -335,8 +335,8 @@
 
 	.btn-primary {
 		border: none;
-		background: var(--color-primary);
-		color: var(--color-primary-foreground);
+		background: var(--primary);
+		color: var(--primary-foreground);
 	}
 
 	.btn-primary:hover:not(:disabled) {

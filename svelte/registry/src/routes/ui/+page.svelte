@@ -309,17 +309,17 @@
     margin: 0 auto 1.5rem;
     border-radius: 1rem;
     background: linear-gradient(135deg,
-      color-mix(in srgb, var(--color-primary) 10%, transparent),
-      color-mix(in srgb, var(--color-primary) 5%, transparent)
+      color-mix(in srgb, var(--primary) 10%, transparent),
+      color-mix(in srgb, var(--primary) 5%, transparent)
     );
-    color: var(--color-primary);
+    color: var(--primary);
   }
 
   .page-title {
     font-size: 3.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -374,8 +374,8 @@
     height: 3rem;
     margin-bottom: 1rem;
     border-radius: 0.5rem;
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
   }
 
   .philosophy-card h3 {
@@ -408,9 +408,9 @@
   }
 
   .layer-card.ui-layer {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     background: linear-gradient(135deg,
-      color-mix(in srgb, var(--color-primary) 3%, var(--color-background)),
+      color-mix(in srgb, var(--primary) 3%, var(--color-background)),
       var(--color-background) 50%
     );
   }
@@ -429,14 +429,14 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.375rem;
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
   }
 
   .layer-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
-    background: var(--color-primary);
+    background: var(--primary);
     color: white;
     font-size: 0.75rem;
     font-weight: 600;
@@ -452,7 +452,7 @@
   .layer-path {
     font-family: monospace;
     font-size: 0.875rem;
-    color: var(--color-primary);
+    color: var(--primary);
     margin: 0 0 0.75rem 0;
   }
 
@@ -497,9 +497,9 @@
   }
 
   .primitive-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--primary) 20%, transparent);
   }
 
   .primitive-card h3 {

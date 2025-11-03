@@ -18,7 +18,7 @@
   <div class="flex items-center gap-4">
     {#each fallbackPubkeys as pubkey}
       <User.Root {ndk} {pubkey}>
-        <User.Avatar size={48} />
+        <User.Avatar />
       </User.Root>
     {/each}
   </div>

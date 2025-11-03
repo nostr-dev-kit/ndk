@@ -109,8 +109,7 @@
 		{/snippet}
 
 		<ComponentsShowcase
-			title="Blocks Showcase"
-			description="Four beautifully crafted variants. Each optimized for its purpose. Choose the perfect presentation for your content."
+			description="Beautifully crafted variants. Each optimized for its purpose. Choose the perfect presentation for your content."
 			blocks={[
 				{
 					name: 'Hero',

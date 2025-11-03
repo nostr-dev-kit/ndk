@@ -445,8 +445,8 @@
 
   /* Nostr highlight styles */
   :global(mark.nostr-highlight) {
-    background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
-    border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+    background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--primary) 60%, transparent);
     color: var(--color-foreground);
     @apply transition-all duration-200;
     @apply cursor-pointer;
@@ -456,7 +456,7 @@
   }
 
   :global(mark.nostr-highlight:hover) {
-    background-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
-    border-bottom-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--primary) 30%, transparent);
+    border-bottom-color: var(--primary);
   }
 </style>

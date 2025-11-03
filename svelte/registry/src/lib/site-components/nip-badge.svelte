@@ -17,8 +17,8 @@
     font-size: 0.625rem;
     font-weight: 500;
     line-height: 1;
-    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
-    color: color-mix(in srgb, var(--color-primary) 70%, var(--color-muted-foreground));
+    background: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: color-mix(in srgb, var(--primary) 70%, var(--color-muted-foreground));
     opacity: 0.7;
     pointer-events: none;
     flex-shrink: 0;

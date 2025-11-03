@@ -339,8 +339,8 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.callout-box {
-		background: linear-gradient(135deg, hsl(var(--color-primary) / 0.08), hsl(var(--color-primary) / 0.03));
-		border: 1px solid hsl(var(--color-primary) / 0.2);
+		background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.03));
+		border: 1px solid hsl(var(--primary) / 0.2);
 		border-radius: 0.5rem;
 		padding: 1.5rem;
 		margin: 2rem 0;
@@ -372,7 +372,7 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.sort-card h4 {
-		color: var(--color-primary);
+		color: var(--primary);
 		font-family: 'SF Mono', Monaco, monospace;
 	}
 
@@ -450,12 +450,12 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.next-card:hover {
-		border-color: var(--color-primary);
+		border-color: var(--primary);
 	}
 
 	.next-card h3 {
 		margin: 0 0 0.5rem 0;
-		color: var(--color-primary);
+		color: var(--primary);
 		font-size: 1.125rem;
 	}
 

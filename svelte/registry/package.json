@@ -21,16 +21,23 @@
     "ndk:upgrade": "bun run scripts/scan-and-upgrade.ts --yes"
   },
   "devDependencies": {
+    "@internationalized/date": "^3.8.1",
+    "@lucide/svelte": "^0.552.0",
     "@sveltejs/adapter-auto": "^6.1.0",
     "@sveltejs/adapter-vercel": "^6.0.0",
     "@sveltejs/kit": "^2.48.3",
     "@sveltejs/vite-plugin-svelte": "^6.2.0",
     "@tailwindcss/postcss": "4.1.16",
     "autoprefixer": "^10.4.21",
+    "clsx": "^2.1.1",
+    "package-manager-detector": "^1.3.0",
     "postcss": "^8.5.6",
     "svelte": "^5.43.0",
     "svelte-check": "^4.3.2",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^3.1.1",
     "tailwindcss": "4.1.16",
+    "tw-animate-css": "^1.4.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.7",
     "vite-plugin-devtools-json": "^1.0.0"
@@ -46,7 +53,7 @@
     "@nostr-dev-kit/sync": "0.4.0-beta.32",
     "@nostr-dev-kit/wallet": "0.8.11-beta.32",
     "@nostr-dev-kit/wot": "0.3.7-beta.32",
-    "bits-ui": "^2.8.3",
+    "bits-ui": "^2.11.0",
     "marked": "^16.4.1",
     "shiki": "^3.14.0",
     "svelte-motion": "^0.12.2"

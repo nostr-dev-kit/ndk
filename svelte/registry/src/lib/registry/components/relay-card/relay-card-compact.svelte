@@ -79,11 +79,11 @@
 	>
 		<!-- Bookmark Button (top-right) -->
 		<div class="absolute top-2 right-2 z-10">
-			<BookmarkButton {bookmarks} size="sm" />
+			<BookmarkButton {bookmarks} class="w-6 h-6" />
 		</div>
 
 		<!-- Icon -->
-		<Icon size={48} />
+		<Icon class="w-12 h-12" />
 
 		<!-- Name -->
 		<Name class="text-sm font-medium line-clamp-2" />

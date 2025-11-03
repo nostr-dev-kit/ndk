@@ -124,10 +124,6 @@
         <code>User.Field</code>
         <p>Display a custom profile field.</p>
       </div>
-      <div class="component-item">
-        <code>User.AvatarName</code>
-        <p>Combined avatar + name component.</p>
-      </div>
     </div>
   </section>
 
@@ -227,18 +223,6 @@
         { name: 'field', type: 'keyof NDKUserProfile', default: 'required', description: 'Profile field name to display (e.g., "website", "lud16", "about")' },
         { name: 'size', type: 'string', default: "'text-sm'", description: 'Text size CSS classes' },
         { name: 'maxLines', type: 'number', default: 'undefined', description: 'Maximum number of lines to show (uses line-clamp)' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>User.AvatarName</h2>
-    <p class="mb-4">Combined avatar and name display with optional metadata line below.</p>
-    <ApiTable
-      rows={[
-        { name: 'avatarSize', type: 'number', default: '40', description: 'Avatar size in pixels' },
-        { name: 'meta', type: "'handle' | 'about' | string | Snippet", default: 'undefined', description: 'Metadata to show below name. Use "handle" for @handle, "about" for bio, custom string, or a Snippet for full control' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

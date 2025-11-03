@@ -31,16 +31,13 @@
 				</div>
 
 				<div class="pt-4 border-t border-white/10">
-					<User.AvatarName
-						{ndk}
-						user={article.author}
-						avatarSize={36}
-						class="text-white [&_.text-muted-foreground]:text-white/70 [&_img]:ring-2 [&_img]:ring-white/20"
-					>
-						{#snippet meta()}
+					<User.Root {ndk} user={article.author} class="flex items-center gap-3">
+						<User.Avatar size={36} class="ring-2 ring-white/20" />
+						<div class="flex flex-col">
+							<User.Name class="text-white" />
 							<Article.ReadingTime class="text-xs text-white/70" />
-						{/snippet}
-					</User.AvatarName>
+						</div>
+					</User.Root>
 				</div>
 			</div>
 		</div>

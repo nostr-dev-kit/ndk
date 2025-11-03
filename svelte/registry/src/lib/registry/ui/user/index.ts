@@ -6,7 +6,6 @@ import Handle from './user-handle.svelte';
 import Bio from './user-bio.svelte';
 import Banner from './user-banner.svelte';
 import Nip05 from './user-nip05.svelte';
-import AvatarName from './user-avatar-name.svelte';
 
 export const User = {
 	Root,
@@ -16,8 +15,7 @@ export const User = {
 	Handle,
 	Bio,
 	Banner,
-	Nip05,
-	AvatarName
+	Nip05
 };
 
 export type { UserContext } from './context.svelte.js';

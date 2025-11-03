@@ -16,7 +16,7 @@
 	import { User } from '../../ui/user';
 	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import RepostButton from '../actions/repost-button.svelte';
-	import { ReactionButton } from '../actions/index.js';
+	import { ReactionButton } from '../reaction/index.js';
 	// import { ZapButton } from '../../components/zap/index.js'; // TODO: Add ZapButton when available
 	import { cn } from '../../utils/index.js';
 

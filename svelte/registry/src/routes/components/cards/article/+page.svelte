@@ -390,7 +390,7 @@
 					</Tabs.Content>
 
 					<Tabs.Content value="hero">
-						<ComponentCardInline data={heroCardData}>
+						<ComponentCard inline data={heroCardData}>
 							{#snippet preview()}
 								<div class="max-w-2xl">
 									<ArticleCardHero {ndk} article={article1} />
@@ -400,7 +400,7 @@
 					</Tabs.Content>
 
 					<Tabs.Content value="medium">
-						<ComponentCardInline data={mediumCardData}>
+						<ComponentCard inline data={mediumCardData}>
 							{#snippet preview()}
 								<div class="space-y-4 max-w-2xl">
 									{#each displayArticles as article}
@@ -412,7 +412,7 @@
 					</Tabs.Content>
 
 					<Tabs.Content value="neon">
-						<ComponentCardInline data={neonCardData}>
+						<ComponentCard inline data={neonCardData}>
 							{#snippet preview()}
 								<ScrollArea orientation="horizontal" class="w-full">
 									<div class="flex gap-6 pb-4">

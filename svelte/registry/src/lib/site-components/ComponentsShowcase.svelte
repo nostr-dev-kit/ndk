@@ -77,11 +77,6 @@
 		}
 	}
 
-	function closeModal() {
-		showModal = false;
-		selectedBlock = null;
-	}
-
 	$effect(() => {
 		if (typeof window === 'undefined') return;
 

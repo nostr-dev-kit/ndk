@@ -7,10 +7,11 @@
 	import FollowPackCompact from '$lib/registry/components/follow-pack/follow-pack-compact.svelte';
 	import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
+	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
+	import * as Tabs from '$lib/components/ui/tabs';
 	import { FollowPack } from '$lib/registry/ui/follow-pack';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
@@ -53,6 +54,91 @@
 	const displayPacks = $derived(
 		[pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]
 	);
+
+	// Component card data for inline display
+	const heroCardData = {
+		name: 'follow-pack-hero',
+		title: 'FollowPackHero',
+		description: 'Featured display with full-bleed imagery.',
+		richDescription: 'The Follow Pack Hero component is designed to showcase follow packs in a dramatic, full-width layout. It features large imagery with overlaid text, making it perfect for landing pages, featured sections, and hero areas where you want to make a strong visual impact.',
+		command: 'npx shadcn@latest add follow-pack-hero',
+		apiDocs: [
+			{
+				name: 'FollowPackHero',
+				description: 'Hero-style follow pack display component',
+				importPath: "import FollowPackHero from '$lib/registry/components/follow-pack/follow-pack-hero.svelte'",
+				props: [
+					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+					{ name: 'followPack', type: 'NDKFollowPack', description: 'The follow pack event', required: true },
+					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			}
+		]
+	};
+
+	const portraitCardData = {
+		name: 'follow-pack-portrait',
+		title: 'FollowPackPortrait',
+		description: 'Vertical elegance for grid displays.',
+		richDescription: 'The Follow Pack Portrait component presents follow packs in a vertical card format, perfect for grid layouts and gallery displays. Its portrait orientation makes it ideal for showing multiple packs side-by-side.',
+		command: 'npx shadcn@latest add follow-pack-portrait',
+		apiDocs: [
+			{
+				name: 'FollowPackPortrait',
+				description: 'Portrait follow pack card component',
+				importPath: "import FollowPackPortrait from '$lib/registry/components/follow-pack/follow-pack-portrait.svelte'",
+				props: [
+					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+					{ name: 'followPack', type: 'NDKFollowPack', description: 'The follow pack event', required: true },
+					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			}
+		]
+	};
+
+	const compactCardData = {
+		name: 'follow-pack-compact',
+		title: 'FollowPackCompact',
+		description: 'Information-dense for feeds.',
+		richDescription: 'The Follow Pack Compact component provides a horizontal, information-dense display perfect for content feeds and streams. It efficiently uses horizontal space while presenting all essential information.',
+		command: 'npx shadcn@latest add follow-pack-compact',
+		apiDocs: [
+			{
+				name: 'FollowPackCompact',
+				description: 'Compact follow pack card component',
+				importPath: "import FollowPackCompact from '$lib/registry/components/follow-pack/follow-pack-compact.svelte'",
+				props: [
+					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+					{ name: 'followPack', type: 'NDKFollowPack', description: 'The follow pack event', required: true },
+					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			}
+		]
+	};
+
+	const listItemCardData = {
+		name: 'follow-pack-list-item',
+		title: 'FollowPackListItem',
+		description: 'Minimal design for sidebars.',
+		richDescription: 'The Follow Pack List Item component provides a minimal, space-efficient display designed for sidebar navigation and compact lists. It delivers essential information in a clean format.',
+		command: 'npx shadcn@latest add follow-pack-list-item',
+		apiDocs: [
+			{
+				name: 'FollowPackListItem',
+				description: 'Minimal list item component',
+				importPath: "import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte'",
+				props: [
+					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+					{ name: 'followPack', type: 'NDKFollowPack', description: 'The follow pack event', required: true },
+					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			}
+		]
+	};
 
 	// Anatomy layer data
 	const anatomyLayers: Record<string, ComponentAnatomy.AnatomyLayer> = {
@@ -107,7 +193,7 @@
 		{/key}
 	</div>
 
-	<!-- Blocks Showcase Section -->
+	<!-- ComponentsShowcase Section -->
 	{#if displayPacks.length > 0}
 		{#snippet heroPreview()}
 			{#if pack1}
@@ -139,8 +225,13 @@
 			</div>
 		{/snippet}
 
+		<ComponentPageSectionTitle
+			title="Components Showcase"
+			description="Four follow pack variants. Hero for landing pages, portrait for grids, compact for feeds, and list item for sidebars."
+		/>
+
 		<ComponentsShowcase
-			description="Beautifully crafted variants. Each optimized for its purpose. Choose the perfect presentation for your content."
+			class="-mx-8 px-8"
 			blocks={[
 				{
 					name: 'Hero',
@@ -360,7 +451,7 @@
 	{/if}
 
 	<!-- Anatomy Section -->
-	{#if pack1}
+	{#if displayPacks.length > 0}
 		<ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
 		<ComponentAnatomy.Root>
@@ -392,221 +483,73 @@
 		</ComponentAnatomy.Root>
 	{/if}
 
-	<!-- Blocks Section -->
-	<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
-		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
-		<p class="text-muted-foreground mb-8">
-			Pre-composed layouts ready to use. Install with a single command.
-		</p>
+	<!-- Components Section -->
+	{#if pack1}
+		<Tabs.Root value="hero">
+			<ComponentPageSectionTitle title="Components" description="Explore each variant in detail">
+				{#snippet tabs()}
+					<Tabs.List>
+						<Tabs.Trigger value="hero">Hero</Tabs.Trigger>
+						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
+						<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
+						<Tabs.Trigger value="list">List Item</Tabs.Trigger>
+					</Tabs.List>
+				{/snippet}
+			</ComponentPageSectionTitle>
 
-		<div class="space-y-12">
-			<Demo
-				title="Portrait"
-				description="Use for follow pack galleries or grid layouts where vertical space is abundant. Shows full pack details with prominent image."
-				component="follow-pack-portrait"
-				code={PortraitCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'followPack',
-						type: 'NDKFollowPack',
-						required: true,
-						description: 'The follow pack event (kind 39089) to display'
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler for custom actions'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes to apply'
-					}
-				]}
-			>
-				<div class="flex gap-4 flex-wrap">
-					{#each displayPacks.slice(0, 3) as pack}
-						<FollowPackPortrait {ndk} followPack={pack} />
-					{/each}
-				</div>
-			</Demo>
+			<section class="min-h-[500px] lg:min-h-[60vh] py-12">
+				<Tabs.Content value="hero">
+					<ComponentCard inline data={heroCardData}>
+						{#snippet preview()}
+							<div class="min-w-[800px]">
+								<FollowPackHero {ndk} followPack={pack1} />
+							</div>
+						{/snippet}
+					</ComponentCard>
+				</Tabs.Content>
 
-			<Demo
-				title="Hero"
-				description="Use for featured follow packs or landing page highlights. Large format with dramatic imagery and overlaid text."
-				component="follow-pack-hero"
-				code={HeroCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'followPack',
-						type: 'NDKFollowPack',
-						required: true,
-						description: 'The follow pack event (kind 39089) to display'
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler for custom actions'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes to apply'
-					}
-				]}
-			>
-				{#if pack1}
-					<FollowPackHero {ndk} followPack={pack1} />
-				{/if}
-			</Demo>
+				<Tabs.Content value="portrait">
+					<ComponentCard inline data={portraitCardData}>
+						{#snippet preview()}
+							<div class="flex gap-4 flex-wrap">
+								{#each displayPacks.slice(0, 3) as pack}
+									<FollowPackPortrait {ndk} followPack={pack} />
+								{/each}
+							</div>
+						{/snippet}
+					</ComponentCard>
+				</Tabs.Content>
 
-			<Demo
-				title="Compact"
-				description="Use for follow pack lists or feeds where horizontal space is limited. Shows key information in a horizontal layout."
-				component="follow-pack-compact"
-				code={CompactCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'followPack',
-						type: 'NDKFollowPack',
-						required: true,
-						description: 'The follow pack event (kind 39089) to display'
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler for custom actions'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes to apply'
-					}
-				]}
-			>
-				<div class="space-y-2 max-w-2xl">
-					{#each displayPacks.slice(0, 3) as pack}
-						<FollowPackCompact {ndk} followPack={pack} />
-					{/each}
-				</div>
-			</Demo>
+				<Tabs.Content value="compact">
+					<ComponentCard inline data={compactCardData}>
+						{#snippet preview()}
+							<div class="space-y-2 max-w-2xl">
+								{#each displayPacks.slice(0, 3) as pack}
+									<FollowPackCompact {ndk} followPack={pack} />
+								{/each}
+							</div>
+						{/snippet}
+					</ComponentCard>
+				</Tabs.Content>
 
-			<Demo
-				title="List Item"
-				description="Use for minimal follow pack lists or sidebars. Displays essential information only with a clean, simple design."
-				component="follow-pack-list-item"
-				code={ListItemCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'followPack',
-						type: 'NDKFollowPack',
-						required: true,
-						description: 'The follow pack event (kind 39089) to display'
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler for custom actions'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes to apply'
-					}
-				]}
-			>
-				<div class="max-w-md">
-					{#each displayPacks.slice(0, 4) as pack}
-						<FollowPackListItem {ndk} followPack={pack} />
-					{/each}
-				</div>
-			</Demo>
+				<Tabs.Content value="list">
+					<ComponentCard inline data={listItemCardData}>
+						{#snippet preview()}
+							<div class="space-y-2 max-w-md">
+								{#each displayPacks.slice(0, 4) as pack}
+									<FollowPackListItem {ndk} followPack={pack} />
+								{/each}
+							</div>
+						{/snippet}
+					</ComponentCard>
+				</Tabs.Content>
+			</section>
+		</Tabs.Root>
+	{:else}
+		<div class="flex items-center justify-center py-12">
+			<div class="text-muted-foreground">Loading follow packs...</div>
 		</div>
-	</section>
-
-	<!-- UI Primitives Section -->
-	<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
-		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
-		<p class="text-muted-foreground mb-8">
-			Primitive components for building custom follow pack layouts. Mix and match to create your
-			own designs.
-		</p>
-
-		<div class="space-y-8">
-			<Demo
-				title="Basic Usage"
-				description="Minimal example with FollowPack.Root and essential primitives."
-				code={UIBasicRaw}
-			>
-				{#if pack1}
-					<div class="p-4 bg-card rounded-lg">
-						<div class="text-lg font-semibold">{pack1.title || 'Untitled Pack'}</div>
-						<div class="text-sm text-muted-foreground mt-2">{pack1.description || ''}</div>
-						<div class="text-xs text-muted-foreground mt-2">
-							{pack1.pubkeys.length} {pack1.pubkeys.length === 1 ? 'person' : 'people'}
-						</div>
-					</div>
-				{/if}
-			</Demo>
-
-			<Demo
-				title="Full Composition"
-				description="All available primitives composed together."
-				code={UIFullRaw}
-			>
-				{#if pack1}
-					<div class="bg-card rounded-xl overflow-hidden shadow-md max-w-md">
-						{#if pack1.image}
-							<div class="relative w-full h-48 overflow-hidden">
-								<img src={pack1.image} alt={pack1.title || 'Follow pack'} class="w-full h-full object-cover" />
-								<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-							</div>
-						{/if}
-
-						<div class="p-6">
-							<div class="text-xl font-bold mb-3">{pack1.title || 'Untitled Pack'}</div>
-							<div class="text-sm text-muted-foreground mb-4">
-								{pack1.description && pack1.description.length > 150
-									? pack1.description.slice(0, 150) + '...'
-									: pack1.description}
-							</div>
-
-							<div class="flex items-center justify-between pt-4 border-t border-border">
-								<div class="flex items-center gap-2 text-sm">
-									<svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-									</svg>
-									<span class="text-muted-foreground">
-										{pack1.pubkeys.length} {pack1.pubkeys.length === 1 ? 'person' : 'people'}
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				{/if}
-			</Demo>
-		</div>
-	</section>
+	{/if}
 
 	<!-- Component API -->
 	<ComponentAPI

@@ -72,9 +72,9 @@
 
 <Dialog.Root bind:open={show}>
 	<Dialog.Portal>
-		<Dialog.Overlay class="fixed inset-0 z-[9998] bg-black/80 backdrop-blur-sm" />
+		<Dialog.Overlay class="fixed inset-0 z-[9998] bg-background/80 backdrop-blur-sm" />
 		<Dialog.Content
-			class="fixed left-[50%] top-[50%] z-[9999] w-[95%] max-w-[1200px] max-h-[95vh] translate-x-[-50%] translate-y-[-50%] overflow-y-auto rounded-lg border border-border bg-card shadow-lg"
+			class="fixed left-[50%] top-[50%] z-[9999] w-[95%] max-w-[1200px] max-h-[95vh] translate-x-[-50%] translate-y-[-50%] overflow-y-auto rounded-xl bg-background"
 		>
 			{#if data}
 				<!-- Header - Just close button -->

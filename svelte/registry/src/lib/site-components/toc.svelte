@@ -105,11 +105,7 @@
 
 <style>
   .toc {
-    position: sticky;
-    top: 3rem;
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-    padding-bottom: 2rem;
+    width: 100%;
   }
 
   .toc-title {

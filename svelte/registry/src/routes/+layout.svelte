@@ -93,7 +93,13 @@
     {/if}
 
     <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen} class:sidebar-collapsed={$sidebarCollapsed}>
-      {@render children()}
+      {#if showSidebar}
+        <div class="main-centered">
+          {@render children()}
+        </div>
+      {:else}
+        {@render children()}
+      {/if}
     </main>
   </div>
 
@@ -164,21 +170,33 @@
 
   .main.has-sidebar {
     margin-left: 280px;
-    padding: 3rem 2rem;
-    max-width: 1400px;
+    display: flex;
+    justify-content: center;
   }
 
   .main.has-sidebar.sidebar-collapsed {
     margin-left: 64px;
   }
 
+  .main-centered {
+    width: 100%;
+    max-width: 1400px;
+    padding: 3rem 2rem;
+  }
+
   @media (max-width: 768px) {
     .main.has-sidebar {
       margin-left: 0;
+      display: block;
+    }
+
+    .main-centered {
+      padding: 1.5rem 1rem;
     }
 
     .main.has-sidebar.sidebar-open {
       margin-left: 280px;
+      display: flex;
     }
 
     .main.has-sidebar.sidebar-open.sidebar-collapsed {

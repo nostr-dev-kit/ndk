@@ -18,10 +18,6 @@
 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import Avatar from '../../ui/user/user-avatar.svelte';
-  import Name from '../../ui/user/user-name.svelte';
-  import Field from '../../ui/user/user-field.svelte';
-  import Nip05 from '../../ui/user/user-nip05.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';
@@ -90,7 +86,7 @@
       role="presentation"
     >
       {#if showAvatar}
-        <Avatar
+        <User.Avatar
           size={avatarSize === 'sm' ? 32 : avatarSize === 'md' ? 40 : 48}
           class="flex-shrink-0"
         />
@@ -100,11 +96,11 @@
         {#if variant === 'full'}
           <!-- Full variant: name on top, handle below -->
           <div class="flex flex-col">
-            <Name
+            <User.Name
               field="displayName"
               class="font-semibold text-[15px] text-foreground truncate"
             />
-            <Field
+            <User.Field
               field="nip05"
               class="text-sm text-muted-foreground truncate"
             />
@@ -112,14 +108,14 @@
         {:else if variant === 'compact'}
           <!-- Compact: name and handle inline -->
           <div class="flex items-center gap-2 min-w-0">
-            <Name
+            <User.Name
               field="displayName"
               class="font-semibold text-[15px] text-foreground truncate"
             />
           </div>
         {:else}
           <!-- Minimal: just name -->
-          <Name
+          <User.Name
             field="displayName"
             class="font-semibold text-[15px] text-foreground truncate"
           />

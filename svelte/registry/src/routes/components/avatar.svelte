@@ -54,15 +54,11 @@
   });
 
   const imageUrl = $derived(profileFetcher?.profile?.picture || fallback);
-  const displayName = $derived(
-    alt || profileFetcher?.profile?.displayName || profileFetcher?.profile?.name || 'Anon'
-  );
 </script>
 
 {#if imageUrl}
   <img
     src={imageUrl}
-    alt={displayName}
     class="avatar {className}"
     style="width: {size}px; height: {size}px;"
   />
@@ -71,7 +67,7 @@
     class="avatar avatar-fallback {className}"
     style="width: {size}px; height: {size}px;"
   >
-    {displayName.slice(0, 2).toUpperCase()}
+    {ndkUser?.pubkey.slice(0, 2).toUpperCase()}
   </div>
 {/if}
 

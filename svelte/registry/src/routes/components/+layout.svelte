@@ -25,15 +25,23 @@
     flex: 1;
     min-width: 0;
     max-width: 1000px;
+    margin: 0 auto;
   }
 
   .component-toc {
-    width: 240px;
-    flex-shrink: 0;
+    position: fixed;
+    right: 0;
+    top: 3.5rem;
+    width: 280px;
+    height: calc(100vh - 3.5rem);
+    padding: 3rem 2rem;
+    overflow-y: auto;
+    background: var(--background);
+    border-left: 1px solid var(--border);
   }
 
   /* Hide TOC on smaller screens */
-  @media (max-width: 1400px) {
+  @media (max-width: 1600px) {
     .component-toc {
       display: none;
     }

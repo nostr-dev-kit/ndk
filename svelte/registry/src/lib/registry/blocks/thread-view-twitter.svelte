@@ -16,7 +16,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard } from '../ui/event-card/index.js';
+  import { EventCard } from '../components/event-card/index.js';
   import { ReactionAction } from '../components/actions/index.js';
   import { User } from '../ui/user/index.js';
   import RepostButton from '../components/actions/repost-button.svelte';

@@ -1,0 +1,189 @@
+<!--
+  @component UserProfile
+  Opinionated composite component combining User.Avatar, User.Name, and optional byline.
+
+  This is a flexible component for displaying user identity with various layouts and optional metadata.
+  It wraps the User.Root primitive and composes Avatar + Name + byline with configurable variants.
+
+  @example Basic usage:
+  ```svelte
+  <UserProfile {ndk} {user} />
+  ```
+
+  @example With string byline:
+  ```svelte
+  <UserProfile {ndk} {user} variant="stacked" byline="Journalist" size="lg" />
+  ```
+
+  @example With component byline:
+  ```svelte
+  <UserProfile {ndk} {user} variant="horizontal" byline={User.Nip05} size="xs" />
+  ```
+
+  @example With snippet for complex byline:
+  ```svelte
+  <UserProfile {ndk} {user} variant="stacked" size="md" byline={customByline}>
+  ```
+  Where customByline is defined as:
+  ```svelte
+  {#snippet customByline()}
+    <div class="flex items-center gap-2">
+      <User.Nip05 />
+      <span>• 2h ago</span>
+    </div>
+  {/snippet}
+  ```
+
+  @example Without avatar:
+  ```svelte
+  <UserProfile {ndk} {user} showAvatar={false} byline="Journalist" />
+  ```
+-->
+<script lang="ts">
+  import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { Component } from 'svelte';
+  import { User } from '../../ui/user';
+  import { cn } from '../../utils/index.js';
+
+  interface Props {
+    /** NDK instance (required) */
+    ndk: NDKSvelte;
+
+    /** User instance */
+    user?: NDKUser;
+
+    /** User's pubkey (alternative to user) */
+    pubkey?: string;
+
+    /** Pre-loaded profile (optional, avoids fetch) */
+    profile?: NDKUserProfile;
+
+    /** Layout variant */
+    variant?: 'horizontal' | 'stacked' | 'inline' | 'compact';
+
+    /** Size preset */
+    size?: 'xs' | 'sm' | 'md' | 'lg';
+
+    /** Show avatar */
+    showAvatar?: boolean;
+
+    /** Byline content (string, component, or snippet) */
+    byline?: string | Component;
+
+    /** Click handler */
+    onclick?: (e: MouseEvent) => void;
+
+    /** Additional CSS classes */
+    class?: string;
+  }
+
+  let {
+    ndk,
+    user,
+    pubkey,
+    profile,
+    variant = 'horizontal',
+    size = 'md',
+    showAvatar = true,
+    byline,
+    onclick,
+    class: className = ''
+  }: Props = $props();
+
+
+  // Size-based classes
+  const sizeClasses = $derived.by(() => {
+    switch (size) {
+      case 'xs':
+        return {
+          container: 'gap-2',
+          avatar: 'w-6 h-6',
+          name: 'text-xs',
+          byline: 'text-xs'
+        };
+      case 'sm':
+        return {
+          container: 'gap-2',
+          avatar: 'w-8 h-8',
+          name: 'text-sm',
+          byline: 'text-xs'
+        };
+      case 'md':
+        return {
+          container: 'gap-3',
+          avatar: 'w-10 h-10',
+          name: 'text-base',
+          byline: 'text-sm'
+        };
+      case 'lg':
+        return {
+          container: 'gap-4',
+          avatar: 'w-12 h-12',
+          name: 'text-lg',
+          byline: 'text-base'
+        };
+      default:
+        return {
+          container: 'gap-3',
+          avatar: 'w-10 h-10',
+          name: 'text-base',
+          byline: 'text-sm'
+        };
+    }
+  });
+
+  // Variant-based layout classes
+  const variantClasses = $derived.by(() => {
+    switch (variant) {
+      case 'horizontal':
+        return {
+          wrapper: 'flex items-center',
+          info: 'flex flex-col'
+        };
+      case 'stacked':
+        return {
+          wrapper: 'flex flex-col items-center text-center',
+          info: 'flex flex-col items-center'
+        };
+      case 'inline':
+        return {
+          wrapper: 'flex items-center',
+          info: 'flex items-center gap-2'
+        };
+      case 'compact':
+        return {
+          wrapper: 'flex items-center',
+          info: 'flex items-baseline gap-2'
+        };
+      default:
+        return {
+          wrapper: 'flex items-center',
+          info: 'flex flex-col'
+        };
+    }
+  });
+</script>
+
+<User.Root {ndk} {user} {pubkey} {profile} {onclick}>
+  <div class={cn(variantClasses.wrapper, sizeClasses.container, className)}>
+    {#if showAvatar}
+      <User.Avatar class={sizeClasses.avatar} />
+    {/if}
+
+    <div class={cn(variantClasses.info, 'min-w-0')}>
+      <User.Name class={cn(sizeClasses.name, 'truncate')} />
+
+      {#if typeof byline === 'string'}
+        <div class={cn(sizeClasses.byline, 'text-muted-foreground truncate')}>
+          {byline}
+        </div>
+      {:else if byline}
+        {@const BylineComponent = byline}
+        <div class={cn(sizeClasses.byline, 'text-muted-foreground')}>
+          <BylineComponent />
+        </div>
+      {/if}
+    </div>
+  </div>
+</User.Root>

@@ -20,7 +20,7 @@ export { default as Input } from './input.svelte';
 export { User, type UserContext } from './user/index.js';
 export { Article, type ArticleContext } from './article/index.js';
 export { Highlight, type HighlightContext } from './highlight/index.js';
-export { EventCard, EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card/index.js';
+export { Event } from './event/index.js';
 export { UserInput, type UserInputContext } from './user-input/index.js';
 export { VoiceMessage, type VoiceMessageContext } from './voice-message/index.js';
 export { MediaUpload, createMediaUpload, type MediaUploadResult, type MediaUploadOptions } from './media-upload/index.js';

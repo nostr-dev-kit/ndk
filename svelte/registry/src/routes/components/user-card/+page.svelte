@@ -9,6 +9,7 @@
 	import { User } from '$lib/registry/ui';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Select from '$lib/components/ui/select';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 
@@ -35,6 +36,9 @@
 	let user9 = $state<NDKUser | undefined>();
 
 	const displayUsers = $derived([user1, user2, user3, user4, user5, user6, user7, user8, user9].filter(Boolean) as NDKUser[]);
+
+	// Glass card variant state
+	let glassVariant = $state<'gradient' | 'transparent'>('gradient');
 
 	// Primitives drawer state
 	let focusedPrimitive = $state<string | null>(null);
@@ -374,25 +378,28 @@
 		{/snippet}
 
 		{#snippet glassPreview()}
-			<div class="flex flex-col gap-8 pb-4">
-				<!-- Gradient variant -->
-				<div>
-					<h4 class="text-sm font-medium mb-4 text-muted-foreground">Gradient Background</h4>
-					<div class="flex gap-4">
-						{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-							<UserCardGlass {ndk} pubkey={user.pubkey} variant="gradient" />
-						{/each}
-					</div>
+			<div class="flex flex-col gap-4 pb-4">
+				<div class="flex items-center gap-3">
+					<label for="glass-variant-select" class="text-sm font-medium text-muted-foreground">Variant:</label>
+					<Select.Root
+						selected={{ value: glassVariant, label: glassVariant === 'gradient' ? 'Gradient Background' : 'Transparent' }}
+						onSelectedChange={(v) => {
+							if (v) glassVariant = v.value as 'gradient' | 'transparent';
+						}}
+					>
+						<Select.Trigger class="w-[200px]">
+							<Select.Value placeholder="Select variant" />
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="gradient" label="Gradient Background">Gradient Background</Select.Item>
+							<Select.Item value="transparent" label="Transparent">Transparent</Select.Item>
+						</Select.Content>
+					</Select.Root>
 				</div>
-
-				<!-- Transparent variant -->
-				<div>
-					<h4 class="text-sm font-medium mb-4 text-muted-foreground">Transparent (inherits parent background)</h4>
-					<div class="flex gap-4">
-						{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-							<UserCardGlass {ndk} pubkey={user.pubkey} variant="transparent" />
-						{/each}
-					</div>
+				<div class="flex gap-4">
+					{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+						<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+					{/each}
 				</div>
 			</div>
 		{/snippet}
@@ -606,30 +613,31 @@
 					<Tabs.Content value="glass">
 						<ComponentCard inline data={glassCardData}>
 							{#snippet preview()}
-								<div class="flex flex-col gap-8">
-									<!-- Gradient variant -->
-									<div>
-										<h4 class="text-sm font-medium mb-4 text-muted-foreground">Gradient Background</h4>
-										<ScrollArea orientation="horizontal" class="w-full">
-											<div class="flex gap-4 pb-4">
-												{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-													<UserCardGlass {ndk} pubkey={user.pubkey} variant="gradient" />
-												{/each}
-											</div>
-										</ScrollArea>
+								<div class="flex flex-col gap-4">
+									<div class="flex items-center gap-3">
+										<label class="text-sm font-medium text-muted-foreground">Variant:</label>
+										<Select.Root
+											selected={{ value: glassVariant, label: glassVariant === 'gradient' ? 'Gradient Background' : 'Transparent' }}
+											onSelectedChange={(v) => {
+												if (v) glassVariant = v.value as 'gradient' | 'transparent';
+											}}
+										>
+											<Select.Trigger class="w-[200px]">
+												<Select.Value placeholder="Select variant" />
+											</Select.Trigger>
+											<Select.Content>
+												<Select.Item value="gradient" label="Gradient Background">Gradient Background</Select.Item>
+												<Select.Item value="transparent" label="Transparent">Transparent</Select.Item>
+											</Select.Content>
+										</Select.Root>
 									</div>
-
-									<!-- Transparent variant -->
-									<div>
-										<h4 class="text-sm font-medium mb-4 text-muted-foreground">Transparent (inherits parent background)</h4>
-										<ScrollArea orientation="horizontal" class="w-full">
-											<div class="flex gap-4 pb-4">
-												{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-													<UserCardGlass {ndk} pubkey={user.pubkey} variant="transparent" />
-												{/each}
-											</div>
-										</ScrollArea>
-									</div>
+									<ScrollArea orientation="horizontal" class="w-full">
+										<div class="flex gap-4 pb-4">
+											{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+												<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+											{/each}
+										</div>
+									</ScrollArea>
 								</div>
 							{/snippet}
 						</ComponentCard>

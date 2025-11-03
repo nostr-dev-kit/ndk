@@ -3,33 +3,94 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
+  import * as Tabs from '$lib/components/ui/tabs';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
   // Import block components for preview
   import FollowButton from '$lib/registry/components/actions/follow-button.svelte';
   import FollowButtonPill from '$lib/registry/components/actions/follow-button-pill.svelte';
   import FollowButtonAnimated from '$lib/registry/components/actions/follow-button-animated.svelte';
 
-  // Import code examples
-  import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
-  import PillCodeRaw from './examples/pill-code.svelte?raw';
-  import AnimatedCodeRaw from './examples/animated-code.svelte?raw';
-
-  // Import UI example
-  import UIComposition from './examples/ui-composition.svelte';
-  import UICompositionCode from './examples/ui-composition--code.svelte?raw';
-
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleUser = $state<NDKUser | undefined>();
+
+  // Component card data for inline display
+  const minimalCardData = {
+    name: 'follow-button',
+    title: 'FollowButton',
+    description: 'Minimal icon-first follow button.',
+    richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name.',
+    command: 'npx shadcn@latest add follow-button',
+    apiDocs: [
+      {
+        name: 'FollowButton',
+        description: 'Minimal follow button component',
+        importPath: "import FollowButton from '$lib/registry/components/actions/follow-button.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+          { name: 'target', type: 'NDKUser | string', description: 'User object or hashtag string to follow', required: true },
+          { name: 'showIcon', type: 'boolean', description: 'Whether to show icon', default: 'true' },
+          { name: 'showTarget', type: 'boolean', description: 'Shows target avatar/icon and name', default: 'false' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const pillCardData = {
+    name: 'follow-button-pill',
+    title: 'FollowButtonPill',
+    description: 'Rounded pill-style follow button.',
+    richDescription: 'Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name.',
+    command: 'npx shadcn@latest add follow-button-pill',
+    apiDocs: [
+      {
+        name: 'FollowButtonPill',
+        description: 'Pill-style follow button component',
+        importPath: "import FollowButtonPill from '$lib/registry/components/actions/follow-button-pill.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+          { name: 'target', type: 'NDKUser | string', description: 'User object or hashtag string to follow', required: true },
+          { name: 'variant', type: "'solid' | 'outline'", description: 'Button style variant', default: "'solid'" },
+          { name: 'compact', type: 'boolean', description: 'Icon-only circular layout', default: 'false' },
+          { name: 'showIcon', type: 'boolean', description: 'Whether to show icon', default: 'true' },
+          { name: 'showTarget', type: 'boolean', description: 'Shows target name on hover', default: 'false' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const animatedCardData = {
+    name: 'follow-button-animated',
+    title: 'FollowButtonAnimated',
+    description: 'Animated follow button with transitions.',
+    richDescription: 'Animated follow button with smooth transitions and visual feedback. Features icon animations and checkmark confirmation on follow.',
+    command: 'npx shadcn@latest add follow-button-animated',
+    apiDocs: [
+      {
+        name: 'FollowButtonAnimated',
+        description: 'Animated follow button component',
+        importPath: "import FollowButtonAnimated from '$lib/registry/components/actions/follow-button-animated.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: false },
+          { name: 'target', type: 'NDKUser | string', description: 'User object or hashtag string to follow', required: true },
+          { name: 'showTarget', type: 'boolean', description: 'Shows target avatar/icon and name', default: 'false' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Follow</h1>
+      <h1 class="text-4xl font-bold">Follow</h1>
     </div>
     <p class="text-lg text-muted-foreground mb-6">
       Follow/unfollow buttons for users and hashtags. Choose from pre-built block variants or
@@ -43,233 +104,122 @@
         default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
         bind:value={sampleUser}
       />
-    	<EditProps.Button>Edit Examples</EditProps.Button>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 
   {#if sampleUser}
-    <!-- Blocks Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
-      <p class="text-muted-foreground mb-8">
-        Pre-composed follow button layouts ready to use. Install with a single command.
-      </p>
+    <!-- Components Section -->
+    <Tabs.Root value="minimal">
+      <ComponentPageSectionTitle title="Components" description="Explore each follow button variant in detail">
+        {#snippet tabs()}
+          <Tabs.List>
+            <Tabs.Trigger value="minimal">Minimal</Tabs.Trigger>
+            <Tabs.Trigger value="pill">Pill</Tabs.Trigger>
+            <Tabs.Trigger value="animated">Animated</Tabs.Trigger>
+          </Tabs.List>
+        {/snippet}
+      </ComponentPageSectionTitle>
 
-      <div class="space-y-12">
-        <Demo
-          title="FollowButton"
-          description="Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name."
-          component="follow-button"
-          code={MinimalCodeRaw}
-          props={[
-            {
-              name: 'ndk',
-              type: 'NDKSvelte',
-              description: 'NDK instance (optional if provided via context)'
-            },
-            {
-              name: 'target',
-              type: 'NDKUser | string',
-              required: true,
-              description: 'User object or hashtag string to follow'
-            },
-            {
-              name: 'showIcon',
-              type: 'boolean',
-              default: 'true',
-              description: 'Whether to show icon'
-            },
-            {
-              name: 'showTarget',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold.'
-            },
-            {
-              name: 'class',
-              type: 'string',
-              default: "''",
-              description: 'Custom CSS classes'
-            }
-          ]}
-        >
-          <div class="flex flex-col gap-4">
-            <div class="flex items-center gap-4">
-              <span class="text-sm text-muted-foreground w-24">Default:</span>
-              <FollowButton {ndk} target={sampleUser} />
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="text-sm text-muted-foreground w-24">With User:</span>
-              <FollowButton {ndk} target={sampleUser} showTarget={true} />
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
-              <FollowButton {ndk} target="bitcoin" showTarget={true} />
-            </div>
-          </div>
-        </Demo>
+      <section class="min-h-[500px] lg:min-h-[60vh] py-12">
+        <Tabs.Content value="minimal">
+          <ComponentCard inline data={minimalCardData}>
+            {#snippet preview()}
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-4">
+                  <span class="text-sm text-muted-foreground w-24">Default:</span>
+                  <FollowButton {ndk} target={sampleUser} />
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-sm text-muted-foreground w-24">With User:</span>
+                  <FollowButton {ndk} target={sampleUser} showTarget={true} />
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
+                  <FollowButton {ndk} target="bitcoin" showTarget={true} />
+                </div>
+              </div>
+            {/snippet}
+          </ComponentCard>
+        </Tabs.Content>
 
-        <Demo
-          title="FollowButtonPill"
-          description="Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name."
-          component="follow-button-pill"
-          code={PillCodeRaw}
-          props={[
-            {
-              name: 'ndk',
-              type: 'NDKSvelte',
-              description: 'NDK instance (optional if provided via context)'
-            },
-            {
-              name: 'target',
-              type: 'NDKUser | string',
-              required: true,
-              description: 'User object or hashtag string to follow'
-            },
-            {
-              name: 'variant',
-              type: "'solid' | 'outline'",
-              default: "'solid'",
-              description: 'Button style variant'
-            },
-            {
-              name: 'compact',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, hides the label and shows icon only in a circular layout'
-            },
-            {
-              name: 'showIcon',
-              type: 'boolean',
-              default: 'true',
-              description: 'Whether to show icon'
-            },
-            {
-              name: 'showTarget',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, shows target name on hover. In compact mode: displays "Follow Name" on hover. In regular mode: displays avatar/icon + "Follow Name". Text is bold.'
-            },
-            {
-              name: 'class',
-              type: 'string',
-              default: "''",
-              description: 'Custom CSS classes'
-            }
-          ]}
-        >
-          <div class="flex flex-col gap-6 items-center">
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">Default</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-                <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+        <Tabs.Content value="pill">
+          <ComponentCard inline data={pillCardData}>
+            {#snippet preview()}
+              <div class="flex flex-col gap-6 items-center">
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">Default</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
+                    <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">With User Target</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+                    <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
+                    <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonPill {ndk} target={sampleUser} compact />
+                    <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
+                    <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">With User Target</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-                <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
-              </div>
-            </div>
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
-                <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
-              </div>
-            </div>
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonPill {ndk} target={sampleUser} compact />
-                <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
-              </div>
-            </div>
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
-                <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
-              </div>
-            </div>
-          </div>
-        </Demo>
+            {/snippet}
+          </ComponentCard>
+        </Tabs.Content>
 
-        <Demo
-          title="FollowButtonAnimated"
-          description="Animated follow button with smooth transitions and visual feedback. Features icon animations and checkmark confirmation on follow."
-          component="follow-button-animated"
-          code={AnimatedCodeRaw}
-          props={[
-            {
-              name: 'ndk',
-              type: 'NDKSvelte',
-              description: 'NDK instance (optional if provided via context)'
-            },
-            {
-              name: 'target',
-              type: 'NDKUser | string',
-              required: true,
-              description: 'User object or hashtag string to follow'
-            },
-            {
-              name: 'showTarget',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag".'
-            },
-            {
-              name: 'class',
-              type: 'string',
-              default: "''",
-              description: 'Custom CSS classes'
-            }
-          ]}
-        >
-          <div class="flex flex-col gap-6 items-center">
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">Default</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonAnimated {ndk} target={sampleUser} />
+        <Tabs.Content value="animated">
+          <ComponentCard inline data={animatedCardData}>
+            {#snippet preview()}
+              <div class="flex flex-col gap-6 items-center">
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">Default</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonAnimated {ndk} target={sampleUser} />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">With User Target</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center">
+                  <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+                  <div class="flex flex-wrap gap-4 justify-center">
+                    <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
+                    <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">With User Target</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
-              </div>
-            </div>
-            <div class="flex flex-col gap-2 items-center">
-              <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
-                <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
-              </div>
-            </div>
-          </div>
-        </Demo>
-      </div>
-    </section>
-
-    <!-- UI Primitives Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Custom Implementation</h2>
-      <p class="text-muted-foreground mb-8">
-        Use the createFollowAction builder directly to create custom follow buttons.
-      </p>
-
-      <div class="space-y-8">
-        <Demo
-          title="Example"
-          description="Building a custom follow button using the createFollowAction builder."
-          code={UICompositionCode}
-        >
-          <UIComposition {ndk} user={sampleUser} />
-        </Demo>
-      </div>
-    </section>
+            {/snippet}
+          </ComponentCard>
+        </Tabs.Content>
+      </section>
+    </Tabs.Root>
+  {:else}
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Select a user to see the components...</div>
+    </div>
   {/if}
 
   <!-- Component API -->

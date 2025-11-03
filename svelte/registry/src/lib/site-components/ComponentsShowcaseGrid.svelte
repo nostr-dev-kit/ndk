@@ -17,13 +17,13 @@
   let { blocks, class: className }: Props = $props();
 </script>
 
-<div class={cn('grid grid-cols-1 md:grid-cols-3 border border-border rounded-lg overflow-hidden', className)}>
+<div class={cn('grid grid-cols-1 md:grid-cols-3 -mx-8', className)}>
   {#each blocks as block, index}
     <div
       class={cn(
-        'flex flex-col items-center justify-center p-8 min-h-[280px]',
-        index % 3 !== 2 && 'md:border-r border-border',
-        index >= 3 && 'border-t border-border'
+        'flex flex-col items-center justify-center px-8 py-12 min-h-[280px] border-border',
+        index % 3 !== 2 && 'md:border-r',
+        index >= 3 && 'border-t'
       )}
     >
       <!-- Title and description -->

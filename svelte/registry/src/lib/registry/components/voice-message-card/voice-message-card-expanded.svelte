@@ -46,8 +46,8 @@
     audioRef.addEventListener('loadedmetadata', handleTimeUpdate);
 
     return () => {
-      audioRef.removeEventListener('timeupdate', handleTimeUpdate);
-      audioRef.removeEventListener('loadedmetadata', handleTimeUpdate);
+      audioRef?.removeEventListener('timeupdate', handleTimeUpdate);
+      audioRef?.removeEventListener('loadedmetadata', handleTimeUpdate);
     };
   });
 
@@ -57,7 +57,7 @@
 <VoiceMessage.Root {ndk} {voiceMessage}>
   <div class="voice-message-expanded {className}">
     <div class="header">
-      <User.Root user={voiceMessage.author}>
+      <User.Root {ndk} user={voiceMessage.author}>
         <User.Avatar class="w-10 h-10" />
         <User.Name />
       </User.Root>

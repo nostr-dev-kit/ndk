@@ -78,7 +78,7 @@ export function createMediaUpload(ndk: NDKSvelte, options: MediaUploadOptions = 
 
 				const result: MediaUploadResult = {
 					url: url as string,
-					sha256: upload.result.sha256 || '',
+					sha256: (Array.isArray(upload.result.sha256) ? upload.result.sha256[0]! : upload.result.sha256) as string || '',
 					blurhash: upload.result.blurhash,
 					mimeType: file.type,
 					dimensions,

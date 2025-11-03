@@ -288,7 +288,8 @@
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 					{ name: 'pubkey', type: 'string', description: 'User public key (hex format)', required: true },
-					{ name: 'primaryColor', type: 'string', description: 'Primary color for gradient palette (default: #6366f1)' },
+					{ name: 'primaryColor', type: 'string', description: 'Primary color for gradient palette (default: derived from pubkey)' },
+					{ name: 'variant', type: "'gradient' | 'transparent'", description: "Background variant (default: 'gradient')" },
 					{ name: 'width', type: 'string', description: 'Card width (default: w-[280px])' },
 					{ name: 'height', type: 'string', description: 'Card height (default: h-[380px])' },
 					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
@@ -373,10 +374,26 @@
 		{/snippet}
 
 		{#snippet glassPreview()}
-			<div class="flex gap-4 pb-4">
-				{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-					<UserCardGlass {ndk} pubkey={user.pubkey} />
-				{/each}
+			<div class="flex flex-col gap-8 pb-4">
+				<!-- Gradient variant -->
+				<div>
+					<h4 class="text-sm font-medium mb-4 text-muted-foreground">Gradient Background</h4>
+					<div class="flex gap-4">
+						{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+							<UserCardGlass {ndk} pubkey={user.pubkey} variant="gradient" />
+						{/each}
+					</div>
+				</div>
+
+				<!-- Transparent variant -->
+				<div>
+					<h4 class="text-sm font-medium mb-4 text-muted-foreground">Transparent (inherits parent background)</h4>
+					<div class="flex gap-4">
+						{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+							<UserCardGlass {ndk} pubkey={user.pubkey} variant="transparent" />
+						{/each}
+					</div>
+				</div>
 			</div>
 		{/snippet}
 
@@ -589,13 +606,31 @@
 					<Tabs.Content value="glass">
 						<ComponentCard inline data={glassCardData}>
 							{#snippet preview()}
-								<ScrollArea orientation="horizontal" class="w-full">
-									<div class="flex gap-4 pb-4">
-										{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-											<UserCardGlass {ndk} pubkey={user.pubkey} />
-										{/each}
+								<div class="flex flex-col gap-8">
+									<!-- Gradient variant -->
+									<div>
+										<h4 class="text-sm font-medium mb-4 text-muted-foreground">Gradient Background</h4>
+										<ScrollArea orientation="horizontal" class="w-full">
+											<div class="flex gap-4 pb-4">
+												{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+													<UserCardGlass {ndk} pubkey={user.pubkey} variant="gradient" />
+												{/each}
+											</div>
+										</ScrollArea>
 									</div>
-								</ScrollArea>
+
+									<!-- Transparent variant -->
+									<div>
+										<h4 class="text-sm font-medium mb-4 text-muted-foreground">Transparent (inherits parent background)</h4>
+										<ScrollArea orientation="horizontal" class="w-full">
+											<div class="flex gap-4 pb-4">
+												{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+													<UserCardGlass {ndk} pubkey={user.pubkey} variant="transparent" />
+												{/each}
+											</div>
+										</ScrollArea>
+									</div>
+								</div>
 							{/snippet}
 						</ComponentCard>
 					</Tabs.Content>

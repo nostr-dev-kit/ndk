@@ -15,14 +15,6 @@
 	import { FollowPack } from '$lib/registry/ui/follow-pack';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
-	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
-	import HeroCodeRaw from './examples/hero-code.svelte?raw';
-	import CompactCodeRaw from './examples/compact-code.svelte?raw';
-	import ListItemCodeRaw from './examples/list-item-code.svelte?raw';
-
-	import UIBasicRaw from './examples/ui-basic.svelte?raw';
-	import UIFullRaw from './examples/ui-full.svelte?raw';
-
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	let followPacks = $state<NDKFollowPack[]>([]);

@@ -47,6 +47,9 @@
     /** Spacing between avatars */
     spacing?: 'tight' | 'normal' | 'loose';
 
+    /** Overflow display variant */
+    overflowVariant?: 'avatar' | 'text';
+
     /** Additional CSS classes */
     class?: string;
 
@@ -55,6 +58,9 @@
 
     /** Click handler for overflow count */
     onOverflowClick?: () => void;
+
+    /** Render prop for custom overflow display */
+    overflowSnippet?: (count: number) => any;
   }
 
   let {
@@ -64,9 +70,11 @@
     max = 5,
     size = 40,
     spacing = 'normal',
+    overflowVariant = 'avatar',
     class: className = '',
     onAvatarClick,
-    onOverflowClick
+    onOverflowClick,
+    overflowSnippet
   }: Props = $props();
 
   // Use the builder to get prioritized user list
@@ -123,28 +131,51 @@
   {/each}
 
   {#if overflowCount > 0}
-    <div
-      class="avatar-group-overflow"
-      style:margin-left="{marginLeft}px"
-      style:width="{size}px"
-      style:height="{size}px"
-      style:font-size="{size * 0.35}px"
-      style:z-index={0}
-    >
-      {#if onOverflowClick}
-        <button
-          type="button"
-          onclick={onOverflowClick}
-          class="avatar-group-overflow-button"
-        >
-          +{overflowCount}
-        </button>
-      {:else}
-        <div class="avatar-group-overflow-content">
-          +{overflowCount}
-        </div>
-      {/if}
-    </div>
+    {#if overflowSnippet}
+      {@render overflowSnippet(overflowCount)}
+    {:else if overflowVariant === 'text'}
+      <div
+        class="avatar-group-overflow-text"
+        style:margin-left="8px"
+      >
+        {#if onOverflowClick}
+          <button
+            type="button"
+            onclick={onOverflowClick}
+            class="avatar-group-overflow-text-button"
+          >
+            +{overflowCount}
+          </button>
+        {:else}
+          <span class="avatar-group-overflow-text-content">
+            +{overflowCount}
+          </span>
+        {/if}
+      </div>
+    {:else}
+      <div
+        class="avatar-group-overflow"
+        style:margin-left="{marginLeft}px"
+        style:width="{size}px"
+        style:height="{size}px"
+        style:font-size="{size * 0.35}px"
+        style:z-index={0}
+      >
+        {#if onOverflowClick}
+          <button
+            type="button"
+            onclick={onOverflowClick}
+            class="avatar-group-overflow-button"
+          >
+            +{overflowCount}
+          </button>
+        {:else}
+          <div class="avatar-group-overflow-content">
+            +{overflowCount}
+          </div>
+        {/if}
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -223,5 +254,36 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .avatar-group-overflow-text {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+
+  .avatar-group-overflow-text-content {
+    display: inline-block;
+  }
+
+  .avatar-group-overflow-text-button {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    transition: color 0.2s ease;
+  }
+
+  .avatar-group-overflow-text-button:hover {
+    color: var(--foreground);
+  }
+
+  .avatar-group-overflow-text-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 </style>

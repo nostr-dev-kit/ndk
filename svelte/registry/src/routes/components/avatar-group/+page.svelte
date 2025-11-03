@@ -9,6 +9,10 @@
   import BasicExampleRaw from './examples/basic.svelte?raw';
   import WithOverflowExample from './examples/with-overflow.svelte';
   import WithOverflowExampleRaw from './examples/with-overflow.svelte?raw';
+  import WithTextOverflowExample from './examples/with-text-overflow.svelte';
+  import WithTextOverflowExampleRaw from './examples/with-text-overflow.svelte?raw';
+  import WithSnippetExample from './examples/with-snippet.svelte';
+  import WithSnippetExampleRaw from './examples/with-snippet.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -56,6 +60,24 @@
       code={WithOverflowExampleRaw}
     >
       <WithOverflowExample {ndk} pubkeys={examplePubkeys} max={maxAvatars} />
+    </Demo>
+
+    <Demo
+      title="Text Overflow Variant"
+      description="Display the overflow count as text to the side instead of in a circular avatar."
+      component="avatar-group"
+      code={WithTextOverflowExampleRaw}
+    >
+      <WithTextOverflowExample {ndk} pubkeys={examplePubkeys} />
+    </Demo>
+
+    <Demo
+      title="Custom Overflow with Snippet"
+      description="Use a snippet to completely customize how the overflow count is displayed."
+      component="avatar-group"
+      code={WithSnippetExampleRaw}
+    >
+      <WithSnippetExample {ndk} pubkeys={examplePubkeys} />
     </Demo>
   </section>
 
@@ -117,6 +139,12 @@
           <td>Spacing between avatars</td>
         </tr>
         <tr>
+          <td><code>overflowVariant</code></td>
+          <td><code>'avatar' | 'text'</code></td>
+          <td><code>'avatar'</code></td>
+          <td>How to display the overflow count: as a circular avatar or as text to the side</td>
+        </tr>
+        <tr>
           <td><code>onAvatarClick</code></td>
           <td><code>(user: NDKUser) => void</code></td>
           <td>-</td>
@@ -127,6 +155,12 @@
           <td><code>() => void</code></td>
           <td>-</td>
           <td>Click handler for overflow count</td>
+        </tr>
+        <tr>
+          <td><code>overflowSnippet</code></td>
+          <td><code>(count: number) => any</code></td>
+          <td>-</td>
+          <td>Custom snippet for rendering the overflow count (overrides overflowVariant)</td>
         </tr>
       </tbody>
     </table>
@@ -158,11 +192,31 @@
 <p>Followed: {avatarGroup.followedUsers.length}</p>
 <p>Not followed: {avatarGroup.unfollowedUsers.length}</p>`}</code></pre>
 
+    <h3>Overflow Variants</h3>
+    <p>The component supports different ways to display the overflow count:</p>
+
+    <h4>Avatar Variant (Default)</h4>
+    <pre><code>{`<AvatarGroup {ndk} {pubkeys} max={3} />`}</code></pre>
+    <p>Displays the overflow count in a circular avatar-style badge that overlaps with the avatars.</p>
+
+    <h4>Text Variant</h4>
+    <pre><code>{`<AvatarGroup {ndk} {pubkeys} max={3} overflowVariant="text" />`}</code></pre>
+    <p>Displays the overflow count as text to the side of the avatars, similar to "Trusted by 60K+ developers".</p>
+
+    <h4>Custom with Snippet</h4>
+    <pre><code>{`<AvatarGroup {ndk} {pubkeys} max={4}>
+  {#snippet overflowSnippet(count)}
+    <span>+{count} more</span>
+  {/snippet}
+</AvatarGroup>`}</code></pre>
+    <p>Use a snippet to completely customize how the overflow count is rendered. The snippet receives the count as a parameter.</p>
+
     <h3>Features</h3>
     <ul>
       <li><strong>Smart Ordering</strong> - Prioritizes users you follow</li>
       <li><strong>Skip Current User</strong> - Optionally exclude yourself from the group</li>
       <li><strong>Overflow Count</strong> - Shows "+N" when there are more users than max</li>
+      <li><strong>Multiple Variants</strong> - Choose between avatar, text, or custom snippet rendering</li>
       <li><strong>Customizable Spacing</strong> - Three spacing options for avatar overlap</li>
       <li><strong>Interactive</strong> - Optional click handlers for avatars and overflow</li>
       <li><strong>Accessible</strong> - Proper ARIA labels and keyboard navigation</li>

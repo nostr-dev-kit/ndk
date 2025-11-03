@@ -75,19 +75,19 @@ export function createNoteComposer(ndk: NDKSvelte, options: NoteComposerOptions 
 
 			// Add media tags (imeta)
 			for (const upload of uploads) {
-				if (upload.url && upload.hash) {
+				if (upload.url && upload.sha256) {
 					const imetaTag = [
 						'imeta',
 						`url ${upload.url}`,
-						`x ${upload.hash}`,
+						`x ${upload.sha256}`,
 					];
 
 					if (upload.mimeType) {
 						imetaTag.push(`m ${upload.mimeType}`);
 					}
 
-					if (upload.size) {
-						imetaTag.push(`size ${upload.size}`);
+					if (upload.file.size) {
+						imetaTag.push(`size ${upload.file.size}`);
 					}
 
 					if (upload.dimensions?.width && upload.dimensions?.height) {

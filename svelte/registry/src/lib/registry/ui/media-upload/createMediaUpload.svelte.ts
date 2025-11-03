@@ -74,7 +74,7 @@ export function createMediaUpload(ndk: NDKSvelte, options: MediaUploadOptions = 
 
 				// Handle url being string or string[] - take first if array
 				const uploadUrl = upload.result.url;
-				const url = (Array.isArray(uploadUrl) ? uploadUrl[0] : uploadUrl) as string;
+				const url: string = Array.isArray(uploadUrl) ? uploadUrl[0] : uploadUrl;
 
 				const result: MediaUploadResult = {
 					url,

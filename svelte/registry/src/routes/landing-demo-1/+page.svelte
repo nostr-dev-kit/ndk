@@ -6,7 +6,7 @@
 	import EventCardClassic from '$lib/registry/components/event-card/event-card-classic.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import ThreadViewTwitter from '$lib/registry/blocks/thread-view-twitter.svelte';
-	import ReactionButton from '$lib/registry/components/actions/reaction-button.svelte';
+	import { ReactionButton } from '$lib/registry/components';
 	import ZapButton from '$lib/registry/components/zap-button/zap-button.svelte';
 	import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
 

@@ -57,30 +57,25 @@
     }
   });
 
-  function handleClick(e: MouseEvent) {
-    if (onclick) {
-      onclick(e);
-    } else {
-      // Default: navigate to article
-      const naddr = article.encode();
-      window.location.href = `/a/${naddr}`;
-    }
-  }
+  const baseClasses = cn(
+    'bg-background',
+    'group block w-full',
+    'p-4 sm:p-6',
+    'transition-colors',
+    'border-b border-border last:border-b-0',
+    'text-left',
+    className
+  );
+
+  const interactiveClasses = onclick ? 'hover:bg-card/30 cursor-pointer' : '';
 </script>
 
 <Root {ndk} {article}>
-  <button
-    type="button"
-    onclick={handleClick}
-    class={cn(
-      'bg-background',
-      'group block w-full',
-      'p-4 sm:p-6',
-      'hover:bg-card/30 transition-colors',
-      'border-b border-border last:border-b-0',
-      'text-left',
-      className
-    )}
+  <svelte:element
+    this={onclick ? 'button' : 'div'}
+    type={onclick ? 'button' : undefined}
+    {onclick}
+    class={cn(baseClasses, interactiveClasses)}
   >
     <div class="flex items-start gap-4 sm:gap-6">
       <!-- Content -->
@@ -95,5 +90,5 @@
         <Image class="w-full h-full object-cover" />
       </div>
     </div>
-  </button>
+  </svelte:element>
 </Root>

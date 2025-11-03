@@ -244,11 +244,13 @@
 		{/snippet}
 
 		{#snippet neonPreview()}
-			{#if article1}
-				<div class="w-full max-w-3xl">
-					<ArticleCardNeon {ndk} article={article1} />
+			<ScrollArea orientation="horizontal" class="w-full">
+				<div class="flex gap-6 pb-4">
+					{#each displayArticles as article}
+						<ArticleCardNeon {ndk} {article} />
+					{/each}
 				</div>
-			{/if}
+			</ScrollArea>
 		{/snippet}
 
 		<ComponentsShowcase
@@ -488,11 +490,13 @@
 					<!-- Neon -->
 					<ComponentCardInline data={neonCardData}>
 						{#snippet preview()}
-							<div class="space-y-6 max-w-2xl">
-								{#each displayArticles.slice(0, 2) as article}
-									<ArticleCardNeon {ndk} {article} />
-								{/each}
-							</div>
+							<ScrollArea orientation="horizontal" class="w-full">
+								<div class="flex gap-6 pb-4">
+									{#each displayArticles as article}
+										<ArticleCardNeon {ndk} {article} />
+									{/each}
+								</div>
+							</ScrollArea>
 						{/snippet}
 					</ComponentCardInline>
 				{/if}

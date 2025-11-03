@@ -50,10 +50,10 @@
   )}>
     <User.Avatar class="w-24 h-24" />
     <div class="flex flex-col items-center gap-1 min-w-0">
-      <User.Name field="displayName" size="lg" />
-      <User.Field field="name" size="sm" class="text-muted-foreground" />
+      <User.Name field="displayName" class="text-lg font-semibold" />
+      <User.Field field="name" class="text-sm text-muted-foreground" />
     </div>
-    <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
+    <User.Field field="about" class="text-muted-foreground text-sm leading-relaxed line-clamp-2" />
     {#if stats.recentNoteCount > 0 || stats.followCount > 0}
       <div class="flex items-center gap-3 text-sm shrink-0">
         {#if stats.recentNoteCount > 0}

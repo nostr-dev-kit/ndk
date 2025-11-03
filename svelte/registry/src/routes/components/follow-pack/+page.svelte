@@ -12,6 +12,7 @@
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 	import { FollowPack } from '$lib/registry/ui/follow-pack';
+	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
 	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
 	import HeroCodeRaw from './examples/hero-code.svelte?raw';
@@ -360,6 +361,8 @@
 
 	<!-- Anatomy Section -->
 	{#if pack1}
+		<ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
+
 		<ComponentAnatomy.Root>
 			<ComponentAnatomy.Preview>
 				<div class="relative bg-card border border-border rounded-xl overflow-hidden">
@@ -390,7 +393,7 @@
 	{/if}
 
 	<!-- Blocks Section -->
-	<section class="mb-16">
+	<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
 		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
 		<p class="text-muted-foreground mb-8">
 			Pre-composed layouts ready to use. Install with a single command.
@@ -542,7 +545,7 @@
 	</section>
 
 	<!-- UI Primitives Section -->
-	<section class="mb-16">
+	<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
 		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
 		<p class="text-muted-foreground mb-8">
 			Primitive components for building custom follow pack layouts. Mix and match to create your

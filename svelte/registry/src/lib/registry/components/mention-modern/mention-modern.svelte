@@ -54,6 +54,23 @@
 
   const profileFetcher = createProfileFetcher(() => ({ user: bech32 }), ndk);
   const pubkey = $derived(profileFetcher.user?.pubkey);
+
+  let open = $state(false);
+  let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  function handleMouseEnter() {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
+    hoverTimeout = setTimeout(() => {
+      open = true;
+    }, 200);
+  }
+
+  function handleMouseLeave() {
+    if (hoverTimeout) clearTimeout(hoverTimeout);
+    hoverTimeout = setTimeout(() => {
+      open = false;
+    }, 150);
+  }
 </script>
 
 {#if profileFetcher?.loading}
@@ -61,11 +78,15 @@
     @{bech32.slice(0, 8)}...
   </span>
 {:else if pubkey}
-  <Popover.Root>
-    <Popover.Trigger>
+  <Popover.Root bind:open>
+    <Popover.Trigger
+      class="inline-flex items-center"
+      onmouseenter={handleMouseEnter}
+      onmouseleave={handleMouseLeave}
+    >
       <User.Root {ndk} {pubkey}>
         <span class={cn(
-          'inline-flex items-center gap-1.5 text-primary hover:underline cursor-pointer transition-all',
+          'items-center gap-1.5 text-primary hover:underline cursor-pointer transition-all',
           className
         )}>
           <User.Avatar class="w-5 h-5 inline-block" />
@@ -76,6 +97,8 @@
     <Popover.Content
       class="z-50"
       sideOffset={8}
+      onmouseenter={handleMouseEnter}
+      onmouseleave={handleMouseLeave}
     >
       <UserCardClassic {ndk} {pubkey} />
     </Popover.Content>

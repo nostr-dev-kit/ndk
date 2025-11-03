@@ -8,12 +8,16 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import { User } from '$lib/registry/ui';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+	import * as ComponentAnatomy from '$site-components/component-anatomy';
 
 	// Import blocks
 	import UserCardClassic from '$lib/registry/components/user-card/user-card-classic.svelte';
 	import UserCardPortrait from '$lib/registry/components/user-card/user-card-portrait.svelte';
 	import UserCardLandscape from '$lib/registry/components/user-card/user-card-landscape.svelte';
 	import UserCardCompact from '$lib/registry/components/user-card/user-card-compact.svelte';
+	import UserCardNeon from '$lib/registry/components/user-card/user-card-neon.svelte';
 	import UserListItem from '$lib/registry/components/user-card/user-list-item.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
@@ -60,13 +64,8 @@
 
 	const displayUsers = $derived([user1, user2, user3].filter(Boolean) as NDKUser[]);
 
-	// Anatomy interaction state
-	let selectedLayer = $state<string | null>(null);
+	// Primitives drawer state
 	let focusedPrimitive = $state<string | null>(null);
-
-	function toggleLayer(layerId: string) {
-		selectedLayer = selectedLayer === layerId ? null : layerId;
-	}
 
 	function openPrimitiveDrawer(primitiveId: string) {
 		focusedPrimitive = primitiveId;
@@ -75,6 +74,34 @@
 	function closePrimitiveDrawer() {
 		focusedPrimitive = null;
 	}
+
+	// Anatomy layer data
+	const anatomyLayers: Record<string, ComponentAnatomy.AnatomyLayer> = {
+		avatar: {
+			id: 'avatar',
+			label: 'User.Avatar',
+			description: 'Displays user avatar image with automatic loading and fallback handling.',
+			props: ['size', 'class']
+		},
+		name: {
+			id: 'name',
+			label: 'User.Name',
+			description: 'Renders the user display name or handle from profile metadata.',
+			props: ['class']
+		},
+		bio: {
+			id: 'bio',
+			label: 'User.Bio',
+			description: 'Shows user biography text from profile with automatic truncation support.',
+			props: ['maxLength', 'class']
+		},
+		nip05: {
+			id: 'nip05',
+			label: 'User.Nip05',
+			description: 'Displays verified NIP-05 identifier with verification badge.',
+			props: ['class']
+		}
+	};
 
 	const primitiveData = {
 		root: {
@@ -215,11 +242,34 @@
 			}
 		]
 	};
+
+	const neonCardData = {
+		name: 'user-card-neon',
+		title: 'UserCardNeon',
+		description: 'Neon-style card with full background image and glossy top border.',
+		richDescription: 'Features a full background image with darkening gradient and a neon glow effect at the top border. Perfect for modern, visually striking user displays.',
+		command: 'npx shadcn@latest add user-card-neon',
+		apiDocs: [
+			{
+				name: 'UserCardNeon',
+				description: 'Neon-style user card component',
+				importPath: "import { UserCardNeon } from '$lib/registry/components/user-card'",
+				props: [
+					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
+					{ name: 'pubkey', type: 'string', description: 'User public key (hex format)', required: true },
+					{ name: 'width', type: 'string', description: 'Card width (default: w-[320px])' },
+					{ name: 'height', type: 'string', description: 'Card height (default: h-[480px])' },
+					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			}
+		]
+	};
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
-	<!-- Header -->
-	  <div class="mb-12">
+<div class="px-8">
+<!-- Header -->
+<div class="mb-12 pt-8">
 	    <div class="flex items-start justify-between gap-4 mb-4">
 	        <h1 class="text-4xl font-bold">User Card</h1>
 	    </div>
@@ -278,9 +328,23 @@
 			</div>
 		{/snippet}
 
-		<ComponentsShowcase
+		{#snippet neonPreview()}
+			<ScrollArea orientation="horizontal" class="w-full">
+				<div class="flex gap-4 pb-4">
+					{#each displayUsers as user (user.pubkey)}
+						<UserCardNeon {ndk} pubkey={user.pubkey} />
+					{/each}
+				</div>
+			</ScrollArea>
+		{/snippet}
+
+		<ComponentPageSectionTitle
 			title="Components Showcase"
-			description="Five carefully crafted variants. From ultra-compact list items to full-featured classic cards. Choose the perfect fit for your layout."
+			description="Six carefully crafted variants. From ultra-compact list items to full-featured classic cards. Choose the perfect fit for your layout."
+		/>
+
+		<ComponentsShowcase
+			class="-mx-8 px-8"
 			blocks={[
 				{
 					name: 'Classic',
@@ -326,6 +390,15 @@
 						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardLandscape</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: landscapePreview,
 					cardData: landscapeCardData
+				},
+				{
+					name: 'Neon',
+					description: 'Neon-style card with full background image and glossy top border. Perfect for modern, visually striking user displays.',
+					command: 'npx shadcn@latest add user-card-neon',
+					codeSnippet:
+						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardNeon</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+					preview: neonPreview,
+					cardData: neonCardData
 				}
 			]}
 		/>
@@ -333,219 +406,133 @@
 
 	{#if displayUsers.length > 0}
 		<!-- Anatomy Section -->
-		<section class="mb-24">
-			<h2 class="text-3xl font-bold mb-4">Anatomy</h2>
-			<p class="text-muted-foreground mb-8">Click on any layer to see its details and props</p>
+		<ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-				<!-- Card Preview -->
-				<div class="flex items-center justify-center lg:justify-end">
-					<div class="max-w-md w-full relative">
-						{#if user1}
-							<!-- The actual card preview -->
-							<div class="relative bg-card border border-border rounded-xl overflow-hidden">
-								<User.Root {ndk} pubkey={user1.pubkey}>
-									<div class="p-4 space-y-3">
-										<!-- Avatar Layer -->
-										<div class="relative w-fit mx-auto">
-											<User.Avatar class="w-24 h-24" />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded-full transition-all cursor-pointer {selectedLayer ===
-												'avatar'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('avatar')}
-											>
-												<span
-													class="absolute -bottom-7 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
-												>
-													User.Avatar
-												</span>
-											</button>
-										</div>
-
-										<!-- Name Layer -->
-										<div class="relative text-center">
-											<User.Name class="text-lg font-semibold" />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {selectedLayer ===
-												'name'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('name')}
-											>
-												<span
-													class="absolute -bottom-7 right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-												>
-													User.Name
-												</span>
-											</button>
-										</div>
-
-										<!-- Bio Layer -->
-										<div class="relative">
-											<User.Bio class="text-sm text-muted-foreground text-center" />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {selectedLayer ===
-												'bio'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('bio')}
-											>
-												<span
-													class="absolute -bottom-7 right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-												>
-													User.Bio
-												</span>
-											</button>
-										</div>
-
-										<!-- NIP-05 Layer -->
-										<div class="relative w-fit mx-auto">
-											<User.Nip05 class="text-xs text-muted-foreground" />
-											<button
-												type="button"
-												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {selectedLayer ===
-												'nip05'
-													? 'bg-primary/20 border-primary'
-													: 'hover:bg-primary/5'}"
-												onclick={() => toggleLayer('nip05')}
-											>
-												<span
-													class="absolute -bottom-7 right-1 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity"
-												>
-													User.Nip05
-												</span>
-											</button>
-										</div>
-									</div>
-								</User.Root>
-							</div>
-						{/if}
-					</div>
-				</div>
-
-				<!-- Detail Panel -->
-				<div class="flex flex-col justify-start">
-					{#if selectedLayer === 'avatar'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">User.Avatar</h3>
-							<p class="text-muted-foreground mb-4">
-								Displays the user avatar image with automatic loading states and fallback handling.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">size</code>
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else if selectedLayer === 'name'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">User.Name</h3>
-							<p class="text-muted-foreground mb-4">
-								Renders the user display name or handle from profile metadata.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else if selectedLayer === 'bio'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">User.Bio</h3>
-							<p class="text-muted-foreground mb-4">
-								Shows user biography text from profile with automatic truncation support.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">maxLength</code>
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else if selectedLayer === 'nip05'}
-						<div class="animate-in fade-in duration-200">
-							<h3 class="font-mono text-xl font-bold mb-3">User.Nip05</h3>
-							<p class="text-muted-foreground mb-4">
-								Displays verified NIP-05 identifier with verification badge.
-							</p>
-							<div class="flex gap-2">
-								<code class="bg-muted px-2 py-1 rounded text-sm">class</code>
-							</div>
-						</div>
-					{:else}
-						<div class="text-muted-foreground text-sm">
-							Hover and click on a layer to see its details
-						</div>
-					{/if}
-				</div>
-			</div>
-		</section>
-
-		<!-- Components Section -->
-		<section class="mb-24">
-			<h2 class="text-3xl font-bold mb-8">Components</h2>
-
-			<div class="space-y-12">
+		<ComponentAnatomy.Root>
+			<ComponentAnatomy.Preview>
 				{#if user1}
-					<!-- Classic -->
-					<ComponentCardInline data={classicCardData}>
-						{#snippet preview()}
-							<UserCardClassic {ndk} pubkey={user1.pubkey} />
-						{/snippet}
-					</ComponentCardInline>
+					<div class="relative bg-card border border-border rounded-xl overflow-hidden">
+						<User.Root {ndk} pubkey={user1.pubkey}>
+							<div class="p-4 space-y-3">
+								<ComponentAnatomy.Layer id="avatar" label="User.Avatar" class="w-fit mx-auto">
+									<User.Avatar class="w-24 h-24" />
+								</ComponentAnatomy.Layer>
 
-					<!-- Compact -->
-					<ComponentCardInline data={compactCardData}>
-						{#snippet preview()}
-							<div class="space-y-2 max-w-sm">
-								{#each displayUsers as user (user.pubkey)}
-									<UserCardCompact {ndk} pubkey={user.pubkey} />
-								{/each}
+								<ComponentAnatomy.Layer id="name" label="User.Name" class="text-center">
+									<User.Name class="text-lg font-semibold" />
+								</ComponentAnatomy.Layer>
+
+								<ComponentAnatomy.Layer id="bio" label="User.Bio">
+									<User.Bio class="text-sm text-muted-foreground text-center" />
+								</ComponentAnatomy.Layer>
+
+								<ComponentAnatomy.Layer id="nip05" label="User.Nip05" class="w-fit mx-auto">
+									<User.Nip05 class="text-xs text-muted-foreground" />
+								</ComponentAnatomy.Layer>
 							</div>
-						{/snippet}
-					</ComponentCardInline>
+						</User.Root>
+					</div>
+				{/if}
+			</ComponentAnatomy.Preview>
 
-					<!-- List Item -->
-					<ComponentCardInline data={listItemCardData}>
-						{#snippet preview()}
-							<div class="max-w-sm border border-border rounded-lg overflow-hidden">
-								{#each displayUsers as user (user.pubkey)}
-									<UserListItem {ndk} pubkey={user.pubkey} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCardInline>
+			<ComponentAnatomy.DetailPanel layers={anatomyLayers} />
+		</ComponentAnatomy.Root>
+	{/if}
 
-					<!-- Portrait -->
-					<ComponentCardInline data={portraitCardData}>
-						{#snippet preview()}
-							<ScrollArea orientation="horizontal" class="w-full">
-								<div class="flex gap-4 pb-4">
+	<!-- Components Section -->
+	{#if user1}
+		<Tabs.Root value="classic">
+			<div class="border-t border-b border-border/50 py-8 -mx-8 px-8 flex items-center justify-between">
+				<h2 class="text-xl font-semibold text-muted-foreground">Components</h2>
+				<Tabs.List>
+					<Tabs.Trigger value="classic">Classic</Tabs.Trigger>
+					<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
+					<Tabs.Trigger value="list">List Item</Tabs.Trigger>
+					<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
+					<Tabs.Trigger value="landscape">Landscape</Tabs.Trigger>
+					<Tabs.Trigger value="neon">Neon</Tabs.Trigger>
+				</Tabs.List>
+			</div>
+
+			<section class="min-h-[500px] lg:min-h-[60vh] py-12">
+				<Tabs.Content value="classic">
+						<ComponentCardInline data={classicCardData}>
+							{#snippet preview()}
+								<UserCardClassic {ndk} pubkey={user1.pubkey} />
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+
+					<Tabs.Content value="compact">
+						<ComponentCardInline data={compactCardData}>
+							{#snippet preview()}
+								<div class="space-y-2 max-w-sm">
 									{#each displayUsers as user (user.pubkey)}
-										<UserCardPortrait {ndk} pubkey={user.pubkey} />
+										<UserCardCompact {ndk} pubkey={user.pubkey} />
 									{/each}
 								</div>
-							</ScrollArea>
-						{/snippet}
-					</ComponentCardInline>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
 
-					<!-- Landscape -->
-					<ComponentCardInline data={landscapeCardData}>
-						{#snippet preview()}
-							<div class="space-y-4 max-w-2xl">
-								{#each displayUsers as user (user.pubkey)}
-									<UserCardLandscape {ndk} pubkey={user.pubkey} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCardInline>
-				{/if}
-			</div>
-		</section>
+					<Tabs.Content value="list">
+						<ComponentCardInline data={listItemCardData}>
+							{#snippet preview()}
+								<div class="max-w-sm border border-border rounded-lg overflow-hidden">
+									{#each displayUsers as user (user.pubkey)}
+										<UserListItem {ndk} pubkey={user.pubkey} />
+									{/each}
+								</div>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+
+					<Tabs.Content value="portrait">
+						<ComponentCardInline data={portraitCardData}>
+							{#snippet preview()}
+								<ScrollArea orientation="horizontal" class="w-full">
+									<div class="flex gap-4 pb-4">
+										{#each displayUsers as user (user.pubkey)}
+											<UserCardPortrait {ndk} pubkey={user.pubkey} />
+										{/each}
+									</div>
+								</ScrollArea>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+
+					<Tabs.Content value="landscape">
+						<ComponentCardInline data={landscapeCardData}>
+							{#snippet preview()}
+								<div class="space-y-4 max-w-2xl">
+									{#each displayUsers as user (user.pubkey)}
+										<UserCardLandscape {ndk} pubkey={user.pubkey} />
+									{/each}
+								</div>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+
+					<Tabs.Content value="neon">
+						<ComponentCardInline data={neonCardData}>
+							{#snippet preview()}
+								<ScrollArea orientation="horizontal" class="w-full">
+									<div class="flex gap-4 pb-4">
+										{#each displayUsers as user (user.pubkey)}
+											<UserCardNeon {ndk} pubkey={user.pubkey} />
+										{/each}
+									</div>
+								</ScrollArea>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+				</section>
+			</Tabs.Root>
 
 		<!-- Primitives Grid -->
-		<section class="mb-24">
-			<h2 class="text-3xl font-bold mb-8">Primitives</h2>
+		<ComponentPageSectionTitle title="Primitives" />
+
+		<section class="min-h-[500px] lg:min-h-[60vh] py-12">
 
 			<div class="grid grid-cols-3">
 				{#each Object.entries(primitiveData) as [id, data], i}

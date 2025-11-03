@@ -1,6 +1,6 @@
 <script lang="ts">
   import '../app.css';
-  import { setContext } from 'svelte';
+  import { setContext, getContext } from 'svelte';
   import { page } from '$app/stores';
   import { ndk, initializeNDK } from '$lib/ndk.svelte.ts';
   import Navbar from '$site-components/Navbar.svelte';
@@ -9,8 +9,17 @@
   import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
   import { nip19 } from 'nostr-tools';
     import { ConsoleFreeIcons } from '@hugeicons/core-free-icons';
+  import type { Snippet } from 'svelte';
+  import Toc from '$site-components/toc.svelte';
 
-  let { children } = $props();
+  let { children }: { children: Snippet } = $props();
+
+  // Pages can use this to show a TOC
+  const showTocForRoute = $derived(
+    $page.url.pathname.startsWith('/components/') ||
+    $page.url.pathname.startsWith('/docs/') ||
+    $page.url.pathname.startsWith('/ui/')
+  );
 
   const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
 
@@ -92,15 +101,17 @@
       <Sidebar />
     {/if}
 
-    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen} class:sidebar-collapsed={$sidebarCollapsed}>
-      {#if showSidebar}
-        <div class="main-centered">
-          {@render children()}
-        </div>
-      {:else}
+    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen} class:sidebar-collapsed={$sidebarCollapsed} class:has-toc={showTocForRoute}>
+      <div class="main-content">
         {@render children()}
-      {/if}
+      </div>
     </main>
+
+    {#if showTocForRoute}
+      <aside class="right-sidebar">
+        <Toc />
+      </aside>
+    {/if}
   </div>
 
   <LoginModal
@@ -163,40 +174,60 @@
     flex: 1;
     margin-top: 3.5rem;
     margin-left: 0;
-    padding: 0;
-    width: 100%;
+    margin-right: 0;
+    display: flex;
+    justify-content: center;
     transition: margin-left 300ms ease-in-out;
   }
 
   .main.has-sidebar {
     margin-left: 280px;
-    display: flex;
-    justify-content: center;
   }
 
   .main.has-sidebar.sidebar-collapsed {
     margin-left: 64px;
   }
 
-  .main-centered {
+  .main.has-toc {
+    margin-right: 280px;
+  }
+
+  .main-content {
     width: 100%;
     max-width: 1400px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .right-sidebar {
+    position: fixed;
+    right: 0;
+    top: 3.5rem;
+    width: 280px;
+    height: calc(100vh - 3.5rem);
     padding: 3rem 2rem;
+    overflow-y: auto;
+    background: var(--background);
+    border-left: 1px solid var(--border);
+  }
+
+  @media (max-width: 1600px) {
+    .right-sidebar {
+      display: none;
+    }
+
+    .main.has-toc {
+      margin-right: 0;
+    }
   }
 
   @media (max-width: 768px) {
     .main.has-sidebar {
       margin-left: 0;
-      display: block;
-    }
-
-    .main-centered {
-      padding: 1.5rem 1rem;
     }
 
     .main.has-sidebar.sidebar-open {
       margin-left: 280px;
-      display: flex;
     }
 
     .main.has-sidebar.sidebar-open.sidebar-collapsed {

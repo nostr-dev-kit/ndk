@@ -127,10 +127,6 @@
 
 <style>
 	.component-card-inline {
-		padding: 2rem;
-		background: var(--card);
-		border: 1px solid var(--border);
-		border-radius: 0.75rem;
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;

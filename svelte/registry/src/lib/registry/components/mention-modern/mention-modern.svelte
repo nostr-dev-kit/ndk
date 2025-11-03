@@ -53,7 +53,6 @@
   }: Props = $props();
 
   const profileFetcher = createProfileFetcher(() => ({ user: bech32 }), ndk);
-  const profile = $derived(profileFetcher.profile);
   const pubkey = $derived(profileFetcher.user?.pubkey);
 </script>
 
@@ -61,18 +60,18 @@
   <span class={cn('inline-flex items-center gap-1 text-primary', className)}>
     @{bech32.slice(0, 8)}...
   </span>
-{:else if profile && pubkey}
+{:else if pubkey}
   <Popover.Root>
     <Popover.Trigger>
-      <span class={cn(
-        'inline-flex items-center gap-1.5 text-primary hover:underline cursor-pointer transition-all',
-        className
-      )}>
-        <User.Root {ndk} {pubkey}>
+      <User.Root {ndk} {pubkey}>
+        <span class={cn(
+          'inline-flex items-center gap-1.5 text-primary hover:underline cursor-pointer transition-all',
+          className
+        )}>
           <User.Avatar class="w-5 h-5 inline-block" />
-        </User.Root>
-        <span>@{profile?.name || profile?.displayName || bech32.slice(0, 8)}</span>
-      </span>
+          <span>@<User.Name class="inline" field="name" /></span>
+        </span>
+      </User.Root>
     </Popover.Trigger>
     <Popover.Content
       class="z-50"

@@ -48,7 +48,7 @@
 
     <h3>Using Components</h3>
     <CodeBlock lang="svelte" code={`<script>
-  import { EventCard } from '$lib/components/ui/event-card';
+  import { EventCard } from '$lib/components/event-card';
 </script>
 
 <EventCard.Root {ndk} {event}>

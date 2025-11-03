@@ -105,7 +105,7 @@ When you install components, a `components.lock.json` file is created in your pr
       "installedAt": "2025-10-15T10:00:00Z",
       "source": "https://ndk.fyi",
       "files": [
-        "src/lib/components/ui/event-card/..."
+        "src/lib/components/event-card/..."
       ]
     }
   },

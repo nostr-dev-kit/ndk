@@ -1,9 +1,19 @@
-// Re-export EventCard primitives from ui
-export { EventCard, EVENT_CARD_CONTEXT_KEY, type EventCardContext } from '../../ui/event-card/index.js';
+import Root from './event-card-root.svelte';
+import Header from './event-card-header.svelte';
+import Content from './event-card-content.svelte';
+import Actions from './event-card-actions.svelte';
+import Dropdown from './event-card-dropdown.svelte';
 
-// Export block components
+export const EventCard = {
+	Root,
+	Header,
+	Content,
+	Actions,
+	Dropdown
+};
+
+export type { EventCardContext } from './context.svelte.js';
+export { EVENT_CARD_CONTEXT_KEY } from './context.svelte.js';
+
 export { default as EventCardClassic } from './event-card-classic.svelte';
 export { default as EventCardMenu } from './event-card-menu.svelte';
-
-// Re-export ReactionAction for backwards compatibility
-export { default as ReactionAction } from '../actions/reaction.svelte';

@@ -2,6 +2,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createProfileFetcher } from '@nostr-dev-kit/svelte';
+	import { User } from '../../ui/user';
 
 	interface MentionProps {
 		ndk: NDKSvelte;
@@ -12,14 +13,16 @@
 	let { ndk, bech32, class: className = '' }: MentionProps = $props();
 
 	const profileFetcher = createProfileFetcher(() => ({ user: bech32 }), ndk);
-	const profile = $derived(profileFetcher.profile);
+	const pubkey = $derived(profileFetcher.user?.pubkey);
 </script>
 
 <span class="mention {className}" role="button" tabindex="0">
 	{#if profileFetcher?.loading}
 		@{bech32.slice(0, 8)}...
-	{:else if profile}
-		@{profile?.name || profile?.displayName || bech32}
+	{:else if pubkey}
+		<User.Root {ndk} {pubkey}>
+			@<User.Name class="inline" field="name" />
+		</User.Root>
 	{/if}
 </span>
 

@@ -13,11 +13,11 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import Root from '../../ui/article/article-root.svelte';
   import Title from '../../ui/article/article-title.svelte';
   import Summary from '../../ui/article/article-summary.svelte';
   import ReadingTime from '../../ui/article/article-reading-time.svelte';
+  import { User } from '../../ui/user';
   import { cn } from '../../utils/index.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/context.svelte.js';
@@ -51,15 +51,6 @@
     onclick,
     class: className = ''
   }: Props = $props();
-
-  // Fetch author profile for avatar/name display
-  const profileFetcher = $derived.by(() => {
-    const user = article.author;
-    if (!user) return null;
-    return createProfileFetcher(() => ({ user }), ndk);
-  });
-
-  const authorProfile = $derived(profileFetcher?.profile);
 
   const publishedAt = $derived(article.published_at);
   const articleImage = $derived(article.image);
@@ -119,36 +110,24 @@
       <Summary class="text-base md:text-lg text-white/90 mb-6 leading-relaxed max-w-3xl line-clamp-2" maxLength={200} />
 
       <!-- Author & Meta -->
-      <div class="flex items-center gap-3 text-white/80">
-        <!-- Avatar -->
-        {#if authorProfile?.image}
-          <img
-            src={authorProfile.image}
-            alt={authorProfile.name || 'Author'}
-            class="w-10 h-10 rounded-full object-cover bg-white/10"
-          />
-        {:else}
-          <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-          </div>
-        {/if}
+      <User.Root {ndk} user={article.author}>
+        <div class="flex items-center gap-3 text-white/80">
+          <!-- Avatar -->
+          <User.Avatar class="w-10 h-10" />
 
-        <!-- Author Name & Meta Info -->
-        <div class="flex flex-col">
-          <span class="font-semibold text-white">
-            {authorProfile?.name || authorProfile?.displayName || 'Anonymous'}
-          </span>
-          <div class="flex items-center gap-2 text-sm">
-            {#if timeAgo}
-              <time>Published {timeAgo}</time>
-              <span>•</span>
-            {/if}
-            <ReadingTime />
+          <!-- Author Name & Meta Info -->
+          <div class="flex flex-col">
+            <User.Name class="font-semibold text-white" field="displayName" />
+            <div class="flex items-center gap-2 text-sm">
+              {#if timeAgo}
+                <time>Published {timeAgo}</time>
+                <span>•</span>
+              {/if}
+              <ReadingTime />
+            </div>
           </div>
         </div>
-      </div>
+      </User.Root>
     </div>
   </svelte:element>
 </Root>

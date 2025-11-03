@@ -19,6 +19,9 @@ export * from './voice-message-player';
 // Action Components
 export * from './zap-button';
 
+// Reaction Components
+export * from './reaction';
+
 // Article Cards
 export * from './article-card';
 

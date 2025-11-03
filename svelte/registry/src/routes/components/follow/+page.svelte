@@ -5,7 +5,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
@@ -112,14 +112,14 @@
   {#if sampleUser}
     <!-- ComponentsShowcase Section -->
     {#snippet minimalPreview()}
-      <div class="flex flex-col items-start justify-center gap-3 min-h-[200px]">
+      <div class="flex flex-col items-center gap-3">
         <FollowButton {ndk} target={sampleUser} showTarget={true} />
         <FollowButton {ndk} target="bitcoin" showTarget={true} />
       </div>
     {/snippet}
 
     {#snippet pillPreview()}
-      <div class="flex flex-col items-start justify-center gap-3 min-h-[200px]">
+      <div class="flex flex-col items-center gap-3">
         <div class="flex items-center gap-3">
           <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
           <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
@@ -132,7 +132,7 @@
     {/snippet}
 
     {#snippet animatedPreview()}
-      <div class="flex flex-col items-start justify-center gap-3 min-h-[200px]">
+      <div class="flex flex-col items-center gap-3">
         <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
         <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
       </div>
@@ -143,30 +143,26 @@
       description="Three follow button variants. Minimal for inline use, pill for versatile layouts, and animated for visual feedback."
     />
 
-    <ComponentsShowcase
-      class="-mx-8 px-8"
+    <ComponentsShowcaseGrid
       blocks={[
         {
           name: 'Minimal',
-          description: 'Icon-first design for inline use in feeds. Clean and unobtrusive.',
+          description: 'Icon-first design for inline use in feeds',
           command: 'npx shadcn@latest add follow-button',
-          codeSnippet: '<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowButton</span> <span class="text-cyan-400">target</span><span class="text-gray-500">=&#123;</span>user<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
           preview: minimalPreview,
           cardData: minimalCardData
         },
         {
           name: 'Pill',
-          description: 'Rounded pill style with solid and outline variants. Supports compact mode.',
+          description: 'Rounded pill style with solid and outline variants',
           command: 'npx shadcn@latest add follow-button-pill',
-          codeSnippet: '<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowButtonPill</span> <span class="text-cyan-400">target</span><span class="text-gray-500">=&#123;</span>user<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
           preview: pillPreview,
           cardData: pillCardData
         },
         {
           name: 'Animated',
-          description: 'Smooth transitions and visual feedback. Features icon animations and checkmark confirmation.',
+          description: 'Smooth transitions and visual feedback',
           command: 'npx shadcn@latest add follow-button-animated',
-          codeSnippet: '<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowButtonAnimated</span> <span class="text-cyan-400">target</span><span class="text-gray-500">=&#123;</span>user<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
           preview: animatedPreview,
           cardData: animatedCardData
         }

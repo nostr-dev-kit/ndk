@@ -48,9 +48,9 @@ export { default as MentionModern } from '../components/mention-modern/mention-m
 
 // Actions
 export { default as MuteButton } from '../components/actions/mute-button.svelte';
-export { default as ReactionButton } from '../components/actions/reaction-button.svelte';
-export { default as ReactionEmojiButton } from '../components/actions/reaction-emoji-button.svelte';
-export { default as ReactionSlack } from '../components/actions/reaction-slack.svelte';
+export { default as ReactionButton } from '../components/reaction/reaction-button.svelte';
+export { default as ReactionEmojiButton } from '../components/reaction/reaction-emoji-button.svelte';
+export { default as ReactionSlack } from '../components/reaction/reaction-slack.svelte';
 export { default as RepostButton } from '../components/actions/repost-button.svelte';
 export { default as RepostButtonPill } from '../components/actions/repost-button-pill.svelte';
 

@@ -15,7 +15,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '../event-card/index.js';
-	import { ReactionAction } from '../actions/index.js';
+	import { ReactionAction } from '../reaction/index.js';
 	import { ImageContent } from '../image-content/index.js';
 	import RepostButton from '../actions/repost-button.svelte';
 	import { cn } from '../../utils/index.js';
@@ -65,7 +65,6 @@
 <EventCard.Root
 	{ndk}
 	event={image}
-	{interactive}
 	class={cn(
 		'overflow-hidden rounded-xl border border-border bg-card',
 		'hover:shadow-lg transition-all duration-200',

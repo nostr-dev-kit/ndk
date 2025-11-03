@@ -10,57 +10,18 @@
   let followPack = $state<NDKFollowPack | null>(null);
 </script>
 
-<div class="follow-pack-demo">
+<div class="border border-gray-200 rounded-lg p-4 bg-white">
   {#if followPack}
     <FollowPack.Root {ndk} {followPack}>
-      <div class="pack-card">
-        <FollowPack.Title class="title" />
-        <FollowPack.Description class="description" />
-        <FollowPack.MemberCount class="count" format="long" />
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <FollowPack.Title class="text-lg font-semibold text-gray-900" />
+        <FollowPack.Description class="text-sm text-gray-500 mt-2" />
+        <FollowPack.MemberCount class="text-xs text-gray-400 mt-2" format="long" />
       </div>
     </FollowPack.Root>
   {:else}
-    <div class="placeholder">
+    <div class="p-8 text-center text-gray-500">
       <p>Load a follow pack event to see details</p>
     </div>
   {/if}
 </div>
-
-<style>
-  .follow-pack-demo {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background: white;
-  }
-
-  .pack-card {
-    padding: 1rem;
-    background: #f9fafb;
-    border-radius: 0.5rem;
-  }
-
-  .pack-card :global(.title) {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #111827;
-  }
-
-  .pack-card :global(.description) {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.5rem;
-  }
-
-  .pack-card :global(.count) {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    margin-top: 0.5rem;
-  }
-
-  .placeholder {
-    padding: 2rem;
-    text-align: center;
-    color: #6b7280;
-  }
-</style>

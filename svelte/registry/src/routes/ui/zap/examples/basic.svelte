@@ -22,57 +22,16 @@
   ] as ProcessedZap[];
 </script>
 
-<div class="zap-demo">
-  <h3>Zap Display</h3>
-  <div class="zap-list">
+<div class="border border-gray-200 rounded-lg p-4 bg-white">
+  <h3 class="text-sm font-semibold mb-4 text-gray-700">Zap Display</h3>
+  <div class="flex flex-col gap-3">
     {#each exampleZaps as zap}
-      <div class="zap-item">
-        <ZapAmount {zap} class="amount" /> sats
+      <div class="p-3 bg-gray-50 rounded-md flex items-center gap-2">
+        <ZapAmount {zap} class="font-bold text-amber-500" /> sats
         {#if zap.comment}
-          <ZapContent {zap} class="comment" />
+          <ZapContent {zap} class="text-gray-500 text-sm" />
         {/if}
       </div>
     {/each}
   </div>
 </div>
-
-<style>
-  .zap-demo {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background: white;
-  }
-
-  .zap-demo h3 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #374151;
-  }
-
-  .zap-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .zap-item {
-    padding: 0.75rem;
-    background: #f9fafb;
-    border-radius: 0.375rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .zap-item :global(.amount) {
-    font-weight: 700;
-    color: #f59e0b;
-  }
-
-  .zap-item :global(.comment) {
-    color: #6b7280;
-    font-size: 0.875rem;
-  }
-</style>

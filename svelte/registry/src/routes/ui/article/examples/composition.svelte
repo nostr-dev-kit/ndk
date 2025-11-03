@@ -22,69 +22,19 @@
 </script>
 
 {#if article}
-  <div class="article-card">
+  <div class="border border-gray-200 rounded-xl overflow-hidden bg-white">
     <Article.Root {ndk} {article}>
       <!-- Hero layout with image -->
-      <Article.Image class="article-image" />
+      <Article.Image class="w-full h-[200px] object-cover" />
 
-      <div class="article-content">
-        <Article.Title class="article-title" />
-        <Article.ReadingTime class="article-meta" />
-        <Article.Summary class="article-summary" />
-        <Article.ReadingTime class="article-reading-time" />
+      <div class="p-6">
+        <Article.Title class="text-2xl font-bold mb-2 text-gray-900" />
+        <Article.ReadingTime class="text-sm text-gray-500 mb-3" />
+        <Article.Summary class="text-base leading-relaxed text-gray-600 mb-3" />
+        <Article.ReadingTime class="text-sm text-gray-400" />
       </div>
     </Article.Root>
   </div>
 {:else}
-  <div class="loading">Loading article...</div>
+  <div class="text-gray-500 p-8 text-center">Loading article...</div>
 {/if}
-
-<style>
-  .article-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-  }
-
-  .article-card :global(.article-image) {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  .article-content {
-    padding: 1.5rem;
-  }
-
-  .article-card :global(.article-title) {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #111827;
-  }
-
-  .article-card :global(.article-meta) {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-bottom: 0.75rem;
-  }
-
-  .article-card :global(.article-summary) {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #4b5563;
-    margin-bottom: 0.75rem;
-  }
-
-  .article-card :global(.article-reading-time) {
-    font-size: 0.875rem;
-    color: #9ca3af;
-  }
-
-  .loading {
-    color: #6b7280;
-    padding: 2rem;
-    text-align: center;
-  }
-</style>

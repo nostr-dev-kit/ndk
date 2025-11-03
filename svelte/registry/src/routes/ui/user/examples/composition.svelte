@@ -10,75 +10,17 @@
   let { ndk, userPubkey }: Props = $props();
 </script>
 
-<div class="user-card">
+<div class="border border-gray-200 rounded-xl overflow-hidden bg-white max-w-md">
   <User.Root {ndk} pubkey={userPubkey}>
-    <div class="user-header">
-      <User.Banner class="banner" />
-      <User.Avatar size={80} class="avatar" />
+    <div class="relative h-[120px]">
+      <User.Banner class="w-full h-full object-cover" />
+      <User.Avatar class="absolute -bottom-10 left-6 border-4 border-white rounded-full w-20 h-20" />
     </div>
-    <div class="user-content">
-      <User.Name class="user-name" />
-      <User.Handle class="user-handle" />
-      <User.Nip05 class="user-nip05" />
-      <User.Bio class="user-bio" />
+    <div class="pt-12 px-6 pb-6">
+      <User.Name class="text-xl font-bold mb-1 text-gray-900" />
+      <User.Handle class="text-sm text-gray-500 mb-2" />
+      <User.Nip05 class="text-sm text-emerald-500 mb-3" />
+      <User.Bio class="text-[15px] leading-normal text-gray-600" />
     </div>
   </User.Root>
 </div>
-
-<style>
-  .user-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-    max-width: 400px;
-  }
-
-  .user-header {
-    position: relative;
-    height: 120px;
-  }
-
-  .user-card :global(.banner) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .user-card :global(.avatar) {
-    position: absolute;
-    bottom: -40px;
-    left: 1.5rem;
-    border: 4px solid white;
-    border-radius: 50%;
-  }
-
-  .user-content {
-    padding: 3rem 1.5rem 1.5rem;
-  }
-
-  .user-card :global(.user-name) {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    color: #111827;
-  }
-
-  .user-card :global(.user-handle) {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-bottom: 0.5rem;
-  }
-
-  .user-card :global(.user-nip05) {
-    font-size: 0.875rem;
-    color: #10b981;
-    margin-bottom: 0.75rem;
-  }
-
-  .user-card :global(.user-bio) {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    color: #4b5563;
-  }
-</style>

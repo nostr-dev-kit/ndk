@@ -21,53 +21,13 @@
 </script>
 
 {#if highlight}
-  <div class="highlight-card">
+  <div class="relative p-6 border border-amber-400 rounded-xl bg-gradient-to-br from-amber-50 to-white">
     <Highlight.Root {ndk} {highlight}>
-      <div class="highlight-marker"></div>
-      <Highlight.Content class="highlight-content" />
-      <Highlight.Source class="highlight-source" />
+      <div class="absolute top-0 left-0 w-1 h-full bg-amber-500 rounded-l-xl"></div>
+      <Highlight.Content class="text-lg leading-relaxed italic text-amber-950 mb-3" />
+      <Highlight.Source class="text-sm text-amber-900 opacity-80" />
     </Highlight.Root>
   </div>
 {:else}
-  <div class="loading">Loading highlight...</div>
+  <div class="text-gray-500 p-8 text-center">Loading highlight...</div>
 {/if}
-
-<style>
-  .highlight-card {
-    position: relative;
-    padding: 1.5rem;
-    border: 1px solid #fbbf24;
-    border-radius: 0.75rem;
-    background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
-  }
-
-  .highlight-marker {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: #f59e0b;
-    border-radius: 0.75rem 0 0 0.75rem;
-  }
-
-  .highlight-card :global(.highlight-content) {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    font-style: italic;
-    color: #78350f;
-    margin-bottom: 0.75rem;
-  }
-
-  .highlight-card :global(.highlight-source) {
-    font-size: 0.875rem;
-    color: #92400e;
-    opacity: 0.8;
-  }
-
-  .loading {
-    color: #6b7280;
-    padding: 2rem;
-    text-align: center;
-  }
-</style>

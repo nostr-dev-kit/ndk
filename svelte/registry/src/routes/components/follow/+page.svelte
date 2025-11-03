@@ -5,6 +5,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
+  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
@@ -109,6 +110,65 @@
   </div>
 
   {#if sampleUser}
+    <!-- ComponentsShowcase Section -->
+    {#snippet minimalPreview()}
+      <div class="flex items-center gap-4">
+        <FollowButton {ndk} target={sampleUser} />
+        <FollowButton {ndk} target={sampleUser} showTarget={true} />
+      </div>
+    {/snippet}
+
+    {#snippet pillPreview()}
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
+        <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+        <FollowButtonPill {ndk} target={sampleUser} compact />
+        <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+      </div>
+    {/snippet}
+
+    {#snippet animatedPreview()}
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonAnimated {ndk} target={sampleUser} />
+        <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
+      </div>
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Components Showcase"
+      description="Three follow button variants. Minimal for inline use, pill for versatile layouts, and animated for visual feedback."
+    />
+
+    <ComponentsShowcase
+      class="-mx-8 px-8"
+      blocks={[
+        {
+          name: 'Minimal',
+          description: 'Icon-first design for inline use in feeds. Clean and unobtrusive.',
+          command: 'npx shadcn@latest add follow-button',
+          codeSnippet: '<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowButton</span> <span class="text-cyan-400">target</span><span class="text-gray-500">=&#123;</span>user<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+          preview: minimalPreview,
+          cardData: minimalCardData
+        },
+        {
+          name: 'Pill',
+          description: 'Rounded pill style with solid and outline variants. Supports compact mode.',
+          command: 'npx shadcn@latest add follow-button-pill',
+          codeSnippet: '<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowButtonPill</span> <span class="text-cyan-400">target</span><span class="text-gray-500">=&#123;</span>user<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+          preview: pillPreview,
+          cardData: pillCardData
+        },
+        {
+          name: 'Animated',
+          description: 'Smooth transitions and visual feedback. Features icon animations and checkmark confirmation.',
+          command: 'npx shadcn@latest add follow-button-animated',
+          codeSnippet: '<span class="text-gray-500">&lt;</span><span class="text-blue-400">FollowButtonAnimated</span> <span class="text-cyan-400">target</span><span class="text-gray-500">=&#123;</span>user<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
+          preview: animatedPreview,
+          cardData: animatedCardData
+        }
+      ]}
+    />
+
     <!-- Components Section -->
     <Tabs.Root value="minimal">
       <ComponentPageSectionTitle title="Components" description="Explore each follow button variant in detail">

@@ -9,7 +9,7 @@
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-	import ComponentCardInline from '$site-components/ComponentCardInline.svelte';
+	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -376,7 +376,7 @@
 				<section class="min-h-[500px] lg:min-h-[60vh] pb-12">
 
 					<Tabs.Content value="portrait">
-						<ComponentCardInline data={portraitCardData}>
+						<ComponentCard inline data={portraitCardData}>
 							{#snippet preview()}
 								<ScrollArea orientation="horizontal" class="w-full">
 									<div class="flex gap-6 pb-4">
@@ -386,7 +386,7 @@
 									</div>
 								</ScrollArea>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="hero">
@@ -396,7 +396,7 @@
 									<ArticleCardHero {ndk} article={article1} />
 								</div>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="medium">
@@ -408,7 +408,7 @@
 									{/each}
 								</div>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="neon">
@@ -422,7 +422,7 @@
 									</div>
 								</ScrollArea>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 				</section>
 			</Tabs.Root>

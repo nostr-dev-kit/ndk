@@ -87,7 +87,7 @@
             <div class="flex items-center gap-3 w-full">
               <User.Avatar class="w-10 h-10" />
               <div class="flex-1 min-w-0">
-                <User.Name field="displayName" size="sm" truncate={true} />
+                <User.Name field="displayName" class="text-sm truncate" />
               </div>
             </div>
           </User.Root>

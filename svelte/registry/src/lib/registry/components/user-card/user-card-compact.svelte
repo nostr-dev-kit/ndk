@@ -43,8 +43,8 @@
   )}>
     <User.Avatar />
     <div class="flex-1 min-w-0 flex flex-col gap-0.5">
-      <User.Name field="displayName" size="md" truncate={true} />
-      <User.Field field="name" size="sm" />
+      <User.Name size="md" truncate={true} />
+      <User.Field field="name" class="text-xs text-foreground/50" />
     </div>
     <FollowButton {ndk} target={user} class="shrink-0" />
   </div>

@@ -6,14 +6,10 @@
   interface Props {
     /** Additional CSS classes */
     class?: string;
-
-    /** Max number of lines to show (line-clamp) */
-    maxLines?: number;
   }
 
   let {
-    class: className = '',
-    maxLines = 3
+    class: className = ''
   }: Props = $props();
 
   const context = getContext<UserContext>(USER_CONTEXT_KEY);
@@ -25,7 +21,7 @@
 </script>
 
 {#if bio}
-  <p class={cn(`line-clamp-${maxLines}`, className)}>
+  <p class={cn(className)}>
     {bio}
   </p>
 {/if}

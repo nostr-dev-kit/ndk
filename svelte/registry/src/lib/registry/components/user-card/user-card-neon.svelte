@@ -18,6 +18,7 @@
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/context.svelte.js';
   import FollowButtonAnimated from '../actions/follow-button-animated.svelte';
+  import { createUserStats } from '../../hooks/user/stats.svelte.js';
 
   interface Props {
     /** NDK instance */
@@ -64,7 +65,7 @@
   {@const context = getContext<UserContext>(USER_CONTEXT_KEY)}
   {@const imageUrl = context.profile?.banner}
   {@const user = context.ndkUser}
-  {@const isOwnProfile = user && ndk.$currentPubkey === user.pubkey}
+  {@const stats = createUserStats(() => user ? { user, follows: true, recentNotes: true } : undefined, ndk)}
 
   <svelte:element
     this={onclick ? 'button' : 'div'}
@@ -106,19 +107,27 @@
         <User.Field field="about" class="text-sm text-white/80 leading-relaxed line-clamp-3 mb-6" maxLines={3} />
 
         <!-- Stats -->
-        <div class="w-full border-t border-white/20 pt-4 mb-6">
-          <div class="flex items-center justify-center gap-8">
-            <div class="flex flex-col items-center">
-              <span class="text-xl font-bold text-white">234</span>
-              <span class="text-xs text-white/70 uppercase tracking-wide">notes</span>
-            </div>
-            <div class="w-px h-8 bg-white/20"></div>
-            <div class="flex flex-col items-center">
-              <span class="text-xl font-bold text-white">1.5K</span>
-              <span class="text-xs text-white/70 uppercase tracking-wide">followers</span>
+        {#if stats.followCount > 0 || stats.recentNoteCount > 0}
+          <div class="w-full border-t border-white/20 pt-4 mb-6">
+            <div class="flex items-center justify-center gap-8">
+              {#if stats.recentNoteCount > 0}
+                <div class="flex flex-col items-center">
+                  <span class="text-xl font-bold text-white">{stats.recentNoteCount}</span>
+                  <span class="text-xs text-white/70 uppercase tracking-wide">recent notes</span>
+                </div>
+              {/if}
+              {#if stats.recentNoteCount > 0 && stats.followCount > 0}
+                <div class="w-px h-8 bg-white/20"></div>
+              {/if}
+              {#if stats.followCount > 0}
+                <div class="flex flex-col items-center">
+                  <span class="text-xl font-bold text-white">{stats.followCount}</span>
+                  <span class="text-xs text-white/70 uppercase tracking-wide">following</span>
+                </div>
+              {/if}
             </div>
           </div>
-        </div>
+        {/if}
 
         <!-- Follow Button -->
         {#if user}

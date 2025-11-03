@@ -18,6 +18,7 @@
 	import UserCardLandscape from '$lib/registry/components/user-card/user-card-landscape.svelte';
 	import UserCardCompact from '$lib/registry/components/user-card/user-card-compact.svelte';
 	import UserCardNeon from '$lib/registry/components/user-card/user-card-neon.svelte';
+	import UserCardGlass from '$lib/registry/components/user-card/user-card-glass.svelte';
 	import UserListItem from '$lib/registry/components/user-card/user-list-item.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
@@ -54,10 +55,22 @@
 			description: 'Displays user avatar image with automatic loading and fallback handling.',
 			props: ['size', 'class']
 		},
+		banner: {
+			id: 'banner',
+			label: 'User.Banner',
+			description: 'Renders user banner/header image from profile metadata.',
+			props: ['class']
+		},
 		name: {
 			id: 'name',
 			label: 'User.Name',
 			description: 'Renders the user display name or handle from profile metadata.',
+			props: ['class']
+		},
+		handle: {
+			id: 'handle',
+			label: 'User.Handle',
+			description: 'Displays the user handle/username.',
 			props: ['class']
 		},
 		bio: {
@@ -71,6 +84,12 @@
 			label: 'User.Nip05',
 			description: 'Displays verified NIP-05 identifier with verification badge.',
 			props: ['class']
+		},
+		field: {
+			id: 'field',
+			label: 'User.Field',
+			description: 'Renders a custom field from user profile metadata.',
+			props: ['name', 'class']
 		}
 	};
 
@@ -93,9 +112,19 @@
 				{ name: 'class', type: 'string', desc: 'Additional CSS classes for styling' }
 			]
 		},
+		banner: {
+			name: 'User.Banner',
+			description: 'Renders user banner/header image from profile metadata.',
+			props: [{ name: 'class', type: 'string', desc: 'Additional CSS classes' }]
+		},
 		name: {
 			name: 'User.Name',
 			description: 'Renders the user display name or handle from profile metadata.',
+			props: [{ name: 'class', type: 'string', desc: 'Additional CSS classes' }]
+		},
+		handle: {
+			name: 'User.Handle',
+			description: 'Displays the user handle/username.',
 			props: [{ name: 'class', type: 'string', desc: 'Additional CSS classes' }]
 		},
 		bio: {
@@ -110,6 +139,14 @@
 			name: 'User.Nip05',
 			description: 'Displays verified NIP-05 identifier with verification badge.',
 			props: [{ name: 'class', type: 'string', desc: 'Additional CSS classes' }]
+		},
+		field: {
+			name: 'User.Field',
+			description: 'Renders a custom field from user profile metadata.',
+			props: [
+				{ name: 'name', type: 'string', desc: 'Field name to display (required)' },
+				{ name: 'class', type: 'string', desc: 'Additional CSS classes' }
+			]
 		}
 	};
 
@@ -236,6 +273,30 @@
 			}
 		],
 	};
+
+	const glassCardData = {
+		name: 'user-card-glass',
+		title: 'UserCardGlass',
+		description: 'Glassmorphic card with frosted glass effect and gradient mesh background.',
+		richDescription: 'Features a translucent frosted glass card over an animated gradient mesh background with sparkle effects. Modern, elegant design with soft glows and blur effects.',
+		command: 'npx shadcn@latest add user-card-glass',
+		apiDocs: [
+			{
+				name: 'UserCardGlass',
+				description: 'Glassmorphic user card component',
+				importPath: "import { UserCardGlass } from '$lib/registry/components/user-card'",
+				props: [
+					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
+					{ name: 'pubkey', type: 'string', description: 'User public key (hex format)', required: true },
+					{ name: 'primaryColor', type: 'string', description: 'Primary color for gradient palette (default: #6366f1)' },
+					{ name: 'width', type: 'string', description: 'Card width (default: w-[280px])' },
+					{ name: 'height', type: 'string', description: 'Card height (default: h-[380px])' },
+					{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler' },
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			}
+		],
+	};
 </script>
 
 <div class="px-8">
@@ -296,7 +357,7 @@
 		{/snippet}
 
 		{#snippet landscapePreview()}
-			<div class="space-y-4 max-w-2xl max-h-[250px]">
+			<div class="space-y-4 max-w-2xl max-h-[300px]">
 				{#each displayUsers as user (user.pubkey)}
 					<UserCardLandscape {ndk} pubkey={user.pubkey} />
 				{/each}
@@ -311,9 +372,17 @@
 			</div>
 		{/snippet}
 
+		{#snippet glassPreview()}
+			<div class="flex gap-4 pb-4">
+				{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+					<UserCardGlass {ndk} pubkey={user.pubkey} />
+				{/each}
+			</div>
+		{/snippet}
+
 		<ComponentPageSectionTitle
 			title="Components Showcase"
-			description="Six carefully crafted variants. From ultra-compact list items to full-featured classic cards. Choose the perfect fit for your layout."
+			description="Seven carefully crafted variants. From ultra-compact list items to full-featured glassmorphic cards. Choose the perfect fit for your layout."
 		/>
 
 		<ComponentsShowcase
@@ -366,6 +435,14 @@
 					preview: neonPreview,
 					cardData: neonCardData,
 					orientation: 'horizontal'
+				},
+				{
+					name: 'Glass',
+					description: 'Glassmorphic card with frosted glass effect and gradient mesh background. Modern, elegant design with soft glows.',
+					command: 'npx shadcn@latest add user-card-glass',
+					preview: glassPreview,
+					cardData: glassCardData,
+					orientation: 'horizontal'
 				}
 			]}
 		/>
@@ -380,13 +457,21 @@
 				{#if user1}
 					<div class="relative bg-card border border-border rounded-xl overflow-hidden">
 						<User.Root {ndk} pubkey={user1.pubkey}>
+							<ComponentAnatomy.Layer id="banner" label="User.Banner">
+								<User.Banner class="w-full h-32" />
+							</ComponentAnatomy.Layer>
+
 							<div class="p-4 space-y-3">
-								<ComponentAnatomy.Layer id="avatar" label="User.Avatar" class="w-fit mx-auto">
-									<User.Avatar class="w-24 h-24" />
+								<ComponentAnatomy.Layer id="avatar" label="User.Avatar" class="w-fit mx-auto -mt-16">
+									<User.Avatar class="w-24 h-24 ring-4 ring-card" />
 								</ComponentAnatomy.Layer>
 
 								<ComponentAnatomy.Layer id="name" label="User.Name" class="text-center">
 									<User.Name class="text-lg font-semibold" />
+								</ComponentAnatomy.Layer>
+
+								<ComponentAnatomy.Layer id="handle" label="User.Handle" class="text-center">
+									<User.Handle class="text-sm text-muted-foreground" />
 								</ComponentAnatomy.Layer>
 
 								<ComponentAnatomy.Layer id="bio" label="User.Bio">
@@ -395,6 +480,10 @@
 
 								<ComponentAnatomy.Layer id="nip05" label="User.Nip05" class="w-fit mx-auto">
 									<User.Nip05 class="text-xs text-muted-foreground" />
+								</ComponentAnatomy.Layer>
+
+								<ComponentAnatomy.Layer id="field" label="User.Field" class="w-fit mx-auto">
+									<User.Field name="website" class="text-xs text-foreground" />
 								</ComponentAnatomy.Layer>
 							</div>
 						</User.Root>
@@ -419,6 +508,7 @@
 						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
 						<Tabs.Trigger value="landscape">Landscape</Tabs.Trigger>
 						<Tabs.Trigger value="neon">Neon</Tabs.Trigger>
+						<Tabs.Trigger value="glass">Glass</Tabs.Trigger>
 					</Tabs.List>
 				{/snippet}
 			</ComponentPageSectionTitle>
@@ -495,6 +585,20 @@
 							{/snippet}
 						</ComponentCard>
 					</Tabs.Content>
+
+					<Tabs.Content value="glass">
+						<ComponentCard inline data={glassCardData}>
+							{#snippet preview()}
+								<ScrollArea orientation="horizontal" class="w-full">
+									<div class="flex gap-4 pb-4">
+										{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+											<UserCardGlass {ndk} pubkey={user.pubkey} />
+										{/each}
+									</div>
+								</ScrollArea>
+							{/snippet}
+						</ComponentCard>
+					</Tabs.Content>
 				</section>
 			</Tabs.Root>
 
@@ -509,7 +613,7 @@
 						type="button"
 						class="p-12 border-border transition-all {i % 3 !== 2
 							? 'border-r'
-							: ''} {i < 3 ? 'border-b' : ''} {focusedPrimitive && focusedPrimitive !== id
+							: ''} {i < 6 ? 'border-b' : ''} {focusedPrimitive && focusedPrimitive !== id
 							? 'opacity-30'
 							: ''}"
 						onclick={() => openPrimitiveDrawer(id)}
@@ -526,12 +630,18 @@
 											</div>
 										{:else if id === 'avatar'}
 											<User.Avatar class="w-16 h-16" />
+										{:else if id === 'banner'}
+											<User.Banner class="w-full h-24 rounded-lg" />
 										{:else if id === 'name'}
 											<User.Name class="text-xl font-bold text-center" />
+										{:else if id === 'handle'}
+											<User.Handle class="text-base text-muted-foreground text-center" />
 										{:else if id === 'bio'}
 											<User.Bio class="text-sm text-muted-foreground text-center leading-relaxed px-2" />
 										{:else if id === 'nip05'}
 											<User.Nip05 class="text-base text-foreground" />
+										{:else if id === 'field'}
+											<User.Field name="website" class="text-sm text-foreground" />
 										{/if}
 									</User.Root>
 								{/if}

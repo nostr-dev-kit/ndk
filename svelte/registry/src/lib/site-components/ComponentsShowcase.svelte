@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { Dialog } from 'bits-ui';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import { PMCommand } from '$lib/components/ui/pm-command';
     import { cn } from '$lib/registry/utils';
@@ -235,9 +236,27 @@
 	</div>
 
 	<!-- Component Card Modal -->
-	<ComponentCard
-		bind:show={showModal}
-		data={selectedBlock?.cardData ?? null}
-		preview={selectedBlock?.preview}
-		onClose={closeModal}
-	/>
+	<Dialog.Root bind:open={showModal}>
+		<Dialog.Portal>
+			<Dialog.Overlay class="fixed inset-0 z-[9998] bg-background/80 backdrop-blur-sm" />
+			<Dialog.Content
+				class="fixed left-[50%] top-[50%] z-[9999] w-[95%] max-w-[1200px] max-h-[95vh] translate-x-[-50%] translate-y-[-50%] overflow-y-auto rounded-xl bg-background"
+			>
+				<div class="absolute top-6 right-6 z-10">
+					<Dialog.Close class="p-2 border-none bg-transparent cursor-pointer rounded-md transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+						<span class="sr-only">Close</span>
+					</Dialog.Close>
+				</div>
+
+				<div class="p-12">
+					<ComponentCard
+						data={selectedBlock?.cardData ?? null}
+						preview={selectedBlock?.preview}
+					/>
+				</div>
+			</Dialog.Content>
+		</Dialog.Portal>
+	</Dialog.Root>

@@ -7,21 +7,13 @@
     /** Which field to display */
     field?: 'displayName' | 'name' | 'both';
 
-    /** Text size classes */
-    size?: string;
-
     /** Additional CSS classes */
     class?: string;
-
-    /** Whether to truncate */
-    truncate?: boolean;
   }
 
   let {
     field = 'displayName',
-    size = 'text-base',
-    class: className = '',
-    truncate = true
+    class: className = ''
   }: Props = $props();
 
   const context = getContext<UserContext>(USER_CONTEXT_KEY);
@@ -57,6 +49,6 @@
   });
 </script>
 
-<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
+<span class={cn(className)}>
   {displayText}
 </span>

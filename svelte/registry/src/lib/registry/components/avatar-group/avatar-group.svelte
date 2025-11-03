@@ -108,14 +108,12 @@
             class="avatar-group-button"
           >
             <User.Avatar
-              {size}
-              class="ring-2 ring-background"
+              class="ring-2 ring-background w-[{size}px] h-[{size}px]"
             />
           </button>
         {:else}
           <User.Avatar
-            {size}
-            class="ring-2 ring-background"
+            class="ring-2 ring-background w-[{size}px] h-[{size}px]"
           />
         {/if}
       </User.Root>

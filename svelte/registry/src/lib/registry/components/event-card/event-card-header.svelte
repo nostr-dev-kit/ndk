@@ -87,8 +87,10 @@
     >
       {#if showAvatar}
         <User.Avatar
-          size={avatarSize === 'sm' ? 32 : avatarSize === 'md' ? 40 : 48}
-          class="flex-shrink-0"
+          class={cn(
+            'flex-shrink-0',
+            avatarSize === 'sm' ? 'w-8 h-8' : avatarSize === 'md' ? 'w-10 h-10' : 'w-12 h-12'
+          )}
         />
       {/if}
 

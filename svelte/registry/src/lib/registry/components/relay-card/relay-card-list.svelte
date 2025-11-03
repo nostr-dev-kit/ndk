@@ -72,7 +72,7 @@
 	>
 		<!-- Icon -->
 		<div class="flex-shrink-0">
-			<Icon size={compact ? 32 : 48} />
+			<Icon class={compact ? 'w-8 h-8' : 'w-12 h-12'} />
 		</div>
 
 		<!-- Content -->
@@ -93,7 +93,7 @@
 
 		<!-- Actions -->
 		<div class="flex-shrink-0">
-			<BookmarkButton {bookmarks} size="md" />
+			<BookmarkButton {bookmarks} class="w-8 h-8" />
 		</div>
 	</button>
 </Root>

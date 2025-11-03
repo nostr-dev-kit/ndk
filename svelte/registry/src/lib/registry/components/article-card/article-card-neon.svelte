@@ -106,12 +106,12 @@
 
         <!-- Author & Reading Time -->
         <div class="pt-4 border-t border-white/10 flex items-center justify-between">
-          <div class="text-sm text-white/80 flex items-center gap-1">
-            <User.Root {ndk} user={context.article.author} class="inline">
+          <User.Root {ndk} user={context.article.author}>
+            <div class="text-sm text-white/80 flex items-center gap-1">
               <span>by</span>
-              <User.Name class="inline" />
-            </User.Root>
-          </div>
+              <User.Name />
+            </div>
+          </User.Root>
           <ReadingTime class="text-sm text-white/70" />
         </div>
       </div>

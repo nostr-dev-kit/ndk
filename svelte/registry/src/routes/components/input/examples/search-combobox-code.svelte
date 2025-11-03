@@ -85,7 +85,7 @@
         >
           <User.Root {ndk} pubkey={result.user.pubkey}>
             <div class="flex items-center gap-3 w-full">
-              <User.Avatar size={40} />
+              <User.Avatar class="w-10 h-10" />
               <div class="flex-1 min-w-0">
                 <User.Name field="displayName" size="sm" truncate={true} />
               </div>

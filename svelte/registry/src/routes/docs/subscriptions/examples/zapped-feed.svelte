@@ -119,7 +119,7 @@
 						<div class="reposters-avatars">
 							{#each reposters.slice(0, 5) as reposter}
 								<div class="avatar-wrapper">
-									<User.Avatar {ndk} pubkey={reposter.pubkey} size={28} />
+									<User.Avatar {ndk} pubkey={reposter.pubkey} class="w-7 h-7" />
 								</div>
 							{/each}
 							{#if reposters.length > 5}
@@ -176,13 +176,13 @@
 	}
 
 	.sort-button.active .sort-label {
-		background: var(--color-primary);
-		border-color: var(--color-primary);
-		color: var(--color-primary-foreground);
+		background: var(--primary);
+		border-color: var(--primary);
+		color: var(--primary-foreground);
 	}
 
 	.sort-button:hover .sort-label {
-		border-color: var(--color-primary);
+		border-color: var(--primary);
 	}
 
 	.sort-label strong {
@@ -196,7 +196,7 @@
 
 	.sort-button.active .sort-label strong,
 	.sort-button.active .sort-label small {
-		color: var(--color-primary-foreground);
+		color: var(--primary-foreground);
 	}
 
 	.loading {
@@ -212,7 +212,7 @@
 		width: 2rem;
 		height: 2rem;
 		border: 3px solid var(--color-border);
-		border-top-color: var(--color-primary);
+		border-top-color: var(--primary);
 		border-radius: 50%;
 		animation: spin 0.8s linear infinite;
 	}
@@ -311,11 +311,11 @@
 		align-items: center;
 		gap: 0.375rem;
 		padding: 0.375rem 0.75rem;
-		background: linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(var(--color-primary) / 0.8) 100%);
+		background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
 		border-radius: 1rem;
 		font-weight: 600;
 		font-size: 0.875rem;
-		color: var(--color-primary-foreground);
+		color: var(--primary-foreground);
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 

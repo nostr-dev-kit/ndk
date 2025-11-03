@@ -155,8 +155,8 @@
   }
 
   .toc-link.active {
-    color: var(--color-primary);
-    border-left-color: var(--color-primary);
+    color: var(--primary);
+    border-left-color: var(--primary);
   }
 
   /* Scrollbar styling */

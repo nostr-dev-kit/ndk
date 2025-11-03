@@ -73,7 +73,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-primary);
+    background: var(--primary);
     color: var(--primary-foreground);
   }
 

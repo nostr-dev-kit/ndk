@@ -473,8 +473,8 @@
   }
 
   .modal-button--primary {
-    background: var(--color-primary);
-    border: 1px solid var(--color-primary);
+    background: var(--primary);
+    border: 1px solid var(--primary);
     color: var(--primary-foreground);
   }
 

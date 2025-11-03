@@ -173,7 +173,7 @@
   }
 
   .avatar-group-button:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
     border-radius: 50%;
   }
@@ -213,7 +213,7 @@
   }
 
   .avatar-group-overflow-button:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 

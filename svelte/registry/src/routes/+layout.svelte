@@ -122,7 +122,7 @@
   .loading-spinner {
     width: 3rem;
     height: 3rem;
-    color: var(--color-primary);
+    color: var(--primary);
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 

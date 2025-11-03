@@ -247,7 +247,7 @@
 
 	.copy-button:hover {
 		background: var(--color-background);
-		border-color: var(--color-primary);
+		border-color: var(--primary);
 	}
 
 	.copy-button svg {
@@ -291,7 +291,7 @@
 		width: 1.5rem;
 		height: 1.5rem;
 		border: 2px solid var(--color-muted);
-		border-top-color: var(--color-primary);
+		border-top-color: var(--primary);
 		border-radius: 50%;
 		animation: spin 1s linear infinite;
 	}

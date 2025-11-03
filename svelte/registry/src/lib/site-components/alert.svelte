@@ -99,13 +99,13 @@ Use for: login requirements, deprecation notices, important information.
 
 	/* Info variant (blue/primary) */
 	.alert-info {
-		background: color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
-		border-color: color-mix(in srgb, var(--color-primary) calc(0.3 * 100%), transparent);
+		background: color-mix(in srgb, var(--primary) calc(0.1 * 100%), transparent);
+		border-color: color-mix(in srgb, var(--primary) calc(0.3 * 100%), transparent);
 		color: var(--color-foreground);
 	}
 
 	.alert-info .alert-icon {
-		color: var(--color-primary);
+		color: var(--primary);
 	}
 
 	/* Error variant (red/destructive) */

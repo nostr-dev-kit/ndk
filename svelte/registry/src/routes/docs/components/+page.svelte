@@ -168,7 +168,7 @@
 </User.Root>
 
 <!-- Standalone - provide data directly -->
-<User.Avatar {ndk} {user} size={64} />
+<User.Avatar {ndk} {user} class="w-16 h-16" />
 <User.Name {ndk} {user} field="displayName" />`} />
 
     <p>

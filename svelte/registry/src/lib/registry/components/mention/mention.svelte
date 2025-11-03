@@ -25,7 +25,7 @@
 
 <style>
 	.mention {
-		color: var(--color-primary);
+		color: var(--primary);
 		text-decoration: underline;
 		cursor: pointer;
 	}

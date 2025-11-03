@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
+    import { cn } from '$lib/registry/utils';
 
 	interface ComponentDoc {
 		name: string;
@@ -71,7 +72,6 @@
 		if (block.cardData) {
 			selectedBlock = block;
 			showModal = true;
-			console.log('Opening modal for:', block.name);
 		}
 	}
 
@@ -151,7 +151,9 @@
 				}}
 			>
 				<div
-					class="lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r border-border/50 text-right sticky top-0 self-start"
+					class={cn(
+						"lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r  text-right sticky top-10 self-start border-border/50 h-full",
+					)}
 				>
 					<h3 class="text-2xl font-semibold mb-3 tracking-tight">{block.name}</h3>
 					<p class="text-sm text-muted-foreground leading-relaxed">

@@ -310,7 +310,7 @@ sub.on('event', (event) => &#123;
   }
 
   .badge-nip {
-    background: var(--color-primary);
+    background: var(--primary);
     color: white;
   }
 
@@ -318,7 +318,7 @@ sub.on('event', (event) => &#123;
     font-size: 3rem;
     font-weight: 700;
     margin: 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -394,7 +394,7 @@ sub.on('event', (event) => &#123;
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--primary);
     display: block;
     margin-bottom: 0.5rem;
   }
@@ -423,7 +423,7 @@ sub.on('event', (event) => &#123;
   }
 
   .related-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
   }
 

@@ -212,13 +212,13 @@
 	}
 
 	.controls :global(select:hover) {
-		border-color: var(--color-primary);
+		border-color: var(--primary);
 	}
 
 	.controls :global(select:focus) {
 		outline: none;
-		border-color: var(--color-primary);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
+		border-color: var(--primary);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) calc(0.1 * 100%), transparent);
 	}
 
 	.oneliner-below-preview {

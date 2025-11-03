@@ -39,7 +39,7 @@
   <div class="flex flex-col gap-4 p-5 bg-card border border-border rounded-2xl w-full max-w-lg">
     <div class="flex items-center justify-between">
       <User.Root {ndk} user={voiceMessage.author}>
-        <User.Avatar size={40} />
+        <User.Avatar class="w-10 h-10" />
         <User.Name />
       </User.Root>
       <VoiceMessageCard.Duration {currentTime} showCurrent={true} />

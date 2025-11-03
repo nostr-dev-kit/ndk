@@ -73,7 +73,7 @@
     font-size: 3rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 70%, transparent) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -136,15 +136,15 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--color-primary) 0%, transparent 50%);
+    background: linear-gradient(135deg, var(--primary) 0%, transparent 50%);
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
   }
 
   .component-card:hover {
-    border-color: var(--color-primary);
+    border-color: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--primary) 20%, transparent);
   }
 
   .component-card:hover::before {
@@ -154,7 +154,7 @@
   .component-card.featured {
     grid-column: span 2;
     background: linear-gradient(135deg,
-      color-mix(in srgb, var(--color-primary) 5%, var(--color-background)) 0%,
+      color-mix(in srgb, var(--primary) 5%, var(--color-background)) 0%,
       var(--color-background) 100%
     );
   }
@@ -172,8 +172,8 @@
     width: 3rem;
     height: 3rem;
     border-radius: 0.5rem;
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
     flex-shrink: 0;
     position: relative;
     z-index: 1;

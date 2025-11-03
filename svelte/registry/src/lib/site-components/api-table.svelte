@@ -112,7 +112,7 @@ Use for: component API documentation across all component pages.
 	}
 
 	.prop-name {
-		color: var(--color-primary);
+		color: var(--primary);
 		font-weight: 500;
 	}
 

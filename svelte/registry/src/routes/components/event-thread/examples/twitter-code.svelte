@@ -37,7 +37,7 @@
       {#each thread.replies as reply}
         <EventCard.Root {ndk} event={reply}>
           <div class="flex">
-            <User.Avatar {ndk} pubkey={reply.author.pubkey} size={40} />
+            <User.Avatar {ndk} pubkey={reply.author.pubkey} class="w-10 h-10" />
             <div class="flex-1">
               <EventCard.Header variant="compact" showAvatar={false} />
               <EventCard.Content />

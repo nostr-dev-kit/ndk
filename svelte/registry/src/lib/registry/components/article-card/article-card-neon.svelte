@@ -80,10 +80,10 @@
     )}
   >
     <!-- Glossy neon top border effect -->
-    <div class="neon-border"></div>
+    <div class={cn("neon-border z-1", width, height)}></div>
 
     <!-- Full Background Image -->
-    <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 z-1 m-[1px]">
       {#if imageUrl}
         <img
           src={imageUrl}
@@ -146,33 +146,12 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
     background: radial-gradient(
       ellipse at top,
       color-mix(in srgb, white 40%, transparent) 0%,
       color-mix(in srgb, white 15%, transparent) 50%,
       transparent 100%
     );
-    box-shadow:
-      /* Bright narrow shadow right at top */
-      inset 0 1px 1px 0 color-mix(in srgb, white 60%, transparent),
-      inset 0 2px 3px 0 color-mix(in srgb, white 30%, transparent),
-      /* Softer wide shadows below for depth */
-      inset 0 4px 6px 0 color-mix(in srgb, white 15%, transparent),
-      inset 0 6px 10px 0 color-mix(in srgb, white 10%, transparent);
-  }
-
-  .article-card-neon:hover .neon-border {
-    background: radial-gradient(
-      ellipse at top,
-      color-mix(in srgb, white 50%, transparent) 0%,
-      color-mix(in srgb, white 20%, transparent) 50%,
-      transparent 100%
-    );
-    box-shadow:
-      inset 0 1px 1px 0 color-mix(in srgb, white 80%, transparent),
-      inset 0 2px 3px 0 color-mix(in srgb, white 40%, transparent),
-      inset 0 4px 6px 0 color-mix(in srgb, white 20%, transparent),
-      inset 0 6px 10px 0 color-mix(in srgb, white 15%, transparent);
+    
   }
 </style>

@@ -262,8 +262,8 @@
   }
 
   .info-box.info {
-    background: color-mix(in srgb, var(--color-primary) calc(0.1 * 100%), transparent);
-    border-color: color-mix(in srgb, var(--color-primary) calc(0.3 * 100%), transparent);
+    background: color-mix(in srgb, var(--primary) calc(0.1 * 100%), transparent);
+    border-color: color-mix(in srgb, var(--primary) calc(0.3 * 100%), transparent);
   }
 
   .info-box.warning {
@@ -284,7 +284,7 @@
   }
 
   .info-box.info .info-icon {
-    color: var(--color-primary);
+    color: var(--primary);
   }
 
   .info-box.warning .info-icon {
@@ -321,8 +321,8 @@
   .submit-btn {
     width: 100%;
     padding: 0.5rem 1rem;
-    background: var(--color-primary);
-    color: var(--color-primary-foreground);
+    background: var(--primary);
+    color: var(--primary-foreground);
     border: none;
     border-radius: 0.375rem;
     font-size: 0.875rem;

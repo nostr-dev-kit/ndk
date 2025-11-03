@@ -120,7 +120,7 @@
 	}
 
 	.link {
-		color: var(--color-primary);
+		color: var(--primary);
 		text-decoration: underline;
 		word-break: break-all;
 	}

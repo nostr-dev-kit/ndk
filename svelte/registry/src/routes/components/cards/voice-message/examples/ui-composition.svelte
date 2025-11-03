@@ -38,7 +38,7 @@
 <VoiceMessage.Root {ndk} {voiceMessage}>
   <div class="flex flex-col gap-4 p-4 bg-card border border-border rounded-xl max-w-md">
     <User.Root {ndk} user={voiceMessage.author}>
-      <User.Avatar size={32} />
+      <User.Avatar class="w-8 h-8" />
       <User.Name />
     </User.Root>
     <VoiceMessage.Waveform height={50} {progress} />

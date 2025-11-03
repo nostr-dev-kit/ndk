@@ -117,7 +117,7 @@
 	.preview-event-kind {
 		font-size: 0.75rem;
 		font-weight: 500;
-		color: var(--color-primary);
+		color: var(--primary);
 	}
 
 	.preview-text-value {

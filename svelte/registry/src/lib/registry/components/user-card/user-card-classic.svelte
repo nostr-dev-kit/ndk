@@ -84,8 +84,7 @@
 
       <!-- Bio -->
       <User.Bio
-        maxLines={3}
-        class="mb-4 text-sm text-muted-foreground"
+        class="mb-4 text-sm text-muted-foreground line-clamp-3"
       />
 
       <!-- Stats -->

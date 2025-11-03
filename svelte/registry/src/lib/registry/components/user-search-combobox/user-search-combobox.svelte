@@ -105,15 +105,15 @@
   }
 </script>
 
-<Combobox.Root
-  bind:open
-  bind:value={selectedValue}
-  onValueChange={handleValueChange}
-  {items}
-  inputValue={query}
-  class={cn('relative w-full', className)}
->
-  <div class="relative">
+<div class={cn('relative w-full', className)}>
+  <Combobox.Root
+    bind:open
+    bind:value={selectedValue}
+    onValueChange={handleValueChange}
+    {items}
+    inputValue={query}
+  >
+    <div class="relative">
     {#if input}
       {@render input({ value: query, oninput: handleInput, loading: userInputState.loading })}
     {:else}
@@ -174,4 +174,5 @@
       </div>
     {/if}
   </Combobox.Content>
-</Combobox.Root>
+  </Combobox.Root>
+</div>

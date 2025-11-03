@@ -50,7 +50,7 @@
         </div>
         <FollowButtonPill {ndk} target={user} variant="solid" class="shrink-0" />
       </div>
-      <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
+      <User.Field field="about" class="text-muted-foreground text-sm leading-relaxed line-clamp-2" />
     </div>
   </div>
 </User.Root>

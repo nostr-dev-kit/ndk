@@ -101,7 +101,7 @@
   });
 </script>
 
-<Relay.Root {ndk} relayUrl={relay.url} nip11={relay.nip11}>
+<Relay.Root {ndk} relayUrl={relay.url}>
   <div class="relay-card">
     <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
       <div class="relay-card-header-left">
@@ -222,12 +222,6 @@
                   <div class="info-item">
                     <span class="info-label">Max Subscriptions</span>
                     <span class="info-value">{relay.nip11.limitation.max_subscriptions}</span>
-                  </div>
-                {/if}
-                {#if relay.nip11.limitation.max_filters !== undefined}
-                  <div class="info-item">
-                    <span class="info-label">Max Filters</span>
-                    <span class="info-value">{relay.nip11.limitation.max_filters}</span>
                   </div>
                 {/if}
                 {#if relay.nip11.limitation.auth_required}

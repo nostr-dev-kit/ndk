@@ -20,8 +20,8 @@
       <Article.Image class="h-32" />
 
       <div class="article-content">
-        <Article.Title class="text-sm font-semibold" lines={2} />
-        <Article.Summary class="text-xs text-muted-foreground" maxLength={80} lines={2} />
+        <Article.Title class="text-sm font-semibold" />
+        <Article.Summary class="text-xs text-muted-foreground" maxLength={80} />
 
         <div class="article-meta">
           <Article.ReadingTime class="text-xs" />

@@ -126,7 +126,7 @@
 			<div class="relative">
 				<!-- Glow effect behind icon -->
 				<div class="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
-				<Icon size={80} class="relative z-[1]" />
+				<Icon class="relative z-[1] w-20 h-20" />
 			</div>
 		</div>
 

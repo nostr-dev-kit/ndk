@@ -112,30 +112,34 @@
   {#if sampleUser}
     <!-- ComponentsShowcase Section -->
     {#snippet minimalPreview()}
-      <div class="flex items-center gap-4">
-        <FollowButton {ndk} target={sampleUser} />
+      <div class="flex flex-col items-start justify-center gap-3">
         <FollowButton {ndk} target={sampleUser} showTarget={true} />
+        <FollowButton {ndk} target="bitcoin" showTarget={true} />
       </div>
     {/snippet}
 
     {#snippet pillPreview()}
-      <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-        <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
-        <FollowButtonPill {ndk} target={sampleUser} compact />
-        <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+      <div class="flex flex-col items-start justify-center gap-3">
+        <div class="flex items-center gap-3">
+          <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+          <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+        </div>
+        <div class="flex items-center gap-3">
+          <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
+          <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+        </div>
       </div>
     {/snippet}
 
     {#snippet animatedPreview()}
-      <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonAnimated {ndk} target={sampleUser} />
+      <div class="flex flex-col items-start justify-center gap-3">
         <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
+        <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
       </div>
     {/snippet}
 
     <ComponentPageSectionTitle
-      title="Components Showcase"
+      title="Showcase"
       description="Three follow button variants. Minimal for inline use, pill for versatile layouts, and animated for visual feedback."
     />
 

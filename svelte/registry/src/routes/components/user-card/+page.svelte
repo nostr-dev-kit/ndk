@@ -9,7 +9,7 @@
 	import { User } from '$lib/registry/ui';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as Tabs from '$lib/components/ui/tabs';
-	import * as Select from '$lib/components/ui/select';
+	import { Button } from '$lib/components/ui/button';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 
@@ -379,22 +379,26 @@
 
 		{#snippet glassPreview()}
 			<div class="flex flex-col gap-4 pb-4">
-				<div class="flex items-center gap-3">
-					<label for="glass-variant-select" class="text-sm font-medium text-muted-foreground">Variant:</label>
-					<Select.Root
-						selected={{ value: glassVariant, label: glassVariant === 'gradient' ? 'Gradient Background' : 'Transparent' }}
-						onSelectedChange={(v) => {
-							if (v) glassVariant = v.value as 'gradient' | 'transparent';
-						}}
-					>
-						<Select.Trigger class="w-[200px]">
-							<Select.Value placeholder="Select variant" />
-						</Select.Trigger>
-						<Select.Content>
-							<Select.Item value="gradient" label="Gradient Background">Gradient Background</Select.Item>
-							<Select.Item value="transparent" label="Transparent">Transparent</Select.Item>
-						</Select.Content>
-					</Select.Root>
+				<div class="flex items-center gap-2">
+					<span class="text-sm font-medium text-muted-foreground">Variant:</span>
+					<div class="inline-flex rounded-lg border border-border p-1">
+						<Button
+							variant={glassVariant === 'gradient' ? 'default' : 'ghost'}
+							size="sm"
+							onclick={() => glassVariant = 'gradient'}
+							class="h-7"
+						>
+							Gradient
+						</Button>
+						<Button
+							variant={glassVariant === 'transparent' ? 'default' : 'ghost'}
+							size="sm"
+							onclick={() => glassVariant = 'transparent'}
+							class="h-7"
+						>
+							Transparent
+						</Button>
+					</div>
 				</div>
 				<div class="flex gap-4">
 					{#each displayUsers.slice(0, 5) as user (user.pubkey)}
@@ -614,22 +618,26 @@
 						<ComponentCard inline data={glassCardData}>
 							{#snippet preview()}
 								<div class="flex flex-col gap-4">
-									<div class="flex items-center gap-3">
-										<label class="text-sm font-medium text-muted-foreground">Variant:</label>
-										<Select.Root
-											selected={{ value: glassVariant, label: glassVariant === 'gradient' ? 'Gradient Background' : 'Transparent' }}
-											onSelectedChange={(v) => {
-												if (v) glassVariant = v.value as 'gradient' | 'transparent';
-											}}
-										>
-											<Select.Trigger class="w-[200px]">
-												<Select.Value placeholder="Select variant" />
-											</Select.Trigger>
-											<Select.Content>
-												<Select.Item value="gradient" label="Gradient Background">Gradient Background</Select.Item>
-												<Select.Item value="transparent" label="Transparent">Transparent</Select.Item>
-											</Select.Content>
-										</Select.Root>
+									<div class="flex items-center gap-2">
+										<span class="text-sm font-medium text-muted-foreground">Variant:</span>
+										<div class="inline-flex rounded-lg border border-border p-1">
+											<Button
+												variant={glassVariant === 'gradient' ? 'default' : 'ghost'}
+												size="sm"
+												onclick={() => glassVariant = 'gradient'}
+												class="h-7"
+											>
+												Gradient
+											</Button>
+											<Button
+												variant={glassVariant === 'transparent' ? 'default' : 'ghost'}
+												size="sm"
+												onclick={() => glassVariant = 'transparent'}
+												class="h-7"
+											>
+												Transparent
+											</Button>
+										</div>
 									</div>
 									<ScrollArea orientation="horizontal" class="w-full">
 										<div class="flex gap-4 pb-4">

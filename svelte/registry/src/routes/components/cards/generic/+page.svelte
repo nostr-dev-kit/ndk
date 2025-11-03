@@ -50,7 +50,7 @@ import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.s
 
 	<!-- Concept: The Chrome -->
 	{#if sampleEvent}
-		<section class="mb-16">
+		<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
 			<h2 class="text-3xl font-bold mb-4">Understanding the Chrome</h2>
 			<p class="text-muted-foreground mb-6">
 				EventCard provides the <strong>chrome</strong> — the consistent visual frame around your content.
@@ -102,7 +102,7 @@ import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.s
 
 	{#if sampleEvent}
 		<!-- Blocks Section -->
-		<section class="mb-16">
+		<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
 			<h2 class="text-3xl font-bold mb-2">Blocks</h2>
 			<p class="text-muted-foreground mb-8">
 				Pre-composed layouts ready to use. Install with a single command.
@@ -195,7 +195,7 @@ import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.s
 		</section>
 
 		<!-- UI Primitives Section -->
-		<section class="mb-16">
+		<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
 			<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
 			<p class="text-muted-foreground mb-8">
 				Primitive components for building custom event card layouts. Mix and match to create your
@@ -226,7 +226,7 @@ import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.s
 		</section>
 
 		<!-- Component API -->
-		<section class="mb-16">
+		<section class="min-h-[500px] lg:min-h-[60vh] border-b border-border/50 pb-12">
 			<h2 class="text-3xl font-bold mb-4">Component API</h2>
 
 			<ComponentAPI

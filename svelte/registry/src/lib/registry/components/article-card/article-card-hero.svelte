@@ -104,7 +104,7 @@
       {/if}
 
       <!-- Title -->
-      <Title class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight line-clamp-3" />
+      <Title class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight line-clamp-1" />
 
       <!-- Summary -->
       <Summary class="text-base md:text-lg text-white/90 mb-6 leading-relaxed max-w-3xl line-clamp-2" maxLength={200} />

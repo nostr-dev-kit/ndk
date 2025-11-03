@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
+	import { PMCommand } from '$lib/components/ui/pm-command';
     import { cn } from '$lib/registry/utils';
 
 	interface ComponentDoc {
@@ -48,15 +49,11 @@
 	}
 
 	interface Props {
-		title?: string;
-		description?: string;
 		blocks: BlockVariant[];
 		class?: string;
 	}
 
 	let {
-		title = 'Showcase',
-		description = '',
 		blocks,
 		class: className = ''
 	}: Props = $props();
@@ -114,29 +111,15 @@
 	});
 </script>
 
-<section class="mb-32 {className}">
-	<!-- Section Header -->
-	<div class="mb-12">
-		<h2 class="text-3xl font-bold mb-2">{title}</h2>
-		{#if description}
-			<p class="text-muted-foreground mb-8">
-				{description}
-			</p>
-		{/if}
-	</div>
-
-	<div class="space-y-0 relative">
-		<!-- Gradient overlay for entire showcase -->
-		<div
-			class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none z-50"
-		></div>
-
+<section class="min-h-[500px] lg:min-h-[60vh] pb-12 {className}">
+	<div class="space-y-0 pb-0">
 		{#each blocks as block, index}
 			{@const isNotLast = index < blocks.length - 1}
-			{@const borderClass = isNotLast ? 'border-b border-border/50' : ''}
+			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
+			{@const commandArgs = block.command.replace(/^npx\s+/, '').split(' ')}
 			<div
 				bind:this={blockRefs[index]}
-				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out {borderClass}"
+				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 px-8 {borderClass}"
 				class:cursor-pointer={block.cardData}
 				style:filter={activeBlockIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
 				style:opacity={activeBlockIndex !== index ? '0.6' : '1'}
@@ -153,29 +136,19 @@
 			>
 				<div
 					class={cn(
-						"lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r  text-right sticky top-10 self-start border-border/50 h-full",
+						"lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r text-right sticky top-20 border-border flex flex-col justify-between",
 					)}
 				>
-					<h3 class="text-2xl font-semibold mb-3 tracking-tight">{block.name}</h3>
-					<p class="text-sm text-muted-foreground leading-relaxed">
-						{block.description}
-					</p>
+					<div>
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{block.name}</h3>
+						<p class="text-sm text-muted-foreground leading-relaxed">
+							{block.description}
+						</p>
+					</div>
 				</div>
-				<div class="lg:col-span-5 p-10 lg:p-12 !pr-0 overflow-hidden">
+				<div class="lg:col-span-5 p-10 lg:p-12 !pr-0 overflow-hidden relative">
 					<div class="flex items-center">
 						{@render block.preview()}
-					</div>
-
-					<div
-						class="mt-6 space-y-4 transition-all duration-700 ease-out"
-						style:opacity={activeBlockIndex === index ? '1' : '0.1'}
-						style:filter={activeBlockIndex === index ? 'grayscale(0)' : 'grayscale(1)'}
-					>
-						<div class="font-mono text-sm text-foreground">
-							<span class="text-muted-foreground">$</span>
-							{block.command}
-						</div>
-						<pre class="font-mono text-sm leading-relaxed"><code>{@html block.codeSnippet}</code></pre>
 					</div>
 				</div>
 			</div>

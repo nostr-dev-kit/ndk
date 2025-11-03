@@ -202,7 +202,6 @@
     overflow-y: auto;
     transition: width 300ms ease-in-out, transform 300ms ease-in-out;
     z-index: 900;
-    border-right: 1px solid var(--border);
   }
 
   .sidebar.collapsed {

@@ -12,6 +12,8 @@
 	import ComponentCardInline from '$site-components/ComponentCardInline.svelte';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -276,8 +278,12 @@
 			</ScrollArea>
 		{/snippet}
 
-		<ComponentsShowcase
+		<ComponentPageSectionTitle
+			title="Showcase"
 			description="Beautifully crafted. Each optimized for its purpose. Choose the perfect presentation for your content."
+		/>
+
+		<ComponentsShowcase
 			blocks={[
 				{
 					name: 'Portrait',
@@ -322,6 +328,8 @@
 	{#if !loading}
 
 		<!-- Anatomy Section -->
+		<ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
+
 		<ComponentAnatomy.Root>
 			<ComponentAnatomy.Preview>
 				{#if article1}
@@ -353,63 +361,77 @@
 		</ComponentAnatomy.Root>
 
 		<!-- Components Section -->
-		<section class="mb-24">
-			<h2 class="text-3xl font-bold mb-8">Components</h2>
+		{#if article1}
+			<Tabs.Root value="portrait">
+				<div class="border-t border-b border-border/50 py-8 -mx-8 px-8 flex items-center justify-between">
+					<h2 class="text-3xl font-bold">Components</h2>
+					<Tabs.List>
+						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
+						<Tabs.Trigger value="hero">Hero</Tabs.Trigger>
+						<Tabs.Trigger value="medium">Medium</Tabs.Trigger>
+						<Tabs.Trigger value="neon">Neon</Tabs.Trigger>
+					</Tabs.List>
+				</div>
 
-			<div class="space-y-12">
-				{#if article1}
-					<!-- Portrait -->
-					<ComponentCardInline data={portraitCardData}>
-						{#snippet preview()}
-							<ScrollArea orientation="horizontal" class="w-full">
-								<div class="flex gap-6 pb-4">
+				<section class="min-h-[500px] lg:min-h-[60vh] pb-12">
+
+					<Tabs.Content value="portrait">
+						<ComponentCardInline data={portraitCardData}>
+							{#snippet preview()}
+								<ScrollArea orientation="horizontal" class="w-full">
+									<div class="flex gap-6 pb-4">
+										{#each displayArticles as article}
+											<ArticleCardPortrait {ndk} {article} />
+										{/each}
+									</div>
+								</ScrollArea>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+
+					<Tabs.Content value="hero">
+						<ComponentCardInline data={heroCardData}>
+							{#snippet preview()}
+								<div class="max-w-2xl">
+									<ArticleCardHero {ndk} article={article1} />
+								</div>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+
+					<Tabs.Content value="medium">
+						<ComponentCardInline data={mediumCardData}>
+							{#snippet preview()}
+								<div class="space-y-4 max-w-2xl">
 									{#each displayArticles as article}
-										<ArticleCardPortrait {ndk} {article} />
+										<ArticleCardMedium {ndk} {article} />
 									{/each}
 								</div>
-							</ScrollArea>
-						{/snippet}
-					</ComponentCardInline>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
 
-					<!-- Hero -->
-					<ComponentCardInline data={heroCardData}>
-						{#snippet preview()}
-							<div class="max-w-2xl">
-								<ArticleCardHero {ndk} article={article1} />
-							</div>
-						{/snippet}
-					</ComponentCardInline>
-
-					<!-- Medium -->
-					<ComponentCardInline data={mediumCardData}>
-						{#snippet preview()}
-							<div class="space-y-4 max-w-2xl">
-								{#each displayArticles as article}
-									<ArticleCardMedium {ndk} {article} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCardInline>
-
-					<!-- Neon -->
-					<ComponentCardInline data={neonCardData}>
-						{#snippet preview()}
-							<ScrollArea orientation="horizontal" class="w-full">
-								<div class="flex gap-6 pb-4">
-									{#each displayArticles as article}
-										<ArticleCardNeon {ndk} {article} />
-									{/each}
-								</div>
-							</ScrollArea>
-						{/snippet}
-					</ComponentCardInline>
-				{/if}
-			</div>
-		</section>
+					<Tabs.Content value="neon">
+						<ComponentCardInline data={neonCardData}>
+							{#snippet preview()}
+								<ScrollArea orientation="horizontal" class="w-full">
+									<div class="flex gap-6 pb-4">
+										{#each displayArticles as article}
+											<ArticleCardNeon {ndk} {article} />
+										{/each}
+									</div>
+								</ScrollArea>
+							{/snippet}
+						</ComponentCardInline>
+					</Tabs.Content>
+				</section>
+			</Tabs.Root>
+		{/if}
 
 		<!-- Primitives Grid -->
-		<section class="mb-24">
-			<h2 class="text-3xl font-bold mb-8">Primitives</h2>
+		<ComponentPageSectionTitle title="Primitives" />
+
+		<section class="min-h-[500px] lg:min-h-[60vh] pb-12">
 
 			<div class="grid grid-cols-3">
 				{#each Object.entries(primitiveData) as [id, data], i}

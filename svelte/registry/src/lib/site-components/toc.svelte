@@ -18,7 +18,7 @@
     }
 
     // Extract headings from the page
-    const headings = Array.from(document.querySelectorAll('.component-content h2, .component-content h3'));
+    const headings = Array.from(document.querySelectorAll('.main-content h2, .main-content h3'));
 
     const usedIds = new Set<string>();
     items = headings.map((heading) => {

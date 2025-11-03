@@ -4,7 +4,7 @@
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-	import ComponentCardInline from '$site-components/ComponentCardInline.svelte';
+	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import { User } from '$lib/registry/ui';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
@@ -26,43 +26,14 @@
 	let user1 = $state<NDKUser | undefined>();
 	let user2 = $state<NDKUser | undefined>();
 	let user3 = $state<NDKUser | undefined>();
+	let user4 = $state<NDKUser | undefined>();
+	let user5 = $state<NDKUser | undefined>();
+	let user6 = $state<NDKUser | undefined>();
+	let user7 = $state<NDKUser | undefined>();
+	let user8 = $state<NDKUser | undefined>();
+	let user9 = $state<NDKUser | undefined>();
 
-	$effect(() => {
-		(async () => {
-			try {
-				// Fetch some example users - following list or popular users
-				const follows = ndk.activeUser ? await ndk.activeUser.follows() : null;
-				const fetchedUsers = follows ? Array.from(follows).slice(0, 10) : [];
-
-				// If no active user or no follows, fetch some popular pubkeys
-				if (fetchedUsers.length === 0) {
-					const popularPubkeys = [
-						'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52', // pablo
-						'3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d', // fiatjaf
-						'82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2', // jack
-					];
-					for (const pubkey of popularPubkeys) {
-						const user = ndk.getUser({ pubkey });
-						await user.fetchProfile();
-						fetchedUsers.push(user);
-					}
-				}
-
-				users = fetchedUsers;
-
-				// Auto-initialize from fetched data
-				if (users.length > 0) {
-					if (!user1) user1 = users[0];
-					if (!user2 && users.length > 1) user2 = users[1];
-					if (!user3 && users.length > 2) user3 = users[2];
-				}
-			} catch (err) {
-				console.error('Failed to fetch users:', err);
-			}
-		})();
-	});
-
-	const displayUsers = $derived([user1, user2, user3].filter(Boolean) as NDKUser[]);
+	const displayUsers = $derived([user1, user2, user3, user4, user5, user6, user7, user8, user9].filter(Boolean) as NDKUser[]);
 
 	// Primitives drawer state
 	let focusedPrimitive = $state<string | null>(null);
@@ -263,7 +234,7 @@
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 				]
 			}
-		]
+		],
 	};
 </script>
 
@@ -279,9 +250,15 @@
 	
 			{#key users}
 				<EditProps.Root>
-					<EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} />
-					<EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} />
-					<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} />
+					<EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+					<EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
+					<EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} default="npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m" />
+					<EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
+					<EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} default="npub1a2cww4kn9wqte4ry70vyfwqyqvpswksna27rtxd8vty6c74era8sdcw83a" />
+					<EditProps.Prop name="User 6" type="user" bind:value={user6} options={users} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
+					<EditProps.Prop name="User 7" type="user" bind:value={user7} options={users} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
+					<EditProps.Prop name="User 8" type="user" bind:value={user8} options={users} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
+					<EditProps.Prop name="User 9" type="user" bind:value={user9} options={users} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
 					<EditProps.Button>Edit Examples</EditProps.Button>
 				</EditProps.Root>
 			{/key}
@@ -295,7 +272,7 @@
 		{/snippet}
 
 		{#snippet compactPreview()}
-			<div class="space-y-2 max-w-sm">
+			<div class="space-y-2 max-w-sm max-h-[250px]">
 				{#each displayUsers as user (user.pubkey)}
 					<UserCardCompact {ndk} pubkey={user.pubkey} />
 				{/each}
@@ -303,7 +280,7 @@
 		{/snippet}
 
 		{#snippet listItemPreview()}
-			<div class="max-w-sm border border-border rounded-lg overflow-hidden">
+			<div class="max-w-sm border border-border rounded-lg max-h-[250px]">
 				{#each displayUsers as user (user.pubkey)}
 					<UserListItem {ndk} pubkey={user.pubkey} />
 				{/each}
@@ -311,17 +288,15 @@
 		{/snippet}
 
 		{#snippet portraitPreview()}
-			<ScrollArea orientation="horizontal" class="w-full">
-				<div class="flex gap-4 pb-4">
-					{#each displayUsers as user (user.pubkey)}
-						<UserCardPortrait {ndk} pubkey={user.pubkey} />
-					{/each}
-				</div>
-			</ScrollArea>
+			<div class="flex gap-4 pb-4">
+				{#each displayUsers as user (user.pubkey)}
+					<UserCardPortrait {ndk} pubkey={user.pubkey} />
+				{/each}
+			</div>
 		{/snippet}
 
 		{#snippet landscapePreview()}
-			<div class="space-y-4 max-w-2xl">
+			<div class="space-y-4 max-w-2xl max-h-[250px]">
 				{#each displayUsers as user (user.pubkey)}
 					<UserCardLandscape {ndk} pubkey={user.pubkey} />
 				{/each}
@@ -329,13 +304,11 @@
 		{/snippet}
 
 		{#snippet neonPreview()}
-			<ScrollArea orientation="horizontal" class="w-full">
-				<div class="flex gap-4 pb-4">
-					{#each displayUsers as user (user.pubkey)}
-						<UserCardNeon {ndk} pubkey={user.pubkey} />
-					{/each}
-				</div>
-			</ScrollArea>
+			<div class="flex gap-4 pb-4">
+				{#each displayUsers as user (user.pubkey)}
+					<UserCardNeon {ndk} pubkey={user.pubkey} />
+				{/each}
+			</div>
 		{/snippet}
 
 		<ComponentPageSectionTitle
@@ -350,55 +323,49 @@
 					name: 'Classic',
 					description: 'Classic user card with banner, avatar, name, bio, and stats. Perfect for popovers, dialogs, and standalone displays.',
 					command: 'npx shadcn@latest add user-card-classic',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardClassic</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: classicPreview,
-					cardData: classicCardData
+					cardData: classicCardData,
+					orientation: 'horizontal'
 				},
 				{
 					name: 'Compact',
 					description: 'Minimal user card for lists, showing avatar, name, and follow button. Ideal for sidebars and compact layouts.',
 					command: 'npx shadcn@latest add user-card-compact',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardCompact</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: compactPreview,
-					cardData: compactCardData
+					cardData: compactCardData,
+					orientation: 'vertical'
 				},
 				{
 					name: 'List Item',
 					description: 'Ultra-compact list item showing avatar, name, and follow status badge. Perfect for dense user lists.',
 					command: 'npx shadcn@latest add user-list-item',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserListItem</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: listItemPreview,
-					cardData: listItemCardData
+					cardData: listItemCardData,
+					orientation: 'vertical'
 				},
 				{
 					name: 'Portrait',
 					description: 'Vertical card layout showing avatar, name, bio, and stats. Great for grids and profile galleries.',
 					command: 'npx shadcn@latest add user-card-portrait',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardPortrait</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: portraitPreview,
-					cardData: portraitCardData
+					cardData: portraitCardData,
+					orientation: 'horizontal'
 				},
 				{
 					name: 'Landscape',
 					description: 'Horizontal card layout with avatar on left. Perfect for feed views and detailed lists.',
 					command: 'npx shadcn@latest add user-card-landscape',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardLandscape</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: landscapePreview,
-					cardData: landscapeCardData
+					cardData: landscapeCardData,
+					orientation: 'vertical'
 				},
 				{
 					name: 'Neon',
 					description: 'Neon-style card with full background image and glossy top border. Perfect for modern, visually striking user displays.',
 					command: 'npx shadcn@latest add user-card-neon',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">UserCardNeon</span> <span class="text-cyan-400">pubkey</span><span class="text-gray-500">=&#123;</span>pubkey<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
 					preview: neonPreview,
-					cardData: neonCardData
+					cardData: neonCardData,
+					orientation: 'horizontal'
 				}
 			]}
 		/>
@@ -440,31 +407,33 @@
 	{/if}
 
 	<!-- Components Section -->
+	 
 	{#if user1}
 		<Tabs.Root value="classic">
-			<div class="border-t border-b border-border/50 py-8 -mx-8 px-8 flex items-center justify-between">
-				<h2 class="text-xl font-semibold text-muted-foreground">Components</h2>
-				<Tabs.List>
-					<Tabs.Trigger value="classic">Classic</Tabs.Trigger>
-					<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
-					<Tabs.Trigger value="list">List Item</Tabs.Trigger>
-					<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
-					<Tabs.Trigger value="landscape">Landscape</Tabs.Trigger>
-					<Tabs.Trigger value="neon">Neon</Tabs.Trigger>
-				</Tabs.List>
-			</div>
+			<ComponentPageSectionTitle title="Components" description="Click on any layer to see its details and props">
+				{#snippet tabs()}
+					<Tabs.List>
+						<Tabs.Trigger value="classic">Classic</Tabs.Trigger>
+						<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
+						<Tabs.Trigger value="list">List Item</Tabs.Trigger>
+						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
+						<Tabs.Trigger value="landscape">Landscape</Tabs.Trigger>
+						<Tabs.Trigger value="neon">Neon</Tabs.Trigger>
+					</Tabs.List>
+				{/snippet}
+			</ComponentPageSectionTitle>
 
 			<section class="min-h-[500px] lg:min-h-[60vh] py-12">
 				<Tabs.Content value="classic">
-						<ComponentCardInline data={classicCardData}>
+						<ComponentCard inline data={classicCardData}>
 							{#snippet preview()}
 								<UserCardClassic {ndk} pubkey={user1.pubkey} />
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="compact">
-						<ComponentCardInline data={compactCardData}>
+						<ComponentCard inline data={compactCardData}>
 							{#snippet preview()}
 								<div class="space-y-2 max-w-sm">
 									{#each displayUsers as user (user.pubkey)}
@@ -472,11 +441,11 @@
 									{/each}
 								</div>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="list">
-						<ComponentCardInline data={listItemCardData}>
+						<ComponentCard inline data={listItemCardData}>
 							{#snippet preview()}
 								<div class="max-w-sm border border-border rounded-lg overflow-hidden">
 									{#each displayUsers as user (user.pubkey)}
@@ -484,11 +453,11 @@
 									{/each}
 								</div>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="portrait">
-						<ComponentCardInline data={portraitCardData}>
+						<ComponentCard inline data={portraitCardData}>
 							{#snippet preview()}
 								<ScrollArea orientation="horizontal" class="w-full">
 									<div class="flex gap-4 pb-4">
@@ -498,11 +467,11 @@
 									</div>
 								</ScrollArea>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="landscape">
-						<ComponentCardInline data={landscapeCardData}>
+						<ComponentCard inline data={landscapeCardData}>
 							{#snippet preview()}
 								<div class="space-y-4 max-w-2xl">
 									{#each displayUsers as user (user.pubkey)}
@@ -510,11 +479,11 @@
 									{/each}
 								</div>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 
 					<Tabs.Content value="neon">
-						<ComponentCardInline data={neonCardData}>
+						<ComponentCard inline data={neonCardData}>
 							{#snippet preview()}
 								<ScrollArea orientation="horizontal" class="w-full">
 									<div class="flex gap-4 pb-4">
@@ -524,7 +493,7 @@
 									</div>
 								</ScrollArea>
 							{/snippet}
-						</ComponentCardInline>
+						</ComponentCard>
 					</Tabs.Content>
 				</section>
 			</Tabs.Root>

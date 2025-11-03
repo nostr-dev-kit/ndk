@@ -81,7 +81,7 @@
         emoji={emoji.emoji}
         url={emoji.url}
         shortcode={emoji.shortcode}
-        size={24}
+        class="w-6 h-6"
       />
     {/if}
   </button>

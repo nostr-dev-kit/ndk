@@ -83,28 +83,28 @@
 	};
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
 	<!-- Header -->
-	<div class="mb-12">
-		
+	<div class="mb-12 pt-8">
 		<div class="flex items-start justify-between gap-4 mb-4">
 			<h1 class="text-4xl font-bold">FollowPack</h1>
-			{#key followPacks}
-				<EditProps.Root>
-					<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-					<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-					<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-					<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-					<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-					<EditProps.Button>Change Sample Packs</EditProps.Button>
-				</EditProps.Root>
-			{/key}
 		</div>
-		<p class="text-lg text-muted-foreground">
+		<p class="text-lg text-muted-foreground mb-6">
 			Display curated lists of people (kind 39089). Follow packs are collections of users grouped
 			by topic, interest, or community. Perfect for showcasing recommended follows, team members, or
 			thematic user lists.
 		</p>
+
+		{#key followPacks}
+			<EditProps.Root>
+				<EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
+				<EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+				<EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+				<EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+				<EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+				<EditProps.Button>Change Sample Packs</EditProps.Button>
+			</EditProps.Root>
+		{/key}
 	</div>
 
 	<!-- Blocks Showcase Section -->

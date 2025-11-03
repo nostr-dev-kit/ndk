@@ -10,6 +10,7 @@
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { Button } from '$lib/components/ui/button';
+	import { Select } from 'bits-ui';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 
@@ -377,34 +378,53 @@
 			</div>
 		{/snippet}
 
+		{#snippet glassControl()}
+			<div class="flex flex-col gap-2">
+				<label class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Variant</label>
+				<Select.Root
+					selected={{ value: glassVariant, label: glassVariant === 'gradient' ? 'Gradient' : 'Transparent' }}
+					onSelectedChange={(v) => {
+						if (v) glassVariant = v.value as 'gradient' | 'transparent';
+					}}
+				>
+					<Select.Trigger
+						class="flex h-9 w-full items-center justify-between rounded-md border border-border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+					>
+						<Select.Value placeholder="Select variant" />
+						<svg class="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+						</svg>
+					</Select.Trigger>
+					<Select.Content
+						class="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md"
+						sideOffset={5}
+					>
+						<div class="p-1">
+							<Select.Item
+								value="gradient"
+								label="Gradient"
+								class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+							>
+								Gradient
+							</Select.Item>
+							<Select.Item
+								value="transparent"
+								label="Transparent"
+								class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+							>
+								Transparent
+							</Select.Item>
+						</div>
+					</Select.Content>
+				</Select.Root>
+			</div>
+		{/snippet}
+
 		{#snippet glassPreview()}
-			<div class="flex flex-col gap-4 pb-4">
-				<div class="flex items-center gap-2">
-					<span class="text-sm font-medium text-muted-foreground">Variant:</span>
-					<div class="inline-flex rounded-lg border border-border p-1">
-						<Button
-							variant={glassVariant === 'gradient' ? 'default' : 'ghost'}
-							size="sm"
-							onclick={() => glassVariant = 'gradient'}
-							class="h-7"
-						>
-							Gradient
-						</Button>
-						<Button
-							variant={glassVariant === 'transparent' ? 'default' : 'ghost'}
-							size="sm"
-							onclick={() => glassVariant = 'transparent'}
-							class="h-7"
-						>
-							Transparent
-						</Button>
-					</div>
-				</div>
-				<div class="flex gap-4">
-					{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-						<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
-					{/each}
-				</div>
+			<div class="flex gap-4 pb-4">
+				{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+					<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+				{/each}
 			</div>
 		{/snippet}
 
@@ -470,7 +490,8 @@
 					command: 'npx shadcn@latest add user-card-glass',
 					preview: glassPreview,
 					cardData: glassCardData,
-					orientation: 'horizontal'
+					orientation: 'horizontal',
+					control: glassControl
 				}
 			]}
 		/>
@@ -617,36 +638,13 @@
 					<Tabs.Content value="glass">
 						<ComponentCard inline data={glassCardData}>
 							{#snippet preview()}
-								<div class="flex flex-col gap-4">
-									<div class="flex items-center gap-2">
-										<span class="text-sm font-medium text-muted-foreground">Variant:</span>
-										<div class="inline-flex rounded-lg border border-border p-1">
-											<Button
-												variant={glassVariant === 'gradient' ? 'default' : 'ghost'}
-												size="sm"
-												onclick={() => glassVariant = 'gradient'}
-												class="h-7"
-											>
-												Gradient
-											</Button>
-											<Button
-												variant={glassVariant === 'transparent' ? 'default' : 'ghost'}
-												size="sm"
-												onclick={() => glassVariant = 'transparent'}
-												class="h-7"
-											>
-												Transparent
-											</Button>
-										</div>
+								<ScrollArea orientation="horizontal" class="w-full">
+									<div class="flex gap-4 pb-4">
+										{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+											<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+										{/each}
 									</div>
-									<ScrollArea orientation="horizontal" class="w-full">
-										<div class="flex gap-4 pb-4">
-											{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-												<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
-											{/each}
-										</div>
-									</ScrollArea>
-								</div>
+								</ScrollArea>
 							{/snippet}
 						</ComponentCard>
 					</Tabs.Content>

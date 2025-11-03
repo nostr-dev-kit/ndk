@@ -72,8 +72,7 @@
       <!-- Avatar -->
       <div class="relative inline-block mb-3">
         <User.Avatar
-          size={80}
-          class="border-4 border-card shadow-lg"
+          class="border-4 border-card shadow-lg w-[80px] h-[80px]"
         />
       </div>
 

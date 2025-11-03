@@ -194,7 +194,7 @@
 
   .main-content {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1000px;
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
   }

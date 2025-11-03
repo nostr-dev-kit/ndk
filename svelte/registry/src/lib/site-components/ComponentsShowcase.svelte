@@ -47,6 +47,7 @@
 		preview: Snippet;
 		cardData?: ComponentCardData;
 		orientation?: 'horizontal' | 'vertical';
+		control?: Snippet;
 	}
 
 	interface Props {
@@ -197,7 +198,7 @@
 			>
 				<div
 					class={cn(
-						"lg:col-span-2 p-10 lg:p-12 lg:border-r text-right sticky top-20 border-border flex flex-col justify-between",
+						"lg:col-span-2 p-10 lg:p-12 lg:border-r text-right sticky top-20 border-border flex flex-col justify-between gap-6",
 					)}
 				>
 					<div>
@@ -206,6 +207,11 @@
 							{block.description}
 						</p>
 					</div>
+					{#if block.control}
+						<div>
+							{@render block.control()}
+						</div>
+					{/if}
 				</div>
 				<div class="lg:col-span-5 relative">
 					<div

@@ -112,14 +112,14 @@
   {#if sampleUser}
     <!-- ComponentsShowcase Section -->
     {#snippet minimalPreview()}
-      <div class="flex flex-col items-start justify-center gap-3">
+      <div class="flex flex-col items-start justify-center gap-3 min-h-[200px]">
         <FollowButton {ndk} target={sampleUser} showTarget={true} />
         <FollowButton {ndk} target="bitcoin" showTarget={true} />
       </div>
     {/snippet}
 
     {#snippet pillPreview()}
-      <div class="flex flex-col items-start justify-center gap-3">
+      <div class="flex flex-col items-start justify-center gap-3 min-h-[200px]">
         <div class="flex items-center gap-3">
           <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
           <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
@@ -132,7 +132,7 @@
     {/snippet}
 
     {#snippet animatedPreview()}
-      <div class="flex flex-col items-start justify-center gap-3">
+      <div class="flex flex-col items-start justify-center gap-3 min-h-[200px]">
         <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
         <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
       </div>

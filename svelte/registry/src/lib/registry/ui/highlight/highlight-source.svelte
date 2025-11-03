@@ -69,7 +69,7 @@
   }
 
   const mergedProps = $derived(mergeProps(restProps, {
-    type: 'button',
+    type: 'button' as const,
     onclick: handleClick,
     class: className
   }));

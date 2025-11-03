@@ -68,7 +68,7 @@
 	}
 
 	const mergedProps = $derived(mergeProps(restProps, {
-		type: 'button',
+		type: 'button' as const,
 		onclick: openFilePicker,
 		disabled: disabled || mediaUpload.isUploading,
 		'aria-label': mediaUpload.isUploading ? 'Uploading files' : 'Upload files',
@@ -78,7 +78,7 @@
 
 	const snippetProps = $derived({
 		isUploading: mediaUpload.isUploading,
-		uploadCount: mediaUpload.uploadedMedia?.length || 0
+		uploadCount: mediaUpload.uploads?.length || 0
 	});
 </script>
 

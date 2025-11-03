@@ -17,7 +17,7 @@ export function toProcessedZap(
     const comment = getZapComment(event);
 
     // Determine recipient
-    const recipient = event instanceof NDKEvent ? event.author : target;
+    const recipient = target instanceof Object && 'pubkey' in target && !('kind' in target) ? target : event.author;
 
     const processedZap: ProcessedZap = {
         amount,
@@ -28,9 +28,9 @@ export function toProcessedZap(
 
     // Add typed instances based on kind
     if (event.kind === NDKKind.Zap) {
-        processedZap.zap = NDKZap.from(event);
+        processedZap.zap = NDKZap.from(event) || undefined;
     } else if (event.kind === NDKKind.Nutzap) {
-        processedZap.nutzap = NDKNutzap.from(event);
+        processedZap.nutzap = NDKNutzap.from(event) || undefined;
     }
 
     return processedZap;

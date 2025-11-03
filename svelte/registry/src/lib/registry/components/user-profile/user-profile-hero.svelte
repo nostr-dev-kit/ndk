@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
   import FollowButtonPill from '../actions/follow-button-pill.svelte';
+  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 
   interface Props {
     /** NDK instance */
@@ -25,7 +26,7 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     pubkey,
     bannerClass = 'h-64',
     avatarClass = 'w-[120px] h-[120px]',
@@ -33,7 +34,8 @@
     class: className = ''
   }: Props = $props();
 
-  const user = $derived(ndk ? ndk.getUser({ pubkey }) : null);
+  const ndk = getNDKFromContext(providedNdk);
+  const user = $derived(ndk.getUser({ pubkey }));
 </script>
 
 <User.Root {ndk} {pubkey}>

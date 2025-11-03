@@ -19,7 +19,7 @@
 
 	const ndk = getNDKFromContext(providedNdk);
 
-	const context: FollowPackContext = $state.raw({
+	const context: FollowPackContext = {
 		get ndk() {
 			return ndk;
 		},
@@ -29,7 +29,7 @@
 		get onclick() {
 			return onclick;
 		}
-	});
+	};
 
 	setContext(FOLLOW_PACK_CONTEXT_KEY, context);
 </script>

@@ -17,10 +17,10 @@
 <div class="article-embedded-compact">
   <Article.Root {ndk} {article}>
     <div class="article-layout">
-      <Article.Image class="h-24" showGradient={true} />
+      <Article.Image class="h-24" />
 
       <div class="article-content">
-        <Article.Title class="text-sm font-semibold" lines={1} />
+        <Article.Title class="text-sm font-semibold" />
         <div class="article-meta">
           <Article.ReadingTime class="text-xs" />
         </div>

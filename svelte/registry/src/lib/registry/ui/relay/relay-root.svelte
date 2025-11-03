@@ -49,12 +49,12 @@
   const relayInfo = createRelayInfo(() => ({ relayUrl }), ndk);
 
   // Create reactive context with getters
-  const context = $state.raw({
+  const context = {
     get ndk() { return ndk; },
     get relayUrl() { return relayUrl; },
     get relayInfo() { return relayInfo; },
     get onclick() { return onclick; }
-  });
+  };
 
   setContext(RELAY_CONTEXT_KEY, context);
 </script>

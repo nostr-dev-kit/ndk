@@ -100,7 +100,7 @@
                 <span>Following #{target}</span>
               {:else}
                 <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
-                  <User.Avatar size={16} />
+                  <User.Avatar class="w-4 h-4" />
                   <span>Following</span>
                   <User.Name field="displayName" class="text-sm" />
                 </User.Root>
@@ -154,7 +154,7 @@
                 <span>Follow #{target}</span>
               {:else}
                 <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
-                  <User.Avatar size={16} />
+                  <User.Avatar class="w-4 h-4" />
                   <span>Follow</span>
                   <User.Name field="displayName" class="text-sm" />
                 </User.Root>

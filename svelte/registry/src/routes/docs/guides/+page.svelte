@@ -50,8 +50,8 @@
   .coming-soon {
     padding: 3rem;
     text-align: center;
-    background: var(--color-card);
-    border: 2px dashed var(--color-border);
+    background: var(--card);
+    border: 2px dashed var(--border);
     border-radius: 0.5rem;
   }
 
@@ -68,8 +68,8 @@
 
   .component-link {
     padding: 1.5rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     text-decoration: none;
     transition: all 0.2s;

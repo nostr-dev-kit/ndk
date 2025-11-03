@@ -95,7 +95,7 @@
         </span>
       {:else}
         <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
-          <User.Avatar size={20} />
+          <User.Avatar class="w-5 h-5" />
           <span class="text-sm inline-flex items-baseline gap-1">
             <span class="font-bold">{followAction.isFollowing ? 'Unfollow' : 'Follow'}</span>
             <User.Name field="displayName" class="font-normal text-sm" />

@@ -120,7 +120,7 @@
   }
 
   .example-card {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     overflow: hidden;
   }
@@ -141,14 +141,14 @@
 
   .example-pubkey {
     font-size: 0.75rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     font-family: 'SF Mono', Monaco, monospace;
     word-break: break-all;
   }
 
   .example-color {
     font-size: 0.75rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin-top: 0.5rem;
   }
 
@@ -160,7 +160,7 @@
   }
 
   .use-case {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 1rem;
   }
@@ -172,7 +172,7 @@
 
   .use-case-description {
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     line-height: 1.5;
   }
 </style>

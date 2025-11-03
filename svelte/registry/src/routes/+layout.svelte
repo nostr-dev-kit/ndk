@@ -109,7 +109,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: var(--color-background);
+    background: var(--background);
   }
 
   .loading-content {
@@ -128,7 +128,7 @@
 
   .loading-text {
     font-size: 1rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -150,7 +150,7 @@
   .app {
     display: flex;
     min-height: 100vh;
-    background: var(--color-background);
+    background: var(--background);
   }
 
   .main {

@@ -91,7 +91,7 @@
             aria-label="User menu"
           >
             <User.Root {ndk} pubkey={ndk.$currentPubkey}>
-              <User.Avatar size={32} />
+              <User.Avatar class="w-8 h-8" />
             </User.Root>
           </button>
 
@@ -149,8 +149,8 @@
     left: 0;
     right: 0;
     height: 3.5rem;
-    background: var(--color-background);
-    border-bottom: 1px solid var(--color-border);
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
     z-index: 1000;
   }
 
@@ -196,7 +196,7 @@
   .nav-link {
     padding: 0.5rem 0.75rem;
     border-radius: 0.375rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     text-decoration: none;
     font-size: 0.875rem;
     font-weight: 500;
@@ -204,13 +204,13 @@
   }
 
   .nav-link:hover {
-    color: var(--color-foreground);
-    background: var(--color-accent);
+    color: var(--foreground);
+    background: var(--accent);
   }
 
   .nav-link.active {
-    color: var(--color-foreground);
-    background: var(--color-muted);
+    color: var(--foreground);
+    background: var(--muted);
   }
 
   .navbar-right {
@@ -228,15 +228,15 @@
     padding: 0;
     border: none;
     background: transparent;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     border-radius: 0.375rem;
     cursor: pointer;
     transition: all 0.15s ease-in-out;
   }
 
   .icon-button:hover {
-    background: var(--color-accent);
-    color: var(--color-foreground);
+    background: var(--accent);
+    color: var(--foreground);
   }
 
   .icon {
@@ -269,10 +269,10 @@
     right: 0;
     top: calc(100% + 0.5rem);
     min-width: 16rem;
-    background: var(--color-popover);
-    border: 1px solid var(--color-border);
+    background: var(--popover);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-foreground) 10%, transparent);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent);
     overflow: hidden;
   }
 
@@ -281,7 +281,7 @@
   }
 
   .dropdown-divider {
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--border);
   }
 
   .dropdown-item {
@@ -292,7 +292,7 @@
     padding: 0.625rem 1rem;
     border: none;
     background: transparent;
-    color: var(--color-foreground);
+    color: var(--foreground);
     font-size: 0.875rem;
     font-weight: 500;
     text-align: left;
@@ -301,7 +301,7 @@
   }
 
   .dropdown-item:hover {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .dropdown-icon {
@@ -339,14 +339,14 @@
       padding: 0;
       border: none;
       background: transparent;
-      color: var(--color-muted-foreground);
+      color: var(--muted-foreground);
       border-radius: 0.375rem;
       cursor: pointer;
     }
 
     .mobile-menu-button:hover {
-      background: var(--color-accent);
-      color: var(--color-foreground);
+      background: var(--accent);
+      color: var(--foreground);
     }
 
     .icon-button {

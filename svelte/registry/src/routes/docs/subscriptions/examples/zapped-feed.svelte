@@ -151,7 +151,7 @@
 		gap: 0.5rem;
 		margin-bottom: 1.5rem;
 		padding: 1rem;
-		background: var(--color-muted);
+		background: var(--muted);
 		border-radius: 0.5rem;
 	}
 
@@ -169,8 +169,8 @@
 		flex-direction: column;
 		gap: 0.25rem;
 		padding: 0.75rem;
-		background: var(--color-background);
-		border: 2px solid var(--color-border);
+		background: var(--background);
+		border: 2px solid var(--border);
 		border-radius: 0.5rem;
 		transition: all 0.2s;
 	}
@@ -211,7 +211,7 @@
 	.spinner {
 		width: 2rem;
 		height: 2rem;
-		border: 3px solid var(--color-border);
+		border: 3px solid var(--border);
 		border-top-color: var(--primary);
 		border-radius: 50%;
 		animation: spin 0.8s linear infinite;
@@ -225,27 +225,27 @@
 
 	.loading p {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0;
 	}
 
 	.empty-state {
 		padding: 3rem 2rem;
 		text-align: center;
-		border: 1px dashed var(--color-border);
+		border: 1px dashed var(--border);
 		border-radius: 0.5rem;
 	}
 
 	.empty-title {
 		font-size: 1.125rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 0.5rem 0;
 	}
 
 	.empty-description {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0;
 	}
 
@@ -254,7 +254,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 1rem 0;
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--border);
 		margin-bottom: 1rem;
 		flex-wrap: wrap;
 		gap: 0.5rem;
@@ -263,7 +263,7 @@
 	.feed-title {
 		font-size: 1rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0;
 	}
 
@@ -272,7 +272,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.stat {
@@ -295,7 +295,7 @@
 		justify-content: space-between;
 		gap: 0.75rem;
 		padding: 0.75rem 0 0 0;
-		border-top: 1px solid var(--color-border);
+		border-top: 1px solid var(--border);
 		margin-top: 0.75rem;
 		flex-wrap: wrap;
 	}
@@ -330,7 +330,7 @@
 
 	.reposter-count {
 		font-size: 0.8125rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.reposters-avatars {
@@ -341,7 +341,7 @@
 
 	.avatar-wrapper {
 		position: relative;
-		border: 2px solid var(--color-background);
+		border: 2px solid var(--background);
 		border-radius: 50%;
 		transition: transform 0.2s;
 	}
@@ -352,8 +352,8 @@
 	}
 
 	.avatar-more {
-		background: var(--color-muted);
-		color: var(--color-muted-foreground);
+		background: var(--muted);
+		color: var(--muted-foreground);
 		font-size: 0.75rem;
 		font-weight: 600;
 		padding: 0.25rem 0.5rem;
@@ -368,13 +368,13 @@
 	.more-indicator {
 		text-align: center;
 		padding: 1.5rem 0 0.5rem;
-		border-top: 1px dashed var(--color-border);
+		border-top: 1px dashed var(--border);
 		margin-top: 1.5rem;
 	}
 
 	.more-indicator p {
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		margin: 0;
 		font-weight: 500;
 	}

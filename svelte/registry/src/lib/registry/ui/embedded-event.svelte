@@ -69,8 +69,8 @@
 	.embedded-fallback {
 		padding: 0.75rem;
 		border-radius: 0.5rem;
-		border: 1px solid var(--color-border);
-		background: var(--color-muted);
+		border: 1px solid var(--border);
+		background: var(--muted);
 		font-size: 0.875rem;
 	}
 
@@ -96,11 +96,11 @@
 	}
 
 	.embedded-error {
-		color: var(--color-destructive);
+		color: var(--destructive);
 	}
 
 	.embedded-fallback {
-		background: var(--color-card);
+		background: var(--card);
 	}
 
 	.fallback-header {

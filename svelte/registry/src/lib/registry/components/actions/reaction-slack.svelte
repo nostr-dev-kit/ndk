@@ -89,7 +89,7 @@
               )}
               onclick={() => reactWith(reaction.emoji)}
             >
-              <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} size={18} />
+              <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} class="text-lg w-[18px] h-[18px]" />
               <span class="text-sm font-medium">{reaction.count}</span>
             </button>
           </Tooltip.Trigger>
@@ -121,7 +121,7 @@
         )}
         onclick={() => reactWith(reaction.emoji)}
       >
-        <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} size={18} />
+        <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} class="text-lg w-[18px] h-[18px]" />
         <span class="text-sm font-medium">{reaction.count}</span>
         <AvatarGroup
           {ndk}
@@ -145,7 +145,7 @@
         )}
         onclick={() => reactWith(reaction.emoji)}
       >
-        <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} size={18} />
+        <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} class="text-lg w-[18px] h-[18px]" />
         <span class="text-sm font-medium">{reaction.count}</span>
       </button>
     {/each}

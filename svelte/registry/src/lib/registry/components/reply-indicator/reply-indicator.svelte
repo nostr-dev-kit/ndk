@@ -143,7 +143,7 @@
     align-items: center;
     gap: 0.25rem;
     font-size: 0.875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   .reply-indicator__text {

@@ -71,7 +71,7 @@
 
 <style>
   .border-grid {
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
   }
 
   .container-wrapper {
@@ -110,7 +110,7 @@
     font-weight: 600;
     line-height: 1.1;
     letter-spacing: -0.025em;
-    color: var(--color-foreground);
+    color: var(--foreground);
     margin: 0;
   }
 
@@ -132,7 +132,7 @@
     max-width: 48rem;
     text-balance: balance;
     font-size: 1rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
     line-height: 1.6;
   }
@@ -152,12 +152,12 @@
 
   .badge {
     padding: 0.375rem 0.75rem;
-    background: var(--color-secondary);
-    color: var(--color-secondary-foreground);
+    background: var(--secondary);
+    color: var(--secondary-foreground);
     border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
   }
 
   .actions {
@@ -200,12 +200,12 @@
 
   .button-secondary {
     background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-foreground);
+    border: 1px solid var(--border);
+    color: var(--foreground);
   }
 
   .button-secondary:hover {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .intro-section {
@@ -228,21 +228,21 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
     letter-spacing: -0.025em;
   }
 
   .section-description {
     font-size: 1rem;
     line-height: 1.7;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     max-width: 48rem;
     margin: 0 auto;
   }
 
   .connection-status-section {
     padding: 3rem 0;
-    background: var(--color-muted);
+    background: var(--muted);
   }
 
   @media (min-width: 768px) {
@@ -260,7 +260,7 @@
     margin: 0 0 1.5rem 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
     text-align: center;
   }
 
@@ -275,27 +275,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    background: var(--color-background);
+    background: var(--background);
     border-radius: 0.375rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
   }
 
   .relay-url {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
     font-size: 0.875rem;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .relay-state {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
 
   .relay-state.connected {
-    color: var(--color-success);
+    color: var(--success);
   }
 </style>

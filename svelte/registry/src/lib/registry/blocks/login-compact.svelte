@@ -289,8 +289,8 @@
   .login {
     width: 100%;
     max-width: 480px;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 1rem;
     padding: 2rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
@@ -300,13 +300,13 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .section-label {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--color-foreground);
+    color: var(--foreground);
     margin-bottom: 0.75rem;
     display: block;
     text-transform: uppercase;
@@ -315,7 +315,7 @@
 
   .hint {
     font-size: 0.75rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin-top: 0.5rem;
     line-height: 1.4;
     margin-bottom: 0;
@@ -331,12 +331,12 @@
   input[type="password"] {
     flex: 1;
     padding: 0.875rem;
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid var(--border);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-family: 'SF Mono', Monaco, monospace;
-    background: var(--color-background);
-    color: var(--color-foreground);
+    background: var(--background);
+    color: var(--foreground);
     transition: all 0.2s;
   }
 
@@ -364,21 +364,21 @@
     width: 2.75rem;
     height: 2.75rem;
     padding: 0;
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid var(--border);
     border-radius: 0.5rem;
-    background: var(--color-background);
+    background: var(--background);
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .qr-button:hover:not(:disabled) {
     border-color: var(--primary);
-    background: var(--color-muted);
+    background: var(--muted);
   }
 
   .qr-button:disabled {
@@ -421,9 +421,9 @@
   .secondary-button {
     width: 100%;
     padding: 0.875rem;
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid var(--border);
     border-radius: 0.5rem;
-    background: var(--color-background);
+    background: var(--background);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -432,12 +432,12 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .secondary-button:hover:not(:disabled) {
     border-color: var(--primary);
-    background: var(--color-muted);
+    background: var(--muted);
   }
 
   .secondary-button:disabled {
@@ -447,7 +447,7 @@
 
   .button-subtitle {
     font-size: 0.6875rem;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     font-weight: 400;
     display: block;
     margin-top: 0.125rem;
@@ -461,7 +461,7 @@
     display: flex;
     align-items: center;
     margin: 1.5rem 0;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     font-size: 0.75rem;
   }
 
@@ -470,7 +470,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--color-border);
+    background: var(--border);
   }
 
   .divider-horizontal span {
@@ -499,10 +499,10 @@
   .error-message {
     margin-top: 1rem;
     padding: 0.75rem 1rem;
-    background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-destructive) 20%, transparent);
+    background: color-mix(in srgb, var(--destructive) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--destructive) 20%, transparent);
     border-radius: 0.5rem;
-    color: var(--color-destructive);
+    color: var(--destructive);
     font-size: 0.875rem;
   }
 </style>

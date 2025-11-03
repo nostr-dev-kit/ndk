@@ -335,7 +335,7 @@ const popular = ndk.$metaSubscribe(() => ({
 		font-size: 1rem;
 		font-weight: 600;
 		margin: 0 0 0.5rem 0;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.callout-box {
@@ -349,7 +349,7 @@ const popular = ndk.$metaSubscribe(() => ({
 	.callout-title {
 		font-weight: 600;
 		font-size: 1rem;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		margin: 0 0 0.75rem 0;
 	}
 
@@ -365,10 +365,10 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.sort-card {
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		padding: 1rem;
-		background: var(--color-card);
+		background: var(--card);
 	}
 
 	.sort-card h4 {
@@ -388,10 +388,10 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.use-case {
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		padding: 1.5rem;
-		background: var(--color-card);
+		background: var(--card);
 	}
 
 	.use-case h4 {
@@ -412,16 +412,16 @@ const popular = ndk.$metaSubscribe(() => ({
 	th {
 		text-align: left;
 		padding: 0.75rem;
-		background: var(--color-muted);
+		background: var(--muted);
 		font-weight: 600;
-		color: var(--color-foreground);
-		border-bottom: 1px solid var(--color-border);
+		color: var(--foreground);
+		border-bottom: 1px solid var(--border);
 	}
 
 	td {
 		padding: 0.75rem;
-		border-bottom: 1px solid var(--color-border);
-		color: var(--color-muted-foreground);
+		border-bottom: 1px solid var(--border);
+		color: var(--muted-foreground);
 	}
 
 	td code {
@@ -429,7 +429,7 @@ const popular = ndk.$metaSubscribe(() => ({
 	}
 
 	.next-section {
-		border-top: 1px solid var(--color-border);
+		border-top: 1px solid var(--border);
 		padding-top: 3rem;
 	}
 
@@ -442,8 +442,8 @@ const popular = ndk.$metaSubscribe(() => ({
 
 	.next-card {
 		padding: 1.5rem;
-		background: var(--color-card);
-		border: 1px solid var(--color-border);
+		background: var(--card);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		text-decoration: none;
 		transition: border-color 0.2s;

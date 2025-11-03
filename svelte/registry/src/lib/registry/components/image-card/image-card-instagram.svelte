@@ -101,8 +101,8 @@
 
 <style>
 	.instagram-card {
-		background-color: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background-color: hsl(var(--card));
+		border: 1px solid hsl(var(--border));
 		border-radius: 0.75rem;
 		overflow: hidden;
 	}
@@ -112,7 +112,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		border-bottom: 1px solid hsl(var(--color-border));
+		border-bottom: 1px solid hsl(var(--border));
 	}
 
 	.instagram-user-info {
@@ -128,19 +128,19 @@
 		transition: background-color 0.2s;
 		background: none;
 		border: none;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		cursor: pointer;
 	}
 
 	.instagram-menu-btn:hover {
-		background-color: hsl(var(--color-accent));
+		background-color: hsl(var(--accent));
 	}
 
 	.instagram-image-container {
 		position: relative;
 		width: 100%;
 		aspect-ratio: 1;
-		background-color: hsl(var(--color-muted));
+		background-color: hsl(var(--muted));
 	}
 
 	.instagram-image {

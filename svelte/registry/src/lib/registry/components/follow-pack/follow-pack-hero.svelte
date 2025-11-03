@@ -41,7 +41,7 @@
 					{#if followPack.author}
 						<User.Root {ndk} user={followPack.author} class="flex-1 flex flex-col items-end">
 							<div class="flex items-center gap-2 text-xs opacity-70 mb-auto">
-								<User.Avatar size={20} />
+								<User.Avatar class="w-5 h-5" />
 								<User.Name class="text-xs" />
 							</div>
 						</User.Root>

@@ -429,21 +429,21 @@ import { User } from '$lib/registry/ui/user';
 
 <style>
   .prose {
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .prose h1, .prose h2, .prose h3, .prose h4 {
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .prose .lead {
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     font-size: 1.25rem;
     line-height: 1.75;
   }
 
   .prose code {
-    background: var(--color-muted);
+    background: var(--muted);
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
   }

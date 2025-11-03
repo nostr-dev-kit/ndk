@@ -74,8 +74,8 @@
 <style>
   .info {
     padding: 2rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
   }
 
@@ -83,7 +83,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .info ul {
@@ -93,7 +93,7 @@
 
   .info li {
     margin-bottom: 0.5rem;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
 </style>

@@ -78,7 +78,7 @@
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
                 <User.Root {ndk} user={reply.author}>
-                  <User.Avatar size={40} class="avatar" />
+                  <User.Avatar class="w-10 h-10 avatar" />
                 </User.Root>
               </div>
 
@@ -104,7 +104,7 @@
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
                 <User.Root {ndk} user={reply.author}>
-                  <User.Avatar size={40} class="avatar" />
+                  <User.Avatar class="w-10 h-10 avatar" />
                 </User.Root>
               </div>
 
@@ -126,8 +126,8 @@
 
 <style>
   .thread-container {
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--card);
+    border: 1px solid var(--border);
     overflow: hidden;
   }
 
@@ -152,7 +152,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: var(--color-border);
+    background: var(--border);
     z-index: 0;
   }
 
@@ -185,12 +185,12 @@
   /* Section Header */
   .section-header {
     padding: 12px 16px;
-    background: var(--color-muted);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
+    background: var(--muted);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     font-size: 0.8125rem;
     font-weight: 700;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 
   /* Loading State */
@@ -202,6 +202,6 @@
   }
 
   .loading-text {
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
   }
 </style>

@@ -204,13 +204,13 @@
 		margin: 0 0 0.5rem 0;
 		font-size: 1rem;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 	}
 
 	.section-description {
 		margin: 0;
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.command-wrapper {
@@ -218,8 +218,8 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.75rem 1rem;
-		background: var(--color-muted);
-		border: 1px solid var(--color-border);
+		background: var(--muted);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 	}
 
@@ -227,7 +227,7 @@
 		flex: 1;
 		font-family: 'Monaco', 'Courier New', monospace;
 		font-size: 0.875rem;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		user-select: all;
 	}
 
@@ -236,17 +236,17 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0.5rem;
-		background: var(--color-card);
-		border: 1px solid var(--color-border);
+		background: var(--card);
+		border: 1px solid var(--border);
 		border-radius: 0.375rem;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		cursor: pointer;
 		transition: all 0.2s;
 		flex-shrink: 0;
 	}
 
 	.copy-button:hover {
-		background: var(--color-background);
+		background: var(--background);
 		border-color: var(--primary);
 	}
 
@@ -265,15 +265,15 @@
 	.note {
 		margin: 0.5rem 0 0;
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.usage-wrapper {
 		position: relative;
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		overflow: hidden;
-		background: var(--color-background);
+		background: var(--background);
 	}
 
 	.loading {
@@ -284,13 +284,13 @@
 		gap: 1rem;
 		padding: 2rem;
 		font-size: 0.875rem;
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 
 	.spinner {
 		width: 1.5rem;
 		height: 1.5rem;
-		border: 2px solid var(--color-muted);
+		border: 2px solid var(--muted);
 		border-top-color: var(--primary);
 		border-radius: 50%;
 		animation: spin 1s linear infinite;
@@ -316,10 +316,10 @@
 
 	/* Props Table Styles */
 	.props-table-wrapper {
-		border: 1px solid var(--color-border);
+		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		overflow: hidden;
-		background: var(--color-background);
+		background: var(--background);
 	}
 
 	.props-table {
@@ -329,22 +329,22 @@
 	}
 
 	.props-table thead {
-		background: var(--color-muted);
-		border-bottom: 1px solid var(--color-border);
+		background: var(--muted);
+		border-bottom: 1px solid var(--border);
 	}
 
 	.props-table th {
 		padding: 0.75rem 1rem;
 		text-align: left;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		font-size: 0.8125rem;
 		text-transform: uppercase;
 		letter-spacing: 0.025em;
 	}
 
 	.props-table tbody tr {
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--border);
 	}
 
 	.props-table tbody tr:last-child {
@@ -352,7 +352,7 @@
 	}
 
 	.props-table tbody tr:hover {
-		background: var(--color-muted);
+		background: var(--muted);
 	}
 
 	.props-table td {
@@ -362,7 +362,7 @@
 
 	.prop-name {
 		font-weight: 500;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		white-space: nowrap;
 	}
 
@@ -374,8 +374,8 @@
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.025em;
-		color: var(--color-destructive-foreground);
-		background: var(--color-destructive);
+		color: var(--destructive-foreground);
+		background: var(--destructive);
 		border-radius: 0.25rem;
 	}
 
@@ -384,19 +384,19 @@
 		padding: 0.125rem 0.375rem;
 		font-family: 'Monaco', 'Courier New', monospace;
 		font-size: 0.75rem;
-		background: var(--color-muted);
-		border: 1px solid var(--color-border);
+		background: var(--muted);
+		border: 1px solid var(--border);
 		border-radius: 0.25rem;
-		color: var(--color-foreground);
+		color: var(--foreground);
 		white-space: nowrap;
 	}
 
 	.prop-description {
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 		line-height: 1.5;
 	}
 
 	.text-muted {
-		color: var(--color-muted-foreground);
+		color: var(--muted-foreground);
 	}
 </style>

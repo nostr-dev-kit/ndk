@@ -82,7 +82,7 @@
   .page-description {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
   }
 
@@ -108,7 +108,7 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .components-bento {
@@ -123,9 +123,9 @@
     flex-direction: column;
     gap: 1rem;
     padding: 1.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
-    background: var(--color-background);
+    background: var(--background);
     text-decoration: none;
     transition: all 0.2s ease-in-out;
     position: relative;
@@ -154,8 +154,8 @@
   .component-card.featured {
     grid-column: span 2;
     background: linear-gradient(135deg,
-      color-mix(in srgb, var(--primary) 5%, var(--color-background)) 0%,
-      var(--color-background) 100%
+      color-mix(in srgb, var(--primary) 5%, var(--background)) 0%,
+      var(--background) 100%
     );
   }
 
@@ -198,13 +198,13 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0;
-    color: var(--color-foreground);
+    color: var(--foreground);
   }
 
   .card-description {
     font-size: 0.875rem;
     line-height: 1.5;
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;

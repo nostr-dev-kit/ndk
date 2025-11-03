@@ -121,7 +121,7 @@
         </span>
       {:else}
         <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
-          <User.Avatar size={20} />
+          <User.Avatar class="w-5 h-5" />
           <span class="inline-flex items-baseline gap-1">
             <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
             <User.Name field="displayName" class="text-sm font-normal" />
@@ -148,7 +148,7 @@
           </svg>
         {:else}
           <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
-            <User.Avatar size={16} class="flex-shrink-0" />
+            <User.Avatar class="w-4 h-4 flex-shrink-0" />
           </User.Root>
         {/if}
       {:else if showIcon}

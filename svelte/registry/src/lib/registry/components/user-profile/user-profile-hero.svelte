@@ -11,11 +11,11 @@
     /** User pubkey (hex or npub) */
     pubkey: string;
 
-    /** Banner height */
-    bannerHeight?: string;
+    /** Banner CSS classes (use h-* for height) */
+    bannerClass?: string;
 
-    /** Avatar size in pixels */
-    avatarSize?: number;
+    /** Avatar CSS classes (use w-* h-* for sizing) */
+    avatarClass?: string;
 
     /** Show follow button */
     showFollow?: boolean;
@@ -27,8 +27,8 @@
   let {
     ndk,
     pubkey,
-    bannerHeight = '16rem',
-    avatarSize = 120,
+    bannerClass = 'h-64',
+    avatarClass = 'w-[120px] h-[120px]',
     showFollow = true,
     class: className = ''
   }: Props = $props();
@@ -39,15 +39,14 @@
 <User.Root {ndk} {pubkey}>
   <div class={`relative bg-background rounded-lg overflow-hidden border border-border ${className}`}>
     <!-- Banner -->
-    <User.Banner height={bannerHeight} class="w-full" />
+    <User.Banner class={`w-full ${bannerClass}`} />
 
     <!-- Content Container -->
     <div class="relative px-6 pb-6">
       <!-- Avatar - overlapping banner -->
       <div class="relative -mt-[60px] mb-4">
         <User.Avatar
-          size={avatarSize}
-          class="border-4 border-background ring-2 ring-border"
+          class={`border-4 border-background ring-2 ring-border ${avatarClass}`}
         />
       </div>
 

@@ -9,21 +9,13 @@
     /** Which profile field to display */
     field: keyof NDKUserProfile;
 
-    /** Text size classes */
-    size?: string;
-
     /** Additional CSS classes */
     class?: string;
-
-    /** Max number of lines to show (line-clamp) */
-    maxLines?: number;
   }
 
   let {
     field,
-    size = 'text-sm',
-    class: className = '',
-    maxLines
+    class: className = ''
   }: Props = $props();
 
   const context = getContext<UserContext>(USER_CONTEXT_KEY);
@@ -35,15 +27,9 @@
 </script>
 
 {#if field === 'about'}
-  <Bio class={cn(size, className)} {maxLines} />
+  <Bio class={cn(className)} />
 {:else if fieldValue}
-  <span
-    class={cn(size, className)}
-    style:display={maxLines ? '-webkit-box' : undefined}
-    style:-webkit-line-clamp={maxLines}
-    style:-webkit-box-orient={maxLines ? 'vertical' : undefined}
-    style:overflow={maxLines ? 'hidden' : undefined}
-  >
+  <span class={cn(className)}>
     {fieldValue}
   </span>
 {/if}

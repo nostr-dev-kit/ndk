@@ -9,15 +9,11 @@
 
     /** Show @ prefix */
     showAt?: boolean;
-
-    /** Whether to truncate */
-    truncate?: boolean;
   }
 
   let {
     class: className = '',
-    showAt = true,
-    truncate = true
+    showAt = true
   }: Props = $props();
 
   const context = getContext<UserContext>(USER_CONTEXT_KEY);
@@ -38,6 +34,6 @@
   const displayText = $derived(showAt ? `@${handle}` : handle);
 </script>
 
-<span class={cn(truncate && 'truncate inline-block max-w-full', className)}>
+<span class={cn(className)}>
   {displayText}
 </span>

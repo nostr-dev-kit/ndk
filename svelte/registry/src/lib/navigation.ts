@@ -26,7 +26,8 @@ import {
   UserGroupIcon,
   CloudUploadIcon,
   AtIcon,
-  HighlighterIcon
+  HighlighterIcon,
+  Hashtag01Icon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -136,6 +137,12 @@ export const componentCategories: NavCategory[] = [
       { name: 'Card', path: '/components/user-card', icon: IdentificationIcon, title: 'User Card', description: 'Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts.' },
       { name: 'Input', path: '/components/input', icon: Search01Icon, title: 'Input', description: 'Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.' },
       { name: 'Avatar Group', path: '/components/avatar-group', icon: UserGroupIcon, title: 'Avatar Group', description: 'Display a group of avatars.' },
+    ]
+  },
+  {
+    title: 'Hashtag',
+    items: [
+      { name: 'Card', path: '/components/hashtag-card', icon: Hashtag01Icon, title: 'Hashtag Card', description: 'Display hashtag activity and statistics. Track conversations, see contributors, and follow topics with portrait and compact variants.' },
     ]
   },
   {

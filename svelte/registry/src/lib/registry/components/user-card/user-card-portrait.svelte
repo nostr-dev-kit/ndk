@@ -15,6 +15,9 @@
   import { cn } from '../../utils/index.js';
   import { User } from '../../ui/user';
   import FollowButtonPill from '../actions/follow-button-pill.svelte';
+  import { createUserStats } from '../../hooks/user/stats.svelte.js';
+  import { getContext } from 'svelte';
+  import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/context.svelte.js';
 
   interface Props {
     /** NDK instance */
@@ -37,6 +40,10 @@
 </script>
 
 <User.Root {ndk} {pubkey}>
+  {@const context = getContext<UserContext>(USER_CONTEXT_KEY)}
+  {@const ndkUser = context.ndkUser}
+  {@const stats = createUserStats(() => ndkUser ? { user: ndkUser, follows: true, recentNotes: true } : undefined, ndk)}
+
   <div class={cn(
     'flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl w-80 shrink-0',
     className
@@ -47,17 +54,25 @@
       <User.Field field="name" size="sm" class="text-muted-foreground" />
     </div>
     <User.Field field="about" maxLines={2} class="text-muted-foreground text-sm leading-relaxed" />
-    <div class="flex items-center gap-3 text-sm shrink-0">
-      <div class="flex flex-col items-center">
-        <span class="font-semibold text-foreground">234</span>
-        <span class="text-muted-foreground text-xs">notes</span>
+    {#if stats.recentNoteCount > 0 || stats.followCount > 0}
+      <div class="flex items-center gap-3 text-sm shrink-0">
+        {#if stats.recentNoteCount > 0}
+          <div class="flex flex-col items-center">
+            <span class="font-semibold text-foreground">{stats.recentNoteCount}</span>
+            <span class="text-muted-foreground text-xs">recent notes</span>
+          </div>
+        {/if}
+        {#if stats.recentNoteCount > 0 && stats.followCount > 0}
+          <div class="text-muted-foreground">•</div>
+        {/if}
+        {#if stats.followCount > 0}
+          <div class="flex flex-col items-center">
+            <span class="font-semibold text-foreground">{stats.followCount}</span>
+            <span class="text-muted-foreground text-xs">following</span>
+          </div>
+        {/if}
       </div>
-      <div class="text-muted-foreground">•</div>
-      <div class="flex flex-col items-center">
-        <span class="font-semibold text-foreground">1.5K</span>
-        <span class="text-muted-foreground text-xs">followers</span>
-      </div>
-    </div>
+    {/if}
     <FollowButtonPill {ndk} target={user} variant="solid" />
   </div>
 </User.Root>

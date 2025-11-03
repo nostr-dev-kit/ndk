@@ -12,9 +12,9 @@
   import { getContext } from 'svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';
   import { Highlight } from '../../ui/highlight/index.js';
+  import { User } from '../../ui/user';
   import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../../ui/highlight/context.svelte.js';
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';
 
@@ -47,15 +47,6 @@
     class: className = '',
   }: Props = $props();
 
-  // Fetch author profile
-  const profileFetcher = createProfileFetcher(() => ({ user: event.author }), ndk);
-
-  const authorName = $derived(
-    profileFetcher.profile?.displayName ||
-      profileFetcher.profile?.name ||
-      'Anonymous'
-  );
-
   // Create reactive time ago string
   const timeAgo = createTimeAgo(event.created_at);
 </script>
@@ -81,7 +72,9 @@
           {@const ctx = getContext<HighlightContext>(HIGHLIGHT_CONTEXT_KEY)}
           <div class="flex items-center gap-2 text-xs text-muted-foreground">
             {#if showAuthor}
-              <span>{authorName}</span>
+              <User.Root {ndk} user={event.author}>
+                <User.Name class="inline" field="displayName" />
+              </User.Root>
             {/if}
             {#if showTimestamp}
               <span>·</span>

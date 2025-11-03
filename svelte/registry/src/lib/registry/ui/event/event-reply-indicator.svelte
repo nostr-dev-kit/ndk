@@ -14,10 +14,11 @@
   - children: Custom rendering snippet
 -->
 <script lang="ts">
-  import type { NDKEvent, NDKUserProfile } from '@nostr-dev-kit/ndk';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { User } from '../user/index.js';
 
   interface Props {
     /** NDK instance (optional, falls back to context) */
@@ -29,11 +30,11 @@
     /** Additional CSS classes */
     class?: string;
 
-    /** Click handler for the user link (receives npub) */
-    onclick?: (npub: string) => void;
+    /** Click handler for the user link (receives the event being replied to) */
+    onclick?: (event: NDKEvent) => void;
 
     /** Custom rendering snippet */
-    children?: Snippet<[{ profile: NDKUserProfile | null; event: NDKEvent | null; loading: boolean }]>;
+    children?: Snippet<[{ event: NDKEvent | null; loading: boolean }]>;
   }
 
   let {
@@ -47,7 +48,6 @@
   const ndk = getNDKFromContext(providedNdk);
 
   let replyToEvent = $state<NDKEvent | null>(null);
-  let replyToProfile = $state<NDKUserProfile | null>(null);
   let loading = $state(true);
 
   // Determine what this event is replying to
@@ -83,19 +83,12 @@
   $effect(() => {
     loading = true;
     replyToEvent = null;
-    replyToProfile = null;
 
     if (replyToTag) {
       ndk.fetchEventFromTag(replyToTag, event).then((fetchedEvent) => {
         if (fetchedEvent) {
           replyToEvent = fetchedEvent;
-          // Fetch the profile of the replied-to event's author
-          fetchedEvent.author.fetchProfile().then((profile) => {
-            replyToProfile = profile;
-            loading = false;
-          }).catch(() => {
-            loading = false;
-          });
+          loading = false;
         } else {
           loading = false;
         }
@@ -106,38 +99,27 @@
       loading = false;
     }
   });
-
-  // Derive the display name for the replied-to user
-  const displayName = $derived.by(() => {
-    if (!replyToEvent) return '';
-    if (replyToProfile?.name) return replyToProfile.name;
-    if (replyToProfile?.displayName) return replyToProfile.displayName;
-    return `${replyToEvent.pubkey.slice(0, 8)}...`;
-  });
-
-  // Derive the npub for the profile link
-  const npub = $derived.by(() => {
-    return replyToEvent ? replyToEvent.author.npub : '';
-  });
 </script>
 
 {#if replyToTag}
   {#if children}
-    {@render children({ profile: replyToProfile, event: replyToEvent, loading })}
-  {:else if replyToEvent && replyToProfile}
+    {@render children({ event: replyToEvent, loading })}
+  {:else if replyToEvent}
     <div class="reply-indicator {className}">
       <span class="reply-indicator__text">Replying to</span>
-      {#if onclick}
-        <button
-          type="button"
-          onclick={() => onclick(npub)}
-          class="reply-indicator__link reply-indicator__button"
-        >
-          @{displayName}
-        </button>
-      {:else}
-        <span class="reply-indicator__name">@{displayName}</span>
-      {/if}
+      <User.Root {ndk} user={replyToEvent.author}>
+        {#if onclick}
+          <button
+            type="button"
+            onclick={() => {replyToEvent && onclick(replyToEvent)}}
+            class="reply-indicator__link reply-indicator__button"
+          >
+            @<User.Name class="inline" field="name" />
+          </button>
+        {:else}
+          <span class="reply-indicator__name">@<User.Name class="inline" field="name" /></span>
+        {/if}
+      </User.Root>
     </div>
   {:else if !loading}
     <div class="reply-indicator {className}">

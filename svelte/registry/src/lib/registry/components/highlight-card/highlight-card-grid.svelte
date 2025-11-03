@@ -11,7 +11,6 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';
   import { Highlight } from '../../ui/highlight/index.js';
   import { User } from '../../ui/user';
@@ -36,15 +35,6 @@
     showAuthor = true,
     class: className = '',
   }: Props = $props();
-
-  // Fetch author profile
-  const profileFetcher = createProfileFetcher(() => ({ user: event.author }), ndk);
-
-  const authorName = $derived(
-    profileFetcher.profile?.displayName ||
-      profileFetcher.profile?.name ||
-      'Anonymous'
-  );
 </script>
 
 <Highlight.Root {ndk} {event} variant="grid" class={cn(className)}>
@@ -96,7 +86,7 @@
       <User.Root {ndk} user={event.author}>
         <div class="flex items-center gap-2 mt-2 px-1">
           <User.Avatar class="w-5 h-5 rounded-full" />
-          <span class="text-xs text-muted-foreground truncate">{authorName}</span>
+          <User.Name class="text-xs text-muted-foreground truncate" field="displayName" />
         </div>
       </User.Root>
     {/if}

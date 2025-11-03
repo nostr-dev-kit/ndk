@@ -82,7 +82,7 @@
     <h3>Edit the Files Directly</h3>
     <p>Open your copy and modify it.</p>
 
-    <CodeBlock lang="svelte" code={`<!-- Your copy at src/lib/components/ui/event-card/
+    <CodeBlock lang="svelte" code={`<!-- Your copy at src/lib/components/event-card/
      event-card-header.svelte -->
 <script>
   import { fade } from 'svelte/transition';

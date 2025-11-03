@@ -52,15 +52,6 @@
     class: className = ''
   }: Props = $props();
 
-  function handleClick(e: MouseEvent) {
-    if (onclick) {
-      onclick(e);
-    } else {
-      const naddr = article.encode();
-      window.location.href = `/a/${naddr}`;
-    }
-  }
-
   // Fetch author profile for avatar/name display
   const profileFetcher = $derived.by(() => {
     const user = article.author;
@@ -75,23 +66,26 @@
 
   // Create reactive time ago string
   const timeAgo = $derived(publishedAt ? createTimeAgo(publishedAt) : null);
+
+  const baseClasses = cn(
+    'article-card-hero',
+    'group relative w-full rounded-3xl overflow-hidden',
+    'bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600',
+    'transition-all duration-300',
+    'text-left',
+    height,
+    className
+  );
+
+  const interactiveClasses = onclick ? 'hover:shadow-2xl hover:shadow-purple-500/20 cursor-pointer' : '';
 </script>
 
 <Root {ndk} {article}>
-
-  <button
-    type="button"
-    onclick={handleClick}
-    class={cn(
-      'article-card-hero',
-      'group relative w-full rounded-3xl overflow-hidden',
-      'bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600',
-      'transition-all duration-300',
-      'hover:shadow-2xl hover:shadow-purple-500/20',
-      'text-left',
-      height,
-      className
-    )}
+  <svelte:element
+    this={onclick ? 'button' : 'div'}
+    type={onclick ? 'button' : undefined}
+    {onclick}
+    class={cn(baseClasses, interactiveClasses)}
   >
     <!-- Background Image -->
     {#if articleImage}
@@ -156,5 +150,5 @@
         </div>
       </div>
     </div>
-  </button>
+  </svelte:element>
 </Root>

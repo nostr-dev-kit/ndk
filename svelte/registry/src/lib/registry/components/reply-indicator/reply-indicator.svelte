@@ -29,6 +29,9 @@
     /** Additional CSS classes */
     class?: string;
 
+    /** Click handler for the user link (receives npub) */
+    onclick?: (npub: string) => void;
+
     /** Custom rendering snippet */
     children?: Snippet<[{ profile: NDKUserProfile | null; event: NDKEvent | null; loading: boolean }]>;
   }
@@ -37,6 +40,7 @@
     ndk: providedNdk,
     event,
     class: className = '',
+    onclick,
     children
   }: Props = $props();
 
@@ -123,12 +127,17 @@
   {:else if replyToEvent && replyToProfile}
     <div class="reply-indicator {className}">
       <span class="reply-indicator__text">Replying to</span>
-      <a
-        href="/p/{npub}"
-        class="reply-indicator__link"
-      >
-        @{displayName}
-      </a>
+      {#if onclick}
+        <button
+          type="button"
+          onclick={() => onclick(npub)}
+          class="reply-indicator__link reply-indicator__button"
+        >
+          @{displayName}
+        </button>
+      {:else}
+        <span class="reply-indicator__name">@{displayName}</span>
+      {/if}
     </div>
   {:else if !loading}
     <div class="reply-indicator {className}">
@@ -156,7 +165,19 @@
     text-decoration: none;
   }
 
+  .reply-indicator__button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
   .reply-indicator__link:hover {
     text-decoration: underline;
+  }
+
+  .reply-indicator__name {
+    font-weight: 500;
+    color: inherit;
   }
 </style>

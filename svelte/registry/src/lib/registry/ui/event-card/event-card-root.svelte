@@ -29,8 +29,8 @@
     /** The event to display (any kind) */
     event: NDKEvent;
 
-    /** Whether clicking the card navigates to event page */
-    interactive?: boolean;
+    /** Click handler (if provided, card becomes interactive) */
+    onclick?: (e: MouseEvent) => void;
 
     /** Additional CSS classes */
     class?: string;
@@ -42,7 +42,7 @@
   let {
     ndk: providedNdk,
     event,
-    interactive = false,
+    onclick,
     class: className = '',
     children
   }: Props = $props();
@@ -53,22 +53,13 @@
   const context: EventCardContext = $state.raw({
     get ndk() { return ndk; },
     get event() { return event; },
-    get interactive() { return interactive; }
+    get interactive() { return !!onclick; }
   });
 
   setContext(EVENT_CARD_CONTEXT_KEY, context);
 
-  // Handle click navigation
-  function handleClick() {
-    if (!interactive) return;
-
-    // Encode as nevent and navigate
-    const nevent = event.encode();
-    window.location.href = `/e/${nevent}`;
-  }
-
   // Determine if we should show as clickable
-  const isClickable = $derived(interactive);
+  const isClickable = $derived(!!onclick);
 </script>
 
 {#if isClickable}
@@ -77,7 +68,7 @@
       'relative flex flex-col gap-2 cursor-pointer w-full text-left bg-transparent border-none p-0',
       className
     )}
-    onclick={handleClick}
+    {onclick}
     type="button"
   >
     {#if children}

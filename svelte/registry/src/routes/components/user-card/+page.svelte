@@ -7,6 +7,7 @@
 	import ComponentCardInline from '$site-components/ComponentCardInline.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import { User } from '$lib/registry/ui';
+	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 
 	// Import blocks
 	import UserCardClassic from '$lib/registry/components/user-card/user-card-classic.svelte';
@@ -260,11 +261,13 @@
 		{/snippet}
 
 		{#snippet portraitPreview()}
-			<div class="flex gap-4 flex-wrap">
-				{#each displayUsers as user (user.pubkey)}
-					<UserCardPortrait {ndk} pubkey={user.pubkey} />
-				{/each}
-			</div>
+			<ScrollArea orientation="horizontal" class="w-full">
+				<div class="flex gap-4 pb-4">
+					{#each displayUsers as user (user.pubkey)}
+						<UserCardPortrait {ndk} pubkey={user.pubkey} />
+					{/each}
+				</div>
+			</ScrollArea>
 		{/snippet}
 
 		{#snippet landscapePreview()}
@@ -345,7 +348,7 @@
 									<div class="p-4 space-y-3">
 										<!-- Avatar Layer -->
 										<div class="relative w-fit mx-auto">
-											<User.Avatar size="lg" class="w-24 h-24" />
+											<User.Avatar class="w-24 h-24" />
 											<button
 												type="button"
 												class="group absolute inset-0 -m-1 border-2 border-dashed border-primary/60 rounded-full transition-all cursor-pointer {selectedLayer ===
@@ -516,11 +519,13 @@
 					<!-- Portrait -->
 					<ComponentCardInline data={portraitCardData}>
 						{#snippet preview()}
-							<div class="flex gap-4 flex-wrap">
-								{#each displayUsers as user (user.pubkey)}
-									<UserCardPortrait {ndk} pubkey={user.pubkey} />
-								{/each}
-							</div>
+							<ScrollArea orientation="horizontal" class="w-full">
+								<div class="flex gap-4 pb-4">
+									{#each displayUsers as user (user.pubkey)}
+										<UserCardPortrait {ndk} pubkey={user.pubkey} />
+									{/each}
+								</div>
+							</ScrollArea>
 						{/snippet}
 					</ComponentCardInline>
 

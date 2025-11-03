@@ -7,10 +7,10 @@
 
 <div class="flex flex-wrap items-center gap-6">
   <!-- Automatically handles NIP-30 custom emoji from event -->
-  <Reaction.Display {event} size={32} />
+  <Reaction.Display {event} class="text-3xl" />
 
   <!-- Standard emoji for comparison -->
-  <Reaction.Display emoji="⚡" size={32} />
+  <Reaction.Display emoji="⚡" class="text-3xl" />
 </div>
 
 <p class="text-sm text-muted-foreground mt-4">

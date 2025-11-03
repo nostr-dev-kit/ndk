@@ -10,6 +10,7 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import ComponentCardInline from '$site-components/ComponentCardInline.svelte';
+	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -217,9 +218,13 @@
 	<!-- Blocks Showcase Section -->
 	{#if !loading && article1}
 		{#snippet portraitPreview()}
-			{#if article1}
-				<ArticleCardPortrait {ndk} article={article1} />
-			{/if}
+			<ScrollArea orientation="horizontal" class="w-full">
+				<div class="flex gap-6 pb-4">
+					{#each displayArticles as article}
+						<ArticleCardPortrait {ndk} {article} />
+					{/each}
+				</div>
+			</ScrollArea>
 		{/snippet}
 
 		{#snippet heroPreview()}
@@ -450,11 +455,13 @@
 					<!-- Portrait -->
 					<ComponentCardInline data={portraitCardData}>
 						{#snippet preview()}
-							<div class="flex gap-6 overflow-x-auto pb-4">
-								{#each displayArticles as article}
-									<ArticleCardPortrait {ndk} {article} />
-								{/each}
-							</div>
+							<ScrollArea orientation="horizontal" class="w-full">
+								<div class="flex gap-6 pb-4">
+									{#each displayArticles as article}
+										<ArticleCardPortrait {ndk} {article} />
+									{/each}
+								</div>
+							</ScrollArea>
 						{/snippet}
 					</ComponentCardInline>
 

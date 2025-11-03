@@ -5,7 +5,7 @@
   @example
   ```svelte
   <Relay.Root {ndk} {relayUrl}>
-    <Relay.Icon size={48} />
+    <Relay.Icon class="w-12 h-12" />
   </Relay.Root>
   ```
 -->
@@ -15,15 +15,11 @@
   import { cn } from '../../utils/index.js';
 
   interface Props {
-    /** Icon size in pixels */
-    size?: number;
-
     /** Additional CSS classes */
     class?: string;
   }
 
   let {
-    size = 48,
     class: className = ''
   }: Props = $props();
 
@@ -40,13 +36,11 @@
   <img
     src={icon}
     alt={name}
-    class={cn('relay-icon', className)}
-    style="width: {size}px; height: {size}px;"
+    class={cn('relay-icon w-12 h-12', className)}
   />
 {:else}
   <div
-    class={cn('relay-icon relay-icon-fallback', className)}
-    style="width: {size}px; height: {size}px;"
+    class={cn('relay-icon relay-icon-fallback w-12 h-12', className)}
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -5,17 +5,17 @@
 
   @example Standard emoji
   ```svelte
-  <Reaction.Display emoji="❤️" />
+  <Reaction.Display emoji="❤️" class="text-2xl" />
   ```
 
   @example Custom emoji with URL
   ```svelte
-  <Reaction.Display emoji=":custom:" url="https://example.com/emoji.png" shortcode="custom" />
+  <Reaction.Display emoji=":custom:" url="https://example.com/emoji.png" shortcode="custom" class="w-6 h-6" />
   ```
 
   @example From NDKEvent (kind:7)
   ```svelte
-  <Reaction.Display event={reactionEvent} />
+  <Reaction.Display event={reactionEvent} class="text-2xl" />
   ```
 -->
 <script lang="ts">
@@ -31,14 +31,11 @@
     /** NDKEvent kind:7 reaction (Option 2) */
     event?: NDKEvent;
 
-    /** Display size in pixels */
-    size?: number;
-
     /** Additional CSS classes */
     class?: string;
   }
 
-  let { emoji: emojiProp, url: urlProp, shortcode: shortcodeProp, event, size = 20, class: className = '' }: Props = $props();
+  let { emoji: emojiProp, url: urlProp, shortcode: shortcodeProp, event, class: className = '' }: Props = $props();
 
   // Extract emoji data from NDKEvent if provided
   const emojiData = $derived.by(() => {
@@ -71,11 +68,10 @@
   <img
     src={emojiData.url}
     alt={emojiData.shortcode || emojiData.emoji}
-    class={cn('inline-block object-contain', className)}
-    style="width: {size}px; height: {size}px;"
+    class={cn('inline-block object-contain w-5 h-5', className)}
   />
 {:else}
-  <span class={cn('inline-block', className)} style="font-size: {size}px; line-height: 1;">
+  <span class={cn('inline-block leading-none text-xl', className)}>
     {emojiData.emoji}
   </span>
 {/if}

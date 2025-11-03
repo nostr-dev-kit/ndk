@@ -89,9 +89,9 @@
   <section class="info">
     <h2>Standard Emojis</h2>
     <p class="mb-4">Display standard Unicode emojis:</p>
-    <pre><code>&lt;Reaction.Display emoji="❤️" size=&#123;24&#125; /&gt;
-&lt;Reaction.Display emoji="🔥" size=&#123;24&#125; /&gt;
-&lt;Reaction.Display emoji="👍" size=&#123;24&#125; /&gt;</code></pre>
+    <pre><code>&lt;Reaction.Display emoji="❤️" class="text-2xl" /&gt;
+&lt;Reaction.Display emoji="🔥" class="text-2xl" /&gt;
+&lt;Reaction.Display emoji="👍" class="text-2xl" /&gt;</code></pre>
   </section>
 
   <section class="info">
@@ -101,7 +101,7 @@
   emoji=":party:"
   url="https://example.com/party.gif"
   shortcode="party"
-  size=&#123;24&#125;
+  class="w-6 h-6"
 /&gt;</code></pre>
     <p class="mb-4">Custom emojis are displayed as images, while standard emojis are rendered as text.</p>
   </section>
@@ -114,7 +114,7 @@
 // kind:7 reaction event
 const reactionEvent: NDKEvent = ...;
 
-&lt;Reaction.Display event=&#123;reactionEvent&#125; size=&#123;24&#125; /&gt;</code></pre>
+&lt;Reaction.Display event=&#123;reactionEvent&#125; class="text-2xl" /&gt;</code></pre>
     <p class="mb-4">The component automatically extracts:</p>
     <ul class="ml-6 mb-4 space-y-2">
       <li>Emoji content from <code>event.content</code></li>
@@ -124,11 +124,15 @@ const reactionEvent: NDKEvent = ...;
 
   <section class="info">
     <h2>Sizing</h2>
-    <p class="mb-4">Control the display size with the size prop (in pixels):</p>
-    <pre><code>&lt;Reaction.Display emoji="💜" size=&#123;16&#125; /&gt;  &lt;!-- Small --&gt;
-&lt;Reaction.Display emoji="💜" size=&#123;20&#125; /&gt;  &lt;!-- Default --&gt;
-&lt;Reaction.Display emoji="💜" size=&#123;24&#125; /&gt;  &lt;!-- Medium --&gt;
-&lt;Reaction.Display emoji="💜" size=&#123;32&#125; /&gt;  &lt;!-- Large --&gt;</code></pre>
+    <p class="mb-4">Control the display size with Tailwind text classes for emojis or width/height classes for images:</p>
+    <pre><code>&lt;Reaction.Display emoji="💜" class="text-base" /&gt;  &lt;!-- Small --&gt;
+&lt;Reaction.Display emoji="💜" /&gt;  &lt;!-- Default (text-xl) --&gt;
+&lt;Reaction.Display emoji="💜" class="text-2xl" /&gt;  &lt;!-- Medium --&gt;
+&lt;Reaction.Display emoji="💜" class="text-3xl" /&gt;  &lt;!-- Large --&gt;
+
+&lt;!-- For custom image emojis, use width/height classes --&gt;
+&lt;Reaction.Display url="..." class="w-4 h-4" /&gt;  &lt;!-- Small --&gt;
+&lt;Reaction.Display url="..." class="w-8 h-8" /&gt;  &lt;!-- Large --&gt;</code></pre>
   </section>
 
   <section class="info">

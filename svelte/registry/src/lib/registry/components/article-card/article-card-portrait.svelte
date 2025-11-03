@@ -42,33 +42,27 @@
     class: className = ''
   }: Props = $props();
 
-  function handleClick(e: MouseEvent) {
-    if (onclick) {
-      onclick(e);
-    } else {
-      // Default: navigate to article
-      const naddr = article.encode();
-      window.location.href = `/a/${naddr}`;
-    }
-  }
+  const baseClasses = cn(
+    'article-card-portrait',
+    'group flex flex-col flex-shrink-0',
+    'rounded-2xl overflow-hidden',
+    'bg-card',
+    'transition-all duration-300',
+    'text-left',
+    width,
+    height,
+    className
+  );
+
+  const interactiveClasses = onclick ? 'hover:bg-muted hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10 cursor-pointer' : '';
 </script>
 
 <Root {ndk} {article}>
-  <button
-    type="button"
-    onclick={handleClick}
-    class={cn(
-      'article-card-portrait',
-      'group flex flex-col flex-shrink-0',
-      'rounded-2xl overflow-hidden',
-      'bg-card hover:bg-muted',
-      'transition-all duration-300',
-      'hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10',
-      'text-left',
-      width,
-      height,
-      className
-    )}
+  <svelte:element
+    this={onclick ? 'button' : 'div'}
+    type={onclick ? 'button' : undefined}
+    {onclick}
+    class={cn(baseClasses, interactiveClasses)}
   >
     <!-- Cover Image -->
     <div class={cn('relative overflow-hidden', imageHeight)}>
@@ -93,5 +87,5 @@
         </div>
       </div>
     </div>
-  </button>
+  </svelte:element>
 </Root>

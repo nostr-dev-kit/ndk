@@ -52,31 +52,27 @@
     class: className = ''
   }: Props = $props();
 
-  function handleClick(e: MouseEvent) {
-    if (onclick) {
-      onclick(e);
-    } else {
-      const naddr = article.encode();
-      window.location.href = `/a/${naddr}`;
-    }
-  }
+  const baseClasses = cn(
+    'article-card-neon',
+    'group relative flex flex-col flex-shrink-0 overflow-hidden rounded-2xl',
+    'text-left',
+    width,
+    height,
+    className
+  );
+
+  const interactiveClasses = onclick ? 'cursor-pointer' : '';
 </script>
 
 <Root {ndk} {article}>
   {@const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY)}
   {@const imageUrl = context.article.image}
 
-  <button
-    type="button"
-    onclick={handleClick}
-    class={cn(
-      'article-card-neon',
-      'group relative flex flex-col flex-shrink-0 overflow-hidden rounded-2xl',
-      'text-left',
-      width,
-      height,
-      className
-    )}
+  <svelte:element
+    this={onclick ? 'button' : 'div'}
+    type={onclick ? 'button' : undefined}
+    {onclick}
+    class={cn(baseClasses, interactiveClasses)}
   >
     <!-- Glossy neon top border effect -->
     <div class={cn("neon-border z-1", width, height)}></div>
@@ -110,14 +106,17 @@
 
         <!-- Author & Reading Time -->
         <div class="pt-4 border-t border-white/10 flex items-center justify-between">
-          <div class="text-sm text-white/80">
-            by {context.article.author.profile?.displayName || context.article.author.profile?.name || 'Anonymous'}
+          <div class="text-sm text-white/80 flex items-center gap-1">
+            <User.Root {ndk} user={context.article.author} class="inline">
+              <span>by</span>
+              <User.Name class="inline" />
+            </User.Root>
           </div>
           <ReadingTime class="text-sm text-white/70" />
         </div>
       </div>
     </div>
-  </button>
+  </svelte:element>
 </Root>
 
 <style>

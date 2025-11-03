@@ -43,9 +43,9 @@
 		name: string;
 		description: string;
 		command: string;
-		codeSnippet: string;
 		preview: Snippet;
 		cardData?: ComponentCardData;
+		orientation?: 'horizontal' | 'vertical';
 	}
 
 	interface Props {
@@ -60,6 +60,9 @@
 
 	let activeBlockIndex = $state<number | null>(null);
 	let blockRefs: HTMLDivElement[] = [];
+	let previewRefs: HTMLDivElement[] = [];
+	let scrollIntervals: number[] = [];
+	let scrollPositions: number[] = [];
 
 	// Modal state
 	let showModal = $state(false);
@@ -109,9 +112,66 @@
 			window.removeEventListener('resize', updateActiveBlock);
 		};
 	});
+
+	// Auto-scroll effect for inactive preview areas
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+
+		// Initialize scroll positions
+		scrollPositions = blocks.map(() => 0);
+
+		const animateScroll = (index: number) => {
+			const container = previewRefs[index];
+			const block = blocks[index];
+			if (!container || !block) return;
+
+			const isActive = activeBlockIndex === index;
+			const isHorizontal = block.orientation === 'horizontal';
+
+			if (!isActive) {
+				// Increment virtual scroll position by small amount each frame
+				scrollPositions[index] += 0.06; // ~60fps = 3.6px/sec
+
+				if (isHorizontal) {
+					// Horizontal scrolling
+					if (container.scrollWidth > container.clientWidth) {
+						// Loop back to start when reaching end
+						if (scrollPositions[index] >= container.scrollWidth - container.clientWidth) {
+							scrollPositions[index] = 0;
+						}
+						container.scrollTo({ left: scrollPositions[index], behavior: 'instant' });
+					}
+				} else {
+					// Vertical scrolling
+					if (container.scrollHeight > container.clientHeight) {
+						// Loop back to top when reaching bottom
+						if (scrollPositions[index] >= container.scrollHeight - container.clientHeight) {
+							scrollPositions[index] = 0;
+						}
+						container.scrollTo({ top: scrollPositions[index], behavior: 'instant' });
+					}
+				}
+			}
+
+			scrollIntervals[index] = requestAnimationFrame(() => animateScroll(index));
+		};
+
+		// Start animation for each block
+		blocks.forEach((_, index) => {
+			animateScroll(index);
+		});
+
+		return () => {
+			// Clean up all animation frames
+			scrollIntervals.forEach(frameId => {
+				if (frameId) cancelAnimationFrame(frameId);
+			});
+			scrollIntervals = [];
+			scrollPositions = [];
+		};
+	});
 </script>
 
-<section class="min-h-[500px] lg:min-h-[60vh] pb-12 {className}">
 	<div class="space-y-0 pb-0">
 		{#each blocks as block, index}
 			{@const isNotLast = index < blocks.length - 1}
@@ -119,7 +179,7 @@
 			{@const commandArgs = block.command.replace(/^npx\s+/, '').split(' ')}
 			<div
 				bind:this={blockRefs[index]}
-				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 px-8 {borderClass}"
+				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 {borderClass}"
 				class:cursor-pointer={block.cardData}
 				style:filter={activeBlockIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
 				style:opacity={activeBlockIndex !== index ? '0.6' : '1'}
@@ -136,7 +196,7 @@
 			>
 				<div
 					class={cn(
-						"lg:col-span-2 p-10 !pl-0 lg:p-12 lg:border-r text-right sticky top-20 border-border flex flex-col justify-between",
+						"lg:col-span-2 p-10 lg:p-12 lg:border-r text-right sticky top-20 border-border flex flex-col justify-between",
 					)}
 				>
 					<div>
@@ -146,10 +206,29 @@
 						</p>
 					</div>
 				</div>
-				<div class="lg:col-span-5 p-10 lg:p-12 !pr-0 overflow-hidden relative">
-					<div class="flex items-center">
+				<div class="lg:col-span-5 relative">
+					<div
+						bind:this={previewRefs[index]}
+						class={cn(
+							"scroll-smooth scrollbar-hide",
+							block.orientation === 'horizontal'
+								? "overflow-x-auto pl-10 lg:pl-12 !pr-0 py-10 lg:py-12"
+								: "overflow-y-auto px-10 lg:px-12"
+						)}
+					>
 						{@render block.preview()}
 					</div>
+					{#if block.orientation === 'horizontal'}
+						<!-- Left gradient -->
+						<div class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
+						<!-- Right gradient -->
+						<div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
+					{:else}
+						<!-- Top gradient -->
+						<div class="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-background to-transparent pointer-events-none"></div>
+						<!-- Bottom gradient -->
+						<div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent pointer-events-none"></div>
+					{/if}
 				</div>
 			</div>
 		{/each}
@@ -162,4 +241,3 @@
 		preview={selectedBlock?.preview}
 		onClose={closeModal}
 	/>
-</section>

@@ -31,7 +31,7 @@
   <div class="voice-message-compact {className}">
     {#if showAuthor}
       <div class="author-section">
-        <User.Root user={voiceMessage.author}>
+        <User.Root {ndk} user={voiceMessage.author}>
           <User.Avatar class="w-8 h-8" />
           <User.Name />
         </User.Root>
@@ -39,7 +39,7 @@
     {/if}
 
     <div class="player-section">
-      <VoiceMessage.Player showButton={true} />
+      <VoiceMessage.Player />
       <VoiceMessage.Duration />
     </div>
   </div>

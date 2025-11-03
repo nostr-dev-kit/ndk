@@ -112,56 +112,74 @@
   {#if sampleUser}
     <!-- ComponentsShowcase Section -->
     {#snippet minimalPreview()}
-      <div class="flex flex-col items-center gap-3">
-        <FollowButton {ndk} target={sampleUser} showTarget={true} />
-        <FollowButton {ndk} target="bitcoin" showTarget={true} />
-      </div>
+      <FollowButton {ndk} target={sampleUser} showTarget={true} />
     {/snippet}
 
-    {#snippet pillPreview()}
-      <div class="flex flex-col items-center gap-3">
-        <div class="flex items-center gap-3">
-          <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-          <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
-        </div>
-        <div class="flex items-center gap-3">
-          <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
-          <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
-        </div>
-      </div>
+    {#snippet minimalIconOnlyPreview()}
+      <FollowButton {ndk} target={sampleUser} />
+    {/snippet}
+
+    {#snippet pillSolidPreview()}
+      <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+    {/snippet}
+
+    {#snippet pillOutlinePreview()}
+      <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+    {/snippet}
+
+    {#snippet pillCompactPreview()}
+      <FollowButtonPill {ndk} target={sampleUser} compact />
     {/snippet}
 
     {#snippet animatedPreview()}
-      <div class="flex flex-col items-center gap-3">
-        <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
-        <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
-      </div>
+      <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
     {/snippet}
 
     <ComponentPageSectionTitle
       title="Showcase"
-      description="Three follow button variants. Minimal for inline use, pill for versatile layouts, and animated for visual feedback."
+      description="Follow button variants for users and hashtags. From minimal to animated."
     />
 
     <ComponentsShowcaseGrid
       blocks={[
         {
           name: 'Minimal',
-          description: 'Icon-first design for inline use in feeds',
+          description: 'Icon-first with target name',
           command: 'npx shadcn@latest add follow-button',
           preview: minimalPreview,
           cardData: minimalCardData
         },
         {
-          name: 'Pill',
-          description: 'Rounded pill style with solid and outline variants',
+          name: 'Minimal Icon Only',
+          description: 'Just the follow icon',
+          command: 'npx shadcn@latest add follow-button',
+          preview: minimalIconOnlyPreview,
+          cardData: minimalCardData
+        },
+        {
+          name: 'Pill Solid',
+          description: 'Rounded pill with solid background',
           command: 'npx shadcn@latest add follow-button-pill',
-          preview: pillPreview,
+          preview: pillSolidPreview,
+          cardData: pillCardData
+        },
+        {
+          name: 'Pill Outline',
+          description: 'Rounded pill with outline style',
+          command: 'npx shadcn@latest add follow-button-pill',
+          preview: pillOutlinePreview,
+          cardData: pillCardData
+        },
+        {
+          name: 'Pill Compact',
+          description: 'Icon-only circular button',
+          command: 'npx shadcn@latest add follow-button-pill',
+          preview: pillCompactPreview,
           cardData: pillCardData
         },
         {
           name: 'Animated',
-          description: 'Smooth transitions and visual feedback',
+          description: 'With smooth transitions and feedback',
           command: 'npx shadcn@latest add follow-button-animated',
           preview: animatedPreview,
           cardData: animatedCardData

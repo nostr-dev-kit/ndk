@@ -9,55 +9,18 @@
   let uploads = $state<MediaUploadResult[]>([]);
 </script>
 
-<div class="media-upload-demo">
+<div class="border border-gray-200 rounded-lg p-4 bg-white">
   <MediaUpload.Root {ndk} bind:uploads>
-    <MediaUpload.Button class="upload-button">
+    <MediaUpload.Button class="px-4 py-2 bg-blue-500 text-white border-none rounded-md cursor-pointer font-medium hover:bg-blue-600">
       Select Files
     </MediaUpload.Button>
 
     {#if uploads.length > 0}
-      <div class="preview-grid">
+      <div class="grid grid-cols-3 gap-2 mt-4">
         {#each uploads as upload (upload.url)}
-          <MediaUpload.Preview {upload} class="preview-item" />
+          <MediaUpload.Preview {upload} class="w-full h-[100px] rounded-md overflow-hidden" />
         {/each}
       </div>
     {/if}
   </MediaUpload.Root>
 </div>
-
-<style>
-  .media-upload-demo {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background: white;
-  }
-
-  .media-upload-demo :global(.upload-button) {
-    padding: 0.5rem 1rem;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    font-weight: 500;
-  }
-
-  .media-upload-demo :global(.upload-button:hover) {
-    background: #2563eb;
-  }
-
-  .preview-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-
-  .media-upload-demo :global(.preview-item) {
-    width: 100%;
-    height: 100px;
-    border-radius: 0.375rem;
-    overflow: hidden;
-  }
-</style>

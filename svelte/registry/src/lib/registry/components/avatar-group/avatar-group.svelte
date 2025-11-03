@@ -114,17 +114,23 @@
             type="button"
             onclick={() => onAvatarClick?.(user)}
             class="avatar-group-button"
+            style:width="{size}px"
+            style:height="{size}px"
           >
             <User.Avatar
-              class="ring-2 ring-background"
-              style="width: {size}px; height: {size}px;"
+              class="ring-2 ring-background w-full h-full"
             />
           </button>
         {:else}
-          <User.Avatar
-            class="ring-2 ring-background"
-            style="width: {size}px; height: {size}px;"
-          />
+          <div
+            class="avatar-wrapper"
+            style:width="{size}px"
+            style:height="{size}px"
+          >
+            <User.Avatar
+              class="ring-2 ring-background w-full h-full"
+            />
+          </div>
         {/if}
       </User.Root>
     </div>

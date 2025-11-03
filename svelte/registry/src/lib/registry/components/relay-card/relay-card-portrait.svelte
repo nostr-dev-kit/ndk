@@ -105,7 +105,7 @@
 			{:else}
 				<!-- Fallback: Large faded icon as background - centered and covering full height -->
 				<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50 scale-[2.5]">
-					<Icon size={200} />
+					<Icon class="w-[200px] h-[200px]" />
 				</div>
 				<!-- Gradient overlay for color effect -->
 				<div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15"></div>
@@ -118,7 +118,7 @@
 
 		<!-- Bookmark Button (top-right) -->
 		<div class="absolute top-3 right-3 z-10">
-			<BookmarkButton {bookmarks} size="sm" />
+			<BookmarkButton {bookmarks} class="w-6 h-6" />
 		</div>
 
 		<!-- Icon -->

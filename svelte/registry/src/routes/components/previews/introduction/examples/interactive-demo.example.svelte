@@ -38,7 +38,7 @@
     <!-- Quick Examples -->
     <div class="flex gap-2 flex-wrap">
       <span class="text-sm text-muted-foreground">Quick examples:</span>
-      {#each examples as example (example)}
+      {#each examples as example (example.value)}
         <button
           type="button"
           onclick={() => bech32Input = example.value}

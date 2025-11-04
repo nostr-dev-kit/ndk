@@ -246,7 +246,7 @@
 				<div class="absolute top-6 right-6 z-10">
 					<Dialog.Close class="p-2 border-none bg-transparent cursor-pointer rounded-md transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground">
 						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" ></path>
 						</svg>
 						<span class="sr-only">Close</span>
 					</Dialog.Close>

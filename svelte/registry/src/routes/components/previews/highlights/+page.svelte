@@ -3,7 +3,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
   import HighlightCardExample from './examples/highlight-card.svelte';
   import HighlightInlineExample from './examples/highlight-inline.svelte';
@@ -13,17 +15,44 @@
 
   // The sample should be a kind:1 event that EMBEDS a kind:9802 highlight
   let sampleNote = $state<NDKEvent | undefined>();
+
+  const cardData = {
+    name: 'highlight-embedded-card',
+    title: 'Card Variant',
+    description: 'Full book-page style display.',
+    richDescription: 'Full book-page style display with source badge. Default variant for embedded highlights.',
+    command: 'npx shadcn@latest add highlight-embedded-card',
+    apiDocs: []
+  };
+
+  const inlineData = {
+    name: 'highlight-embedded-inline',
+    title: 'Inline Variant',
+    description: 'Medium-sized for inline references.',
+    richDescription: 'Medium-sized display for inline references with line clamping.',
+    command: 'npx shadcn@latest add highlight-embedded-inline',
+    apiDocs: []
+  };
+
+  const compactData = {
+    name: 'highlight-embedded-compact',
+    title: 'Compact Variant',
+    description: 'Minimal with truncated content.',
+    richDescription: 'Minimal display with heavily truncated content (2 lines).',
+    command: 'npx shadcn@latest add highlight-embedded-compact',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <h1 class="text-4xl font-bold mb-4">Highlight Embedded Preview</h1>
     <p class="text-lg text-muted-foreground mb-2">
       Embedded preview handler for text highlights (Kind 9802 / NIP-84).
     </p>
     <p class="text-sm text-muted-foreground mb-6">
-      <a href="/components/embedded-previews" class="text-primary hover:underline">
+      <a href="/components/previews/introduction" class="text-primary hover:underline">
         ← Back to Embedded Previews
       </a>
     </p>
@@ -62,17 +91,73 @@
   </section>
 
   <!-- Visual Examples -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold mb-6">Visual Examples</h2>
+  {#snippet cardPreview()}
+    {#if sampleNote}
+      <HighlightCardExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
 
-    <div class="space-y-8">
-      <!-- Card Variant -->
-      <Demo
-        title="Card Variant"
-        description="Full book-page style display with source badge. Default variant for embedded highlights."
-        component="highlight-embedded-card"
-        usageOneLiner="import './kinds/highlight-embedded-card'  // Add to embedded-handlers.ts"
-      >
+  {#snippet inlinePreview()}
+    {#if sampleNote}
+      <HighlightInlineExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
+
+  {#snippet compactPreview()}
+    {#if sampleNote}
+      <HighlightCompactExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
+
+  <ComponentPageSectionTitle
+    title="Visual Examples"
+    description="Different display variants for embedded highlights."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Card Variant',
+        description: 'Full book-page style',
+        command: 'npx shadcn@latest add highlight-embedded-card',
+        preview: cardPreview,
+        cardData: cardData
+      },
+      {
+        name: 'Inline Variant',
+        description: 'Medium-sized display',
+        command: 'npx shadcn@latest add highlight-embedded-inline',
+        preview: inlinePreview,
+        cardData: inlineData
+      },
+      {
+        name: 'Compact Variant',
+        description: 'Minimal truncated',
+        command: 'npx shadcn@latest add highlight-embedded-compact',
+        preview: compactPreview,
+        cardData: compactData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={cardData}>
+      {#snippet preview()}
         {#if sampleNote}
           <HighlightCardExample {ndk} event={sampleNote} />
         {:else}
@@ -80,15 +165,11 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
+      {/snippet}
+    </ComponentCard>
 
-      <!-- Inline Variant -->
-      <Demo
-        title="Inline Variant"
-        description="Medium-sized display for inline references with line clamping."
-        component="highlight-embedded-inline"
-        usageOneLiner="import './kinds/highlight-embedded-inline'  // Add to embedded-handlers.ts"
-      >
+    <ComponentCard inline data={inlineData}>
+      {#snippet preview()}
         {#if sampleNote}
           <HighlightInlineExample {ndk} event={sampleNote} />
         {:else}
@@ -96,15 +177,11 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
+      {/snippet}
+    </ComponentCard>
 
-      <!-- Compact Variant -->
-      <Demo
-        title="Compact Variant"
-        description="Minimal display with heavily truncated content (2 lines)."
-        component="highlight-embedded-compact"
-        usageOneLiner="import './kinds/highlight-embedded-compact'  // Add to embedded-handlers.ts"
-      >
+    <ComponentCard inline data={compactData}>
+      {#snippet preview()}
         {#if sampleNote}
           <HighlightCompactExample {ndk} event={sampleNote} />
         {:else}
@@ -112,8 +189,8 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
-    </div>
+      {/snippet}
+    </ComponentCard>
   </section>
 
   <!-- When to Use -->

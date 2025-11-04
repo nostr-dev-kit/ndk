@@ -4,16 +4,14 @@
   import { createThreadView } from '@nostr-dev-kit/svelte';
   import ThreadViewTwitter from '$lib/registry/blocks/thread-view-twitter.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   import TwitterCode from './examples/twitter-code.svelte';
-  import TwitterBlockCodeRaw from './examples/twitter-block-code.svelte?raw';
-
   import UIBasic from './examples/ui-basic.svelte';
-  import UIBasicRaw from './examples/ui-basic.svelte?raw';
   import UIComposition from './examples/ui-composition.svelte';
-  import UICompositionRaw from './examples/ui-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -27,13 +25,40 @@
     }),
     ndk
   );
+
+  const twitterBlockData = {
+    name: 'thread-view-twitter',
+    title: 'Twitter Style',
+    description: 'Vertical thread with connector lines.',
+    richDescription: 'Vertical thread view with continuous connector lines, perfect for social media-style conversations. Shows parent chain, focused event, and all replies.',
+    command: 'npx shadcn@latest add thread-view-twitter',
+    apiDocs: []
+  };
+
+  const basicUIData = {
+    name: 'thread-view-basic',
+    title: 'Basic Usage',
+    description: 'Minimal thread view primitives.',
+    richDescription: 'Minimal thread view with EventCard.Root, EventCard.Header, and EventCard.Content. Shows the essential composition for displaying thread events.',
+    command: 'npx shadcn@latest add thread-view',
+    apiDocs: []
+  };
+
+  const fullCompositionData = {
+    name: 'thread-view-full',
+    title: 'Full Composition',
+    description: 'All primitives together.',
+    richDescription: 'Complete thread view showing parent chain with thread lines, focused event highlighting, reply sections, and interactive navigation. Demonstrates all available primitives working together.',
+    command: 'npx shadcn@latest add thread-view',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">ThreadView</h1>
+      <h1 class="text-4xl font-bold">ThreadView</h1>
     </div>
     <p class="text-lg text-muted-foreground mb-6">
       Display Nostr event threads with parent chains, focused events, and replies. Built using
@@ -42,7 +67,7 @@
 
     <EditProps.Root>
       <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
-    	<EditProps.Button>Edit Examples</EditProps.Button>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 
@@ -51,51 +76,60 @@
       <div class="text-muted-foreground">Loading thread...</div>
     </div>
   {:else}
-    <!-- Blocks Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
-      <p class="text-muted-foreground mb-8">
-        Pre-composed thread layouts ready to use. Install with a single command.
-      </p>
+    <!-- Blocks Showcase -->
+    {#snippet twitterPreview()}
+      <TwitterCode {ndk} nevent={neventInput} />
+    {/snippet}
 
-      <div class="space-y-12">
-        <Demo
-          title="Twitter Style"
-          description="Vertical thread view with continuous connector lines, perfect for social media-style conversations. Shows parent chain, focused event, and all replies."
-          component="thread-view-twitter"
-          code={TwitterBlockCodeRaw}
-        >
-          <TwitterCode {ndk} nevent={neventInput} />
-        </Demo>
-      </div>
-    </section>
+    <ComponentPageSectionTitle
+      title="Blocks"
+      description="Pre-composed thread layouts ready to use."
+    />
 
-    <!-- UI Primitives Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
-      <p class="text-muted-foreground mb-8">
-        Primitive components for building custom thread layouts. Mix and match EventCard
-        primitives with createThreadView data to create your own designs.
-      </p>
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Twitter Style',
+          description: 'Vertical with connectors',
+          command: 'npx shadcn@latest add thread-view-twitter',
+          preview: twitterPreview,
+          cardData: twitterBlockData
+        }
+      ]}
+    />
 
-      <div class="space-y-8">
-        <Demo
-          title="Basic Usage"
-          description="Minimal thread view with EventCard.Root, EventCard.Header, and EventCard.Content. Shows the essential composition for displaying thread events."
-          code={UIBasicRaw}
-        >
-          <UIBasic {ndk} nevent={neventInput} />
-        </Demo>
+    <!-- UI Primitives Showcase -->
+    {#snippet basicPreview()}
+      <UIBasic {ndk} nevent={neventInput} />
+    {/snippet}
 
-        <Demo
-          title="Full Composition"
-          description="Complete thread view showing parent chain with thread lines, focused event highlighting, reply sections, and interactive navigation. Demonstrates all available primitives working together."
-          code={UICompositionRaw}
-        >
-          <UIComposition {ndk} nevent={neventInput} />
-        </Demo>
-      </div>
-    </section>
+    {#snippet compositionPreview()}
+      <UIComposition {ndk} nevent={neventInput} />
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="UI Primitives"
+      description="Primitive components for building custom thread layouts."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Basic Usage',
+          description: 'Minimal primitives',
+          command: 'npx shadcn@latest add thread-view',
+          preview: basicPreview,
+          cardData: basicUIData
+        },
+        {
+          name: 'Full Composition',
+          description: 'All primitives together',
+          command: 'npx shadcn@latest add thread-view',
+          preview: compositionPreview,
+          cardData: fullCompositionData
+        }
+      ]}
+    />
 
     <!-- Builder Section -->
     <section class="mb-16">
@@ -139,6 +173,29 @@ thread.focusOn(event)  // Navigate to different event`}
         </div>
       </div>
     </section>
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={twitterBlockData}>
+        {#snippet preview()}
+          <TwitterCode {ndk} nevent={neventInput} />
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={basicUIData}>
+        {#snippet preview()}
+          <UIBasic {ndk} nevent={neventInput} />
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={fullCompositionData}>
+        {#snippet preview()}
+          <UIComposition {ndk} nevent={neventInput} />
+        {/snippet}
+      </ComponentCard>
+    </section>
   {/if}
 
   <!-- Component API -->
@@ -166,8 +223,7 @@ thread.focusOn(event)  // Navigate to different event`}
             name: 'class',
             type: 'string',
             default: "''",
-            description: 'Additional CSS classes to apply to container',
-            required: false
+            description: 'Additional CSS classes to apply to container'
           }
         ]
       }

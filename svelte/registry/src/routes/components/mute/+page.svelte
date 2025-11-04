@@ -3,30 +3,59 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import Alert from '$site-components/alert.svelte';
 
   // Import block components for preview
   import MuteButton from '$lib/registry/components/actions/mute-button.svelte';
 
-  // Import code examples
-  import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
-
   // Import UI example
   import UIComposition from './examples/mute-action-builder.svelte';
-  import UICompositionCode from './examples/mute-action-builder--code.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleUser = $state<NDKUser | undefined>();
+
+  const muteButtonCardData = {
+    name: 'mute-button',
+    title: 'MuteButton',
+    description: 'Minimal mute button with icon-first design.',
+    richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar and name.',
+    command: 'npx shadcn@latest add mute-button',
+    apiDocs: [
+      {
+        name: 'MuteButton',
+        description: 'Minimal mute button block',
+        importPath: "import MuteButton from '$lib/registry/components/actions/mute-button.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'target', type: 'NDKUser | string', required: true, description: 'User to mute' },
+          { name: 'showIcon', type: 'boolean', default: 'true', description: 'Whether to show icon' },
+          { name: 'showTarget', type: 'boolean', default: 'false', description: 'When true, shows user avatar and name. Format: "Mute Name" with bold Mute text' },
+          { name: 'class', type: 'string', description: 'Custom CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const customCardData = {
+    name: 'mute-custom',
+    title: 'Custom Implementation',
+    description: 'Build custom mute buttons with createMuteAction.',
+    richDescription: 'Use the createMuteAction builder directly to create custom mute buttons with full control over appearance and behavior.',
+    command: 'npx shadcn@latest add mute-button',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Mute</h1>
+      <h1 class="text-4xl font-bold">Mute</h1>
     </div>
     <p class="text-lg text-muted-foreground mb-6">
       Mute/unmute buttons for users. Choose from pre-built block variants or compose custom layouts using the builder.
@@ -45,25 +74,59 @@
         default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
         bind:value={sampleUser}
       />
-    	<EditProps.Button>Edit Examples</EditProps.Button>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 
   {#if sampleUser}
-    <!-- Blocks Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
-      <p class="text-muted-foreground mb-8">
-        Pre-composed mute button layouts ready to use. Install with a single command.
-      </p>
+    <!-- ComponentsShowcase Section -->
+    {#snippet muteButtonPreview()}
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-24">Default:</span>
+          <MuteButton {ndk} target={sampleUser} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-24">With User:</span>
+          <MuteButton {ndk} target={sampleUser} showTarget={true} />
+        </div>
+      </div>
+    {/snippet}
 
-      <div class="space-y-12">
-        <Demo
-          title="MuteButton"
-          description="Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar and name."
-          component="mute-button"
-          code={MinimalCodeRaw}
-        >
+    {#snippet customPreview()}
+      <UIComposition {ndk} user={sampleUser} />
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Showcase"
+      description="Mute button variants from minimal to custom implementations."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'MuteButton',
+          description: 'Minimal icon-first design',
+          command: 'npx shadcn@latest add mute-button',
+          preview: muteButtonPreview,
+          cardData: muteButtonCardData
+        },
+        {
+          name: 'Custom',
+          description: 'Custom implementation with builder',
+          command: 'npx shadcn@latest add mute-button',
+          preview: customPreview,
+          cardData: customCardData
+        }
+      ]}
+    />
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each mute button variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={muteButtonCardData}>
+        {#snippet preview()}
           <div class="flex flex-col gap-4">
             <div class="flex items-center gap-4">
               <span class="text-sm text-muted-foreground w-24">Default:</span>
@@ -74,27 +137,19 @@
               <MuteButton {ndk} target={sampleUser} showTarget={true} />
             </div>
           </div>
-        </Demo>
-      </div>
-    </section>
+        {/snippet}
+      </ComponentCard>
 
-    <!-- Custom Implementation Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Custom Implementation</h2>
-      <p class="text-muted-foreground mb-8">
-        Use the createMuteAction builder directly to create custom mute buttons.
-      </p>
-
-      <div class="space-y-8">
-        <Demo
-          title="Example"
-          description="Building a custom mute button using the createMuteAction builder."
-          code={UICompositionCode}
-        >
+      <ComponentCard inline data={customCardData}>
+        {#snippet preview()}
           <UIComposition {ndk} user={sampleUser} />
-        </Demo>
-      </div>
+        {/snippet}
+      </ComponentCard>
     </section>
+  {:else}
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Select a user to see the components...</div>
+    </div>
   {/if}
 
   <!-- Component API -->
@@ -137,7 +192,7 @@
       {
         name: 'MuteButton',
         description: 'Minimal mute button block with icon-first design.',
-        importPath: "import { MuteButton } from '$lib/registry/blocks'",
+        importPath: "import MuteButton from '$lib/registry/components/actions/mute-button.svelte'",
         props: [
           {
             name: 'ndk',
@@ -165,7 +220,6 @@
           {
             name: 'class',
             type: 'string',
-            default: "''",
             description: 'Custom CSS classes'
           }
         ]

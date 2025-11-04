@@ -28,7 +28,7 @@
       {#snippet children({ pubkeys, count })}
         <div class="flex items-center gap-3 mt-3">
           <div class="flex -space-x-2">
-            {#each pubkeys.slice(0, 5) as pubkey}
+            {#each pubkeys.slice(0, 5) as pubkey (pubkey)}
               <img
                 src="https://api.dicebear.com/7.x/identicon/svg?seed={pubkey}"
                 alt="Avatar"

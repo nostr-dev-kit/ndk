@@ -6,6 +6,7 @@
 	import { User } from '$lib/registry/ui';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
+	import * as Tabs from '$lib/components/ui/tabs';
 
 	export interface ComponentDoc {
 		name: string;
@@ -54,92 +55,124 @@
 </script>
 
 {#if data}
-	<div class="component-card border border-border p-8">
-		<div class="flex flex-row items-end gap-2 border-b border-border -mx-8 pb-4 px-8">
-			<h1 class="text-3xl">{data.title}</h1>
-			<div class="author-header">
-				<User.Root {ndk} pubkey={"fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"}>
-					<div class="author-attribution">
-						<User.Avatar class="!w-6 !h-6 rounded-md" />
-						<div class="text-sm">
-							<span class="author-label">by</span>
-							<User.Name class="text-sm" />
+	<Tabs.Root value="about" class="component-card-tabs">
+		<div class="component-card border border-border p-8">
+			<div class="header-section border-b border-border -mx-8 pb-4 px-8">
+				<div class="flex flex-row items-end justify-between gap-2">
+					<div class="flex flex-row items-end gap-2">
+						<h1 class="text-3xl">{data.title}</h1>
+						<div class="author-header">
+							<User.Root {ndk} pubkey={"fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"}>
+								<div class="author-attribution">
+									<User.Avatar class="!w-6 !h-6 rounded-md" />
+									<div class="text-sm">
+										<span class="author-label">by</span>
+										<User.Name class="text-sm" />
+									</div>
+								</div>
+							</User.Root>
 						</div>
 					</div>
-				</User.Root>
+					<Tabs.List class="card-tabs-list">
+						<Tabs.Trigger value="about">About</Tabs.Trigger>
+						<Tabs.Trigger value="usage">Usage</Tabs.Trigger>
+					</Tabs.List>
+				</div>
 			</div>
-		</div>
-		<p class="component-description" class:inline>{data.description}</p>
 
+			<Tabs.Content value="about" class="tab-content">
+				<p class="component-description" class:inline>{data.description}</p>
 
-			<PMCommand command="execute" args={['shadcn@latest', 'add', data.name]} />
+				{#if data.richDescription}
+					<section class="section">
+						<p class="description-text">{data.richDescription}</p>
+					</section>
+				{/if}
 
-			{#if data.richDescription}
+				{#if preview}
+					<section class="section">
+						<h3 class="section-title" class:inline>Preview</h3>
+						<div class="preview-container">
+							{@render preview()}
+						</div>
+					</section>
+				{/if}
+
+				{#if data.relatedComponents && data.relatedComponents.length > 0}
+					<section class="section">
+						<h3 class="section-title" class:inline>Related Components</h3>
+						<div class="related-grid">
+							{#each data.relatedComponents as related}
+								<a href={related.path} class="related-card">
+									<div class="related-card-title">{related.title}</div>
+									<div class="related-card-name">{related.name}</div>
+								</a>
+							{/each}
+						</div>
+					</section>
+				{/if}
+			</Tabs.Content>
+
+			<Tabs.Content value="usage" class="tab-content">
 				<section class="section">
-					<h3 class="section-title" class:inline>About</h3>
-					<p class="description-text">{data.richDescription}</p>
+					<h3 class="section-title" class:inline>Installation</h3>
+					<PMCommand command="execute" args={['shadcn@latest', 'add', data.name]} />
 				</section>
-			{/if}
 
-		{#if preview}
-			<section class="section">
-				<h3 class="section-title" class:inline>Preview</h3>
-				<div class="preview-container">
-					{@render preview()}
-				</div>
-			</section>
-		{/if}
+				<section class="section">
+					{#if data.dependencies && data.dependencies.length > 0}
+						<div class="dependencies">
+							<h4 class="dependencies-title">Dependencies</h4>
+							<ul class="dependencies-list">
+								{#each data.dependencies as dep}
+									<li><code>{dep}</code></li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
 
-		<section class="section">
-			<h3 class="section-title" class:inline>Installation</h3>
-			{#if data.dependencies && data.dependencies.length > 0}
-				<div class="dependencies">
-					<h4 class="dependencies-title">Dependencies</h4>
-					<ul class="dependencies-list">
-						{#each data.dependencies as dep}
-							<li><code>{dep}</code></li>
-						{/each}
-					</ul>
-				</div>
-			{/if}
+					{#if data.registryDependencies && data.registryDependencies.length > 0}
+						<div class="dependencies">
+							<h4 class="dependencies-title">Registry Dependencies</h4>
+							<ul class="dependencies-list">
+								{#each data.registryDependencies as dep}
+									<li><code>{dep}</code></li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+				</section>
 
-			{#if data.registryDependencies && data.registryDependencies.length > 0}
-				<div class="dependencies">
-					<h4 class="dependencies-title">Registry Dependencies</h4>
-					<ul class="dependencies-list">
-						{#each data.registryDependencies as dep}
-							<li><code>{dep}</code></li>
-						{/each}
-					</ul>
-				</div>
-			{/if}
-		</section>
-
-		{#if data.apiDocs && data.apiDocs.length > 0}
-			<section class="section">
-				<h3 class="section-title" class:inline>API</h3>
-				<ComponentAPI components={data.apiDocs} />
-			</section>
-		{/if}
-
-		{#if data.relatedComponents && data.relatedComponents.length > 0}
-			<section class="section">
-				<h3 class="section-title" class:inline>Related Components</h3>
-				<div class="related-grid">
-					{#each data.relatedComponents as related}
-						<a href={related.path} class="related-card">
-							<div class="related-card-title">{related.title}</div>
-							<div class="related-card-name">{related.name}</div>
-						</a>
-					{/each}
-				</div>
-			</section>
-		{/if}
-	</div>
+				{#if data.apiDocs && data.apiDocs.length > 0}
+					<section class="section">
+						<ComponentAPI components={data.apiDocs} />
+					</section>
+				{/if}
+			</Tabs.Content>
+		</div>
+	</Tabs.Root>
 {/if}
 
 <style>
 	.component-card {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.header-section {
+		margin-bottom: 0;
+	}
+
+	:global(.card-tabs-list) {
+		height: auto !important;
+		background: transparent !important;
+		border: none !important;
+		padding: 0 !important;
+	}
+
+	:global(.tab-content) {
+		margin-top: 2rem;
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;

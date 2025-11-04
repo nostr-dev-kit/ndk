@@ -88,7 +88,7 @@ const KIND_LABELS: Record<number, { singular: string; plural: string }> = {
  *
  * @param kind - The Nostr event kind number
  * @param count - Optional count for pluralization (if > 1, returns plural form)
- * @returns Human-readable label for the kind, or "Unknown Event" if not found
+ * @returns Human-readable label for the kind, or the kind number as a string if not found
  *
  * @example
  * ```ts
@@ -97,14 +97,14 @@ const KIND_LABELS: Record<number, { singular: string; plural: string }> = {
  * kindLabel(30023, 5) // => "Articles"
  * kindLabel(1) // => "Note"
  * kindLabel(1, 3) // => "Notes"
- * kindLabel(99999) // => "Unknown Event"
+ * kindLabel(99999) // => "99999"
  * ```
  */
 export function kindLabel(kind: number, count?: number): string {
 	const label = KIND_LABELS[kind];
 
 	if (!label) {
-		return 'Unknown Event';
+		return kind.toString();
 	}
 
 	// If count is provided and > 1, return plural form

@@ -154,8 +154,8 @@ const label = kindLabel(30023, 5);
 kindLabel(1);     // "Note"
 kindLabel(1, 3);  // "Notes"
 
-// Unknown kinds
-kindLabel(99999); // "Unknown Event"`} />
+// Unknown kinds return the kind number
+kindLabel(99999); // "99999"`} />
   </section>
 
   <section>
@@ -205,7 +205,7 @@ kindLabel(99999); // "Unknown Event"`} />
       <li>And more common kinds (1984, 1985, 4550, 9041, 34550...)</li>
     </ul>
     <p class="text-muted-foreground text-sm mt-4">
-      Unknown kinds return "Unknown Event"
+      Unknown kinds return the kind number as a string (e.g., "99999")
     </p>
   </section>
 

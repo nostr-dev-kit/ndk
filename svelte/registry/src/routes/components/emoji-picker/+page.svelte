@@ -1,153 +1,289 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples
   import UiBasic from './examples/ui-basic.svelte';
-  import UiBasicRaw from './examples/ui-basic.svelte?raw';
   import UiComposition from './examples/ui-composition.svelte';
-  import UiCompositionRaw from './examples/ui-composition.svelte?raw';
   import UiPopover from './examples/ui-popover.svelte';
-  import UiPopoverRaw from './examples/ui-popover.svelte?raw';
   import UiAutocomplete from './examples/ui-autocomplete.svelte';
-  import UiAutocompleteRaw from './examples/ui-autocomplete.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  const basicCardData = {
+    name: 'emoji-picker-list',
+    title: 'EmojiPicker.List',
+    description: 'Basic emoji list primitive',
+    richDescription: 'A primitive component that renders a grid of clickable emojis. Perfect for custom layouts when you need full control over the emoji picker behavior.',
+    command: 'npx shadcn@latest add emoji-picker',
+    apiDocs: [
+      {
+        name: 'EmojiPicker.List',
+        description: 'Primitive emoji list component',
+        importPath: "import { EmojiPicker } from '$lib/registry/ui/emoji-picker'",
+        props: [
+          { name: 'emojis', type: 'EmojiData[]', required: true, description: 'Array of emojis to display' },
+          { name: 'onSelect', type: '(emoji: EmojiData) => void', required: true, description: 'Callback when emoji is clicked' },
+          { name: 'columns', type: 'number', default: '6', description: 'Number of columns in grid' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const contentCardData = {
+    name: 'emoji-picker-content',
+    title: 'EmojiPicker.Content',
+    description: 'Complete emoji picker with builder integration',
+    richDescription: 'An opinionated component that integrates with the createEmojiPicker builder to show user\'s custom emojis and defaults in organized sections.',
+    command: 'npx shadcn@latest add emoji-picker',
+    apiDocs: [
+      {
+        name: 'EmojiPicker.Content',
+        description: 'Complete emoji picker component',
+        importPath: "import { EmojiPicker } from '$lib/registry/ui/emoji-picker'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, falls back to context)' },
+          { name: 'onSelect', type: '(emoji: EmojiData) => void', required: true, description: 'Callback when emoji is selected' },
+          { name: 'defaults', type: 'EmojiData[]', description: 'Default emojis to show (can be overridden)' },
+          { name: 'columns', type: 'number', default: '6 (5 on mobile)', description: 'Number of columns in grid' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const popoverCardData = {
+    name: 'emoji-picker-popover',
+    title: 'EmojiPicker in Popover',
+    description: 'Emoji picker in a dropdown popover',
+    richDescription: 'Use EmojiPicker.Content with bits-ui Popover for a dropdown picker. This is how ReactionAction uses it internally.',
+    command: 'npx shadcn@latest add emoji-picker',
+    apiDocs: []
+  };
+
+  const autocompleteCardData = {
+    name: 'emoji-picker-autocomplete',
+    title: 'Textarea Autocomplete',
+    description: 'Emoji autocomplete in textarea',
+    richDescription: 'Type : followed by text to autocomplete with your custom emojis. Supports keyboard navigation (arrows, tab/enter to select, escape to close).',
+    command: 'npx shadcn@latest add emoji-picker',
+    apiDocs: []
+  };
 </script>
 
-<div class="component-page">
-  <header>
-    <div class="header-title">
-      <h1>EmojiPicker</h1>
+<div class="px-8">
+  <!-- Header -->
+  <div class="mb-12 pt-8">
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <h1 class="text-4xl font-bold">EmojiPicker</h1>
     </div>
-    <p>Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys.</p>
-  </header>
+    <p class="text-lg text-muted-foreground mb-6">
+      Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys.
+    </p>
+  </div>
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">UI Primitives</h2>
+  <!-- ComponentsShowcase Section -->
+  {#snippet basicPreview()}
+    <UiBasic />
+  {/snippet}
 
-    <Demo
-      title="Basic List"
-      description="EmojiPicker.List is a primitive component that renders a grid of clickable emojis. Perfect for custom layouts and when you need full control."
-      code={UiBasicRaw}
-    >
-      <UiBasic />
-    </Demo>
+  {#snippet contentPreview()}
+    <UiComposition {ndk} />
+  {/snippet}
 
-    <Demo
-      title="Content with Builder"
-      description="EmojiPicker.Content is an opinionated component that integrates with the createEmojiPicker builder to show user's custom emojis and defaults in sections."
-      code={UiCompositionRaw}
-    >
-      <UiComposition {ndk} />
-    </Demo>
+  {#snippet popoverPreview()}
+    <UiPopover {ndk} />
+  {/snippet}
 
-    <Demo
-      title="In a Popover"
-      description="Use EmojiPicker.Content with bits-ui Popover for a dropdown picker. This is how ReactionAction uses it."
-      code={UiPopoverRaw}
-    >
-      <UiPopover {ndk} />
-    </Demo>
+  {#snippet autocompletePreview()}
+    <UiAutocomplete {ndk} />
+  {/snippet}
 
-    <Demo
-      title="Textarea Autocomplete"
-      description="Type : followed by text to autocomplete with your custom emojis. Supports keyboard navigation (arrows, tab/enter to select, escape to close)."
-      code={UiAutocompleteRaw}
-    >
-      <UiAutocomplete {ndk} />
-    </Demo>
+  <ComponentPageSectionTitle
+    title="Showcase"
+    description="Emoji picker variants from basic primitives to autocomplete."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Basic List',
+        description: 'Grid of clickable emojis',
+        command: 'npx shadcn@latest add emoji-picker',
+        preview: basicPreview,
+        cardData: basicCardData
+      },
+      {
+        name: 'Content',
+        description: 'Complete picker with builder',
+        command: 'npx shadcn@latest add emoji-picker',
+        preview: contentPreview,
+        cardData: contentCardData
+      },
+      {
+        name: 'Popover',
+        description: 'Dropdown emoji picker',
+        command: 'npx shadcn@latest add emoji-picker',
+        preview: popoverPreview,
+        cardData: popoverCardData
+      },
+      {
+        name: 'Autocomplete',
+        description: 'Textarea emoji autocomplete',
+        command: 'npx shadcn@latest add emoji-picker',
+        preview: autocompletePreview,
+        cardData: autocompleteCardData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each emoji picker variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={basicCardData}>
+      {#snippet preview()}
+        <UiBasic />
+      {/snippet}
+    </ComponentCard>
+
+    <ComponentCard inline data={contentCardData}>
+      {#snippet preview()}
+        <UiComposition {ndk} />
+      {/snippet}
+    </ComponentCard>
+
+    <ComponentCard inline data={popoverCardData}>
+      {#snippet preview()}
+        <UiPopover {ndk} />
+      {/snippet}
+    </ComponentCard>
+
+    <ComponentCard inline data={autocompleteCardData}>
+      {#snippet preview()}
+        <UiAutocomplete {ndk} />
+      {/snippet}
+    </ComponentCard>
   </section>
 
-  <section class="info">
-    <h2>EmojiPicker.List Props</h2>
-    <ApiTable
-      rows={[
-        { name: 'emojis', type: 'EmojiData[]', default: 'required', description: 'Array of emojis to display' },
-        { name: 'onSelect', type: '(emoji: EmojiData) => void', default: 'required', description: 'Callback when emoji is clicked' },
-        { name: 'columns', type: 'number', default: '6', description: 'Number of columns in grid' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'createEmojiPicker',
+        description: 'Builder function for aggregating emojis from multiple sources with smart ordering.',
+        importPath: "import { createEmojiPicker } from '@nostr-dev-kit/svelte'",
+        props: [
+          {
+            name: 'config',
+            type: '() => EmojiPickerConfig',
+            required: true,
+            description: 'Reactive function returning configuration'
+          },
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance'
+          }
+        ],
+        returns: {
+          name: 'EmojiPickerState',
+          properties: [
+            {
+              name: 'emojis',
+              type: 'EmojiData[]',
+              description: 'Ordered emojis: user saved, aggregated from pubkeys, then defaults'
+            }
+          ]
+        }
+      },
+      {
+        name: 'EmojiPicker.List',
+        description: 'Primitive component for rendering a grid of clickable emojis.',
+        importPath: "import { EmojiPicker } from '$lib/registry/ui/emoji-picker'",
+        props: [
+          {
+            name: 'emojis',
+            type: 'EmojiData[]',
+            required: true,
+            description: 'Array of emojis to display'
+          },
+          {
+            name: 'onSelect',
+            type: '(emoji: EmojiData) => void',
+            required: true,
+            description: 'Callback when emoji is clicked'
+          },
+          {
+            name: 'columns',
+            type: 'number',
+            default: '6',
+            description: 'Number of columns in grid'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            description: 'Additional CSS classes'
+          }
+        ]
+      },
+      {
+        name: 'EmojiPicker.Content',
+        description: 'Complete emoji picker with builder integration and organized sections.',
+        importPath: "import { EmojiPicker } from '$lib/registry/ui/emoji-picker'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance (optional, falls back to context)'
+          },
+          {
+            name: 'onSelect',
+            type: '(emoji: EmojiData) => void',
+            required: true,
+            description: 'Callback when emoji is selected'
+          },
+          {
+            name: 'defaults',
+            type: 'EmojiData[]',
+            description: 'Default emojis to show'
+          },
+          {
+            name: 'columns',
+            type: 'number',
+            default: '6 (5 on mobile)',
+            description: 'Number of columns in grid'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            description: 'Additional CSS classes'
+          }
+        ]
+      }
+    ]}
+  />
 
-  <section class="info">
-    <h2>EmojiPicker.Content Props</h2>
-    <ApiTable
-      rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional, falls back to context)' },
-        { name: 'onSelect', type: '(emoji: EmojiData) => void', default: 'required', description: 'Callback when emoji is selected' },
-        { name: 'defaults', type: 'EmojiData[]', default: 'hardcoded 12 emojis', description: 'Default emojis to show (can be overridden)' },
-        { name: 'columns', type: 'number', default: '6 (5 on mobile)', description: 'Number of columns in grid' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
+  <!-- Builder API -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
+    <p class="text-muted-foreground mb-6">
+      Use <code class="px-2 py-1 bg-muted rounded text-sm">createEmojiPicker()</code> to aggregate emojis from multiple sources.
+    </p>
 
-  <section class="info">
-    <h2>Builder: createEmojiPicker</h2>
-    <p class="mb-4">For advanced use cases, use the builder directly to aggregate emojis from multiple sources:</p>
-    <ApiTable
-      rows={[
-        { name: 'config', type: '() => EmojiPickerConfig', default: 'required', description: 'Closure returning config with defaults and from pubkeys' },
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' }
-      ]}
-    />
-
-    <h3 class="mt-4 mb-2 font-semibold">EmojiPickerConfig</h3>
-    <ApiTable
-      rows={[
-        { name: 'defaults', type: 'EmojiData[]', default: 'undefined', description: 'Default emojis to show last' },
-        { name: 'from', type: 'string[]', default: 'undefined', description: 'Pubkeys to aggregate emojis from (sorted by frequency)' }
-      ]}
-    />
-
-    <h3 class="mt-4 mb-2 font-semibold">Emoji Order</h3>
-    <ol class="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
-      <li>User's saved emojis (NIP-51 kind:10030) - shown first</li>
-      <li>Aggregated emojis from <code>from</code> pubkeys (sorted by frequency) - shown second</li>
-      <li>Default emojis from <code>defaults</code> - shown last</li>
-    </ol>
+    <div class="bg-muted/50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-3">Emoji Order</h3>
+      <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+        <li><strong>User's saved emojis</strong> (NIP-51 kind:10030) - shown first</li>
+        <li><strong>Aggregated emojis</strong> from <code>from</code> pubkeys (sorted by frequency) - shown second</li>
+        <li><strong>Default emojis</strong> from <code>defaults</code> - shown last</li>
+      </ol>
+    </div>
   </section>
 </div>
-
-<style>
-  .header-title {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .info {
-    padding: 2rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    margin-top: 2rem;
-  }
-
-  .info h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--foreground);
-  }
-
-  .info h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  code {
-    background: var(--accent);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875em;
-  }
-</style>

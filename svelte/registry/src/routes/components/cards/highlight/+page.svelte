@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Demo from '$site-components/Demo.svelte';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
@@ -9,19 +8,14 @@
   import HighlightCardCompact from '$lib/registry/components/highlight-card/highlight-card-compact.svelte';
   import HighlightCardGrid from '$lib/registry/components/highlight-card/highlight-card-grid.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
-
-  // Code examples for blocks
-  import FeedCodeRaw from './examples/feed-code.svelte?raw';
-  import ElegantCodeRaw from './examples/elegant-code.svelte?raw';
-  import CompactCodeRaw from './examples/compact-code.svelte?raw';
-  import GridCodeRaw from './examples/grid-code.svelte?raw';
 
   // UI component examples
   import UIBasic from './examples/ui-basic.svelte';
-  import UIBasicRaw from './examples/ui-basic.svelte?raw';
   import UIComposition from './examples/custom-composition.svelte';
-  import UICompositionRaw from './examples/custom-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -67,11 +61,65 @@
   });
 
   const displayHighlights = $derived([highlight1, highlight2, highlight3, highlight4, highlight5].filter(Boolean) as NDKHighlight[]);
+
+  const feedCardData = {
+    name: 'highlight-card-feed',
+    title: 'Feed',
+    description: 'Full-width card for main feed displays.',
+    richDescription: 'Full-width card with header, large highlighted text in a book-page style, source badge, and action buttons. Best for main feed displays.',
+    command: 'npx shadcn@latest add highlight-card-feed',
+    apiDocs: []
+  };
+
+  const elegantCardData = {
+    name: 'highlight-card-elegant',
+    title: 'Elegant',
+    description: 'Square card with gradient background.',
+    richDescription: 'Square-sized elegant card with gradient background. Context text is muted while the highlight is bright with primary foreground color.',
+    command: 'npx shadcn@latest add highlight-card-elegant',
+    apiDocs: []
+  };
+
+  const compactCardData = {
+    name: 'highlight-card-compact',
+    title: 'Compact',
+    description: 'Small horizontal card layout.',
+    richDescription: 'Small horizontal card layout. Ideal for compact lists and sidebars.',
+    command: 'npx shadcn@latest add highlight-card-compact',
+    apiDocs: []
+  };
+
+  const gridCardData = {
+    name: 'highlight-card-grid',
+    title: 'Grid',
+    description: 'Square card for grid layouts.',
+    richDescription: 'Square card perfect for grid layouts. Shows highlight with optional author info below.',
+    command: 'npx shadcn@latest add highlight-card-grid',
+    apiDocs: []
+  };
+
+  const basicCardData = {
+    name: 'highlight-basic',
+    title: 'Basic Usage',
+    description: 'Minimal primitives example.',
+    richDescription: 'Minimal example with HighlightCard.Root and essential primitives. Build custom layouts by composing primitives.',
+    command: 'npx shadcn@latest add highlight-card',
+    apiDocs: []
+  };
+
+  const compositionCardData = {
+    name: 'highlight-composition',
+    title: 'Full Composition',
+    description: 'All primitives composed together.',
+    richDescription: 'All available primitives composed together demonstrating the flexibility of the primitive-based approach.',
+    command: 'npx shadcn@latest add highlight-card',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
         <h1 class="text-4xl font-bold">HighlightCard</h1>
     </div>
@@ -100,104 +148,174 @@
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">No highlights found. Try following more users or create your own highlights!</div>
     </div>
-  {/if}
+  {:else if highlight1}
+    <!-- Blocks Showcase -->
+    {#snippet feedPreview()}
+      <HighlightCardFeed {ndk} event={highlight1} />
+    {/snippet}
 
-  <!-- Blocks Section -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Blocks</h2>
-    <p class="text-muted-foreground mb-8">
-      Pre-composed layouts ready to use. Install with a single command.
-    </p>
+    {#snippet elegantPreview()}
+      <div class="flex gap-6 overflow-x-auto pb-4">
+        {#each displayHighlights as highlight}
+          <HighlightCardElegant {ndk} event={highlight} />
+        {/each}
+      </div>
+    {/snippet}
 
-    <div class="space-y-12">
-      <!-- Feed -->
-      <Demo
-        title="Feed"
-        description="Full-width card with header, large highlighted text in a book-page style, source badge, and action buttons. Best for main feed displays."
-        component="highlight-card-feed"
-        code={FeedCodeRaw}
-      >
-        {#if highlight1}
+    {#snippet compactPreview()}
+      <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl mx-auto">
+        {#each displayHighlights.slice(0, 4) as highlight}
+          <HighlightCardCompact {ndk} event={highlight} />
+        {/each}
+      </div>
+    {/snippet}
+
+    {#snippet gridPreview()}
+      <div class="flex gap-6 overflow-x-auto pb-4">
+        {#each displayHighlights as highlight}
+          <HighlightCardGrid {ndk} event={highlight} />
+        {/each}
+      </div>
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Blocks"
+      description="Pre-composed layouts ready to use."
+    />
+
+    <ComponentsShowcase
+      class="-mx-8 px-8"
+      blocks={[
+        {
+          name: 'Feed',
+          description: 'Full-width card for feeds',
+          command: 'npx shadcn@latest add highlight-card-feed',
+          codeSnippet:
+            '<span class="text-gray-500">&lt;</span><span class="text-blue-400">HighlightCardFeed</span> <span class="text-cyan-400">event</span><span class="text-gray-500">=</span><span class="text-green-400">{event}</span> <span class="text-gray-500">/&gt;</span>',
+          preview: feedPreview,
+          cardData: feedCardData
+        },
+        {
+          name: 'Elegant',
+          description: 'Square with gradient',
+          command: 'npx shadcn@latest add highlight-card-elegant',
+          codeSnippet:
+            '<span class="text-gray-500">&lt;</span><span class="text-blue-400">HighlightCardElegant</span> <span class="text-cyan-400">event</span><span class="text-gray-500">=</span><span class="text-green-400">{event}</span> <span class="text-gray-500">/&gt;</span>',
+          preview: elegantPreview,
+          cardData: elegantCardData
+        },
+        {
+          name: 'Compact',
+          description: 'Horizontal list layout',
+          command: 'npx shadcn@latest add highlight-card-compact',
+          codeSnippet:
+            '<span class="text-gray-500">&lt;</span><span class="text-blue-400">HighlightCardCompact</span> <span class="text-cyan-400">event</span><span class="text-gray-500">=</span><span class="text-green-400">{event}</span> <span class="text-gray-500">/&gt;</span>',
+          preview: compactPreview,
+          cardData: compactCardData
+        },
+        {
+          name: 'Grid',
+          description: 'Square for grids',
+          command: 'npx shadcn@latest add highlight-card-grid',
+          codeSnippet:
+            '<span class="text-gray-500">&lt;</span><span class="text-blue-400">HighlightCardGrid</span> <span class="text-cyan-400">event</span><span class="text-gray-500">=</span><span class="text-green-400">{event}</span> <span class="text-gray-500">/&gt;</span>',
+          preview: gridPreview,
+          cardData: gridCardData
+        }
+      ]}
+    />
+
+    <!-- UI Primitives Showcase -->
+    {#snippet basicPreview()}
+      <UIBasic {ndk} event={highlight1} />
+    {/snippet}
+
+    {#snippet compositionPreview()}
+      <UIComposition {ndk} event={highlight1} />
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="UI Primitives"
+      description="Primitive components for building custom layouts."
+    />
+
+    <ComponentsShowcase
+      class="-mx-8 px-8"
+      blocks={[
+        {
+          name: 'Basic',
+          description: 'Minimal primitives',
+          command: 'npx shadcn@latest add highlight-card',
+          codeSnippet:
+            '<span class="text-gray-500">&lt;</span><span class="text-blue-400">HighlightCard.Root</span><span class="text-gray-500">&gt;</span>...<span class="text-gray-500">&lt;/</span><span class="text-blue-400">HighlightCard.Root</span><span class="text-gray-500">&gt;</span>',
+          preview: basicPreview,
+          cardData: basicCardData
+        },
+        {
+          name: 'Composition',
+          description: 'All primitives together',
+          command: 'npx shadcn@latest add highlight-card',
+          codeSnippet:
+            '<span class="text-gray-500">&lt;</span><span class="text-blue-400">HighlightCard.Root</span><span class="text-gray-500">&gt;</span>...<span class="text-gray-500">&lt;/</span><span class="text-blue-400">HighlightCard.Root</span><span class="text-gray-500">&gt;</span>',
+          preview: compositionPreview,
+          cardData: compositionCardData
+        }
+      ]}
+    />
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={feedCardData}>
+        {#snippet preview()}
           <HighlightCardFeed {ndk} event={highlight1} />
-        {/if}
-      </Demo>
+        {/snippet}
+      </ComponentCard>
 
-      <!-- Elegant -->
-      <Demo
-        title="Elegant"
-        description="Square-sized elegant card with gradient background. Context text is muted while the highlight is bright with primary foreground color."
-        component="highlight-card-elegant"
-        code={ElegantCodeRaw}
-      >
-        <div class="flex gap-6 overflow-x-auto pb-4">
-          {#each displayHighlights as highlight}
-            <HighlightCardElegant {ndk} event={highlight} />
-          {/each}
-        </div>
-      </Demo>
+      <ComponentCard inline data={elegantCardData}>
+        {#snippet preview()}
+          <div class="flex gap-6 overflow-x-auto pb-4">
+            {#each displayHighlights as highlight}
+              <HighlightCardElegant {ndk} event={highlight} />
+            {/each}
+          </div>
+        {/snippet}
+      </ComponentCard>
 
-      <!-- Compact -->
-      <Demo
-        title="Compact"
-        description="Small horizontal card layout. Ideal for compact lists and sidebars."
-        component="highlight-card-compact"
-        code={CompactCodeRaw}
-      >
-        <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl">
-          {#each displayHighlights.slice(0, 4) as highlight}
-            <HighlightCardCompact {ndk} event={highlight} />
-          {/each}
-        </div>
-      </Demo>
+      <ComponentCard inline data={compactCardData}>
+        {#snippet preview()}
+          <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl mx-auto">
+            {#each displayHighlights.slice(0, 4) as highlight}
+              <HighlightCardCompact {ndk} event={highlight} />
+            {/each}
+          </div>
+        {/snippet}
+      </ComponentCard>
 
-      <!-- Grid -->
-      <Demo
-        title="Grid"
-        description="Square card perfect for grid layouts. Shows highlight with optional author info below."
-        component="highlight-card-grid"
-        code={GridCodeRaw}
-      >
-        <div class="flex gap-6 overflow-x-auto pb-4">
-          {#each displayHighlights as highlight}
-            <HighlightCardGrid {ndk} event={highlight} />
-          {/each}
-        </div>
-      </Demo>
-    </div>
-  </section>
+      <ComponentCard inline data={gridCardData}>
+        {#snippet preview()}
+          <div class="flex gap-6 overflow-x-auto pb-4">
+            {#each displayHighlights as highlight}
+              <HighlightCardGrid {ndk} event={highlight} />
+            {/each}
+          </div>
+        {/snippet}
+      </ComponentCard>
 
-  <!-- UI Primitives Section -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
-    <p class="text-muted-foreground mb-8">
-      Primitive components for building custom highlight card layouts. Compose them together to
-      create your own designs.
-    </p>
-
-    <div class="space-y-8">
-      <!-- Basic Usage -->
-      <Demo
-        title="Basic Usage"
-        description="Minimal example with HighlightCard.Root and essential primitives."
-        code={UIBasicRaw}
-      >
-        {#if highlight1}
+      <ComponentCard inline data={basicCardData}>
+        {#snippet preview()}
           <UIBasic {ndk} event={highlight1} />
-        {/if}
-      </Demo>
+        {/snippet}
+      </ComponentCard>
 
-      <!-- Full Composition -->
-      <Demo
-        title="Full Composition"
-        description="All available primitives composed together."
-        code={UICompositionRaw}
-      >
-        {#if highlight1}
+      <ComponentCard inline data={compositionCardData}>
+        {#snippet preview()}
           <UIComposition {ndk} event={highlight1} />
-        {/if}
-      </Demo>
-    </div>
-  </section>
+        {/snippet}
+      </ComponentCard>
+    </section>
+  {/if}
 
   <!-- Component API -->
   <ComponentAPI

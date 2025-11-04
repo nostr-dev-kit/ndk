@@ -2,106 +2,147 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples
   import BasicExample from './examples/basic.svelte';
-  import BasicExampleRaw from './examples/basic.svelte?raw';
   import FallbackExample from './examples/fallback.svelte';
-  import FallbackExampleRaw from './examples/fallback.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let examplePubkey = $state<string>('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
   let size = $state<number>(48);
+
+  const basicCardData = {
+    name: 'user-avatar',
+    title: 'User.Avatar',
+    description: 'Display user avatars with customizable size.',
+    richDescription: 'Images load in the background without showing broken states. The deterministic gradient fallback (based on pubkey) is displayed until the image loads, or when no image is available.',
+    command: 'npx shadcn@latest add user',
+    apiDocs: [
+      {
+        name: 'User.Avatar',
+        description: 'User avatar component with background loading and automatic fallbacks',
+        importPath: "import { User } from '$lib/registry/ui/user'",
+        props: [
+          { name: 'size', type: 'number', default: '48', description: 'Avatar size in pixels' },
+          { name: 'fallback', type: 'string', description: 'Fallback image URL' },
+          { name: 'alt', type: 'string', description: 'Alt text for the image' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' },
+          { name: 'customFallback', type: 'Snippet', description: 'Custom fallback snippet to replace the default gradient' }
+        ]
+      }
+    ]
+  };
+
+  const fallbackCardData = {
+    name: 'user-avatar-fallback',
+    title: 'Avatar with Fallback',
+    description: 'Avatars with deterministic gradient fallback.',
+    richDescription: 'When no profile picture is available, avatars automatically show initials with a gradient background generated from the pubkey. The gradient is deterministic - the same pubkey always produces the same gradient.',
+    command: 'npx shadcn@latest add user',
+    apiDocs: []
+  };
 </script>
 
-<div class="component-page">
-  <header>
+<div class="px-8">
+  <!-- Header -->
+  <div class="mb-12 pt-8">
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <h1 class="text-4xl font-bold">User.Avatar</h1>
+    </div>
+    <p class="text-lg text-muted-foreground mb-6">
+      Display user avatars with background image loading and automatic fallbacks. Part of the UserProfile component system.
+    </p>
+
     <EditProps.Root>
       <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
       <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
-    	<EditProps.Button>Edit Examples</EditProps.Button>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
-    <div class="header-title">
-      <h1>UserProfile.Avatar</h1>
-    </div>
-    <p>Display user avatars with background image loading and automatic fallbacks. Part of the UserProfile component system.</p>
-    <p class="text-sm text-muted-foreground mt-2">
-      Images load in the background without showing broken states. The deterministic gradient fallback (based on pubkey) is displayed until the image loads, or when no image is available.
-    </p>
-  </header>
+  </div>
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+  <!-- ComponentsShowcase Section -->
+  {#snippet basicPreview()}
+    <BasicExample {ndk} pubkey={examplePubkey} {size} />
+  {/snippet}
 
-    <Demo
-      title="Basic Usage"
-      description="Display user avatars with customizable size in pixels. Use the controls above to adjust the size and try different users."
-      code={BasicExampleRaw}
-    >
-      <BasicExample {ndk} pubkey={examplePubkey} {size} />
-    </Demo>
+  {#snippet fallbackPreview()}
+    <FallbackExample {ndk} />
+  {/snippet}
 
-    <Demo
-      title="With Fallback"
-      description="When no profile picture is available, avatars automatically show initials with a gradient background generated from the pubkey. The gradient is deterministic - the same pubkey always produces the same gradient."
-      code={FallbackExampleRaw}
-    >
-      <FallbackExample {ndk} />
-    </Demo>
+  <ComponentPageSectionTitle
+    title="Showcase"
+    description="User avatar variants with background loading and fallback states."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Basic',
+        description: 'Avatar with customizable size',
+        command: 'npx shadcn@latest add user',
+        preview: basicPreview,
+        cardData: basicCardData
+      },
+      {
+        name: 'Fallback',
+        description: 'Deterministic gradient fallback',
+        command: 'npx shadcn@latest add user',
+        preview: fallbackPreview,
+        cardData: fallbackCardData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each avatar variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={basicCardData}>
+      {#snippet preview()}
+        <BasicExample {ndk} pubkey={examplePubkey} {size} />
+      {/snippet}
+    </ComponentCard>
+
+    <ComponentCard inline data={fallbackCardData}>
+      {#snippet preview()}
+        <FallbackExample {ndk} />
+      {/snippet}
+    </ComponentCard>
   </section>
 
-  <section class="info">
-    <h2>Props</h2>
-    <ApiTable
-      rows={[
-        { name: 'size', type: 'number', default: '48', description: 'Avatar size in pixels' },
-        { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL' },
-        { name: 'alt', type: 'string', default: 'undefined', description: 'Alt text for the image' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-        { name: 'customFallback', type: 'Snippet', default: 'undefined', description: 'Custom fallback snippet to replace the default gradient' }
-      ]}
-    />
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'User.Avatar',
+        description: 'Display user avatars with background loading and automatic fallbacks.',
+        importPath: "import { User } from '$lib/registry/ui/user'",
+        props: [
+          { name: 'size', type: 'number', default: '48', description: 'Avatar size in pixels' },
+          { name: 'fallback', type: 'string', description: 'Fallback image URL' },
+          { name: 'alt', type: 'string', description: 'Alt text for the image' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' },
+          { name: 'customFallback', type: 'Snippet', description: 'Custom fallback snippet to replace the default gradient' }
+        ]
+      }
+    ]}
+  />
 
-    <div class="mt-6">
-      <h3 class="text-lg font-semibold mb-2">Background Loading</h3>
-      <p class="text-sm text-muted-foreground">
-        Images load in the background to prevent showing broken image states. The component displays the deterministic gradient fallback until the image successfully loads. If the image fails to load, the fallback remains visible indefinitely.
-      </p>
-    </div>
+  <!-- Additional Info -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Background Loading</h2>
+    <p class="text-muted-foreground mb-6">
+      Images load in the background to prevent showing broken image states. The component displays the deterministic gradient fallback until the image successfully loads. If the image fails to load, the fallback remains visible indefinitely.
+    </p>
 
-    <div class="mt-6">
-      <h3 class="text-lg font-semibold mb-2">Custom Fallback</h3>
-      <p class="text-sm text-muted-foreground">
-        You can provide a custom fallback snippet using the <code>customFallback</code> prop to replace the default gradient and initials. The custom fallback will be displayed while the image loads and when no image is available.
-      </p>
-    </div>
+    <h3 class="text-xl font-semibold mb-2">Custom Fallback</h3>
+    <p class="text-muted-foreground">
+      You can provide a custom fallback snippet using the <code class="px-2 py-1 bg-muted rounded text-sm">customFallback</code> prop to replace the default gradient and initials. The custom fallback will be displayed while the image loads and when no image is available.
+    </p>
   </section>
 </div>
-
-<style>
-  .header-title {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .info {
-    padding: 2rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    margin-top: 2rem;
-  }
-
-  .info h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--foreground);
-  }
-</style>

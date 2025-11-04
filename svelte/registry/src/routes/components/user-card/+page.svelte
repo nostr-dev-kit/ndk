@@ -441,6 +441,23 @@
 			</div>
 		{/snippet}
 
+		{#snippet glassControlNew()}
+			<div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
+				<button
+					class="px-3 py-1.5 text-xs rounded-md transition-colors {glassVariant === 'gradient' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+					onclick={() => glassVariant = 'gradient'}
+				>
+					Gradient
+				</button>
+				<button
+					class="px-3 py-1.5 text-xs rounded-md transition-colors {glassVariant === 'transparent' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+					onclick={() => glassVariant = 'transparent'}
+				>
+					Transparent
+				</button>
+			</div>
+		{/snippet}
+
 		{#snippet glassPreview()}
 			<div class="flex gap-4 pb-4">
 				{#each displayUsers.slice(0, 5) as user (user.pubkey)}
@@ -512,7 +529,7 @@
 					preview: glassPreview,
 					cardData: glassCardData,
 					orientation: 'horizontal',
-					control: glassControl
+					control: glassControlNew
 				}
 			]}
 		/>

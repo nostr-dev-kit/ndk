@@ -49,7 +49,7 @@
         {@render editPropsSection()}
       {:else if metadata.editProps && metadata.editProps.length > 0}
         <EditProps.Root>
-          {#each metadata.editProps as prop (prop.name || prop)}
+          {#each metadata.editProps as prop (prop.name)}
             <EditProps.Prop
               name={prop.name}
               type={prop.type}
@@ -115,7 +115,7 @@
       />
 
       <section class="py-12 space-y-16">
-        {#each componentsSection.cards as cardData, index (cardData.id || index)}
+        {#each componentsSection.cards as cardData, index (cardData.id)}
           <ComponentCard inline data={cardData}>
             {#snippet preview()}
               {#if componentsSection.previews?.[cardData.name]}

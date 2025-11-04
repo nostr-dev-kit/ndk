@@ -2,8 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EventContent, ContentRenderer } from '$lib/registry/ui';
-  import CustomHashtag from './hashtag-custom.svelte';
-  import CustomLink from './link-custom.svelte';
+  import CustomHashtag from './hashtag-custom.example.svelte';
+  import CustomLink from './link-custom.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

@@ -27,8 +27,8 @@
     audioRef.addEventListener('loadedmetadata', handleTimeUpdate);
 
     return () => {
-      audioRef.removeEventListener('timeupdate', handleTimeUpdate);
-      audioRef.removeEventListener('loadedmetadata', handleTimeUpdate);
+      audioRef?.removeEventListener('timeupdate', handleTimeUpdate);
+      audioRef?.removeEventListener('loadedmetadata', handleTimeUpdate);
     };
   });
 

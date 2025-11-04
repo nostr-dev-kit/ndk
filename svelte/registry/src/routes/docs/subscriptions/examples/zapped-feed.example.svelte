@@ -119,7 +119,9 @@
 						<div class="reposters-avatars">
 							{#each reposters.slice(0, 5) as reposter}
 								<div class="avatar-wrapper">
-									<User.Avatar {ndk} pubkey={reposter.pubkey} class="w-7 h-7" />
+									<User.Root {ndk} pubkey={reposter.pubkey}>
+										<User.Avatar class="w-7 h-7" />
+									</User.Root>
 								</div>
 							{/each}
 							{#if reposters.length > 5}

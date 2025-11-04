@@ -17,7 +17,7 @@
 </script>
 
 <div class="border border-gray-200 rounded-xl p-6 bg-white flex flex-col gap-4">
-  {#each exampleZaps as zap (zap.id || zap)}
+  {#each exampleZaps as zap (zap.sender.pubkey)}
     <div class="bg-gradient-to-br from-amber-100 to-amber-200 border-2 border-amber-400 rounded-xl p-5 shadow-amber-400/10 shadow-md">
       <div class="flex items-center gap-2">
         <div class="text-2xl">⚡</div>

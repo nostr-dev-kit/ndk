@@ -15,8 +15,8 @@
 <div class="max-w-2xl">
   <EventCard.Root {ndk} {event}>
     <EventCard.Header variant="full" showTimestamp={true} />
-    <EventCard.Content>
+    <div class="p-4">
       <EventContent {ndk} {event} />
-    </EventCard.Content>
+    </div>
   </EventCard.Root>
 </div>

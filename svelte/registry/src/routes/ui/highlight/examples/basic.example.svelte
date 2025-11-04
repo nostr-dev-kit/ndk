@@ -6,9 +6,8 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  const highlightFetcher = $state(ndk.subscribe({
-    kinds: [NDKKind.Highlight],
-    limit: 1
+  const highlightFetcher = ndk.$subscribe(() => ({
+    filters: [{ kinds: [NDKKind.Highlight], limit: 1 }]
   }));
 
   let highlight = $state<NDKHighlight | null>(null);
@@ -21,7 +20,7 @@
 </script>
 
 {#if highlight}
-  <Highlight.Root {ndk} {highlight}>
+  <Highlight.Root {ndk} event={highlight}>
     <Highlight.Content class="text-lg italic border-l-4 border-primary pl-4" />
     <Highlight.Source class="text-sm text-gray-500 mt-2" />
   </Highlight.Root>

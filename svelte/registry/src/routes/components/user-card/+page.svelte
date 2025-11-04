@@ -194,7 +194,7 @@
                 </ComponentAnatomy.Layer>
 
                 <ComponentAnatomy.Layer id="field" label="User.Field" class="w-fit mx-auto">
-                  <User.Field name="website" class="text-xs text-foreground" />
+                  <User.Field field="website" class="text-xs text-foreground" />
                 </ComponentAnatomy.Layer>
               </div>
             </User.Root>
@@ -243,7 +243,7 @@
                     {:else if id === 'nip05'}
                       <User.Nip05 class="text-base text-foreground" />
                     {:else if id === 'field'}
-                      <User.Field name="website" class="text-sm text-foreground" />
+                      <User.Field field="website" class="text-sm text-foreground" />
                     {/if}
                   </User.Root>
                 {/if}
@@ -417,8 +417,8 @@
 {/if}
 
 <!-- API Drawer (Primitives drawer) -->
-{#if focusedPrimitive && userCardPrimitiveData[focusedPrimitive]}
-  {@const data = userCardPrimitiveData[focusedPrimitive]}
+{#if focusedPrimitive && userCardPrimitiveData[focusedPrimitive as keyof typeof userCardPrimitiveData]}
+  {@const data = userCardPrimitiveData[focusedPrimitive as keyof typeof userCardPrimitiveData]}
   <div
     class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
     onclick={closePrimitiveDrawer}

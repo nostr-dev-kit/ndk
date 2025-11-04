@@ -1,0 +1,113 @@
+<script lang="ts">
+  import { createReplyAction } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
+
+  // Create the reply action using the builder
+  const replyAction = createReplyAction(() => ({ event }), ndk);
+
+  // Local UI state
+  let showDialog = $state(false);
+  let replyContent = $state('');
+  let isSubmitting = $state(false);
+
+  async function handleSubmit() {
+    if (!replyContent.trim() || isSubmitting) return;
+
+    isSubmitting = true;
+    try {
+      await replyAction.reply(replyContent);
+      replyContent = '';
+      showDialog = false;
+    } catch (error) {
+      console.error('Failed to publish reply:', error);
+    } finally {
+      isSubmitting = false;
+    }
+  }
+
+  function handleCancel() {
+    showDialog = false;
+    replyContent = '';
+  }
+</script>
+
+<button
+  onclick={() => showDialog = true}
+  class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-background hover:bg-accent transition-colors"
+>
+  <svg
+    class="w-4 h-4 {replyAction.hasReplied ? 'text-primary' : 'text-muted-foreground'}"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+    />
+  </svg>
+  <span class="text-sm">{replyAction.count}</span>
+</button>
+
+{#if showDialog}
+  <!-- Dialog backdrop -->
+  <div
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+    onclick={handleCancel}
+  >
+    <!-- Dialog content -->
+    <div
+      class="bg-background border border-border rounded-lg p-6 w-[90%] max-w-[500px] shadow-lg"
+      onclick={(e) => e.stopPropagation()}
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold">Reply</h3>
+        <button
+          onclick={handleCancel}
+          class="text-muted-foreground hover:text-foreground"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <textarea
+        bind:value={replyContent}
+        placeholder="Write your reply..."
+        class="w-full min-h-[120px] p-3 rounded-lg border border-border bg-background resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+      ></textarea>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button
+          onclick={handleCancel}
+          class="px-4 py-2 rounded-lg border border-border hover:bg-accent transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onclick={handleSubmit}
+          disabled={!replyContent.trim() || isSubmitting}
+          class="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? 'Sending...' : 'Reply'}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}

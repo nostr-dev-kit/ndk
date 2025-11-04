@@ -25,7 +25,7 @@
 <div class="border border-gray-200 rounded-lg p-4 bg-white">
   <h3 class="text-sm font-semibold mb-4 text-gray-700">Zap Display</h3>
   <div class="flex flex-col gap-3">
-    {#each exampleZaps as zap (zap.id || zap)}
+    {#each exampleZaps as zap (zap.sender.pubkey)}
       <div class="p-3 bg-gray-50 rounded-md flex items-center gap-2">
         <ZapAmount {zap} class="font-bold text-amber-500" /> sats
         {#if zap.comment}

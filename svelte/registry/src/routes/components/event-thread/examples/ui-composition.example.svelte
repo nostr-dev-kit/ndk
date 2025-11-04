@@ -38,7 +38,7 @@
 
             <EventCard.Root {ndk} event={node.event}>
               <div class="p-4">
-                <EventCard.Header variant={isFocused ? 'default' : 'compact'} />
+                <EventCard.Header variant={isFocused ? 'full' : 'compact'} />
                 <EventCard.Content class={isFocused ? 'text-lg' : ''} />
 
                 {#if isFocused}

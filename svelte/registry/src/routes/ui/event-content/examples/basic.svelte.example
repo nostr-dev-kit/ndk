@@ -1,0 +1,22 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { EventContent } from '$lib/registry/ui';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  const sampleContent = "Hello Nostr! 🌟 Check out this link: https://nostr.com\n\n#nostr #decentralized";
+</script>
+
+<div class="event-content-demo">
+  <EventContent {ndk} content={sampleContent} />
+</div>
+
+<style>
+  .event-content-demo {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: white;
+  }
+</style>

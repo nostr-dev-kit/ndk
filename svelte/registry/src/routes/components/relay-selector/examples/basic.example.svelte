@@ -52,9 +52,6 @@
 						</div>
 					{/each}
 				</div>
-				<div class="border-t pt-4">
-					<Relay.Selector.AddForm showAsButton={true} />
-				</div>
 			</div>
 		{/snippet}
 	</Relay.Selector.Root>

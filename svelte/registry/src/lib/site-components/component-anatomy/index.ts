@@ -7,5 +7,5 @@ export type AnatomyLayer = {
 	id: string;
 	label: string;
 	description: string;
-	props: string[];
+	props?: string[];
 };

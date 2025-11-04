@@ -1,0 +1,27 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
+  import { FollowPack } from '$lib/registry/ui';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  // Example follow pack (you would normally get this from an event)
+  let followPack = $state<NDKFollowPack | null>(null);
+</script>
+
+<div class="border border-gray-200 rounded-lg p-4 bg-white">
+  {#if followPack}
+    <FollowPack.Root {ndk} {followPack}>
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <FollowPack.Title class="text-lg font-semibold text-gray-900" />
+        <FollowPack.Description class="text-sm text-gray-500 mt-2" />
+        <FollowPack.MemberCount class="text-xs text-gray-400 mt-2" format="long" />
+      </div>
+    </FollowPack.Root>
+  {:else}
+    <div class="p-8 text-center text-gray-500">
+      <p>Load a follow pack event to see details</p>
+    </div>
+  {/if}
+</div>

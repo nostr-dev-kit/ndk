@@ -7,9 +7,8 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Fetch a sample article
-  const articleFetcher = $state(ndk.subscribe({
-    kinds: [NDKKind.Article],
-    limit: 1
+  const articleFetcher = ndk.$subscribe(() => ({
+    filters: [{ kinds: [NDKKind.Article], limit: 1 }]
   }));
 
   let article = $state<NDKArticle | null>(null);

@@ -1,24 +1,18 @@
 <script lang="ts">
-	import Demo from '$site-components/Demo.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { Relay } from '$lib/registry/ui/relay';
 	import RelayCardPortrait from '$lib/registry/components/relay-card/relay-card-portrait.svelte';
 	import RelayCardCompact from '$lib/registry/components/relay-card/relay-card-compact.svelte';
 	import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
+	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
+	import ComponentCard from '$site-components/ComponentCard.svelte';
+	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-
-	// Code examples for blocks
-	import PortraitCodeRaw from './examples/portrait-code.svelte?raw';
-	import CompactCodeRaw from './examples/compact-code.svelte?raw';
-	import ListCodeRaw from './examples/list-code.svelte?raw';
 
 	// UI component examples
 	import BasicExample from './examples/basic.svelte';
-	import BasicExampleRaw from './examples/basic.svelte?raw';
 	import BuilderUsageExample from './examples/builder-usage.svelte';
-	import BuilderUsageExampleRaw from './examples/builder-usage.svelte?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -32,11 +26,64 @@
 	let relay5 = $state<string>('wss://nostr.wine');
 
 	const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
+
+	const portraitCardData = {
+		name: 'relay-card-portrait',
+		title: 'Portrait',
+		description: 'Vertical relay card with icon on top.',
+		richDescription: 'Vertical card layout with icon on top. Perfect for relay grids and discovery displays.',
+		command: 'npx shadcn@latest add relay-card-portrait',
+		apiDocs: []
+	};
+
+	const compactCardData = {
+		name: 'relay-card-compact',
+		title: 'Compact',
+		description: 'Small square relay card.',
+		richDescription: 'Small square card with icon and name. Ideal for compact grids where space is limited.',
+		command: 'npx shadcn@latest add relay-card-compact',
+		apiDocs: []
+	};
+
+	const listCardData = {
+		name: 'relay-card-list',
+		title: 'List',
+		description: 'Horizontal relay card for lists.',
+		richDescription: 'Horizontal card layout. Perfect for relay lists and feeds with optional description.',
+		command: 'npx shadcn@latest add relay-card-list',
+		apiDocs: []
+	};
+
+	const basicCardData = {
+		name: 'relay-basic',
+		title: 'Basic Usage',
+		description: 'Minimal relay primitives example.',
+		richDescription: 'Minimal example with Relay.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy.',
+		command: 'npx shadcn@latest add relay-card',
+		apiDocs: []
+	};
+
+	const builderCardData = {
+		name: 'relay-builder',
+		title: 'Using the Builder',
+		description: 'Bookmarked relay list builder.',
+		richDescription: 'Use createBookmarkedRelayList() to create a reactive bookmarked relay list that tracks relays bookmarked by users you follow. Includes bookmark counts and toggle functionality.',
+		command: 'npx shadcn@latest add relay-card',
+		apiDocs: []
+	};
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
 	<!-- Header -->
-	<div class="mb-12">
+	<div class="mb-12 pt-8">
+		<div class="flex items-start justify-between gap-4 mb-4">
+			<h1 class="text-4xl font-bold">RelayCard</h1>
+		</div>
+		<p class="text-lg text-muted-foreground mb-6">
+			Composable relay display components with NIP-11 info and bookmark functionality. Build custom
+			relay cards with flexible primitive components.
+		</p>
+
 		<EditProps.Root>
 			<EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
 			<EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
@@ -46,58 +93,110 @@
 			<EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
 			<EditProps.Button>Change Sample Relays</EditProps.Button>
 		</EditProps.Root>
-		<div class="flex items-start justify-between gap-4 mb-4">
-			<h1 class="text-4xl font-bold">RelayCard</h1>
-		</div>
-		<p class="text-lg text-muted-foreground">
-			Composable relay display components with NIP-11 info and bookmark functionality. Build custom
-			relay cards with flexible primitive components.
-		</p>
 	</div>
 
-	<!-- Blocks Section -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
-		<p class="text-muted-foreground mb-8">
-			Pre-composed relay card layouts ready to use. Install with a single command.
-		</p>
+	<!-- ComponentsShowcase Section -->
+	{#snippet portraitPreview()}
+		<div class="flex gap-6 overflow-x-auto pb-4">
+			{#each displayRelays as relayUrl}
+				<RelayCardPortrait {ndk} {relayUrl} class="flex-none" />
+			{/each}
+		</div>
+	{/snippet}
 
-		<div class="space-y-12">
-			<!-- Portrait -->
-			<Demo
-				title="Portrait"
-				description="Vertical card layout with icon on top. Perfect for relay grids and discovery displays."
-				component="relay-card-portrait"
-				code={PortraitCodeRaw}
-			>
+	{#snippet compactPreview()}
+		<div class="flex gap-4 overflow-x-auto pb-4">
+			{#each displayRelays as relayUrl}
+				<RelayCardCompact {ndk} {relayUrl} />
+			{/each}
+		</div>
+	{/snippet}
+
+	{#snippet listPreview()}
+		<div class="space-y-4">
+			<div>
+				<h3 class="text-sm font-semibold mb-2">Default</h3>
+				<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+					{#each displayRelays.slice(0, 4) as relayUrl}
+						<RelayCardList {ndk} {relayUrl} />
+					{/each}
+				</div>
+			</div>
+			<div>
+				<h3 class="text-sm font-semibold mb-2">Compact</h3>
+				<div class="space-y-0 border border-border rounded-lg overflow-hidden">
+					{#each displayRelays.slice(0, 4) as relayUrl}
+						<RelayCardList {ndk} {relayUrl} compact />
+					{/each}
+				</div>
+			</div>
+		</div>
+	{/snippet}
+
+	<ComponentPageSectionTitle
+		title="Blocks"
+		description="Pre-composed relay card layouts ready to use."
+	/>
+
+	<ComponentsShowcase
+		class="-mx-8 px-8"
+		blocks={[
+			{
+				name: 'Portrait',
+				description: 'Vertical card with icon on top',
+				command: 'npx shadcn@latest add relay-card-portrait',
+				codeSnippet:
+					'<span class="text-gray-500">&lt;</span><span class="text-blue-400">RelayCardPortrait</span> <span class="text-cyan-400">relayUrl</span><span class="text-gray-500">=</span><span class="text-green-400">"wss://relay.damus.io"</span> <span class="text-gray-500">/&gt;</span>',
+				preview: portraitPreview,
+				cardData: portraitCardData
+			},
+			{
+				name: 'Compact',
+				description: 'Small square card',
+				command: 'npx shadcn@latest add relay-card-compact',
+				codeSnippet:
+					'<span class="text-gray-500">&lt;</span><span class="text-blue-400">RelayCardCompact</span> <span class="text-cyan-400">relayUrl</span><span class="text-gray-500">=</span><span class="text-green-400">"wss://relay.damus.io"</span> <span class="text-gray-500">/&gt;</span>',
+				preview: compactPreview,
+				cardData: compactCardData
+			},
+			{
+				name: 'List',
+				description: 'Horizontal list layout',
+				command: 'npx shadcn@latest add relay-card-list',
+				codeSnippet:
+					'<span class="text-gray-500">&lt;</span><span class="text-blue-400">RelayCardList</span> <span class="text-cyan-400">relayUrl</span><span class="text-gray-500">=</span><span class="text-green-400">"wss://relay.damus.io"</span> <span class="text-gray-500">/&gt;</span>',
+				preview: listPreview,
+				cardData: listCardData
+			}
+		]}
+	/>
+
+	<!-- Components Section -->
+	<ComponentPageSectionTitle title="Components" description="Explore each relay card variant in detail" />
+
+	<section class="py-12 space-y-16">
+		<ComponentCard inline data={portraitCardData}>
+			{#snippet preview()}
 				<div class="flex gap-6 overflow-x-auto pb-4">
 					{#each displayRelays as relayUrl}
 						<RelayCardPortrait {ndk} {relayUrl} class="flex-none" />
 					{/each}
 				</div>
-			</Demo>
+			{/snippet}
+		</ComponentCard>
 
-			<!-- Compact -->
-			<Demo
-				title="Compact"
-				description="Small square card with icon and name. Ideal for compact grids where space is limited."
-				component="relay-card-compact"
-				code={CompactCodeRaw}
-			>
+		<ComponentCard inline data={compactCardData}>
+			{#snippet preview()}
 				<div class="flex gap-4 overflow-x-auto pb-4">
 					{#each displayRelays as relayUrl}
 						<RelayCardCompact {ndk} {relayUrl} />
 					{/each}
 				</div>
-			</Demo>
+			{/snippet}
+		</ComponentCard>
 
-			<!-- List -->
-			<Demo
-				title="List"
-				description="Horizontal card layout. Perfect for relay lists and feeds with optional description."
-				component="relay-card-list"
-				code={ListCodeRaw}
-			>
+		<ComponentCard inline data={listCardData}>
+			{#snippet preview()}
 				<div class="space-y-4">
 					<div>
 						<h3 class="text-sm font-semibold mb-2">Default</h3>
@@ -116,37 +215,25 @@
 						</div>
 					</div>
 				</div>
-			</Demo>
-		</div>
+			{/snippet}
+		</ComponentCard>
 	</section>
 
 	<!-- UI Primitives Section -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
-		<p class="text-muted-foreground mb-8">
-			Primitive components for building custom relay card layouts. Compose them together to create
-			your own designs.
-		</p>
+	<ComponentPageSectionTitle title="UI Primitives" description="Primitive components for building custom relay card layouts" />
 
-		<div class="space-y-8">
-			<!-- Basic Usage -->
-			<Demo
-				title="Basic Usage"
-				description="Minimal example with Relay.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy."
-				code={BasicExampleRaw}
-			>
+	<section class="py-12 space-y-16">
+		<ComponentCard inline data={basicCardData}>
+			{#snippet preview()}
 				<BasicExample {ndk} relayUrl={exampleRelay} />
-			</Demo>
+			{/snippet}
+		</ComponentCard>
 
-			<!-- Builder Usage -->
-			<Demo
-				title="Using the Builder"
-				description="Use createBookmarkedRelayList() to create a reactive bookmarked relay list that tracks relays bookmarked by users you follow. Includes bookmark counts and toggle functionality."
-				code={BuilderUsageExampleRaw}
-			>
+		<ComponentCard inline data={builderCardData}>
+			{#snippet preview()}
 				<BuilderUsageExample {ndk} />
-			</Demo>
-		</div>
+			{/snippet}
+		</ComponentCard>
 	</section>
 
 	<!-- Component API -->
@@ -162,8 +249,7 @@
 						name: 'ndk',
 						type: 'NDKSvelte',
 						description:
-							'NDK instance. Optional if NDK is available in Svelte context (from parent components).',
-						required: false
+							'NDK instance. Optional if NDK is available in Svelte context (from parent components).'
 					},
 					{
 						name: 'relayUrl',
@@ -182,14 +268,12 @@
 						name: 'size',
 						type: 'number',
 						default: '48',
-						description: 'Icon size in pixels',
-						required: false
+						description: 'Icon size in pixels'
 					},
 					{
 						name: 'class',
 						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
+						description: 'Additional CSS classes'
 					}
 				]
 			},
@@ -202,14 +286,12 @@
 						name: 'fallback',
 						type: 'string',
 						default: '"Relay"',
-						description: 'Fallback text when relay name is unavailable',
-						required: false
+						description: 'Fallback text when relay name is unavailable'
 					},
 					{
 						name: 'class',
 						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
+						description: 'Additional CSS classes'
 					}
 				]
 			},
@@ -222,14 +304,12 @@
 						name: 'showProtocol',
 						type: 'boolean',
 						default: 'true',
-						description: 'Show wss:// protocol prefix',
-						required: false
+						description: 'Show wss:// protocol prefix'
 					},
 					{
 						name: 'class',
 						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
+						description: 'Additional CSS classes'
 					}
 				]
 			},
@@ -242,174 +322,12 @@
 						name: 'maxLines',
 						type: 'number',
 						default: '2',
-						description: 'Maximum number of lines to display',
-						required: false
+						description: 'Maximum number of lines to display'
 					},
 					{
 						name: 'class',
 						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
-					}
-				]
-			},
-			{
-				name: 'Relay.BookmarkButton',
-				description:
-					'Toggle button for bookmarking/unbookmarking relay. Requires user authentication.',
-				importPath: "import { Relay } from '$lib/registry/ui/relay'",
-				props: [
-					{
-						name: 'bookmarks',
-						type: 'BookmarkedRelayListState',
-						description:
-							'Bookmarked relay list state from createBookmarkedRelayList. Must include current user for toggle functionality.',
-						required: true
-					},
-					{
-						name: 'size',
-						type: '"sm" | "md" | "lg"',
-						default: '"md"',
-						description: 'Button size variant',
-						required: false
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes',
-						required: false
-					}
-				]
-			},
-			{
-				name: 'Relay.BookmarkedBy',
-				description: 'Headless component that exposes bookmark data (pubkeys and count) via snippet for custom rendering.',
-				importPath: "import { Relay } from '$lib/registry/ui/relay'",
-				props: [
-					{
-						name: 'bookmarks',
-						type: 'BookmarkedRelayListState',
-						description: 'Bookmarked relay list state from createBookmarkedRelayList',
-						required: true
-					},
-					{
-						name: 'children',
-						type: 'Snippet<[{ pubkeys: string[]; count: number }]>',
-						description: 'Snippet that receives bookmark data for custom rendering',
-						required: true
-					}
-				]
-			},
-			{
-				name: 'RelayCardPortrait',
-				description:
-					'Component: Vertical card with icon on top. Import from $lib/ndk/components for quick use.',
-				importPath: "import { RelayCardPortrait } from '$lib/registry/components'",
-				props: [
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance',
-						required: true
-					},
-					{
-						name: 'relayUrl',
-						type: 'string',
-						description: 'The relay WebSocket URL',
-						required: true
-					},
-					{
-						name: 'width',
-						type: 'string',
-						default: '"w-[280px]"',
-						description: 'Card width (Tailwind classes)',
-						required: false
-					},
-					{
-						name: 'height',
-						type: 'string',
-						default: '"h-[320px]"',
-						description: 'Card height (Tailwind classes)',
-						required: false
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler',
-						required: false
-					}
-				]
-			},
-			{
-				name: 'RelayCardCompact',
-				description:
-					'Component: Small square card with icon and name. Import from $lib/ndk/components.',
-				importPath: "import { RelayCardCompact } from '$lib/registry/components'",
-				props: [
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance',
-						required: true
-					},
-					{
-						name: 'relayUrl',
-						type: 'string',
-						description: 'The relay WebSocket URL',
-						required: true
-					},
-					{
-						name: 'size',
-						type: 'string',
-						default: '"w-[160px] h-[160px]"',
-						description: 'Card size (Tailwind classes)',
-						required: false
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler',
-						required: false
-					}
-				]
-			},
-			{
-				name: 'RelayCardList',
-				description:
-					'Component: Horizontal list card. Import from $lib/ndk/components.',
-				importPath: "import { RelayCardList } from '$lib/registry/components'",
-				props: [
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance',
-						required: true
-					},
-					{
-						name: 'relayUrl',
-						type: 'string',
-						description: 'The relay WebSocket URL',
-						required: true
-					},
-					{
-						name: 'showDescription',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show relay description',
-						required: false
-					},
-					{
-						name: 'compact',
-						type: 'boolean',
-						default: 'false',
-						description: 'Compact variant with smaller icon (32px) and no URL display',
-						required: false
-					},
-					{
-						name: 'onclick',
-						type: '(e: MouseEvent) => void',
-						description: 'Optional click handler',
-						required: false
+						description: 'Additional CSS classes'
 					}
 				]
 			}
@@ -417,7 +335,7 @@
 	/>
 
 	<!-- Builder API -->
-	<section class="mb-16">
+	<section class="mt-16">
 		<h2 class="text-3xl font-bold mb-4">Builder API</h2>
 
 		<div class="space-y-6">

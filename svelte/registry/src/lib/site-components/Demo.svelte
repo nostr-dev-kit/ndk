@@ -175,7 +175,9 @@
 					Copy
 				{/if}
 			</button>
+			{#if code}
 			<CodeBlock {code} lang="svelte" class="demo-code" />
+		{/if}
 		</div>
 
 		<!-- Usage Tab -->

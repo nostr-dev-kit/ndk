@@ -20,10 +20,10 @@
     stroke-linecap="round"
     stroke-linejoin="round"
     stroke-width="1.5"
-  />
+  ></path>
   <path
     d="M4 7H20"
     stroke="currentColor"
     stroke-width="1.5"
-  />
+  ></path>
 </svg>

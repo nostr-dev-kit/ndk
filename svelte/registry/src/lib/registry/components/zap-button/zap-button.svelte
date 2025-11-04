@@ -39,7 +39,7 @@
             aria-label={`Zap (${stats.total} sats)`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" color="currentColor" fill={stats.count > 0 ? 'currentColor' : 'none'}>
-              <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
             {#if showCount && stats.total > 0}
               <span class="text-sm font-medium">{stats.total}</span>

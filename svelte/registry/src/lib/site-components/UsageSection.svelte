@@ -163,7 +163,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each props as prop (prop.name || prop)}
+						{#each props as prop (prop.name)}
 							<tr>
 								<td class="prop-name">
 									{prop.name}

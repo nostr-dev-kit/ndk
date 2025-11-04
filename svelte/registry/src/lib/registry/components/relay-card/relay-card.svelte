@@ -315,14 +315,6 @@
     color: var(--foreground);
   }
 
-  .relay-card-url {
-    font-size: 0.75rem;
-    font-family: monospace;
-    color: var(--muted-foreground);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 
   .relay-card-badges {
     display: flex;
@@ -413,8 +405,7 @@
     margin: 0;
   }
 
-  .relay-section p,
-  .relay-section-text {
+  .relay-section p {
     font-size: 0.875rem;
     color: var(--muted-foreground);
     margin: 0;

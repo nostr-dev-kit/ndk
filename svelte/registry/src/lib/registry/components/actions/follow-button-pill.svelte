@@ -1,18 +1,4 @@
 <!-- @ndk-version: follow-button-pill@0.2.0 -->
-<!--
-  @component FollowButtonPill
-  Pill-style follow button block using createFollowAction builder.
-  Rounded button with background, border, and smooth hover/active states.
-
-  @example
-  ```svelte
-  <FollowButtonPill {ndk} target={user} />
-  <FollowButtonPill {ndk} target={user} variant="outline" />
-  <FollowButtonPill {ndk} target={user} compact />
-  <FollowButtonPill {ndk} target={user} showTarget={true} />
-  <FollowButtonPill {ndk} target="#bitcoin" showTarget={true} />
-  ```
--->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

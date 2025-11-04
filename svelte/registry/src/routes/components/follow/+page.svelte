@@ -188,112 +188,96 @@
     />
 
     <!-- Components Section -->
-    <Tabs.Root value="minimal">
-      <ComponentPageSectionTitle title="Components" description="Explore each follow button variant in detail">
-        {#snippet tabs()}
-          <Tabs.List>
-            <Tabs.Trigger value="minimal">Minimal</Tabs.Trigger>
-            <Tabs.Trigger value="pill">Pill</Tabs.Trigger>
-            <Tabs.Trigger value="animated">Animated</Tabs.Trigger>
-          </Tabs.List>
+    <ComponentPageSectionTitle title="Components" description="Explore each follow button variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={minimalCardData}>
+        {#snippet preview()}
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">Default:</span>
+              <FollowButton {ndk} target={sampleUser} />
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">With User:</span>
+              <FollowButton {ndk} target={sampleUser} showTarget={true} />
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
+              <FollowButton {ndk} target="bitcoin" showTarget={true} />
+            </div>
+          </div>
         {/snippet}
-      </ComponentPageSectionTitle>
+      </ComponentCard>
 
-      <section class="min-h-[500px] lg:min-h-[60vh] py-12">
-        <Tabs.Content value="minimal">
-          <ComponentCard inline data={minimalCardData}>
-            {#snippet preview()}
-              <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-4">
-                  <span class="text-sm text-muted-foreground w-24">Default:</span>
-                  <FollowButton {ndk} target={sampleUser} />
-                </div>
-                <div class="flex items-center gap-4">
-                  <span class="text-sm text-muted-foreground w-24">With User:</span>
-                  <FollowButton {ndk} target={sampleUser} showTarget={true} />
-                </div>
-                <div class="flex items-center gap-4">
-                  <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
-                  <FollowButton {ndk} target="bitcoin" showTarget={true} />
-                </div>
+      <ComponentCard inline data={pillCardData}>
+        {#snippet preview()}
+          <div class="flex flex-col gap-6 items-center">
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Default</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
+                <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
               </div>
-            {/snippet}
-          </ComponentCard>
-        </Tabs.Content>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">With User Target</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+                <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
+                <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} compact />
+                <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
+                <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
+              </div>
+            </div>
+          </div>
+        {/snippet}
+      </ComponentCard>
 
-        <Tabs.Content value="pill">
-          <ComponentCard inline data={pillCardData}>
-            {#snippet preview()}
-              <div class="flex flex-col gap-6 items-center">
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">Default</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-                    <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">With User Target</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-                    <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
-                    <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonPill {ndk} target={sampleUser} compact />
-                    <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
-                    <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
-                  </div>
-                </div>
+      <ComponentCard inline data={animatedCardData}>
+        {#snippet preview()}
+          <div class="flex flex-col gap-6 items-center">
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">Default</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonAnimated {ndk} target={sampleUser} />
               </div>
-            {/snippet}
-          </ComponentCard>
-        </Tabs.Content>
-
-        <Tabs.Content value="animated">
-          <ComponentCard inline data={animatedCardData}>
-            {#snippet preview()}
-              <div class="flex flex-col gap-6 items-center">
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">Default</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonAnimated {ndk} target={sampleUser} />
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">With User Target</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                  <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-                  <div class="flex flex-wrap gap-4 justify-center">
-                    <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
-                    <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
-                  </div>
-                </div>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">With User Target</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
               </div>
-            {/snippet}
-          </ComponentCard>
-        </Tabs.Content>
-      </section>
-    </Tabs.Root>
+            </div>
+            <div class="flex flex-col gap-2 items-center">
+              <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
+                <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
+              </div>
+            </div>
+          </div>
+        {/snippet}
+      </ComponentCard>
+    </section>
   {:else}
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Select a user to see the components...</div>
@@ -349,120 +333,6 @@
           }
         ]
       },
-      {
-        name: 'FollowButton',
-        description: 'Minimal follow button block with icon-first design.',
-        importPath: "import { FollowButton } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance (optional if provided via context)'
-          },
-          {
-            name: 'target',
-            type: 'NDKUser | string',
-            required: true,
-            description: 'User object or hashtag string to follow'
-          },
-          {
-            name: 'showIcon',
-            type: 'boolean',
-            default: 'true',
-            description: 'Whether to show icon'
-          },
-          {
-            name: 'showTarget',
-            type: 'boolean',
-            default: 'false',
-            description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold.'
-          },
-          {
-            name: 'class',
-            type: 'string',
-            default: "''",
-            description: 'Custom CSS classes'
-          }
-        ]
-      },
-      {
-        name: 'FollowButtonPill',
-        description: 'Pill-style follow button block with rounded design. Supports compact mode for icon-only display.',
-        importPath: "import { FollowButtonPill } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance (optional if provided via context)'
-          },
-          {
-            name: 'target',
-            type: 'NDKUser | string',
-            required: true,
-            description: 'User object or hashtag string to follow'
-          },
-          {
-            name: 'variant',
-            type: "'solid' | 'outline'",
-            default: "'solid'",
-            description: 'Button style variant'
-          },
-          {
-            name: 'compact',
-            type: 'boolean',
-            default: 'false',
-            description: 'When true, hides the label and shows icon only in a circular layout'
-          },
-          {
-            name: 'showIcon',
-            type: 'boolean',
-            default: 'true',
-            description: 'Whether to show icon'
-          },
-          {
-            name: 'showTarget',
-            type: 'boolean',
-            default: 'false',
-            description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag". Text is bold. Ignored when compact is true.'
-          },
-          {
-            name: 'class',
-            type: 'string',
-            default: "''",
-            description: 'Custom CSS classes'
-          }
-        ]
-      },
-      {
-        name: 'FollowButtonAnimated',
-        description: 'Animated follow button with smooth transitions and visual feedback. Features icon animations, checkmark confirmation, and particle effects.',
-        importPath: "import { FollowButtonAnimated } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance (optional if provided via context)'
-          },
-          {
-            name: 'target',
-            type: 'NDKUser | string',
-            required: true,
-            description: 'User object or hashtag string to follow'
-          },
-          {
-            name: 'showTarget',
-            type: 'boolean',
-            default: 'false',
-            description: 'When true, shows target avatar/icon and name. For users: displays avatar + "Follow Name". For hashtags: displays # icon + "Follow #hashtag".'
-          },
-          {
-            name: 'class',
-            type: 'string',
-            default: "''",
-            description: 'Custom CSS classes'
-          }
-        ]
-      }
     ]}
   />
 

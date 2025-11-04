@@ -129,6 +129,7 @@ export const componentCategories: NavCategory[] = [
     title: 'Bits',
     items: [
       { name: 'Threads', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
+      { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
     ]
   },
   {

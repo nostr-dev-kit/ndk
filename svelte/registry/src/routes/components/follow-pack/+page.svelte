@@ -477,66 +477,47 @@
 
 	<!-- Components Section -->
 	{#if pack1}
-		<Tabs.Root value="hero">
-			<ComponentPageSectionTitle title="Components" description="Explore each variant in detail">
-				{#snippet tabs()}
-					<Tabs.List>
-						<Tabs.Trigger value="hero">Hero</Tabs.Trigger>
-						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
-						<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
-						<Tabs.Trigger value="list">List Item</Tabs.Trigger>
-					</Tabs.List>
+		<ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+		<section class="py-12 space-y-16">
+			<ComponentCard inline data={heroCardData}>
+				{#snippet preview()}
+					<div class="min-w-[800px]">
+						<FollowPackHero {ndk} followPack={pack1} />
+					</div>
 				{/snippet}
-			</ComponentPageSectionTitle>
+			</ComponentCard>
 
-			<section class="min-h-[500px] lg:min-h-[60vh] py-12">
-				<Tabs.Content value="hero">
-					<ComponentCard inline data={heroCardData}>
-						{#snippet preview()}
-							<div class="min-w-[800px]">
-								<FollowPackHero {ndk} followPack={pack1} />
-							</div>
-						{/snippet}
-					</ComponentCard>
-				</Tabs.Content>
+			<ComponentCard inline data={portraitCardData}>
+				{#snippet preview()}
+					<div class="flex gap-4 flex-wrap">
+						{#each displayPacks.slice(0, 3) as pack}
+							<FollowPackPortrait {ndk} followPack={pack} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
 
-				<Tabs.Content value="portrait">
-					<ComponentCard inline data={portraitCardData}>
-						{#snippet preview()}
-							<div class="flex gap-4 flex-wrap">
-								{#each displayPacks.slice(0, 3) as pack}
-									<FollowPackPortrait {ndk} followPack={pack} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCard>
-				</Tabs.Content>
+			<ComponentCard inline data={compactCardData}>
+				{#snippet preview()}
+					<div class="space-y-2 max-w-2xl">
+						{#each displayPacks.slice(0, 3) as pack}
+							<FollowPackCompact {ndk} followPack={pack} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
 
-				<Tabs.Content value="compact">
-					<ComponentCard inline data={compactCardData}>
-						{#snippet preview()}
-							<div class="space-y-2 max-w-2xl">
-								{#each displayPacks.slice(0, 3) as pack}
-									<FollowPackCompact {ndk} followPack={pack} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCard>
-				</Tabs.Content>
-
-				<Tabs.Content value="list">
-					<ComponentCard inline data={listItemCardData}>
-						{#snippet preview()}
-							<div class="space-y-2 max-w-md">
-								{#each displayPacks.slice(0, 4) as pack}
-									<FollowPackListItem {ndk} followPack={pack} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCard>
-				</Tabs.Content>
-			</section>
-		</Tabs.Root>
+			<ComponentCard inline data={listItemCardData}>
+				{#snippet preview()}
+					<div class="space-y-2 max-w-md">
+						{#each displayPacks.slice(0, 4) as pack}
+							<FollowPackListItem {ndk} followPack={pack} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
+		</section>
 	{:else}
 		<div class="flex items-center justify-center py-12">
 			<div class="text-muted-foreground">Loading follow packs...</div>

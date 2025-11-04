@@ -99,7 +99,7 @@
           stroke-linejoin="round"
           class="flex-shrink-0"
         >
-          <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
+          <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
         </svg>
         <span class="inline-flex items-baseline gap-1">
           <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
@@ -130,7 +130,7 @@
             stroke-linejoin="round"
             class="flex-shrink-0"
           >
-            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
+            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
           </svg>
         {:else}
           <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
@@ -152,7 +152,7 @@
             stroke-linejoin="round"
             class="flex-shrink-0"
           >
-            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
+            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
           </svg>
         {:else if followAction.isFollowing}
           <svg
@@ -165,9 +165,9 @@
             stroke-width="1.5"
             class="flex-shrink-0"
           >
-            <path d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z" />
-            <path d="M2 23C2 18.5817 6.47715 15 12 15C17.5228 15 22 18.5817 22 23" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M8 9L10.5 11.5L16 6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z" ></path>
+            <path d="M2 23C2 18.5817 6.47715 15 12 15C17.5228 15 22 18.5817 22 23" stroke-linecap="round" stroke-linejoin="round" ></path>
+            <path d="M8 9L10.5 11.5L16 6" stroke-linecap="round" stroke-linejoin="round" ></path>
           </svg>
         {:else}
           <UserAddIcon size={16} class="flex-shrink-0" />

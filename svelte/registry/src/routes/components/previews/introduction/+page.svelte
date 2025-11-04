@@ -1,24 +1,42 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
-  import ComponentAPI from '$site-components/component-api.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
-  import HowItWorksCode from './examples/how-it-works-code.svelte?raw';
-  import AddingHandlerCode from './examples/adding-handler-code.svelte?raw';
   import InteractiveDemo from './examples/interactive-demo.svelte';
   import VariantComparison from './examples/variant-comparison.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  const liveDemoData = {
+    name: 'embedded-event-live',
+    title: 'Live Preview',
+    description: 'Paste and see it render.',
+    richDescription: 'Paste a bech32 event reference (note1, nevent1, naddr1) and see it render in real-time.',
+    command: 'npx shadcn@latest add embedded-event',
+    apiDocs: []
+  };
+
+  const variantData = {
+    name: 'embedded-event-variants',
+    title: 'Variant Comparison',
+    description: 'Compare display variants.',
+    richDescription: 'Compare card, inline, and compact variants side by side.',
+    command: 'npx shadcn@latest add embedded-event',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Embedded Event Previews</h1>
-        <EditProps.Button>Edit Examples</EditProps.Button>
+      <h1 class="text-4xl font-bold">Embedded Event Previews</h1>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </div>
     <p class="text-lg text-muted-foreground mb-6">
       Automatically render rich previews of embedded Nostr events based on their kind.
@@ -28,7 +46,7 @@
   </div>
 
   <!-- How It Works Section -->
-  <section class="mb-16">
+  <section class="mb-16 prose prose-lg max-w-none">
     <h2 class="text-3xl font-bold mb-2">How It Works</h2>
     <p class="text-muted-foreground mb-8">
       The embedded event system uses a simple map-based registry to determine which
@@ -72,78 +90,74 @@
       </div>
 
       <!-- KindRegistry System -->
-      <Demo
-        title="KindRegistry System"
-        description="Self-registering handlers using NDK wrapper classes for automatic kind mapping and type-safe event wrapping."
-        code={HowItWorksCode}
-      >
-        <div class="p-6 border border-border rounded-lg bg-muted/30">
-          <p class="text-sm text-muted-foreground mb-4">
-            Each kind handler self-registers via its <code class="px-2 py-1 bg-muted rounded">index.ts</code> file:
-          </p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">NDKArticle → ArticleEmbedded</div>
-              <p class="text-xs text-muted-foreground">Automatically registers kind 30023 and wraps with NDKArticle.from()</p>
-            </div>
-            <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">[1, 1111] → NoteEmbedded</div>
-              <p class="text-xs text-muted-foreground">Manual kinds (no NDK wrapper class exists)</p>
-            </div>
-            <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">NDKHighlight → HighlightEmbedded</div>
-              <p class="text-xs text-muted-foreground">Automatically registers kind 9802 and wraps with NDKHighlight.from()</p>
-            </div>
-            <div class="p-4 bg-card rounded border border-border">
-              <div class="text-sm font-mono mb-2">* → GenericEmbedded</div>
-              <p class="text-xs text-muted-foreground">Fallback for unknown kinds (no wrapping)</p>
-            </div>
+      <div class="p-6 border border-border rounded-lg bg-muted/30">
+        <h3 class="text-xl font-semibold mb-4">KindRegistry System</h3>
+        <p class="text-sm text-muted-foreground mb-4">
+          Self-registering handlers using NDK wrapper classes for automatic kind mapping and type-safe event wrapping.
+        </p>
+        <p class="text-sm text-muted-foreground mb-4">
+          Each kind handler self-registers via its <code class="px-2 py-1 bg-muted rounded">index.ts</code> file:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-card rounded border border-border">
+            <div class="text-sm font-mono mb-2">NDKArticle → ArticleEmbedded</div>
+            <p class="text-xs text-muted-foreground">Automatically registers kind 30023 and wraps with NDKArticle.from()</p>
           </div>
-          <div class="mt-4 p-4 bg-card/50 rounded border border-primary/20">
-            <p class="text-sm"><strong>Benefits:</strong></p>
-            <ul class="text-xs text-muted-foreground list-disc list-inside mt-2 space-y-1">
-              <li>Type-safe: Components receive NDKArticle, NDKHighlight, not just NDKEvent</li>
-              <li>Automatic: Kind numbers extracted from NDK wrapper classes</li>
-              <li>Flexible: Custom registries for variant-specific previews</li>
-              <li>Clean: No manual kind number management</li>
-            </ul>
+          <div class="p-4 bg-card rounded border border-border">
+            <div class="text-sm font-mono mb-2">[1, 1111] → NoteEmbedded</div>
+            <p class="text-xs text-muted-foreground">Manual kinds (no NDK wrapper class exists)</p>
+          </div>
+          <div class="p-4 bg-card rounded border border-border">
+            <div class="text-sm font-mono mb-2">NDKHighlight → HighlightEmbedded</div>
+            <p class="text-xs text-muted-foreground">Automatically registers kind 9802 and wraps with NDKHighlight.from()</p>
+          </div>
+          <div class="p-4 bg-card rounded border border-border">
+            <div class="text-sm font-mono mb-2">* → GenericEmbedded</div>
+            <p class="text-xs text-muted-foreground">Fallback for unknown kinds (no wrapping)</p>
           </div>
         </div>
-      </Demo>
+        <div class="mt-4 p-4 bg-card/50 rounded border border-primary/20">
+          <p class="text-sm"><strong>Benefits:</strong></p>
+          <ul class="text-xs text-muted-foreground list-disc list-inside mt-2 space-y-1">
+            <li>Type-safe: Components receive NDKArticle, NDKHighlight, not just NDKEvent</li>
+            <li>Automatic: Kind numbers extracted from NDK wrapper classes</li>
+            <li>Flexible: Custom registries for variant-specific previews</li>
+            <li>Clean: No manual kind number management</li>
+          </ul>
+        </div>
+      </div>
 
       <!-- Adding New Handlers -->
-      <Demo
-        title="Adding New Kind Handlers"
-        description="Kind handlers self-register automatically via side effects. Just install and import - no manual registration needed."
-        code={AddingHandlerCode}
-      >
-        <div class="p-6 border border-border rounded-lg bg-muted/30">
-          <div class="space-y-4">
-            <div>
-              <div class="text-sm font-semibold mb-2">Step 1: Install the handler</div>
-              <code class="block p-3 bg-card rounded text-sm">
-                npx shadcn-svelte@latest add video-embedded
-              </code>
+      <div class="p-6 border border-border rounded-lg bg-muted/30">
+        <h3 class="text-xl font-semibold mb-4">Adding New Kind Handlers</h3>
+        <p class="text-sm text-muted-foreground mb-4">
+          Kind handlers self-register automatically via side effects. Just install and import - no manual registration needed.
+        </p>
+        <div class="space-y-4">
+          <div>
+            <div class="text-sm font-semibold mb-2">Step 1: Install the handler</div>
+            <code class="block p-3 bg-card rounded text-sm">
+              npx shadcn-svelte@latest add video-embedded
+            </code>
+          </div>
+          <div>
+            <div class="text-sm font-semibold mb-2">Step 2: Import in embedded-handlers.ts</div>
+            <p class="text-xs text-muted-foreground mb-2">
+              Post-install automatically appends to <code class="px-1 py-0.5 bg-muted rounded">embedded-handlers.ts</code>:
+            </p>
+            <div class="p-3 bg-card rounded text-sm font-mono">
+              <div>import './kinds/video-embedded';</div>
             </div>
-            <div>
-              <div class="text-sm font-semibold mb-2">Step 2: Import in embedded-handlers.ts</div>
-              <p class="text-xs text-muted-foreground mb-2">
-                Post-install automatically appends to <code class="px-1 py-0.5 bg-muted rounded">embedded-handlers.ts</code>:
-              </p>
-              <div class="p-3 bg-card rounded text-sm font-mono">
-                <div>import './kinds/video-embedded';</div>
-              </div>
-              <p class="text-xs text-muted-foreground mt-2">
-                Or add manually if installing without CLI
-              </p>
-            </div>
-            <p class="text-sm text-muted-foreground">
-              That's it! The handler automatically registers itself via its index.ts file
-              and will render all video events using NDKVideo.kinds and NDKVideo.from().
+            <p class="text-xs text-muted-foreground mt-2">
+              Or add manually if installing without CLI
             </p>
           </div>
+          <p class="text-sm text-muted-foreground">
+            That's it! The handler automatically registers itself via its index.ts file
+            and will render all video events using NDKVideo.kinds and NDKVideo.from().
+          </p>
         </div>
-      </Demo>
+      </div>
 
       <!-- Custom Registries -->
       <div class="p-6 border border-border rounded-lg bg-primary/5 border-primary/20">
@@ -232,34 +246,6 @@
         </div>
       </a>
 
-      <!-- App Recommendations (NIP-89) -->
-      <a href="/components/previews/app-recommendations" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-        <div class="flex items-start justify-between mb-3">
-          <h3 class="text-lg font-semibold">App Recommendations</h3>
-          <span class="text-xs px-2 py-1 bg-muted rounded">Kind 31989</span>
-        </div>
-        <p class="text-sm text-muted-foreground mb-4">
-          NIP-89 app recommendation events for discovering handlers.
-        </p>
-        <div class="text-sm text-primary group-hover:underline">
-          View documentation →
-        </div>
-      </a>
-
-      <!-- Handler Info (NIP-89) -->
-      <a href="/components/previews/handler-info" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-        <div class="flex items-start justify-between mb-3">
-          <h3 class="text-lg font-semibold">Handler Info</h3>
-          <span class="text-xs px-2 py-1 bg-muted rounded">Kind 31990</span>
-        </div>
-        <p class="text-sm text-muted-foreground mb-4">
-          NIP-89 handler information declaring app capabilities.
-        </p>
-        <div class="text-sm text-primary group-hover:underline">
-          View documentation →
-        </div>
-      </a>
-
       <!-- Generic Fallback -->
       <a href="/components/previews/generic" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
@@ -277,101 +263,124 @@
   </section>
 
   <!-- Interactive Demo Section -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Interactive Demo</h2>
-    <p class="text-muted-foreground mb-8">
-      Try pasting any Nostr event reference to see how it renders.
-    </p>
+  {#snippet liveDemoPreview()}
+    <InteractiveDemo {ndk} />
+  {/snippet}
 
-    <div class="space-y-8">
-      <Demo
-        title="Live Preview"
-        description="Paste a bech32 event reference (note1, nevent1, naddr1) and see it render in real-time."
-      >
-        <InteractiveDemo {ndk} />
-      </Demo>
-    </div>
-  </section>
+  <ComponentPageSectionTitle
+    title="Interactive Demo"
+    description="Try pasting any Nostr event reference."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Live Preview',
+        description: 'Paste and render',
+        command: 'npx shadcn@latest add embedded-event',
+        preview: liveDemoPreview,
+        cardData: liveDemoData
+      }
+    ]}
+  />
 
   <!-- Variant Comparison Section -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Variant Support</h2>
-    <p class="text-muted-foreground mb-8">
-      All embedded event handlers support three display variants for different contexts.
-    </p>
+  {#snippet variantPreview()}
+    <VariantComparison {ndk} />
+  {/snippet}
 
-    <div class="space-y-8">
-      <Demo
-        title="Variant Comparison"
-        description="Compare card, inline, and compact variants side by side."
-      >
+  <ComponentPageSectionTitle
+    title="Variant Support"
+    description="All handlers support three display variants."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Variant Comparison',
+        description: 'Compare variants',
+        command: 'npx shadcn@latest add embedded-event',
+        preview: variantPreview,
+        cardData: variantData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={liveDemoData}>
+      {#snippet preview()}
+        <InteractiveDemo {ndk} />
+      {/snippet}
+    </ComponentCard>
+
+    <ComponentCard inline data={variantData}>
+      {#snippet preview()}
         <VariantComparison {ndk} />
-      </Demo>
-    </div>
+      {/snippet}
+    </ComponentCard>
   </section>
 
   <!-- Component API -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Component API</h2>
-
-    <ComponentAPI
-      components={[
-        {
-          name: 'EmbeddedEvent',
-          description: 'Main orchestrator component that fetches events and routes to kind-specific handlers.',
-          importPath: "import { EmbeddedEvent } from '$lib/registry/ui'",
-          props: [
-            {
-              name: 'ndk',
-              type: 'NDKSvelte',
-              required: true,
-              description: 'NDK instance for fetching events'
-            },
-            {
-              name: 'bech32',
-              type: 'string',
-              required: true,
-              description: 'Bech32-encoded event reference (note1, nevent1, naddr1)'
-            },
-            {
-              name: 'variant',
-              type: "'inline' | 'card' | 'compact'",
-              default: "'card'",
-              description: 'Display variant - card (default), inline (max-width), or compact (minimal)'
-            },
-            {
-              name: 'class',
-              type: 'string',
-              description: 'Additional CSS classes to apply'
-            }
-          ]
-        },
-        {
-          name: 'Kind Handlers',
-          description: 'Individual components for each supported kind. Typically not used directly - the EmbeddedEvent orchestrator selects the appropriate handler.',
-          importPath: "import { ArticleEmbedded } from '$lib/registry/components/article-embedded'; import { NoteEmbedded } from '$lib/registry/components/note-embedded'; import { HighlightEmbedded } from '$lib/registry/components/highlight-embedded'",
-          props: [
-            {
-              name: 'ndk',
-              type: 'NDKSvelte',
-              required: true,
-              description: 'NDK instance'
-            },
-            {
-              name: 'event',
-              type: 'NDKEvent | NDKArticle',
-              required: true,
-              description: 'The event to render'
-            },
-            {
-              name: 'variant',
-              type: "'inline' | 'card' | 'compact'",
-              default: "'card'",
-              description: 'Display variant'
-            }
-          ]
-        }
-      ]}
-    />
-  </section>
+  <ComponentAPI
+    components={[
+      {
+        name: 'EmbeddedEvent',
+        description: 'Main orchestrator component that fetches events and routes to kind-specific handlers.',
+        importPath: "import { EmbeddedEvent } from '$lib/registry/ui'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance for fetching events'
+          },
+          {
+            name: 'bech32',
+            type: 'string',
+            required: true,
+            description: 'Bech32-encoded event reference (note1, nevent1, naddr1)'
+          },
+          {
+            name: 'variant',
+            type: "'inline' | 'card' | 'compact'",
+            default: "'card'",
+            description: 'Display variant - card (default), inline (max-width), or compact (minimal)'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            description: 'Additional CSS classes to apply'
+          }
+        ]
+      },
+      {
+        name: 'Kind Handlers',
+        description: 'Individual components for each supported kind. Typically not used directly - the EmbeddedEvent orchestrator selects the appropriate handler.',
+        importPath: "import { ArticleEmbedded } from '$lib/registry/components/article-embedded'; import { NoteEmbedded } from '$lib/registry/components/note-embedded'; import { HighlightEmbedded } from '$lib/registry/components/highlight-embedded'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance'
+          },
+          {
+            name: 'event',
+            type: 'NDKEvent | NDKArticle',
+            required: true,
+            description: 'The event to render'
+          },
+          {
+            name: 'variant',
+            type: "'inline' | 'card' | 'compact'",
+            default: "'card'",
+            description: 'Display variant'
+          }
+        ]
+      }
+    ]}
+  />
 </div>

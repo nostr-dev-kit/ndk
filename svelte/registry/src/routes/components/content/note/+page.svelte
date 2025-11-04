@@ -3,13 +3,12 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
   import BasicExample from './examples/basic.svelte';
-  import BasicExampleRaw from './examples/basic.svelte?raw';
-
   import CustomSnippetsExample from './examples/custom-snippets.svelte';
-  import CustomSnippetsExampleRaw from './examples/custom-snippets.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -35,38 +34,89 @@ Pretty cool, right? #awesome`);
       ['emoji', 'custom_emoji', 'https://example.com/emoji.png']
     ]
   } as any));
+
+  const basicData = {
+    name: 'event-content-basic',
+    title: 'Basic Content Rendering',
+    description: 'Auto-detects content types.',
+    richDescription: 'Automatically detects and renders mentions, hashtags, links, images, videos, YouTube embeds, and custom emojis.',
+    command: 'npx shadcn@latest add event-content',
+    apiDocs: []
+  };
+
+  const customSnippetsData = {
+    name: 'event-content-custom-snippets',
+    title: 'Custom Snippets',
+    description: 'Override default rendering.',
+    richDescription: 'Use custom snippets to override default rendering for any content type (mentions, hashtags, links, etc.).',
+    command: 'npx shadcn@latest add event-content',
+    apiDocs: []
+  };
 </script>
 
-<div class="component-page">
-  <header>
+<div class="px-8">
+  <!-- Header -->
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1>Event Content</h1>
+      <h1 class="text-4xl font-bold">Event Content</h1>
     </div>
-    <p>Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.</p>
+    <p class="text-lg text-muted-foreground mb-6">
+      Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.
+    </p>
 
     <EditProps.Root>
       <EditProps.Prop name="Event content" type="text" bind:value={eventContent} />
-    	<EditProps.Button>Edit Examples</EditProps.Button>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
-  </header>
+  </div>
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
+  <!-- Examples Showcase -->
+  {#snippet basicPreview()}
+    <BasicExample {ndk} event={exampleEvent} />
+  {/snippet}
 
-    <Demo
-      title="Basic Content Rendering"
-      description="Automatically detects and renders mentions, hashtags, links, images, videos, YouTube embeds, and custom emojis."
-      code={BasicExampleRaw}
-    >
-      <BasicExample {ndk} event={exampleEvent} />
-    </Demo>
+  {#snippet customSnippetsPreview()}
+    <CustomSnippetsExample {ndk} event={exampleEvent} />
+  {/snippet}
 
-    <Demo
-      title="Custom Snippets"
-      description="Use custom snippets to override default rendering for any content type (mentions, hashtags, links, etc.)."
-      code={CustomSnippetsExampleRaw}
-    >
-      <CustomSnippetsExample {ndk} event={exampleEvent} />
-    </Demo>
+  <ComponentPageSectionTitle
+    title="Examples"
+    description="Different ways to use EventContent component."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Basic Rendering',
+        description: 'Auto-detects content',
+        command: 'npx shadcn@latest add event-content',
+        preview: basicPreview,
+        cardData: basicData
+      },
+      {
+        name: 'Custom Snippets',
+        description: 'Override rendering',
+        command: 'npx shadcn@latest add event-content',
+        preview: customSnippetsPreview,
+        cardData: customSnippetsData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={basicData}>
+      {#snippet preview()}
+        <BasicExample {ndk} event={exampleEvent} />
+      {/snippet}
+    </ComponentCard>
+
+    <ComponentCard inline data={customSnippetsData}>
+      {#snippet preview()}
+        <CustomSnippetsExample {ndk} event={exampleEvent} />
+      {/snippet}
+    </ComponentCard>
   </section>
 </div>

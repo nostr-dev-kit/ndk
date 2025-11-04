@@ -6,19 +6,19 @@
 
 	let { children }: { children: Snippet } = $props();
 
-	let props = $state<PropDefinition[]>([]);
+	let propDefinitions = $state<PropDefinition[]>([]);
 	let open = $state(false);
 
 	function registerProp(prop: PropDefinition) {
 		// Check if prop already exists
-		const existing = props.find(p => p.name === prop.name);
+		const existing = propDefinitions.find(p => p.name === prop.name);
 		if (!existing) {
-			props = [...props, prop];
+			propDefinitions = [...propDefinitions, prop];
 		}
 	}
 
 	function updatePropValue(name: string, value: NDKUser | NDKEvent | NDKArticle | string) {
-		props = props.map(p => (p.name === name ? { ...p, value } : p));
+		propDefinitions = propDefinitions.map(p => (p.name === name ? { ...p, value } : p));
 	}
 
 	function toggleDialog() {
@@ -27,7 +27,7 @@
 
 	const context: EditPropsContext = {
 		get props() {
-			return props;
+			return propDefinitions;
 		},
 		get open() {
 			return open;
@@ -45,4 +45,4 @@
 	{@render children()}
 </div>
 
-<EditPropsDialog bind:show={open} {props} onClose={() => (open = false)} onApply={updatePropValue} />
+<EditPropsDialog bind:show={open} props={propDefinitions} onClose={() => (open = false)} onApply={updatePropValue} />

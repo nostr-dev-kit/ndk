@@ -1,6 +1,7 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
+  import { kindLabel } from '$lib/registry/utils';
 
   // Sample pubkeys to demonstrate different gradients
   const samplePubkeys = [
@@ -9,6 +10,18 @@
     { name: 'Jack', pubkey: '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2' },
     { name: 'Lyn', pubkey: 'eab0e756d32b80bcd464f3d844b8040303075a13eabc3599a762c9ac7ab91f4f' },
     { name: 'Derek', pubkey: '3f770d65d3a764a9c5cb503ae123e62ec7598ad035d836e2a810f3877a745b24' },
+  ];
+
+  // Sample kinds to demonstrate kindLabel
+  const sampleKinds = [
+    { kind: 1, description: 'Short text note' },
+    { kind: 30023, description: 'Long-form article' },
+    { kind: 6, description: 'Repost' },
+    { kind: 7, description: 'Reaction' },
+    { kind: 9735, description: 'Zap receipt' },
+    { kind: 10002, description: 'Relay list metadata' },
+    { kind: 30000, description: 'Categorized people list' },
+    { kind: 99999, description: 'Unknown/custom kind' },
   ];
 </script>
 
@@ -108,6 +121,111 @@
       </div>
     </div>
   </section>
+
+  <hr class="my-16" />
+
+  <section>
+    <h2>kindLabel</h2>
+    <p>
+      Convert Nostr event kind numbers to human-readable labels with automatic pluralization support.
+      Makes it easy to display event types in your UI without memorizing kind numbers.
+    </p>
+  </section>
+
+  <section>
+    <h3>Installation</h3>
+    <CodeBlock lang="typescript" code={`import { kindLabel } from '$lib/registry/utils';`} />
+  </section>
+
+  <section>
+    <h3>Usage</h3>
+    <CodeBlock lang="typescript" code={`// Singular form (default)
+const label = kindLabel(30023);
+// Returns: "Article"
+
+// With count for pluralization
+const label = kindLabel(30023, 1);
+// Returns: "Article"
+
+const label = kindLabel(30023, 5);
+// Returns: "Articles"
+
+// Notes
+kindLabel(1);     // "Note"
+kindLabel(1, 3);  // "Notes"
+
+// Unknown kinds
+kindLabel(99999); // "Unknown Event"`} />
+  </section>
+
+  <section>
+    <h3>Examples</h3>
+    <p>
+      Common Nostr event kinds and their labels:
+    </p>
+
+    <div class="kind-examples">
+      {#each sampleKinds as { kind, description }}
+        <div class="kind-example">
+          <div class="kind-header">
+            <code class="kind-number">Kind {kind}</code>
+            <span class="kind-description">{description}</span>
+          </div>
+          <div class="kind-labels">
+            <div class="kind-label-item">
+              <span class="label-type">Singular:</span>
+              <span class="label-value">{kindLabel(kind)}</span>
+            </div>
+            <div class="kind-label-item">
+              <span class="label-type">Plural:</span>
+              <span class="label-value">{kindLabel(kind, 2)}</span>
+            </div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </section>
+
+  <section>
+    <h3>Supported Kinds</h3>
+    <p>
+      The function supports all common Nostr kinds from various NIPs:
+    </p>
+    <ul>
+      <li><strong>NIP-01:</strong> Metadata (0), Notes (1), Contact Lists (3), Encrypted Messages (4), Reposts (6), Reactions (7)</li>
+      <li><strong>NIP-23:</strong> Long-form Articles (30023)</li>
+      <li><strong>NIP-28:</strong> Public Chat (40-44)</li>
+      <li><strong>NIP-51:</strong> Lists (10000-10030, 30000-30030)</li>
+      <li><strong>NIP-57:</strong> Lightning Zaps (9734, 9735)</li>
+      <li><strong>NIP-58:</strong> Badges (30008, 30009)</li>
+      <li><strong>NIP-89:</strong> App Metadata (31989, 31990)</li>
+      <li><strong>NIP-90:</strong> Data Vending Machines (5000-7000)</li>
+      <li><strong>NIP-94:</strong> File Metadata (1063)</li>
+      <li><strong>NIP-99:</strong> Classified Listings (30402)</li>
+      <li>And more common kinds (1984, 1985, 4550, 9041, 34550...)</li>
+    </ul>
+    <p class="text-muted-foreground text-sm mt-4">
+      Unknown kinds return "Unknown Event"
+    </p>
+  </section>
+
+  <section>
+    <h3>Practical Examples</h3>
+    <CodeBlock lang="typescript" code={`// Display event counts
+const count = 5;
+const label = kindLabel(30023, count);
+console.log(\`You have \${count} \${label}\`);
+// Output: "You have 5 Articles"
+
+// Event feed headings
+<h2>{kindLabel(event.kind, events.length)}</h2>
+// Shows "Note" or "Notes" based on count
+
+// Filter labels
+{#if filterKind === 1}
+  <span>Showing {kindLabel(filterKind, filteredCount)}</span>
+{/if}`} />
+  </section>
 </div>
 
 <style>
@@ -174,5 +292,64 @@
     font-size: 0.875rem;
     color: var(--muted-foreground);
     line-height: 1.5;
+  }
+
+  .kind-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .kind-example {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .kind-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .kind-number {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: var(--muted);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .kind-description {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+
+  .kind-labels {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .kind-label-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .label-type {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .label-value {
+    font-weight: 600;
+    font-size: 1rem;
   }
 </style>

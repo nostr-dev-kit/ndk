@@ -333,9 +333,11 @@
 	<!-- ComponentsShowcase Section -->
 	{#if displayUsers.length > 0 && user1}
 		{#snippet classicPreview()}
-			{#if user1}
-				<UserCardClassic {ndk} pubkey={user1.pubkey} />
-			{/if}
+			<div class="flex gap-4 pb-4">
+				{#each displayUsers as user (user.pubkey)}
+					<UserCardClassic {ndk} pubkey={user.pubkey} />
+				{/each}
+			</div>
 		{/snippet}
 
 		{#snippet compactPreview()}
@@ -564,111 +566,83 @@
 	{/if}
 
 	<!-- Components Section -->
-	 
+
 	{#if user1}
-		<Tabs.Root value="classic">
-			<ComponentPageSectionTitle title="Components" description="Click on any layer to see its details and props">
-				{#snippet tabs()}
-					<Tabs.List>
-						<Tabs.Trigger value="classic">Classic</Tabs.Trigger>
-						<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
-						<Tabs.Trigger value="list">List Item</Tabs.Trigger>
-						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
-						<Tabs.Trigger value="landscape">Landscape</Tabs.Trigger>
-						<Tabs.Trigger value="neon">Neon</Tabs.Trigger>
-						<Tabs.Trigger value="glass">Glass</Tabs.Trigger>
-					</Tabs.List>
+		<ComponentPageSectionTitle title="Components" description="Click on any layer to see its details and props" />
+
+		<section class="py-12 space-y-16">
+			<ComponentCard inline data={classicCardData}>
+				{#snippet preview()}
+					<UserCardClassic {ndk} pubkey={user1.pubkey} />
 				{/snippet}
-			</ComponentPageSectionTitle>
+			</ComponentCard>
 
-			<section class="min-h-[500px] lg:min-h-[60vh] py-12">
-				<Tabs.Content value="classic">
-						<ComponentCard inline data={classicCardData}>
-							{#snippet preview()}
-								<UserCardClassic {ndk} pubkey={user1.pubkey} />
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
+			<ComponentCard inline data={compactCardData}>
+				{#snippet preview()}
+					<div class="space-y-2 max-w-sm">
+						{#each displayUsers as user (user.pubkey)}
+							<UserCardCompact {ndk} pubkey={user.pubkey} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
 
-					<Tabs.Content value="compact">
-						<ComponentCard inline data={compactCardData}>
-							{#snippet preview()}
-								<div class="space-y-2 max-w-sm">
-									{#each displayUsers as user (user.pubkey)}
-										<UserCardCompact {ndk} pubkey={user.pubkey} />
-									{/each}
-								</div>
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
+			<ComponentCard inline data={listItemCardData}>
+				{#snippet preview()}
+					<div class="max-w-sm border border-border rounded-lg overflow-hidden">
+						{#each displayUsers as user (user.pubkey)}
+							<UserListItem {ndk} pubkey={user.pubkey} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
 
-					<Tabs.Content value="list">
-						<ComponentCard inline data={listItemCardData}>
-							{#snippet preview()}
-								<div class="max-w-sm border border-border rounded-lg overflow-hidden">
-									{#each displayUsers as user (user.pubkey)}
-										<UserListItem {ndk} pubkey={user.pubkey} />
-									{/each}
-								</div>
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
+			<ComponentCard inline data={portraitCardData}>
+				{#snippet preview()}
+					<ScrollArea orientation="horizontal" class="w-full">
+						<div class="flex gap-4 pb-4">
+							{#each displayUsers as user (user.pubkey)}
+								<UserCardPortrait {ndk} pubkey={user.pubkey} />
+							{/each}
+						</div>
+					</ScrollArea>
+				{/snippet}
+			</ComponentCard>
 
-					<Tabs.Content value="portrait">
-						<ComponentCard inline data={portraitCardData}>
-							{#snippet preview()}
-								<ScrollArea orientation="horizontal" class="w-full">
-									<div class="flex gap-4 pb-4">
-										{#each displayUsers as user (user.pubkey)}
-											<UserCardPortrait {ndk} pubkey={user.pubkey} />
-										{/each}
-									</div>
-								</ScrollArea>
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
+			<ComponentCard inline data={landscapeCardData}>
+				{#snippet preview()}
+					<div class="space-y-4 max-w-2xl">
+						{#each displayUsers as user (user.pubkey)}
+							<UserCardLandscape {ndk} pubkey={user.pubkey} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
 
-					<Tabs.Content value="landscape">
-						<ComponentCard inline data={landscapeCardData}>
-							{#snippet preview()}
-								<div class="space-y-4 max-w-2xl">
-									{#each displayUsers as user (user.pubkey)}
-										<UserCardLandscape {ndk} pubkey={user.pubkey} />
-									{/each}
-								</div>
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
+			<ComponentCard inline data={neonCardData}>
+				{#snippet preview()}
+					<ScrollArea orientation="horizontal" class="w-full">
+						<div class="flex gap-4 pb-4">
+							{#each displayUsers as user (user.pubkey)}
+								<UserCardNeon {ndk} pubkey={user.pubkey} />
+							{/each}
+						</div>
+					</ScrollArea>
+				{/snippet}
+			</ComponentCard>
 
-					<Tabs.Content value="neon">
-						<ComponentCard inline data={neonCardData}>
-							{#snippet preview()}
-								<ScrollArea orientation="horizontal" class="w-full">
-									<div class="flex gap-4 pb-4">
-										{#each displayUsers as user (user.pubkey)}
-											<UserCardNeon {ndk} pubkey={user.pubkey} />
-										{/each}
-									</div>
-								</ScrollArea>
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
-
-					<Tabs.Content value="glass">
-						<ComponentCard inline data={glassCardData}>
-							{#snippet preview()}
-								<ScrollArea orientation="horizontal" class="w-full">
-									<div class="flex gap-4 pb-4">
-										{#each displayUsers.slice(0, 5) as user (user.pubkey)}
-											<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
-										{/each}
-									</div>
-								</ScrollArea>
-							{/snippet}
-						</ComponentCard>
-					</Tabs.Content>
-				</section>
-			</Tabs.Root>
+			<ComponentCard inline data={glassCardData}>
+				{#snippet preview()}
+					<ScrollArea orientation="horizontal" class="w-full">
+						<div class="flex gap-4 pb-4">
+							{#each displayUsers.slice(0, 5) as user (user.pubkey)}
+								<UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+							{/each}
+						</div>
+					</ScrollArea>
+				{/snippet}
+			</ComponentCard>
+		</section>
 
 		<!-- Primitives Grid -->
 		<ComponentPageSectionTitle title="Primitives" />

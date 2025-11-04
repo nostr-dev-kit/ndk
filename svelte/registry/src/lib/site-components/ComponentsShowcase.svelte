@@ -170,7 +170,7 @@
 </script>
 
 	<div class="space-y-0 pb-0">
-		{#each blocks as block, index (block.name || index)}
+		{#each blocks as block, index (block.name)}
 			{@const isNotLast = index < blocks.length - 1}
 			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
 			{@const commandArgs = block.command.replace(/^npx\s+/, '').split(' ')}

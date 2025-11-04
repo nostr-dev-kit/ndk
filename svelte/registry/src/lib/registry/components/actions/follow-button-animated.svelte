@@ -83,7 +83,7 @@
                   stroke-linejoin="round"
                   class="flex-shrink-0"
                 >
-                  <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
+                  <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
                 </svg>
                 <span>Following #{target}</span>
               {:else}
@@ -137,7 +137,7 @@
                   stroke-linejoin="round"
                   class="flex-shrink-0"
                 >
-                  <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" />
+                  <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
                 </svg>
                 <span>Follow #{target}</span>
               {:else}

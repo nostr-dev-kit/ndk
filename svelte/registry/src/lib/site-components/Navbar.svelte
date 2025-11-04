@@ -99,7 +99,11 @@
             <div class="user-dropdown" onclick={(e) => e.stopPropagation()}>
               <div class="user-info">
                 <User.Root {ndk} pubkey={ndk.$currentPubkey}>
-                  <User.AvatarName avatarSize={40} meta="handle" />
+                  <User.Avatar class="w-10 h-10" />
+                  <div>
+                    <User.Name />
+                    <User.Handle class="text-sm text-muted-foreground" />
+                  </div>
                 </User.Root>
               </div>
               <div class="dropdown-divider"></div>

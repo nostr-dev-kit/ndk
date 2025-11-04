@@ -9,10 +9,10 @@
 
 <Relay.Root {ndk} {relayUrl}>
   <div class="flex items-center gap-3">
-    <Relay.Icon class="w-8 h-8" />
+    <Relay.Icon />
     <div>
-      <Relay.Name class="font-semibold" />
-      <Relay.Url class="text-sm text-gray-500" />
+      <Relay.Name />
+      <Relay.Url />
     </div>
   </div>
 </Relay.Root>
@@ -21,9 +21,4 @@
   .flex { display: flex; }
   .items-center { align-items: center; }
   .gap-3 { gap: 0.75rem; }
-  .w-8 { width: 2rem; }
-  .h-8 { height: 2rem; }
-  .font-semibold { font-weight: 600; }
-  .text-sm { font-size: 0.875rem; }
-  .text-gray-500 { color: #6b7280; }
 </style>

@@ -218,7 +218,7 @@
         </div>
 
         <!-- Bio -->
-        <User.Field field="about" maxLines={2} class="text-sm text-white/80 leading-relaxed line-clamp-2 text-center min-h-[2.5rem]" />
+        <User.Field field="about" class="text-sm text-white/80 leading-relaxed line-clamp-2 text-center min-h-[2.5rem]" />
 
         <!-- Action buttons -->
         <div class="flex items-center gap-3 mt-2">

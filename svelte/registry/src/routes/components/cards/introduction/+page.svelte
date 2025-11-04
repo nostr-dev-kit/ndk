@@ -5,80 +5,85 @@
   import { EventCard } from '$lib/registry/components/event-card';
   import { EventContent } from '$lib/registry/ui';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
 
-  const eventCardExample = `<script>
-  import { EventCard } from '$lib/registry/components/event-card';
-  import { EventContent } from '$lib/registry/ui';
+  const fullCardData = {
+    name: 'card-full',
+    title: 'Full Card with Chrome',
+    description: 'Complete social media post experience.',
+    richDescription: 'EventCard with header, content, and actions — the complete social media post experience.',
+    command: 'npx shadcn@latest add event-card',
+    apiDocs: []
+  };
 
-  let event; // Your NDKEvent
-<\/script>
+  const contentOnlyData = {
+    name: 'content-only',
+    title: 'Content Only (No Chrome)',
+    description: 'Just the content renderer without frame.',
+    richDescription: 'Just the content renderer without any frame — useful for article pages or focused reading.',
+    command: 'npx shadcn@latest add event-content',
+    apiDocs: []
+  };
 
-<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-  <EventCard.Content />
-  <EventCard.Actions />
-</EventCard.Root>`;
-
-  const justContentExample = `<!-- Just the content, no chrome -->
-<EventContent {ndk} {event} />`;
-
-  const customChromeExample = `<!-- Custom chrome with content inside -->
-<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-
-  <div class="my-custom-content-area">
-    <EventCard.Content />
-  </div>
-
-  <EventCard.Actions />
-</EventCard.Root>`;
+  const customChromeData = {
+    name: 'custom-chrome',
+    title: 'Custom Chrome',
+    description: 'Mix and match card primitives.',
+    richDescription: 'Mix and match — use the card\'s frame but customize the layout or add your own elements.',
+    command: 'npx shadcn@latest add event-card',
+    apiDocs: []
+  };
 </script>
 
-<div class="docs-page">
-  <header class="docs-header">
+<div class="px-8">
+  <!-- Header -->
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1>Card Components</h1>
-      <EditProps.Root>
-        <EditProps.Prop
-          name="Sample Event"
-          type="event"
-          bind:value={sampleEvent}
-          default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        />
-        <EditProps.Button>Edit Examples</EditProps.Button>
-      </EditProps.Root>
+      <h1 class="text-4xl font-bold">Card Components</h1>
     </div>
-    <p class="subtitle">
+    <p class="text-lg text-muted-foreground mb-6">
       Understanding the chrome: consistent visual frames for Nostr events
     </p>
-  </header>
 
+    <EditProps.Root>
+      <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        bind:value={sampleEvent}
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+      />
+      <EditProps.Button>Edit Examples</EditProps.Button>
+    </EditProps.Root>
+  </div>
+
+  <!-- Introduction Content -->
   <section class="prose prose-lg max-w-none mb-12">
-    <h2>What are Card Components?</h2>
-    <p>
+    <h2 class="text-3xl font-bold mb-4">What are Card Components?</h2>
+    <p class="text-muted-foreground mb-6">
       Card components provide the <strong>chrome</strong> — the consistent visual frame around your
       content. Think of it as the picture frame that stays the same while the artwork inside changes.
       The chrome includes the header (avatar, name, timestamp), action buttons (like, reply, repost),
       and the overall container styling that makes an event recognizable as a social media post.
     </p>
 
-    <p>
+    <p class="text-muted-foreground mb-6">
       The most fundamental card component is <code>EventCard</code>, which provides composable building
       blocks for displaying any NDKEvent type. Other specialized cards like <code>ArticleCard</code>,
       <code>HighlightCard</code>, and <code>VoiceMessageCard</code> extend this pattern for specific
       event kinds, offering optimized layouts and metadata display for their content type.
     </p>
 
-    <h2>The Chrome Components</h2>
-    <p>
+    <h2 class="text-3xl font-bold mb-4 mt-12">The Chrome Components</h2>
+    <p class="text-muted-foreground mb-4">
       EventCard breaks down the chrome into composable pieces:
     </p>
-    <ul>
+    <ul class="space-y-2 text-muted-foreground mb-8">
       <li><strong>EventCard.Root</strong> — Container that provides context to child components</li>
       <li><strong>EventCard.Header</strong> — Author avatar, name, and timestamp</li>
       <li><strong>EventCard.Content</strong> — Renders the event content (uses EventContent internally)</li>
@@ -86,58 +91,112 @@
       <li><strong>EventCard.Dropdown</strong> — Menu for additional actions (mute, copy link, etc.)</li>
     </ul>
 
-    <h2>Cards vs Content: The Separation</h2>
-    <p>
+    <h2 class="text-3xl font-bold mb-4 mt-12">Cards vs Content: The Separation</h2>
+    <p class="text-muted-foreground mb-8">
       The key insight is that <strong>cards provide the frame, content provides the filling</strong>.
       You can use content components without cards (for focused reading), or combine them (for social feeds):
     </p>
   </section>
 
   {#if sampleEvent}
-    <section class="demo space-y-8">
-      <h2 class="text-2xl font-semibold mb-4">Understanding the Pattern</h2>
+    <!-- Examples Showcase -->
+    {#snippet fullCardPreview()}
+      <EventCard.Root {ndk} event={sampleEvent}>
+        <EventCard.Header />
+        <EventCard.Content />
+        <EventCard.Actions />
+      </EventCard.Root>
+    {/snippet}
 
-      <Demo
-        title="Full Card with Chrome"
-        description="EventCard with header, content, and actions — the complete social media post experience."
-        code={eventCardExample}
-      >
-        <EventCard.Root {ndk} event={sampleEvent}>
-          <EventCard.Header />
+    {#snippet contentOnlyPreview()}
+      <div class="p-4 border rounded-lg">
+        <EventContent {ndk} event={sampleEvent} />
+      </div>
+    {/snippet}
+
+    {#snippet customChromePreview()}
+      <EventCard.Root {ndk} event={sampleEvent}>
+        <EventCard.Header />
+
+        <div class="my-4 p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
           <EventCard.Content />
-          <EventCard.Actions />
-        </EventCard.Root>
-      </Demo>
-
-      <Demo
-        title="Content Only (No Chrome)"
-        description="Just the content renderer without any frame — useful for article pages or focused reading."
-        code={justContentExample}
-      >
-        <div class="p-4 border rounded-lg">
-          <EventContent {ndk} event={sampleEvent} />
         </div>
-      </Demo>
 
-      <Demo
-        title="Custom Chrome"
-        description="Mix and match — use the card's frame but customize the layout or add your own elements."
-        code={customChromeExample}
-      >
-        <EventCard.Root {ndk} event={sampleEvent}>
-          <EventCard.Header />
+        <EventCard.Actions />
+      </EventCard.Root>
+    {/snippet}
 
-          <div class="my-4 p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+    <ComponentPageSectionTitle
+      title="Understanding the Pattern"
+      description="See how cards and content work together."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Full Card',
+          description: 'Complete social post',
+          command: 'npx shadcn@latest add event-card',
+          preview: fullCardPreview,
+          cardData: fullCardData
+        },
+        {
+          name: 'Content Only',
+          description: 'No chrome',
+          command: 'npx shadcn@latest add event-content',
+          preview: contentOnlyPreview,
+          cardData: contentOnlyData
+        },
+        {
+          name: 'Custom Chrome',
+          description: 'Mix and match',
+          command: 'npx shadcn@latest add event-card',
+          preview: customChromePreview,
+          cardData: customChromeData
+        }
+      ]}
+    />
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Examples" description="Explore each pattern in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={fullCardData}>
+        {#snippet preview()}
+          <EventCard.Root {ndk} event={sampleEvent}>
+            <EventCard.Header />
             <EventCard.Content />
-          </div>
+            <EventCard.Actions />
+          </EventCard.Root>
+        {/snippet}
+      </ComponentCard>
 
-          <EventCard.Actions />
-        </EventCard.Root>
-      </Demo>
+      <ComponentCard inline data={contentOnlyData}>
+        {#snippet preview()}
+          <div class="p-4 border rounded-lg">
+            <EventContent {ndk} event={sampleEvent} />
+          </div>
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={customChromeData}>
+        {#snippet preview()}
+          <EventCard.Root {ndk} event={sampleEvent}>
+            <EventCard.Header />
+
+            <div class="my-4 p-4 bg-muted/30 rounded-lg border-l-4 border-primary">
+              <EventCard.Content />
+            </div>
+
+            <EventCard.Actions />
+          </EventCard.Root>
+        {/snippet}
+      </ComponentCard>
     </section>
 
-    <section class="mt-12">
-      <h2 class="text-2xl font-semibold mb-4">Pre-built Block Components</h2>
+    <!-- Pre-built Blocks Section -->
+    <section class="mt-16">
+      <h2 class="text-3xl font-bold mb-4">Pre-built Block Components</h2>
       <p class="text-muted-foreground mb-6">
         For common use cases, the registry provides pre-built "block" components that combine
         the chrome with specific layouts and styling. These are ready-to-use implementations
@@ -174,7 +233,8 @@
     </div>
   {/if}
 
-  <section class="mt-12 p-6 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+  <!-- Design Philosophy -->
+  <section class="mt-16 p-6 bg-blue-500/10 border border-blue-500/20 rounded-lg">
     <h3 class="text-lg font-semibold mb-2">💡 Design Philosophy</h3>
     <p class="text-muted-foreground">
       Card components follow a composable-first approach: use the primitives (EventCard.Root, Header, etc.)
@@ -185,7 +245,7 @@
 </div>
 
 <style>
-  .prose :global(code) {
+  code {
     background: hsl(var(--muted));
     padding: 0.2em 0.4em;
     border-radius: 0.25rem;

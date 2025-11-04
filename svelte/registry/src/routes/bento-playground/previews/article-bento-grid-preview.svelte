@@ -80,7 +80,7 @@
             <div class="scale-75 w-80">
               <Article.Root {ndk} {article}>
                 <div class="h-[480px] rounded-xl overflow-hidden border border-border bg-card shadow-lg flex flex-col">
-                  <Article.Image class="h-64 w-full" showGradient={true} />
+                  <Article.Image class="h-64 w-full" />
                   <div class="flex-1 p-6 flex flex-col gap-3">
                     <Article.Title class="text-lg font-bold line-clamp-2" />
                     <Article.Summary class="text-sm text-muted-foreground line-clamp-3" maxLength={150} />

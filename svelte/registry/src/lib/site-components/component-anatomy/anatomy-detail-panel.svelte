@@ -25,7 +25,7 @@
 				{currentLayer.description}
 			</p>
 			<div class="flex gap-2 flex-wrap">
-				{#each currentLayer.props as prop (prop.name || prop)}
+				{#each currentLayer.props as prop (prop)}
 					<code class="bg-muted px-2 py-1 rounded text-sm">{prop}</code>
 				{/each}
 			</div>

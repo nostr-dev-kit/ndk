@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
-	import { cn } from '$lib/utils/utils';
+	import { cn } from '$lib/registry/utils/index';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import XIcon from '@lucide/svelte/icons/x';

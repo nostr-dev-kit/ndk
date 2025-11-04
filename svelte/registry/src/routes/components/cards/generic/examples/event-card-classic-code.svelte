@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
 	import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/registry/utils/index.js';
 
 	interface Props {
 		ndk: NDKSvelte;

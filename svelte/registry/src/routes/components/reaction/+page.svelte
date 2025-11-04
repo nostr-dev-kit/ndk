@@ -3,38 +3,21 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
-  // Import block components for preview
+  // Import block components
   import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components';
 
-  // Import primitives for examples
-  import { Reaction } from '$lib/registry/ui/reaction';
-
-  // Import primitive examples
+  // Import examples
   import ReactionDisplayBasic from './examples/reaction-display-basic.svelte';
-  import ReactionDisplayBasicRaw from './examples/reaction-display-basic.svelte?raw';
   import ReactionDisplayCustom from './examples/reaction-display-custom.svelte';
-  import ReactionDisplayCustomRaw from './examples/reaction-display-custom.svelte?raw';
-
-  // Import code examples
-  import MinimalCodeRaw from './examples/minimal-code.svelte?raw';
-  import ReactionSlackCodeRaw from './examples/reaction-slack-code.svelte?raw';
-
   import ReactionEmojiButtonExample from './examples/reaction-emoji-button-code.svelte';
-  import ReactionEmojiButtonCodeRaw from './examples/reaction-emoji-button-code.svelte?raw';
-
   import BasicExample from './examples/reaction-action-basic.svelte';
-  import BasicExampleRaw from './examples/reaction-action-basic.svelte?raw';
-
   import SlackLikeExample from './examples/slack-like.svelte';
-  import SlackLikeCodeRaw from './examples/slack-like-code.svelte?raw';
-
   import BuilderExample from './examples/reaction-action-builder.svelte';
-  import BuilderExampleRaw from './examples/reaction-action-builder.svelte?raw';
-
   import DelayedExample from './examples/delayed.svelte';
-  import DelayedCodeRaw from './examples/delayed-code.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -62,11 +45,92 @@
       }
     })();
   });
+
+  const reactionDisplayStandardData = {
+    name: 'reaction-display-standard',
+    title: 'Reaction.Display - Standard Emojis',
+    description: 'Renders standard unicode emojis.',
+    richDescription: 'Renders standard unicode emojis with configurable size. Perfect for displaying reaction counts and user reactions.',
+    command: 'npx shadcn@latest add reaction',
+    apiDocs: []
+  };
+
+  const reactionDisplayCustomData = {
+    name: 'reaction-display-custom',
+    title: 'Reaction.Display - Custom Emojis',
+    description: 'Renders custom emoji images using NIP-30.',
+    richDescription: 'Renders custom emoji images using NIP-30 emoji tags. Automatically handles both standard and custom emojis.',
+    command: 'npx shadcn@latest add reaction',
+    apiDocs: []
+  };
+
+  const reactionButtonData = {
+    name: 'reaction-button',
+    title: 'ReactionButton',
+    description: 'Minimal icon-first design.',
+    richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside other action buttons. Click to react with a heart.',
+    command: 'npx shadcn@latest add reaction-button',
+    apiDocs: []
+  };
+
+  const reactionSlackData = {
+    name: 'reaction-slack',
+    title: 'ReactionSlack',
+    description: 'Slack-style reactions display.',
+    richDescription: 'Slack-style reactions with horizontal and vertical layouts. Horizontal shows avatars in popover on hover. Vertical shows avatars inline. Best for displaying all reactions with user attribution.',
+    command: 'npx shadcn@latest add reaction-slack',
+    apiDocs: []
+  };
+
+  const reactionEmojiButtonData = {
+    name: 'reaction-emoji-button',
+    title: 'ReactionEmojiButton',
+    description: 'Reaction button with emoji picker.',
+    richDescription: 'Reaction button with emoji picker popover. Click to open emoji picker and select from your custom emojis and defaults. Uses bits-ui Popover component.',
+    command: 'npx shadcn@latest add reaction-emoji-button',
+    apiDocs: []
+  };
+
+  const basicActionData = {
+    name: 'reaction-action-basic',
+    title: 'Basic ReactionAction',
+    description: 'Click to react, long-press for picker.',
+    richDescription: 'Click to react with a heart, long-press to open emoji picker. Shows current reaction count.',
+    command: 'npx shadcn@latest add reaction',
+    apiDocs: []
+  };
+
+  const slackStyleData = {
+    name: 'slack-style',
+    title: 'Slack-Style Reactions',
+    description: 'Display all reactions with attribution.',
+    richDescription: 'Display all reactions sorted by count. Hover to see who reacted with each emoji. Click to add/remove your reaction.',
+    command: 'npx shadcn@latest add reaction',
+    apiDocs: []
+  };
+
+  const builderData = {
+    name: 'builder-usage',
+    title: 'Using the Builder',
+    description: 'Full control with createReactionAction().',
+    richDescription: 'Use createReactionAction() for full control over your UI markup with reactive state management.',
+    command: 'npx shadcn@latest add reaction',
+    apiDocs: []
+  };
+
+  const delayedData = {
+    name: 'delayed-reactions',
+    title: 'Cancellable Delayed Reactions',
+    description: 'Optimistic updates with cancel option.',
+    richDescription: 'Set delayed: 5 to show reactions immediately (optimistic update) but wait 5 seconds before publishing. Click again to cancel.',
+    command: 'npx shadcn@latest add reaction',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <h1 class="text-4xl font-bold mb-4">Reaction</h1>
     <p class="text-lg text-muted-foreground mb-6">
       Simple reaction button with long-press emoji picker and NIP-30/NIP-51 support. Long-press to open emoji picker with custom emojis from your NIP-51 kind:10030 list.
@@ -89,48 +153,183 @@
   </div>
 
   {#if sampleEvent}
-    <!-- Reaction Primitives Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Reaction Primitives</h2>
-      <p class="text-muted-foreground mb-8">
-        Low-level building blocks for rendering emoji reactions. Use these primitives to create custom reaction UIs.
-      </p>
+    <!-- Reaction Primitives Showcase -->
+    {#snippet displayStandardPreview()}
+      <ReactionDisplayBasic />
+    {/snippet}
 
-      <div class="space-y-12">
-        <Demo
-          title="Reaction.Display - Standard Emojis"
-          description="Renders standard unicode emojis with configurable size. Perfect for displaying reaction counts and user reactions."
-          code={ReactionDisplayBasicRaw}
-        >
-          <ReactionDisplayBasic />
-        </Demo>
+    {#snippet displayCustomPreview()}
+      {#if nip30ReactionEvent}
+        <ReactionDisplayCustom event={nip30ReactionEvent} />
+      {/if}
+    {/snippet}
 
-        {#if nip30ReactionEvent}
-          <Demo
-            title="Reaction.Display - Custom Emojis (NIP-30)"
-            description="Renders custom emoji images using NIP-30 emoji tags. Automatically handles both standard and custom emojis."
-            code={ReactionDisplayCustomRaw}
-          >
-            <ReactionDisplayCustom event={nip30ReactionEvent} />
-          </Demo>
-        {/if}
+    <ComponentPageSectionTitle
+      title="Reaction Primitives"
+      description="Low-level building blocks for rendering emoji reactions."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Standard Emojis',
+          description: 'Unicode emoji display',
+          command: 'npx shadcn@latest add reaction',
+          preview: displayStandardPreview,
+          cardData: reactionDisplayStandardData
+        },
+        ...(nip30ReactionEvent ? [{
+          name: 'Custom Emojis',
+          description: 'NIP-30 custom emojis',
+          command: 'npx shadcn@latest add reaction',
+          preview: displayCustomPreview,
+          cardData: reactionDisplayCustomData
+        }] : [])
+      ]}
+    />
+
+    <!-- Blocks Showcase -->
+    {#snippet buttonPreview()}
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-24">Default:</span>
+          <ReactionButton {ndk} event={sampleEvent} />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-24">Fire emoji:</span>
+          <ReactionButton {ndk} event={sampleEvent} emoji="🔥" />
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-24">No count:</span>
+          <ReactionButton {ndk} event={sampleEvent} showCount={false} />
+        </div>
       </div>
-    </section>
+    {/snippet}
 
-    <!-- Blocks Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Blocks</h2>
-      <p class="text-muted-foreground mb-8">
-        Pre-composed reaction button layouts ready to use. Install with a single command.
-      </p>
+    {#snippet slackPreview()}
+      <div class="space-y-8">
+        <div>
+          <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
+          <ReactionSlack {ndk} event={sampleEvent} />
+        </div>
 
-      <div class="space-y-12">
-        <Demo
-          title="ReactionButton"
-          description="Minimal icon-first design. Best for inline use in feeds or alongside other action buttons. Click to react with a heart."
-          component="reaction-button"
-          code={MinimalCodeRaw}
-        >
+        <div>
+          <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
+          <ReactionSlack {ndk} event={sampleEvent} variant="vertical" />
+        </div>
+      </div>
+    {/snippet}
+
+    {#snippet emojiButtonPreview()}
+      <ReactionEmojiButtonExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Blocks"
+      description="Pre-composed reaction button layouts ready to use."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'ReactionButton',
+          description: 'Minimal icon-first design',
+          command: 'npx shadcn@latest add reaction-button',
+          preview: buttonPreview,
+          cardData: reactionButtonData
+        },
+        {
+          name: 'ReactionSlack',
+          description: 'Slack-style reactions',
+          command: 'npx shadcn@latest add reaction-slack',
+          preview: slackPreview,
+          cardData: reactionSlackData
+        },
+        {
+          name: 'ReactionEmojiButton',
+          description: 'With emoji picker',
+          command: 'npx shadcn@latest add reaction-emoji-button',
+          preview: emojiButtonPreview,
+          cardData: reactionEmojiButtonData
+        }
+      ]}
+    />
+
+    <!-- Custom Implementation Showcase -->
+    {#snippet basicActionPreview()}
+      <BasicExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    {#snippet slackStylePreview()}
+      <SlackLikeExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    {#snippet builderPreview()}
+      <BuilderExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    {#snippet delayedPreview()}
+      <DelayedExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Custom Implementation"
+      description="Use the createReactionAction builder directly."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Basic',
+          description: 'Click to react',
+          command: 'npx shadcn@latest add reaction',
+          preview: basicActionPreview,
+          cardData: basicActionData
+        },
+        {
+          name: 'Slack-Style',
+          description: 'All reactions display',
+          command: 'npx shadcn@latest add reaction',
+          preview: slackStylePreview,
+          cardData: slackStyleData
+        },
+        {
+          name: 'Builder',
+          description: 'Full control',
+          command: 'npx shadcn@latest add reaction',
+          preview: builderPreview,
+          cardData: builderData
+        },
+        {
+          name: 'Delayed',
+          description: 'Cancellable reactions',
+          command: 'npx shadcn@latest add reaction',
+          preview: delayedPreview,
+          cardData: delayedData
+        }
+      ]}
+    />
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={reactionDisplayStandardData}>
+        {#snippet preview()}
+          <ReactionDisplayBasic />
+        {/snippet}
+      </ComponentCard>
+
+      {#if nip30ReactionEvent}
+        <ComponentCard inline data={reactionDisplayCustomData}>
+          {#snippet preview()}
+            <ReactionDisplayCustom event={nip30ReactionEvent} />
+          {/snippet}
+        </ComponentCard>
+      {/if}
+
+      <ComponentCard inline data={reactionButtonData}>
+        {#snippet preview()}
           <div class="flex flex-col gap-4">
             <div class="flex items-center gap-4">
               <span class="text-sm text-muted-foreground w-24">Default:</span>
@@ -150,14 +349,11 @@
               <span class="text-xs text-muted-foreground">← Click twice to cancel</span>
             </div>
           </div>
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="ReactionSlack"
-          description="Slack-style reactions with horizontal and vertical layouts. Horizontal shows avatars in popover on hover. Vertical shows avatars inline. Best for displaying all reactions with user attribution."
-          component="reaction-slack"
-          code={ReactionSlackCodeRaw}
-        >
+      <ComponentCard inline data={reactionSlackData}>
+        {#snippet preview()}
           <div class="space-y-8">
             <div>
               <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
@@ -175,59 +371,38 @@
               <p class="text-xs text-muted-foreground mt-2">💡 Click any reaction twice within 5 seconds to cancel</p>
             </div>
           </div>
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="ReactionEmojiButton"
-          description="Reaction button with emoji picker popover. Click to open emoji picker and select from your custom emojis and defaults. Uses bits-ui Popover component. Supports custom trigger via children."
-          component="reaction-emoji-button"
-          code={ReactionEmojiButtonCodeRaw}
-        >
+      <ComponentCard inline data={reactionEmojiButtonData}>
+        {#snippet preview()}
           <ReactionEmojiButtonExample {ndk} event={sampleEvent} />
-        </Demo>
-      </div>
-    </section>
+        {/snippet}
+      </ComponentCard>
 
-    <!-- Examples Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Custom Implementation</h2>
-      <p class="text-muted-foreground mb-8">
-        Use the createReactionAction builder directly to create custom reaction buttons.
-      </p>
-
-      <div class="space-y-12">
-        <Demo
-          title="Basic ReactionAction"
-          description="Click to react with a heart, long-press to open emoji picker. Shows current reaction count."
-          code={BasicExampleRaw}
-        >
+      <ComponentCard inline data={basicActionData}>
+        {#snippet preview()}
           <BasicExample {ndk} event={sampleEvent} />
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="Slack-Style Reactions"
-          description="Display all reactions sorted by count. Hover to see who reacted with each emoji. Click to add/remove your reaction. Uses allReactions map from the builder."
-          code={SlackLikeCodeRaw}
-        >
+      <ComponentCard inline data={slackStyleData}>
+        {#snippet preview()}
           <SlackLikeExample {ndk} event={sampleEvent} />
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="Using the Builder"
-          description="Use createReactionAction() for full control over your UI markup with reactive state management."
-          code={BuilderExampleRaw}
-        >
+      <ComponentCard inline data={builderData}>
+        {#snippet preview()}
           <BuilderExample {ndk} event={sampleEvent} />
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="Cancellable Delayed Reactions"
-          description="Set delayed: 5 to show reactions immediately (optimistic update) but wait 5 seconds before publishing. Click again to cancel."
-          code={DelayedCodeRaw}
-        >
+      <ComponentCard inline data={delayedData}>
+        {#snippet preview()}
           <DelayedExample {ndk} event={sampleEvent} />
-        </Demo>
-      </div>
+        {/snippet}
+      </ComponentCard>
     </section>
   {:else}
     <div class="flex items-center justify-center py-12">

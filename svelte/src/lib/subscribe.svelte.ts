@@ -324,8 +324,8 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
                 .then((sub) => {
                     subscription = sub;
                 })
-                .catch((error) => {
-                    console.error("[createSubscription] Failed to start subscription:", error);
+                .catch(() => {
+                    // Subscription failed to start
                 });
         } else {
             subscription = result;

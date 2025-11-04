@@ -3,7 +3,7 @@
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import { createUserInput } from '@nostr-dev-kit/svelte';
   import { Combobox } from 'bits-ui';
-  import { cn } from '$lib/utils.js';
+  import { cn } from '$lib/registry/utils/index.js';
   import { User } from '$lib/registry/ui/user';
 
   interface Props {

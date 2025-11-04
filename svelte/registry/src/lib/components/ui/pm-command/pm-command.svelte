@@ -28,7 +28,7 @@
 </script>
 
 <script lang="ts">
-	import { cn } from '$lib/utils/utils';
+	import { cn } from '$lib/registry/utils/index';
 	import type { Command, Agent } from 'package-manager-detector';
 	import { resolveCommand } from 'package-manager-detector/commands';
 	import CopyButton from '$lib/components/ui/copy-button/copy-button.svelte';

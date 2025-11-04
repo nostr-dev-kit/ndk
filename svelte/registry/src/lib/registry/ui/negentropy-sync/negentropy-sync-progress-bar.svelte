@@ -34,7 +34,7 @@
       barClass
     )}
     style="width: {context.progress}%"
-  />
+  ></div>
   {#if showPercentage}
     <span class="absolute inset-0 flex items-center justify-center text-xs font-medium">
       {context.progress}%

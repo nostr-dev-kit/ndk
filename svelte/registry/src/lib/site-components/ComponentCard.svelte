@@ -46,10 +46,9 @@
 	interface Props {
 		data: ComponentCardData | null;
 		preview?: Snippet;
-		inline?: boolean;
 	}
 
-	let { data, preview, inline = false }: Props = $props();
+	let { data, preview }: Props = $props();
 
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>

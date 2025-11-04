@@ -310,13 +310,13 @@
   <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={liveDemoData}>
+    <ComponentCard data={liveDemoData}>
       {#snippet preview()}
         <InteractiveDemo {ndk} />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={variantData}>
+    <ComponentCard data={variantData}>
       {#snippet preview()}
         <VariantComparison {ndk} />
       {/snippet}

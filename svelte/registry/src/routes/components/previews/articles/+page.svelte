@@ -157,7 +157,7 @@
   <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={cardData}>
+    <ComponentCard data={cardData}>
       {#snippet preview()}
         {#if sampleNote}
           <ArticleCardExample {ndk} event={sampleNote} />
@@ -169,7 +169,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={inlineData}>
+    <ComponentCard data={inlineData}>
       {#snippet preview()}
         {#if sampleNote}
           <ArticleInlineExample {ndk} event={sampleNote} />
@@ -181,7 +181,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={compactData}>
+    <ComponentCard data={compactData}>
       {#snippet preview()}
         {#if sampleNote}
           <ArticleCompactExample {ndk} event={sampleNote} />

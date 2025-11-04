@@ -150,13 +150,13 @@
   <ComponentPageSectionTitle title="Block Variants" description="Explore each relay input block variant in detail" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={relayInputMetadata.cards[0]}>
+    <ComponentCard data={relayInputMetadata.cards[0]}>
       {#snippet preview()}
         <RelayInputBlock {ndk} bind:value={blockDemoUrl} />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayInputMetadata.cards[1]}>
+    <ComponentCard data={relayInputMetadata.cards[1]}>
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
@@ -167,7 +167,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayInputMetadata.cards[2]}>
+    <ComponentCard data={relayInputMetadata.cards[2]}>
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
@@ -178,7 +178,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayInputMetadata.cards[3]}>
+    <ComponentCard data={relayInputMetadata.cards[3]}>
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
@@ -194,25 +194,25 @@
   <ComponentPageSectionTitle title="Component Variants" description="Explore each component variant in detail" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={relayInputMetadata.cards[4]}>
+    <ComponentCard data={relayInputMetadata.cards[4]}>
       {#snippet preview()}
         <BasicExample />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayInputMetadata.cards[5]}>
+    <ComponentCard data={relayInputMetadata.cards[5]}>
       {#snippet preview()}
         <WithLabelExample />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayInputMetadata.cards[6]}>
+    <ComponentCard data={relayInputMetadata.cards[6]}>
       {#snippet preview()}
         <ValidationExample />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayInputMetadata.cards[7]}>
+    <ComponentCard data={relayInputMetadata.cards[7]}>
       {#snippet preview()}
         <DisabledExample />
       {/snippet}

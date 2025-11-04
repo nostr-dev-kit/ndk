@@ -1,10 +1,17 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
+
   interface Props {
     title: string;
     description: string;
+    children?: {
+      preview?: Snippet;
+      code?: Snippet;
+      props?: Snippet;
+    };
   }
 
-  let { title, description }: Props = $props();
+  let { title, description, children }: Props = $props();
 
   let activeTab = $state<'preview' | 'code' | 'props'>('preview');
 </script>

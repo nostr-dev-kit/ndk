@@ -4,7 +4,7 @@
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui';
   import UIPrimitivePageTemplate from '$lib/templates/UIPrimitivePageTemplate.svelte';
-  import ComponentAnatomy from '$site-components/component-anatomy.svelte';
+  import ComponentAnatomy from '$site-components/component-anatomy/index.js';
   import { articleMetadata } from '$lib/ui-registry/article';
 
   // Import examples
@@ -34,7 +34,7 @@
 </svelte:head>
 
 {#if sampleArticle}
-  <UIPrimitivePageTemplate metadata={articleMetadata} {ndk} anatomyPreview={anatomyPreview}>
+  <UIPrimitivePageTemplate metadata={articleMetadata} {ndk}>
     {#snippet anatomyPreview()}
       <Article.Root {ndk} article={sampleArticle}>
         <ComponentAnatomy.Layer id="root" label="Article.Root" description="Context provider for article data">

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { afterNavigate } from '$app/navigation';
+  import { SvelteSet } from 'svelte/reactivity';
 
   interface TocItem {
     id: string;
@@ -20,7 +21,7 @@
     // Extract headings from the page
     const headings = Array.from(document.querySelectorAll('.main-content h2, .main-content h3'));
 
-    const usedIds = new Set<string>();
+    const usedIds = new SvelteSet<string>();
     items = headings.map((heading) => {
       // Create an ID if one doesn't exist
       if (!heading.id) {

@@ -463,6 +463,7 @@
 	<div
 		class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
 		onclick={closePrimitiveDrawer}
+		onkeydown={(e) => e.key === 'Escape' && closePrimitiveDrawer()}
 		role="button"
 		tabindex="-1"
 	></div>

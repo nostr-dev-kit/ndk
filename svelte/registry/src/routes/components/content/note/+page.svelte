@@ -63,25 +63,26 @@ Pretty cool, right? #awesome`);
 {/snippet}
 
 <!-- Showcase blocks with preview snippets -->
-{@const showcaseBlocks: ShowcaseBlock[] = [
-  {
-    name: 'Basic Rendering',
-    description: 'Auto-detects content',
-    command: 'npx shadcn@latest add event-content',
-    preview: basicPreview,
-    cardData: contentNoteBasicCard
-  },
-  {
-    name: 'Custom Snippets',
-    description: 'Override rendering',
-    command: 'npx shadcn@latest add event-content',
-    preview: customSnippetsPreview,
-    cardData: contentNoteCustomSnippetsCard
-  }
-]}
+{#if true}
+  {@const showcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Basic Rendering',
+      description: 'Auto-detects content',
+      command: 'npx shadcn@latest add event-content',
+      preview: basicPreview,
+      cardData: contentNoteBasicCard
+    },
+    {
+      name: 'Custom Snippets',
+      description: 'Override rendering',
+      command: 'npx shadcn@latest add event-content',
+      preview: customSnippetsPreview,
+      cardData: contentNoteCustomSnippetsCard
+    }
+  ]}
 
-<!-- Use the template -->
-<ComponentPageTemplate
+  <!-- Use the template -->
+  <ComponentPageTemplate
   metadata={contentNoteMetadata}
   {ndk}
   {showcaseBlocks}
@@ -95,3 +96,4 @@ Pretty cool, right? #awesome`);
   }}
   apiDocs={contentNoteMetadata.apiDocs}
 />
+{/if}

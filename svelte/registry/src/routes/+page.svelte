@@ -1,8 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk')!;
+  import { ndk } from '$lib/ndk.svelte';
 </script>
 
 <section class="border-grid">

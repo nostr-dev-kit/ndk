@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { sidebarOpen } from '$lib/stores/sidebar';
+	import { sidebar } from '$lib/stores/sidebar.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Menu01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 </script>
 
 <button
-	onclick={() => sidebarOpen.toggle()}
+	onclick={() => sidebar.toggleOpen()}
 	class="hamburger-button"
-	aria-label={$sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+	aria-label={sidebar.open ? 'Close sidebar' : 'Open sidebar'}
 >
-	{#if $sidebarOpen}
+	{#if sidebar.open}
 		<HugeiconsIcon icon={Cancel01Icon} size={24} strokeWidth={2} />
 	{:else}
 		<HugeiconsIcon icon={Menu01Icon} size={24} strokeWidth={2} />

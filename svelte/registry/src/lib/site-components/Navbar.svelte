@@ -3,7 +3,7 @@
   import { ndk } from '$lib/ndk.svelte';
   import { themeManager } from '$lib/theme.svelte';
   import { User } from '$lib/registry/ui';
-  import { sidebarOpen } from '$lib/stores/sidebar';
+  import { sidebar } from '$lib/stores/sidebar.svelte';
   import { mainNav } from '$lib/navigation';
 
   interface Props {
@@ -132,7 +132,7 @@
       {#if showMobileMenu}
         <button
           class="mobile-menu-button"
-          onclick={() => sidebarOpen.toggle()}
+          onclick={() => sidebar.toggleOpen()}
           aria-label="Toggle menu"
         >
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

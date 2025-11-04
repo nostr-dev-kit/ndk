@@ -74,44 +74,6 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 /**
- * Copy text to clipboard
- * @param text - Text to copy
- * @returns Promise that resolves when copied
- */
-export async function copyToClipboard(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    await navigator.clipboard.writeText(text);
-  } else {
-    // Fallback for older browsers
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-  }
-}
-
-/**
- * Share content using Web Share API or fallback
- * @param data - Share data
- * @returns Promise that resolves when shared
- */
-export async function share(data: {
-  title?: string;
-  text?: string;
-  url?: string;
-}): Promise<void> {
-  if (navigator.share && navigator.canShare?.(data)) {
-    await navigator.share(data);
-  } else if (data.url) {
-    await copyToClipboard(data.url);
-  }
-}
-
-/**
  * Truncate text with ellipsis
  * @param text - Text to truncate
  * @param length - Maximum length

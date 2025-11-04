@@ -27,7 +27,8 @@ import {
   CloudUploadIcon,
   AtIcon,
   HighlighterIcon,
-  Tag01Icon
+  Tag01Icon,
+  CloudLoadingIcon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -111,8 +112,6 @@ export const componentCategories: NavCategory[] = [
       { name: 'Article', path: '/components/content/article', icon: NewsIcon, title: 'ArticleContent', description: 'Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars.', nip: 'NIP-23' },
       { name: 'Image', path: '/components/content/image', icon: Image02Icon, title: 'Image Content', description: 'Display image events with metadata and interactions. Renders images from NIP-68 events (kind 20).', nip: 'NIP-68' },
       { name: 'Mention', path: '/components/content/mention', icon: AtIcon, title: 'Mention', description: 'Render inline user mentions with automatic profile fetching and customizable styling.' },
-      { name: 'Event Content', path: '/components/event-content', icon: File01Icon, title: 'Event Content', description: 'Render the content of a Nostr event.' },
-      { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'A component to pick emojis.'},
     ]
   },
   {
@@ -130,6 +129,7 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'Threads', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
+      { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
     ]
   },
   {
@@ -165,6 +165,13 @@ export const componentCategories: NavCategory[] = [
     title: 'Media',
     items: [
       { name: 'Upload', path: '/components/media-upload', icon: CloudUploadIcon, title: 'Media Upload', description: 'Upload media files to Blossom servers. Support for images, videos, audio, and other file types with progress tracking.' },
+    ]
+  },
+  {
+    title: 'Negentropy',
+    nip: 'NIP-77',
+    items: [
+      { name: 'Sync Progress', path: '/components/negentropy-sync', icon: CloudLoadingIcon, title: 'Negentropy Sync', description: 'Monitor Negentropy sync progress across multiple relays with real-time stats and relay status. Choose from minimal badges to detailed dashboards.', nip: 'NIP-77' },
     ]
   },
 ];

@@ -15,7 +15,7 @@
     <div class="text-sm text-gray-600">
       <p class="font-medium">Splits:</p>
       <ul class="mt-1 space-y-1">
-        {#each ctx.splits as split}
+        {#each ctx.splits as split (split)}
           <li>{split.pubkey.slice(0, 8)}... - {split.amount} sats</li>
         {/each}
       </ul>

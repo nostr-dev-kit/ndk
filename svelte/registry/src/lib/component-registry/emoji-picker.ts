@@ -41,7 +41,7 @@ export const emojiPickerAutocompleteCard: ComponentCardData = {
 export const emojiPickerApiDocs: ApiDoc[] = [
   {
     name: 'createEmojiPicker',
-    description: 'Builder function for aggregating emojis from multiple sources with smart ordering.',
+    description: 'Builder function for aggregating emojis from multiple sources with smart ordering. Returns EmojiPickerState with emojis (EmojiData[] - ordered emojis: user saved, aggregated from pubkeys, then defaults).',
     importPath: "import { createEmojiPicker } from '@nostr-dev-kit/svelte'",
     props: [
       {
@@ -56,17 +56,7 @@ export const emojiPickerApiDocs: ApiDoc[] = [
         required: true,
         description: 'NDK instance'
       }
-    ],
-    returns: {
-      name: 'EmojiPickerState',
-      properties: [
-        {
-          name: 'emojis',
-          type: 'EmojiData[]',
-          description: 'Ordered emojis: user saved, aggregated from pubkeys, then defaults'
-        }
-      ]
-    }
+    ]
   },
   {
     name: 'EmojiPicker.List',

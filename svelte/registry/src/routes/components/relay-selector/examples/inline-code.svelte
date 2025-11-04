@@ -31,7 +31,7 @@
 
 		{#if showSelectedChips && selected.length > 0}
 			<div class="flex flex-wrap gap-2">
-				{#each selected as relayUrl}
+				{#each selected as relayUrl (relayUrl)}
 					<div
 						class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-muted text-muted-foreground"
 					>

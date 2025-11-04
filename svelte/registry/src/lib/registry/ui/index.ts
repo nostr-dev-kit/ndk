@@ -27,6 +27,7 @@ export { MediaUpload, createMediaUpload, type MediaUploadResult, type MediaUploa
 export { Reaction } from './reaction/index.js';
 export { FollowPack, FOLLOW_PACK_CONTEXT_KEY, type FollowPackContext } from './follow-pack/index.js';
 export { Relay, type RelayContext } from './relay/index.js';
+export { NegentrogySync, type NegentropySyncContext } from './negentropy-sync/index.js';
 
 // Zap primitives (display only)
 export { Amount as ZapAmount, Content as ZapContent } from './zap/index.js';

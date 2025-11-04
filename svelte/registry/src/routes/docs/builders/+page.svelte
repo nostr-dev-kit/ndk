@@ -141,7 +141,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
   }))
 );
 
-{#each cards as { event, state }}
+{#each cards as { event, state } (event.id)}
   <article>
     <p>{state.profile?.displayName}</p>
     <p>{state.replies.count} replies</p>
@@ -175,7 +175,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
 </script>
 
 <div class="feed">
-  {#each cards as { event, state }}
+  {#each cards as { event, state } (event.id)}
     <article>
       <header>
         <img src={state.profile?.picture} alt="" />

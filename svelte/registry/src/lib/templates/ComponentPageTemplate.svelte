@@ -49,7 +49,7 @@
         {@render editPropsSection()}
       {:else if metadata.editProps && metadata.editProps.length > 0}
         <EditProps.Root>
-          {#each metadata.editProps as prop}
+          {#each metadata.editProps as prop (prop.name || prop)}
             <EditProps.Prop
               name={prop.name}
               type={prop.type}
@@ -114,7 +114,7 @@
       />
 
       <section class="py-12 space-y-16">
-        {#each componentsSection.cards as cardData, index}
+        {#each componentsSection.cards as cardData, index (cardData.id || index)}
           <ComponentCard inline data={cardData}>
             {#snippet preview()}
               {#if componentsSection.previews?.[cardData.name]}
@@ -138,11 +138,6 @@
     <!-- Custom Sections (Anatomy, Primitives, etc.) -->
     {#if customSections}
       {@render customSections()}
-    {/if}
-
-    <!-- API Documentation Section -->
-    {#if apiDocs.length > 0}
-      <ComponentAPI components={apiDocs} />
     {/if}
   </div>
 {/if}

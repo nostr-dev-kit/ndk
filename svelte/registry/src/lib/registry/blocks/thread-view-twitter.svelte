@@ -37,7 +37,7 @@
 {#if thread.focusedEventId}
   <div class="thread-container {className}">
     <div class="thread flex flex-col w-full divide-y rounded-xl overflow-hidden">
-      {#each thread.events as node, i}
+      {#each thread.events as node, i (node.id)}
         {#if node.event}
           {@const isFocused = node.event.id === thread.focusedEventId}
           {@const isFirst = i === 0}
@@ -72,7 +72,7 @@
       {/each}
 
       {#if thread.replies.length > 0}
-        {#each thread.replies as reply}
+        {#each thread.replies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">
@@ -98,7 +98,7 @@
       </div>
 
       <div class="thread">
-        {#each thread.otherReplies as reply}
+        {#each thread.otherReplies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
               <div class="timeline">

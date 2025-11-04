@@ -6,7 +6,7 @@
   import Summary from '../../ui/article/article-summary.svelte';
   import ReadingTime from '../../ui/article/article-reading-time.svelte';
   import { User } from '../../ui/user';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/context.svelte.js';
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';

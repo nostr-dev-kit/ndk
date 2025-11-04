@@ -69,7 +69,7 @@
     class="absolute inset-0 overflow-y-auto scrollbar-hide opacity-70"
   >
     <div class="space-y-0">
-      {#each articles as article}
+      {#each articles as article (article.id)}
         <div class="grayscale hover:grayscale-0 transition-all duration-500">
           <Article.Root {ndk} {article}>
             <div class="flex gap-4 p-4 border-b border-border bg-card hover:bg-muted/50 transition-colors">

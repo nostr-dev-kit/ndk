@@ -161,7 +161,7 @@ const reposts = ndk.$metaSubscribe(() => ({
   sort: 'tag-time'
 }));
 
-{#each reposts.events as event}
+{#each reposts.events as event (event.name || event)}
   {@const reposters = reposts.eventsTagging(event)}
   <EventCard {event}>
     <span>Reposted by {reposters.length} people</span>
@@ -180,7 +180,7 @@ const articles = ndk.$metaSubscribe(() => ({
   sort: 'count'
 }));
 
-{#each articles.events as article}
+{#each articles.events as article (article.id)}
   {@const comments = articles.eventsTagging(article)}
   <ArticleCard {article}>
     <span>{comments.length} comments</span>
@@ -199,7 +199,7 @@ const popular = ndk.$metaSubscribe(() => ({
   sort: 'count'
 }));
 
-{#each popular.events as event}
+{#each popular.events as event (event.name || event)}
   {@const reactions = popular.eventsTagging(event)}
   <EventCard {event}>
     <span>{reactions.length} reactions</span>

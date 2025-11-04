@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { EmojiData } from './createEmojiPicker.svelte.js';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import Item from './emoji-picker-item.svelte';
 
   interface Props {
@@ -24,7 +24,7 @@
   class={cn('grid gap-2 max-w-full', className)}
   style="grid-template-columns: repeat({columns}, minmax(0, 1fr));"
 >
-  {#each emojis as emojiData}
+  {#each emojis as emojiData (emojiData.unicode)}
     <Item emoji={emojiData} {onSelect} />
   {/each}
 </div>

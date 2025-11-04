@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import EventContent from '../../ui/event-content.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
 
   interface Props {
     /** Maximum number of lines to display before truncating (uses CSS line-clamp) */

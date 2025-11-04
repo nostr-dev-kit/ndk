@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
 
   interface Props {
     /** NDK instance */

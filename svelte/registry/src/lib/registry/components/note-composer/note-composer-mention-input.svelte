@@ -6,7 +6,7 @@
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
 	import { UserInput } from '../../ui/user-input/index.js';
 	import { User } from '../../ui/user/index.js';
-	import { cn } from '../../utils/index.js';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		/** Additional CSS classes */

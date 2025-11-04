@@ -47,6 +47,79 @@
       }
     })();
   });
+
+  // Move const declarations here to avoid TDZ issues with snippets
+  const getPrimitivesBlocks = (displayStandardPreview: any, displayCustomPreview: any, hasNip30Event: boolean): ShowcaseBlock[] => [
+    {
+      name: 'Standard Emojis',
+      description: 'Unicode emoji display',
+      command: 'npx shadcn@latest add reaction',
+      preview: displayStandardPreview,
+      cardData: reactionDisplayStandardCard
+    },
+    ...(hasNip30Event ? [{
+      name: 'Custom Emojis',
+      description: 'NIP-30 custom emojis',
+      command: 'npx shadcn@latest add reaction',
+      preview: displayCustomPreview,
+      cardData: reactionDisplayCustomCard
+    }] : [])
+  ];
+
+  const getBlocksBlocks = (buttonPreview: any, slackPreview: any, emojiButtonPreview: any): ShowcaseBlock[] => [
+    {
+      name: 'ReactionButton',
+      description: 'Minimal icon-first design',
+      command: 'npx shadcn@latest add reaction-button',
+      preview: buttonPreview,
+      cardData: reactionButtonCard
+    },
+    {
+      name: 'ReactionSlack',
+      description: 'Slack-style reactions',
+      command: 'npx shadcn@latest add reaction-slack',
+      preview: slackPreview,
+      cardData: reactionSlackCard
+    },
+    {
+      name: 'ReactionEmojiButton',
+      description: 'With emoji picker',
+      command: 'npx shadcn@latest add reaction-emoji-button',
+      preview: emojiButtonPreview,
+      cardData: reactionEmojiButtonCard
+    }
+  ];
+
+  const getCustomBlocks = (basicActionPreview: any, slackStylePreview: any, builderPreview: any, delayedPreview: any): ShowcaseBlock[] => [
+    {
+      name: 'Basic',
+      description: 'Click to react',
+      command: 'npx shadcn@latest add reaction',
+      preview: basicActionPreview,
+      cardData: reactionActionBasicCard
+    },
+    {
+      name: 'Slack-Style',
+      description: 'All reactions display',
+      command: 'npx shadcn@latest add reaction',
+      preview: slackStylePreview,
+      cardData: reactionSlackStyleCard
+    },
+    {
+      name: 'Builder',
+      description: 'Full control',
+      command: 'npx shadcn@latest add reaction',
+      preview: builderPreview,
+      cardData: reactionBuilderCard
+    },
+    {
+      name: 'Delayed',
+      description: 'Cancellable reactions',
+      command: 'npx shadcn@latest add reaction',
+      preview: delayedPreview,
+      cardData: reactionDelayedCard
+    }
+  ];
 </script>
 
 {#if sampleEvent}
@@ -205,83 +278,11 @@
     <DelayedExample {ndk} event={sampleEvent} />
   {/snippet}
 
-  <!-- Primitives showcase blocks -->
-  {@const primitivesBlocks: ShowcaseBlock[] = [
-    {
-      name: 'Standard Emojis',
-      description: 'Unicode emoji display',
-      command: 'npx shadcn@latest add reaction',
-      preview: displayStandardPreview,
-      cardData: reactionDisplayStandardCard
-    },
-    ...(nip30ReactionEvent ? [{
-      name: 'Custom Emojis',
-      description: 'NIP-30 custom emojis',
-      command: 'npx shadcn@latest add reaction',
-      preview: displayCustomPreview,
-      cardData: reactionDisplayCustomCard
-    }] : [])
-  ]}
-
-  <!-- Blocks showcase blocks -->
-  {@const blocksBlocks: ShowcaseBlock[] = [
-    {
-      name: 'ReactionButton',
-      description: 'Minimal icon-first design',
-      command: 'npx shadcn@latest add reaction-button',
-      preview: buttonPreview,
-      cardData: reactionButtonCard
-    },
-    {
-      name: 'ReactionSlack',
-      description: 'Slack-style reactions',
-      command: 'npx shadcn@latest add reaction-slack',
-      preview: slackPreview,
-      cardData: reactionSlackCard
-    },
-    {
-      name: 'ReactionEmojiButton',
-      description: 'With emoji picker',
-      command: 'npx shadcn@latest add reaction-emoji-button',
-      preview: emojiButtonPreview,
-      cardData: reactionEmojiButtonCard
-    }
-  ]}
-
-  <!-- Custom Implementation showcase blocks -->
-  {@const customBlocks: ShowcaseBlock[] = [
-    {
-      name: 'Basic',
-      description: 'Click to react',
-      command: 'npx shadcn@latest add reaction',
-      preview: basicActionPreview,
-      cardData: reactionActionBasicCard
-    },
-    {
-      name: 'Slack-Style',
-      description: 'All reactions display',
-      command: 'npx shadcn@latest add reaction',
-      preview: slackStylePreview,
-      cardData: reactionSlackStyleCard
-    },
-    {
-      name: 'Builder',
-      description: 'Full control',
-      command: 'npx shadcn@latest add reaction',
-      preview: builderPreview,
-      cardData: reactionBuilderCard
-    },
-    {
-      name: 'Delayed',
-      description: 'Cancellable reactions',
-      command: 'npx shadcn@latest add reaction',
-      preview: delayedPreview,
-      cardData: reactionDelayedCard
-    }
-  ]}
-
   <!-- Custom sections for additional showcase sections -->
   {#snippet customSections()}
+    {@const blocksBlocks = getBlocksBlocks(buttonPreview, slackPreview, emojiButtonPreview)}
+    {@const customBlocks = getCustomBlocks(basicActionPreview, slackStylePreview, builderPreview, delayedPreview)}
+
     <!-- Blocks Showcase -->
     <ComponentPageSectionTitle
       title="Blocks"
@@ -298,6 +299,8 @@
 
     <ComponentsShowcaseGrid blocks={customBlocks} />
   {/snippet}
+
+  {@const primitivesBlocks = getPrimitivesBlocks(displayStandardPreview, displayCustomPreview, !!nip30ReactionEvent)}
 
   <!-- Use the template -->
   <ComponentPageTemplate

@@ -24,7 +24,7 @@
 <div class="custom-emoji-demo">
   <h3>Custom Emojis (NIP-30)</h3>
   <div class="emoji-row">
-    {#each customEmojis as { emoji, url, shortcode }}
+    {#each customEmojis as { emoji, url, shortcode } (shortcode)}
       <div class="emoji-item">
         <Reaction.Display {emoji} {url} {shortcode} class="w-8 h-8" />
         <span class="shortcode">{shortcode}</span>

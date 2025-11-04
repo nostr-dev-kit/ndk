@@ -102,7 +102,7 @@
 					<section class="section">
 						<h3 class="section-title" class:inline>Related Components</h3>
 						<div class="related-grid">
-							{#each data.relatedComponents as related}
+							{#each data.relatedComponents as related (related)}
 								<a href={related.path} class="related-card">
 									<div class="related-card-title">{related.title}</div>
 									<div class="related-card-name">{related.name}</div>
@@ -124,7 +124,7 @@
 						<div class="dependencies">
 							<h4 class="dependencies-title">Dependencies</h4>
 							<ul class="dependencies-list">
-								{#each data.dependencies as dep}
+								{#each data.dependencies as dep (dep)}
 									<li><code>{dep}</code></li>
 								{/each}
 							</ul>
@@ -135,7 +135,7 @@
 						<div class="dependencies">
 							<h4 class="dependencies-title">Registry Dependencies</h4>
 							<ul class="dependencies-list">
-								{#each data.registryDependencies as dep}
+								{#each data.registryDependencies as dep (dep)}
 									<li><code>{dep}</code></li>
 								{/each}
 							</ul>

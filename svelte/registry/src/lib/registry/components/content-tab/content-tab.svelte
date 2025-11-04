@@ -31,7 +31,8 @@
   import type { NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
   import type { Snippet } from 'svelte';
   import { createContentSampler, type ContentTab as ContentTabType } from '../../hooks/content-tab';
-  import { cn, kindLabel } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
+  import { kindLabel } from '../../utils/kind-label.js';
 
   interface Props {
     /** NDK instance */

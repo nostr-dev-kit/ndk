@@ -5,7 +5,7 @@
   import { Tooltip } from 'bits-ui';
   import AvatarGroup from '../../components/avatar-group/avatar-group.svelte';
   import { Reaction } from '../../ui/reaction';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
 
   interface Props {
     /** NDK instance */

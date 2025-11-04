@@ -69,7 +69,7 @@
     class="absolute inset-0 overflow-x-auto scrollbar-hide opacity-70"
   >
     <div class="flex gap-6 p-6 h-full items-center">
-      {#each articles as article, i}
+      {#each articles as article, i (article.id)}
         <Motion
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}

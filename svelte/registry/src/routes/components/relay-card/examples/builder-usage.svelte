@@ -32,7 +32,7 @@
 		</div>
 	{:else}
 		<div class="space-y-2">
-			{#each topRelays as relay}
+			{#each topRelays as relay (relay)}
 				<Relay.Root {ndk} relayUrl={relay.url}>
 					<div class="flex items-center gap-3 p-3 bg-card border border-border rounded-lg">
 						<Relay.Icon class="w-10 h-10" />

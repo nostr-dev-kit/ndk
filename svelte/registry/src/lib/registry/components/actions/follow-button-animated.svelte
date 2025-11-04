@@ -4,7 +4,7 @@
   import { createFollowAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { Motion } from 'svelte-motion';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import { User } from '../../ui/user/index.js';
 
   interface Props {

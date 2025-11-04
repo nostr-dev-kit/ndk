@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
-	import { cn } from '../../utils/index.js';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		/** Placeholder text */

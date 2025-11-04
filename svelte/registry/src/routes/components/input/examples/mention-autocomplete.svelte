@@ -148,7 +148,7 @@
             {searchQuery ? 'No users found' : 'Start typing to search...'}
           </div>
         {:else}
-          {#each userInput.results as result, index}
+          {#each userInput.results as result, index (result.user.pubkey || index)}
             <button
               class="w-full border-none bg-transparent p-0 cursor-pointer transition-colors"
               class:bg-accent={index === selectedIndex}

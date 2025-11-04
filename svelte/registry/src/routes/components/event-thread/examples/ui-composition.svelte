@@ -14,7 +14,7 @@
 {#if thread.focusedEventId}
   <div class="border border-border rounded-lg overflow-hidden">
     <!-- Parent Chain -->
-    {#each thread.events as node}
+    {#each thread.events as node (node.id)}
       {#if node.event}
         {#key node.event.id}
           {@const isFocused = node.event.id === thread.focusedEventId}
@@ -65,7 +65,7 @@
           {thread.replies.length} {thread.replies.length === 1 ? 'Reply' : 'Replies'}
         </h3>
       </div>
-      {#each thread.replies as reply}
+      {#each thread.replies as reply (reply.id)}
         <EventCard.Root {ndk} event={reply}>
           <div
             class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"
@@ -93,7 +93,7 @@
             : 'Replies'} to Other Events
         </h3>
       </div>
-      {#each thread.otherReplies as reply}
+      {#each thread.otherReplies as reply (reply.id)}
         <EventCard.Root {ndk} event={reply}>
           <div
             class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"

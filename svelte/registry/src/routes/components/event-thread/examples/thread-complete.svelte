@@ -18,7 +18,7 @@
 
 {#if thread.focusedEventId}
   <div class="border border-border overflow-hidden">
-    {#each thread.events as node}
+    {#each thread.events as node (node.id)}
       {#if node.event}
       {#key node.event.id}
         {#if node.event.id === thread.focusedEventId}
@@ -72,7 +72,7 @@
           {thread.replies.length} {thread.replies.length === 1 ? 'Reply' : 'Replies'} to Focused Event
         </h3>
       </div>
-      {#each thread.replies as reply}
+      {#each thread.replies as reply (reply.id)}
         <EventCard.Root {ndk} event={reply}>
           <div
             class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"
@@ -97,7 +97,7 @@
           {thread.otherReplies.length} {thread.otherReplies.length === 1 ? 'Reply' : 'Replies'} to Other Thread Events
         </h3>
       </div>
-      {#each thread.otherReplies as reply}
+      {#each thread.otherReplies as reply (reply.id)}
         <EventCard.Root {ndk} event={reply}>
           <div
             class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"

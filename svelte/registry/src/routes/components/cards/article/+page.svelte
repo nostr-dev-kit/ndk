@@ -244,7 +244,7 @@
 		{#snippet portraitPreview()}
 			<ScrollArea orientation="horizontal" class="w-full">
 				<div class="flex gap-6 pb-4">
-					{#each displayArticles as article}
+					{#each displayArticles as article (article.id)}
 						<ArticleCardPortrait {ndk} {article} />
 					{/each}
 				</div>
@@ -261,7 +261,7 @@
 
 		{#snippet mediumPreview()}
 			<div class="w-full max-w-3xl space-y-4">
-				{#each displayArticles.slice(0, 2) as article}
+				{#each displayArticles.slice(0, 2) as article (article.id)}
 					<ArticleCardMedium {ndk} {article} />
 				{/each}
 			</div>
@@ -270,7 +270,7 @@
 		{#snippet neonPreview()}
 			<ScrollArea orientation="horizontal" class="w-full">
 				<div class="flex gap-6 pb-4">
-					{#each displayArticles as article}
+					{#each displayArticles as article (article.id)}
 						<ArticleCardNeon {ndk} {article} />
 					{/each}
 				</div>
@@ -368,7 +368,7 @@
 					{#snippet preview()}
 						<ScrollArea orientation="horizontal" class="w-full">
 							<div class="flex gap-6 pb-4">
-								{#each displayArticles as article}
+								{#each displayArticles as article (article.id)}
 									<ArticleCardPortrait {ndk} {article} />
 								{/each}
 							</div>
@@ -387,7 +387,7 @@
 				<ComponentCard inline data={mediumCardData}>
 					{#snippet preview()}
 						<div class="space-y-4 max-w-2xl mx-auto">
-							{#each displayArticles as article}
+							{#each displayArticles as article (article.id)}
 								<ArticleCardMedium {ndk} {article} />
 							{/each}
 						</div>
@@ -398,7 +398,7 @@
 					{#snippet preview()}
 						<ScrollArea orientation="horizontal" class="w-full">
 							<div class="flex gap-6 pb-4">
-								{#each displayArticles as article}
+								{#each displayArticles as article (article.id)}
 									<ArticleCardNeon {ndk} {article} />
 								{/each}
 							</div>
@@ -488,7 +488,7 @@
 			<div>
 				<h3 class="text-lg font-bold mb-4">Props</h3>
 				<div class="space-y-4">
-					{#each data.props as prop}
+					{#each data.props as prop (prop.name || prop)}
 						<div class="bg-muted/50 border border-border rounded-lg p-4">
 							<div class="flex justify-between items-start mb-2">
 								<code class="font-mono font-semibold text-primary">{prop.name}</code>

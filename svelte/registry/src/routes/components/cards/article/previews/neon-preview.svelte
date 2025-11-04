@@ -34,7 +34,7 @@
 <div class="relative h-full w-full overflow-hidden min-h-[400px]">
 	<!-- Background: Neon cards (grayscale) -->
 	<div class="absolute inset-0 flex flex-col gap-6 justify-center p-8 opacity-70">
-		{#each articles.slice(0, 2) as article, i}
+		{#each articles.slice(0, 2) as article, i (article.id)}
 			<Motion
 				initial={{ opacity: 0, x: -30 }}
 				animate={{ opacity: 1, x: 0 }}

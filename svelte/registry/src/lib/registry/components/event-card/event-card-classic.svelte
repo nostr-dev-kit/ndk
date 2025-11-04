@@ -4,7 +4,7 @@
   import { EventCard } from './index.js';
   import { ReactionAction } from '../reaction/index.js';
   import RepostButton from '../actions/repost-button.svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
 
   interface Props {
     /** NDK instance */

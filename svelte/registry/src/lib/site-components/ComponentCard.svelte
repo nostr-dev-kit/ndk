@@ -99,7 +99,7 @@
 					<section class="flex flex-col gap-4">
 						<h3 class="text-xl font-semibold text-foreground m-0">Related Components</h3>
 						<div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
-							{#each data.relatedComponents as related (related)}
+							{#each data.relatedComponents as related (related.name)}
 								<a href={related.path} class="p-4 bg-muted border border-border rounded-lg no-underline transition-all duration-200 cursor-pointer hover:border-primary hover:bg-accent">
 									<div class="text-base font-semibold text-foreground mb-1">{related.title}</div>
 									<div class="text-sm text-muted-foreground">{related.name}</div>

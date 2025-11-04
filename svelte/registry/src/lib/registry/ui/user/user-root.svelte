@@ -74,7 +74,6 @@
     get user() { return user; },
     get ndkUser() { return ndkUser; },
     get profile() { return profile; },
-    get showHoverCard() { return false; },
     get onclick() { return onclick; }
   };
 

@@ -17,6 +17,7 @@
     max={3}
     size={32}
     spacing="tight"
+    direction="vertical"
     skipCurrentUser={true}
   />
   ```
@@ -50,6 +51,9 @@
     /** Overflow display variant */
     overflowVariant?: 'avatar' | 'text';
 
+    /** Stack direction */
+    direction?: 'horizontal' | 'vertical';
+
     /** Additional CSS classes */
     class?: string;
 
@@ -71,6 +75,7 @@
     size = 40,
     spacing = 'normal',
     overflowVariant = 'avatar',
+    direction = 'horizontal',
     class: className = '',
     onAvatarClick,
     onOverflowClick,
@@ -94,18 +99,20 @@
     loose: -6
   };
 
-  const marginLeft = spacingValues[spacing];
+  const marginValue = spacingValues[spacing];
+  const isVertical = $derived(direction === 'vertical');
 </script>
 
 <div
-  class={cn('avatar-group', 'flex items-center', className)}
+  class={cn('avatar-group', 'flex', isVertical ? 'flex-col items-start' : 'items-center', className)}
   role="group"
   aria-label="User avatars"
 >
   {#each visibleUsers as user, index (user.pubkey)}
     <div
       class="avatar-group-item"
-      style:margin-left={index === 0 ? '0' : `${marginLeft}px`}
+      style:margin-left={!isVertical && index !== 0 ? `${marginValue}px` : '0'}
+      style:margin-top={isVertical && index !== 0 ? `${marginValue}px` : '0'}
       style:z-index={visibleUsers.length - index}
     >
       <User.Root {ndk} {user}>
@@ -142,7 +149,8 @@
     {:else if overflowVariant === 'text'}
       <div
         class="avatar-group-overflow-text"
-        style:margin-left="8px"
+        style:margin-left={!isVertical ? '8px' : '0'}
+        style:margin-top={isVertical ? '8px' : '0'}
       >
         {#if onOverflowClick}
           <button
@@ -161,7 +169,8 @@
     {:else}
       <div
         class="avatar-group-overflow"
-        style:margin-left="{marginLeft}px"
+        style:margin-left={!isVertical ? `${marginValue}px` : '0'}
+        style:margin-top={isVertical ? `${marginValue}px` : '0'}
         style:width="{size}px"
         style:height="{size}px"
         style:font-size="{size * 0.35}px"

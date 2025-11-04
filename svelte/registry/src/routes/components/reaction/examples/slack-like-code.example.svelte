@@ -7,7 +7,7 @@
 </script>
 
 <div class="flex gap-2">
-  {#each reactionState.all as reaction (reaction.emoji || reaction)}
+  {#each reactionState.all as reaction (reaction.emoji)}
     <Tooltip.Root>
       <Tooltip.Trigger>
         <button

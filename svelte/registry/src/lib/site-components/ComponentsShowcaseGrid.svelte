@@ -18,7 +18,7 @@
 </script>
 
 <div class={cn('grid grid-cols-1 md:grid-cols-3 -mx-8', className)}>
-  {#each blocks as block, index (block.name || index)}
+  {#each blocks as block, index (block.name)}
     <div
       class={cn(
         'flex flex-col items-center justify-center px-8 py-12 min-h-[280px] border-border transition-colors group',

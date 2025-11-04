@@ -117,7 +117,7 @@
 							</span>
 						</div>
 						<div class="reposters-avatars">
-							{#each reposters.slice(0, 5) as reposter}
+							{#each reposters.slice(0, 5) as reposter (reposter.pubkey)}
 								<div class="avatar-wrapper">
 									<User.Root {ndk} pubkey={reposter.pubkey}>
 										<User.Avatar class="w-7 h-7" />

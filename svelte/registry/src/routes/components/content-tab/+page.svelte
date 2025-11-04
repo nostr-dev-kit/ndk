@@ -176,7 +176,7 @@
 
     <section class="min-h-[500px] lg:min-h-[60vh] py-12">
       <Tabs.Content value="basic">
-        <ComponentCard inline data={contentTabCard}>
+        <ComponentCard data={contentTabCard}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
@@ -202,7 +202,7 @@
       </Tabs.Content>
 
       <Tabs.Content value="sorting">
-        <ComponentCard inline data={contentTabCard}>
+        <ComponentCard data={contentTabCard}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
@@ -229,7 +229,7 @@
       </Tabs.Content>
 
       <Tabs.Content value="custom">
-        <ComponentCard inline data={contentTabCard}>
+        <ComponentCard data={contentTabCard}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">

@@ -106,7 +106,7 @@
   />
 
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={negentropySyncProgressMinimalCard}>
+    <ComponentCard data={negentropySyncProgressMinimalCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-md mx-auto">
           <NegentropySyncProgressMinimal {ndk} {filters} {relayUrls} />
@@ -117,7 +117,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={negentropySyncProgressDetailedCard}>
+    <ComponentCard data={negentropySyncProgressDetailedCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-2xl mx-auto">
           <NegentropySyncProgressDetailed {ndk} {filters} {relayUrls} />
@@ -125,7 +125,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={negentropySyncProgressAnimatedCard}>
+    <ComponentCard data={negentropySyncProgressAnimatedCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-2xl mx-auto">
           <NegentropySyncProgressAnimated {ndk} {filters} {relayUrls} />
@@ -133,7 +133,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={negentropySyncProgressCompactCard}>
+    <ComponentCard data={negentropySyncProgressCompactCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 items-center">
           <div class="flex items-center gap-4">

@@ -150,13 +150,13 @@
   <ComponentPageSectionTitle title="UI Primitives" description="Primitive components for building custom relay card layouts" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={relayCardMetadata.cards[3]}>
+    <ComponentCard data={relayCardMetadata.cards[3]}>
       {#snippet preview()}
         <BasicExample {ndk} relayUrl={exampleRelay} />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={relayCardMetadata.cards[4]}>
+    <ComponentCard data={relayCardMetadata.cards[4]}>
       {#snippet preview()}
         <BuilderUsageExample {ndk} />
       {/snippet}

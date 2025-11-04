@@ -267,13 +267,13 @@
     <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
 
     <section class="py-12 space-y-16">
-      <ComponentCard inline data={feedCardData}>
+      <ComponentCard data={feedCardData}>
         {#snippet preview()}
           <HighlightCardFeed {ndk} event={highlight1} />
         {/snippet}
       </ComponentCard>
 
-      <ComponentCard inline data={elegantCardData}>
+      <ComponentCard data={elegantCardData}>
         {#snippet preview()}
           <div class="flex gap-6 overflow-x-auto pb-4">
             {#each displayHighlights as highlight (highlight.id)}
@@ -283,7 +283,7 @@
         {/snippet}
       </ComponentCard>
 
-      <ComponentCard inline data={compactCardData}>
+      <ComponentCard data={compactCardData}>
         {#snippet preview()}
           <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl mx-auto">
             {#each displayHighlights.slice(0, 4) as highlight (highlight.id)}
@@ -293,7 +293,7 @@
         {/snippet}
       </ComponentCard>
 
-      <ComponentCard inline data={gridCardData}>
+      <ComponentCard data={gridCardData}>
         {#snippet preview()}
           <div class="flex gap-6 overflow-x-auto pb-4">
             {#each displayHighlights as highlight (highlight.id)}
@@ -303,13 +303,13 @@
         {/snippet}
       </ComponentCard>
 
-      <ComponentCard inline data={basicCardData}>
+      <ComponentCard data={basicCardData}>
         {#snippet preview()}
           <UIBasic {ndk} event={highlight1} />
         {/snippet}
       </ComponentCard>
 
-      <ComponentCard inline data={compositionCardData}>
+      <ComponentCard data={compositionCardData}>
         {#snippet preview()}
           <UIComposition {ndk} event={highlight1} />
         {/snippet}

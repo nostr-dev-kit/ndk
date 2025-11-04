@@ -67,6 +67,16 @@
       cardData: followButtonAnimatedCard
     }
   ];
+
+  // Components section
+  const componentsSection = $derived({
+    cards: [followButtonMinimalCard, followButtonPillCard, followButtonAnimatedCard],
+    previews: {
+      [followButtonMinimalCard.name]: minimalCardPreview,
+      [followButtonPillCard.name]: pillCardPreview,
+      [followButtonAnimatedCard.name]: animatedCardPreview
+    }
+  });
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -94,6 +104,88 @@
   <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
 {/snippet}
 
+<!-- Component card preview snippets -->
+{#snippet minimalCardPreview()}
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-muted-foreground w-24">Default:</span>
+      <FollowButton {ndk} target={sampleUser} />
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-muted-foreground w-24">With User:</span>
+      <FollowButton {ndk} target={sampleUser} showTarget={true} />
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
+      <FollowButton {ndk} target="bitcoin" showTarget={true} />
+    </div>
+  </div>
+{/snippet}
+
+{#snippet pillCardPreview()}
+  <div class="flex flex-col gap-6 items-center">
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Default</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
+        <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">With User Target</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+        <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
+        <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonPill {ndk} target={sampleUser} compact />
+        <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
+        <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
+      </div>
+    </div>
+  </div>
+{/snippet}
+
+{#snippet animatedCardPreview()}
+  <div class="flex flex-col gap-6 items-center">
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Default</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonAnimated {ndk} target={sampleUser} />
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">With User Target</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">With Hashtag Target</span>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
+        <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
+      </div>
+    </div>
+  </div>
+{/snippet}
+
 <!-- EditProps snippet -->
 {#snippet editPropsSection()}
   <EditProps.Root>
@@ -110,7 +202,7 @@
 <!-- Custom Components section -->
 {#snippet customComponentsSection()}
   <section class="py-12 space-y-16">
-    <ComponentCard inline data={followButtonMinimalCard}>
+    <ComponentCard data={followButtonMinimalCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-4">
@@ -129,7 +221,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={followButtonPillCard}>
+    <ComponentCard data={followButtonPillCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 items-center">
           <div class="flex flex-col gap-2 items-center">
@@ -171,7 +263,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard inline data={followButtonAnimatedCard}>
+    <ComponentCard data={followButtonAnimatedCard}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 items-center">
           <div class="flex flex-col gap-2 items-center">

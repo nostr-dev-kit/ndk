@@ -64,7 +64,7 @@
 				</ul>
 			</div>
 
-			<ComponentCard inline data={{ name: 'chrome-demo', title: 'Interactive Chrome Demo', description: 'See how the chrome adapts to different event kinds', richDescription: 'See how the same chrome adapts to different event kinds. The header, layout, and actions stay consistent while the content changes.', command: 'npx shadcn@latest add event-card', apiDocs: [] }}>
+			<ComponentCard data={{ name: 'chrome-demo', title: 'Interactive Chrome Demo', description: 'See how the chrome adapts to different event kinds', richDescription: 'See how the same chrome adapts to different event kinds. The header, layout, and actions stay consistent while the content changes.', command: 'npx shadcn@latest add event-card', apiDocs: [] }}>
 				{#snippet preview()}
 					<div class="max-w-2xl mx-auto">
 						<ChromeDemo {ndk} event={sampleEvent} />

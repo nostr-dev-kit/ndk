@@ -7,7 +7,47 @@ export const followButtonMinimalCard: ComponentCardData = {
   description: 'Minimal icon-first follow button.',
   richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name.',
   command: 'npx shadcn@latest add follow-button',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowButton',
+      description: 'Minimal follow button component with icon-first design.',
+      importPath: "import { FollowButton } from '$lib/registry/components/actions/follow-button.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: false,
+          description: 'NDK instance. If not provided, will use context.'
+        },
+        {
+          name: 'target',
+          type: 'NDKUser | string',
+          required: true,
+          description: 'User to follow (NDKUser object) or hashtag to follow (string).'
+        },
+        {
+          name: 'showIcon',
+          type: 'boolean',
+          default: 'true',
+          required: false,
+          description: 'Whether to show the follow/unfollow icon.'
+        },
+        {
+          name: 'showTarget',
+          type: 'boolean',
+          default: 'false',
+          required: false,
+          description: 'Whether to display target avatar/icon and name.'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          required: false,
+          description: 'Additional CSS classes to apply to the button.'
+        }
+      ]
+    }
+  ]
 };
 
 export const followButtonPillCard: ComponentCardData = {
@@ -16,7 +56,61 @@ export const followButtonPillCard: ComponentCardData = {
   description: 'Rounded pill-style follow button.',
   richDescription: 'Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name.',
   command: 'npx shadcn@latest add follow-button-pill',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowButtonPill',
+      description: 'Rounded pill-style follow button with multiple variants and display modes.',
+      importPath: "import { FollowButtonPill } from '$lib/registry/components/actions/follow-button-pill.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: false,
+          description: 'NDK instance. If not provided, will use context.'
+        },
+        {
+          name: 'target',
+          type: 'NDKUser | string',
+          required: true,
+          description: 'User to follow (NDKUser object) or hashtag to follow (string).'
+        },
+        {
+          name: 'variant',
+          type: "'solid' | 'outline'",
+          default: "'solid'",
+          required: false,
+          description: 'Button style variant. Solid has filled background, outline has transparent background with border.'
+        },
+        {
+          name: 'showIcon',
+          type: 'boolean',
+          default: 'true',
+          required: false,
+          description: 'Whether to show the follow/unfollow icon.'
+        },
+        {
+          name: 'showTarget',
+          type: 'boolean',
+          default: 'false',
+          required: false,
+          description: 'Whether to display target avatar/icon and name.'
+        },
+        {
+          name: 'compact',
+          type: 'boolean',
+          default: 'false',
+          required: false,
+          description: 'Compact mode shows only the icon. Expands on hover when showTarget is true.'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          required: false,
+          description: 'Additional CSS classes to apply to the button.'
+        }
+      ]
+    }
+  ]
 };
 
 export const followButtonAnimatedCard: ComponentCardData = {
@@ -25,7 +119,40 @@ export const followButtonAnimatedCard: ComponentCardData = {
   description: 'Animated follow button with transitions.',
   richDescription: 'Animated follow button with smooth transitions and visual feedback. Features icon animations and checkmark confirmation on follow.',
   command: 'npx shadcn@latest add follow-button-animated',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowButtonAnimated',
+      description: 'Follow button with smooth animations and visual feedback on state changes.',
+      importPath: "import { FollowButtonAnimated } from '$lib/registry/components/actions/follow-button-animated.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: false,
+          description: 'NDK instance. If not provided, will use context.'
+        },
+        {
+          name: 'target',
+          type: 'NDKUser | string',
+          required: true,
+          description: 'User to follow (NDKUser object) or hashtag to follow (string).'
+        },
+        {
+          name: 'showTarget',
+          type: 'boolean',
+          default: 'false',
+          required: false,
+          description: 'Whether to display target avatar/icon and name.'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          required: false,
+          description: 'Additional CSS classes to apply to the button.'
+        }
+      ]
+    }
+  ]
 };
 
 // API documentation

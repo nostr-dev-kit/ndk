@@ -56,25 +56,12 @@ export type GridBlock = ShowcaseBlock;
 // Import PropType from edit-props
 import type { PropType } from '$lib/site-components/edit-props';
 
-// EditProps configuration
-export interface EditPropConfig {
-  name: string;
-  type: PropType | 'number' | 'boolean';  // PropType plus additional types we use
-  default?: string | number | boolean;
-  options?: any[];
-  bind?: {
-    get: () => any;
-    set: (value: any) => void;
-  };
-}
-
 // Page metadata structure
 export interface ComponentPageMetadata {
   title: string;
   description: string;
   showcaseTitle?: string;
   showcaseDescription?: string;
-  editProps?: EditPropConfig[];
 }
 
 // Component section configuration
@@ -101,7 +88,6 @@ export interface ComponentPageTemplateProps {
   apiDocs?: ApiDoc[];
 
   // Custom sections via snippets
-  editPropsSection?: Snippet;
   beforeShowcase?: Snippet;
   afterShowcase?: Snippet;
   beforeComponents?: Snippet;
@@ -111,8 +97,11 @@ export interface ComponentPageTemplateProps {
   // Controls for showcase items
   showcaseControls?: Snippet<[block: ShowcaseBlock]>;
 
-  // Escape hatch - replace entire template
-  customContent?: Snippet;
+  // Empty state snippet (shown when no showcase blocks)
+  emptyState?: Snippet;
+
+  // Children (EditProps.Prop components)
+  children?: Snippet;
 }
 
 // Helper type for component examples
@@ -161,7 +150,4 @@ export interface UIPrimitivePageTemplateProps {
   beforeAnatomy?: Snippet;
   afterAnatomy?: Snippet;
   customSections?: Snippet;
-
-  // Escape hatch - replace entire template
-  customContent?: Snippet;
 }

@@ -5,6 +5,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { repostMetadata, repostButtonCard, repostButtonPillCard, repostBasicBuilderCard, repostCustomBuilderCard } from '$lib/component-registry/repost';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import blocks
@@ -29,22 +30,47 @@
       }
     })();
   });
+
+  const showcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'RepostButton',
+      description: 'Minimal with icon and count',
+      command: 'npx shadcn@latest add repost-button',
+      preview: repostButtonPreview,
+      cardData: repostButtonCard
+    },
+    {
+      name: 'Pill Solid',
+      description: 'Rounded with solid background',
+      command: 'npx shadcn@latest add repost-button-pill',
+      preview: repostButtonPillSolidPreview,
+      cardData: repostButtonPillCard
+    },
+    {
+      name: 'Pill Outline',
+      description: 'Rounded with outline style',
+      command: 'npx shadcn@latest add repost-button-pill',
+      preview: repostButtonPillOutlinePreview,
+      cardData: repostButtonPillCard
+    },
+    {
+      name: 'Basic Builder',
+      description: 'Minimal builder example',
+      command: 'npx shadcn@latest add repost-button',
+      preview: basicBuilderPreview,
+      cardData: repostBasicBuilderCard
+    },
+    {
+      name: 'Custom Styled',
+      description: 'Custom styled builder',
+      command: 'npx shadcn@latest add repost-button',
+      preview: customBuilderPreview,
+      cardData: repostCustomBuilderCard
+    }
+  ];
 </script>
 
 {#if sampleEvent}
-  <!-- EditProps snippet -->
-  {#snippet editPropsSection()}
-    <EditProps.Root>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </EditProps.Root>
-  {/snippet}
-
   <!-- Preview snippets for showcase -->
   {#snippet repostButtonPreview()}
     <RepostButton {ndk} event={sampleEvent} />
@@ -85,45 +111,6 @@
   {#snippet customBuilderComponentPreview()}
     <BuilderExample {ndk} event={sampleEvent} />
   {/snippet}
-
-  <!-- Showcase blocks with preview snippets -->
-  {@const showcaseBlocks: ShowcaseBlock[] = [
-    {
-      name: 'RepostButton',
-      description: 'Minimal with icon and count',
-      command: 'npx shadcn@latest add repost-button',
-      preview: repostButtonPreview,
-      cardData: repostButtonCard
-    },
-    {
-      name: 'Pill Solid',
-      description: 'Rounded with solid background',
-      command: 'npx shadcn@latest add repost-button-pill',
-      preview: repostButtonPillSolidPreview,
-      cardData: repostButtonPillCard
-    },
-    {
-      name: 'Pill Outline',
-      description: 'Rounded with outline style',
-      command: 'npx shadcn@latest add repost-button-pill',
-      preview: repostButtonPillOutlinePreview,
-      cardData: repostButtonPillCard
-    },
-    {
-      name: 'Basic Builder',
-      description: 'Minimal builder example',
-      command: 'npx shadcn@latest add repost-button',
-      preview: basicBuilderPreview,
-      cardData: repostBasicBuilderCard
-    },
-    {
-      name: 'Custom Styled',
-      description: 'Custom styled builder',
-      command: 'npx shadcn@latest add repost-button',
-      preview: customBuilderPreview,
-      cardData: repostCustomBuilderCard
-    }
-  ]}
 
   <!-- Additional section for Builder API -->
   {#snippet afterComponents()}
@@ -173,7 +160,6 @@ await repostState.repost();</code></pre>
     metadata={repostMetadata}
     {ndk}
     {showcaseBlocks}
-    {editPropsSection}
     {afterComponents}
     componentsSection={{
       cards: repostMetadata.cards,
@@ -185,18 +171,25 @@ await repostState.repost();</code></pre>
       }
     }}
     apiDocs={repostMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop
+      name="Sample Event"
+      type="event"
+      default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+      bind:value={sampleEvent}
+    />
+  </ComponentPageTemplate>
 {:else}
   <!-- Loading state -->
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Repost</h1>
-      </div>
-      <p class="text-lg text-muted-foreground mb-6">
-        Repost button blocks and builder for adding repost functionality to Nostr events. Tracks both regular reposts (Kind 6/16) and quote posts.
-      </p>
-    </div>
+    <PageTitle title={repostMetadata.title} subtitle={repostMetadata.description}>
+      <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        bind:value={sampleEvent}
+      />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading event...</div>
     </div>

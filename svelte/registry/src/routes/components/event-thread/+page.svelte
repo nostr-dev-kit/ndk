@@ -5,6 +5,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { threadViewMetadata, threadViewTwitterCard, threadViewBasicCard, threadViewFullCard } from '$lib/component-registry/event-thread';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
@@ -68,13 +69,6 @@
   <UIComposition {ndk} nevent={neventInput} />
 {/snippet}
 
-<!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  <EditProps.Root>
-    <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
-    <EditProps.Button>Edit Examples</EditProps.Button>
-  </EditProps.Root>
-{/snippet}
 
 <!-- Custom Builder section before showcase -->
 {#snippet beforeShowcase()}
@@ -237,11 +231,9 @@ thread.focusOn(event)  // Navigate to different event`}
 <!-- Conditional rendering based on thread loading -->
 {#if !thread.focusedEventId}
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <h1 class="text-4xl font-bold">{threadViewMetadata.title}</h1>
-      <p class="text-lg text-muted-foreground mb-6">{threadViewMetadata.description}</p>
-      {@render editPropsSection()}
-    </div>
+    <PageTitle title={threadViewMetadata.title} subtitle={threadViewMetadata.description}>
+      <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading thread...</div>
     </div>
@@ -250,7 +242,6 @@ thread.focusOn(event)  // Navigate to different event`}
   <ComponentPageTemplate
     metadata={threadViewMetadata}
     {ndk}
-    {editPropsSection}
     {beforeShowcase}
     showcaseBlocks={blocksShowcaseBlocks}
     {afterShowcase}
@@ -264,5 +255,7 @@ thread.focusOn(event)  // Navigate to different event`}
       }
     }}
     apiDocs={threadViewMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
+  </ComponentPageTemplate>
 {/if}

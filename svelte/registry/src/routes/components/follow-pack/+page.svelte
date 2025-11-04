@@ -13,6 +13,7 @@
     followPackAnatomyLayers
   } from '$lib/component-registry/follow-pack';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
@@ -122,19 +123,6 @@
 {/snippet}
 
 <!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  {#key followPacks}
-    <EditProps.Root>
-      <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-      <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-      <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-      <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-      <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-      <EditProps.Button>Change Sample Packs</EditProps.Button>
-    </EditProps.Root>
-  {/key}
-{/snippet}
-
 <!-- Custom Anatomy section -->
 {#snippet customSections()}
   {#if displayPacks.length > 0}
@@ -209,9 +197,7 @@
     metadata={followPackMetadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
-    {showcaseBlocks}
-    {editPropsSection}
-    {customSections}
+    {showcaseBlocks}{customSections}
     componentsSection={{
       cards: followPackMetadata.cards,
       previews: {
@@ -222,14 +208,22 @@
       }
     }}
     apiDocs={followPackMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
+      <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+      <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+      <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+      <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+  </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <h1 class="text-4xl font-bold">{followPackMetadata.title}</h1>
-      <p class="text-lg text-muted-foreground mb-6">{followPackMetadata.description}</p>
-      {@render editPropsSection()}
-    </div>
+    <PageTitle title={followPackMetadata.title} subtitle={followPackMetadata.description}>
+      <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
+      <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+      <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+      <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+      <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading follow packs...</div>
     </div>

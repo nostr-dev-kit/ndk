@@ -5,7 +5,7 @@
   import { createFollowAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn.js';
-  import UserAddIcon from '../../icons/user-add.svelte';
+  import { HashtagIcon, UserAddIcon, UserFollowingIcon } from '../../icons/index.js';
   import { User } from '../../ui/user/index.js';
 
   interface Props {
@@ -32,16 +32,36 @@
   const ndk = ndkProp || ndkContext;
 
   const isHashtag = typeof target === 'string';
+  const targetUser = $derived(!isHashtag ? (target as NDKUser) : undefined);
+
   const isOwnProfile = $derived.by(() => {
     if (isHashtag || !ndk?.$currentPubkey) return false;
     try {
-      return ndk.$currentPubkey === (target as NDKUser).pubkey;
+      return ndk.$currentPubkey === targetUser?.pubkey;
     } catch {
       return false;
     }
   });
 
   const followAction = createFollowAction(() => ({ target }), ndk);
+
+  const buttonLabel = $derived(followAction.isFollowing ? 'Following' : 'Follow');
+
+  const variantStyles = $derived(
+    variant === 'solid'
+      ? followAction.isFollowing
+        ? 'bg-muted text-foreground hover:bg-red-500 hover:text-white'
+        : 'bg-primary text-primary-foreground hover:bg-primary/90'
+      : followAction.isFollowing
+        ? 'bg-transparent border border-border text-muted-foreground hover:border-red-500 hover:text-red-500'
+        : 'bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+  );
+
+  const ariaLabel = $derived(
+    followAction.isFollowing
+      ? isHashtag ? `Unfollow #${target}` : 'Unfollow user'
+      : isHashtag ? `Follow #${target}` : 'Follow user'
+  );
 
   async function handleToggle() {
     if (!ndk?.$currentPubkey) return;
@@ -54,143 +74,87 @@
 </script>
 
 {#if !isOwnProfile && ndk?.$currentUser}
-  <div class={compact ? 'inline-block w-10 h-10 relative' : 'inline-block'}>
+  <div class={compact ? 'inline-block w-10 h-10 relative group' : 'inline-block'}>
+    {#if compact}
+      <span
+        class={cn(
+          'absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold leading-none transition-opacity duration-300 z-10',
+          followAction.isFollowing
+            ? 'bg-red-500 text-white opacity-0 group-hover:opacity-100'
+            : 'bg-primary text-primary-foreground',
+          'shadow-sm pointer-events-none'
+        )}
+      >
+        {followAction.isFollowing ? '−' : '+'}
+      </span>
+    {/if}
     <button
       type="button"
       onclick={handleToggle}
       class={cn(
-        'inline-flex items-center cursor-pointer transition-all font-medium text-sm rounded-full',
+        'inline-flex items-center cursor-pointer transition-all duration-1000 font-medium text-sm rounded-full',
         compact
-          ? 'w-10 h-10 px-3 group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:z-50'
+          ? showTarget && !isHashtag
+            ? 'w-10 h-10 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:pl-2 hover:justify-start hover:z-50'
+            : 'w-10 h-10 px-3 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50'
           : 'gap-2 px-4 py-2',
-        variant === 'solid' &&
-          !followAction.isFollowing &&
-          'bg-primary text-primary-foreground hover:bg-primary/90',
-        variant === 'solid' &&
-          followAction.isFollowing &&
-          'bg-muted text-foreground hover:bg-red-500 hover:text-white',
-        variant === 'outline' &&
-          !followAction.isFollowing &&
-          'bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground',
-        variant === 'outline' &&
-          followAction.isFollowing &&
-          'bg-transparent border border-border text-muted-foreground hover:border-red-500 hover:text-red-500',
+        variantStyles,
         className
       )}
-      aria-label={followAction.isFollowing
-        ? isHashtag
-          ? `Unfollow #${target}`
-          : 'Unfollow user'
-        : isHashtag
-          ? `Follow #${target}`
-          : 'Follow user'}
+      aria-label={ariaLabel}
     >
     {#if showTarget && !compact}
       {#if isHashtag}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="20"
-          height="20"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="flex-shrink-0"
-        >
-          <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
-        </svg>
+        <HashtagIcon size={20} class="flex-shrink-0" />
         <span class="inline-flex items-baseline gap-1">
-          <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+          <span class="font-bold">{buttonLabel}</span>
           <span class="font-normal">#{target}</span>
         </span>
-      {:else}
-        <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
+      {:else if targetUser}
+        <User.Root {ndk} user={targetUser} class="flex items-center gap-2">
           <User.Avatar class="w-5 h-5" />
           <span class="inline-flex items-baseline gap-1">
-            <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+            <span class="font-bold">{buttonLabel}</span>
             <User.Name field="displayName" class="text-sm font-normal" />
           </span>
         </User.Root>
       {/if}
     {:else}
       {#if compact && showTarget}
-        <!-- Compact with target shows avatar/hashtag icon -->
         {#if isHashtag}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="flex-shrink-0"
-          >
-            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
-          </svg>
-        {:else}
-          <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
-            <User.Avatar class="w-4 h-4 flex-shrink-0" />
-          </User.Root>
+          <HashtagIcon size={16} class="flex-shrink-0" />
+        {:else if targetUser}
+          <div class="w-9 h-9 flex-shrink-0">
+            <User.Root {ndk} user={targetUser}>
+              <User.Avatar class="w-full h-full" />
+            </User.Root>
+          </div>
         {/if}
       {:else if showIcon}
-        <!-- Regular icons -->
         {#if isHashtag}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="flex-shrink-0"
-          >
-            <path d="M10 3L8 21M16 3L14 21M3 8H21M2 16H20" ></path>
-          </svg>
+          <HashtagIcon size={16} class="flex-shrink-0" />
         {:else if followAction.isFollowing}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            class="flex-shrink-0"
-          >
-            <path d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z" ></path>
-            <path d="M2 23C2 18.5817 6.47715 15 12 15C17.5228 15 22 18.5817 22 23" stroke-linecap="round" stroke-linejoin="round" ></path>
-            <path d="M8 9L10.5 11.5L16 6" stroke-linecap="round" stroke-linejoin="round" ></path>
-          </svg>
+          <UserFollowingIcon size={16} class="flex-shrink-0" />
         {:else}
           <UserAddIcon size={16} class="flex-shrink-0" />
         {/if}
       {/if}
       {#if !compact}
-        <span>{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+        <span>{buttonLabel}</span>
       {:else if showTarget}
-        <!-- Compact with target name/hashtag -->
         <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[200px] ml-2 inline-flex items-baseline gap-1">
-          <span class="font-bold">{followAction.isFollowing ? 'Following' : 'Follow'}</span>
+          <span class="font-bold">{buttonLabel}</span>
           {#if isHashtag}
             <span class="font-normal">#{target}</span>
-          {:else}
-            <User.Root {ndk} user={target as NDKUser} class="flex items-center gap-2">
+          {:else if targetUser}
+            <User.Root {ndk} user={targetUser} class="flex items-center gap-2">
               <User.Name field="displayName" class="text-sm font-normal" />
             </User.Root>
           {/if}
         </span>
       {:else}
-        <!-- Compact without target -->
         <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[100px] ml-2">
-          {followAction.isFollowing ? 'Following' : 'Follow'}
+          {buttonLabel}
         </span>
       {/if}
     {/if}

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Option 3: Interactive Toggle Builder</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 3rem;
+      background: #fafafa;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: #666;
+      margin-bottom: 3rem;
+    }
+
+    .controls-section {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .controls-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #111;
+    }
+
+    .toggle-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .toggle-item:hover {
+      border-color: #999;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .toggle-item.active {
+      border-color: #111;
+      background: #fafafa;
+    }
+
+    .toggle-checkbox {
+      width: 48px;
+      height: 28px;
+      background: #ddd;
+      border-radius: 14px;
+      position: relative;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .toggle-checkbox::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: white;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-item.active .toggle-checkbox {
+      background: #111;
+    }
+
+    .toggle-item.active .toggle-checkbox::after {
+      transform: translateX(20px);
+    }
+
+    .toggle-info {
+      flex: 1;
+    }
+
+    .toggle-label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+
+    .toggle-description {
+      font-size: 0.8rem;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .preview-section {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 2rem;
+      min-height: 400px;
+    }
+
+    .preview-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .preview-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .event-preview {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Chrome styles */
+    .chrome-container {
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .chrome-container.visible {
+      display: block;
+    }
+
+    .event-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    .author-info {
+      flex: 1;
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .timestamp {
+      font-size: 0.875rem;
+      color: #999;
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .action-btn {
+      font-size: 0.875rem;
+      color: #666;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #e9ecef;
+    }
+
+    /* Content styles */
+    .content-container {
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .content-container.visible {
+      display: block;
+    }
+
+    .event-content {
+      line-height: 1.8;
+      color: #333;
+      font-size: 0.95rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .mention {
+      color: #1565c0;
+      font-weight: 500;
+    }
+
+    .hashtag {
+      color: #6a1b9a;
+      font-weight: 500;
+    }
+
+    /* Embed styles */
+    .embed-container {
+      display: none;
+      animation: slideIn 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .embed-container.visible {
+      display: block;
+    }
+
+    .embedded-note {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-left: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .embedded-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .embedded-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .embedded-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .embedded-time {
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    .embedded-content {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .composition-formula {
+      text-align: center;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin: 2rem 0;
+      font-family: monospace;
+      font-size: 1.125rem;
+      color: #555;
+      border: 2px dashed #ddd;
+    }
+
+    .composition-formula .active-layer {
+      font-weight: 700;
+      color: #111;
+    }
+
+    .note {
+      background: #fff9e6;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      margin-top: 3rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Option 3: Interactive Toggle Builder</h1>
+  <p class="subtitle">Turn layers on and off to see what each contributes</p>
+
+  <!-- Controls -->
+  <div class="controls-section">
+    <div class="controls-title">🎛️ Toggle Layers</div>
+    <div class="toggle-controls">
+      <div class="toggle-item active" id="toggleChrome" onclick="toggleLayer('chrome')">
+        <div class="toggle-checkbox"></div>
+        <div class="toggle-info">
+          <div class="toggle-label">Chrome</div>
+          <div class="toggle-description">Avatar, name, timestamp, actions</div>
+        </div>
+      </div>
+
+      <div class="toggle-item active" id="toggleContent" onclick="toggleLayer('content')">
+        <div class="toggle-checkbox"></div>
+        <div class="toggle-info">
+          <div class="toggle-label">Content</div>
+          <div class="toggle-description">Event body with text and formatting</div>
+        </div>
+      </div>
+
+      <div class="toggle-item active" id="toggleEmbed" onclick="toggleLayer('embed')">
+        <div class="toggle-checkbox"></div>
+        <div class="toggle-info">
+          <div class="toggle-label">Embeds</div>
+          <div class="toggle-description">Referenced event previews</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Composition Formula -->
+  <div class="composition-formula" id="formula">
+    <span class="active-layer">Chrome</span> +
+    <span class="active-layer">Content</span> +
+    <span class="active-layer">Embeds</span> =
+    Complete Event
+  </div>
+
+  <!-- Preview -->
+  <div class="preview-section">
+    <div class="preview-title">Live Preview</div>
+    <div class="preview-subtitle">See how the layers compose together</div>
+
+    <div class="event-preview" id="eventPreview">
+      <!-- Chrome layer -->
+      <div class="chrome-container visible" id="chromeLayer">
+        <div class="event-header">
+          <div class="avatar"></div>
+          <div class="author-info">
+            <div class="author-name">Alice Johnson</div>
+            <div class="timestamp">2 hours ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content layer -->
+      <div class="content-container visible" id="contentLayer">
+        <div class="event-content">
+          Just deployed a new feature! Check out what <span class="mention">@bob</span> built for the
+          <span class="hashtag">#nostr</span> ecosystem. Here's their original post explaining it:
+
+          <!-- Embed layer -->
+          <div class="embed-container visible" id="embedLayer">
+            <div class="embedded-note">
+              <div class="embedded-author">
+                <div class="embedded-avatar"></div>
+                <div>
+                  <div class="embedded-name">Bob Smith</div>
+                  <div class="embedded-time">5 hours ago</div>
+                </div>
+              </div>
+              <div class="embedded-content">
+                Excited to announce the new relay discovery feature! This will make onboarding so much easier for newcomers.
+                We've tested it with over 100 users and the feedback has been incredible.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chrome actions -->
+      <div class="chrome-container visible" id="chromeActions">
+        <div class="event-actions">
+          <div class="action-btn">💬 Reply</div>
+          <div class="action-btn">🔄 Repost</div>
+          <div class="action-btn">⚡ Zap</div>
+          <div class="action-btn">❤️ Like</div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-state-icon">👻</div>
+        <div>Turn on at least one layer to see the preview</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Concept:</strong> Interactive playground where users can toggle each layer on/off independently.
+    Shows the composition formula at the top and updates the preview in real-time.
+    Emphasizes "you can mix and match these layers."
+  </div>
+
+  <script>
+    const state = {
+      chrome: true,
+      content: true,
+      embed: true
+    };
+
+    function toggleLayer(layer) {
+      state[layer] = !state[layer];
+
+      // Update toggle UI
+      const toggleElement = document.getElementById(`toggle${layer.charAt(0).toUpperCase() + layer.slice(1)}`);
+      toggleElement.classList.toggle('active');
+
+      // Update preview
+      updatePreview();
+      updateFormula();
+    }
+
+    function updatePreview() {
+      const chromeLayer = document.getElementById('chromeLayer');
+      const chromeActions = document.getElementById('chromeActions');
+      const contentLayer = document.getElementById('contentLayer');
+      const embedLayer = document.getElementById('embedLayer');
+      const emptyState = document.getElementById('emptyState');
+
+      // Show/hide layers
+      chromeLayer.classList.toggle('visible', state.chrome);
+      chromeActions.classList.toggle('visible', state.chrome);
+      contentLayer.classList.toggle('visible', state.content);
+      embedLayer.classList.toggle('visible', state.embed);
+
+      // Show empty state if all off
+      const anyActive = state.chrome || state.content || state.embed;
+      emptyState.style.display = anyActive ? 'none' : 'block';
+    }
+
+    function updateFormula() {
+      const formula = document.getElementById('formula');
+      let parts = [];
+
+      if (state.chrome) parts.push('<span class="active-layer">Chrome</span>');
+      else parts.push('<span style="opacity: 0.3; text-decoration: line-through;">Chrome</span>');
+
+      if (state.content) parts.push('<span class="active-layer">Content</span>');
+      else parts.push('<span style="opacity: 0.3; text-decoration: line-through;">Content</span>');
+
+      if (state.embed) parts.push('<span class="active-layer">Embeds</span>');
+      else parts.push('<span style="opacity: 0.3; text-decoration: line-through;">Embeds</span>');
+
+      const anyActive = state.chrome || state.content || state.embed;
+      const result = anyActive ? 'Event' : '<span style="opacity: 0.3;">Nothing</span>';
+
+      formula.innerHTML = parts.join(' + ') + ' = ' + result;
+    }
+  </script>
+</body>
+</html>

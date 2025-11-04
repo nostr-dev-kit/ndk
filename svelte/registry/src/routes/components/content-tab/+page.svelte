@@ -6,6 +6,7 @@
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import { contentTabMetadata, contentTabCard } from '$lib/component-registry/content-tab';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
@@ -147,20 +148,6 @@
 {/snippet}
 
 <!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  <EditProps.Root>
-    <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
-    <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
-    <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
-    <EditProps.Prop name="User 6" type="user" bind:value={user6} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
-    <EditProps.Prop name="User 7" type="user" bind:value={user7} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
-    <EditProps.Prop name="User 8" type="user" bind:value={user8} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
-    <EditProps.Prop name="User 9" type="user" bind:value={user9} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
-    <EditProps.Prop name="User 10 (Gigi)" type="user" bind:value={user10} default="npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc" />
-    <EditProps.Button>Edit Examples</EditProps.Button>
-  </EditProps.Root>
-{/snippet}
-
 <!-- Custom Components section with tabs -->
 {#snippet customComponentsSection()}
   <Tabs.Root value="basic">
@@ -405,19 +392,31 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
     metadata={contentTabMetadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
-    {showcaseBlocks}
-    {editPropsSection}
-    {customSections}
+    {showcaseBlocks}{customSections}
     beforeComponents={customComponentsSection}
     apiDocs={contentTabMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+    <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
+    <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
+    <EditProps.Prop name="User 6" type="user" bind:value={user6} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
+    <EditProps.Prop name="User 7" type="user" bind:value={user7} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
+    <EditProps.Prop name="User 8" type="user" bind:value={user8} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
+    <EditProps.Prop name="User 9" type="user" bind:value={user9} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
+    <EditProps.Prop name="User 10 (Gigi)" type="user" bind:value={user10} default="npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc" />
+  </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <h1 class="text-4xl font-bold">{contentTabMetadata.title}</h1>
-      <p class="text-lg text-muted-foreground mb-6">{contentTabMetadata.description}</p>
-      {@render editPropsSection()}
-    </div>
+    <PageTitle title={contentTabMetadata.title} subtitle={contentTabMetadata.description}>
+      <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+    <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
+    <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
+    <EditProps.Prop name="User 6" type="user" bind:value={user6} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
+    <EditProps.Prop name="User 7" type="user" bind:value={user7} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
+    <EditProps.Prop name="User 8" type="user" bind:value={user8} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
+    <EditProps.Prop name="User 9" type="user" bind:value={user9} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
+    <EditProps.Prop name="User 10 (Gigi)" type="user" bind:value={user10} default="npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc" />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Select a user to see the components...</div>
     </div>

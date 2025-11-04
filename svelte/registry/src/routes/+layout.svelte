@@ -16,11 +16,12 @@
   // Pages can use this to show a TOC
   const showTocForRoute = $derived(
     $page.url.pathname.startsWith('/components/') ||
+    $page.url.pathname.startsWith('/events/') ||
     $page.url.pathname.startsWith('/docs/') ||
     $page.url.pathname.startsWith('/ui/')
   );
 
-  const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
+  const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/events') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
 
   let isInitialized = $state(false);
   let showLoginModal = $state(false);

@@ -1,0 +1,7 @@
+<FollowButtonPill target={user} variant="solid" />
+
+<FollowButtonPill target={user} variant="outline" />
+
+<FollowButtonPill target={user} compact />
+
+<FollowButtonPill target={user} compact showTarget={true} />

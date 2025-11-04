@@ -7,6 +7,7 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import CodeSnippet from '$site-components/code-snippet.svelte';
 
 	export interface ComponentDoc {
 		name: string;
@@ -41,6 +42,7 @@
 		relatedComponents?: RelatedComponent[];
 		version?: string;
 		updatedAt?: string;
+		code?: string;
 	}
 
 	interface Props {
@@ -89,8 +91,13 @@
 				{#if preview}
 					<section class="flex flex-col gap-4">
 						<h3 class="text-xl font-semibold text-foreground m-0">Preview</h3>
-						<div class="p-8 bg-background border border-border rounded-lg flex justify-center items-center max-h-[600px] overflow-y-auto">
-							{@render preview()}
+						<div class="flex flex-col w-full border border-border rouded-lg">
+							<div class="p-8 bg-background rounded-lg flex justify-center items-center max-h-[600px] overflow-y-auto">
+								{@render preview()}
+							</div>
+							{#if data.code}
+								<CodeSnippet code={data.code} lang="svelte" class="rounded-t-none" />
+							{/if}
 						</div>
 					</section>
 				{/if}

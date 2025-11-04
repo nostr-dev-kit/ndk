@@ -42,24 +42,37 @@
 
 <div class={cn("space-y-1", className)}>
   {#each context.relays as relay (relay.url)}
-    <div class="flex items-center justify-between text-sm">
-      <div class="flex items-center gap-2 flex-1 min-w-0">
-        <span class={cn("flex-shrink-0", getStatusColor(relay.status))}>
-          {getStatusIcon(relay.status)}
-        </span>
-        <span class="truncate text-gray-700 dark:text-gray-300" title={relay.url}>
-          {relay.url.replace('wss://', '').replace('ws://', '')}
-        </span>
+    <div class="flex flex-col text-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+          <span class={cn("flex-shrink-0", getStatusColor(relay.status))}>
+            {getStatusIcon(relay.status)}
+          </span>
+          <span class="truncate text-gray-700 dark:text-gray-300" title={relay.url}>
+            {relay.url.replace('wss://', '').replace('ws://', '')}
+          </span>
+        </div>
+        {#if showCounts && relay.eventCount > 0}
+          <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+            {relay.eventCount} events
+          </span>
+        {/if}
+        {#if relay.error}
+          <span class="text-xs text-red-500 ml-2" title={relay.error}>
+            Error
+          </span>
+        {/if}
       </div>
-      {#if showCounts && relay.eventCount > 0}
-        <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
-          {relay.eventCount} events
-        </span>
-      {/if}
-      {#if relay.error}
-        <span class="text-xs text-red-500 ml-2" title={relay.error}>
-          Error
-        </span>
+
+      {#if relay.negotiation && relay.status === 'syncing'}
+        <div class="ml-6 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+          Round {relay.negotiation.round} - {relay.negotiation.phase}
+          {#if relay.negotiation.needCount > 0 || relay.negotiation.haveCount > 0}
+            <span class="ml-2">
+              (Need: {relay.negotiation.needCount}, Have: {relay.negotiation.haveCount})
+            </span>
+          {/if}
+        </div>
       {/if}
     </div>
   {/each}

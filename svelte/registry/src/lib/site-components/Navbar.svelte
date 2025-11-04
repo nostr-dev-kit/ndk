@@ -14,7 +14,7 @@
   let { onLoginClick, onLogoutClick }: Props = $props();
 
   let showUserDropdown = $state(false);
-  const showMobileMenu = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
+  const showMobileMenu = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/events') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
 
   // Close dropdown on outside click
   $effect(() => {

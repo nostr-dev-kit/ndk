@@ -95,18 +95,6 @@
 {/snippet}
 
 <!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  <EditProps.Root>
-    <EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
-    <EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
-    <EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
-    <EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
-    <EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
-    <EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
-    <EditProps.Button>Change Sample Relays</EditProps.Button>
-  </EditProps.Root>
-{/snippet}
-
 <!-- Component previews for blocks -->
 {#snippet portraitComponentPreview()}
   <div class="flex gap-6 overflow-x-auto pb-4">
@@ -257,9 +245,7 @@
   metadata={relayCardMetadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
-  {showcaseBlocks}
-  {editPropsSection}
-  componentsSection={{
+  {showcaseBlocks}componentsSection={{
     cards: relayCardMetadata.cards.slice(0, 3),
     previews: {
       'relay-card-portrait': portraitComponentPreview,
@@ -270,4 +256,11 @@
   {afterComponents}
   apiDocs={relayCardMetadata.apiDocs}
   {customSections}
-/>
+>
+    <EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
+    <EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />
+    <EditProps.Prop name="Relay 2" type="text" bind:value={relay2} />
+    <EditProps.Prop name="Relay 3" type="text" bind:value={relay3} />
+    <EditProps.Prop name="Relay 4" type="text" bind:value={relay4} />
+    <EditProps.Prop name="Relay 5" type="text" bind:value={relay5} />
+  </ComponentPageTemplate>

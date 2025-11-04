@@ -6,6 +6,7 @@
   import { muteMetadata } from '$lib/component-registry/mute';
   import type { ShowcaseBlock } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import Alert from '$site-components/alert.svelte';
 
   import MuteButton from '$lib/registry/components/actions/mute-button.svelte';
@@ -52,25 +53,7 @@
   <UIComposition {ndk} user={sampleUser} />
 {/snippet}
 
-<!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  {#if !ndk.$currentUser}
-    <Alert variant="warning" title="Login required">
-      <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
-    </Alert>
-  {/if}
-
-  <EditProps.Root>
-    <EditProps.Prop
-      name="Sample User"
-      type="user"
-      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-      bind:value={sampleUser}
-    />
-    <EditProps.Button>Edit Examples</EditProps.Button>
-  </EditProps.Root>
-{/snippet}
-
+<!-- Title section -->
 <!-- Component previews for Components section -->
 {#snippet muteButtonComponentPreview()}
   <div class="flex flex-col gap-4">
@@ -166,9 +149,7 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
   <ComponentPageTemplate
     metadata={muteMetadata}
     {ndk}
-    {showcaseBlocks}
-    {editPropsSection}
-    componentsSection={{
+    {showcaseBlocks}componentsSection={{
       cards: muteMetadata.cards,
       previews: {
         'mute-button': muteButtonComponentPreview,
@@ -177,14 +158,36 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
     }}
     apiDocs={muteMetadata.apiDocs}
     {customSections}
-  />
+  >
+    {#if !ndk.$currentUser}
+      <Alert variant="warning" title="Login required">
+        <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
+      </Alert>
+    {/if}
+
+    <EditProps.Prop
+      name="Sample User"
+      type="user"
+      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+      bind:value={sampleUser}
+    />
+  </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <h1 class="text-4xl font-bold">{muteMetadata.title}</h1>
-      <p class="text-lg text-muted-foreground mb-6">{muteMetadata.description}</p>
-      {@render editPropsSection()}
-    </div>
+    <PageTitle title={muteMetadata.title} subtitle={muteMetadata.description}>
+      {#if !ndk.$currentUser}
+      <Alert variant="warning" title="Login required">
+        <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
+      </Alert>
+    {/if}
+
+    <EditProps.Prop
+      name="Sample User"
+      type="user"
+      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+      bind:value={sampleUser}
+    />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Select a user to see the components...</div>
     </div>

@@ -5,6 +5,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { replyMetadata, replyDialogComposerCard, replyInlineComposerCard, replyMinimalButtonCard } from '$lib/component-registry/reply';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import UI examples
@@ -26,21 +27,33 @@
       }
     })();
   });
+
+  const showcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Dialog Composer',
+      description: 'Modal dialog with composer',
+      command: 'npx shadcn@latest add reply-button',
+      preview: dialogComposerPreview,
+      cardData: replyDialogComposerCard
+    },
+    {
+      name: 'Inline Composer',
+      description: 'Expandable inline composer',
+      command: 'npx shadcn@latest add reply-button',
+      preview: inlineComposerPreview,
+      cardData: replyInlineComposerCard
+    },
+    {
+      name: 'Minimal Button',
+      description: 'Simple button with count',
+      command: 'npx shadcn@latest add reply-button',
+      preview: minimalButtonPreview,
+      cardData: replyMinimalButtonCard
+    }
+  ];
 </script>
 
 {#if sampleEvent}
-  <!-- EditProps snippet -->
-  {#snippet editPropsSection()}
-    <EditProps.Root>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </EditProps.Root>
-  {/snippet}
 
   <!-- Preview snippets for showcase -->
   {#snippet dialogComposerPreview()}
@@ -67,31 +80,6 @@
   {#snippet minimalButtonComponentPreview()}
     <MinimalButtonExample {ndk} event={sampleEvent} />
   {/snippet}
-
-  <!-- Showcase blocks with preview snippets -->
-  {@const showcaseBlocks: ShowcaseBlock[] = [
-    {
-      name: 'Dialog Composer',
-      description: 'Modal dialog with composer',
-      command: 'npx shadcn@latest add reply-button',
-      preview: dialogComposerPreview,
-      cardData: replyDialogComposerCard
-    },
-    {
-      name: 'Inline Composer',
-      description: 'Expandable inline composer',
-      command: 'npx shadcn@latest add reply-button',
-      preview: inlineComposerPreview,
-      cardData: replyInlineComposerCard
-    },
-    {
-      name: 'Minimal Button',
-      description: 'Simple button with count',
-      command: 'npx shadcn@latest add reply-button',
-      preview: minimalButtonPreview,
-      cardData: replyMinimalButtonCard
-    }
-  ]}
 
   <!-- Additional section for Builder API -->
   {#snippet afterComponents()}
@@ -156,7 +144,6 @@ const replyEvent = await replyAction.reply('This is my reply!');</code></pre>
     metadata={replyMetadata}
     {ndk}
     {showcaseBlocks}
-    {editPropsSection}
     {afterComponents}
     componentsSection={{
       cards: replyMetadata.cards,
@@ -167,20 +154,25 @@ const replyEvent = await replyAction.reply('This is my reply!');</code></pre>
       }
     }}
     apiDocs={replyMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop
+      name="Sample Event"
+      type="event"
+      default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+      bind:value={sampleEvent}
+    />
+  </ComponentPageTemplate>
 {:else}
   <!-- Loading state -->
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Reply</h1>
-      </div>
-      <p class="text-lg text-muted-foreground mb-6">
-        Build custom reply functionality using the createReplyAction builder. Reply is inherently
-        application-specific, requiring different composer UIs for different use cases. This guide
-        shows common patterns for implementing reply buttons and composers.
-      </p>
-    </div>
+    <PageTitle title={replyMetadata.title} subtitle={replyMetadata.description}>
+      <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        bind:value={sampleEvent}
+      />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading event...</div>
     </div>

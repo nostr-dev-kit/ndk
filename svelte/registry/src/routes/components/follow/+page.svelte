@@ -10,8 +10,13 @@
     followButtonAnimatedCard
   } from '$lib/component-registry/follow';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
+
+  // Import code examples
+  import followButtonCode from './follow-button.example?raw';
+  import followButtonPillCode from './follow-button-pill.example?raw';
+  import followButtonAnimatedCode from './follow-button-animated.example?raw';
 
   // Import block components
   import FollowButton from '$lib/registry/components/actions/follow-button.svelte';
@@ -70,7 +75,11 @@
 
   // Components section
   const componentsSection = $derived({
-    cards: [followButtonMinimalCard, followButtonPillCard, followButtonAnimatedCard],
+    cards: [
+      { ...followButtonMinimalCard, code: followButtonCode },
+      { ...followButtonPillCard, code: followButtonPillCode },
+      { ...followButtonAnimatedCard, code: followButtonAnimatedCode }
+    ],
     previews: {
       [followButtonMinimalCard.name]: minimalCardPreview,
       [followButtonPillCard.name]: pillCardPreview,
@@ -186,110 +195,6 @@
   </div>
 {/snippet}
 
-<!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  <EditProps.Root>
-    <EditProps.Prop
-      name="Sample User"
-      type="user"
-      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-      bind:value={sampleUser}
-    />
-    <EditProps.Button>Edit Examples</EditProps.Button>
-  </EditProps.Root>
-{/snippet}
-
-<!-- Custom Components section -->
-{#snippet customComponentsSection()}
-  <section class="py-12 space-y-16">
-    <ComponentCard data={followButtonMinimalCard}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-muted-foreground w-24">Default:</span>
-            <FollowButton {ndk} target={sampleUser} />
-          </div>
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-muted-foreground w-24">With User:</span>
-            <FollowButton {ndk} target={sampleUser} showTarget={true} />
-          </div>
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
-            <FollowButton {ndk} target="bitcoin" showTarget={true} />
-          </div>
-        </div>
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={followButtonPillCard}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-6 items-center">
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Default</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-              <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With User Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-              <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
-              <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} compact />
-              <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
-              <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
-            </div>
-          </div>
-        </div>
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={followButtonAnimatedCard}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-6 items-center">
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Default</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonAnimated {ndk} target={sampleUser} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With User Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
-              <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
-            </div>
-          </div>
-        </div>
-      {/snippet}
-    </ComponentCard>
-  </section>
-{/snippet}
 
 <!-- Custom Builder API section -->
 {#snippet customSections()}
@@ -339,18 +244,27 @@ await followAction.follow();</code></pre>
     metadata={followMetadata}
     {ndk}
     {showcaseBlocks}
-    {editPropsSection}
+    {componentsSection}
     {customSections}
-    beforeComponents={customComponentsSection}
     apiDocs={followMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop
+      name="Sample User"
+      type="user"
+      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+      bind:value={sampleUser}
+    />
+  </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <h1 class="text-4xl font-bold">{followMetadata.title}</h1>
-      <p class="text-lg text-muted-foreground mb-6">{followMetadata.description}</p>
-      {@render editPropsSection()}
-    </div>
+    <PageTitle title={followMetadata.title} subtitle={followMetadata.description}>
+      <EditProps.Prop
+        name="Sample User"
+        type="user"
+        default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+        bind:value={sampleUser}
+      />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Select a user to see the components...</div>
     </div>

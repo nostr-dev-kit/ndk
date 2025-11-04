@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { Button } from "$lib/components/ui/button";
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import {
@@ -25,16 +26,13 @@
 
   // Demo state
   let filters = $state({ kinds: [1], limit: 100 });
-  let relayUrls = $state<string[] | undefined>(undefined);
+  let relayUrls = $state<string[] | undefined>(['wss://relay.damus.io']);
   let demoSyncBuilder = $state<ReturnType<typeof createNegentropySync>>();
 
-  // Initialize demo sync builder
-  $effect(() => {
-    demoSyncBuilder = createNegentropySync(() => ({
-      filters,
-      relayUrls
-    }), ndk);
-  });
+  demoSyncBuilder = createNegentropySync(() => ({
+    filters,
+    relayUrls
+  }), ndk);
 
   // Showcase blocks
   const showcaseBlocks: ShowcaseBlock[] = [
@@ -87,17 +85,6 @@
 {/snippet}
 
 <!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  <EditProps.Root>
-    <EditProps.Button onclick={() => demoSyncBuilder?.startSync()}>
-      Start Demo Sync
-    </EditProps.Button>
-    <EditProps.Button onclick={() => demoSyncBuilder?.stopSync()} variant="outline">
-      Stop Sync
-    </EditProps.Button>
-  </EditProps.Root>
-{/snippet}
-
 <!-- Custom Components section -->
 {#snippet customComponentsSection()}
   <ComponentPageSectionTitle
@@ -168,13 +155,16 @@ const sync = createNegentropySync(() => (&#123;
 const subscription = await sync.startSync();
 
 // Access reactive state
-sync.syncing          // boolean - whether currently syncing
-sync.progress         // number - 0-100 percentage
-sync.totalRelays      // number - total relays to sync
-sync.completedRelays  // number - completed relay count
-sync.totalEvents      // number - total events synced
-sync.relays           // RelayProgress[] - per-relay status
-sync.errors           // Map&lt;string, Error&gt; - relay errors
+sync.syncing                  // boolean - whether currently syncing
+sync.progress                 // number - 0-100 percentage
+sync.totalRelays              // number - total relays to sync
+sync.completedRelays          // number - completed relay count
+sync.totalEvents              // number - total events synced
+sync.relays                   // RelayProgress[] - per-relay status
+sync.errors                   // Map&lt;string, Error&gt; - relay errors
+sync.velocity                 // number - events/second velocity
+sync.estimatedTimeRemaining   // number | null - ETA in seconds
+sync.activeNegotiations       // RelayProgress[] - actively negotiating relays
 
 // Stop syncing
 sync.stopSync();</code></pre>
@@ -197,13 +187,74 @@ sync.stopSync();</code></pre>
           <li><code>totalRelays</code>: number - Total number of relays</li>
           <li><code>completedRelays</code>: number - Completed relay count</li>
           <li><code>totalEvents</code>: number - Total events synced</li>
-          <li><code>relays</code>: RelayProgress[] - Individual relay status</li>
+          <li><code>relays</code>: RelayProgress[] - Individual relay status with negotiation details</li>
           <li><code>errors</code>: Map&lt;string, Error&gt; - Errors by relay URL</li>
           <li><code>subscription</code>: NDKSubscription | null - Active subscription</li>
+          <li><code>velocity</code>: number - Events per second (0 if not syncing)</li>
+          <li><code>estimatedTimeRemaining</code>: number | null - Seconds until completion (null if not calculable)</li>
+          <li><code>activeNegotiations</code>: RelayProgress[] - Relays currently in negotiation phase</li>
           <li><code>startSync()</code>: async function - Start syncing</li>
           <li><code>stopSync()</code>: function - Stop sync and subscription</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Progress Tracking</h2>
+    <p class="text-muted-foreground mb-6">
+      The sync builder provides detailed negotiation progress tracking with velocity and ETA calculations.
+    </p>
+
+    <div class="bg-muted/50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-3">Negotiation Progress</h3>
+      <p class="text-sm text-muted-foreground mb-4">
+        During sync, each relay goes through multiple negotiation rounds. The builder tracks this in real-time:
+      </p>
+      <pre class="text-sm overflow-x-auto"><code>const sync = createNegentropySync(() => (&#123; filters &#125;), ndk);
+
+// Each relay's progress includes negotiation details
+sync.relays.forEach(relay => &#123;
+  if (relay.negotiation) &#123;
+    console.log(`$&#123;relay.url&#125;:`);
+    console.log(`  Phase: $&#123;relay.negotiation.phase&#125;`);        // 'initiating' | 'reconciling' | 'closing' | 'fetching'
+    console.log(`  Round: $&#123;relay.negotiation.round&#125;`);        // Current round number
+    console.log(`  Need: $&#123;relay.negotiation.needCount&#125;`);     // Events to fetch
+    console.log(`  Have: $&#123;relay.negotiation.haveCount&#125;`);     // Events we have
+  &#125;
+&#125;);</code></pre>
+
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Negotiation Phases:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li><code>initiating</code>: Sending initial negentropy message to relay</li>
+          <li><code>reconciling</code>: Exchanging fingerprints and ID lists</li>
+          <li><code>closing</code>: Negotiation complete, sending close message</li>
+          <li><code>fetching</code>: Downloading discovered events from relay</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bg-muted/50 rounded-lg p-6 mt-6">
+      <h3 class="text-lg font-semibold mb-3">Velocity & ETA</h3>
+      <p class="text-sm text-muted-foreground mb-4">
+        Real-time velocity tracking and time-to-completion estimates:
+      </p>
+      <pre class="text-sm overflow-x-auto"><code>const sync = createNegentropySync(() => (&#123; filters &#125;), ndk);
+
+// Velocity in events per second
+console.log(`Syncing at $&#123;sync.velocity&#125; events/sec`);
+
+// Estimated time remaining in seconds
+if (sync.estimatedTimeRemaining !== null) &#123;
+  console.log(`ETA: $&#123;sync.estimatedTimeRemaining&#125;s`);
+&#125;
+
+// Active negotiations
+console.log(`$&#123;sync.activeNegotiations.length&#125; relays negotiating`);
+sync.activeNegotiations.forEach(relay => &#123;
+  console.log(`  $&#123;relay.url&#125;: Round $&#123;relay.negotiation?.round&#125;`);
+&#125;);</code></pre>
     </div>
   </section>
 
@@ -248,9 +299,14 @@ sync.stopSync();</code></pre>
 <ComponentPageTemplate
   metadata={negentropySyncMetadata}
   {ndk}
-  {showcaseBlocks}
-  {editPropsSection}
-  {customSections}
+  {showcaseBlocks}{customSections}
   beforeComponents={customComponentsSection}
   apiDocs={negentropySyncMetadata.apiDocs}
-/>
+>
+    <Button variant="outline" onclick={() => demoSyncBuilder?.startSync()}>
+      Start Demo Sync
+    </Button>
+    <Button onclick={() => demoSyncBuilder?.stopSync()} variant="outline">
+      Stop Sync
+    </Button>
+  </ComponentPageTemplate>

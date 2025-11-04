@@ -178,6 +178,7 @@ export class NDKSync {
             return await ndkSync.call(this.ndk, filters, {
                 ...opts,
                 relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
+                onNegotiationProgress: opts.onNegotiationProgress,
             });
         }
 
@@ -313,6 +314,7 @@ export class NDKSync {
                     const result = await this.syncSingleRelay(relay, filterArray, {
                         autoFetch: true,
                         onRelayError: this.createErrorHandler(opts.onRelayError),
+                        onNegotiationProgress: opts.onNegotiationProgress,
                     });
                     opts.onRelaySynced?.(relay, result.events.length);
                 } catch (error) {

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Option 2: Exploded Annotated View</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 3rem;
+      background: #fafafa;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: #666;
+      margin-bottom: 3rem;
+    }
+
+    .interactive-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .example-side {
+      position: sticky;
+      top: 2rem;
+    }
+
+    .event-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    .event-card.chrome-highlight .chrome-zone {
+      outline: 3px solid #1565c0;
+      outline-offset: 4px;
+      border-radius: 8px;
+      background: rgba(21, 101, 192, 0.03);
+    }
+
+    .event-card.content-highlight .content-zone {
+      outline: 3px solid #6a1b9a;
+      outline-offset: 4px;
+      border-radius: 8px;
+      background: rgba(106, 27, 154, 0.03);
+    }
+
+    .event-card.embed-highlight .embed-zone {
+      outline: 3px solid #e65100;
+      outline-offset: 4px;
+      border-radius: 8px;
+      background: rgba(230, 81, 0, 0.03);
+    }
+
+    .chrome-zone {
+      transition: all 0.3s ease;
+    }
+
+    .event-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    .author-info {
+      flex: 1;
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.125rem;
+    }
+
+    .timestamp {
+      font-size: 0.875rem;
+      color: #999;
+    }
+
+    .content-zone {
+      transition: all 0.3s ease;
+      padding: 0.5rem 0;
+    }
+
+    .event-content {
+      line-height: 1.7;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    .mention {
+      color: #1565c0;
+      font-weight: 500;
+    }
+
+    .hashtag {
+      color: #6a1b9a;
+      font-weight: 500;
+    }
+
+    .embed-zone {
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .embedded-note {
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .embedded-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .embedded-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .embedded-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .embedded-time {
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    .embedded-content {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .action-btn {
+      font-size: 0.875rem;
+      color: #666;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .layers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .layer-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .layer-card:hover {
+      border-color: #999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateX(8px);
+    }
+
+    .layer-card.active {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      transform: translateX(8px);
+    }
+
+    .layer-card.chrome { border-left: 4px solid #1565c0; }
+    .layer-card.content { border-left: 4px solid #6a1b9a; }
+    .layer-card.embed { border-left: 4px solid #e65100; }
+
+    .layer-card.active.chrome {
+      border-color: #1565c0;
+      background: rgba(21, 101, 192, 0.02);
+    }
+    .layer-card.active.content {
+      border-color: #6a1b9a;
+      background: rgba(106, 27, 154, 0.02);
+    }
+    .layer-card.active.embed {
+      border-color: #e65100;
+      background: rgba(230, 81, 0, 0.02);
+    }
+
+    .layer-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .layer-card.chrome .layer-number { background: #e3f2fd; color: #1565c0; }
+    .layer-card.content .layer-number { background: #f3e5f5; color: #6a1b9a; }
+    .layer-card.embed .layer-number { background: #fff3e0; color: #e65100; }
+
+    .layer-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .layer-description {
+      color: #666;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .layer-what {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e0e0e0;
+      font-size: 0.875rem;
+      color: #888;
+    }
+
+    .layer-what strong {
+      color: #555;
+    }
+
+    .note {
+      background: #fff9e6;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      margin-top: 3rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .instruction {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Option 2: Exploded Annotated View</h1>
+  <p class="subtitle">Hover over each layer to see it highlighted in context</p>
+
+  <div class="instruction">
+    👆 <strong>Hover over each layer card</strong> to see where it appears in the rendered event
+  </div>
+
+  <div class="interactive-container">
+    <!-- Left: Event Example -->
+    <div class="example-side">
+      <div class="event-card" id="eventCard">
+        <div class="chrome-zone" id="chromeZone">
+          <div class="event-header">
+            <div class="avatar"></div>
+            <div class="author-info">
+              <div class="author-name">Alice Johnson</div>
+              <div class="timestamp">2 hours ago</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-zone" id="contentZone">
+          <div class="event-content">
+            Just deployed a new feature! Check out what <span class="mention">@bob</span> built for the
+            <span class="hashtag">#nostr</span> ecosystem. Here's their original post explaining it:
+
+            <div class="embed-zone" id="embedZone">
+              <div class="embedded-note">
+                <div class="embedded-author">
+                  <div class="embedded-avatar"></div>
+                  <div>
+                    <div class="embedded-name">Bob Smith</div>
+                    <div class="embedded-time">5 hours ago</div>
+                  </div>
+                </div>
+                <div class="embedded-content">
+                  Excited to announce the new relay discovery feature! This will make onboarding so much easier for newcomers.
+                  We've tested it with over 100 users and the feedback has been incredible.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chrome-zone">
+          <div class="event-actions">
+            <div class="action-btn">💬 Reply</div>
+            <div class="action-btn">🔄 Repost</div>
+            <div class="action-btn">⚡ Zap</div>
+            <div class="action-btn">❤️ Like</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Layer Explanations -->
+    <div class="layers-list">
+      <div class="layer-card chrome"
+           onmouseenter="highlightLayer('chrome')"
+           onmouseleave="clearHighlight()">
+        <div class="layer-number">1</div>
+        <div class="layer-title">Chrome</div>
+        <div class="layer-description">
+          The metadata container that wraps all events. Provides the header (avatar, name, timestamp)
+          and footer (action buttons). This frame stays consistent regardless of content type.
+        </div>
+        <div class="layer-what">
+          <strong>Includes:</strong> Avatar, author name, timestamp, reply/repost/zap/like buttons
+        </div>
+      </div>
+
+      <div class="layer-card content"
+           onmouseenter="highlightLayer('content')"
+           onmouseleave="clearHighlight()">
+        <div class="layer-number">2</div>
+        <div class="layer-title">Content</div>
+        <div class="layer-description">
+          The event body renderer. Parses and displays the actual content based on event kind.
+          Handles markdown, mentions, hashtags, links, and media. May contain embedded event references.
+        </div>
+        <div class="layer-what">
+          <strong>Includes:</strong> Text, mentions (@bob), hashtags (#nostr), formatted content
+        </div>
+      </div>
+
+      <div class="layer-card embed"
+           onmouseenter="highlightLayer('embed')"
+           onmouseleave="clearHighlight()">
+        <div class="layer-number">3</div>
+        <div class="layer-title">Embeds</div>
+        <div class="layer-description">
+          Rich previews of referenced events that appear inside content. When content mentions another event
+          (via note1, nevent1, naddr1), it's automatically fetched and rendered with a kind-specific preview.
+        </div>
+        <div class="layer-what">
+          <strong>Includes:</strong> Referenced event preview with author, timestamp, and content snippet
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Concept:</strong> Show a real rendered event on the left, let users hover over layer descriptions
+    on the right to highlight where each layer appears. Emphasizes "this is what you'll actually see" while
+    teaching the architecture.
+  </div>
+
+  <script>
+    let currentHighlight = null;
+
+    function highlightLayer(layer) {
+      clearHighlight();
+      currentHighlight = layer;
+
+      const eventCard = document.getElementById('eventCard');
+      eventCard.classList.add(`${layer}-highlight`);
+
+      const layerCards = document.querySelectorAll('.layer-card');
+      layerCards.forEach(card => {
+        if (card.classList.contains(layer)) {
+          card.classList.add('active');
+        }
+      });
+    }
+
+    function clearHighlight() {
+      if (!currentHighlight) return;
+
+      const eventCard = document.getElementById('eventCard');
+      eventCard.classList.remove(`${currentHighlight}-highlight`);
+
+      const layerCards = document.querySelectorAll('.layer-card');
+      layerCards.forEach(card => card.classList.remove('active'));
+
+      currentHighlight = null;
+    }
+  </script>
+</body>
+</html>

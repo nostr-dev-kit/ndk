@@ -73,7 +73,7 @@
         <div class="grayscale hover:grayscale-0 transition-all duration-500">
           <Article.Root {ndk} {article}>
             <div class="flex gap-4 p-4 border-b border-border bg-card hover:bg-muted/50 transition-colors">
-              <Article.Image class="h-24 w-32 flex-shrink-0 rounded-lg" showGradient={false} />
+              <Article.Image class="h-24 w-32 flex-shrink-0 rounded-lg" />
               <div class="flex-1 flex flex-col gap-2 min-w-0">
                 <Article.Title class="text-base font-semibold line-clamp-2" />
                 <Article.Summary class="text-xs text-muted-foreground line-clamp-2" maxLength={100} />

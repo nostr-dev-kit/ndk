@@ -63,5 +63,5 @@ export const Relay = {
 };
 
 // Export types
-export type { RelayContext } from './context.svelte.js';
+export type { RelayContext } from './relay.context.js';
 export type { RelaySelectorContext } from '../../relay-selector/index.js';

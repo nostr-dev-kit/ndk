@@ -13,4 +13,4 @@ export const Article = {
     ReadingTime
 };
 
-export type { ArticleContext } from './context.svelte.js';
+export type { ArticleContext } from './article.context.js';

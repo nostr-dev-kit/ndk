@@ -13,4 +13,4 @@ export const Highlight = {
   Source,
 };
 
-export type { HighlightContext } from './context.svelte.js';
+export type { HighlightContext } from './highlight.context.js';

@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
+	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
 	import { MediaUpload } from '../../ui/media-upload';
 	import ImageAddIcon from '../../icons/image-add.svelte';
 	import { cn } from '../../utils/cn.js';

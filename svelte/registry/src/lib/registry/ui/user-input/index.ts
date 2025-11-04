@@ -35,4 +35,4 @@ export const UserInput = {
   Item,
 };
 
-export type { UserInputContext } from './context.svelte.js';
+export type { UserInputContext } from './user-input.context.js';

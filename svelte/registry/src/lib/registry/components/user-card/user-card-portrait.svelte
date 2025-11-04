@@ -5,7 +5,7 @@
   import FollowButtonPill from '../actions/follow-button-pill.svelte';
   import { createUserStats } from '../../hooks/user/stats.svelte.js';
   import { getContext } from 'svelte';
-  import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/user.context.js';
 
   interface Props {
     /** NDK instance */

@@ -3,7 +3,7 @@
   import { getContext } from 'svelte';
   import type { Snippet } from 'svelte';
   import type { UserInputResult } from '@nostr-dev-kit/svelte';
-  import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';
+  import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
 
   interface Props {
     /** Optional snippet to render each result */

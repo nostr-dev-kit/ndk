@@ -60,7 +60,7 @@ export type MediaComponent = Component<{
 /**
  * ContentRenderer - Unified system for customizing content rendering
  *
- * Replaces KindRegistry + MentionRegistry with a single, cohesive system.
+ * A single, cohesive system for all content customization.
  *
  * Features:
  * - Inline handler properties (mentions, hashtags, links, media)

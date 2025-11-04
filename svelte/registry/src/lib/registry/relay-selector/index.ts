@@ -51,5 +51,5 @@ export const Selector = {
 };
 
 // Export types
-export type { RelaySelectorContext } from './relay-selector-context.svelte.js';
-export { RELAY_SELECTOR_CONTEXT_KEY } from './relay-selector-context.svelte.js';
+export type { RelaySelectorContext } from './relay-selector.context.js';
+export { RELAY_SELECTOR_CONTEXT_KEY } from './relay-selector.context.js';

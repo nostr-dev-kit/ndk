@@ -3,7 +3,7 @@
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from './user.context.js';
   import type { Snippet } from 'svelte';
   import { cn } from "../../utils/cn.js";
 

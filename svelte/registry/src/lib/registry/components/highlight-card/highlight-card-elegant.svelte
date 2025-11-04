@@ -7,7 +7,7 @@
   import {
     HIGHLIGHT_CONTEXT_KEY,
     type HighlightContext,
-  } from '../../ui/highlight/context.svelte.js';
+  } from '../../ui/highlight/highlight.context.js';
 
   interface Props {
     /** NDK instance */

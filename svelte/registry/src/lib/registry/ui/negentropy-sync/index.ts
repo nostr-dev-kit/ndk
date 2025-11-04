@@ -10,4 +10,4 @@ export const NegentrogySync = {
     Stats
 };
 
-export type { NegentropySyncContext } from './context.svelte.js';
+export type { NegentropySyncContext } from './negentropy-sync.context.js';

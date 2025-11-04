@@ -3,7 +3,7 @@
   import { User } from '../../ui/user/index.js';
   import { cn } from '../../utils/cn.js';
   import { getContext } from 'svelte';
-  import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/context.svelte.js';
+  import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/user.context.js';
   import FollowButtonAnimated from '../actions/follow-button-animated.svelte';
   import { createUserStats } from '../../hooks/user/stats.svelte.js';
 

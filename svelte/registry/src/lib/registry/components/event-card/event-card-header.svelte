@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
+  import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/cn.js';
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';

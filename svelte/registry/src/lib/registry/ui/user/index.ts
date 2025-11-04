@@ -18,4 +18,4 @@ export const User = {
 	Nip05
 };
 
-export type { UserContext } from './context.svelte.js';
+export type { UserContext } from './user.context.js';

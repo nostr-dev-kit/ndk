@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';
+  import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
   import type { Snippet } from 'svelte';
   import { mergeProps } from '../../utils/index.js';
 

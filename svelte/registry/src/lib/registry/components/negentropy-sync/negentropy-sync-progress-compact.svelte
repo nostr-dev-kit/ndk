@@ -5,7 +5,7 @@
 	import { NegentrogySync } from '../../ui/negentropy-sync';
 	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import { getContext } from 'svelte';
-	import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from '../../ui/negentropy-sync/context.svelte.js';
+	import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from '../../ui/negentropy-sync/negentropy-sync.context.js';
 
 	interface Props {
 		ndk?: NDKSvelte;

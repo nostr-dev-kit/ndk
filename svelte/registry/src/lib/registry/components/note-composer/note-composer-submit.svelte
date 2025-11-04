@@ -1,7 +1,7 @@
 <!-- @ndk-version: note-composer@0.1.0 -->
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
+	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
 	import LoadingIcon from '../../icons/loading.svelte';
 	import { cn } from '../../utils/cn.js';
 

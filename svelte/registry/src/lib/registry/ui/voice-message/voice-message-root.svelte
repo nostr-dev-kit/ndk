@@ -3,7 +3,7 @@
   import { setContext } from 'svelte';
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
+  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './voice-message.context.js';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
 

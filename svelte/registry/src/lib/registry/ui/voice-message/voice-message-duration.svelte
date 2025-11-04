@@ -1,7 +1,7 @@
 <!-- @ndk-version: voice-message@0.1.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './context.svelte.js';
+  import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './voice-message.context.js';
 
   interface Props {
     /** Additional CSS classes */

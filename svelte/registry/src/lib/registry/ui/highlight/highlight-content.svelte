@@ -3,7 +3,7 @@
   import {
     HIGHLIGHT_CONTEXT_KEY,
     type HighlightContext,
-  } from './context.svelte.js';
+  } from './highlight.context.js';
 
   interface Props {
     /** Additional CSS classes */

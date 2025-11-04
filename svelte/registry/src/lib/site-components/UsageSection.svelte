@@ -250,11 +250,6 @@
 		border-color: var(--primary);
 	}
 
-	.copy-button svg {
-		width: 16px;
-		height: 16px;
-	}
-
 	.copy-button-absolute {
 		position: absolute;
 		top: 1rem;

@@ -178,19 +178,6 @@
 		gap: 2rem;
 	}
 
-	.title-section {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding-bottom: 2rem;
-		border-bottom: 1px solid var(--border);
-		margin-bottom: 2rem;
-	}
-
-	.title-section.inline {
-		padding-bottom: 1.5rem;
-		margin-bottom: 0;
-	}
 
 	.author-header {
 		margin: 0;
@@ -202,12 +189,6 @@
 		gap: 0.75rem;
 	}
 
-	.author-meta {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 1rem;
-	}
 
 	.author-label {
 		color: var(--muted-foreground);

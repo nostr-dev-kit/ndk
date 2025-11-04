@@ -22,12 +22,12 @@
     stroke-width="1.5"
     stroke-linecap="round"
     stroke-linejoin="round"
-  />
+  ></path>
   <path
     d="M7.61156 21L6.60875 20.0243C6.16074 19.5883 5.93673 19.3704 6.01557 19.1852C6.09441 19 6.4112 19 7.04478 19H14.8058C18.779 19 22 15.866 22 12C22 10.5128 21.5233 9.13383 20.7105 8"
     stroke="currentColor"
     stroke-width="1.5"
     stroke-linecap="round"
     stroke-linejoin="round"
-  />
+  ></path>
 </svg>

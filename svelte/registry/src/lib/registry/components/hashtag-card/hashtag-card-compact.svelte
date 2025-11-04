@@ -81,5 +81,5 @@
   {/if}
 
   <!-- Follow button -->
-  <FollowButton {ndk} target={formattedHashtag} compact={true} class="shrink-0" />
+  <FollowButton {ndk} target={formattedHashtag} class="shrink-0" />
 </div>

@@ -1,22 +1,3 @@
-<!-- @ndk-version: reaction-emoji-button@0.1.0 -->
-<!--
-  @component ReactionEmojiButton
-  Reaction button with emoji picker popover using bits-ui.
-  By default uses ReactionButton as trigger, but allows custom trigger via children.
-
-  @example Default trigger (ReactionButton)
-  ```svelte
-  <ReactionEmojiButton {ndk} {event} />
-  <ReactionEmojiButton {ndk} {event} emoji="🔥" />
-  ```
-
-  @example Custom trigger
-  ```svelte
-  <ReactionEmojiButton {ndk} {event}>
-    <button>Pick an emoji</button>
-  </ReactionEmojiButton>
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

@@ -1,14 +1,3 @@
-<!--
-  @component Relay.Url
-  Displays the relay URL.
-
-  @example
-  ```svelte
-  <Relay.Root {ndk} {relayUrl}>
-    <Relay.Url class="text-sm text-muted" />
-  </Relay.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';

@@ -1,23 +1,3 @@
-<!--
-  @component ReactionAction
-  Reaction button with long-press emoji picker support.
-  Can be used standalone OR within EventCard context.
-  Uses NIP-30 for custom emoji tags and NIP-51 for user preferences.
-
-  @example Standalone
-  ```svelte
-  <ReactionAction {ndk} {event} />
-  <ReactionAction {ndk} {event} emoji="🔥" showCount={false} />
-  ```
-
-  @example In EventCard
-  ```svelte
-  <EventCard.Actions>
-    <ReactionAction />
-    <ReactionAction emoji="🚀" />
-  </EventCard.Actions>
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

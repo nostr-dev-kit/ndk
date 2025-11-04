@@ -1,33 +1,3 @@
-<!-- @ndk-version: user-input@0.6.0 -->
-<!--
-  @component UserInput.Item
-  A headless item primitive for user selection results.
-
-  Follows the bits-ui pattern with support for both default and custom rendering via child snippet.
-
-  @example Basic usage:
-  ```svelte
-  <UserInput.Item {result}>
-    <User.Root user={result.user}>
-      <User.AvatarName />
-    </User.Root>
-  </UserInput.Item>
-  ```
-
-  @example With child snippet (custom element):
-  ```svelte
-  <UserInput.Item {result}>
-    {#snippet child({ props })}
-      <div {...props} class="custom-wrapper">
-        <User.Root user={result.user}>
-          <User.Avatar />
-          <User.Name />
-        </User.Root>
-      </div>
-    {/snippet}
-  </UserInput.Item>
-  ```
--->
 <script lang="ts">
   import { mergeProps } from '../../utils/index.js';
   import { getContext } from 'svelte';

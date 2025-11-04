@@ -1,15 +1,3 @@
-<!-- @ndk-version: article-card-hero@0.4.0 -->
-<!--
-  @component ArticleCard.Hero
-  Hero-style article card preset with prominent gradient background and featured badge
-
-  Ideal for featured/hero sections and landing pages.
-
-  @example
-  ```svelte
-  <ArticleCard.Hero {ndk} {article} />
-  ```
--->
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

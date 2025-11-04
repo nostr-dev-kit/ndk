@@ -1,16 +1,3 @@
-<!-- @ndk-version: event-card@0.20.0 -->
-<!--
-  @component EventCard.Actions
-  Minimal container for action buttons with layout only.
-
-  @example
-  ```svelte
-  <EventCard.Actions>
-    <RepostButton {ndk} {event} />
-    <ReactionAction />
-  </EventCard.Actions>
-  ```
--->
 <script lang="ts">
   import { cn } from '../../utils/index.js';
   import type { Snippet } from 'svelte';

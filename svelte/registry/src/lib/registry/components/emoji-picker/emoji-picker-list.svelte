@@ -1,17 +1,3 @@
-<!-- @ndk-version: emoji-picker@0.2.0 -->
-<!--
-  @component EmojiPicker.List
-  Primitive emoji grid component - renders a clickable list of emojis
-
-  @example
-  ```svelte
-  <EmojiPicker.List
-    emojis={[{ emoji: '❤️' }, { emoji: '👍' }]}
-    onSelect={(emoji) => console.log(emoji)}
-    columns={6}
-  />
-  ```
--->
 <script lang="ts">
   import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { cn } from '../../utils/index.js';

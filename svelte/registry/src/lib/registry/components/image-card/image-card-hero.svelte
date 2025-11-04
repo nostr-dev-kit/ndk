@@ -1,15 +1,3 @@
-<!-- @ndk-version: image-card-hero@0.2.0 -->
-<!--
-  @component ImageCardHero
-  Fullbleed hero-style image card with immersive full-height display.
-  Caption and author info anchored at bottom over gradient overlay.
-
-  @example
-  ```svelte
-  <ImageCardHero {ndk} {image} />
-  <ImageCardHero {ndk} {image} height="h-[600px]" />
-  ```
--->
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';

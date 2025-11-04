@@ -1,16 +1,3 @@
-<!-- @ndk-version: highlight@0.7.0 -->
-<!--
-  @component Highlight.Root
-  Root container for highlight that provides context to child components.
-
-  @example
-  ```svelte
-  <Highlight.Root {ndk} {event} variant="feed">
-    <Highlight.Content />
-    <Highlight.Source />
-  </Highlight.Root>
-  ```
--->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';

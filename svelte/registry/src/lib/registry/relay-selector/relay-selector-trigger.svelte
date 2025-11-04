@@ -1,34 +1,3 @@
-<!-- @ndk-version: relay-selector-trigger@0.1.0 -->
-<!--
-  @component Relay.Selector.Trigger
-  Headless trigger component for relay selector
-
-  @example
-  ```svelte
-  <Relay.Selector.Root {ndk} bind:selected>
-    {#snippet children(context)}
-      <Relay.Selector.Trigger>
-        {#snippet children(ctx)}
-          <button>
-            Select Relays ({ctx.selectionCount})
-          </button>
-        {/snippet}
-      </Relay.Selector.Trigger>
-    {/snippet}
-  </Relay.Selector.Root>
-  ```
-
-  @example With asChild pattern
-  ```svelte
-  <Relay.Selector.Trigger asChild>
-    {#snippet children(ctx)}
-      <CustomButton selected={ctx.selectionCount}>
-        {ctx.selectionCount} relays selected
-      </CustomButton>
-    {/snippet}
-  </Relay.Selector.Trigger>
-  ```
--->
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { RELAY_SELECTOR_CONTEXT_KEY, type RelaySelectorContext } from './relay-selector-context.svelte.js';

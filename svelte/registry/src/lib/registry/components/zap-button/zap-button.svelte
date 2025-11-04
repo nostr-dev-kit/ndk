@@ -1,7 +1,3 @@
-<!--
-  @component ZapButton
-  Standalone zap button component combining send and display functionality.
--->
 <script lang="ts">
   import { NDKEvent, type NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

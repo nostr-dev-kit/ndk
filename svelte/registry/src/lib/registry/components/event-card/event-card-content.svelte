@@ -1,15 +1,3 @@
-<!-- @ndk-version: event-card@0.20.0 -->
-<!--
-  @component EventCard.Content
-  Minimal content display builder with optional truncation.
-  For styled content, create custom blocks.
-
-  @example
-  ```svelte
-  <EventCard.Content />
-  <EventCard.Content truncate={3} />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import EventContent from '../../ui/event-content.svelte';

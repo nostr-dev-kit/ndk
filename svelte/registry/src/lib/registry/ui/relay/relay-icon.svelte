@@ -1,14 +1,3 @@
-<!--
-  @component Relay.Icon
-  Displays relay icon from NIP-11 or fallback.
-
-  @example
-  ```svelte
-  <Relay.Root {ndk} {relayUrl}>
-    <Relay.Icon class="w-12 h-12" />
-  </Relay.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';

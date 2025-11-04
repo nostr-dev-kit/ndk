@@ -1,18 +1,3 @@
-<!-- @ndk-version: event-card@0.20.0 -->
-<!--
-  @component EventCard.Root
-  Minimal root container providing context to child components.
-  Layout-only styling - use blocks for opinionated designs.
-
-  @example
-  ```svelte
-  <EventCard.Root {ndk} {event}>
-    <EventCard.Header />
-    <EventCard.Content />
-    <EventCard.Actions />
-  </EventCard.Root>
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

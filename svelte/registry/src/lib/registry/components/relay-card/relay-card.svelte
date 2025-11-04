@@ -1,15 +1,3 @@
-<!-- @ndk-version: relay-card@0.7.0 -->
-<!--
-  @component RelayCard
-  Full-featured relay card component with expandable sections and connection stats.
-
-  Uses Relay primitives for consistent rendering of relay information.
-
-  @example
-  ```svelte
-  <RelayCard {relay} expanded={true} />
-  ```
--->
 <script lang="ts">
   import type { BookmarkedRelayWithStats, NDKRelayInformation, RelayStatus } from '@nostr-dev-kit/svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

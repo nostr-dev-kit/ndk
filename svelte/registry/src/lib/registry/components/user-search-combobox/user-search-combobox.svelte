@@ -1,32 +1,3 @@
-<!-- @ndk-version: user-search-combobox@0.1.0 -->
-<!--
-  @component UserSearchCombobox
-  User search combobox using bits-ui for accessible keyboard navigation.
-  Search users by name, NIP-05, or npub with real-time results.
-
-  @example Default usage
-  ```svelte
-  <UserSearchCombobox {ndk} onSelect={(user) => console.log(user)} />
-  ```
-
-  @example With custom input element
-  ```svelte
-  <UserSearchCombobox {ndk} onSelect={(user) => console.log(user)}>
-    {#snippet input({ value, oninput, loading })}
-      <input {value} {oninput} placeholder="Search..." class="my-custom-input" />
-    {/snippet}
-  </UserSearchCombobox>
-  ```
-
-  @example With textarea
-  ```svelte
-  <UserSearchCombobox {ndk}>
-    {#snippet input({ value, oninput, loading })}
-      <textarea {value} {oninput} placeholder="Type to search users..." class="custom-textarea" />
-    {/snippet}
-  </UserSearchCombobox>
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';

@@ -1,15 +1,3 @@
-<!-- @ndk-version: article@0.14.0 -->
-<!--
-  @component Article.ReadingTime
-  Display estimated reading time for the article
-
-  @example
-  ```svelte
-  <Article.ReadingTime />
-  <Article.ReadingTime showSuffix={false} />
-  <Article.ReadingTime wordsPerMinute={250} />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';

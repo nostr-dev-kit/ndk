@@ -1,18 +1,3 @@
-<!-- @ndk-version: reply-indicator@0.1.0 -->
-<!--
-  @component ReplyIndicator
-  Shows a "Replying to @user" indicator when an event is a reply.
-  Automatically detects reply relationships and fetches parent event/profile.
-
-  Displays "Replying to @username" with a link to the user's profile.
-  Supports custom rendering via the children snippet prop.
-
-  Props:
-  - ndk: NDKSvelte instance (optional, falls back to context)
-  - event: NDKEvent to check for reply relationship
-  - class: Additional CSS classes
-  - children: Custom rendering snippet
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

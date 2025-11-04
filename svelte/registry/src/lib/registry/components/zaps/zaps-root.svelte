@@ -1,7 +1,3 @@
-<!--
-  @component Zaps.Root
-  Root component for displaying zaps. Subscribes to zaps and provides context.
--->
 <script lang="ts">
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte, ProcessedZap } from '@nostr-dev-kit/svelte';

@@ -1,16 +1,3 @@
-<!-- @ndk-version: image-card@0.1.0 -->
-<!--
-  @component ImageCard
-  An optimized card for displaying image events (NIP-68).
-  Features prominent image display with metadata and interactions.
-
-  @example
-  ```svelte
-  <ImageCard {ndk} {image} />
-  <ImageCard {ndk} {image} showActions={false} />
-  <ImageCard {ndk} {image} imageHeight="h-96" />
-  ```
--->
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';

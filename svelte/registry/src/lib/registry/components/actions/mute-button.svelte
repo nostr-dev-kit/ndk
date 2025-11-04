@@ -1,16 +1,3 @@
-<!-- @ndk-version: mute-button@0.1.0 -->
-<!--
-  @component MuteButton
-  Minimal mute button block using createMuteAction builder.
-  Clean, icon-first design with dynamic text based on mute state.
-
-  @example
-  ```svelte
-  <MuteButton {ndk} target={user} />
-  <MuteButton {ndk} target={user} showIcon={false} />
-  <MuteButton {ndk} target={user} showTarget={true} />
-  ```
--->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

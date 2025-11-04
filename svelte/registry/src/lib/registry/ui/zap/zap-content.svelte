@@ -1,7 +1,3 @@
-<!--
-  @component Zap.Content
-  Displays the comment/content of a zap.
--->
 <script lang="ts">
   import type { ProcessedZap } from '@nostr-dev-kit/svelte';
 

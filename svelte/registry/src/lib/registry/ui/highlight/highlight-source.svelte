@@ -1,24 +1,3 @@
-<!-- @ndk-version: highlight@0.8.0 -->
-<!--
-  @component Highlight.Source
-  Displays the source for the highlight (web URL, article, or event).
-
-  @example Basic usage:
-  ```svelte
-  <Highlight.Source />
-  ```
-
-  @example With custom element:
-  ```svelte
-  <Highlight.Source>
-    {#snippet child({ props, source })}
-      <a {...props} href={source.url} class="custom-link">
-        View source: {source.displayText}
-      </a>
-    {/snippet}
-  </Highlight.Source>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import {

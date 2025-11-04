@@ -1,13 +1,3 @@
-<!-- @ndk-version: relay-selector-inline@0.2.0 -->
-<!--
-  @component RelaySelectorInline
-  Inline relay selector block (no trigger/popover)
-
-  @example
-  ```svelte
-  <RelaySelectorInline {ndk} bind:selected={selectedRelays} />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../../ui/relay/index.js';

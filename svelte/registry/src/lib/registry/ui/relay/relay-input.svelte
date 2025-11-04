@@ -1,13 +1,3 @@
-<!-- @ndk-version: relay-input@0.1.0 -->
-<!--
-  @component Relay.Input
-  Input field for relay URLs with autocomplete and NIP-11 icon replacement
-
-  @example
-  ```svelte
-  <Relay.Input {ndk} bind:value={relayUrl} />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createRelayInfo } from '@nostr-dev-kit/svelte';

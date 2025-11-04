@@ -1,14 +1,3 @@
-<!-- @ndk-version: hashtag-card-compact@0.1.0 -->
-<!--
-  @component HashtagCardCompact
-  Compact horizontal layout for hashtag lists.
-  Shows hashtag, note count, contributors, and follow button.
-
-  @example
-  ```svelte
-  <HashtagCardCompact {ndk} hashtag="bitcoin" />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

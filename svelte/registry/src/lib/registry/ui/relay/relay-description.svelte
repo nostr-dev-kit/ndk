@@ -1,14 +1,3 @@
-<!--
-  @component Relay.Description
-  Displays relay description from NIP-11.
-
-  @example
-  ```svelte
-  <Relay.Root {ndk} {relayUrl}>
-    <Relay.Description maxLines={2} />
-  </Relay.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';

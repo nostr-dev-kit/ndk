@@ -1,15 +1,3 @@
-<!-- @ndk-version: user-card-compact@0.2.0 -->
-<!--
-  @component UserCardCompact
-  Minimal user card for lists, showing avatar, name, and follow button.
-  Built using composable UserProfile primitives and FollowButton block.
-  Ideal for sidebars and compact layouts.
-
-  @example
-  ```svelte
-  <UserCardCompact {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

@@ -1,14 +1,3 @@
-<!-- @ndk-version: hashtag-card-portrait@0.1.0 -->
-<!--
-  @component HashtagCardPortrait
-  Vertical card layout showing hashtag stats, activity chart, and contributors.
-  Great for grids and hashtag galleries.
-
-  @example
-  ```svelte
-  <HashtagCardPortrait {ndk} hashtag="bitcoin" />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

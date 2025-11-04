@@ -1,16 +1,3 @@
-<!-- @ndk-version: event-card-classic@0.1.0 -->
-<!--
-  @component EventCardClassic
-  A classic event card block with complete functionality.
-  Features background, dropdown menu, reposts, and reactions.
-
-  @example
-  ```svelte
-  <EventCardClassic {ndk} {event} />
-  <EventCardClassic {ndk} {event} interactive showActions={false} />
-  <EventCardClassic {ndk} {event} showDropdown={false} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

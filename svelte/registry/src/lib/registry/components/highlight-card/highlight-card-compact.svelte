@@ -1,13 +1,3 @@
-<!-- @ndk-version: highlight-card-compact@0.4.0 -->
-<!--
-  @component HighlightCard.Compact
-  Pre-composed compact variant with inline metadata and left marker line.
-
-  @example
-  ```svelte
-  <HighlightCard.Compact {ndk} {event} />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';

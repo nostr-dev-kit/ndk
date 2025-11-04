@@ -1,16 +1,3 @@
-<!-- @ndk-version: user-card-neon@0.5.0 -->
-<!--
-  @component UserCard.Neon
-  Neon-style user card with full background image and glossy top border
-
-  Features a full background image with darkening gradient and a neon glow effect
-  at the top border using radial gradients and layered inset shadows.
-
-  @example
-  ```svelte
-  <UserCard.Neon {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/index.js';

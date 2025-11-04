@@ -1,32 +1,3 @@
-<!-- @ndk-version: mention-modern@0.1.0 -->
-<!--
-  @component MentionModern
-  Modern inline mention with avatar and user card popover on hover.
-  Displays avatar next to username with hover interaction showing full user card.
-
-  @example
-  ```svelte
-  <MentionModern {ndk} {bech32} />
-  ```
-
-  @installation
-  To use as default mention renderer globally (recommended):
-  ```ts
-  import { setDefaultMention } from '$lib/registry/components/event/content';
-  import MentionModern from '$lib/registry/blocks/mention-modern.svelte';
-
-  setDefaultMention(MentionModern);
-  ```
-
-  Or use with custom snippet per component:
-  ```svelte
-  <EventContent {ndk} {event}>
-    {#snippet mention({ bech32 })}
-      <MentionModern {ndk} {bech32} />
-    {/snippet}
-  </EventContent>
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';

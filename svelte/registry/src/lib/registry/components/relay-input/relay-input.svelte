@@ -1,13 +1,3 @@
-<!-- @ndk-version: relay-input-block@0.1.0 -->
-<!--
-  @component RelayInputBlock
-  Preset block for relay URL input with NIP-11 autocomplete
-
-  @example
-  ```svelte
-  <RelayInputBlock {ndk} bind:value={relayUrl} />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../../ui/relay/index.js';

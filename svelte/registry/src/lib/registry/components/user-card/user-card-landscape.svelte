@@ -1,15 +1,3 @@
-<!-- @ndk-version: user-card-landscape@0.2.0 -->
-<!--
-  @component UserCardLandscape
-  Horizontal card layout with avatar on left.
-  Built using composable UserProfile primitives and FollowButtonPill block.
-  Perfect for feed views and detailed lists.
-
-  @example
-  ```svelte
-  <UserCardLandscape {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

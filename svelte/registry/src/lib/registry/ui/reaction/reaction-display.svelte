@@ -1,23 +1,3 @@
-<!--
-  @component Reaction.Display
-  Renders emoji reactions - supports both standard emojis and custom NIP-30 emojis.
-  Can extract emoji data from NDKEvent (kind:7) or accept direct props.
-
-  @example Standard emoji
-  ```svelte
-  <Reaction.Display emoji="❤️" class="text-2xl" />
-  ```
-
-  @example Custom emoji with URL
-  ```svelte
-  <Reaction.Display emoji=":custom:" url="https://example.com/emoji.png" shortcode="custom" class="w-6 h-6" />
-  ```
-
-  @example From NDKEvent (kind:7)
-  ```svelte
-  <Reaction.Display event={reactionEvent} class="text-2xl" />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { cn } from '../../utils/index.js';

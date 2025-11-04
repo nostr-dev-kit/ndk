@@ -1,7 +1,3 @@
-<!--
-  @component Zap.Amount
-  Displays the amount of a zap in sats.
--->
 <script lang="ts">
   import type { ProcessedZap } from '@nostr-dev-kit/svelte';
 

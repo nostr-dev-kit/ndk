@@ -1,28 +1,3 @@
-<!-- @ndk-version: note-composer-card@0.1.0 -->
-<!--
-  @component NoteComposerCard
-  Note composer in a card layout with border and shadow.
-  Good for embedding in feeds or pages.
-
-  @example Basic usage
-  ```svelte
-  <NoteComposerCard {ndk} />
-  ```
-
-  @example With reply
-  ```svelte
-  <NoteComposerCard {ndk} replyTo={event} />
-  ```
-
-  @example Custom styling
-  ```svelte
-  <NoteComposerCard
-    {ndk}
-    class="max-w-2xl mx-auto"
-    onPublish={(event) => console.log('Published:', event)}
-  />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';

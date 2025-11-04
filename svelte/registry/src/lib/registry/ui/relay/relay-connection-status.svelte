@@ -1,20 +1,3 @@
-<!--
-  @component Relay.ConnectionStatus
-  Displays relay connection status indicator.
-
-  @example
-  ```svelte
-  <Relay.Root {ndk} {relayUrl}>
-    <Relay.ConnectionStatus size="md" showLabel />
-  </Relay.Root>
-  ```
-
-  Can also be used standalone with explicit status:
-  ```svelte
-  <Relay.ConnectionStatus status="connected" size="md" showLabel />
-  ```
--->
-<!-- @ndk-version: relay-connection-status@0.3.0 -->
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { RelayStatus } from '@nostr-dev-kit/svelte';

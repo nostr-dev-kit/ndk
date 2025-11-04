@@ -1,27 +1,3 @@
-<!--
-  @component AvatarGroup
-  Displays multiple user avatars in a stacked group with optional overflow count.
-
-  Uses createAvatarGroup builder to prioritize showing users that the current user follows.
-
-  @example Basic
-  ```svelte
-  <AvatarGroup {ndk} pubkeys={['pubkey1', 'pubkey2', 'pubkey3']} />
-  ```
-
-  @example With options
-  ```svelte
-  <AvatarGroup
-    {ndk}
-    pubkeys={pubkeys}
-    max={3}
-    size={32}
-    spacing="tight"
-    direction="vertical"
-    skipCurrentUser={true}
-  />
-  ```
--->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

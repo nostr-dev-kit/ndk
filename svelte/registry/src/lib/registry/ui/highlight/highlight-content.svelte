@@ -1,13 +1,3 @@
-<!-- @ndk-version: highlight@0.7.0 -->
-<!--
-  @component Highlight.Content
-  Displays the highlight text with surrounding context.
-
-  @example
-  ```svelte
-  <Highlight.Content />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import {

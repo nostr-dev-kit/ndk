@@ -1,29 +1,3 @@
-<!-- @ndk-version: note-composer-minimal@0.1.0 -->
-<!--
-  @component NoteComposerMinimal
-  Minimal note composer with just textarea and submit button.
-  No media uploads or mention input - just simple text notes.
-
-  @example Basic usage
-  ```svelte
-  <NoteComposerMinimal {ndk} />
-  ```
-
-  @example With reply
-  ```svelte
-  <NoteComposerMinimal {ndk} replyTo={event} />
-  ```
-
-  @example Quick replies
-  ```svelte
-  <NoteComposerMinimal
-    {ndk}
-    replyTo={event}
-    placeholder="Quick reply..."
-    buttonSize="sm"
-  />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';

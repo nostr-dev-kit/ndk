@@ -1,4 +1,3 @@
-<!-- @ndk-version: thread-view-twitter@0.4.0 -->
 <!--
   @component ThreadViewTwitter
   A Twitter-style thread view with vertical connector lines.
@@ -6,7 +5,7 @@
 
   @example
   ```svelte
-  <script>
+<script>
     import { createThreadView } from '@nostr-dev-kit/svelte';
     const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
   </script>

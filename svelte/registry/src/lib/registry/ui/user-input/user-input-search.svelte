@@ -1,25 +1,3 @@
-<!-- @ndk-version: user-input@0.7.0 -->
-<!--
-  @component UserInput.Search
-  Headless search input that connects to UserInput context.
-
-  @example Basic usage:
-  ```svelte
-  <UserInput.Search />
-  ```
-
-  @example Custom input:
-  ```svelte
-  <UserInput.Search>
-    {#snippet child({ props, loading })}
-      <div class="custom-wrapper">
-        <input {...props} class="custom-input" />
-        {#if loading}<span>Searching...</span>{/if}
-      </div>
-    {/snippet}
-  </UserInput.Search>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';

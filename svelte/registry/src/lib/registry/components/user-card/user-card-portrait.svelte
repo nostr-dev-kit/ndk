@@ -1,15 +1,3 @@
-<!-- @ndk-version: user-card-portrait@0.2.0 -->
-<!--
-  @component UserCardPortrait
-  Vertical card layout showing avatar, name, bio, and stats.
-  Built using composable UserProfile primitives and FollowButtonPill block.
-  Great for grids and profile galleries.
-
-  @example
-  ```svelte
-  <UserCardPortrait {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

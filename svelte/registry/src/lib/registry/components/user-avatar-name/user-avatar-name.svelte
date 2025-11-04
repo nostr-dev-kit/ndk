@@ -1,20 +1,3 @@
-<!--
-  @component UserAvatarName
-  Opinionated composite component combining User.Avatar and User.Name.
-
-  This is a convenience component for common user display patterns.
-  It wraps the User.Root primitive and composites Avatar + Name with optional metadata.
-
-  @example Basic usage:
-  ```svelte
-  <UserAvatarName {ndk} {user} />
-  ```
-
-  @example With metadata:
-  ```svelte
-  <UserAvatarName {ndk} pubkey={user.pubkey} avatarClass="w-12 h-12" meta="handle" />
-  ```
--->
 <script lang="ts">
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

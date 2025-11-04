@@ -1,20 +1,3 @@
-<!--
-  @component VoiceMessagePlayer
-  Opinionated full-featured audio player component for voice messages.
-
-  This component provides a complete player UI with play/pause button and progress bar.
-  It wraps the VoiceMessage.Root primitive and uses the Player primitive internally.
-
-  @example Basic usage:
-  ```svelte
-  <VoiceMessagePlayer {voiceMessage} />
-  ```
-
-  @example Without play button:
-  ```svelte
-  <VoiceMessagePlayer {voiceMessage} showButton={false} />
-  ```
--->
 <script lang="ts">
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

@@ -1,7 +1,3 @@
-<!--
-  @component ZapSend.Root
-  Root component for sending zaps. Provides context and send action.
--->
 <script lang="ts">
   import { NDKEvent, NDKZapper, type NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

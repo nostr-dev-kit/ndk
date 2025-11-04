@@ -136,6 +136,13 @@ async function syncWithRelay(
         // Create sync session
         const session = new SyncSession(relay, filterArray, storage, opts);
 
+        // Wire up progress callback if provided
+        if (opts.onNegotiationProgress) {
+            session.on("progress", (progress) => {
+                opts.onNegotiationProgress?.(relay, progress);
+            });
+        }
+
         // Start sync
         const { need, have } = await session.start();
 
@@ -145,6 +152,18 @@ async function syncWithRelay(
 
         // Auto-fetch if enabled
         if (opts.autoFetch !== false && need.size > 0) {
+            // Emit fetching progress
+            if (opts.onNegotiationProgress) {
+                opts.onNegotiationProgress(relay, {
+                    phase: "fetching",
+                    round: 0,
+                    needCount: need.size,
+                    haveCount: have.size,
+                    messageSize: 0,
+                    timestamp: Date.now(),
+                });
+            }
+
             const events = await fetchNeededEvents.call(this, relay, need);
             result.events.push(...events);
 

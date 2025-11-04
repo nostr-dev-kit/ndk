@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Option 4: Full Interactive Composition with Variant Swapping</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 3rem;
+      background: #fafafa;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .instruction {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    .instruction strong {
+      color: #111;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .event-container {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    /* Layer boundaries with colored dashed borders */
+    .chrome-layer {
+      border: 3px dashed #3b82f6;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      background: rgba(59, 130, 246, 0.02);
+    }
+
+    .content-layer {
+      border: 3px dashed #8b5cf6;
+      border-radius: 8px;
+      padding: 1.5rem;
+      position: relative;
+      background: rgba(139, 92, 246, 0.02);
+    }
+
+    .embed-layer {
+      border: 3px dashed #f97316;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      position: relative;
+      background: rgba(249, 115, 22, 0.02);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .embed-layer:hover {
+      background: rgba(249, 115, 22, 0.05);
+      border-color: #ea580c;
+    }
+
+    .embed-layer.active {
+      background: rgba(249, 115, 22, 0.08);
+      border-color: #ea580c;
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+    }
+
+    /* Layer labels */
+    .layer-label {
+      position: absolute;
+      top: -12px;
+      left: 12px;
+      background: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .chrome-layer .layer-label {
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+    }
+
+    .content-layer .layer-label {
+      color: #8b5cf6;
+      border: 2px solid #8b5cf6;
+    }
+
+    .embed-layer .layer-label {
+      color: #f97316;
+      border: 2px solid #f97316;
+    }
+
+    /* Chrome components */
+    .event-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    .author-info {
+      flex: 1;
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.125rem;
+    }
+
+    .timestamp {
+      font-size: 0.875rem;
+      color: #999;
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .action-btn {
+      font-size: 0.875rem;
+      color: #666;
+      cursor: pointer;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+      background: transparent;
+      border: none;
+    }
+
+    .action-btn:hover {
+      background: #f5f5f5;
+    }
+
+    /* Content components */
+    .event-content {
+      line-height: 1.8;
+      color: #333;
+      font-size: 0.95rem;
+    }
+
+    .inline-mention {
+      color: #3b82f6;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.125rem 0.25rem;
+      border-radius: 3px;
+      transition: all 0.2s;
+      display: inline-block;
+      border: 2px dashed #f97316;
+      background: rgba(249, 115, 22, 0.02);
+    }
+
+    .inline-mention:hover {
+      background: rgba(249, 115, 22, 0.05);
+      border-color: #ea580c;
+    }
+
+    .inline-mention.active {
+      background: rgba(249, 115, 22, 0.08);
+      border-color: #ea580c;
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+    }
+
+    .inline-hashtag {
+      color: #8b5cf6;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.125rem 0.25rem;
+      border-radius: 3px;
+      transition: all 0.2s;
+      display: inline-block;
+      border: 2px dashed #f97316;
+      background: rgba(249, 115, 22, 0.02);
+    }
+
+    .inline-hashtag:hover {
+      background: rgba(249, 115, 22, 0.05);
+      border-color: #ea580c;
+    }
+
+    .inline-hashtag.active {
+      background: rgba(249, 115, 22, 0.08);
+      border-color: #ea580c;
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+    }
+
+    /* Embedded note variants */
+    .embedded-note-card,
+    .embedded-note-compact,
+    .embedded-note-inline {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .embedded-note-compact {
+      padding: 0.75rem;
+      display: flex;
+      align-items: start;
+      gap: 0.75rem;
+    }
+
+    .embedded-note-inline {
+      padding: 0.875rem;
+      max-width: 500px;
+    }
+
+    .embedded-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .embedded-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      flex-shrink: 0;
+    }
+
+    .embedded-avatar-small {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      flex-shrink: 0;
+    }
+
+    .embedded-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .embedded-time {
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    .embedded-content {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .embedded-content-truncated {
+      font-size: 0.8rem;
+      color: #666;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Embedded article variants */
+    .embedded-article-card,
+    .embedded-article-compact,
+    .embedded-article-inline {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .embedded-article-cover {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .embedded-article-cover-small {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .embedded-article-body {
+      padding: 1rem;
+    }
+
+    .embedded-article-compact {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem;
+    }
+
+    .embedded-article-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .embedded-article-title-small {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #111;
+    }
+
+    .embedded-article-summary {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .embedded-article-author {
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 0.5rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 2rem;
+    }
+
+    .info-panel {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #111;
+    }
+
+    .info-description {
+      font-size: 0.875rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .info-meta {
+      font-size: 0.8rem;
+      color: #999;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .variant-selector {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .variant-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #111;
+    }
+
+    .variant-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .variant-option {
+      padding: 0.75rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.875rem;
+      background: white;
+    }
+
+    .variant-option:hover {
+      border-color: #999;
+    }
+
+    .variant-option.active {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.05);
+      font-weight: 600;
+    }
+
+    .variant-label {
+      font-weight: 600;
+      color: #111;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .variant-desc {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+      font-size: 0.875rem;
+    }
+
+    .click-hint {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 4px;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #92400e;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .legend {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .legend-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #111;
+    }
+
+    .legend-items {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-box {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 3px dashed;
+    }
+
+    .legend-box.chrome { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+    .legend-box.content { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
+    .legend-box.embed { border-color: #f97316; background: rgba(249, 115, 22, 0.1); }
+
+    .legend-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Option 4: Full Interactive Composition</h1>
+  <p class="subtitle">Click on any layer to see details and swap variants</p>
+
+  <div class="instruction">
+    👆 <strong>Click on any layer</strong> to see details and change how it renders.
+    Click the <strong>blue chrome layer</strong> to swap card variants, or <strong>orange embeds</strong> to change how they display.
+    The sidebar shows details and variant options.
+  </div>
+
+  <div class="legend">
+    <div class="legend-title">Layer Legend</div>
+    <div class="legend-items">
+      <div class="legend-item">
+        <div class="legend-box chrome"></div>
+        <div class="legend-text">Chrome Layer</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box content"></div>
+        <div class="legend-text">Content Layer</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box embed"></div>
+        <div class="legend-text">Embed Layer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Main Event Display -->
+    <div class="event-container">
+      <!-- Chrome Layer -->
+      <div class="chrome-layer" onclick="selectEmbed('chrome', event)" style="cursor: pointer;">
+        <span class="layer-label">Layer 1: Chrome</span>
+
+        <div id="chrome-variant-container">
+          <!-- Will be populated by JS -->
+        </div>
+
+        <!-- Content Layer -->
+        <div class="content-layer">
+          <span class="layer-label">Layer 2: Content</span>
+
+          <div class="event-content">
+            Hey <span class="inline-mention" onclick="selectEmbed('mention', event)" id="mention-variant-container">@bob</span>, check out this article
+            about <span class="inline-hashtag" onclick="selectEmbed('hashtag', event)" id="hashtag-variant-container">#nostr</span> development!
+            I think you'll find it super relevant to what we discussed.
+
+            <!-- Embedded Article -->
+            <div class="embed-layer" id="embed-article" onclick="selectEmbed('article', event)">
+              <span class="layer-label">Embed: Article</span>
+              <div id="article-variant-container">
+                <!-- Will be populated by JS -->
+              </div>
+            </div>
+
+            <br><br>
+            Also, here's that post from yesterday that explains the whole concept:
+
+            <!-- Embedded Note -->
+            <div class="embed-layer" id="embed-note" onclick="selectEmbed('note', event)">
+              <span class="layer-label">Embed: Note</span>
+              <div id="note-variant-container">
+                <!-- Will be populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="chrome-actions-container">
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="click-hint">
+        👈 Click any layer to see options
+      </div>
+
+      <div class="info-panel" id="infoPanel">
+        <div class="empty-state">
+          Select an embed to see details and variant options
+        </div>
+      </div>
+
+      <div class="variant-selector" id="variantSelector" style="display: none;">
+        <div class="variant-title">Choose Variant</div>
+        <div class="variant-options" id="variantOptions">
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const embedData = {
+      chrome: {
+        title: 'Chrome (Card Container)',
+        description: 'The metadata container that wraps all events. Different chrome variants provide different layouts and visual treatments for the same content.',
+        layer: 'Layer 1: Chrome',
+        component: 'EventCard',
+        variants: {
+          standard: {
+            label: 'Standard Card',
+            desc: 'Default chrome with full metadata',
+            renderHeader: () => `
+              <div class="event-header">
+                <div class="avatar"></div>
+                <div class="author-info">
+                  <div class="author-name">Alice Johnson</div>
+                  <div class="timestamp">2 hours ago</div>
+                </div>
+              </div>
+            `,
+            renderActions: () => `
+              <div class="event-actions">
+                <button class="action-btn">💬 Reply</button>
+                <button class="action-btn">🔄 Repost</button>
+                <button class="action-btn">⚡ Zap</button>
+                <button class="action-btn">❤️ Like</button>
+              </div>
+            `
+          },
+          compact: {
+            label: 'Compact Card',
+            desc: 'Minimal chrome, smaller avatar',
+            renderHeader: () => `
+              <div class="event-header" style="margin-bottom: 1rem;">
+                <div class="avatar" style="width: 32px; height: 32px;"></div>
+                <div class="author-info">
+                  <div class="author-name" style="font-size: 0.875rem;">Alice Johnson</div>
+                  <div class="timestamp" style="font-size: 0.75rem;">2h</div>
+                </div>
+              </div>
+            `,
+            renderActions: () => `
+              <div class="event-actions" style="margin-top: 1rem; padding-top: 1rem; gap: 1rem;">
+                <button class="action-btn" style="font-size: 0.8rem;">💬</button>
+                <button class="action-btn" style="font-size: 0.8rem;">🔄</button>
+                <button class="action-btn" style="font-size: 0.8rem;">⚡</button>
+                <button class="action-btn" style="font-size: 0.8rem;">❤️</button>
+              </div>
+            `
+          },
+          minimal: {
+            label: 'Minimal Card',
+            desc: 'Name and timestamp only, no actions',
+            renderHeader: () => `
+              <div style="margin-bottom: 1rem;">
+                <span style="font-weight: 600; font-size: 0.875rem; color: #111;">Alice Johnson</span>
+                <span style="color: #999; font-size: 0.75rem; margin-left: 0.5rem;">• 2 hours ago</span>
+              </div>
+            `,
+            renderActions: () => ''
+          },
+          threaded: {
+            label: 'Thread Card',
+            desc: 'Optimized for thread/conversation view',
+            renderHeader: () => `
+              <div class="event-header" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0e0e0;">
+                <div class="avatar" style="width: 36px; height: 36px;"></div>
+                <div class="author-info">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="author-name" style="font-size: 0.9rem;">Alice Johnson</div>
+                    <div class="timestamp" style="font-size: 0.75rem;">2h</div>
+                  </div>
+                </div>
+              </div>
+            `,
+            renderActions: () => `
+              <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e0e0e0;">
+                <button class="action-btn" style="font-size: 0.8rem; padding: 0.125rem 0.5rem;">Reply</button>
+                <button class="action-btn" style="font-size: 0.8rem; padding: 0.125rem 0.5rem;">Repost</button>
+                <button class="action-btn" style="font-size: 0.8rem; padding: 0.125rem 0.5rem;">Zap</button>
+              </div>
+            `
+          }
+        }
+      },
+      mention: {
+        title: 'Inline Mention',
+        description: 'A clickable reference to another user. Parsed from @username syntax in the content. Can expand to show user profile card on hover or click.',
+        layer: 'Content (inline element)',
+        component: 'MentionInline',
+        variants: {
+          raw: {
+            label: 'Raw (No Variant)',
+            desc: 'Show raw nostr: reference',
+            render: () => '<span style="color: #999; font-family: monospace; font-size: 0.85rem;">nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft</span>'
+          },
+          inline: {
+            label: 'Inline Text',
+            desc: 'Simple colored text link',
+            render: () => '@bob'
+          },
+          badge: {
+            label: 'Badge Style',
+            desc: 'Pill-shaped badge with background',
+            render: () => '<span style="background: #dbeafe; color: #1e40af; padding: 0.125rem 0.5rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">@bob</span>'
+          },
+          avatar: {
+            label: 'With Avatar',
+            desc: 'Shows small avatar next to name',
+            render: () => `
+              <span style="display: inline-flex; align-items: center; gap: 0.25rem; background: #f3f4f6; padding: 0.125rem 0.5rem; border-radius: 12px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: inline-block;"></span>
+                <span style="font-size: 0.875rem; font-weight: 500; color: #1e40af;">bob</span>
+              </span>
+            `
+          }
+        }
+      },
+      hashtag: {
+        title: 'Inline Hashtag',
+        description: 'A topic tag parsed from #hashtag syntax. Links to a feed of all events with this tag. Essential for content discovery and categorization.',
+        layer: 'Content (inline element)',
+        component: 'HashtagInline',
+        variants: {
+          raw: {
+            label: 'Raw (No Variant)',
+            desc: 'Show raw #hashtag text',
+            render: () => '<span style="color: #999; font-family: monospace; font-size: 0.85rem;">#nostr</span>'
+          },
+          inline: {
+            label: 'Inline Text',
+            desc: 'Simple colored text link',
+            render: () => '#nostr'
+          },
+          badge: {
+            label: 'Badge Style',
+            desc: 'Pill-shaped badge with background',
+            render: () => '<span style="background: #f3e8ff; color: #6b21a8; padding: 0.125rem 0.5rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">#nostr</span>'
+          },
+          chip: {
+            label: 'Chip Style',
+            desc: 'Outlined chip with border',
+            render: () => '<span style="border: 1.5px solid #8b5cf6; color: #8b5cf6; padding: 0.125rem 0.5rem; border-radius: 12px; font-size: 0.875rem; font-weight: 500;">#nostr</span>'
+          }
+        }
+      },
+      note: {
+        title: 'Embedded Note Preview',
+        description: 'A rich preview of a referenced short-form note (kind:1 or kind:1111). Automatically fetched when content includes note1/nevent1 references. Shows author, timestamp, and content preview.',
+        layer: 'Embed',
+        component: 'NoteEmbedded',
+        variants: {
+          raw: {
+            label: 'Raw (No Variant)',
+            desc: 'Show raw nostr: reference',
+            render: () => '<div style="color: #999; font-family: monospace; font-size: 0.85rem; word-break: break-all; padding: 0.5rem; background: #fafafa; border-radius: 4px;">nostr:nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qgewaehxw309ahx7um5wgh8xetdd9ekx7mp0qy88wumn8ghj7mn0wvhxcmmv9uq3xamnwvaz7tmwdaehgu3dwp6kytnhv4kxcmmjv3jhytnwv46z7qpq8xjewd4atxdaz2k2fq0dl6rrhu3z74t7ppjd79ykz4gqfnepvksqjflxnn</div>'
+          },
+          card: {
+            label: 'Card Variant',
+            desc: 'Full preview with all details',
+            render: () => `
+              <div class="embedded-note-card">
+                <div class="embedded-author">
+                  <div class="embedded-avatar"></div>
+                  <div>
+                    <div class="embedded-name">Bob Smith</div>
+                    <div class="embedded-time">5 hours ago</div>
+                  </div>
+                </div>
+                <div class="embedded-content">
+                  This is exactly what I've been working on! The relay discovery feature uses a clever
+                  gossip protocol to find the most relevant relays for each user. It's been tested with
+                  over 100 beta users and the onboarding time decreased by 73%.
+                </div>
+              </div>
+            `
+          },
+          inline: {
+            label: 'Inline Variant',
+            desc: 'Constrained width for flowing content',
+            render: () => `
+              <div class="embedded-note-inline">
+                <div class="embedded-author">
+                  <div class="embedded-avatar"></div>
+                  <div>
+                    <div class="embedded-name">Bob Smith</div>
+                    <div class="embedded-time">5 hours ago</div>
+                  </div>
+                </div>
+                <div class="embedded-content">
+                  This is exactly what I've been working on! The relay discovery feature uses a clever
+                  gossip protocol...
+                </div>
+              </div>
+            `
+          },
+          compact: {
+            label: 'Compact Variant',
+            desc: 'Minimal space with truncated content',
+            render: () => `
+              <div class="embedded-note-compact">
+                <div class="embedded-avatar-small"></div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <div class="embedded-name">Bob Smith</div>
+                    <div class="embedded-time">5h</div>
+                  </div>
+                  <div class="embedded-content-truncated">
+                    This is exactly what I've been working on! The relay discovery feature uses a clever gossip protocol...
+                  </div>
+                </div>
+              </div>
+            `
+          }
+        }
+      },
+      article: {
+        title: 'Embedded Article Preview',
+        description: 'A rich preview of a long-form article (kind:30023). Shows cover image, title, summary, and author. Automatically fetched when content includes naddr1 references.',
+        layer: 'Embed',
+        component: 'ArticleEmbedded',
+        variants: {
+          raw: {
+            label: 'Raw (No Variant)',
+            desc: 'Show raw nostr: reference',
+            render: () => '<div style="color: #999; font-family: monospace; font-size: 0.85rem; word-break: break-all; padding: 0.5rem; background: #fafafa; border-radius: 4px;">nostr:naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx</div>'
+          },
+          card: {
+            label: 'Card Variant',
+            desc: 'Full card with cover image',
+            render: () => `
+              <div class="embedded-article-card">
+                <div class="embedded-article-cover">📄</div>
+                <div class="embedded-article-body">
+                  <div class="embedded-article-title">
+                    Understanding Nostr: A Protocol for Decentralized Social Media
+                  </div>
+                  <div class="embedded-article-summary">
+                    An in-depth exploration of the Nostr protocol, covering relays, event signing,
+                    and how it enables truly decentralized social networking without platform lock-in.
+                  </div>
+                  <div class="embedded-article-author">
+                    By Charlie Davis • 12 min read
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          inline: {
+            label: 'Inline Variant',
+            desc: 'No cover image, inline style',
+            render: () => `
+              <div class="embedded-article-inline">
+                <div style="padding: 1rem;">
+                  <div class="embedded-article-title">
+                    Understanding Nostr: A Protocol for Decentralized Social Media
+                  </div>
+                  <div class="embedded-article-summary">
+                    An in-depth exploration of the Nostr protocol, covering relays, event signing,
+                    and how it enables truly decentralized social networking.
+                  </div>
+                  <div class="embedded-article-author">
+                    By Charlie Davis • 12 min read
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          compact: {
+            label: 'Compact Variant',
+            desc: 'Small thumbnail with title',
+            render: () => `
+              <div class="embedded-article-compact">
+                <div class="embedded-article-cover-small">📄</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div class="embedded-article-title-small">
+                    Understanding Nostr: A Protocol for Decentralized Social Media
+                  </div>
+                  <div class="embedded-article-author">
+                    Charlie Davis • 12 min read
+                  </div>
+                </div>
+              </div>
+            `
+          }
+        }
+      }
+    };
+
+    const state = {
+      selectedEmbed: null,
+      variants: {
+        chrome: 'standard',
+        mention: 'inline',
+        hashtag: 'inline',
+        note: 'card',
+        article: 'card'
+      }
+    };
+
+    function selectEmbed(embedType, event) {
+      event.stopPropagation();
+
+      // Clear previous selection
+      document.querySelectorAll('.embed-layer').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.inline-mention').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.inline-hashtag').forEach(el => el.classList.remove('active'));
+      document.querySelector('.chrome-layer')?.classList.remove('active');
+
+      state.selectedEmbed = embedType;
+      const data = embedData[embedType];
+
+      // Highlight selected embed
+      if (embedType === 'chrome') {
+        document.querySelector('.chrome-layer').classList.add('active');
+      } else if (embedType === 'note' || embedType === 'article') {
+        document.getElementById(`embed-${embedType}`).classList.add('active');
+      } else if (embedType === 'mention') {
+        event.target.classList.add('active');
+      } else if (embedType === 'hashtag') {
+        event.target.classList.add('active');
+      }
+
+      // Update info panel
+      const infoPanel = document.getElementById('infoPanel');
+      infoPanel.innerHTML = `
+        <div class="info-title">${data.title}</div>
+        <div class="info-description">${data.description}</div>
+        <div class="info-meta">
+          <strong>Layer:</strong> ${data.layer}<br>
+          <strong>Component:</strong> <code>${data.component}</code>
+        </div>
+      `;
+
+      // Show variant selector if available
+      const variantSelector = document.getElementById('variantSelector');
+      if (data.variants) {
+        variantSelector.style.display = 'block';
+
+        const variantOptions = document.getElementById('variantOptions');
+        variantOptions.innerHTML = Object.entries(data.variants).map(([key, variant]) => `
+          <div class="variant-option ${state.variants[embedType] === key ? 'active' : ''}"
+               onclick="selectVariant('${embedType}', '${key}')">
+            <span class="variant-label">${variant.label}</span>
+            <span class="variant-desc">${variant.desc}</span>
+          </div>
+        `).join('');
+      } else {
+        variantSelector.style.display = 'none';
+      }
+    }
+
+    function selectVariant(embedType, variantKey) {
+      state.variants[embedType] = variantKey;
+
+      // Re-render the embed with new variant
+      if (embedType === 'chrome') {
+        const variant = embedData.chrome.variants[variantKey];
+        const headerContainer = document.getElementById('chrome-variant-container');
+        const actionsContainer = document.getElementById('chrome-actions-container');
+        headerContainer.innerHTML = variant.renderHeader();
+        actionsContainer.innerHTML = variant.renderActions();
+      } else {
+        const container = document.getElementById(`${embedType}-variant-container`);
+        const newContent = embedData[embedType].variants[variantKey].render();
+
+        // For inline elements (mention, hashtag), we need to preserve the wrapper
+        if (embedType === 'mention' || embedType === 'hashtag') {
+          container.innerHTML = newContent;
+          // Reapply the onclick handler
+          container.onclick = (e) => selectEmbed(embedType, e);
+        } else {
+          container.innerHTML = newContent;
+        }
+      }
+
+      // Update active state in variant selector
+      document.querySelectorAll('#variantOptions .variant-option').forEach(el => {
+        el.classList.remove('active');
+      });
+      event.target.closest('.variant-option').classList.add('active');
+
+      // Re-select to update UI
+      const container = document.getElementById(`${embedType}-variant-container`) || document.querySelector('.chrome-layer');
+      selectEmbed(embedType, { stopPropagation: () => {}, target: container });
+    }
+
+    // Initialize with default variants
+    window.addEventListener('DOMContentLoaded', () => {
+      Object.keys(state.variants).forEach(embedType => {
+        if (embedType === 'chrome') {
+          const variant = embedData.chrome.variants[state.variants.chrome];
+          const headerContainer = document.getElementById('chrome-variant-container');
+          const actionsContainer = document.getElementById('chrome-actions-container');
+          headerContainer.innerHTML = variant.renderHeader();
+          actionsContainer.innerHTML = variant.renderActions();
+        } else {
+          const container = document.getElementById(`${embedType}-variant-container`);
+          if (container) {
+            const variantKey = state.variants[embedType];
+            const newContent = embedData[embedType].variants[variantKey].render();
+
+            // For inline elements, just set innerHTML (they already have the wrapper)
+            if (embedType === 'mention' || embedType === 'hashtag') {
+              container.innerHTML = newContent;
+            } else {
+              container.innerHTML = newContent;
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -47,7 +47,10 @@
     get totalEvents() { return syncBuilder.totalEvents; },
     get progress() { return syncBuilder.progress; },
     get relays() { return syncBuilder.relays; },
-    get errors() { return syncBuilder.errors; }
+    get errors() { return syncBuilder.errors; },
+    get velocity() { return syncBuilder.velocity; },
+    get estimatedTimeRemaining() { return syncBuilder.estimatedTimeRemaining; },
+    get activeNegotiations() { return syncBuilder.activeNegotiations; }
   };
 
   setContext(NEGENTROPY_SYNC_CONTEXT_KEY, context);

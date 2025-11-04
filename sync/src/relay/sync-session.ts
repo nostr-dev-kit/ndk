@@ -9,7 +9,7 @@ import { FRAME_SIZE_LIMITS, TIMEOUTS } from "../constants.js";
 import { Negentropy } from "../negentropy/core.js";
 import type { NegentropyStorage } from "../negentropy/storage.js";
 import { hexToUint8Array, uint8ArrayToHex } from "../negentropy/utils.js";
-import type { NDKSyncOptions } from "../types.js";
+import type { NDKSyncOptions, NegotiationProgress } from "../types.js";
 
 /**
  * Typeguard to check if a message is a valid NEG message format.
@@ -46,6 +46,7 @@ function hasWebSocketConnectivity(
 export class SyncSession extends EventEmitter<{
     complete: (result: { need: Set<string>; have: Set<string> }) => void;
     error: (error: Error) => void;
+    progress: (progress: NegotiationProgress) => void;
 }> {
     private relay: NDKRelay;
     private filters: NDKFilter[];
@@ -55,6 +56,7 @@ export class SyncSession extends EventEmitter<{
     private have = new Set<string>();
     private active = false;
     private opts: NDKSyncOptions;
+    private roundNumber = 0;
 
     constructor(relay: NDKRelay, filters: NDKFilter[], storage: NegentropyStorage, opts: NDKSyncOptions) {
         super();
@@ -89,12 +91,18 @@ export class SyncSession extends EventEmitter<{
         this.relay.on("notice", this.handleNotice.bind(this));
 
         try {
+            // Emit initial progress
+            this.emitProgress("initiating", 0);
+
             // Generate initial message
             const initialMsg = await this.negentropy.initiate();
 
             // Send NEG-OPEN
             const message = JSON.stringify(["NEG-OPEN", this.sessionId, this.filters, uint8ArrayToHex(initialMsg)]);
             await this.sendRaw(message);
+
+            // Increment round after sending initial message
+            this.roundNumber++;
 
             // Wait for completion
             return await new Promise((resolve, reject) => {
@@ -130,6 +138,7 @@ export class SyncSession extends EventEmitter<{
 
             // Convert hex payload to Uint8Array
             const query = hexToUint8Array(payload);
+            const querySize = query.length;
 
             // Process with negentropy
             const result = await this.negentropy.reconcile(query);
@@ -142,12 +151,17 @@ export class SyncSession extends EventEmitter<{
                 this.have.add(uint8ArrayToHex(id));
             }
 
+            // Emit progress after processing
+            this.emitProgress("reconciling", querySize);
+
             if (result.nextMessage) {
                 // Continue sync
+                this.roundNumber++;
                 const msg = JSON.stringify(["NEG-MSG", this.sessionId, uint8ArrayToHex(result.nextMessage)]);
                 await this.sendRaw(msg);
             } else {
-                // Sync complete
+                // Sync complete - emit closing progress
+                this.emitProgress("closing", 0);
                 const closeMsg = JSON.stringify(["NEG-CLOSE", this.sessionId]);
                 await this.sendRaw(closeMsg);
                 this.complete();
@@ -295,5 +309,21 @@ export class SyncSession extends EventEmitter<{
      */
     private generateSessionId(): string {
         return `neg-${Math.random().toString(36).substring(2, 15)}`;
+    }
+
+    /**
+     * Emit progress update
+     */
+    private emitProgress(phase: NegotiationProgress["phase"], messageSize: number): void {
+        const progress: NegotiationProgress = {
+            phase,
+            round: this.roundNumber,
+            needCount: this.need.size,
+            haveCount: this.have.size,
+            messageSize,
+            timestamp: Date.now(),
+        };
+
+        this.emit("progress", progress);
     }
 }

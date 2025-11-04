@@ -10,7 +10,7 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let maxAvatars = $state<number>(5);
+  let maxAvatars = $state<string>("5");
 
   const examplePubkeys = [
     'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
@@ -68,7 +68,7 @@
 {/snippet}
 
 {#snippet withOverflowPreview()}
-  <AvatarGroup {ndk} pubkeys={examplePubkeys} max={maxAvatars} />
+  <AvatarGroup {ndk} pubkeys={examplePubkeys} max={parseInt(maxAvatars) || 5} />
 {/snippet}
 
 {#snippet textOverflowPreview()}
@@ -91,18 +91,6 @@
 {/snippet}
 
 <!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  <EditProps.Root>
-    <EditProps.Prop
-      name="Max avatars"
-      type="text"
-      value={maxAvatars.toString()}
-      onchange={(v) => maxAvatars = parseInt(v) || 5}
-    />
-    <EditProps.Button>Edit Examples</EditProps.Button>
-  </EditProps.Root>
-{/snippet}
-
 <!-- Custom sections for Builder API and Usage Examples -->
 {#snippet customSections()}
   <!-- Builder API -->
@@ -192,8 +180,12 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 <ComponentPageTemplate
   metadata={avatarGroupMetadata}
   {ndk}
-  {showcaseBlocks}
-  {editPropsSection}
-  {customSections}
+  {showcaseBlocks}{customSections}
   apiDocs={avatarGroupMetadata.apiDocs}
-/>
+>
+    <EditProps.Prop
+      name="Max avatars"
+      type="text"
+      bind:value={maxAvatars}
+    />
+  </ComponentPageTemplate>

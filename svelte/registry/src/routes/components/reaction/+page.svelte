@@ -5,6 +5,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { reactionMetadata, reactionDisplayStandardCard, reactionDisplayCustomCard, reactionButtonCard, reactionSlackCard, reactionEmojiButtonCard, reactionActionBasicCard, reactionSlackStyleCard, reactionBuilderCard, reactionDelayedCard } from '$lib/component-registry/reaction';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
@@ -123,24 +124,8 @@
 </script>
 
 {#if sampleEvent}
-  <!-- EditProps snippet -->
-  {#snippet editPropsSection()}
-    <EditProps.Root>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-      <EditProps.Prop
-        name="NIP-30 Reaction"
-        type="event"
-        default="nevent1qqsr32zfznhjj7nd5ycher9gwcparzvtrvd6cdxcf769nr5ag37y5fqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgzy86t6"
-        bind:value={nip30ReactionEvent}
-      />
-    </EditProps.Root>
-  {/snippet}
-
+  <!-- Title section -->
+  
   <!-- Reaction Primitives Showcase snippets -->
   {#snippet displayStandardPreview()}
     <ReactionDisplayBasic />
@@ -306,9 +291,7 @@
   <ComponentPageTemplate
     metadata={reactionMetadata}
     {ndk}
-    showcaseBlocks={primitivesBlocks}
-    {editPropsSection}
-    {customSections}
+    showcaseBlocks={primitivesBlocks}{customSections}
     componentsSection={{
       cards: reactionMetadata.cards,
       previews: {
@@ -324,16 +307,37 @@
       }
     }}
     apiDocs={reactionMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        bind:value={sampleEvent}
+      />
+      <EditProps.Prop
+        name="NIP-30 Reaction"
+        type="event"
+        default="nevent1qqsr32zfznhjj7nd5ycher9gwcparzvtrvd6cdxcf769nr5ag37y5fqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgzy86t6"
+        bind:value={nip30ReactionEvent}
+      />
+  </ComponentPageTemplate>
 {:else}
   <!-- Loading state -->
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <h1 class="text-4xl font-bold mb-4">Reaction</h1>
-      <p class="text-lg text-muted-foreground mb-6">
-        Simple reaction button with long-press emoji picker and NIP-30/NIP-51 support. Long-press to open emoji picker with custom emojis from your NIP-51 kind:10030 list.
-      </p>
-    </div>
+    <PageTitle title={reactionMetadata.title} subtitle={reactionMetadata.description}>
+      <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        bind:value={sampleEvent}
+      />
+      <EditProps.Prop
+        name="NIP-30 Reaction"
+        type="event"
+        default="nevent1qqsr32zfznhjj7nd5ycher9gwcparzvtrvd6cdxcf769nr5ag37y5fqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgzy86t6"
+        bind:value={nip30ReactionEvent}
+      />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading event...</div>
     </div>

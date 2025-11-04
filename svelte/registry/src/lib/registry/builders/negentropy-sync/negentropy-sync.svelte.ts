@@ -1,5 +1,5 @@
-import type { NDKFilter, NDKRelay, NDKSubscription } from "@nostr-dev-kit/ndk";
-import { NDKSync } from "@nostr-dev-kit/sync";
+import { NDKRelaySet, type NDKFilter, type NDKRelay, type NDKSubscription } from "@nostr-dev-kit/ndk";
+import { NDKSync, type NegotiationProgress } from "@nostr-dev-kit/sync";
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { getContext } from 'svelte';
 
@@ -8,22 +8,32 @@ export interface NegentropySyncConfig {
     relayUrls?: string[];
 }
 
+export interface RelayNegotiationState {
+    phase: string;
+    round: number;
+    needCount: number;
+    haveCount: number;
+    lastUpdate: number;
+}
+
 export interface RelayProgress {
     url: string;
     status: 'pending' | 'syncing' | 'completed' | 'error';
     eventCount: number;
     error?: string;
+    negotiation?: RelayNegotiationState;
 }
 
 /**
  * Creates a reactive Negentropy sync state manager
  *
- * Tracks sync progress across multiple relays, providing real-time updates
- * on sync status, relay progress, event counts, and errors.
+ * Tracks sync progress across multiple relays with detailed negotiation visibility,
+ * providing real-time updates on sync status, relay progress, event counts, velocity,
+ * ETA, and per-relay negotiation details including round numbers and phase.
  *
  * @param config - Function returning configuration with filters and optional relay URLs
  * @param ndk - Optional NDK instance (uses context if not provided)
- * @returns Object with sync state and startSync function
+ * @returns Object with comprehensive sync state and control functions
  *
  * @example
  * ```svelte
@@ -38,8 +48,21 @@ export interface RelayProgress {
  * </script>
  *
  * <div>
- *   Progress: {sync.progress}%
- *   {#if sync.syncing}Syncing {sync.completedRelays}/{sync.totalRelays} relays{/if}
+ *   <div>Progress: {sync.progress}% | Velocity: {sync.velocity} events/s</div>
+ *   {#if sync.estimatedTimeRemaining !== null}
+ *     <div>ETA: {sync.estimatedTimeRemaining}s</div>
+ *   {/if}
+ *   {#if sync.syncing}
+ *     <div>Syncing {sync.completedRelays}/{sync.totalRelays} relays</div>
+ *     {#each sync.relays as relay}
+ *       <div>
+ *         {relay.url}: {relay.status}
+ *         {#if relay.negotiation}
+ *           (Round {relay.negotiation.round} - {relay.negotiation.phase})
+ *         {/if}
+ *       </div>
+ *     {/each}
+ *   {/if}
  * </div>
  * ```
  */
@@ -56,7 +79,9 @@ export function createNegentropySync(
         totalEvents: 0,
         relayProgress: new Map<string, RelayProgress>(),
         errors: new Map<string, Error>(),
-        subscription: null as NDKSubscription | null
+        subscription: null as NDKSubscription | null,
+        syncStartTime: 0,
+        eventsAtStart: 0
     });
 
     const progress = $derived(
@@ -66,6 +91,33 @@ export function createNegentropySync(
     );
 
     const relays = $derived(Array.from(state.relayProgress.values()));
+
+    const velocity = $derived(() => {
+        if (!state.syncing || state.syncStartTime === 0) return 0;
+        const elapsed = (Date.now() - state.syncStartTime) / 1000; // seconds
+        if (elapsed === 0) return 0;
+        const eventsSynced = state.totalEvents - state.eventsAtStart;
+        return Math.round(eventsSynced / elapsed);
+    });
+
+    const estimatedTimeRemaining = $derived(() => {
+        if (!state.syncing || velocity() === 0) return null;
+        const relaysRemaining = state.totalRelays - state.completedRelays;
+        if (relaysRemaining === 0) return 0;
+
+        // Estimate based on average time per relay so far
+        const elapsed = (Date.now() - state.syncStartTime) / 1000;
+        const avgTimePerRelay = state.completedRelays > 0
+            ? elapsed / state.completedRelays
+            : 0;
+
+        return Math.round(avgTimePerRelay * relaysRemaining);
+    });
+
+    const activeNegotiations = $derived(
+        Array.from(state.relayProgress.values())
+            .filter(r => r.status === 'syncing' && r.negotiation)
+    );
 
     async function startSync(): Promise<NDKSubscription> {
         const { filters, relayUrls } = config();
@@ -77,14 +129,13 @@ export function createNegentropySync(
         state.totalEvents = 0;
         state.relayProgress.clear();
         state.errors.clear();
+        state.syncStartTime = Date.now();
+        state.eventsAtStart = 0;
 
         // Determine relays to sync
         let relaySet;
         if (relayUrls) {
-            await resolvedNDK.pool.ensureRelay(relayUrls[0]);
-            const relays = relayUrls.map(url => resolvedNDK.pool.relays.get(url)!).filter(Boolean);
-            const { NDKRelaySet } = await import("@nostr-dev-kit/ndk");
-            relaySet = new NDKRelaySet(new Set(relays), resolvedNDK);
+            relaySet = NDKRelaySet.fromRelayUrls(relayUrls, resolvedNDK);
         }
 
         const allRelays = relaySet
@@ -105,11 +156,26 @@ export function createNegentropySync(
         // Start sync and subscribe
         const subscription = await sync.syncAndSubscribe(filters, {
             relaySet,
+            onNegotiationProgress: (relay: NDKRelay, progress: NegotiationProgress) => {
+                const relayProgress = state.relayProgress.get(relay.url);
+                if (relayProgress) {
+                    relayProgress.status = 'syncing';
+                    relayProgress.negotiation = {
+                        phase: progress.phase,
+                        round: progress.round,
+                        needCount: progress.needCount,
+                        haveCount: progress.haveCount,
+                        lastUpdate: progress.timestamp
+                    };
+                    state.relayProgress.set(relay.url, relayProgress);
+                }
+            },
             onRelaySynced: (relay: NDKRelay, eventCount: number) => {
                 const progress = state.relayProgress.get(relay.url);
                 if (progress) {
                     progress.status = 'completed';
                     progress.eventCount = eventCount;
+                    progress.negotiation = undefined; // Clear negotiation state
                     state.relayProgress.set(relay.url, progress);
                 }
                 state.completedRelays++;
@@ -120,6 +186,7 @@ export function createNegentropySync(
                 if (progress) {
                     progress.status = 'error';
                     progress.error = error.message;
+                    progress.negotiation = undefined; // Clear negotiation state
                     state.relayProgress.set(relay.url, progress);
                 }
                 state.errors.set(relay.url, error);
@@ -166,6 +233,15 @@ export function createNegentropySync(
         },
         get subscription() {
             return state.subscription;
+        },
+        get velocity() {
+            return velocity();
+        },
+        get estimatedTimeRemaining() {
+            return estimatedTimeRemaining();
+        },
+        get activeNegotiations() {
+            return activeNegotiations;
         },
         startSync,
         stopSync

@@ -63,6 +63,66 @@
   function closePrimitiveDrawer() {
     focusedPrimitive = null;
   }
+
+  const showcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Classic',
+      description: 'Classic user card with banner, avatar, name, bio, and stats. Perfect for popovers, dialogs, and standalone displays.',
+      command: 'npx shadcn@latest add user-card-classic',
+      preview: classicPreview,
+      cardData: userCardClassicCard,
+      orientation: 'horizontal'
+    },
+    {
+      name: 'Compact',
+      description: 'Minimal user card for lists, showing avatar, name, and follow button. Ideal for sidebars and compact layouts.',
+      command: 'npx shadcn@latest add user-card-compact',
+      preview: compactPreview,
+      cardData: userCardCompactCard,
+      orientation: 'vertical'
+    },
+    {
+      name: 'List Item',
+      description: 'Ultra-compact list item showing avatar, name, and follow status badge. Perfect for dense user lists.',
+      command: 'npx shadcn@latest add user-list-item',
+      preview: listItemPreview,
+      cardData: userCardListItemCard,
+      orientation: 'vertical'
+    },
+    {
+      name: 'Portrait',
+      description: 'Vertical card layout showing avatar, name, bio, and stats. Great for grids and profile galleries.',
+      command: 'npx shadcn@latest add user-card-portrait',
+      preview: portraitPreview,
+      cardData: userCardPortraitCard,
+      orientation: 'horizontal'
+    },
+    {
+      name: 'Landscape',
+      description: 'Horizontal card layout with avatar on left. Perfect for feed views and detailed lists.',
+      command: 'npx shadcn@latest add user-card-landscape',
+      preview: landscapePreview,
+      cardData: userCardLandscapeCard,
+      orientation: 'vertical'
+    },
+    {
+      name: 'Neon',
+      description: 'Neon-style card with full background image and glossy top border. Perfect for modern, visually striking user displays.',
+      command: 'npx shadcn@latest add user-card-neon',
+      preview: neonPreview,
+      cardData: userCardNeonCard,
+      orientation: 'horizontal'
+    },
+    {
+      name: 'Glass',
+      description: 'Glassmorphic card with frosted glass effect and gradient mesh background. Modern, elegant design with soft glows.',
+      command: 'npx shadcn@latest add user-card-glass',
+      preview: glassPreview,
+      cardData: userCardGlassCard,
+      orientation: 'horizontal',
+      control: glassControlNew
+    }
+  ];
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -140,23 +200,6 @@
 {/snippet}
 
 <!-- EditProps snippet -->
-{#snippet editPropsSection()}
-  {#key users}
-    <EditProps.Root>
-      <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
-      <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
-      <EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} default="npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m" />
-      <EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
-      <EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} default="npub1a2cww4kn9wqte4ry70vyfwqyqvpswksna27rtxd8vty6c74era8sdcw83a" />
-      <EditProps.Prop name="User 6" type="user" bind:value={user6} options={users} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
-      <EditProps.Prop name="User 7" type="user" bind:value={user7} options={users} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
-      <EditProps.Prop name="User 8" type="user" bind:value={user8} options={users} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
-      <EditProps.Prop name="User 9" type="user" bind:value={user9} options={users} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </EditProps.Root>
-  {/key}
-{/snippet}
-
 <!-- Custom sections (Anatomy + Primitives) -->
 {#snippet customSections()}
   {#if displayUsers.length > 0}
@@ -316,75 +359,12 @@
 {/snippet}
 
 {#if displayUsers.length > 0 && user1}
-  <!-- Showcase blocks -->
-  {@const showcaseBlocks = [
-    {
-      name: 'Classic',
-      description: 'Classic user card with banner, avatar, name, bio, and stats. Perfect for popovers, dialogs, and standalone displays.',
-      command: 'npx shadcn@latest add user-card-classic',
-      preview: classicPreview,
-      cardData: userCardClassicCard,
-      orientation: 'horizontal'
-    },
-    {
-      name: 'Compact',
-      description: 'Minimal user card for lists, showing avatar, name, and follow button. Ideal for sidebars and compact layouts.',
-      command: 'npx shadcn@latest add user-card-compact',
-      preview: compactPreview,
-      cardData: userCardCompactCard,
-      orientation: 'vertical'
-    },
-    {
-      name: 'List Item',
-      description: 'Ultra-compact list item showing avatar, name, and follow status badge. Perfect for dense user lists.',
-      command: 'npx shadcn@latest add user-list-item',
-      preview: listItemPreview,
-      cardData: userCardListItemCard,
-      orientation: 'vertical'
-    },
-    {
-      name: 'Portrait',
-      description: 'Vertical card layout showing avatar, name, bio, and stats. Great for grids and profile galleries.',
-      command: 'npx shadcn@latest add user-card-portrait',
-      preview: portraitPreview,
-      cardData: userCardPortraitCard,
-      orientation: 'horizontal'
-    },
-    {
-      name: 'Landscape',
-      description: 'Horizontal card layout with avatar on left. Perfect for feed views and detailed lists.',
-      command: 'npx shadcn@latest add user-card-landscape',
-      preview: landscapePreview,
-      cardData: userCardLandscapeCard,
-      orientation: 'vertical'
-    },
-    {
-      name: 'Neon',
-      description: 'Neon-style card with full background image and glossy top border. Perfect for modern, visually striking user displays.',
-      command: 'npx shadcn@latest add user-card-neon',
-      preview: neonPreview,
-      cardData: userCardNeonCard,
-      orientation: 'horizontal'
-    },
-    {
-      name: 'Glass',
-      description: 'Glassmorphic card with frosted glass effect and gradient mesh background. Modern, elegant design with soft glows.',
-      command: 'npx shadcn@latest add user-card-glass',
-      preview: glassPreview,
-      cardData: userCardGlassCard,
-      orientation: 'horizontal',
-      control: glassControlNew
-    }
-  ] as ShowcaseBlock[]}
-
   <!-- Use template with custom showcase component -->
   <ComponentPageTemplate
     metadata={userCardMetadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
-    showcaseBlocks={showcaseBlocks}
-    {editPropsSection}
-    {customSections}
+    showcaseBlocks={showcaseBlocks}{customSections}
     componentsSection={{
       cards: userCardMetadata.cards,
       previews: {
@@ -398,7 +378,17 @@
       }
     }}
     apiDocs={userCardMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+      <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
+      <EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} default="npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m" />
+      <EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
+      <EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} default="npub1a2cww4kn9wqte4ry70vyfwqyqvpswksna27rtxd8vty6c74era8sdcw83a" />
+      <EditProps.Prop name="User 6" type="user" bind:value={user6} options={users} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
+      <EditProps.Prop name="User 7" type="user" bind:value={user7} options={users} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
+      <EditProps.Prop name="User 8" type="user" bind:value={user8} options={users} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
+      <EditProps.Prop name="User 9" type="user" bind:value={user9} options={users} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
+  </ComponentPageTemplate>
 {:else}
   <!-- Loading state -->
   <div class="px-8">

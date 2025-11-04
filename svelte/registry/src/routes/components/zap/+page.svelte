@@ -5,6 +5,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { zapMetadata, zapBasicCard, zapCustomCard } from '$lib/component-registry/zap';
   import { EditProps } from '$lib/site-components/edit-props';
+  import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import examples
@@ -27,6 +28,23 @@
       }
     })();
   });
+
+  const showcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Basic',
+      description: 'Simple with amount tracking',
+      command: 'npx shadcn@latest add zap-button',
+      preview: basicPreview,
+      cardData: zapBasicCard
+    },
+    {
+      name: 'Custom',
+      description: 'Full control over styling',
+      command: 'npx shadcn@latest add zap-button',
+      preview: customPreview,
+      cardData: zapCustomCard
+    }
+  ];
 </script>
 
 {#if sampleEvent}
@@ -48,43 +66,11 @@
     <BuilderExample {ndk} event={sampleEvent} />
   {/snippet}
 
-  <!-- EditProps snippet -->
-  {#snippet editPropsSection()}
-    <EditProps.Root>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </EditProps.Root>
-  {/snippet}
-
-  <!-- Showcase blocks with preview snippets -->
-  {@const showcaseBlocks: ShowcaseBlock[] = [
-    {
-      name: 'Basic',
-      description: 'Simple with amount tracking',
-      command: 'npx shadcn@latest add zap-button',
-      preview: basicPreview,
-      cardData: zapBasicCard
-    },
-    {
-      name: 'Custom',
-      description: 'Full control over styling',
-      command: 'npx shadcn@latest add zap-button',
-      preview: customPreview,
-      cardData: zapCustomCard
-    }
-  ]}
-
   <!-- Use the template -->
   <ComponentPageTemplate
     metadata={zapMetadata}
     {ndk}
     {showcaseBlocks}
-    {editPropsSection}
     componentsSection={{
       cards: zapMetadata.cards,
       previews: {
@@ -93,18 +79,25 @@
       }
     }}
     apiDocs={zapMetadata.apiDocs}
-  />
+  >
+    <EditProps.Prop
+      name="Sample Event"
+      type="event"
+      default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+      bind:value={sampleEvent}
+    />
+  </ComponentPageTemplate>
 {:else}
   <!-- Loading state -->
   <div class="px-8">
-    <div class="mb-12 pt-8">
-      <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Zap</h1>
-      </div>
-      <p class="text-lg text-muted-foreground mb-6">
-        Zap (lightning payment) button with amount display. Send sats to support events and users on Nostr.
-      </p>
-    </div>
+    <PageTitle title={zapMetadata.title} subtitle={zapMetadata.description}>
+      <EditProps.Prop
+        name="Sample Event"
+        type="event"
+        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+        bind:value={sampleEvent}
+      />
+    </PageTitle>
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading event...</div>
     </div>

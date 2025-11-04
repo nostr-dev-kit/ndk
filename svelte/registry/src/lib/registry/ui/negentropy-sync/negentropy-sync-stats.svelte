@@ -41,6 +41,24 @@
     </span>
   </div>
 
+  {#if context.syncing && context.velocity > 0}
+    <div class="flex flex-col">
+      <span class="text-xs text-gray-500 dark:text-gray-400">Velocity</span>
+      <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {context.velocity}/s
+      </span>
+    </div>
+  {/if}
+
+  {#if context.syncing && context.estimatedTimeRemaining !== null && context.estimatedTimeRemaining > 0}
+    <div class="flex flex-col">
+      <span class="text-xs text-gray-500 dark:text-gray-400">ETA</span>
+      <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {context.estimatedTimeRemaining}s
+      </span>
+    </div>
+  {/if}
+
   {#if context.errors.size > 0}
     <div class="flex flex-col">
       <span class="text-xs text-gray-500 dark:text-gray-400">Errors</span>

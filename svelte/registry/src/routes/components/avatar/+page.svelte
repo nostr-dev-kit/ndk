@@ -57,7 +57,12 @@
 {#snippet editPropsSection()}
   <EditProps.Root>
     <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
-    <EditProps.Prop name="Size (pixels)" type="number" bind:value={size} />
+    <EditProps.Prop
+      name="Size (pixels)"
+      type="text"
+      value={size.toString()}
+      onchange={(v) => size = parseInt(v) || 48}
+    />
     <EditProps.Button>Edit Examples</EditProps.Button>
   </EditProps.Root>
 {/snippet}

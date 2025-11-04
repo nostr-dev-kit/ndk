@@ -29,7 +29,7 @@
 					<div class="preview-user-name">
 						<User.Name field="displayName" />
 					</div>
-					<User.Nip05 class="preview-user-nip05" />
+					<User.Nip05 />
 				</div>
 			</div>
 		</User.Root>
@@ -82,11 +82,6 @@
 	.preview-user-name {
 		font-weight: 500;
 		color: var(--foreground);
-	}
-
-	.preview-user-nip05 {
-		font-size: 0.75rem;
-		color: var(--muted-foreground);
 	}
 
 	.preview-article,

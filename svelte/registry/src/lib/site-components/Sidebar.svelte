@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
   import { docs, componentCategories } from '$lib/navigation';
-  import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
+  import { sidebar } from '$lib/stores/sidebar.svelte';
   import { Tooltip } from 'bits-ui';
   import NipBadge from '$lib/site-components/nip-badge.svelte';
 
@@ -11,16 +11,16 @@
   const isUiRoute = $derived($page.url.pathname.startsWith('/ui'));
 </script>
 
-<aside class="sidebar" class:open={$sidebarOpen} class:collapsed={$sidebarCollapsed}>
+<aside class="sidebar" class:open={sidebar.open} class:collapsed={sidebar.collapsed}>
   <Tooltip.Provider>
     <nav class="flex-1 overflow-auto flex flex-col px-4 pt-4 gap-6">
     {#if isDocsRoute}
       <div class="flex flex-col gap-1">
-        {#if !$sidebarCollapsed}
+        {#if !sidebar.collapsed}
           <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Documentation</h2>
         {/if}
         {#each docs as doc (doc.path)}
-          {#if $sidebarCollapsed}
+          {#if sidebar.collapsed}
             <Tooltip.Root delayDuration={0}>
               <Tooltip.Trigger class="nav-link-trigger">
                 <a
@@ -64,7 +64,7 @@
     {#if isUiRoute}
       {#each componentCategories.filter(cat => cat.title === 'UI Primitives') as category (category.title)}
         <div class="flex flex-col gap-1">
-          {#if !$sidebarCollapsed}
+          {#if !sidebar.collapsed}
             <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
               {category.title}
               {#if category.nip}
@@ -73,7 +73,7 @@
             </h2>
           {/if}
           {#each category.items as component (component.path)}
-            {#if $sidebarCollapsed}
+            {#if sidebar.collapsed}
               <Tooltip.Root delayDuration={0}>
                 <Tooltip.Trigger class="nav-link-trigger">
                   <a
@@ -118,7 +118,7 @@
     {#if isComponentsRoute}
       {#each componentCategories.filter(cat => cat.title !== 'UI Primitives') as category (category.title)}
         <div class="flex flex-col gap-1">
-          {#if !$sidebarCollapsed}
+          {#if !sidebar.collapsed}
             <h2 class="m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
               {category.title}
               {#if category.nip}
@@ -127,7 +127,7 @@
             </h2>
           {/if}
           {#each category.items as component (component.path)}
-            {#if $sidebarCollapsed}
+            {#if sidebar.collapsed}
               <Tooltip.Root delayDuration={0}>
                 <Tooltip.Trigger class="nav-link-trigger">
                   <a
@@ -172,11 +172,11 @@
 
   <button
     class="collapse-button"
-    onclick={() => sidebarCollapsed.toggle()}
-    aria-label={$sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-    title={$sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+    onclick={() => sidebar.toggleCollapsed()}
+    aria-label={sidebar.collapsed ? "Expand sidebar" : "Collapse sidebar"}
+    title={sidebar.collapsed ? "Expand sidebar" : "Collapse sidebar"}
   >
-    {#if $sidebarCollapsed}
+    {#if sidebar.collapsed}
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="9 18 15 12 9 6"></polyline>
       </svg>

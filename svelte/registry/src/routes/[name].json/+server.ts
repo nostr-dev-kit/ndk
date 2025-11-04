@@ -1,16 +1,19 @@
 import { json, error } from '@sveltejs/kit';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import registryData from '../../../registry.json';
+import registryDataJson from '../../../registry.json';
 import type { RequestHandler } from './$types';
+import type { RegistryData, RegistryItem, RegistryFile, TransformedItem, TransformedFile } from './types';
 
 export const prerender = true;
+
+const registryData = registryDataJson as RegistryData;
 
 // Build a map of all registry:ui file paths for smarter import transformation
 function buildUiFileMap(): Set<string> {
   const uiFiles = new Set<string>();
   registryData.items.forEach((item) => {
-    item.files?.forEach((file: any) => {
+    item.files.forEach((file) => {
       if (file.type === 'registry:ui') {
         // Store the path without registry/ndk/ prefix
         const path = file.path.replace(/^registry\/ndk\//, '');
@@ -23,10 +26,10 @@ function buildUiFileMap(): Set<string> {
 
 const uiFileMap = buildUiFileMap();
 
-function transformItem(item: any) {
-  const transformedItem = {
+function transformItem(item: RegistryItem): TransformedItem {
+  const transformedItem: TransformedItem = {
     ...item,
-    files: item.files.map((file: any) => {
+    files: item.files.map((file): TransformedFile => {
       // Read the actual file content
       // Convert registry/ndk/ path to lib/registry/components/ for actual file location
       const actualPath = file.path.replace(/^registry\/ndk\//, 'lib/registry/components/');
@@ -65,7 +68,7 @@ function transformItem(item: any) {
   return transformedItem;
 }
 
-export function GET({ params }: { params: { name: string } }): ReturnType<RequestHandler> {
+export const GET: RequestHandler = ({ params }) => {
   const item = registryData.items.find((item) => item.name === params.name);
 
   if (!item) {

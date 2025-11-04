@@ -6,9 +6,8 @@
   import Navbar from '$site-components/Navbar.svelte';
   import Sidebar from '$site-components/Sidebar.svelte';
   import LoginModal from '$site-components/LoginModal.svelte';
-  import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
+  import { sidebar } from '$lib/stores/sidebar.svelte';
   import { nip19 } from 'nostr-tools';
-    import { ConsoleFreeIcons } from '@hugeicons/core-free-icons';
   import type { Snippet } from 'svelte';
   import Toc from '$site-components/toc.svelte';
 
@@ -101,7 +100,7 @@
       <Sidebar />
     {/if}
 
-    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={$sidebarOpen} class:sidebar-collapsed={$sidebarCollapsed} class:has-toc={showTocForRoute}>
+    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={sidebar.open} class:sidebar-collapsed={sidebar.collapsed} class:has-toc={showTocForRoute}>
       <div class="main-content">
         {@render children()}
       </div>

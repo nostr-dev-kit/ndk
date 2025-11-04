@@ -50,7 +50,7 @@
             tabindex="0"
           >
             {#if node.threading?.showLineToNext}
-              <div class="thread-line" style:left="20px" aria-hidden="true" />
+              <div class="thread-line" style:left="20px" aria-hidden="true" ></div>
             {/if}
             <EventCard.Root {ndk} event={node.event}>
               <EventCard.Header variant="compact" />

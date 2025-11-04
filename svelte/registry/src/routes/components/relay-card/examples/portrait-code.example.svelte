@@ -31,7 +31,7 @@
 					<div class="flex items-center justify-center gap-1 text-sm text-primary">
 						<span>Browse</span>
 						<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" ></path>
 						</svg>
 					</div>
 				</div>

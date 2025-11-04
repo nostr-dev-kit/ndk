@@ -157,10 +157,6 @@
 						{/each}
 					</div>
 				</div>
-
-				{#if showAddForm}
-					<Relay.Selector.AddForm showAsButton={false} />
-				{/if}
 			</div>
 
 			{#if helperText}

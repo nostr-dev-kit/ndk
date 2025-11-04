@@ -199,38 +199,6 @@
 		align-items: start;
 	}
 
-	.modal-title {
-		font-size: 1.25rem;
-		font-weight: 600;
-		color: var(--foreground);
-		margin: 0;
-	}
-
-	.modal-subtitle {
-		font-size: 0.875rem;
-		color: var(--muted-foreground);
-		margin: 0.25rem 0 0 0;
-	}
-
-	.modal-close {
-		padding: 0.5rem;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		border-radius: 0.375rem;
-		transition: background 0.2s;
-		color: var(--muted-foreground);
-	}
-
-	.modal-close:hover {
-		background: var(--accent);
-		color: var(--accent-foreground);
-	}
-
-	.modal-close svg {
-		width: 1.25rem;
-		height: 1.25rem;
-	}
 
 	.modal-body {
 		padding: 1.5rem;

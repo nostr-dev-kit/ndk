@@ -305,11 +305,6 @@ console.log(mediaUpload.uploads);</code></pre>
     color: var(--muted-foreground);
   }
 
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
-
   .badge-protocol {
     background: #10b981;
     color: white;

@@ -29,7 +29,7 @@
       <p class="text-lg text-muted-foreground mb-4 leading-relaxed">{description}</p>
       {#if badges.length > 0}
         <div class="flex gap-3 flex-wrap">
-          {#each badges as badge (badge)}
+          {#each badges as badge (badge.label)}
             <span
               class="px-3.5 py-1.5 rounded-lg text-sm {badge.variant === 'nip'
                 ? 'bg-primary/10 border-primary/20 text-primary'

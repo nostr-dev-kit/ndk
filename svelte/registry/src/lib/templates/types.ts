@@ -2,25 +2,11 @@ import type { Snippet } from 'svelte';
 import type { ComponentType } from 'svelte';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
-// Card data structure that mirrors existing ComponentCard expectations
-export interface ComponentCardData {
-  name: string;
-  title: string;
-  description: string;
-  richDescription?: string;
-  command: string;
-  apiDocs?: ApiDoc[];
-}
+// Import ComponentCardData from ComponentCard - avoid duplicating type definitions
+export type { ComponentCardData, ComponentDoc } from '$lib/site-components/ComponentCard.svelte';
 
-// API documentation structure
-export interface ApiDoc {
-  name: string;
-  description: string;
-  importPath: string;
-  props?: ApiProp[];
-  returns?: ApiReturns;
-  events?: ApiEvent[];
-}
+// Alias ComponentDoc as ApiDoc for clarity
+export type ApiDoc = ComponentDoc;
 
 export interface ApiProp {
   name: string;
@@ -41,21 +27,30 @@ export interface ApiEvent {
   description: string;
 }
 
-// Showcase block structure
+// Showcase block structure - compatible with both ComponentsShowcase and ComponentsShowcaseGrid
 export interface ShowcaseBlock {
   name: string;
   description: string;
   command: string;
-  preview?: Snippet;
-  cardData?: ComponentCardData;
+  preview?: Snippet | any;  // Snippet or any for compatibility
+  cardData?: ComponentCardData | any;  // ComponentCardData or any for compatibility
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;
 }
 
+// Alias for BlockVariant (used by ComponentsShowcase)
+export type BlockVariant = ShowcaseBlock;
+
+// Alias for GridBlock (used by ComponentsShowcaseGrid)
+export type GridBlock = ShowcaseBlock;
+
+// Import PropType from edit-props
+import type { PropType } from '$lib/site-components/edit-props';
+
 // EditProps configuration
 export interface EditPropConfig {
   name: string;
-  type: 'text' | 'number' | 'event' | 'user' | 'boolean';
+  type: PropType | 'number' | 'boolean';  // PropType plus additional types we use
   default?: string | number | boolean;
   options?: any[];
   bind?: {

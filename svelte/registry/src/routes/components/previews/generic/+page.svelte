@@ -3,7 +3,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
   import GenericCardExample from './examples/generic-card.svelte';
   import GenericInlineExample from './examples/generic-inline.svelte';
@@ -13,17 +15,44 @@
 
   // The sample should be a kind:1 event that EMBEDS an unknown/unsupported kind
   let sampleNote = $state<NDKEvent | undefined>();
+
+  const cardData = {
+    name: 'generic-embedded-card',
+    title: 'Card Variant',
+    description: 'Full display with kind badge.',
+    richDescription: 'Full display with event content and kind badge. Shows NIP-31 alt tag when available.',
+    command: 'npx shadcn@latest add generic-embedded-card',
+    apiDocs: []
+  };
+
+  const inlineData = {
+    name: 'generic-embedded-inline',
+    title: 'Inline Variant',
+    description: 'Medium-sized display.',
+    richDescription: 'Medium-sized display suitable for inline references within content.',
+    command: 'npx shadcn@latest add generic-embedded-inline',
+    apiDocs: []
+  };
+
+  const compactData = {
+    name: 'generic-embedded-compact',
+    title: 'Compact Variant',
+    description: 'Minimal with truncated content.',
+    richDescription: 'Minimal display with truncated content and compact header.',
+    command: 'npx shadcn@latest add generic-embedded-compact',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <h1 class="text-4xl font-bold mb-4">Generic Embedded Preview</h1>
     <p class="text-lg text-muted-foreground mb-2">
       Intelligent fallback handler for unknown event kinds, powered by NIP-31 (Alt Tags) and NIP-89 (App Discovery).
     </p>
     <p class="text-sm text-muted-foreground mb-6">
-      <a href="/components/embedded-previews" class="text-primary hover:underline">
+      <a href="/components/previews/introduction" class="text-primary hover:underline">
         ← Back to Embedded Previews
       </a>
     </p>
@@ -113,15 +142,73 @@
   </section>
 
   <!-- Visual Examples -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold mb-6">Visual Examples</h2>
+  {#snippet cardPreview()}
+    {#if sampleNote}
+      <GenericCardExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
 
-    <div class="space-y-8">
-      <!-- Card Variant -->
-      <Demo
-        title="Card Variant"
-        description="Full display with event content and kind badge. Shows NIP-31 alt tag when available."
-      >
+  {#snippet inlinePreview()}
+    {#if sampleNote}
+      <GenericInlineExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
+
+  {#snippet compactPreview()}
+    {#if sampleNote}
+      <GenericCompactExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
+
+  <ComponentPageSectionTitle
+    title="Visual Examples"
+    description="Different display variants for unknown event kinds."
+  />
+
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Card Variant',
+        description: 'Full display',
+        command: 'npx shadcn@latest add generic-embedded-card',
+        preview: cardPreview,
+        cardData: cardData
+      },
+      {
+        name: 'Inline Variant',
+        description: 'Medium-sized display',
+        command: 'npx shadcn@latest add generic-embedded-inline',
+        preview: inlinePreview,
+        cardData: inlineData
+      },
+      {
+        name: 'Compact Variant',
+        description: 'Minimal truncated',
+        command: 'npx shadcn@latest add generic-embedded-compact',
+        preview: compactPreview,
+        cardData: compactData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={cardData}>
+      {#snippet preview()}
         {#if sampleNote}
           <GenericCardExample {ndk} event={sampleNote} />
         {:else}
@@ -129,13 +216,11 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
+      {/snippet}
+    </ComponentCard>
 
-      <!-- Inline Variant -->
-      <Demo
-        title="Inline Variant"
-        description="Medium-sized display suitable for inline references within content."
-      >
+    <ComponentCard inline data={inlineData}>
+      {#snippet preview()}
         {#if sampleNote}
           <GenericInlineExample {ndk} event={sampleNote} />
         {:else}
@@ -143,13 +228,11 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
+      {/snippet}
+    </ComponentCard>
 
-      <!-- Compact Variant -->
-      <Demo
-        title="Compact Variant"
-        description="Minimal display with truncated content and compact header."
-      >
+    <ComponentCard inline data={compactData}>
+      {#snippet preview()}
         {#if sampleNote}
           <GenericCompactExample {ndk} event={sampleNote} />
         {:else}
@@ -157,8 +240,8 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
-    </div>
+      {/snippet}
+    </ComponentCard>
   </section>
 
   <!-- When to Use -->

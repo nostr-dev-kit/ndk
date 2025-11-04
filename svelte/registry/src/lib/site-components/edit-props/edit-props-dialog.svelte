@@ -149,7 +149,7 @@
 			</div>
 
 			<div class="modal-body">
-				{#each props as prop (prop.name || prop)}
+				{#each props as prop (prop.name)}
 					<div class="prop-field">
 						<label class="prop-label">
 							{prop.name}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '../utils/index.js';
+	import { cn } from '../utils/cn.js';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props extends HTMLInputAttributes {

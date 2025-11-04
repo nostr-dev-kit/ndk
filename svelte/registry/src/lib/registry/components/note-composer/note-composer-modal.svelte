@@ -36,7 +36,7 @@
 	import { Dialog } from 'bits-ui';
 	import { NoteComposer } from '../../components/note-composer';
 	import CancelIcon from '../../icons/cancel.svelte';
-	import { cn } from '../../utils/index.js';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		/** NDK instance */

@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import UserAddIcon from '../../icons/user-add.svelte';
   import { User } from '../../ui/user/index.js';
 

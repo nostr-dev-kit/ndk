@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Alert from '$site-components/alert.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
 </script>

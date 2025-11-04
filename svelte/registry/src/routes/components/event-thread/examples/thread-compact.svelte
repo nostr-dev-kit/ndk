@@ -17,7 +17,7 @@
 
 {#if thread.focusedEventId}
   <div class="border border-border rounded-lg overflow-hidden max-w-md">
-    {#each thread.events as node}
+    {#each thread.events as node (node.id)}
       {#if node.event}
         <EventCard.Root {ndk} event={node.event}>
           <div class="border-b border-border last:border-b-0 bg-background hover:bg-accent/5 transition-colors p-3">

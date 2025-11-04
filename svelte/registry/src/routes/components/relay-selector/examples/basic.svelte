@@ -25,7 +25,7 @@
 					{/if}
 				</div>
 				<div class="space-y-1">
-					{#each context.connectedRelays as relay}
+					{#each context.connectedRelays as relay (relay)}
 						<div
 							class="relative cursor-pointer transition-colors p-2 rounded-md hover:bg-accent"
 							class:bg-accent={context.isSelected(relay)}

@@ -14,7 +14,7 @@ export const avatarGroupCard: ComponentCardData = {
 export const avatarGroupApiDocs: ApiDoc[] = [
   {
     name: 'createAvatarGroup',
-    description: 'Builder function that provides smart user ordering, prioritizing followed users. Returns ordered user lists and groupings.',
+    description: 'Builder function that provides smart user ordering, prioritizing followed users. Returns AvatarGroupState with: users (NDKUser[] - all users ordered with followed first), followedUsers (NDKUser[] - users current user follows), unfollowedUsers (NDKUser[] - users current user does not follow).',
     importPath: "import { createAvatarGroup } from '@nostr-dev-kit/svelte'",
     props: [
       {
@@ -29,27 +29,7 @@ export const avatarGroupApiDocs: ApiDoc[] = [
         required: true,
         description: 'NDK instance'
       }
-    ],
-    returns: {
-      name: 'AvatarGroupState',
-      properties: [
-        {
-          name: 'users',
-          type: 'NDKUser[]',
-          description: 'All users ordered with followed users first'
-        },
-        {
-          name: 'followedUsers',
-          type: 'NDKUser[]',
-          description: 'Users that the current user follows'
-        },
-        {
-          name: 'unfollowedUsers',
-          type: 'NDKUser[]',
-          description: 'Users that the current user does not follow'
-        }
-      ]
-    }
+    ]
   },
   {
     name: 'AvatarGroup',

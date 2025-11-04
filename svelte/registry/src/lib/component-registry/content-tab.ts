@@ -14,7 +14,7 @@ export const contentTabCard: ComponentCardData = {
 export const contentTabApiDocs: ApiDoc[] = [
   {
     name: 'createContentSampler',
-    description: 'Builder function that samples user content and returns active content types with counts. Creates a subscription with n+1 filters for efficient sampling.',
+    description: 'Builder function that samples user content and returns active content types with counts. Creates a subscription with n+1 filters for efficient sampling. Returns ContentTabState with tabs (ContentTab[] - array of tabs with kind, count, and lastPublished timestamp).',
     importPath: "import { createContentSampler } from '$lib/registry/hooks/content-tab'",
     props: [
       {
@@ -29,17 +29,7 @@ export const contentTabApiDocs: ApiDoc[] = [
         required: false,
         description: 'NDK instance (uses context if not provided)'
       }
-    ],
-    returns: {
-      name: 'ContentTabState',
-      properties: [
-        {
-          name: 'tabs',
-          type: 'ContentTab[]',
-          description: 'Array of tabs with kind, count, and lastPublished timestamp'
-        }
-      ]
-    }
+    ]
   },
   {
     name: 'ContentTab',

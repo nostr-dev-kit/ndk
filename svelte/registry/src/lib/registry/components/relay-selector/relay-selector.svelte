@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../../ui/relay/index.js';
-	import { cn } from '../../utils/index.js';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		/** NDK instance */
@@ -61,7 +61,7 @@
 			<div class="space-y-4">
 				{#if showSelectedChips && context.hasSelection}
 					<div class="flex flex-wrap gap-2">
-						{#each context.selected as relay}
+						{#each context.selected as relay (relay)}
 							<div
 								class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-full"
 							>
@@ -111,7 +111,7 @@
 
 				<div class="border rounded-md overflow-hidden">
 					<div class="space-y-1 p-2">
-						{#each context.connectedRelays as relay}
+						{#each context.connectedRelays as relay (relay)}
 							<div
 								class={cn(
 									'relative cursor-pointer transition-colors rounded-md',

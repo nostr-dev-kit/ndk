@@ -156,7 +156,7 @@
 
     {#snippet elegantPreview()}
       <div class="flex gap-6 overflow-x-auto pb-4">
-        {#each displayHighlights as highlight}
+        {#each displayHighlights as highlight (highlight.id)}
           <HighlightCardElegant {ndk} event={highlight} />
         {/each}
       </div>
@@ -164,7 +164,7 @@
 
     {#snippet compactPreview()}
       <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl mx-auto">
-        {#each displayHighlights.slice(0, 4) as highlight}
+        {#each displayHighlights.slice(0, 4) as highlight (highlight.id)}
           <HighlightCardCompact {ndk} event={highlight} />
         {/each}
       </div>
@@ -172,7 +172,7 @@
 
     {#snippet gridPreview()}
       <div class="flex gap-6 overflow-x-auto pb-4">
-        {#each displayHighlights as highlight}
+        {#each displayHighlights as highlight (highlight.id)}
           <HighlightCardGrid {ndk} event={highlight} />
         {/each}
       </div>
@@ -276,7 +276,7 @@
       <ComponentCard inline data={elegantCardData}>
         {#snippet preview()}
           <div class="flex gap-6 overflow-x-auto pb-4">
-            {#each displayHighlights as highlight}
+            {#each displayHighlights as highlight (highlight.id)}
               <HighlightCardElegant {ndk} event={highlight} />
             {/each}
           </div>
@@ -286,7 +286,7 @@
       <ComponentCard inline data={compactCardData}>
         {#snippet preview()}
           <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl mx-auto">
-            {#each displayHighlights.slice(0, 4) as highlight}
+            {#each displayHighlights.slice(0, 4) as highlight (highlight.id)}
               <HighlightCardCompact {ndk} event={highlight} />
             {/each}
           </div>
@@ -296,7 +296,7 @@
       <ComponentCard inline data={gridCardData}>
         {#snippet preview()}
           <div class="flex gap-6 overflow-x-auto pb-4">
-            {#each displayHighlights as highlight}
+            {#each displayHighlights as highlight (highlight.id)}
               <HighlightCardGrid {ndk} event={highlight} />
             {/each}
           </div>

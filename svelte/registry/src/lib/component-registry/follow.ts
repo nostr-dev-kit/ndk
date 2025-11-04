@@ -32,7 +32,7 @@ export const followButtonAnimatedCard: ComponentCardData = {
 export const followApiDocs: ApiDoc[] = [
   {
     name: 'createFollowAction',
-    description: 'Builder function that provides follow/unfollow state and methods. Use directly in custom components or with FollowButton blocks.',
+    description: 'Builder function that provides follow/unfollow state and methods. Use directly in custom components or with FollowButton blocks. Returns FollowActionState with isFollowing (boolean - current follow state) and follow (() => Promise<void> - toggle follow/unfollow).',
     importPath: "import { createFollowAction } from '@nostr-dev-kit/svelte'",
     props: [
       {
@@ -48,31 +48,14 @@ export const followApiDocs: ApiDoc[] = [
         description: 'NDK instance'
       }
     ],
-    returns: {
-      name: 'FollowActionState',
-      properties: [
-        {
-          name: 'isFollowing',
-          type: 'boolean',
-          description: 'Current follow state'
-        },
-        {
-          name: 'follow',
-          type: '() => Promise<void>',
-          description: 'Toggle follow/unfollow'
-        }
-      ]
-    },
     events: [
       {
         name: 'followsuccess',
-        type: '{ target, isFollowing, isHashtag }',
-        description: 'Fired when follow/unfollow operation succeeds'
+        description: 'Fired when follow/unfollow operation succeeds. Detail: { target, isFollowing, isHashtag }'
       },
       {
         name: 'followerror',
-        type: '{ error, target, isHashtag }',
-        description: 'Fired when follow/unfollow operation fails'
+        description: 'Fired when follow/unfollow operation fails. Detail: { error, target, isHashtag }'
       }
     ]
   }

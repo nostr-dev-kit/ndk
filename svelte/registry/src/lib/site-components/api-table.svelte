@@ -35,7 +35,7 @@ Use for: component API documentation across all component pages.
 			</tr>
 		</thead>
 		<tbody>
-			{#each rows as row}
+			{#each rows as row (row)}
 				<tr>
 					<td>
 						<code class="prop-name">{row.name}</code>

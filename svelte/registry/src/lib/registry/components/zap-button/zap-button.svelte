@@ -2,7 +2,7 @@
   import { NDKEvent, type NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import * as ZapSend from '../zap-send/index.js';
   import * as Zaps from '../zaps/index.js';
 

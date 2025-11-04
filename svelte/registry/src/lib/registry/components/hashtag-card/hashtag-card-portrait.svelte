@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import { createHashtagStats } from '../../hooks/hashtag/stats.svelte.js';
   import { hashtagGradient, formatHashtag } from '../../utils/hashtag.js';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
@@ -67,7 +67,7 @@
   {#if stats.noteCount > 0}
     <div class="flex flex-col gap-2">
       <div class="flex items-end justify-between gap-1 h-24">
-        {#each stats.dailyDistribution as count, i}
+        {#each stats.dailyDistribution as count, i (i)}
           <div class="flex flex-col items-center gap-1 flex-1">
             <div
               class="w-full rounded-t transition-all"
@@ -77,7 +77,7 @@
         {/each}
       </div>
       <div class="flex justify-between text-xs text-muted-foreground">
-        {#each dayLabels as label}
+        {#each dayLabels as label, i (i)}
           <span class="flex-1">{label}</span>
         {/each}
       </div>

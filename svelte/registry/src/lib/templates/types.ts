@@ -129,3 +129,39 @@ export interface AnatomyLayer {
   description: string;
   props?: string[];
 }
+
+// UI Primitive specific types
+export interface PrimitiveCardData {
+  name: string;
+  title: string;
+  description: string;
+  preview?: Snippet;
+  apiDocs?: ApiDoc[];
+}
+
+export interface UIPrimitiveMetadata {
+  title: string;
+  description: string;
+  importPath: string;
+  nips?: string[];  // NIP numbers if applicable
+  primitives: PrimitiveCardData[];
+  anatomyLayers: AnatomyLayer[];
+  apiDocs?: ApiDoc[];
+}
+
+// UI Primitive template props interface
+export interface UIPrimitivePageTemplateProps {
+  metadata: UIPrimitiveMetadata;
+  ndk?: NDKSvelte;
+
+  // Anatomy is always present for UI primitives
+  anatomyPreview: Snippet;
+
+  // Extension points via snippets
+  beforeAnatomy?: Snippet;
+  afterAnatomy?: Snippet;
+  customSections?: Snippet;
+
+  // Escape hatch - replace entire template
+  customContent?: Snippet;
+}

@@ -15,7 +15,7 @@
 
 <div class="thread-container">
   <div class="thread flex flex-col w-full divide-y rounded-xl overflow-hidden">
-    {#each thread.events as node}
+    {#each thread.events as node (node.id)}
       {#if node.event}
         <EventCard.Root {ndk} event={node.event} class="py-0 !rounded-none hover:!bg-muted">
           <div class="flex w-full flex-row">
@@ -34,7 +34,7 @@
     {/each}
 
     {#if thread.replies.length > 0}
-      {#each thread.replies as reply}
+      {#each thread.replies as reply (reply.id)}
         <EventCard.Root {ndk} event={reply}>
           <div class="flex">
             <User.Avatar {ndk} pubkey={reply.author.pubkey} class="w-10 h-10" />

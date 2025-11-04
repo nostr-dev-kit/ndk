@@ -37,7 +37,7 @@
   <div class="absolute inset-0 flex flex-col justify-center items-center p-8 opacity-70">
     <div style="transform: rotate(-8deg); transform-origin: center center;">
       <div class="flex flex-col gap-[10rem] scale-[0.5] origin-center w-[1200px]">
-        {#each articles as article, i}
+        {#each articles as article, i (article.id)}
           <Motion
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

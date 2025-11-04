@@ -53,7 +53,7 @@
       <h3 class="status-heading">Connection Status</h3>
       <div class="status-grid">
         {#if ndk.pool}
-          {#each ndk.pool.relays.values() as relay}
+          {#each ndk.pool.relays.values() as relay (relay)}
             <div class="relay-status">
               <span class="relay-url">{relay.url}</span>
               <span class="relay-state" class:connected={relay.status === 1}>

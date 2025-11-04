@@ -35,7 +35,7 @@
 	<!-- Background: Grid of portrait cards (grayscale) -->
 	<div class="absolute inset-0 p-6 opacity-70">
 		<div class="grid grid-cols-3 gap-4 h-full">
-			{#each articles.slice(0, 6) as article, i}
+			{#each articles.slice(0, 6) as article, i (article.id)}
 				<Motion
 					initial={{ opacity: 0, scale: 0.9 }}
 					animate={{ opacity: 1, scale: 1 }}

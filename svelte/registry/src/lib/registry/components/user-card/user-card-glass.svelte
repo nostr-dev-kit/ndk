@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import { User } from '../../ui/user';
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/context.svelte.js';

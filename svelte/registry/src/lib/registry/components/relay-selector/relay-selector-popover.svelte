@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../../ui/relay/index.js';
 	import { Popover } from 'bits-ui';
-	import { cn } from '../../utils/index.js';
+	import { cn } from '../../utils/cn.js';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -156,7 +156,7 @@
 						</div>
 
 						<div class="mb-4 space-y-1">
-							{#each context.connectedRelays as relay}
+							{#each context.connectedRelays as relay (relay)}
 								<div
 									class={cn(
 										'relative cursor-pointer transition-colors p-2 rounded-md',

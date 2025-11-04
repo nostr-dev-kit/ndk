@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createRepostAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/index.js';
+  import { cn } from '../../utils/cn.js';
   import RepostIcon from '../../icons/repost.svelte';
 
   interface Props {

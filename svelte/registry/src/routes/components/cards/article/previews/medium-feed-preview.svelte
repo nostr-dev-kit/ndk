@@ -34,7 +34,7 @@
 <div class="relative h-full w-full overflow-hidden min-h-[400px]">
 	<!-- Background: Medium cards in horizontal feed (grayscale) -->
 	<div class="absolute inset-0 flex gap-4 items-center p-6 opacity-70 overflow-x-auto">
-		{#each articles.slice(0, 3) as article, i}
+		{#each articles.slice(0, 3) as article, i (article.id)}
 			<Motion
 				initial={{ opacity: 0, scale: 0.9 }}
 				animate={{ opacity: 1, scale: 1 }}

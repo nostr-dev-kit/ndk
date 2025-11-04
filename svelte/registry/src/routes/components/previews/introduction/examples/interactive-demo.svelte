@@ -38,7 +38,7 @@
     <!-- Quick Examples -->
     <div class="flex gap-2 flex-wrap">
       <span class="text-sm text-muted-foreground">Quick examples:</span>
-      {#each examples as example}
+      {#each examples as example (example)}
         <button
           type="button"
           onclick={() => bech32Input = example.value}
@@ -53,7 +53,7 @@
     <div>
       <label class="block text-sm font-medium mb-2">Variant</label>
       <div class="flex gap-2">
-        {#each ['card', 'inline', 'compact'] as variant}
+        {#each ['card', 'inline', 'compact'] as variant (variant)}
           <button
             type="button"
             onclick={() => selectedVariant = variant as any}

@@ -24,7 +24,7 @@
     </tr>
   </thead>
   <tbody>
-    {#each props as prop}
+    {#each props as prop (prop.name)}
       <tr>
         <td class="p-4 border-b border-border text-sm last:border-b-0">
           <code class="bg-primary/10 py-1 px-2 rounded font-mono text-[0.85em] text-primary">{prop.name}</code>

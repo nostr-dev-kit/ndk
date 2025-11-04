@@ -45,7 +45,7 @@
 
 {#if hasWaveform}
   <div class="voice-message-waveform {className}" style="height: {height}px;">
-    {#each waveform as value, i}
+    {#each waveform as value, i (i)}
       {@const barHeight = getBarHeight(value)}
       {@const isPlayed = (i / waveform.length) * 100 < progress}
       <div

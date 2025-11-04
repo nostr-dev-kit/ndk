@@ -3,7 +3,7 @@
 	import { createRelayInfo } from '@nostr-dev-kit/svelte';
 	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import Input from '../../ui/input.svelte';
-	import { cn } from '../../utils/index.js';
+	import { cn } from '../../utils/cn.js';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props extends Omit<HTMLInputAttributes, 'type' | 'placeholder'> {

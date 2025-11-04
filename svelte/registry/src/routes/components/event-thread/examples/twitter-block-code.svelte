@@ -2,7 +2,7 @@
   <div class="thread-container">
     <div class="thread">
       <!-- Parent Chain + Focused Event -->
-      {#each thread.events as node, i}
+      {#each thread.events as node, i (node.id)}
         {#if node.event}
           <EventCard.Root {ndk} event={node.event} class="tweet-event-card">
             <div
@@ -33,7 +33,7 @@
 
       <!-- Direct Replies -->
       {#if thread.replies.length > 0}
-        {#each thread.replies as reply}
+        {#each thread.replies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply} class="tweet-event-card">
             <div class="tweet">
               <div class="timeline">
@@ -57,7 +57,7 @@
       </div>
 
       <div class="thread">
-        {#each thread.otherReplies as reply}
+        {#each thread.otherReplies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply} class="tweet-event-card">
             <div class="tweet">
               <div class="timeline">

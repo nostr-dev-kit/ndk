@@ -62,7 +62,7 @@
     </p>
 
     <div class="examples-grid">
-      {#each samplePubkeys as { name, pubkey }}
+      {#each samplePubkeys as { name, pubkey } (pubkey)}
         <div class="example-card">
           <div
             class="gradient-preview"
@@ -165,7 +165,7 @@ kindLabel(99999); // "99999"`} />
     </p>
 
     <div class="kind-examples">
-      {#each sampleKinds as { kind, description }}
+      {#each sampleKinds as { kind, description } (kind)}
         <div class="kind-example">
           <div class="kind-header">
             <code class="kind-number">Kind {kind}</code>

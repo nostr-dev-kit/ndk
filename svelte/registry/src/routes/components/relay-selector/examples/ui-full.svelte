@@ -34,7 +34,7 @@
 			{#if selected.length > 0}
 				<div class="flex flex-wrap gap-2 p-4 bg-muted/50 rounded-lg">
 					<span class="text-xs font-medium text-muted-foreground">Selected:</span>
-					{#each selected as relayUrl}
+					{#each selected as relayUrl (relayUrl)}
 						<div
 							class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-background border"
 						>

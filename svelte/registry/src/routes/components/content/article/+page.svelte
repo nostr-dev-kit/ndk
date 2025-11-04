@@ -1,29 +1,49 @@
 <script lang="ts">
-	import Demo from '$site-components/Demo.svelte';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples
   import BasicExample from './examples/basic.svelte';
-  import BasicCodeRaw from './examples/basic-code.svelte?raw';
   import WithClickExample from './examples/with-click.svelte';
-  import WithClickRaw from './examples/with-click.svelte?raw';
+
+  const ndk = getContext<NDKSvelte>('ndk');
 
   let article = $state<NDKArticle | null | undefined>();
+
+  const basicData = {
+    name: 'article-content-basic',
+    title: 'Basic Usage',
+    description: 'Render article with highlights.',
+    richDescription: 'Render article content with automatic highlight subscription. Select text to create highlights.',
+    command: 'npx shadcn@latest add article-content',
+    apiDocs: []
+  };
+
+  const withClickData = {
+    name: 'article-content-with-click',
+    title: 'With Click Handler',
+    description: 'Handle highlight clicks.',
+    richDescription: 'Handle highlight clicks to show details, open drawers, etc. You can also filter highlights using the highlightFilter callback.',
+    command: 'npx shadcn@latest add article-content',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">ArticleContent</h1>
-        <EditProps.Root>
-          <EditProps.Prop name="Sample Article" type="article" bind:value={article} default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx" />
-          <EditProps.Button>Edit Examples</EditProps.Button>
-        </EditProps.Root>
+      <h1 class="text-4xl font-bold">ArticleContent</h1>
+      <EditProps.Root>
+        <EditProps.Prop name="Sample Article" type="article" bind:value={article} default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx" />
+        <EditProps.Button>Edit Examples</EditProps.Button>
+      </EditProps.Root>
     </div>
     <p class="text-lg text-muted-foreground mb-6">
       Render NIP-23 article content with markdown support, inline highlights, text selection, and
@@ -37,37 +57,42 @@
       <div class="text-muted-foreground">Loading articles...</div>
     </div>
   {:else}
-    <!-- Usage Examples Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Examples</h2>
-      <p class="text-muted-foreground mb-8">
-        Different ways to use the ArticleContent component.
-      </p>
-
-      <div class="space-y-8">
-        <!-- Basic Usage -->
-        <Demo
-          title="Basic Usage"
-          description="Render article content with automatic highlight subscription. Select text to create highlights."
-          code={BasicCodeRaw}
-        >
-          <div class="max-h-[min(500px,80vh)] overflow-y-auto">
-            <BasicExample article={article} />
-          </div>
-        </Demo>
-
-        <!-- With Click Handler -->
-        <Demo
-          title="With Click Handler"
-          description="Handle highlight clicks to show details, open drawers, etc. You can also filter highlights using the highlightFilter callback."
-          code={WithClickRaw}
-        >
-          <div class="max-h-[min(500px,80vh)] overflow-y-auto">
-            <WithClickExample article={article} />
-          </div>
-        </Demo>
+    <!-- Examples Showcase -->
+    {#snippet basicPreview()}
+      <div class="max-h-[min(500px,80vh)] overflow-y-auto">
+        <BasicExample {article} />
       </div>
-    </section>
+    {/snippet}
+
+    {#snippet withClickPreview()}
+      <div class="max-h-[min(500px,80vh)] overflow-y-auto">
+        <WithClickExample {article} />
+      </div>
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Examples"
+      description="Different ways to use the ArticleContent component."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Basic Usage',
+          description: 'With highlight subscription',
+          command: 'npx shadcn@latest add article-content',
+          preview: basicPreview,
+          cardData: basicData
+        },
+        {
+          name: 'With Click Handler',
+          description: 'Handle highlight clicks',
+          command: 'npx shadcn@latest add article-content',
+          preview: withClickPreview,
+          cardData: withClickData
+        }
+      ]}
+    />
 
     <!-- Features Section -->
     <section class="mb-16">
@@ -100,44 +125,65 @@
       </div>
     </section>
 
-    <!-- API Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-4">Component API</h2>
-      <ComponentAPI
-        componentName="ArticleContent"
-        props={[
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            required: false,
-            description: 'NDK instance (optional, falls back to context)'
-          },
-          {
-            name: 'article',
-            type: 'NDKArticle',
-            required: true,
-            description: 'The article to render'
-          },
-          {
-            name: 'highlightFilter',
-            type: '(highlight: NDKHighlight) => boolean',
-            required: false,
-            description: 'Optional filter function to control which highlights are displayed'
-          },
-          {
-            name: 'onHighlightClick',
-            type: '(highlight: NDKHighlight) => void',
-            required: false,
-            description: 'Callback when a highlight is clicked'
-          },
-          {
-            name: 'class',
-            type: 'string',
-            required: false,
-            description: 'Additional CSS classes'
-          }
-        ]}
-      />
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={basicData}>
+        {#snippet preview()}
+          <div class="max-h-[min(500px,80vh)] overflow-y-auto">
+            <BasicExample {article} />
+          </div>
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={withClickData}>
+        {#snippet preview()}
+          <div class="max-h-[min(500px,80vh)] overflow-y-auto">
+            <WithClickExample {article} />
+          </div>
+        {/snippet}
+      </ComponentCard>
     </section>
+
+    <!-- Component API -->
+    <ComponentAPI
+      components={[
+        {
+          name: 'ArticleContent',
+          description: 'Render NIP-23 article content with markdown support and inline highlights',
+          importPath: "import { ArticleContent } from '$lib/registry/ui/article-content'",
+          props: [
+            {
+              name: 'ndk',
+              type: 'NDKSvelte',
+              description: 'NDK instance (optional, falls back to context)'
+            },
+            {
+              name: 'article',
+              type: 'NDKArticle',
+              required: true,
+              description: 'The article to render'
+            },
+            {
+              name: 'highlightFilter',
+              type: '(highlight: NDKHighlight) => boolean',
+              description: 'Optional filter function to control which highlights are displayed'
+            },
+            {
+              name: 'onHighlightClick',
+              type: '(highlight: NDKHighlight) => void',
+              description: 'Callback when a highlight is clicked'
+            },
+            {
+              name: 'class',
+              type: 'string',
+              default: "''",
+              description: 'Additional CSS classes'
+            }
+          ]
+        }
+      ]}
+    />
   {/if}
 </div>

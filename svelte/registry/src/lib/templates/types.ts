@@ -2,11 +2,20 @@ import type { Snippet } from 'svelte';
 import type { ComponentType } from 'svelte';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
-// Import ComponentCardData from ComponentCard - avoid duplicating type definitions
-export type { ComponentCardData, ComponentDoc } from '$lib/site-components/ComponentCard.svelte';
+// Re-export types from ComponentCard
+export type {
+	ComponentCardData,
+	ComponentDoc
+} from '$lib/site-components/ComponentCard.svelte';
+
+// Import for local use
+import type {
+	ComponentDoc as ComponentDocBase,
+	ComponentCardData as ComponentCardDataBase
+} from '$lib/site-components/ComponentCard.svelte';
 
 // Alias ComponentDoc as ApiDoc for clarity
-export type ApiDoc = ComponentDoc;
+export type ApiDoc = ComponentDocBase;
 
 export interface ApiProp {
   name: string;
@@ -33,7 +42,7 @@ export interface ShowcaseBlock {
   description: string;
   command: string;
   preview?: Snippet | any;  // Snippet or any for compatibility
-  cardData?: ComponentCardData | any;  // ComponentCardData or any for compatibility
+  cardData?: ComponentCardDataBase | any;  // ComponentCardData or any for compatibility
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;
 }
@@ -72,7 +81,7 @@ export interface ComponentPageMetadata {
 export interface ComponentSection {
   title?: string;
   description?: string;
-  cards: ComponentCardData[];
+  cards: ComponentCardDataBase[];
   previews?: Record<string, Snippet>;
 }
 

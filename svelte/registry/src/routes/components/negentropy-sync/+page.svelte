@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createNegentropySync } from '$lib/registry/builders/negentropy-sync.svelte';
+  import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import {
     negentropySyncMetadata,

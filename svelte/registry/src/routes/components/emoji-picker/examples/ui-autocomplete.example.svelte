@@ -150,7 +150,7 @@
           {#if filteredEmojis.length === 0}
             <div class="px-3 py-2 text-sm text-muted-foreground">No emojis found</div>
           {:else}
-            {#each filteredEmojis as emoji, index (emoji.unicode || index)}
+            {#each filteredEmojis as emoji, index (emoji.emoji + index)}
               <button
                 class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors text-left"
                 class:bg-accent={index === selectedIndex}

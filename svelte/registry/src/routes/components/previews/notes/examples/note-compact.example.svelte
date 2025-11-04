@@ -14,7 +14,7 @@
 
   // Create custom renderer for compact variant
   const compactRenderer = new ContentRenderer();
-  compactRenderer.addKind([1, 1111], NoteEmbeddedCompact);
+  compactRenderer.addKind([1, 1111], NoteEmbedded);
 </script>
 
 <div class="max-w-2xl">

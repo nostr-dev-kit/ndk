@@ -1,10 +1,16 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
   import { Relay } from '$lib/registry/ui';
 
   const ndk = getContext<NDKSvelte>('ndk');
   const relayUrl = 'wss://relay.damus.io';
+
+  // Create bookmarked relay list (includes current user)
+  const bookmarks = createBookmarkedRelayList(() => ({
+    authors: ndk.$currentUser ? [ndk.$currentUser.pubkey] : []
+  }), ndk);
 </script>
 
 <div class="border border-gray-200 rounded-xl p-6 bg-white">
@@ -21,7 +27,7 @@
     <Relay.Description class="text-[15px] leading-normal text-gray-600 mb-4" />
 
     <div class="flex justify-end">
-      <Relay.BookmarkButton class="px-4 py-2 rounded-md border border-gray-300 bg-white cursor-pointer transition-all hover:bg-gray-50" />
+      <Relay.BookmarkButton {bookmarks} class="px-4 py-2 rounded-md border border-gray-300 bg-white cursor-pointer transition-all hover:bg-gray-50" />
     </div>
   </Relay.Root>
 </div>

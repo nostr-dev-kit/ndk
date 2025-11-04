@@ -14,7 +14,7 @@
 
   // Create custom renderer for card variant
   const cardRenderer = new ContentRenderer();
-  cardRenderer.addKind([1, 1111], NoteEmbeddedCard);
+  cardRenderer.addKind([1, 1111], NoteEmbedded);
 </script>
 
 <div class="max-w-2xl">

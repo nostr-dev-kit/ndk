@@ -56,13 +56,9 @@
 			<!-- Relay list -->
 			<div class="border rounded-lg p-4">
 				<h4 class="text-sm font-medium mb-3">Connected Relays</h4>
-				<Relay.Selector.List />
-			</div>
-
-			<!-- Add relay form -->
-			<div class="border rounded-lg p-4">
-				<h4 class="text-sm font-medium mb-3">Add New Relay</h4>
-				<Relay.Selector.AddForm />
+				<div class="text-sm text-muted-foreground">
+					Use Relay.Root components to display connected relays from ndk.pool
+				</div>
 			</div>
 
 			<!-- Helper text -->

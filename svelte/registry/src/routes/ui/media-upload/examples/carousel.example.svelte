@@ -18,7 +18,11 @@
     </div>
 
     {#if uploads.length > 0}
-      <MediaUpload.Carousel class="rounded-lg overflow-hidden" />
+      <MediaUpload.Carousel class="rounded-lg overflow-hidden">
+        {#each uploads as upload (upload.url)}
+          <MediaUpload.Preview {upload} class="w-32 h-32 rounded-md overflow-hidden" />
+        {/each}
+      </MediaUpload.Carousel>
     {/if}
   </MediaUpload.Root>
 </div>

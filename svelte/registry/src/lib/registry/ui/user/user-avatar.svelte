@@ -3,6 +3,7 @@
   import { USER_CONTEXT_KEY, type UserContext } from './context.svelte.js';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
   import {cn} from "../../utils/cn.js";
+  import type { Snippet } from 'svelte';
 
   interface Props {
     /** Additional CSS classes */
@@ -13,12 +14,16 @@
 
     /** Alt text for image */
     alt?: string;
+
+    /** Custom fallback snippet to replace the default gradient */
+    customFallback?: Snippet;
   }
 
   let {
     class: className = '',
     fallback,
-    alt
+    alt,
+    customFallback
   }: Props = $props();
 
   const context = getContext<UserContext>(USER_CONTEXT_KEY);
@@ -36,19 +41,53 @@
       ? deterministicPubkeyGradient(context.ndkUser.pubkey)
       : 'var(--primary)'
   );
+
+  let imageLoaded = $state(false);
+  let imageError = $state(false);
+
+  function handleImageLoad() {
+    imageLoaded = true;
+    imageError = false;
+  }
+
+  function handleImageError() {
+    imageLoaded = false;
+    imageError = true;
+  }
+
+  $effect(() => {
+    // Reset loading state when imageUrl changes
+    imageLoaded = false;
+    imageError = false;
+  });
 </script>
 
-{#if imageUrl}
-  <img
-    src={imageUrl}
-    alt={displayName}
-    class={cn("rounded-full object-cover block w-12 h-12", className)}
-  />
-{:else}
-  <div
-    class={cn("rounded-full flex items-center justify-center w-12 h-12", className)}
-    style="background: {avatarGradient};"
-  >
-    {displayName.slice(0, 2).toUpperCase()}
-  </div>
-{/if}
+<div class={cn("rounded-full relative w-12 h-12", className)}>
+  <!-- Fallback layer (always visible until image loads) -->
+  {#if !imageLoaded || !imageUrl}
+    {#if customFallback}
+      {@render customFallback()}
+    {:else}
+      <div
+        class="rounded-full flex items-center justify-center w-full h-full absolute inset-0"
+        style="background: {avatarGradient};"
+      >
+        {displayName.slice(0, 2).toUpperCase()}
+      </div>
+    {/if}
+  {/if}
+
+  <!-- Image layer (only visible when loaded) -->
+  {#if imageUrl}
+    <img
+      src={imageUrl}
+      alt={displayName}
+      class={cn(
+        "rounded-full object-cover block w-full h-full absolute inset-0",
+        imageLoaded ? "opacity-100" : "opacity-0"
+      )}
+      onload={handleImageLoad}
+      onerror={handleImageError}
+    />
+  {/if}
+</div>

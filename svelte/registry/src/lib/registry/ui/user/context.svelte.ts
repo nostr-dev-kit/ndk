@@ -17,9 +17,6 @@ export interface UserContext {
     /** User profile data (reactive) */
     profile?: NDKUserProfile | null;
 
-    /** Whether to show hover card on mouse enter */
-    showHoverCard: boolean;
-
     /** Click handler */
     onclick?: (e: MouseEvent) => void;
 }

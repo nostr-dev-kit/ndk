@@ -72,6 +72,10 @@
     </AvatarGroup>
   {/snippet}
 
+  {#snippet verticalPreview()}
+    <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
+  {/snippet}
+
   <ComponentPageSectionTitle
     title="Showcase"
     description="Avatar group variants with different overflow display options."
@@ -101,6 +105,13 @@
         cardData
       },
       {
+        name: 'Vertical Stack',
+        description: 'Vertically stacked avatars',
+        command: 'npx shadcn@latest add avatar-group',
+        preview: verticalPreview,
+        cardData
+      },
+      {
         name: 'Custom Snippet',
         description: 'Fully customizable overflow rendering',
         command: 'npx shadcn@latest add avatar-group',
@@ -110,154 +121,206 @@
     ]}
   />
 
-  <section class="usage">
-    <h2>Usage</h2>
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'createAvatarGroup',
+        description: 'Builder function that provides smart user ordering, prioritizing followed users. Returns ordered user lists and groupings.',
+        importPath: "import { createAvatarGroup } from '@nostr-dev-kit/svelte'",
+        props: [
+          {
+            name: 'config',
+            type: '() => { pubkeys: string[], skipCurrentUser?: boolean }',
+            required: true,
+            description: 'Reactive function returning configuration'
+          },
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance'
+          }
+        ],
+        returns: {
+          name: 'AvatarGroupState',
+          properties: [
+            {
+              name: 'users',
+              type: 'NDKUser[]',
+              description: 'All users ordered with followed users first'
+            },
+            {
+              name: 'followedUsers',
+              type: 'NDKUser[]',
+              description: 'Users that the current user follows'
+            },
+            {
+              name: 'unfollowedUsers',
+              type: 'NDKUser[]',
+              description: 'Users that the current user does not follow'
+            }
+          ]
+        }
+      },
+      {
+        name: 'AvatarGroup',
+        description: 'Display multiple user avatars in a stacked group with smart ordering and flexible overflow options.',
+        importPath: "import { AvatarGroup } from '$lib/registry/components/avatar-group'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            required: true,
+            description: 'NDK instance'
+          },
+          {
+            name: 'pubkeys',
+            type: 'string[]',
+            required: true,
+            description: 'Array of user pubkeys to display'
+          },
+          {
+            name: 'skipCurrentUser',
+            type: 'boolean',
+            default: 'false',
+            description: 'Whether to exclude the current user from the group'
+          },
+          {
+            name: 'max',
+            type: 'number',
+            default: '5',
+            description: 'Maximum number of avatars to show before overflow'
+          },
+          {
+            name: 'size',
+            type: 'number',
+            default: '40',
+            description: 'Avatar size in pixels'
+          },
+          {
+            name: 'spacing',
+            type: "'tight' | 'normal' | 'loose'",
+            default: "'normal'",
+            description: 'Spacing between avatars (tight: -8px, normal: -12px, loose: -6px)'
+          },
+          {
+            name: 'overflowVariant',
+            type: "'avatar' | 'text'",
+            default: "'avatar'",
+            description: 'How to display overflow count: circular avatar badge or text to the side'
+          },
+          {
+            name: 'direction',
+            type: "'horizontal' | 'vertical'",
+            default: "'horizontal'",
+            description: 'Stack direction for avatars'
+          },
+          {
+            name: 'overflowSnippet',
+            type: '(count: number) => any',
+            description: 'Custom snippet for rendering overflow count (overrides overflowVariant)'
+          },
+          {
+            name: 'onAvatarClick',
+            type: '(user: NDKUser) => void',
+            description: 'Click handler for individual avatars'
+          },
+          {
+            name: 'onOverflowClick',
+            type: '() => void',
+            description: 'Click handler for overflow count'
+          },
+          {
+            name: 'class',
+            type: 'string',
+            default: "''",
+            description: 'Additional CSS classes'
+          }
+        ]
+      }
+    ]}
+  />
 
-    <h3>Basic Usage</h3>
-    <pre><code>{`<script>
-  import { AvatarGroup } from '$lib/registry/components/avatar-group';
-</script>
-
-<AvatarGroup {ndk} pubkeys={['pubkey1', 'pubkey2', 'pubkey3']} />`}</code></pre>
-
-    <h3>Props</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Prop</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ndk</code></td>
-          <td><code>NDKSvelte</code></td>
-          <td>-</td>
-          <td>NDK instance (required)</td>
-        </tr>
-        <tr>
-          <td><code>pubkeys</code></td>
-          <td><code>string[]</code></td>
-          <td>-</td>
-          <td>Array of user pubkeys to display (required)</td>
-        </tr>
-        <tr>
-          <td><code>skipCurrentUser</code></td>
-          <td><code>boolean</code></td>
-          <td><code>false</code></td>
-          <td>Whether to skip the current user from the list</td>
-        </tr>
-        <tr>
-          <td><code>max</code></td>
-          <td><code>number</code></td>
-          <td><code>5</code></td>
-          <td>Maximum number of avatars to show before overflow</td>
-        </tr>
-        <tr>
-          <td><code>size</code></td>
-          <td><code>number</code></td>
-          <td><code>40</code></td>
-          <td>Avatar size in pixels</td>
-        </tr>
-        <tr>
-          <td><code>spacing</code></td>
-          <td><code>'tight' | 'normal' | 'loose'</code></td>
-          <td><code>'normal'</code></td>
-          <td>Spacing between avatars</td>
-        </tr>
-        <tr>
-          <td><code>overflowVariant</code></td>
-          <td><code>'avatar' | 'text'</code></td>
-          <td><code>'avatar'</code></td>
-          <td>How to display the overflow count: as a circular avatar or as text to the side</td>
-        </tr>
-        <tr>
-          <td><code>onAvatarClick</code></td>
-          <td><code>(user: NDKUser) => void</code></td>
-          <td>-</td>
-          <td>Click handler for individual avatars</td>
-        </tr>
-        <tr>
-          <td><code>onOverflowClick</code></td>
-          <td><code>() => void</code></td>
-          <td>-</td>
-          <td>Click handler for overflow count</td>
-        </tr>
-        <tr>
-          <td><code>overflowSnippet</code></td>
-          <td><code>(count: number) => any</code></td>
-          <td>-</td>
-          <td>Custom snippet for rendering the overflow count (overrides overflowVariant)</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>Smart User Ordering</h3>
-    <p>
-      AvatarGroup uses the <code>createAvatarGroup</code> builder which automatically prioritizes
-      users that you follow (from <code>ndk.$follows</code>). This means followed users appear
-      first in the group, making it easier to identify familiar faces.
+  <!-- Builder API -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
+    <p class="text-muted-foreground mb-6">
+      Use <code class="px-2 py-1 bg-muted rounded text-sm">createAvatarGroup()</code> to build custom avatar group implementations with smart user ordering.
     </p>
 
-    <h3>Using the Builder Directly</h3>
-    <p>For custom implementations, you can use the <code>createAvatarGroup</code> builder:</p>
-    <pre><code>{`<script>
-  import { createAvatarGroup } from '@nostr-dev-kit/svelte';
+    <div class="bg-muted/50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-3">createAvatarGroup</h3>
+      <pre class="text-sm overflow-x-auto"><code>import &#123; createAvatarGroup &#125; from '@nostr-dev-kit/svelte';
 
-  const avatarGroup = createAvatarGroup(() => ({
-    pubkeys: ['pubkey1', 'pubkey2', 'pubkey3'],
-    skipCurrentUser: true
-  }), ndk);
-</script>
+// Create avatar group with smart ordering
+const avatarGroup = createAvatarGroup(() => (&#123;
+  pubkeys: ['pubkey1', 'pubkey2', 'pubkey3'],
+  skipCurrentUser: true
+&#125;), ndk);
 
-<!-- avatarGroup.users contains ordered users (followed users first) -->
-{#each avatarGroup.users.slice(0, 5) as user}
-  <User.Avatar {ndk} {user} />
-{/each}
+// Access ordered users (followed users appear first)
+avatarGroup.users           // All users, ordered
+avatarGroup.followedUsers   // Users you follow
+avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 
-<!-- Access specific groups -->
-<p>Followed: {avatarGroup.followedUsers.length}</p>
-<p>Not followed: {avatarGroup.unfollowedUsers.length}</p>`}</code></pre>
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Parameters:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li><code>options</code>: Function returning &#123; pubkeys: string[], skipCurrentUser?: boolean &#125;</li>
+          <li><code>ndk</code>: NDKSvelte instance</li>
+        </ul>
+      </div>
 
-    <h3>Overflow Variants</h3>
-    <p>The component supports different ways to display the overflow count:</p>
+      <div class="mt-4">
+        <h4 class="font-semibold mb-2">Returns:</h4>
+        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li><code>users</code>: NDKUser[] - All users with followed users first</li>
+          <li><code>followedUsers</code>: NDKUser[] - Users that you follow</li>
+          <li><code>unfollowedUsers</code>: NDKUser[] - Users that you don't follow</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-    <h4>Avatar Variant (Default)</h4>
-    <pre><code>{`<AvatarGroup {ndk} {pubkeys} max={3} />`}</code></pre>
-    <p>Displays the overflow count in a circular avatar-style badge that overlaps with the avatars.</p>
+  <!-- Usage Examples -->
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Usage Examples</h2>
 
-    <h4>Text Variant</h4>
-    <pre><code>{`<AvatarGroup {ndk} {pubkeys} max={3} overflowVariant="text" />`}</code></pre>
-    <p>Displays the overflow count as text to the side of the avatars, similar to "Trusted by 60K+ developers".</p>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-xl font-semibold mb-2">Basic Usage</h3>
+        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; pubkeys=&#123;['pubkey1', 'pubkey2', 'pubkey3']&#125; /&gt;</code></pre>
+      </div>
 
-    <h4>Custom with Snippet</h4>
-    <pre><code>{`<AvatarGroup {ndk} {pubkeys} max={4}>
-  {#snippet overflowSnippet(count)}
-    <span>+{count} more</span>
-  {/snippet}
-</AvatarGroup>`}</code></pre>
-    <p>Use a snippet to completely customize how the overflow count is rendered. The snippet receives the count as a parameter.</p>
+      <div>
+        <h3 class="text-xl font-semibold mb-2">With Text Overflow</h3>
+        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; max=&#123;3&#125; overflowVariant="text" /&gt;</code></pre>
+      </div>
 
-    <h3>Features</h3>
-    <ul>
-      <li><strong>Smart Ordering</strong> - Prioritizes users you follow</li>
-      <li><strong>Skip Current User</strong> - Optionally exclude yourself from the group</li>
-      <li><strong>Overflow Count</strong> - Shows "+N" when there are more users than max</li>
-      <li><strong>Multiple Variants</strong> - Choose between avatar, text, or custom snippet rendering</li>
-      <li><strong>Customizable Spacing</strong> - Three spacing options for avatar overlap</li>
-      <li><strong>Interactive</strong> - Optional click handlers for avatars and overflow</li>
-      <li><strong>Accessible</strong> - Proper ARIA labels and keyboard navigation</li>
-    </ul>
+      <div>
+        <h3 class="text-xl font-semibold mb-2">With Custom Snippet</h3>
+        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; max=&#123;4&#125;&gt;
+  &#123;#snippet overflowSnippet(count)&#125;
+    &lt;span&gt;+&#123;count&#125; more&lt;/span&gt;
+  &#123;/snippet&#125;
+&lt;/AvatarGroup&gt;</code></pre>
+      </div>
 
-    <h3>Styling</h3>
-    <p>Components use CSS custom properties for theming:</p>
-    <ul>
-      <li><code>--background</code> - Background color for avatar ring</li>
-      <li><code>--muted</code> - Background for overflow count</li>
-      <li><code>--muted-foreground</code> - Text color for overflow count</li>
-      <li><code>--primary</code> - Focus ring color</li>
-    </ul>
+      <div>
+        <h3 class="text-xl font-semibold mb-2">Vertical Stack</h3>
+        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; direction="vertical" /&gt;</code></pre>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-semibold mb-2">With Click Handlers</h3>
+        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup
+  &#123;ndk&#125;
+  &#123;pubkeys&#125;
+  onAvatarClick=&#123;(user) =&gt; console.log('Clicked:', user.pubkey)&#125;
+  onOverflowClick=&#123;() =&gt; console.log('Show all users')&#125;
+/&gt;</code></pre>
+      </div>
+    </div>
   </section>
 </div>

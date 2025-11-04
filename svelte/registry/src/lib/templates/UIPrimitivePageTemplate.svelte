@@ -47,7 +47,7 @@
           UI Primitive
         </span>
         {#if metadata.nips && metadata.nips.length > 0}
-          {#each metadata.nips as nip}
+          {#each metadata.nips as nip (nip)}
             <span class="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
               NIP-{nip}
             </span>
@@ -126,7 +126,7 @@
           description="Detailed API documentation for each primitive"
         />
         <div class="py-12 space-y-16">
-          {#each metadata.primitives as primitive}
+          {#each metadata.primitives as primitive (primitive.name)}
             <ComponentCard inline data={{
               name: primitive.name,
               title: primitive.title,

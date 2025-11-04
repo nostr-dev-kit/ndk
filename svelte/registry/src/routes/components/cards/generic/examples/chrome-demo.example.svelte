@@ -45,7 +45,7 @@ The Nostr protocol is a simple, open protocol that enables global, decentralized
 <div class="space-y-4">
   <!-- Type Selector -->
   <div class="flex flex-wrap gap-2 p-4 bg-muted/30 rounded-lg border border-border">
-    {#each Object.entries(contentExamples) as [type, { label }]}
+    {#each Object.entries(contentExamples) as [type, { label }] (type)}
       <button
         class="px-3 py-1.5 text-sm rounded-md transition-colors {selectedType === type
           ? 'bg-primary text-primary-foreground'

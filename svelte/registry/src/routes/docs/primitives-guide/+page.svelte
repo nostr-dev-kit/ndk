@@ -447,9 +447,4 @@ import { User } from '$lib/registry/ui/user';
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
   }
-
-  .prose pre code {
-    background: none;
-    padding: 0;
-  }
 </style>

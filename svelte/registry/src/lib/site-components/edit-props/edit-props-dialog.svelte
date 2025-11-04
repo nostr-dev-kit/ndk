@@ -34,11 +34,11 @@
 				if (prop.value) {
 					newPreviews[prop.name] = prop.value;
 					// Set the encoded value as the input
-					if (prop.type === 'article' && 'encode' in prop.value) {
+					if (prop.type === 'article' && typeof prop.value === 'object' && prop.value !== null && 'encode' in prop.value) {
 						newInputs[prop.name] = prop.value.encode();
-					} else if (prop.type === 'event' && 'encode' in prop.value) {
+					} else if (prop.type === 'event' && typeof prop.value === 'object' && prop.value !== null && 'encode' in prop.value) {
 						newInputs[prop.name] = prop.value.encode();
-					} else if (prop.type === 'user' && 'npub' in prop.value) {
+					} else if (prop.type === 'user' && typeof prop.value === 'object' && prop.value !== null && 'npub' in prop.value) {
 						newInputs[prop.name] = prop.value.npub;
 					}
 				}

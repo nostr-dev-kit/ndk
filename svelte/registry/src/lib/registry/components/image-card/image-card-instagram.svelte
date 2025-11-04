@@ -50,9 +50,9 @@
 		{#if showDropdown}
 			<button class="instagram-menu-btn" aria-label="Options">
 				<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-					<circle cx="12" cy="12" r="2" />
-					<circle cx="19" cy="12" r="2" />
-					<circle cx="5" cy="12" r="2" />
+					<circle cx="12" cy="12" r="2" ></circle>
+					<circle cx="19" cy="12" r="2" ></circle>
+					<circle cx="5" cy="12" r="2" ></circle>
 				</svg>
 			</button>
 		{/if}

@@ -18,7 +18,7 @@
 <!-- Parent -->
 <div class="relative">
   {#if threadingMetadata?.showLineToNext}
-    <div class="thread-line" style:left="20px" aria-hidden="true" />
+    <div class="thread-line" style:left="20px" aria-hidden="true" ></div>
   {/if}
   <EventCard.Root {ndk} event={threadNote}>
     <EventCard.Header variant="compact" />
@@ -32,7 +32,7 @@
 <!-- Self-thread reply -->
 <div class="relative">
   {#if selfThreadingMetadata?.showLineToNext}
-    <div class="thread-line" style:left="20px" aria-hidden="true" />
+    <div class="thread-line" style:left="20px" aria-hidden="true" ></div>
   {/if}
   <EventCard.Root {ndk} event={selfThreadNote}>
     <EventCard.Header variant="compact" />

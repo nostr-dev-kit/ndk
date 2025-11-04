@@ -266,15 +266,4 @@
 		}
 	}
 
-	[data-state='open'] {
-		animation:
-			fade-in 0.15s ease-out,
-			zoom-in-95 0.15s ease-out;
-	}
-
-	[data-state='closed'] {
-		animation:
-			fade-out 0.15s ease-out,
-			zoom-out-95 0.15s ease-out;
-	}
 </style>

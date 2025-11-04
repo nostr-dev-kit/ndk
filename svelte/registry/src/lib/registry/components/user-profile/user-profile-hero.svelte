@@ -68,7 +68,7 @@
         <User.Handle class="text-muted-foreground" />
 
         <!-- Bio -->
-        <User.Bio class="text-foreground/80 leading-relaxed" maxLines={4} />
+        <User.Bio class="text-foreground/80 leading-relaxed line-clamp-4" />
       </div>
     </div>
   </div>

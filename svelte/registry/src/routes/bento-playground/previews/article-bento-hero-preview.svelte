@@ -48,7 +48,7 @@
               <Article.Root {ndk} {article}>
                 <div class="h-[400px] rounded-2xl overflow-hidden border border-border bg-card shadow-2xl relative">
                   <Article.Image class="h-full w-full absolute inset-0" />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" ></div>
                   <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
                     {#if i === 0}
                       <span class="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold uppercase mb-3">

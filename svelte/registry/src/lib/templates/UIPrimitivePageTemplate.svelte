@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
-  import ComponentAnatomy from '$site-components/component-anatomy/index.js';
+  import * as ComponentAnatomy from '$site-components/component-anatomy/index.js';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import type { UIPrimitivePageTemplateProps } from './types';
 

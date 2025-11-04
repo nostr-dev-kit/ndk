@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
+  import { EventCard } from '$lib/registry/components/event-card';
+  import { ReactionAction } from '$lib/registry/components/reaction';
 
   let { ndk, nevent }: { ndk: NDKSvelte; nevent: string } = $props();
 

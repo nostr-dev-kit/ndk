@@ -4,7 +4,7 @@
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui';
   import UIPrimitivePageTemplate from '$lib/templates/UIPrimitivePageTemplate.svelte';
-  import ComponentAnatomy from '$site-components/component-anatomy/index.js';
+  import * as ComponentAnatomy from '$site-components/component-anatomy/index.js';
   import { articleMetadata } from '$lib/ui-registry/article';
 
   // Import examples

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
+  import { EventCard } from '$lib/registry/components/event-card';
+  import { ReactionAction } from '$lib/registry/components/reaction';
   import type { NDKSvelte, ThreadingMetadata } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
 

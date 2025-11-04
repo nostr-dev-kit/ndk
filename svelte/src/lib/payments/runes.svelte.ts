@@ -1,6 +1,6 @@
 import { NDKEvent, type NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../ndk-svelte.svelte.js";
-import { targetToId } from "./types.js";
+import { targetToId, type Transaction } from "./types.js";
 
 /**
  * Get zap amount for a target (reactive)
@@ -11,7 +11,7 @@ import { targetToId } from "./types.js";
  * {amount.value} sats
  * ```
  */
-export function createZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
+export function createZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent): { readonly value: number } {
     const value = $derived(ndk.$payments.getZapAmount(target));
 
     return {
@@ -32,7 +32,7 @@ export function createZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
  * {/if}
  * ```
  */
-export function createIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
+export function createIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent): { readonly value: boolean } {
     const value = $derived(ndk.$payments.isZapped(target));
 
     return {
@@ -53,7 +53,7 @@ export function createIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
  * {/each}
  * ```
  */
-export function createTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
+export function createTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent): { readonly value: Transaction[] } {
     const id = targetToId(target);
     const value = $derived(ndk.$payments.byTarget.get(id) ?? []);
 
@@ -75,7 +75,7 @@ export function createTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEv
  * {/each}
  * ```
  */
-export function createPendingPayments(ndk: NDKSvelte) {
+export function createPendingPayments(ndk: NDKSvelte): { readonly value: import("./types.js").PendingPayment[] } {
     const value = $derived(ndk.$payments.pending);
 
     return {
@@ -96,7 +96,7 @@ export function createPendingPayments(ndk: NDKSvelte) {
  * {/each}
  * ```
  */
-export function createTransactions(ndk: NDKSvelte, opts?: { direction?: "in" | "out"; type?: string; limit?: number }) {
+export function createTransactions(ndk: NDKSvelte, opts?: { direction?: "in" | "out"; type?: string; limit?: number }): { readonly value: Transaction[] } {
     const value = $derived.by(() => {
         let txs = ndk.$payments.history;
 

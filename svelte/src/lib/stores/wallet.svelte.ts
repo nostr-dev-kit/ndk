@@ -108,8 +108,8 @@ export class ReactiveWalletStore {
                 // Start wallet monitoring (will load from cache first, then sync)
                 await wallet.start({ pubkey });
             }
-        } catch (error) {
-            console.error(`[ReactiveWalletStore] Failed to load wallet from event:`, error);
+        } catch {
+            // Failed to load wallet from event
         } finally {
             this.#syncing = false;
         }
@@ -167,8 +167,8 @@ export class ReactiveWalletStore {
         try {
             const balance = this.#wallet.balance;
             this.balance = balance?.amount || 0;
-        } catch (error) {
-            console.error("[svelte] Failed to refresh wallet balance:", error);
+        } catch {
+            // Failed to refresh wallet balance
         }
     }
 

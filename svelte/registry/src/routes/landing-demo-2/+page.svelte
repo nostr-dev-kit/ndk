@@ -67,7 +67,7 @@
 			<div class="nav-right">
 				<button class="theme-toggle" aria-label="Toggle theme">
 					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<circle cx="10" cy="10" r="5" fill="currentColor"/>
+						<circle cx="10" cy="10" r="5" fill="currentColor"></circle>
 					</svg>
 				</button>
 				<button class="cta-button">Get started</button>
@@ -81,7 +81,7 @@
 			<!-- Badge -->
 			<div class="badge">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M8 1L10.5 6L16 7L12 11L13 16L8 13.5L3 16L4 11L0 7L5.5 6L8 1Z" fill="currentColor"/>
+					<path d="M8 1L10.5 6L16 7L12 11L13 16L8 13.5L3 16L4 11L0 7L5.5 6L8 1Z" fill="currentColor"></path>
 				</svg>
 				<span>NDK v4 Beta Available</span>
 			</div>
@@ -99,7 +99,7 @@
 			<!-- CTA -->
 			<button class="start-button">
 				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+					<rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"></rect>
 				</svg>
 				Start building
 			</button>

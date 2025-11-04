@@ -210,7 +210,7 @@
 
     <section class="min-h-[500px] lg:min-h-[60vh] py-12">
       <div class="grid grid-cols-3">
-        {#each Object.entries(userCardPrimitiveData) as [id, data], i}
+        {#each Object.entries(userCardPrimitiveData) as [id, data], i (id)}
           <button
             type="button"
             class="p-12 border-border transition-all {i % 3 !== 2

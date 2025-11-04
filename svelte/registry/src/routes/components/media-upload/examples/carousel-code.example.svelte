@@ -50,8 +50,8 @@
 				stroke-linecap="round"
 				stroke-linejoin="round"
 			>
-				<path d="M5 12h14" />
-				<path d="M12 5v14" />
+				<path d="M5 12h14" ></path>
+				<path d="M12 5v14" ></path>
 			</svg>
 		</MediaUpload.Button>
 	</MediaUpload.Carousel>

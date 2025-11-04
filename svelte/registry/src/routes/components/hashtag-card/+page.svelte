@@ -4,7 +4,6 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
-	import * as Tabs from '$lib/components/ui/tabs';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
 	// Import hashtag card variants
@@ -134,44 +133,31 @@
 		/>
 	{/if}
 
-	<!-- Components Section with Tabs -->
+	<!-- Components Section -->
 	{#if hashtag1}
-		<Tabs.Root value="portrait">
-			<ComponentPageSectionTitle title="Components" description="Explore each variant in detail">
-				{#snippet tabs()}
-					<Tabs.List>
-						<Tabs.Trigger value="portrait">Portrait</Tabs.Trigger>
-						<Tabs.Trigger value="compact">Compact</Tabs.Trigger>
-					</Tabs.List>
+		<ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+		<section class="py-12 space-y-16">
+			<ComponentCard inline data={portraitCardData}>
+				{#snippet preview()}
+					<div class="flex gap-4 flex-wrap justify-center">
+						{#each displayHashtags as hashtag (hashtag)}
+							<HashtagCardPortrait {ndk} {hashtag} />
+						{/each}
+					</div>
 				{/snippet}
-			</ComponentPageSectionTitle>
+			</ComponentCard>
 
-			<section class="min-h-[500px] lg:min-h-[60vh] py-12">
-				<Tabs.Content value="portrait">
-					<ComponentCard inline data={portraitCardData}>
-						{#snippet preview()}
-							<div class="flex gap-4 flex-wrap justify-center">
-								{#each displayHashtags as hashtag (hashtag)}
-									<HashtagCardPortrait {ndk} {hashtag} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCard>
-				</Tabs.Content>
-
-				<Tabs.Content value="compact">
-					<ComponentCard inline data={compactCardData}>
-						{#snippet preview()}
-							<div class="space-y-2 max-w-md">
-								{#each displayHashtags as hashtag (hashtag)}
-									<HashtagCardCompact {ndk} {hashtag} />
-								{/each}
-							</div>
-						{/snippet}
-					</ComponentCard>
-				</Tabs.Content>
-			</section>
-		</Tabs.Root>
+			<ComponentCard inline data={compactCardData}>
+				{#snippet preview()}
+					<div class="space-y-2 max-w-md">
+						{#each displayHashtags as hashtag (hashtag)}
+							<HashtagCardCompact {ndk} {hashtag} />
+						{/each}
+					</div>
+				{/snippet}
+			</ComponentCard>
+		</section>
 	{:else}
 		<div class="flex items-center justify-center py-12">
 			<div class="text-muted-foreground">Add hashtags to see the components...</div>

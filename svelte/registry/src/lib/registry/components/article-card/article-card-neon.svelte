@@ -1,16 +1,3 @@
-<!-- @ndk-version: article-card-neon@0.5.0 -->
-<!--
-  @component ArticleCard.Neon
-  Neon-style article card with full background image and glossy top border
-
-  Features a full background image with darkening gradient and a neon glow effect
-  at the top border using radial gradients and layered inset shadows.
-
-  @example
-  ```svelte
-  <ArticleCard.Neon {ndk} {article} />
-  ```
--->
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

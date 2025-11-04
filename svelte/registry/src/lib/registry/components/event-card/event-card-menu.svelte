@@ -1,15 +1,3 @@
-<!-- @ndk-version: event-card-menu@0.1.0 -->
-<!--
-  @component EventCardMenu
-  Fully-styled dropdown menu block for event actions.
-  Includes mute, report, copy, and raw event viewing.
-
-  @example
-  ```svelte
-  <EventCardMenu {ndk} {event} />
-  <EventCardMenu {ndk} {event} showRelayInfo={false} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

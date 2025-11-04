@@ -1,13 +1,3 @@
-<!-- @ndk-version: article@0.14.0 -->
-<!--
-  @component Article.Image
-  Display article cover image
-
-  @example
-  ```svelte
-  <Article.Image class="h-48" />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';

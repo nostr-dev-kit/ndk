@@ -1,15 +1,3 @@
-<!-- @ndk-version: user-card-classic@0.2.0 -->
-<!--
-  @component UserCardClassic
-  Classic user card with banner, avatar, name, bio, and stats.
-  Built using composable UserProfile primitives.
-  Perfect for popovers, dialogs, or standalone user cards.
-
-  @example
-  ```svelte
-  <UserCardClassic {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

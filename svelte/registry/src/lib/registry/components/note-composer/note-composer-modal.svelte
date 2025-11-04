@@ -1,4 +1,3 @@
-<!-- @ndk-version: note-composer-modal@0.1.0 -->
 <!--
   @component NoteComposerModal
   Note composer in a modal dialog.
@@ -16,7 +15,7 @@
 
   @example Controlled
   ```svelte
-  <script>
+<script>
     let open = $state(false);
   </script>
 

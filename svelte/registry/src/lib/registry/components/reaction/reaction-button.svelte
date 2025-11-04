@@ -1,17 +1,3 @@
-<!-- @ndk-version: reaction-button@0.1.0 -->
-<!--
-  @component ReactionButton
-  Minimal reaction button block using createReactionAction builder.
-  Clean, icon-first design with optional count display.
-
-  @example
-  ```svelte
-  <ReactionButton {ndk} {event} />
-  <ReactionButton {ndk} {event} emoji="🔥" />
-  <ReactionButton {ndk} {event} showCount={false} />
-  <ReactionButton {ndk} {event} delayed={5} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

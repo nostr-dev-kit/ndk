@@ -1,17 +1,3 @@
-<!-- @ndk-version: emoji-picker@0.2.0 -->
-<!--
-  @component EmojiPicker.Content
-  Opinionated emoji picker with sections for user's custom emojis and defaults
-
-  @example
-  ```svelte
-  <EmojiPicker.Content
-    {ndk}
-    onSelect={(emoji) => console.log(emoji)}
-    defaults={[{ emoji: '❤️' }, { emoji: '👍' }]}
-  />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { EmojiData } from './createEmojiPicker.svelte.js';

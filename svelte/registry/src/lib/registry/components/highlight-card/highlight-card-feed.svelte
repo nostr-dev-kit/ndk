@@ -1,13 +1,3 @@
-<!-- @ndk-version: highlight-card-feed@0.3.0 -->
-<!--
-  @component HighlightCard.Feed
-  Pre-composed feed variant with header, book-page style content, source badge, and actions.
-
-  @example
-  ```svelte
-  <HighlightCard.Feed {ndk} {event} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

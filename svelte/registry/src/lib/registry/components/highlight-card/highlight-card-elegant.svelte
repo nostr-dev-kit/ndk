@@ -1,13 +1,3 @@
-<!-- @ndk-version: highlight-card-elegant@0.2.0 -->
-<!--
-  @component HighlightCard.Elegant
-  Square-sized elegant card with gradient background and styled highlight/context text.
-
-  @example
-  ```svelte
-  <HighlightCard.Elegant {ndk} {event} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

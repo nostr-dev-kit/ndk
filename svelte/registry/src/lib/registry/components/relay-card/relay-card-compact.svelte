@@ -1,15 +1,3 @@
-<!-- @ndk-version: relay-card-compact@0.1.0 -->
-<!--
-  @component RelayCard.Compact
-  Compact relay card preset (small square card with icon and name)
-
-  Ideal for relay grids and compact displays where space is limited.
-
-  @example
-  ```svelte
-  <RelayCard.Compact {ndk} relayUrl="wss://relay.damus.io" />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';

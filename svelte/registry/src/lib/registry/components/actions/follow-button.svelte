@@ -1,17 +1,3 @@
-<!-- @ndk-version: follow-button@0.1.0 -->
-<!--
-  @component FollowButton
-  Minimal follow button block using createFollowAction builder.
-  Clean, icon-first design with dynamic text based on follow state.
-
-  @example
-  ```svelte
-  <FollowButton {ndk} target={user} />
-  <FollowButton {ndk} target={user} showIcon={false} />
-  <FollowButton {ndk} target={user} showTarget={true} />
-  <FollowButton {ndk} target="#bitcoin" showTarget={true} />
-  ```
--->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

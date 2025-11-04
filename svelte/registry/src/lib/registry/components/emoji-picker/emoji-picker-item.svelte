@@ -1,27 +1,3 @@
-<!-- @ndk-version: emoji-picker@0.3.0 -->
-<!--
-  @component EmojiPicker.Item
-  Headless emoji button for picker grids.
-
-  @example Basic usage:
-  ```svelte
-  <EmojiPicker.Item
-    emoji={{ emoji: '❤️' }}
-    onSelect={(emoji) => console.log(emoji)}
-  />
-  ```
-
-  @example Custom button:
-  ```svelte
-  <EmojiPicker.Item emoji={emojiData} {onSelect}>
-    {#snippet child({ props, emoji })}
-      <button {...props} class="custom-emoji-btn">
-        <img src={emoji.url} alt={emoji.shortcode} />
-      </button>
-    {/snippet}
-  </EmojiPicker.Item>
-  ```
--->
 <script lang="ts">
   import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { Reaction } from '../../ui/reaction';

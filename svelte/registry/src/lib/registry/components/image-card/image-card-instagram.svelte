@@ -1,15 +1,3 @@
-<!-- @ndk-version: image-card-instagram@0.2.0 -->
-<!--
-  @component ImageCardInstagram
-  Instagram-style image card with user header, square image, caption, and actions.
-  Classic social feed layout optimized for image content.
-
-  @example
-  ```svelte
-  <ImageCardInstagram {ndk} {image} />
-  <ImageCardInstagram {ndk} {image} showDropdown={false} />
-  ```
--->
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';

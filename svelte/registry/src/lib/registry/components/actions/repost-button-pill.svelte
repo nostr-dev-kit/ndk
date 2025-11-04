@@ -1,15 +1,3 @@
-<!-- @ndk-version: repost-button-pill@0.1.0 -->
-<!--
-  @component RepostButtonPill
-  Pill-style repost button block using createRepostAction builder.
-  Rounded button with background, border, and hover states.
-
-  @example
-  ```svelte
-  <RepostButtonPill {ndk} {event} />
-  <RepostButtonPill {ndk} {event} variant="outline" />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

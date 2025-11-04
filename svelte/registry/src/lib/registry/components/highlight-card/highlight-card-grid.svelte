@@ -1,13 +1,3 @@
-<!-- @ndk-version: highlight-card-grid@0.3.0 -->
-<!--
-  @component HighlightCard.Grid
-  Pre-composed grid variant with aspect-square card and author info below.
-
-  @example
-  ```svelte
-  <HighlightCard.Grid {ndk} {event} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

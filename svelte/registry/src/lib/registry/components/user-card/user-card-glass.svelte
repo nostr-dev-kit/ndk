@@ -1,14 +1,3 @@
-<!-- @ndk-version: user-card-glass@0.1.0 -->
-<!--
-  @component UserCardGlass
-  Glassmorphic user card with frosted glass effect and gradient mesh background.
-  Inspired by modern glass UI design with translucent layers and soft glows.
-
-  @example
-  ```svelte
-  <UserCardGlass {ndk} {pubkey} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/index.js';

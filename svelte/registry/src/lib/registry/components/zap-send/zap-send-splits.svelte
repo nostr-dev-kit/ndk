@@ -1,7 +1,3 @@
-<!--
-  @component ZapSend.Splits
-  UI component for configuring zap splits. Must be inside ZapSend.Root.
--->
 <script lang="ts">
   import { getZapSendContext } from './context.svelte.js';
 

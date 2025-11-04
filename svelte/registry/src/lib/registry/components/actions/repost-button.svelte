@@ -1,15 +1,3 @@
-<!-- @ndk-version: repost-button@0.1.0 -->
-<!--
-  @component RepostButton
-  Minimal repost button block using createRepostAction builder.
-  Clean, icon-first design with optional count display.
-
-  @example
-  ```svelte
-  <RepostButton {ndk} {event} />
-  <RepostButton {ndk} {event} showCount={false} />
-  ```
--->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

@@ -1,14 +1,3 @@
-<!-- @ndk-version: article@0.14.0 -->
-<!--
-  @component Article.Summary
-  Display article summary/excerpt
-
-  @example
-  ```svelte
-  <Article.Summary />
-  <Article.Summary maxLength={200} />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';

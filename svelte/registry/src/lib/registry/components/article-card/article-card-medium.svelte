@@ -1,16 +1,3 @@
-<!-- @ndk-version: article-card-medium@0.4.0 -->
-<!--
-  @component ArticleCard.Medium
-  Medium-style article card preset (horizontal layout with image on right)
-
-  Ideal for list views and feed displays.
-
-  @example
-  ```svelte
-  <ArticleCard.Medium {ndk} {article} />
-  <ArticleCard.Medium {ndk} {article} imageSize="large" />
-  ```
--->
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

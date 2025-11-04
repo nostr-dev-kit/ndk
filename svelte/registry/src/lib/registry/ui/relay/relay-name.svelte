@@ -1,14 +1,3 @@
-<!--
-  @component Relay.Name
-  Displays relay name from NIP-11 or URL.
-
-  @example
-  ```svelte
-  <Relay.Root {ndk} {relayUrl}>
-    <Relay.Name class="font-bold" />
-  </Relay.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';

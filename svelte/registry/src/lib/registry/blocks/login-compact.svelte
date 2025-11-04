@@ -1,14 +1,3 @@
-<!-- @ndk-version: login-compact@0.1.0 -->
-<!--
-  @component LoginCompact
-  Smart login component with adaptive UI based on window.nostr detection.
-  Supports nsec, ncryptsec (NIP-49), bunker://, NIP-05, and read-only mode.
-
-  @example
-  ```svelte
-  <LoginCompact {ndk} onSuccess={() => console.log('Logged in!')} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKNip07Signer, NDKPrivateKeySigner, NDKNip46Signer, nip19 } from '@nostr-dev-kit/ndk';

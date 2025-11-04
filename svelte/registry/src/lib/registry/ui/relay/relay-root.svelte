@@ -1,15 +1,3 @@
-<!--
-  @component Relay.Root
-  Root container that provides context for Relay subcomponents.
-
-  @example
-  ```svelte
-  <Relay.Root {ndk} relayUrl="wss://relay.damus.io">
-    <Relay.Icon />
-    <Relay.Name />
-  </Relay.Root>
-  ```
--->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

@@ -1,21 +1,3 @@
-<!-- @ndk-version: event-card@0.20.0 -->
-<!--
-  @component EventCard.Header
-  Minimal header builder showing avatar, name, and timestamp.
-  Use EventCardMenu block for dropdown functionality.
-
-  @example Basic usage:
-  ```svelte
-  <EventCard.Header />
-  ```
-
-  @example With custom actions:
-  ```svelte
-  <EventCard.Header>
-    <EventCardMenu {ndk} {event} />
-  </EventCard.Header>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';

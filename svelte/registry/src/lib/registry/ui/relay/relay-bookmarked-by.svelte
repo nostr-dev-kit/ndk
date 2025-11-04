@@ -4,7 +4,7 @@
 
   @example
   ```svelte
-  <script>
+<script>
     const bookmarks = createBookmarkedRelayList(() => ({ authors: follows }), ndk);
   </script>
 

@@ -7,7 +7,7 @@
 
   @example Basic
   ```svelte
-  <script>
+<script>
     import { ContentTab, byCount } from '$lib/registry/components/content-tab';
 
     const pubkeys = ['hexpubkey'];

@@ -1,13 +1,3 @@
-<!-- @ndk-version: article@0.14.0 -->
-<!--
-  @component Article.Title
-  Display article title
-
-  @example
-  ```svelte
-  <Article.Title />
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';

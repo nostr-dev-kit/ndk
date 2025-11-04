@@ -1,15 +1,3 @@
-<!-- @ndk-version: follow-button-animated@0.1.0 -->
-<!--
-  @component FollowButtonAnimated
-  Animated follow button block using svelte-motion for smooth subscribe-style animations.
-
-  @example
-  ```svelte
-  <FollowButtonAnimated {ndk} target={user} />
-  <FollowButtonAnimated {ndk} target={user} showTarget={true} />
-  <FollowButtonAnimated {ndk} target="#bitcoin" showTarget={true} />
-  ```
--->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

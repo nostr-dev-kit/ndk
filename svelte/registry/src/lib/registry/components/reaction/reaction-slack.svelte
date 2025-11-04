@@ -1,28 +1,3 @@
-<!-- @ndk-version: reaction-slack@0.1.0 -->
-<!--
-  @component ReactionSlack
-  A Slack-style reactions display with horizontal or vertical layout.
-
-  @example Horizontal with avatars in popover (default)
-  ```svelte
-  <ReactionSlack {ndk} {event} />
-  ```
-
-  @example Vertical with inline avatars
-  ```svelte
-  <ReactionSlack {ndk} {event} variant="vertical" />
-  ```
-
-  @example Without avatars
-  ```svelte
-  <ReactionSlack {ndk} {event} showAvatars={false} />
-  ```
-
-  @example With cancellable delayed reactions
-  ```svelte
-  <ReactionSlack {ndk} {event} delayed={5} />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';

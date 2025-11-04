@@ -1,24 +1,3 @@
-<!--
-  @component MediaUpload.Button
-  Headless file upload trigger button.
-
-  @example Basic usage:
-  ```svelte
-  <MediaUpload.Button />
-  ```
-
-  @example Custom button:
-  ```svelte
-  <MediaUpload.Button>
-    {#snippet child({ props, isUploading })}
-      <button {...props} class="custom-upload-btn">
-        <Icon name="upload" />
-        {isUploading ? 'Processing...' : 'Choose Files'}
-      </button>
-    {/snippet}
-  </MediaUpload.Button>
-  ```
--->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';

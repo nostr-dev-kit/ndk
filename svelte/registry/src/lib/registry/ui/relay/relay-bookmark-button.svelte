@@ -4,7 +4,7 @@
 
   @example Basic usage:
   ```svelte
-  <script>
+<script>
     const bookmarks = createBookmarkedRelayList(() => ({
       authors: [...follows, ndk.$currentUser.pubkey]
     }), ndk);

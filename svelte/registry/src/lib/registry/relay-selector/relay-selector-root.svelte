@@ -1,24 +1,3 @@
-<!-- @ndk-version: relay-selector-root@0.2.0 -->
-<!--
-  @component Relay.Selector.Root
-  Root context provider for relay selector primitives
-
-  @example
-  ```svelte
-  <Relay.Selector.Root {ndk} bind:selected={selectedRelays} multiple={true}>
-    {#snippet children(context)}
-      {#each context.connectedRelays as relay}
-        <button onclick={() => context.toggleRelay(relay)} data-selected={context.isSelected(relay)}>
-          <Relay.Root relayUrl={relay}>
-            <Relay.Name />
-          </Relay.Root>
-        </button>
-      {/each}
-      <Relay.Selector.AddForm />
-    {/snippet}
-  </Relay.Selector.Root>
-  ```
--->
 <script lang="ts">
 	import { setContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';

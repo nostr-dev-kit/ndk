@@ -1,15 +1,3 @@
-<!-- @ndk-version: user-list-item@0.1.0 -->
-<!--
-  @component UserListItem
-  Compact list item showing user avatar, name, and follow status.
-  Perfect for user lists and search results.
-
-  @example
-  ```svelte
-  <UserListItem {ndk} {pubkey} />
-  <UserListItem {ndk} {pubkey} class="hover:bg-accent" />
-  ```
--->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '@nostr-dev-kit/svelte';

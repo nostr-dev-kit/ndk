@@ -1,18 +1,3 @@
-<!-- @ndk-version: event-card@0.20.0 -->
-<!--
-  @component EventCard.Dropdown
-  Self-contained dropdown menu with event options.
-  Reads event from EventCard context.
-
-  @example
-  ```svelte
-  <EventCard.Root {ndk} {event}>
-    <EventCard.Header>
-      <EventCard.Dropdown />
-    </EventCard.Header>
-  </EventCard.Root>
-  ```
--->
 <script lang="ts">
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';

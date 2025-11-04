@@ -1,13 +1,3 @@
-<!-- @ndk-version: relay-selector-popover@0.2.0 -->
-<!--
-  @component RelaySelectorPopover
-  Popover block for relay selection using bits-ui
-
-  @example
-  ```svelte
-  <RelaySelectorPopover {ndk} bind:selected={selectedRelays} />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../../ui/relay/index.js';

@@ -1,15 +1,3 @@
-<!-- @ndk-version: relay-card-portrait@0.6.0 -->
-<!--
-  @component RelayCard.Portrait
-  Portrait-style relay card preset (vertical layout with icon on top)
-
-  Ideal for grid layouts and relay discovery displays.
-
-  @example
-  ```svelte
-  <RelayCard.Portrait {ndk} relayUrl="wss://relay.damus.io" />
-  ```
--->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';

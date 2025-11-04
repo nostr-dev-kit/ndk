@@ -25,16 +25,16 @@
 		<div class="relative overflow-hidden space-y-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-blue-200 dark:border-gray-700 shadow-lg {className}">
 			<!-- Animated background when syncing -->
 			{#if context.syncing}
-				<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" style="animation: shimmer 2s infinite linear;" />
+				<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" style="animation: shimmer 2s infinite linear;"></div>
 			{/if}
 
 			<div class="relative z-10 space-y-3">
 				<div class="flex items-center justify-between">
 					<div class="flex items-center gap-2">
 						{#if context.syncing}
-							<div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+							<div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
 						{:else}
-							<div class="w-2 h-2 bg-green-500 rounded-full" />
+							<div class="w-2 h-2 bg-green-500 rounded-full"></div>
 						{/if}
 						<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
 							{context.syncing ? 'Syncing with relays...' : 'Sync Complete!'}

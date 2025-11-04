@@ -82,7 +82,7 @@
         <div class="flex items-center justify-between">
           <ReadingTime class="text-xs" />
           <svg width="16" height="16" class="text-primary opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" ></path>
           </svg>
         </div>
       </div>

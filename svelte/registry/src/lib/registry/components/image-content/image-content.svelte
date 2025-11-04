@@ -48,7 +48,7 @@
 
 {#if hasImages}
 	<div class="image-content {className}">
-		{#each imetas as imeta, index (imeta.url || index)}
+		{#each imetas as imeta, index (imeta.url)}
 			<div class="image-item">
 				{#if imeta.url}
 					<div class="image-wrapper">

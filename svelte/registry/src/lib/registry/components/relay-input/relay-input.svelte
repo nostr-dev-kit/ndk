@@ -76,12 +76,4 @@
 	.relay-input-block {
 		width: 100%;
 	}
-
-	:global(.dark) {
-		--destructive: 0deg 62.8% 30.6%;
-	}
-
-	:global(.light) {
-		--destructive: 0deg 84.2% 60.2%;
-	}
 </style>

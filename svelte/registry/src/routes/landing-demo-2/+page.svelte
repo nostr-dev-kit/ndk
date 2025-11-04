@@ -48,6 +48,18 @@
 	const demoPubkey = 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
 </script>
 
+<svelte:head>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: #0a0a0a;
+			color: #ffffff;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+		}
+	</style>
+</svelte:head>
+
 <div class="landing-page">
 	<!-- Navigation -->
 	<nav class="nav">
@@ -143,14 +155,6 @@
 </div>
 
 <style>
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		background: #0a0a0a;
-		color: #ffffff;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-	}
-
 	.landing-page {
 		min-height: 100vh;
 		background: #0a0a0a;
@@ -365,10 +369,6 @@
 	.showcase.mounted .showcase-card {
 		opacity: 1;
 		transform: translateY(0);
-	}
-
-	.showcase-card :global(*) {
-		transition: all 0.3s;
 	}
 
 	.showcase-card:hover {

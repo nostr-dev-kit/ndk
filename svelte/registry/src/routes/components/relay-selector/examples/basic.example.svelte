@@ -57,18 +57,3 @@
 	</Relay.Selector.Root>
 </div>
 
-<style>
-	:global(.dark) {
-		--muted: 217.2deg 32.6% 17.5%;
-		--muted-foreground: 215deg 20.2% 65.1%;
-		--border: 217.2deg 32.6% 17.5%;
-		--foreground: 210deg 40% 98%;
-	}
-
-	:global(.light) {
-		--muted: 210deg 40% 96.1%;
-		--muted-foreground: 215.4deg 16.3% 46.9%;
-		--border: 214.3deg 31.8% 91.4%;
-		--foreground: 222.2deg 84% 4.9%;
-	}
-</style>

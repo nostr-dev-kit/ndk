@@ -21,29 +21,3 @@
 	)}
 	{...rest}
 />
-
-<style>
-	:global(.dark) input {
-		--background: 222.2deg 84% 4.9%;
-		--foreground: 210deg 40% 98%;
-		--muted: 217.2deg 32.6% 17.5%;
-		--muted-foreground: 215deg 20.2% 65.1%;
-		--border: 217.2deg 32.6% 17.5%;
-		--input: 217.2deg 32.6% 17.5%;
-		--ring: 212.7deg 26.8% 83.9%;
-		--ring-offset: 222.2deg 84% 4.9%;
-		--ring-offset-width: 2px;
-	}
-
-	:global(.light) input {
-		--background: 0deg 0% 100%;
-		--foreground: 222.2deg 84% 4.9%;
-		--muted: 210deg 40% 96.1%;
-		--muted-foreground: 215.4deg 16.3% 46.9%;
-		--border: 214.3deg 31.8% 91.4%;
-		--input: 214.3deg 31.8% 91.4%;
-		--ring: 222.2deg 84% 4.9%;
-		--ring-offset: 0deg 0% 100%;
-		--ring-offset-width: 2px;
-	}
-</style>

@@ -27,13 +27,13 @@
       )}
     >
       <!-- Title and description -->
-      <div class="mb-6 text-center">
-        <h3 class="text-base font-semibold text-muted-foreground group-hover:text-foreground transition-colors mb-1">{block.name}</h3>
-        <p class="text-sm text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">{block.description}</p>
+      <div class="mb-6 text-center brightness-50 opacity-80 group-hover:opacity-100 group-hover:brightness-100 transition-all duration-700">
+        <h3 class="text-base font-semibold text-foreground transition-colors mb-1">{block.name}</h3>
+        <p class="text-sm text-muted-foreground transition-colors">{block.description}</p>
       </div>
 
       <!-- Preview -->
-      <div class="flex-1 flex items-center justify-center w-full">
+      <div class="flex-1 flex items-center justify-center w-full grayscale group-hover:grayscale-0">
         {@render block.preview()}
       </div>
     </div>

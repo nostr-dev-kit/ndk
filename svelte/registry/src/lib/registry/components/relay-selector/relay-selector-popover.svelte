@@ -200,36 +200,6 @@
 </Relay.Selector.Root>
 
 <style>
-	:global(.dark) {
-		--primary: 210deg 40% 98%;
-		--primary-foreground: 222.2deg 47.4% 11.2%;
-		--secondary: 217.2deg 32.6% 17.5%;
-		--secondary-foreground: 210deg 40% 98%;
-		--accent: 217.2deg 32.6% 17.5%;
-		--accent-foreground: 210deg 40% 98%;
-		--muted-foreground: 215deg 20.2% 65.1%;
-		--popover: 222.2deg 84% 4.9%;
-		--popover-foreground: 210deg 40% 98%;
-		--border: 217.2deg 32.6% 17.5%;
-		--input: 217.2deg 32.6% 17.5%;
-		--ring: 212.7deg 26.8% 83.9%;
-	}
-
-	:global(.light) {
-		--primary: 222.2deg 47.4% 11.2%;
-		--primary-foreground: 210deg 40% 98%;
-		--secondary: 210deg 40% 96.1%;
-		--secondary-foreground: 222.2deg 47.4% 11.2%;
-		--accent: 210deg 40% 96.1%;
-		--accent-foreground: 222.2deg 47.4% 11.2%;
-		--muted-foreground: 215.4deg 16.3% 46.9%;
-		--popover: 0deg 0% 100%;
-		--popover-foreground: 222.2deg 84% 4.9%;
-		--border: 214.3deg 31.8% 91.4%;
-		--input: 214.3deg 31.8% 91.4%;
-		--ring: 222.2deg 84% 4.9%;
-	}
-
 	@keyframes fade-in {
 		from {
 			opacity: 0;

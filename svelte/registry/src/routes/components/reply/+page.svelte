@@ -8,9 +8,9 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import UI examples
-  import DialogComposerExample from './examples/dialog-composer-code.svelte';
-  import InlineComposerExample from './examples/inline-composer-code.svelte';
-  import MinimalButtonExample from './examples/minimal-button-code.svelte';
+  import DialogComposerExample from './examples/dialog-composer-code.example.svelte';
+  import InlineComposerExample from './examples/inline-composer-code.example.svelte';
+  import MinimalButtonExample from './examples/minimal-button-code.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

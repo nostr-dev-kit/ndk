@@ -8,8 +8,8 @@
   import ComponentAPI from '$site-components/component-api.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
 
-  import UIBasic from './examples/ui-basic.svelte';
-  import UIFull from './examples/ui-full.svelte';
+  import UIBasic from './examples/ui-basic.example.svelte';
+  import UIFull from './examples/ui-full.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

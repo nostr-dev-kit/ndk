@@ -6,12 +6,12 @@
   import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.svelte';
-  import BasicRaw from './examples/basic.svelte?raw';
-  import Standalone from './examples/standalone.svelte';
-  import StandaloneRaw from './examples/standalone.svelte?raw';
-  import Composition from './examples/composition.svelte';
-  import CompositionRaw from './examples/composition.svelte?raw';
+  import Basic from './examples/basic.example.svelte';
+  import BasicRaw from './examples/basic.example.svelte?raw';
+  import Standalone from './examples/standalone.example.svelte';
+  import StandaloneRaw from './examples/standalone.example.svelte?raw';
+  import Composition from './examples/composition.example.svelte';
+  import CompositionRaw from './examples/composition.example.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

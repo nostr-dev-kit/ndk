@@ -12,8 +12,8 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import UI component examples
-	import UIBasic from './examples/ui-basic.svelte';
-	import UIComposition from './examples/ui-composition.svelte';
+	import UIBasic from './examples/ui-basic.example.svelte';
+	import UIComposition from './examples/ui-composition.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 

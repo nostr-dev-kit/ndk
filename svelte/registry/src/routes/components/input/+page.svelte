@@ -8,9 +8,9 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte';
-  import CustomTextarea from './examples/custom-textarea.svelte';
-  import ComposableParts from './examples/composable-parts.svelte';
-  import BuilderBasic from './examples/builder-basic.svelte';
+  import CustomTextarea from './examples/custom-textarea.example.svelte';
+  import ComposableParts from './examples/composable-parts.example.svelte';
+  import BuilderBasic from './examples/builder-basic.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

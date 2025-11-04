@@ -6,10 +6,10 @@
   import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.svelte';
-  import BasicRaw from './examples/basic.svelte?raw';
-  import Variants from './examples/variants.svelte';
-  import VariantsRaw from './examples/variants.svelte?raw';
+  import Basic from './examples/basic.example.svelte';
+  import BasicRaw from './examples/basic.example.svelte?raw';
+  import Variants from './examples/variants.example.svelte';
+  import VariantsRaw from './examples/variants.example.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

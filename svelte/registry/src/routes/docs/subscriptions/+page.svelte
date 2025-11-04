@@ -5,8 +5,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 	// Import demo
-	import ZappedFeed from './examples/zapped-feed.svelte';
-	import ZappedFeedRaw from './examples/zapped-feed.svelte?raw';
+	import ZappedFeed from './examples/zapped-feed.example.svelte';
+	import ZappedFeedRaw from './examples/zapped-feed.example.svelte?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>

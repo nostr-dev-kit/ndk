@@ -7,9 +7,9 @@
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
-  import GenericCardExample from './examples/generic-card.svelte';
-  import GenericInlineExample from './examples/generic-inline.svelte';
-  import GenericCompactExample from './examples/generic-compact.svelte';
+  import GenericCardExample from './examples/generic-card.example.svelte';
+  import GenericInlineExample from './examples/generic-inline.example.svelte';
+  import GenericCompactExample from './examples/generic-compact.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

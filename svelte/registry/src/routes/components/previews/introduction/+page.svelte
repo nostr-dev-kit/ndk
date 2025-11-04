@@ -7,8 +7,8 @@
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
-  import InteractiveDemo from './examples/interactive-demo.svelte';
-  import VariantComparison from './examples/variant-comparison.svelte';
+  import InteractiveDemo from './examples/interactive-demo.example.svelte';
+  import VariantComparison from './examples/variant-comparison.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

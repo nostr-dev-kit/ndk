@@ -13,13 +13,13 @@
   import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components';
 
   // Import examples
-  import ReactionDisplayBasic from './examples/reaction-display-basic.svelte';
-  import ReactionDisplayCustom from './examples/reaction-display-custom.svelte';
-  import ReactionEmojiButtonExample from './examples/reaction-emoji-button-code.svelte';
-  import BasicExample from './examples/reaction-action-basic.svelte';
-  import SlackLikeExample from './examples/slack-like.svelte';
-  import BuilderExample from './examples/reaction-action-builder.svelte';
-  import DelayedExample from './examples/delayed.svelte';
+  import ReactionDisplayBasic from './examples/reaction-display-basic.example.svelte';
+  import ReactionDisplayCustom from './examples/reaction-display-custom.example.svelte';
+  import ReactionEmojiButtonExample from './examples/reaction-emoji-button-code.example.svelte';
+  import BasicExample from './examples/reaction-action-basic.example.svelte';
+  import SlackLikeExample from './examples/slack-like.example.svelte';
+  import BuilderExample from './examples/reaction-action-builder.example.svelte';
+  import DelayedExample from './examples/delayed.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

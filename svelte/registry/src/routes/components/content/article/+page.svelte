@@ -9,8 +9,8 @@
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // Import examples
-  import BasicExample from './examples/basic.svelte';
-  import WithClickExample from './examples/with-click.svelte';
+  import BasicExample from './examples/basic.example.svelte';
+  import WithClickExample from './examples/with-click.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

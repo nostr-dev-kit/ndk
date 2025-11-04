@@ -9,7 +9,7 @@
   import Alert from '$site-components/alert.svelte';
 
   import MuteButton from '$lib/registry/components/actions/mute-button.svelte';
-  import UIComposition from './examples/mute-action-builder.svelte';
+  import UIComposition from './examples/mute-action-builder.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

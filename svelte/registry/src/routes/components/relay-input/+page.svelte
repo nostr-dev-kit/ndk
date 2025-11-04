@@ -11,10 +11,10 @@
   import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
 
   // Examples
-  import BasicExample from './examples/basic.svelte';
-  import WithLabelExample from './examples/with-label.svelte';
-  import ValidationExample from './examples/validation.svelte';
-  import DisabledExample from './examples/disabled.svelte';
+  import BasicExample from './examples/basic.example.svelte';
+  import WithLabelExample from './examples/with-label.example.svelte';
+  import ValidationExample from './examples/validation.example.svelte';
+  import DisabledExample from './examples/disabled.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

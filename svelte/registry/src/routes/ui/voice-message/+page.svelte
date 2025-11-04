@@ -309,11 +309,6 @@ sub.on('event', (event) => &#123;
     color: var(--muted-foreground);
   }
 
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
-
   .header-title h1 {
     font-size: 3rem;
     font-weight: 700;

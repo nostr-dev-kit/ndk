@@ -3,7 +3,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
   import ArticleCardExample from './examples/article-card.svelte';
   import ArticleInlineExample from './examples/article-inline.svelte';
@@ -13,17 +15,44 @@
 
   // The sample should be a kind:1 event that EMBEDS a kind:30023 article
   let sampleNote = $state<NDKEvent | undefined>();
+
+  const cardData = {
+    name: 'article-embedded-card',
+    title: 'Card Variant',
+    description: 'Full display with cover and metadata.',
+    richDescription: 'Full display with cover image, title, summary, and metadata. Default variant for embedded articles.',
+    command: 'npx shadcn@latest add article-embedded-card',
+    apiDocs: []
+  };
+
+  const inlineData = {
+    name: 'article-embedded-inline',
+    title: 'Inline Variant',
+    description: 'Medium-sized inline display.',
+    richDescription: 'Medium-sized display suitable for inline references within content.',
+    command: 'npx shadcn@latest add article-embedded-inline',
+    apiDocs: []
+  };
+
+  const compactData = {
+    name: 'article-embedded-compact',
+    title: 'Compact Variant',
+    description: 'Minimal horizontal layout.',
+    richDescription: 'Minimal horizontal layout with small image and truncated text.',
+    command: 'npx shadcn@latest add article-embedded-compact',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <h1 class="text-4xl font-bold mb-4">Article Embedded Preview</h1>
     <p class="text-lg text-muted-foreground mb-2">
       Embedded preview handler for long-form articles (Kind 30023 / NIP-23).
     </p>
     <p class="text-sm text-muted-foreground mb-6">
-      <a href="/components/embedded-previews" class="text-primary hover:underline">
+      <a href="/components/previews/introduction" class="text-primary hover:underline">
         ← Back to Embedded Previews
       </a>
     </p>
@@ -63,45 +92,73 @@
   </section>
 
   <!-- Visual Examples -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold mb-6">Visual Examples</h2>
+  {#snippet cardPreview()}
+    {#if sampleNote}
+      <ArticleCardExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
 
-    <div class="space-y-8">
-      <!-- Card Variant -->
-      <Demo
-        title="Card Variant"
-        description="Full display with cover image, title, summary, and metadata. Default variant for embedded articles."
-        component="article-embedded-card"
-      >
-        {#snippet usage()}
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-lg font-semibold mb-3">Installation</h4>
-              <code class="block p-3 bg-muted rounded text-sm">
-                npx shadcn-svelte@latest add article-embedded-card
-              </code>
-            </div>
+  {#snippet inlinePreview()}
+    {#if sampleNote}
+      <ArticleInlineExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
 
-            <div>
-              <h4 class="text-lg font-semibold mb-3">Setup</h4>
-              <p class="text-sm text-muted-foreground mb-3">
-                Post-install automatically adds the import to <code class="px-2 py-1 bg-card rounded">embedded-handlers.ts</code>:
-              </p>
-              <div class="p-3 bg-muted rounded font-mono text-sm">
-                import './kinds/article-embedded-card';
-              </div>
-            </div>
+  {#snippet compactPreview()}
+    {#if sampleNote}
+      <ArticleCompactExample {ndk} event={sampleNote} />
+    {:else}
+      <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">
+        <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
+      </div>
+    {/if}
+  {/snippet}
 
-            <div>
-              <h4 class="text-lg font-semibold mb-3">That's it!</h4>
-              <p class="text-sm text-muted-foreground">
-                All article embeds (kind 30023) will now automatically use the card variant.
-                No additional code needed - the handler self-registers via its index.ts file.
-              </p>
-            </div>
-          </div>
-        {/snippet}
+  <ComponentPageSectionTitle
+    title="Visual Examples"
+    description="Different display variants for embedded articles."
+  />
 
+  <ComponentsShowcaseGrid
+    blocks={[
+      {
+        name: 'Card Variant',
+        description: 'Full display',
+        command: 'npx shadcn@latest add article-embedded-card',
+        preview: cardPreview,
+        cardData: cardData
+      },
+      {
+        name: 'Inline Variant',
+        description: 'Medium display',
+        command: 'npx shadcn@latest add article-embedded-inline',
+        preview: inlinePreview,
+        cardData: inlineData
+      },
+      {
+        name: 'Compact Variant',
+        description: 'Minimal horizontal',
+        command: 'npx shadcn@latest add article-embedded-compact',
+        preview: compactPreview,
+        cardData: compactData
+      }
+    ]}
+  />
+
+  <!-- Components Section -->
+  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+
+  <section class="py-12 space-y-16">
+    <ComponentCard inline data={cardData}>
+      {#snippet preview()}
         {#if sampleNote}
           <ArticleCardExample {ndk} event={sampleNote} />
         {:else}
@@ -109,40 +166,11 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
+      {/snippet}
+    </ComponentCard>
 
-      <!-- Inline Variant -->
-      <Demo
-        title="Inline Variant"
-        description="Medium-sized display suitable for inline references within content."
-        component="article-embedded-inline"
-      >
-        {#snippet usage()}
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-lg font-semibold mb-3">Installation</h4>
-              <code class="block p-3 bg-muted rounded text-sm">
-                npx shadcn-svelte@latest add article-embedded-inline
-              </code>
-            </div>
-            <div>
-              <h4 class="text-lg font-semibold mb-3">Setup</h4>
-              <p class="text-sm text-muted-foreground mb-3">
-                Post-install adds to <code class="px-2 py-1 bg-card rounded">embedded-handlers.ts</code>:
-              </p>
-              <div class="p-3 bg-muted rounded font-mono text-sm">
-                import './kinds/article-embedded-inline';
-              </div>
-            </div>
-            <div>
-              <h4 class="text-lg font-semibold mb-3">That's it!</h4>
-              <p class="text-sm text-muted-foreground">
-                Article embeds now use the inline variant automatically.
-              </p>
-            </div>
-          </div>
-        {/snippet}
-
+    <ComponentCard inline data={inlineData}>
+      {#snippet preview()}
         {#if sampleNote}
           <ArticleInlineExample {ndk} event={sampleNote} />
         {:else}
@@ -150,40 +178,11 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
+      {/snippet}
+    </ComponentCard>
 
-      <!-- Compact Variant -->
-      <Demo
-        title="Compact Variant"
-        description="Minimal horizontal layout with small image and truncated text."
-        component="article-embedded-compact"
-      >
-        {#snippet usage()}
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-lg font-semibold mb-3">Installation</h4>
-              <code class="block p-3 bg-muted rounded text-sm">
-                npx shadcn-svelte@latest add article-embedded-compact
-              </code>
-            </div>
-            <div>
-              <h4 class="text-lg font-semibold mb-3">Setup</h4>
-              <p class="text-sm text-muted-foreground mb-3">
-                Post-install adds to <code class="px-2 py-1 bg-card rounded">embedded-handlers.ts</code>:
-              </p>
-              <div class="p-3 bg-muted rounded font-mono text-sm">
-                import './kinds/article-embedded-compact';
-              </div>
-            </div>
-            <div>
-              <h4 class="text-lg font-semibold mb-3">That's it!</h4>
-              <p class="text-sm text-muted-foreground">
-                Article embeds now use the compact variant automatically.
-              </p>
-            </div>
-          </div>
-        {/snippet}
-
+    <ComponentCard inline data={compactData}>
+      {#snippet preview()}
         {#if sampleNote}
           <ArticleCompactExample {ndk} event={sampleNote} />
         {:else}
@@ -191,8 +190,8 @@
             <p class="text-sm text-muted-foreground">Select a sample note above to preview</p>
           </div>
         {/if}
-      </Demo>
-    </div>
+      {/snippet}
+    </ComponentCard>
   </section>
 
   <!-- When to Use -->

@@ -8,7 +8,7 @@
   import { User } from '../../ui/user';
   import { cn } from '../../utils/cn.js';
   import { getContext } from 'svelte';
-  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/context.svelte.js';
+  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/article.context.js';
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';
 
   interface Props {

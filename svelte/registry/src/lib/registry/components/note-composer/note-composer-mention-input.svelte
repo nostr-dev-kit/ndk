@@ -3,7 +3,7 @@
 	import type { NDKUser } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
-	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './context.svelte';
+	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
 	import { UserInput } from '../../ui/user-input/index.js';
 	import { User } from '../../ui/user/index.js';
 	import { cn } from '../../utils/cn.js';

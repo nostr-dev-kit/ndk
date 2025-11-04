@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getZapSendContext } from './context.svelte.js';
+  import { getZapSendContext } from './zap-send.context.js';
 
   interface Props {
     class?: string;

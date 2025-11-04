@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { RELAY_SELECTOR_CONTEXT_KEY, type RelaySelectorContext } from './relay-selector-context.svelte.js';
+	import { RELAY_SELECTOR_CONTEXT_KEY, type RelaySelectorContext } from './relay-selector.context.js';
 	import type { Snippet } from 'svelte';
 
 	interface Props {

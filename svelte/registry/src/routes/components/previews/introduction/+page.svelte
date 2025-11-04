@@ -76,7 +76,7 @@
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">3</div>
             <div>
               <strong class="text-foreground">Registry Lookup</strong>
-              <p class="text-sm">Check KIND_HANDLERS map for a registered handler matching the event's kind</p>
+              <p class="text-sm">Check ContentRenderer for a registered handler matching the event's kind</p>
             </div>
           </div>
           <div class="flex items-start gap-3">
@@ -89,14 +89,14 @@
         </div>
       </div>
 
-      <!-- KindRegistry System -->
+      <!-- ContentRenderer System -->
       <div class="p-6 border border-border rounded-lg bg-muted/30">
-        <h3 class="text-xl font-semibold mb-4">KindRegistry System</h3>
+        <h3 class="text-xl font-semibold mb-4">ContentRenderer System</h3>
         <p class="text-sm text-muted-foreground mb-4">
           Self-registering handlers using NDK wrapper classes for automatic kind mapping and type-safe event wrapping.
         </p>
         <p class="text-sm text-muted-foreground mb-4">
-          Each kind handler self-registers via its <code class="px-2 py-1 bg-muted rounded">index.ts</code> file:
+          Each kind handler self-registers with the <code class="px-2 py-1 bg-muted rounded">defaultContentRenderer</code> via its <code class="px-2 py-1 bg-muted rounded">index.ts</code> file:
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="p-4 bg-card rounded border border-border">
@@ -159,23 +159,23 @@
         </div>
       </div>
 
-      <!-- Custom Registries -->
+      <!-- Custom Renderers -->
       <div class="p-6 border border-border rounded-lg bg-primary/5 border-primary/20">
-        <h3 class="text-xl font-semibold mb-4">Custom Registries (Advanced)</h3>
+        <h3 class="text-xl font-semibold mb-4">Custom Renderers (Advanced)</h3>
         <p class="text-sm text-muted-foreground mb-4">
-          Create custom registries to render the same kind differently in different contexts:
+          Create custom renderers to render the same kind differently in different contexts:
         </p>
         <div class="p-4 bg-card rounded text-sm font-mono space-y-2 mb-4">
-          <div class="text-muted-foreground">// Create variant-specific registry</div>
-          <div>const compactRegistry = new KindRegistry();</div>
-          <div>compactRegistry.add(NDKHighlight, HighlightCompactPreview);</div>
+          <div class="text-muted-foreground">// Create variant-specific renderer</div>
+          <div>const compactRenderer = new ContentRenderer();</div>
+          <div>compactRenderer.addKind(NDKHighlight, HighlightCompactPreview);</div>
           <div class="h-2"></div>
           <div class="text-muted-foreground">// Use in component</div>
-          <div>&lt;EventContent kindRegistry={'{compactRegistry}'} /&gt;</div>
+          <div>&lt;EventContent renderer={'{compactRenderer}'} /&gt;</div>
         </div>
         <p class="text-sm text-muted-foreground">
           <strong>Use case:</strong> Show full highlight cards in feeds, but compact previews in sidebars -
-          just pass different registries with different components.
+          just pass different renderers with different components.
         </p>
       </div>
 

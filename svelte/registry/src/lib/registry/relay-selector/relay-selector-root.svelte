@@ -2,7 +2,7 @@
 	import { setContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { getNDKFromContext } from '../utils/ndk-context.svelte.js';
-	import { RELAY_SELECTOR_CONTEXT_KEY, type RelaySelectorContext } from './relay-selector-context.svelte.js';
+	import { RELAY_SELECTOR_CONTEXT_KEY, type RelaySelectorContext } from './relay-selector.context.js';
 	import type { Snippet } from 'svelte';
 
 	interface Props {

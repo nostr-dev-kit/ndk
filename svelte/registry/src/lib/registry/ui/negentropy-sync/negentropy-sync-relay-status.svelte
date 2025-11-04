@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from './context.svelte.js';
+  import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from './negentropy-sync.context.js';
   import { cn } from "../../utils/cn.js";
 
   interface Props {

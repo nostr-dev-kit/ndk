@@ -3,7 +3,7 @@
   import type { NDKSvelte, ProcessedZap } from '@nostr-dev-kit/svelte';
   import { createZapSubscription } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { setZapsContext, type ZapsStats } from './context.svelte.js';
+  import { setZapsContext, type ZapsStats } from './zaps.context.js';
   import { toProcessedZap } from './utils.js';
 
   interface Props {

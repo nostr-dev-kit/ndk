@@ -3,7 +3,7 @@
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createNegentropySync, type NegentropySyncConfig } from '../../builders/negentropy-sync/index.js';
-  import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from './context.svelte.js';
+  import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from './negentropy-sync.context.js';
   import type { Snippet } from 'svelte';
   import { cn } from "../../utils/cn.js";
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './context.svelte.js';
+  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './article.context.js';
 
   interface Props {
     /** Additional CSS classes */

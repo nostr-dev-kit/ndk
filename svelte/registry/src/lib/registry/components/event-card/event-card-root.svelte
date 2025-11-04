@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
-  import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
+  import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import { cn } from '../../utils/cn.js';
   import type { Snippet } from 'svelte';

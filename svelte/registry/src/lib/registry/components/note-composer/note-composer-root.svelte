@@ -5,7 +5,7 @@
 	import type { Snippet } from 'svelte';
 	import { setContext, getContext } from 'svelte';
 	import { createNoteComposer, type NoteComposerOptions } from './createNoteComposer.svelte';
-	import { NOTE_COMPOSER_CONTEXT_KEY } from './context.svelte';
+	import { NOTE_COMPOSER_CONTEXT_KEY } from './note-composer.context';
 
 	interface Props {
 		/** NDK instance (optional, falls back to context) */

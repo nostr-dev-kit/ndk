@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
   import type { Action } from 'svelte/action';
-  import { setZapSendContext } from './context.svelte.js';
+  import { setZapSendContext } from './zap-send.context.js';
 
   interface SendOptions {
     amount: number;

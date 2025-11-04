@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { RelayStatus } from '@nostr-dev-kit/svelte';
-  import { RELAY_CONTEXT_KEY, type RelayContext } from './context.svelte.js';
+  import { RELAY_CONTEXT_KEY, type RelayContext } from './relay.context.js';
 
   interface Props {
     /** Relay status (optional, will read from context if not provided) */

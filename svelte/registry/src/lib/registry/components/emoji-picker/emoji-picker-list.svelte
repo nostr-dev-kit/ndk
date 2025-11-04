@@ -24,7 +24,7 @@
   class={cn('grid gap-2 max-w-full', className)}
   style="grid-template-columns: repeat({columns}, minmax(0, 1fr));"
 >
-  {#each emojis as emojiData (emojiData.unicode)}
+  {#each emojis as emojiData (emojiData.emoji)}
     <Item emoji={emojiData} {onSelect} />
   {/each}
 </div>

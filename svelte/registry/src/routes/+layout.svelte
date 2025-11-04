@@ -2,7 +2,7 @@
   import '../app.css';
   import { setContext, getContext } from 'svelte';
   import { page } from '$app/stores';
-  import { ndk, initializeNDK } from '$lib/ndk.svelte.ts';
+  import { ndk, initializeNDK } from '$lib/ndk.svelte';
   import Navbar from '$site-components/Navbar.svelte';
   import Sidebar from '$site-components/Sidebar.svelte';
   import LoginModal from '$site-components/LoginModal.svelte';

@@ -104,7 +104,7 @@
         <User.Field field="name" class="text-sm text-white/70 leading-relaxed line-clamp-1 mt-1 mb-4" />
 
         <!-- Bio -->
-        <User.Field field="about" class="text-sm text-white/80 leading-relaxed line-clamp-3 mb-6" maxLines={3} />
+        <User.Field field="about" class="text-sm text-white/80 leading-relaxed line-clamp-3 mb-6" />
 
         <!-- Stats -->
         {#if stats.followCount > 0 || stats.recentNoteCount > 0}

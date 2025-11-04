@@ -1,386 +1,291 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import { NDKImage } from '@nostr-dev-kit/ndk';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import ImageCard from '$lib/registry/components/image-card/image-card.svelte';
-import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte';
-import ImageCardHero from '$lib/registry/components/image-card/image-card-hero.svelte';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import Demo from '$site-components/Demo.svelte';
-	import ComponentAPI from '$site-components/component-api.svelte';
+  import { getContext } from 'svelte';
+  import { NDKImage } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import ImageCard from '$lib/registry/components/image-card/image-card.svelte';
+  import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte';
+  import ImageCardHero from '$lib/registry/components/image-card/image-card-hero.svelte';
+  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
-	import ImageCardCodeRaw from './examples/image-card-code.svelte?raw';
-	import InstagramCodeRaw from './examples/instagram-code.svelte?raw';
-	import HeroCodeRaw from './examples/hero-code.svelte?raw';
+  import UIBasic from './examples/ui-basic.svelte';
+  import UIFull from './examples/ui-full.svelte';
 
-	import UIBasic from './examples/ui-basic.svelte';
-	import UIBasicRaw from './examples/ui-basic.svelte?raw';
-	import UIFull from './examples/ui-full.svelte';
-	import UIFullRaw from './examples/ui-full.svelte?raw';
+  const ndk = getContext<NDKSvelte>('ndk');
+  let sampleImage = $state<NDKImage | undefined>();
 
-	const ndk = getContext<NDKSvelte>('ndk');
-	let sampleImage = $state<NDKImage | undefined>();
+  $effect(() => {
+    (async () => {
+      try {
+        const events = await ndk.fetchEvents({
+          kinds: [20], // kind 20 for images
+          "#t": ["olas365"],
+          limit: 1
+        });
+        const firstEvent = Array.from(events)[0];
+        if (firstEvent) {
+          sampleImage = NDKImage.from(firstEvent);
+        }
+      } catch (error) {
+        console.error('Failed to fetch image:', error);
+      }
+    })();
+  });
 
-	$effect(() => {
-		(async () => {
-			try {
-				// For now, we'll create a sample image event for demonstration
-				// In production, you would fetch a real image event
-				const events = await ndk.fetchEvents({
-					kinds: [20], // kind 20 for images
-					"#t": ["olas365"],
-					limit: 1
-				});
-				const firstEvent = Array.from(events)[0];
-				if (firstEvent) {
-					sampleImage = NDKImage.from(firstEvent);
-				}
-			} catch (error) {
-				console.error('Failed to fetch image:', error);
-			}
-		})();
-	});
+  const instagramCardData = {
+    name: 'image-card-instagram',
+    title: 'ImageCardInstagram',
+    description: 'Instagram-style image card.',
+    richDescription: 'Classic Instagram-style card with user header, square image, caption, and action buttons. Perfect for social feed layouts.',
+    command: 'npx shadcn@latest add image-card-instagram',
+    apiDocs: [
+      {
+        name: 'ImageCardInstagram',
+        description: 'Instagram-style image card component',
+        importPath: "import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+          { name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu button' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const heroCardData = {
+    name: 'image-card-hero',
+    title: 'ImageCardHero',
+    description: 'Fullbleed immersive image display.',
+    richDescription: 'Fullbleed immersive display with caption and author info anchored at bottom over gradient. Perfect for featured or detail views.',
+    command: 'npx shadcn@latest add image-card-hero',
+    apiDocs: [
+      {
+        name: 'ImageCardHero',
+        description: 'Hero-style fullbleed image card component',
+        importPath: "import ImageCardHero from '$lib/registry/components/image-card/image-card-hero.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+          { name: 'height', type: 'string', default: 'h-[500px]', description: 'Custom height class' },
+          { name: 'showFollow', type: 'boolean', default: 'true', description: 'Show follow button for author' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const imageCardData = {
+    name: 'image-card',
+    title: 'ImageCard',
+    description: 'General purpose image card.',
+    richDescription: 'Combines EventCard primitives with ImageContent for flexible layouts. Perfect for general purpose image display.',
+    command: 'npx shadcn@latest add image-card',
+    apiDocs: [
+      {
+        name: 'ImageCard',
+        description: 'General purpose image card component',
+        importPath: "import ImageCard from '$lib/registry/components/image-card/image-card.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+          { name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
+          { name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable to navigate' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]
+  };
+
+  const basicCardData = {
+    name: 'image-basic',
+    title: 'Basic Image Content',
+    description: 'Basic image rendering primitive.',
+    richDescription: 'Minimal image rendering with ImageContent primitive. Perfect for building custom layouts.',
+    command: 'npx shadcn@latest add image-card',
+    apiDocs: []
+  };
+
+  const customCardData = {
+    name: 'image-custom',
+    title: 'Custom Image Layout',
+    description: 'Custom image composition.',
+    richDescription: 'Custom image layout using ImageContent primitives for full control over appearance.',
+    command: 'npx shadcn@latest add image-card',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
-	<!-- Header -->
-	  <div class="mb-12">
-	    <div class="flex items-start justify-between gap-4 mb-4">
-	        <h1 class="text-4xl font-bold">Image Content</h1>
-	    </div>
-			<p class="text-lg text-muted-foreground mb-6">
-				Display image events with metadata and interactions. ImageContent renders images from NIP-68
-				events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt
-				text.
-			</p>
-	
-			<EditProps.Root>
-				<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
-				<EditProps.Button>Edit Examples</EditProps.Button>
-			</EditProps.Root>
-		</div>
-	<!-- Blocks Section -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">Blocks</h2>
-		<p class="text-muted-foreground mb-8">
-			Pre-composed layouts ready to use. Install with a single command.
-		</p>
+<div class="px-8">
+  <!-- Header -->
+  <div class="mb-12 pt-8">
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <h1 class="text-4xl font-bold">Image Content</h1>
+    </div>
+    <p class="text-lg text-muted-foreground mb-6">
+      Display image events with metadata and interactions. ImageContent renders images from NIP-68
+      events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt
+      text.
+    </p>
 
-		<div class="space-y-12">
-			<Demo
-				title="ImageCardInstagram"
-				description="Use for social feed layouts. Classic Instagram-style card with user header, square image, caption, and action buttons."
-				component="image-card-instagram"
-				code={InstagramCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'image',
-						type: 'NDKImage',
-						required: true,
-						description: 'The image event to display'
-					},
-					{
-						name: 'showDropdown',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show dropdown menu button'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes'
-					}
-				]}
-			>
-				{#if sampleImage}
-					<div class="max-w-md mx-auto">
-						<ImageCardInstagram {ndk} image={sampleImage} />
-					</div>
-				{:else}
-					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
-				{/if}
-			</Demo>
+    <EditProps.Root>
+      <EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
+      <EditProps.Button>Edit Examples</EditProps.Button>
+    </EditProps.Root>
+  </div>
 
-			<Demo
-				title="ImageCardHero"
-				description="Use for featured or detail views. Fullbleed immersive display with caption and author info anchored at bottom over gradient."
-				component="image-card-hero"
-				code={HeroCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'image',
-						type: 'NDKImage',
-						required: true,
-						description: 'The image event to display'
-					},
-					{
-						name: 'height',
-						type: 'string',
-						default: 'h-[500px]',
-						description: 'Custom height class'
-					},
-					{
-						name: 'showFollow',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show follow button for author'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes'
-					}
-				]}
-			>
-				{#if sampleImage}
-					<ImageCardHero {ndk} image={sampleImage} />
-				{:else}
-					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
-				{/if}
-			</Demo>
+  {#if sampleImage}
+    <!-- ComponentsShowcase Section -->
+    {#snippet instagramPreview()}
+      <div class="max-w-md mx-auto">
+        <ImageCardInstagram {ndk} image={sampleImage} />
+      </div>
+    {/snippet}
 
-			<Demo
-				title="ImageCard"
-				description="Use for general purpose image display. Combines EventCard primitives with ImageContent for flexible layouts."
-				component="image-card"
-				code={ImageCardCodeRaw}
-				props={[
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'image',
-						type: 'NDKImage',
-						required: true,
-						description: 'The image event to display'
-					},
-					{
-						name: 'threading',
-						type: 'ThreadingMetadata',
-						description: 'Threading metadata for thread views'
-					},
-					{
-						name: 'interactive',
-						type: 'boolean',
-						default: 'false',
-						description: 'Make card clickable to navigate'
-					},
-					{
-						name: 'showActions',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show action buttons (repost, reaction)'
-					},
-					{
-						name: 'showDropdown',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show dropdown menu'
-					},
-					{
-						name: 'showImageMeta',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show image metadata (dimensions, size, type)'
-					},
-					{
-						name: 'showAlt',
-						type: 'boolean',
-						default: 'true',
-						description: 'Show image alt text'
-					},
-					{
-						name: 'imageHeight',
-						type: 'string',
-						default: 'max-h-[600px]',
-						description: 'Custom image height class'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						description: 'Additional CSS classes'
-					}
-				]}
-			>
-				{#if sampleImage}
-					<div class="max-w-2xl">
-						<ImageCard {ndk} image={sampleImage} />
-					</div>
-				{:else}
-					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
-				{/if}
-			</Demo>
-		</div>
-	</section>
+    {#snippet heroPreview()}
+      <ImageCardHero {ndk} image={sampleImage} />
+    {/snippet}
 
-	<!-- UI Primitives Section -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-2">UI Primitives</h2>
-		<p class="text-muted-foreground mb-8">
-			Primitive component for rendering image content. Use to build custom image layouts.
-		</p>
+    {#snippet imageCardPreview()}
+      <ImageCard {ndk} image={sampleImage} />
+    {/snippet}
 
-		<div class="space-y-8">
-			<Demo
-				title="Basic Usage"
-				description="Minimal example showing ImageContent with default settings."
-				code={UIBasicRaw}
-			>
-				{#if sampleImage}
-					<UIBasic {ndk} image={sampleImage} />
-				{:else}
-					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
-				{/if}
-			</Demo>
+    {#snippet basicPreview()}
+      <UIBasic {ndk} image={sampleImage} />
+    {/snippet}
 
-			<Demo
-				title="Full Composition"
-				description="Complete example showing ImageContent with various configuration options."
-				code={UIFullRaw}
-			>
-				{#if sampleImage}
-					<UIFull {ndk} image={sampleImage} />
-				{:else}
-					<div class="p-12 text-center text-muted-foreground">Loading sample image...</div>
-				{/if}
-			</Demo>
-		</div>
-	</section>
+    {#snippet customPreview()}
+      <UIFull {ndk} image={sampleImage} />
+    {/snippet}
 
-	<!-- Component API -->
-	<ComponentAPI
-		components={[
-			{
-				name: 'ImageContent',
-				description: 'Renders image events with metadata and optional alt text.',
-				importPath: "import { ImageContent } from '$lib/registry/components/image-content'",
-				props: [
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						required: false,
-						description: 'NDK instance (optional if provided via context)'
-					},
-					{
-						name: 'image',
-						type: 'NDKImage',
-						required: true,
-						description: 'The image event to display'
-					},
-					{
-						name: 'showMeta',
-						type: 'boolean',
-						required: false,
-						default: 'true',
-						description: 'Show image metadata (dimensions, MIME type, file size)'
-					},
-					{
-						name: 'showAlt',
-						type: 'boolean',
-						required: false,
-						default: 'true',
-						description: 'Show image alt text if available'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						required: false,
-						description: 'Additional CSS classes for the container'
-					},
-					{
-						name: 'imageClass',
-						type: 'string',
-						required: false,
-						description: 'Additional CSS classes for the image element'
-					}
-				]
-			},
-			{
-				name: 'ImageCard',
-				description:
-					'Pre-composed card for image events. Combines EventCard primitives with ImageContent for an optimized image display experience.',
-				importPath: "import { ImageCard } from '$lib/registry/blocks'",
-				props: [
-					{
-						name: 'ndk',
-						type: 'NDKSvelte',
-						required: true,
-						description: 'NDK instance'
-					},
-					{
-						name: 'image',
-						type: 'NDKImage',
-						required: true,
-						description: 'The image event to display'
-					},
-					{
-						name: 'threading',
-						type: 'ThreadingMetadata',
-						required: false,
-						description: 'Threading metadata for thread views'
-					},
-					{
-						name: 'interactive',
-						type: 'boolean',
-						required: false,
-						default: 'false',
-						description: 'Make card clickable to navigate'
-					},
-					{
-						name: 'showActions',
-						type: 'boolean',
-						required: false,
-						default: 'true',
-						description: 'Show action buttons (repost, reaction)'
-					},
-					{
-						name: 'showDropdown',
-						type: 'boolean',
-						required: false,
-						default: 'true',
-						description: 'Show dropdown menu'
-					},
-					{
-						name: 'showImageMeta',
-						type: 'boolean',
-						required: false,
-						default: 'true',
-						description: 'Show image metadata (dimensions, size, type)'
-					},
-					{
-						name: 'showAlt',
-						type: 'boolean',
-						required: false,
-						default: 'true',
-						description: 'Show image alt text'
-					},
-					{
-						name: 'imageHeight',
-						type: 'string',
-						required: false,
-						default: 'max-h-[600px]',
-						description: 'Custom image height class'
-					},
-					{
-						name: 'class',
-						type: 'string',
-						required: false,
-						description: 'Additional CSS classes'
-					}
-				]
-			}
-		]}
-	/>
+    <ComponentPageSectionTitle
+      title="Showcase"
+      description="Image card variants from social feeds to hero displays."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Instagram',
+          description: 'Social feed style card',
+          command: 'npx shadcn@latest add image-card-instagram',
+          preview: instagramPreview,
+          cardData: instagramCardData
+        },
+        {
+          name: 'Hero',
+          description: 'Fullbleed immersive display',
+          command: 'npx shadcn@latest add image-card-hero',
+          preview: heroPreview,
+          cardData: heroCardData
+        },
+        {
+          name: 'ImageCard',
+          description: 'General purpose card',
+          command: 'npx shadcn@latest add image-card',
+          preview: imageCardPreview,
+          cardData: imageCardData
+        },
+        {
+          name: 'Basic',
+          description: 'Minimal image primitive',
+          command: 'npx shadcn@latest add image-card',
+          preview: basicPreview,
+          cardData: basicCardData
+        },
+        {
+          name: 'Custom',
+          description: 'Custom composition',
+          command: 'npx shadcn@latest add image-card',
+          preview: customPreview,
+          cardData: customCardData
+        }
+      ]}
+    />
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each image card variant in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={instagramCardData}>
+        {#snippet preview()}
+          <div class="max-w-md mx-auto">
+            <ImageCardInstagram {ndk} image={sampleImage} />
+          </div>
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={heroCardData}>
+        {#snippet preview()}
+          <ImageCardHero {ndk} image={sampleImage} />
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={imageCardData}>
+        {#snippet preview()}
+          <ImageCard {ndk} image={sampleImage} />
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={basicCardData}>
+        {#snippet preview()}
+          <UIBasic {ndk} image={sampleImage} />
+        {/snippet}
+      </ComponentCard>
+
+      <ComponentCard inline data={customCardData}>
+        {#snippet preview()}
+          <UIFull {ndk} image={sampleImage} />
+        {/snippet}
+      </ComponentCard>
+    </section>
+  {:else}
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Loading sample image...</div>
+    </div>
+  {/if}
+
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'ImageCardInstagram',
+        description: 'Instagram-style image card with user header, square image, caption, and action buttons.',
+        importPath: "import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+          { name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu button' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'ImageCardHero',
+        description: 'Fullbleed immersive display with caption and author info anchored at bottom.',
+        importPath: "import ImageCardHero from '$lib/registry/components/image-card/image-card-hero.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+          { name: 'height', type: 'string', default: 'h-[500px]', description: 'Custom height class' },
+          { name: 'showFollow', type: 'boolean', default: 'true', description: 'Show follow button for author' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'ImageCard',
+        description: 'General purpose image card combining EventCard primitives with ImageContent.',
+        importPath: "import ImageCard from '$lib/registry/components/image-card/image-card.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+          { name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
+          { name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable to navigate' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]}
+  />
 </div>

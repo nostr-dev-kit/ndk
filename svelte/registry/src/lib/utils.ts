@@ -3,15 +3,6 @@
  */
 
 /**
- * Combine class names with optional conditional classes
- * @param inputs - Class names to combine
- * @returns Combined class string
- */
-export function cn(...inputs: (string | undefined | null | false)[]) {
-  return inputs.filter(Boolean).join(' ');
-}
-
-/**
  * Format a timestamp to relative time
  * @param timestamp - Unix timestamp in seconds
  * @returns Formatted time string (e.g., "2h", "3d")

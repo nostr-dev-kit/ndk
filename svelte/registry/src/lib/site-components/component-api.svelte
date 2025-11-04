@@ -31,7 +31,7 @@
 	<h2 class="section-title">{title}</h2>
 
 	<div class="components-grid">
-		{#each components as component (component.name || component)}
+		{#each components as component (component.name)}
 			<div class="component-card">
 				<div class="component-header">
 					<h3 class="component-name">{component.name}</h3>
@@ -46,7 +46,7 @@
 					<div class="api-section">
 						<h4 class="api-section-title">Props</h4>
 						<div class="props-list">
-							{#each component.props as prop (prop.name || prop)}
+							{#each component.props as prop (prop.name)}
 								<div class="prop-item">
 									<div class="prop-header">
 										<code class="prop-name">{prop.name}</code>
@@ -72,7 +72,7 @@
 					<div class="api-section">
 						<h4 class="api-section-title">Events</h4>
 						<div class="events-list">
-							{#each component.events as event (event.name || event)}
+							{#each component.events as event (event.name)}
 								<div class="event-item">
 									<code class="event-name">{event.name}</code>
 									<p class="event-description">{event.description}</p>
@@ -86,7 +86,7 @@
 					<div class="api-section">
 						<h4 class="api-section-title">Slots</h4>
 						<div class="slots-list">
-							{#each component.slots as slot (slot.name || slot)}
+							{#each component.slots as slot (slot.name)}
 								<div class="slot-item">
 									<code class="slot-name">{slot.name}</code>
 									<p class="slot-description">{slot.description}</p>

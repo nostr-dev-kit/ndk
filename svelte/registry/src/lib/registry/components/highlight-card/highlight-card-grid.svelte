@@ -47,8 +47,8 @@
         <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
           <path
             d="M18.5 1.15a2.25 2.25 0 00-3.18 0L3.78 12.69a2.25 2.25 0 000 3.18l4.35 4.35a2.25 2.25 0 003.18 0L22.85 8.68a2.25 2.25 0 000-3.18l-4.35-4.35zM9.93 18.84L5.16 14.07 15.3 3.93l4.77 4.77-10.14 10.14z"
-          />
-          <path d="M2.5 22.5h10v1.5h-10z" opacity="0.5" />
+          ></path>
+          <path d="M2.5 22.5h10v1.5h-10z" opacity="0.5" ></path>
         </svg>
       </div>
 
@@ -58,11 +58,11 @@
           {#if source}
             {#if source.type === 'web'}
               <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" ></path>
               </svg>
             {:else}
               <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" ></path>
               </svg>
             {/if}
             <span class="truncate max-w-[100px]">{source.displayText}</span>

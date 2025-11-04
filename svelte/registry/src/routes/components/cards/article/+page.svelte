@@ -8,11 +8,12 @@
 	import ArticleCardNeon from '$lib/registry/components/article-card/article-card-neon.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
-	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
+	import { articleCardMetadata, articleCardCards } from '$lib/component-registry/article-card';
+	import type { ShowcaseBlock } from '$lib/templates/types';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -22,7 +23,6 @@
 	let article2 = $state<NDKArticle | undefined>();
 	let article3 = $state<NDKArticle | undefined>();
 
-	// Fetch articles
 	$effect(() => {
 		(async () => {
 			try {
@@ -53,7 +53,10 @@
 		})();
 	});
 
-	// Anatomy layer data
+	const displayArticles = $derived(
+		[article1, article2, article3].filter(Boolean) as NDKArticle[]
+	);
+
 	let focusedPrimitive = $state<string | null>(null);
 
 	function openPrimitiveDrawer(primitiveId: string) {
@@ -132,200 +135,93 @@
 			]
 		}
 	};
-
-	const displayArticles = $derived(
-		[article1, article2, article3].filter(Boolean) as NDKArticle[]
-	);
-
-	// Component card data for inline display
-	const portraitCardData = {
-		name: 'article-card-portrait',
-		title: 'ArticleCardPortrait',
-		description: 'Portrait-style layout with vertical orientation.',
-		richDescription: 'Ideal for grid layouts and featured content displays. This card presents articles in a vertical portrait orientation with the image at the top, followed by title, summary, and reading time.',
-		command: 'npx shadcn@latest add article-card-portrait',
-		apiDocs: [
-			{
-				name: 'ArticleCardPortrait',
-				description: 'Portrait-style article card component',
-				importPath: "import { ArticleCardPortrait } from '$lib/registry/components/article-card'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-					{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]
-	};
-
-	const heroCardData = {
-		name: 'article-card-hero',
-		title: 'ArticleCardHero',
-		description: 'Full-width hero card with overlay content.',
-		richDescription: 'Perfect for featured articles and landing pages. This card uses the full width with an image background and overlay content including title and summary.',
-		command: 'npx shadcn@latest add article-card-hero',
-		apiDocs: [
-			{
-				name: 'ArticleCardHero',
-				description: 'Hero-style article card component',
-				importPath: "import { ArticleCardHero } from '$lib/registry/components/article-card'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-					{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]
-	};
-
-	const mediumCardData = {
-		name: 'article-card-medium',
-		title: 'ArticleCardMedium',
-		description: 'Compact horizontal card with side image.',
-		richDescription: 'Optimized for article lists and content feeds. This horizontal card layout places the image on the right side with title and metadata on the left, perfect for list views.',
-		command: 'npx shadcn@latest add article-card-medium',
-		apiDocs: [
-			{
-				name: 'ArticleCardMedium',
-				description: 'Medium horizontal article card component',
-				importPath: "import { ArticleCardMedium } from '$lib/registry/components/article-card'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-					{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]
-	};
-
-	const neonCardData = {
-		name: 'article-card-neon',
-		title: 'ArticleCardNeon',
-		description: 'Modern design with vibrant neon accents and gradients.',
-		richDescription: 'Striking visual impact with neon borders and gradient effects. This modern card design uses vibrant colors and glowing effects to make articles stand out.',
-		command: 'npx shadcn@latest add article-card-neon',
-		apiDocs: [
-			{
-				name: 'ArticleCardNeon',
-				description: 'Neon-style article card component with vibrant accents',
-				importPath: "import { ArticleCardNeon } from '$lib/registry/components/article-card'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-					{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]
-	};
 </script>
 
-<div class="px-8">
-	<!-- Header -->
-	<div class="mb-12 pt-8">
-		<div class="flex items-start justify-between gap-4 mb-4">
-			<h1 class="text-4xl font-bold">Article Card</h1>
+{#snippet editPropsSection()}
+	{#key articles}
+		<EditProps.Root>
+			<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
+			<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />
+			<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} />
+			<EditProps.Button>Edit Examples</EditProps.Button>
+		</EditProps.Root>
+	{/key}
+{/snippet}
+
+{#snippet portraitPreview()}
+	<ScrollArea orientation="horizontal" class="w-full">
+		<div class="flex gap-6 pb-4">
+			{#each displayArticles as article (article.id)}
+				<ArticleCardPortrait {ndk} {article} />
+			{/each}
 		</div>
-		<p class="text-lg text-muted-foreground mb-6">
-			Display Nostr long-form articles with rich metadata and previews. Built using composable headless primitives with multiple ready-made variants optimized for different layouts.
-		</p>
+	</ScrollArea>
+{/snippet}
 
-		{#key articles}
-			<EditProps.Root>
-				<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
-				<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />
-				<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} />
-				<EditProps.Button>Edit Examples</EditProps.Button>
-			</EditProps.Root>
-		{/key}
-	</div>
-
-	<!-- Blocks Showcase Section -->
-	{#if !loading && article1}
-		{#snippet portraitPreview()}
-			<ScrollArea orientation="horizontal" class="w-full">
-				<div class="flex gap-6 pb-4">
-					{#each displayArticles as article (article.id)}
-						<ArticleCardPortrait {ndk} {article} />
-					{/each}
-				</div>
-			</ScrollArea>
-		{/snippet}
-
-		{#snippet heroPreview()}
-			{#if article1}
-				<div class="min-w-[800px]">
-					<ArticleCardHero {ndk} article={article1} />
-				</div>
-			{/if}
-		{/snippet}
-
-		{#snippet mediumPreview()}
-			<div class="w-full max-w-3xl space-y-4">
-				{#each displayArticles.slice(0, 2) as article (article.id)}
-					<ArticleCardMedium {ndk} {article} />
-				{/each}
-			</div>
-		{/snippet}
-
-		{#snippet neonPreview()}
-			<ScrollArea orientation="horizontal" class="w-full">
-				<div class="flex gap-6 pb-4">
-					{#each displayArticles as article (article.id)}
-						<ArticleCardNeon {ndk} {article} />
-					{/each}
-				</div>
-			</ScrollArea>
-		{/snippet}
-
-		<ComponentPageSectionTitle
-			title="Showcase"
-			description="Beautifully crafted. Each optimized for its purpose. Choose the perfect presentation for your content."
-		/>
-
-		<ComponentsShowcase
-			blocks={[
-				{
-					name: 'Portrait',
-					description: 'Portrait-style layout with vertical orientation. Ideal for grid layouts and featured content displays.',
-					command: 'npx shadcn@latest add article-card-portrait',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardPortrait</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
-					preview: portraitPreview,
-					cardData: portraitCardData
-				},
-				{
-					name: 'Hero',
-					description: 'Full-width hero card with overlay content. Perfect for featured articles and landing pages.',
-					command: 'npx shadcn@latest add article-card-hero',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardHero</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
-					preview: heroPreview,
-					cardData: heroCardData
-				},
-				{
-					name: 'Medium',
-					description: 'Compact horizontal card with side image. Optimized for article lists and content feeds.',
-					command: 'npx shadcn@latest add article-card-medium',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardMedium</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
-					preview: mediumPreview,
-					cardData: mediumCardData
-				},
-				{
-					name: 'Neon',
-					description: 'Modern design with vibrant neon accents and gradients. Striking visual impact.',
-					command: 'npx shadcn@latest add article-card-neon',
-					codeSnippet:
-						'<span class="text-gray-500">&lt;</span><span class="text-blue-400">ArticleCardNeon</span> <span class="text-cyan-400">article</span><span class="text-gray-500">=&#123;</span>article<span class="text-gray-500">&#125;</span> <span class="text-gray-500">/&gt;</span>',
-					preview: neonPreview,
-					cardData: neonCardData
-				}
-			]}
-		/>
+{#snippet heroPreview()}
+	{#if article1}
+		<div class="min-w-[800px]">
+			<ArticleCardHero {ndk} article={article1} />
+		</div>
 	{/if}
+{/snippet}
 
+{#snippet mediumPreview()}
+	<div class="w-full max-w-3xl space-y-4">
+		{#each displayArticles.slice(0, 2) as article (article.id)}
+			<ArticleCardMedium {ndk} {article} />
+		{/each}
+	</div>
+{/snippet}
+
+{#snippet neonPreview()}
+	<ScrollArea orientation="horizontal" class="w-full">
+		<div class="flex gap-6 pb-4">
+			{#each displayArticles as article (article.id)}
+				<ArticleCardNeon {ndk} {article} />
+			{/each}
+		</div>
+	</ScrollArea>
+{/snippet}
+
+{#snippet portraitComponentPreview()}
+	<ScrollArea orientation="horizontal" class="w-full">
+		<div class="flex gap-6 pb-4">
+			{#each displayArticles as article (article.id)}
+				<ArticleCardPortrait {ndk} {article} />
+			{/each}
+		</div>
+	</ScrollArea>
+{/snippet}
+
+{#snippet heroComponentPreview()}
+	<div class="max-w-2xl mx-auto">
+		{#if article1}
+			<ArticleCardHero {ndk} article={article1} />
+		{/if}
+	</div>
+{/snippet}
+
+{#snippet mediumComponentPreview()}
+	<div class="space-y-4 max-w-2xl mx-auto">
+		{#each displayArticles as article (article.id)}
+			<ArticleCardMedium {ndk} {article} />
+		{/each}
+	</div>
+{/snippet}
+
+{#snippet neonComponentPreview()}
+	<ScrollArea orientation="horizontal" class="w-full">
+		<div class="flex gap-6 pb-4">
+			{#each displayArticles as article (article.id)}
+				<ArticleCardNeon {ndk} {article} />
+			{/each}
+		</div>
+	</ScrollArea>
+{/snippet}
+
+{#snippet customSections()}
 	{#if !loading}
-
 		<!-- Anatomy Section -->
 		<ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
@@ -358,55 +254,6 @@
 
 			<ComponentAnatomy.DetailPanel layers={anatomyLayers} />
 		</ComponentAnatomy.Root>
-
-		<!-- Components Section -->
-		{#if article1}
-			<ComponentPageSectionTitle title="Components" description="Explore each article card variant in detail" />
-
-			<section class="py-12 space-y-16">
-				<ComponentCard inline data={portraitCardData}>
-					{#snippet preview()}
-						<ScrollArea orientation="horizontal" class="w-full">
-							<div class="flex gap-6 pb-4">
-								{#each displayArticles as article (article.id)}
-									<ArticleCardPortrait {ndk} {article} />
-								{/each}
-							</div>
-						</ScrollArea>
-					{/snippet}
-				</ComponentCard>
-
-				<ComponentCard inline data={heroCardData}>
-					{#snippet preview()}
-						<div class="max-w-2xl mx-auto">
-							<ArticleCardHero {ndk} article={article1} />
-						</div>
-					{/snippet}
-				</ComponentCard>
-
-				<ComponentCard inline data={mediumCardData}>
-					{#snippet preview()}
-						<div class="space-y-4 max-w-2xl mx-auto">
-							{#each displayArticles as article (article.id)}
-								<ArticleCardMedium {ndk} {article} />
-							{/each}
-						</div>
-					{/snippet}
-				</ComponentCard>
-
-				<ComponentCard inline data={neonCardData}>
-					{#snippet preview()}
-						<ScrollArea orientation="horizontal" class="w-full">
-							<div class="flex gap-6 pb-4">
-								{#each displayArticles as article (article.id)}
-									<ArticleCardNeon {ndk} {article} />
-								{/each}
-							</div>
-						</ScrollArea>
-					{/snippet}
-				</ComponentCard>
-			</section>
-		{/if}
 
 		<!-- Primitives Grid -->
 		<ComponentPageSectionTitle title="Primitives" />
@@ -455,7 +302,65 @@
 			</div>
 		</section>
 	{/if}
-</div>
+{/snippet}
+
+{#if !loading && article1}
+	{@const showcaseBlocks: ShowcaseBlock[] = [
+		{
+			name: 'Portrait',
+			description: 'Portrait-style layout with vertical orientation. Ideal for grid layouts and featured content displays.',
+			command: 'npx shadcn@latest add article-card-portrait',
+			preview: portraitPreview,
+			cardData: articleCardCards[0]
+		},
+		{
+			name: 'Hero',
+			description: 'Full-width hero card with overlay content. Perfect for featured articles and landing pages.',
+			command: 'npx shadcn@latest add article-card-hero',
+			preview: heroPreview,
+			cardData: articleCardCards[1]
+		},
+		{
+			name: 'Medium',
+			description: 'Compact horizontal card with side image. Optimized for article lists and content feeds.',
+			command: 'npx shadcn@latest add article-card-medium',
+			preview: mediumPreview,
+			cardData: articleCardCards[2]
+		},
+		{
+			name: 'Neon',
+			description: 'Modern design with vibrant neon accents and gradients. Striking visual impact.',
+			command: 'npx shadcn@latest add article-card-neon',
+			preview: neonPreview,
+			cardData: articleCardCards[3]
+		}
+	]}
+
+	<ComponentPageTemplate
+		metadata={articleCardMetadata}
+		{ndk}
+		{showcaseBlocks}
+		{editPropsSection}
+		componentsSection={{
+			cards: articleCardCards,
+			previews: {
+				'article-card-portrait': portraitComponentPreview,
+				'article-card-hero': heroComponentPreview,
+				'article-card-medium': mediumComponentPreview,
+				'article-card-neon': neonComponentPreview
+			}
+		}}
+		{customSections}
+	/>
+{:else if loading}
+	<div class="px-8 py-16 text-center text-muted-foreground">
+		Loading articles...
+	</div>
+{:else}
+	<div class="px-8 py-16 text-center text-muted-foreground">
+		No articles found
+	</div>
+{/if}
 
 <!-- API Drawer -->
 {#if focusedPrimitive && primitiveData[focusedPrimitive]}

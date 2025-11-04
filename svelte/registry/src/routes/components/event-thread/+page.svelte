@@ -8,9 +8,9 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
-  import TwitterCode from './examples/twitter-code.svelte';
-  import UIBasic from './examples/ui-basic.svelte';
-  import UIComposition from './examples/ui-composition.svelte';
+  import TwitterCode from './examples/twitter-code.example.svelte';
+  import UIBasic from './examples/ui-basic.example.svelte';
+  import UIComposition from './examples/ui-composition.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -230,7 +230,7 @@ thread.focusOn(event)  // Navigate to different event`}
 {/snippet}
 
 <!-- Import ComponentsShowcaseGrid for afterShowcase snippet -->
-<script context="module" lang="ts">
+<script module lang="ts">
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
 </script>
 

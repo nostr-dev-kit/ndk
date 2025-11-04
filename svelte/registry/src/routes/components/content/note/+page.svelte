@@ -7,8 +7,8 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
-  import BasicExample from './examples/basic.svelte';
-  import CustomSnippetsExample from './examples/custom-snippets.svelte';
+  import BasicExample from './examples/basic.example.svelte';
+  import CustomSnippetsExample from './examples/custom-snippets.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

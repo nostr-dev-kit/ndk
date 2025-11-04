@@ -8,8 +8,8 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import examples
-  import BasicExample from './examples/zap-action-basic.svelte';
-  import BuilderExample from './examples/zap-action-builder.svelte';
+  import BasicExample from './examples/zap-action-basic.example.svelte';
+  import BuilderExample from './examples/zap-action-builder.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

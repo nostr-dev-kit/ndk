@@ -14,8 +14,8 @@
   import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
 
   // UI component examples
-  import BasicExample from './examples/basic.svelte';
-  import BuilderUsageExample from './examples/builder-usage.svelte';
+  import BasicExample from './examples/basic.example.svelte';
+  import BuilderUsageExample from './examples/builder-usage.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

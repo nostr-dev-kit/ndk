@@ -77,7 +77,8 @@
       />
 
       {#if showcaseComponent}
-        <svelte:component this={showcaseComponent} blocks={showcaseBlocks} />
+        {@const Component = showcaseComponent}
+        <Component blocks={showcaseBlocks} />
       {:else if showcaseBlocks.some(b => b.orientation === 'vertical' || b.orientation === 'horizontal')}
         <!-- Use ComponentsShowcase if orientations are specified -->
         <ComponentsShowcase

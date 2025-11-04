@@ -12,8 +12,8 @@
   import RepostButtonPill from '$lib/registry/components/actions/repost-button-pill.svelte';
 
   // Import builder examples
-  import BasicExample from './examples/basic-code.svelte';
-  import BuilderExample from './examples/builder-code.svelte';
+  import BasicExample from './examples/basic-code.example.svelte';
+  import BuilderExample from './examples/builder-code.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

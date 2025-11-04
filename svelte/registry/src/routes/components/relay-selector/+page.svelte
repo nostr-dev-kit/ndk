@@ -11,8 +11,8 @@
   import RelaySelectorInline from '$lib/registry/components/relay-selector/relay-selector.svelte';
 
   // UI examples
-  import UIBasic from './examples/basic.svelte';
-  import UIFull from './examples/ui-full.svelte';
+  import UIBasic from './examples/basic.example.svelte';
+  import UIFull from './examples/ui-full.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

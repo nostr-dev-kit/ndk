@@ -10,8 +10,8 @@
 
   import UploadButton from '$lib/registry/components/actions/upload-button.svelte';
   import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
-  import UIBasic from './examples/ui-basic.svelte';
-  import UIFull from './examples/ui-full.svelte';
+  import UIBasic from './examples/ui-basic.example.svelte';
+  import UIFull from './examples/ui-full.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

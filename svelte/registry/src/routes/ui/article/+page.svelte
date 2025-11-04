@@ -8,8 +8,8 @@
   import { articleMetadata } from '$lib/ui-registry/article';
 
   // Import examples
-  import Basic from './examples/basic.svelte';
-  import Composition from './examples/composition.svelte';
+  import Basic from './examples/basic.example.svelte';
+  import Composition from './examples/composition.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

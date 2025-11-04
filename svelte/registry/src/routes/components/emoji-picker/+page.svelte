@@ -12,10 +12,10 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import examples
-  import UiBasic from './examples/ui-basic.svelte';
-  import UiComposition from './examples/ui-composition.svelte';
-  import UiPopover from './examples/ui-popover.svelte';
-  import UiAutocomplete from './examples/ui-autocomplete.svelte';
+  import UiBasic from './examples/ui-basic.example.svelte';
+  import UiComposition from './examples/ui-composition.example.svelte';
+  import UiPopover from './examples/ui-popover.example.svelte';
+  import UiAutocomplete from './examples/ui-autocomplete.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

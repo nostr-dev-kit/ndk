@@ -7,9 +7,9 @@
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
 
-  import HighlightCardExample from './examples/highlight-card.svelte';
-  import HighlightInlineExample from './examples/highlight-inline.svelte';
-  import HighlightCompactExample from './examples/highlight-compact.svelte';
+  import HighlightCardExample from './examples/highlight-card.example.svelte';
+  import HighlightInlineExample from './examples/highlight-inline.example.svelte';
+  import HighlightCompactExample from './examples/highlight-compact.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

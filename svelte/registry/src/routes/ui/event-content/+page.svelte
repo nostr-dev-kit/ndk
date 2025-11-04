@@ -4,10 +4,10 @@
   import Demo from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.svelte';
-  import BasicRaw from './examples/basic.svelte?raw';
-  import CustomRenderer from './examples/custom-renderer.svelte';
-  import CustomRendererRaw from './examples/custom-renderer.svelte?raw';
+  import Basic from './examples/basic.example.svelte';
+  import BasicRaw from './examples/basic.example.svelte?raw';
+  import CustomRenderer from './examples/custom-renderer.example.svelte';
+  import CustomRendererRaw from './examples/custom-renderer.example.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>

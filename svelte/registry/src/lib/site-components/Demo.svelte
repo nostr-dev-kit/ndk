@@ -89,6 +89,7 @@
 	});
 
 	async function copyCode() {
+		if (!code) return;
 		try {
 			await navigator.clipboard.writeText(code);
 			copySuccess = true;

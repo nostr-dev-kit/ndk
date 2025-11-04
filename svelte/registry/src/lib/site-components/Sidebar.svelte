@@ -4,7 +4,6 @@
   import { docs, componentCategories } from '$lib/navigation';
   import { sidebarOpen, sidebarCollapsed } from '$lib/stores/sidebar';
   import { Tooltip } from 'bits-ui';
-  import { resolve } from '$app/paths';
   import NipBadge from '$lib/site-components/nip-badge.svelte';
 
   const isDocsRoute = $derived($page.url.pathname.startsWith('/docs'));
@@ -22,10 +21,10 @@
         {/if}
         {#each docs as doc (doc.path)}
           {#if $sidebarCollapsed}
-            <Tooltip.Root openDelay={0}>
+            <Tooltip.Root delayDuration={0}>
               <Tooltip.Trigger class="nav-link-trigger">
                 <a
-                  href={resolve(doc.path)}
+                  href={doc.path}
                   class="nav-link"
                   class:active={$page.url.pathname === doc.path}
                 >
@@ -46,7 +45,7 @@
           {:else}
             <div class="nav-item-wrapper">
               <a
-                href={resolve(doc.path)}
+                href={doc.path}
                 class="nav-link"
                 class:active={$page.url.pathname === doc.path}
               >
@@ -75,10 +74,10 @@
           {/if}
           {#each category.items as component (component.path)}
             {#if $sidebarCollapsed}
-              <Tooltip.Root openDelay={0}>
+              <Tooltip.Root delayDuration={0}>
                 <Tooltip.Trigger class="nav-link-trigger">
                   <a
-                    href={resolve(component.path)}
+                    href={component.path}
                     class="nav-link"
                     class:active={$page.url.pathname === component.path}
                   >
@@ -99,7 +98,7 @@
             {:else}
               <div class="nav-item-wrapper">
                 <a
-                  href={resolve(component.path)}
+                  href={component.path}
                   class="nav-link"
                   class:active={$page.url.pathname === component.path}
                 >
@@ -129,10 +128,10 @@
           {/if}
           {#each category.items as component (component.path)}
             {#if $sidebarCollapsed}
-              <Tooltip.Root openDelay={0}>
+              <Tooltip.Root delayDuration={0}>
                 <Tooltip.Trigger class="nav-link-trigger">
                   <a
-                    href={resolve(component.path)}
+                    href={component.path}
                     class="nav-link"
                     class:active={$page.url.pathname === component.path}
                   >
@@ -153,7 +152,7 @@
             {:else}
               <div class="nav-item-wrapper">
                 <a
-                  href={resolve(component.path)}
+                  href={component.path}
                   class="nav-link"
                   class:active={$page.url.pathname === component.path}
                 >

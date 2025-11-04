@@ -430,7 +430,7 @@
 						name: 'ReactionAction',
 						description:
 							'Action button for reacting to events with emoji. Tracks reaction state and count.',
-						importPath: "import { ReactionAction } from '$lib/registry/components/event-card'",
+						importPath: "import { ReactionAction } from '$lib/registry/components/reaction'",
 						props: [
 							{
 								name: 'emoji',

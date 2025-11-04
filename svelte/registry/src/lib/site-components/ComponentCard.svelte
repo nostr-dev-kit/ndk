@@ -62,7 +62,7 @@
 					<div class="flex flex-row items-end gap-2">
 						<h1 class="text-3xl">{data.title}</h1>
 						<div class="author-header">
-							<User.Root {ndk} pubkey={"fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"}>
+							<User.Root {ndk} pubkey="fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52">
 								<div class="author-attribution">
 									<User.Avatar class="!w-6 !h-6 rounded-md" />
 									<div class="text-sm">

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { EventCard, ReactionAction } from '$lib/registry/components/event-card';
+	import { EventCard } from '$lib/registry/components/event-card';
+	import { ReactionAction } from '$lib/registry/components/reaction';
 	import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
 	import { cn } from '$lib/registry/utils/index.js';
 

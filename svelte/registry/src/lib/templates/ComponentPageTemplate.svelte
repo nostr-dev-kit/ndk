@@ -115,7 +115,7 @@
       />
 
       <section class="py-12 space-y-16">
-        {#each componentsSection.cards as cardData, index (cardData.id)}
+        {#each componentsSection.cards as cardData, index (cardData.name)}
           <ComponentCard inline data={cardData}>
             {#snippet preview()}
               {#if componentsSection.previews?.[cardData.name]}

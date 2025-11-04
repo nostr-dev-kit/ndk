@@ -2,12 +2,14 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/site-components/edit-props';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentAPI from '$site-components/component-api.svelte';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import * as Tabs from '$lib/components/ui/tabs';
+  import { contentTabMetadata, contentTabCard } from '$lib/component-registry/content-tab';
+  import { EditProps } from '$lib/site-components/edit-props';
+  import type { ShowcaseBlock } from '$lib/templates/types';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import * as Tabs from '$lib/components/ui/tabs';
   import { kindLabel } from '$lib/registry/utils';
   import { User } from '$lib/registry/ui';
 
@@ -33,395 +35,250 @@
   // Sorting state for showcase
   let sortMethod = $state<'count' | 'recency'>('count');
 
-  // Component card data
-  const contentTabCardData = {
-    name: 'content-tab',
-    title: 'ContentTab',
-    description: 'Display tabs based on user content types.',
-    richDescription: 'Automatically samples user content and displays tabs only for content types they actually publish. Useful for conditionally showing UI based on what content a user creates.',
-    command: 'npx shadcn@latest add content-tab',
-    apiDocs: [
-      {
-        name: 'ContentTab',
-        description: 'Content-aware tab component',
-        importPath: "import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte'",
-        props: [
-          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-          { name: 'pubkeys', type: 'string[]', description: 'User pubkeys to sample content from', required: true },
-          { name: 'kinds', type: 'number[]', description: 'Event kinds to track', required: true },
-          { name: 'since', type: 'number', description: 'Unix timestamp to start sampling from' },
-          { name: 'subOpts', type: 'NDKSubscriptionOptions', description: 'Additional subscription options' },
-          { name: 'sort', type: '(tabs: ContentTab[]) => ContentTab[]', description: 'Sort function for tabs' },
-          { name: 'class', type: 'string', description: 'Additional CSS classes' },
-          { name: 'onTabClick', type: '(tab: ContentTab) => void', description: 'Tab click handler' }
-        ]
-      }
-    ]
-  };
+  // Showcase blocks
+  const showcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Default Style',
+      description: 'Material bottom nav with sorting control',
+      command: 'npx shadcn@latest add content-tab',
+      preview: defaultPreview,
+      cardData: contentTabCard,
+      control: sortControl
+    },
+    {
+      name: 'Custom Style',
+      description: 'Card-style tabs with emoji icons',
+      command: 'npx shadcn@latest add content-tab',
+      preview: customTabPreview,
+      cardData: contentTabCard
+    }
+  ];
 </script>
 
-<div class="px-8">
-  <!-- Header -->
-  <div class="mb-12 pt-8">
-    <div class="flex items-start justify-between gap-4 mb-4">
-      <h1 class="text-4xl font-bold">Content Tab</h1>
-    </div>
-    <p class="text-lg text-muted-foreground mb-6">
-      Conditionally display tabs based on the types of content a user actually publishes.
-      Automatically samples content and shows only relevant tabs.
-    </p>
-
-    <EditProps.Root>
-      <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
-      <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
-      <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
-      <EditProps.Prop name="User 6" type="user" bind:value={user6} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
-      <EditProps.Prop name="User 7" type="user" bind:value={user7} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
-      <EditProps.Prop name="User 8" type="user" bind:value={user8} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
-      <EditProps.Prop name="User 9" type="user" bind:value={user9} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
-      <EditProps.Prop name="User 10 (Gigi)" type="user" bind:value={user10} default="npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc" />
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </EditProps.Root>
+<!-- Preview snippets for showcase -->
+{#snippet defaultPreview()}
+  <div class="flex flex-col gap-6 py-8">
+    {#each displayUsers as user (user.pubkey)}
+      <div class="flex items-center gap-4">
+        <User.Root {ndk} {user}>
+          <User.Avatar class="w-12 h-12 flex-shrink-0" />
+        </User.Root>
+        <ContentTab
+          {ndk}
+          pubkeys={[user.pubkey]}
+          kinds={[1, 30023, 9802, 6, 7, 20, 21, 22, 1111, 1337, 1984, 30818]}
+          since={Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)}
+          sort={sortMethod === 'count' ? byCount : byRecency}
+        />
+      </div>
+    {/each}
   </div>
+{/snippet}
 
-  {#if user1 && displayUsers.length > 0}
-    {#snippet defaultPreview()}
-      <div class="flex flex-col gap-6 py-8">
-        {#each displayUsers as user (user.pubkey)}
-          <div class="flex items-center gap-4">
+{#snippet sortControl()}
+  <div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
+    <button
+      class="px-3 py-1.5 text-xs rounded-md transition-colors {sortMethod === 'count' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+      onclick={() => sortMethod = 'count'}
+    >
+      By Count
+    </button>
+    <button
+      class="px-3 py-1.5 text-xs rounded-md transition-colors {sortMethod === 'recency' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+      onclick={() => sortMethod = 'recency'}
+    >
+      By Recency
+    </button>
+  </div>
+{/snippet}
+
+{#snippet customTabPreview()}
+  <div class="flex flex-col gap-8 py-8">
+    {#each [user10, user8].filter(Boolean) as user (user.pubkey)}
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3">
+          <User.Root {ndk} {user}>
+            <User.Avatar class="w-10 h-10 flex-shrink-0 ring-2 ring-primary/20" />
+          </User.Root>
+          <div class="flex flex-col">
             <User.Root {ndk} {user}>
-              <User.Avatar class="w-12 h-12 flex-shrink-0" />
+              <User.Name class="font-semibold text-sm" />
             </User.Root>
-            <ContentTab
-              {ndk}
-              pubkeys={[user.pubkey]}
-              kinds={[1, 30023, 9802, 6, 7, 20, 21, 22, 1111, 1337, 1984, 30818]}
-              since={Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)}
-              sort={sortMethod === 'count' ? byCount : byRecency}
-            />
+            <span class="text-xs text-muted-foreground">Content Activity</span>
           </div>
-        {/each}
-      </div>
-    {/snippet}
-
-    {#snippet sortControl()}
-      <div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
-        <button
-          class="px-3 py-1.5 text-xs rounded-md transition-colors {sortMethod === 'count' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
-          onclick={() => sortMethod = 'count'}
+        </div>
+        <ContentTab
+          {ndk}
+          pubkeys={[user.pubkey]}
+          kinds={[1, 30023, 9802, 6, 7]}
+          since={Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)}
+          sort={byCount}
+          class="!border-0 !shadow-none !bg-transparent"
         >
-          By Count
-        </button>
-        <button
-          class="px-3 py-1.5 text-xs rounded-md transition-colors {sortMethod === 'recency' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
-          onclick={() => sortMethod = 'recency'}
-        >
-          By Recency
-        </button>
-      </div>
-    {/snippet}
-
-    {#snippet customTabPreview()}
-      <div class="flex flex-col gap-8 py-8">
-        {#each [user10, user8].filter(Boolean) as user (user.pubkey)}
-          <div class="flex flex-col gap-4">
-            <div class="flex items-center gap-3">
-              <User.Root {ndk} {user}>
-                <User.Avatar class="w-10 h-10 flex-shrink-0 ring-2 ring-primary/20" />
-              </User.Root>
-              <div class="flex flex-col">
-                <User.Root {ndk} {user}>
-                  <User.Name class="font-semibold text-sm" />
-                </User.Root>
-                <span class="text-xs text-muted-foreground">Content Activity</span>
+          {#snippet tab({ kind, count })}
+            <div class="flex flex-col items-center gap-2 px-4 py-3 rounded-lg hover:bg-accent/50 transition-all cursor-pointer group min-w-[80px]">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span class="text-lg">
+                  {#if kind === 1}
+                    📝
+                  {:else if kind === 30023}
+                    📄
+                  {:else if kind === 9802}
+                    ✨
+                  {:else if kind === 6}
+                    🔁
+                  {:else if kind === 7}
+                    ❤️
+                  {:else}
+                    📌
+                  {/if}
+                </span>
+              </div>
+              <div class="flex flex-col items-center gap-0.5">
+                <span class="text-xs font-medium text-foreground">{kindLabel(kind)}</span>
+                <span class="text-xs font-bold text-primary">{count}</span>
               </div>
             </div>
-            <ContentTab
-              {ndk}
-              pubkeys={[user.pubkey]}
-              kinds={[1, 30023, 9802, 6, 7]}
-              since={Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)}
-              sort={byCount}
-              class="!border-0 !shadow-none !bg-transparent"
-            >
-              {#snippet tab({ kind, count })}
-                <div class="flex flex-col items-center gap-2 px-4 py-3 rounded-lg hover:bg-accent/50 transition-all cursor-pointer group min-w-[80px]">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-lg">
-                      {#if kind === 1}
-                        📝
-                      {:else if kind === 30023}
-                        📄
-                      {:else if kind === 9802}
-                        ✨
-                      {:else if kind === 6}
-                        🔁
-                      {:else if kind === 7}
-                        ❤️
-                      {:else}
-                        📌
-                      {/if}
-                    </span>
-                  </div>
-                  <div class="flex flex-col items-center gap-0.5">
-                    <span class="text-xs font-medium text-foreground">{kindLabel(kind)}</span>
-                    <span class="text-xs font-bold text-primary">{count}</span>
-                  </div>
-                </div>
-              {/snippet}
-            </ContentTab>
-          </div>
-        {/each}
+          {/snippet}
+        </ContentTab>
       </div>
-    {/snippet}
+    {/each}
+  </div>
+{/snippet}
 
-    <ComponentPageSectionTitle
-      title="Showcase"
-      description="Content tabs that adapt to what users actually publish."
-    />
+<!-- EditProps snippet -->
+{#snippet editPropsSection()}
+  <EditProps.Root>
+    <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+    <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
+    <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
+    <EditProps.Prop name="User 6" type="user" bind:value={user6} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
+    <EditProps.Prop name="User 7" type="user" bind:value={user7} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
+    <EditProps.Prop name="User 8" type="user" bind:value={user8} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
+    <EditProps.Prop name="User 9" type="user" bind:value={user9} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
+    <EditProps.Prop name="User 10 (Gigi)" type="user" bind:value={user10} default="npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc" />
+    <EditProps.Button>Edit Examples</EditProps.Button>
+  </EditProps.Root>
+{/snippet}
 
-    <ComponentsShowcase
-      blocks={[
-        {
-          name: 'Default Style',
-          description: 'Material bottom nav with sorting control',
-          command: 'npx shadcn@latest add content-tab',
-          preview: defaultPreview,
-          cardData: contentTabCardData,
-          control: sortControl
-        },
-        {
-          name: 'Custom Style',
-          description: 'Card-style tabs with emoji icons',
-          command: 'npx shadcn@latest add content-tab',
-          preview: customTabPreview,
-          cardData: contentTabCardData
-        }
-      ]}
-    />
+<!-- Custom Components section with tabs -->
+{#snippet customComponentsSection()}
+  <Tabs.Root value="basic">
+    <ComponentPageSectionTitle title="Components" description="Explore ContentTab variants and usage">
+      {#snippet tabs()}
+        <Tabs.List>
+          <Tabs.Trigger value="basic">Basic</Tabs.Trigger>
+          <Tabs.Trigger value="sorting">Sorting</Tabs.Trigger>
+          <Tabs.Trigger value="custom">Custom</Tabs.Trigger>
+        </Tabs.List>
+      {/snippet}
+    </ComponentPageSectionTitle>
 
-    <!-- Components Section -->
-    <Tabs.Root value="basic">
-      <ComponentPageSectionTitle title="Components" description="Explore ContentTab variants and usage">
-        {#snippet tabs()}
-          <Tabs.List>
-            <Tabs.Trigger value="basic">Basic</Tabs.Trigger>
-            <Tabs.Trigger value="sorting">Sorting</Tabs.Trigger>
-            <Tabs.Trigger value="custom">Custom</Tabs.Trigger>
-          </Tabs.List>
-        {/snippet}
-      </ComponentPageSectionTitle>
-
-      <section class="min-h-[500px] lg:min-h-[60vh] py-12">
-        <Tabs.Content value="basic">
-          <ComponentCard inline data={contentTabCardData}>
-            {#snippet preview()}
-              <div class="flex flex-col gap-6">
-                <div class="flex flex-col gap-2">
-                  <span class="text-sm text-muted-foreground">Default (no sorting):</span>
-                  <ContentTab
-                    {ndk}
-                    pubkeys={[user1.pubkey]}
-                    kinds={[1, 30023, 1063, 9802]}
-                  />
-                </div>
-                <div class="flex flex-col gap-2">
-                  <span class="text-sm text-muted-foreground">With click handler:</span>
-                  <ContentTab
-                    {ndk}
-                    pubkeys={[user1.pubkey]}
-                    kinds={[1, 30023, 1063]}
-                    onTabClick={(tab) => console.log('Clicked:', tab)}
-                  />
-                </div>
+    <section class="min-h-[500px] lg:min-h-[60vh] py-12">
+      <Tabs.Content value="basic">
+        <ComponentCard inline data={contentTabCard}>
+          {#snippet preview()}
+            <div class="flex flex-col gap-6">
+              <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-foreground">Default (no sorting):</span>
+                <ContentTab
+                  {ndk}
+                  pubkeys={[user1.pubkey]}
+                  kinds={[1, 30023, 1063, 9802]}
+                />
               </div>
-            {/snippet}
-          </ComponentCard>
-        </Tabs.Content>
-
-        <Tabs.Content value="sorting">
-          <ComponentCard inline data={contentTabCardData}>
-            {#snippet preview()}
-              <div class="flex flex-col gap-6">
-                <div class="flex flex-col gap-2">
-                  <span class="text-sm text-muted-foreground">Sorted by count (most published):</span>
-                  <ContentTab
-                    {ndk}
-                    pubkeys={[user1.pubkey]}
-                    kinds={[1, 30023, 1063, 9802]}
-                    sort={byCount}
-                  />
-                </div>
-                <div class="flex flex-col gap-2">
-                  <span class="text-sm text-muted-foreground">Sorted by recency (most recent):</span>
-                  <ContentTab
-                    {ndk}
-                    pubkeys={[user1.pubkey]}
-                    kinds={[1, 30023, 1063, 9802]}
-                    sort={byRecency}
-                  />
-                </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-foreground">With click handler:</span>
+                <ContentTab
+                  {ndk}
+                  pubkeys={[user1.pubkey]}
+                  kinds={[1, 30023, 1063]}
+                  onTabClick={(tab) => console.log('Clicked:', tab)}
+                />
               </div>
-            {/snippet}
-          </ComponentCard>
-        </Tabs.Content>
+            </div>
+          {/snippet}
+        </ComponentCard>
+      </Tabs.Content>
 
-        <Tabs.Content value="custom">
-          <ComponentCard inline data={contentTabCardData}>
-            {#snippet preview()}
-              <div class="flex flex-col gap-6">
-                <div class="flex flex-col gap-2">
-                  <span class="text-sm text-muted-foreground">Custom tab rendering with kindLabel:</span>
-                  <ContentTab
-                    {ndk}
-                    pubkeys={[user1.pubkey]}
-                    kinds={[1, 30023, 1063, 9802]}
-                    sort={byCount}
-                  >
-                    {#snippet tab({ kind, count })}
-                      <button class="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors flex items-center gap-2">
-                        {kindLabel(kind)}
-                        <span class="px-2 py-0.5 bg-background/50 rounded-full text-xs">
-                          {count}
-                        </span>
+      <Tabs.Content value="sorting">
+        <ComponentCard inline data={contentTabCard}>
+          {#snippet preview()}
+            <div class="flex flex-col gap-6">
+              <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-foreground">Sorted by count (most published):</span>
+                <ContentTab
+                  {ndk}
+                  pubkeys={[user1.pubkey]}
+                  kinds={[1, 30023, 1063, 9802]}
+                  sort={byCount}
+                />
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-foreground">Sorted by recency (most recent):</span>
+                <ContentTab
+                  {ndk}
+                  pubkeys={[user1.pubkey]}
+                  kinds={[1, 30023, 1063, 9802]}
+                  sort={byRecency}
+                />
+              </div>
+            </div>
+          {/snippet}
+        </ComponentCard>
+      </Tabs.Content>
+
+      <Tabs.Content value="custom">
+        <ComponentCard inline data={contentTabCard}>
+          {#snippet preview()}
+            <div class="flex flex-col gap-6">
+              <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-foreground">Custom tab rendering with kindLabel:</span>
+                <ContentTab
+                  {ndk}
+                  pubkeys={[user1.pubkey]}
+                  kinds={[1, 30023, 1063, 9802]}
+                  sort={byCount}
+                >
+                  {#snippet tab({ kind, count })}
+                    <button class="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors flex items-center gap-2">
+                      {kindLabel(kind)}
+                      <span class="px-2 py-0.5 bg-background/50 rounded-full text-xs">
+                        {count}
+                      </span>
+                    </button>
+                  {/snippet}
+                </ContentTab>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <span class="text-sm text-muted-foreground">Pill style tabs:</span>
+                <ContentTab
+                  {ndk}
+                  pubkeys={[user1.pubkey]}
+                  kinds={[1, 30023, 1063, 9802]}
+                  sort={byRecency}
+                >
+                  {#snippet tab({ kind, count })}
+                    <div class="flex flex-col items-center gap-1">
+                      <button class="px-6 py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all hover:scale-105">
+                        {kindLabel(kind, count)}
                       </button>
-                    {/snippet}
-                  </ContentTab>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                  <span class="text-sm text-muted-foreground">Pill style tabs:</span>
-                  <ContentTab
-                    {ndk}
-                    pubkeys={[user1.pubkey]}
-                    kinds={[1, 30023, 1063, 9802]}
-                    sort={byRecency}
-                  >
-                    {#snippet tab({ kind, count })}
-                      <div class="flex flex-col items-center gap-1">
-                        <button class="px-6 py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all hover:scale-105">
-                          {kindLabel(kind, count)}
-                        </button>
-                        <span class="text-xs text-muted-foreground">{count} items</span>
-                      </div>
-                    {/snippet}
-                  </ContentTab>
-                </div>
+                      <span class="text-xs text-muted-foreground">{count} items</span>
+                    </div>
+                  {/snippet}
+                </ContentTab>
               </div>
-            {/snippet}
-          </ComponentCard>
-        </Tabs.Content>
-      </section>
-    </Tabs.Root>
-  {:else}
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Select a user to see the components...</div>
-    </div>
-  {/if}
+            </div>
+          {/snippet}
+        </ComponentCard>
+      </Tabs.Content>
+    </section>
+  </Tabs.Root>
+{/snippet}
 
-  <!-- Component API -->
-  <ComponentAPI
-    components={[
-      {
-        name: 'createContentSampler',
-        description: 'Builder function that samples user content and returns active content types with counts. Creates a subscription with n+1 filters for efficient sampling.',
-        importPath: "import { createContentSampler } from '$lib/registry/hooks/content-tab'",
-        props: [
-          {
-            name: 'config',
-            type: '() => ContentTabConfig',
-            required: true,
-            description: 'Reactive function returning configuration: { pubkeys, kinds, since?, subOpts?, sort? }'
-          },
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            required: false,
-            description: 'NDK instance (uses context if not provided)'
-          }
-        ],
-        returns: {
-          name: 'ContentTabState',
-          properties: [
-            {
-              name: 'tabs',
-              type: 'ContentTab[]',
-              description: 'Array of tabs with kind, count, and lastPublished timestamp'
-            }
-          ]
-        }
-      },
-      {
-        name: 'ContentTab',
-        description: 'Component that displays tabs based on user content types with minimal default styling.',
-        importPath: "import { ContentTab } from '$lib/registry/components/content-tab'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            required: true,
-            description: 'NDK instance'
-          },
-          {
-            name: 'pubkeys',
-            type: 'string[]',
-            required: true,
-            description: 'User pubkeys to sample content from'
-          },
-          {
-            name: 'kinds',
-            type: 'number[]',
-            required: true,
-            description: 'Event kinds to track (e.g., [1, 30023, 1063])'
-          },
-          {
-            name: 'since',
-            type: 'number',
-            description: 'Unix timestamp to start sampling from'
-          },
-          {
-            name: 'subOpts',
-            type: 'NDKSubscriptionOptions',
-            description: 'Additional subscription options'
-          },
-          {
-            name: 'sort',
-            type: '(tabs: ContentTab[]) => ContentTab[]',
-            description: 'Sort function for tabs (use byCount or byRecency)'
-          },
-          {
-            name: 'class',
-            type: 'string',
-            default: "''",
-            description: 'Additional CSS classes'
-          },
-          {
-            name: 'tab',
-            type: 'Snippet<[ContentTab]>',
-            description: 'Custom tab renderer snippet'
-          },
-          {
-            name: 'onTabClick',
-            type: '(tab: ContentTab) => void',
-            description: 'Tab click handler'
-          }
-        ]
-      },
-      {
-        name: 'byCount',
-        description: 'Sort function that orders tabs by count (most published first)',
-        importPath: "import { byCount } from '$lib/registry/hooks/content-tab'",
-        props: []
-      },
-      {
-        name: 'byRecency',
-        description: 'Sort function that orders tabs by recency (most recently published first)',
-        importPath: "import { byRecency } from '$lib/registry/hooks/content-tab'",
-        props: []
-      }
-    ]}
-  />
-
+<!-- Custom sections for Builder API and Usage Examples -->
+{#snippet customSections()}
   <!-- Builder API -->
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Builder API</h2>
@@ -540,4 +397,29 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
       </div>
     </div>
   </section>
-</div>
+{/snippet}
+
+<!-- Conditional rendering based on data loading -->
+{#if user1 && displayUsers.length > 0}
+  <ComponentPageTemplate
+    metadata={contentTabMetadata}
+    {ndk}
+    showcaseComponent={ComponentsShowcase}
+    {showcaseBlocks}
+    {editPropsSection}
+    {customSections}
+    beforeComponents={customComponentsSection}
+    apiDocs={contentTabMetadata.apiDocs}
+  />
+{:else}
+  <div class="px-8">
+    <div class="mb-12 pt-8">
+      <h1 class="text-4xl font-bold">{contentTabMetadata.title}</h1>
+      <p class="text-lg text-muted-foreground mb-6">{contentTabMetadata.description}</p>
+      {@render editPropsSection()}
+    </div>
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Select a user to see the components...</div>
+    </div>
+  </div>
+{/if}

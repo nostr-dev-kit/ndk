@@ -2,12 +2,11 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import ThreadViewTwitter from '$lib/registry/blocks/thread-view-twitter.svelte';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
+  import { threadViewMetadata, threadViewTwitterCard, threadViewBasicCard, threadViewFullCard } from '$lib/component-registry/event-thread';
   import { EditProps } from '$lib/site-components/edit-props';
-  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
-  import ComponentAPI from '$site-components/component-api.svelte';
 
   import TwitterCode from './examples/twitter-code.svelte';
   import UIBasic from './examples/ui-basic.svelte';
@@ -26,124 +25,71 @@
     ndk
   );
 
-  const twitterBlockData = {
-    name: 'thread-view-twitter',
-    title: 'Twitter Style',
-    description: 'Vertical thread with connector lines.',
-    richDescription: 'Vertical thread view with continuous connector lines, perfect for social media-style conversations. Shows parent chain, focused event, and all replies.',
-    command: 'npx shadcn@latest add thread-view-twitter',
-    apiDocs: []
-  };
+  // Showcase blocks for Blocks section
+  const blocksShowcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Twitter Style',
+      description: 'Vertical with connectors',
+      command: 'npx shadcn@latest add thread-view-twitter',
+      preview: twitterPreview,
+      cardData: threadViewTwitterCard
+    }
+  ];
 
-  const basicUIData = {
-    name: 'thread-view-basic',
-    title: 'Basic Usage',
-    description: 'Minimal thread view primitives.',
-    richDescription: 'Minimal thread view with EventCard.Root, EventCard.Header, and EventCard.Content. Shows the essential composition for displaying thread events.',
-    command: 'npx shadcn@latest add thread-view',
-    apiDocs: []
-  };
-
-  const fullCompositionData = {
-    name: 'thread-view-full',
-    title: 'Full Composition',
-    description: 'All primitives together.',
-    richDescription: 'Complete thread view showing parent chain with thread lines, focused event highlighting, reply sections, and interactive navigation. Demonstrates all available primitives working together.',
-    command: 'npx shadcn@latest add thread-view',
-    apiDocs: []
-  };
+  // Showcase blocks for UI Primitives section
+  const primitivesShowcaseBlocks: ShowcaseBlock[] = [
+    {
+      name: 'Basic Usage',
+      description: 'Minimal primitives',
+      command: 'npx shadcn@latest add thread-view',
+      preview: basicPreview,
+      cardData: threadViewBasicCard
+    },
+    {
+      name: 'Full Composition',
+      description: 'All primitives together',
+      command: 'npx shadcn@latest add thread-view',
+      preview: compositionPreview,
+      cardData: threadViewFullCard
+    }
+  ];
 </script>
 
-<div class="px-8">
-  <!-- Header -->
-  <div class="mb-12 pt-8">
-    <div class="flex items-start justify-between gap-4 mb-4">
-      <h1 class="text-4xl font-bold">ThreadView</h1>
-    </div>
-    <p class="text-lg text-muted-foreground mb-6">
-      Display Nostr event threads with parent chains, focused events, and replies. Built using
-      EventCard primitives with the createThreadView builder.
+<!-- Preview snippets -->
+{#snippet twitterPreview()}
+  <TwitterCode {ndk} nevent={neventInput} />
+{/snippet}
+
+{#snippet basicPreview()}
+  <UIBasic {ndk} nevent={neventInput} />
+{/snippet}
+
+{#snippet compositionPreview()}
+  <UIComposition {ndk} nevent={neventInput} />
+{/snippet}
+
+<!-- EditProps snippet -->
+{#snippet editPropsSection()}
+  <EditProps.Root>
+    <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
+    <EditProps.Button>Edit Examples</EditProps.Button>
+  </EditProps.Root>
+{/snippet}
+
+<!-- Custom Builder section before showcase -->
+{#snippet beforeShowcase()}
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold mb-2">Builder</h2>
+    <p class="text-muted-foreground mb-8">
+      The createThreadView builder handles all thread data processing automatically, providing a
+      clean API for rendering threads.
     </p>
 
-    <EditProps.Root>
-      <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </EditProps.Root>
-  </div>
-
-  {#if !thread.focusedEventId}
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading thread...</div>
-    </div>
-  {:else}
-    <!-- Blocks Showcase -->
-    {#snippet twitterPreview()}
-      <TwitterCode {ndk} nevent={neventInput} />
-    {/snippet}
-
-    <ComponentPageSectionTitle
-      title="Blocks"
-      description="Pre-composed thread layouts ready to use."
-    />
-
-    <ComponentsShowcaseGrid
-      blocks={[
-        {
-          name: 'Twitter Style',
-          description: 'Vertical with connectors',
-          command: 'npx shadcn@latest add thread-view-twitter',
-          preview: twitterPreview,
-          cardData: twitterBlockData
-        }
-      ]}
-    />
-
-    <!-- UI Primitives Showcase -->
-    {#snippet basicPreview()}
-      <UIBasic {ndk} nevent={neventInput} />
-    {/snippet}
-
-    {#snippet compositionPreview()}
-      <UIComposition {ndk} nevent={neventInput} />
-    {/snippet}
-
-    <ComponentPageSectionTitle
-      title="UI Primitives"
-      description="Primitive components for building custom thread layouts."
-    />
-
-    <ComponentsShowcaseGrid
-      blocks={[
-        {
-          name: 'Basic Usage',
-          description: 'Minimal primitives',
-          command: 'npx shadcn@latest add thread-view',
-          preview: basicPreview,
-          cardData: basicUIData
-        },
-        {
-          name: 'Full Composition',
-          description: 'All primitives together',
-          command: 'npx shadcn@latest add thread-view',
-          preview: compositionPreview,
-          cardData: fullCompositionData
-        }
-      ]}
-    />
-
-    <!-- Builder Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Builder</h2>
-      <p class="text-muted-foreground mb-8">
-        The createThreadView builder handles all thread data processing automatically, providing a
-        clean API for rendering threads.
-      </p>
-
-      <div class="space-y-6">
-        <div class="border border-border rounded-lg p-6">
-          <h3 class="text-xl font-semibold mb-3">Basic Usage</h3>
-          <div class="bg-muted p-4 rounded-lg">
-            <code class="text-sm whitespace-pre">
+    <div class="space-y-6">
+      <div class="border border-border rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-3">Basic Usage</h3>
+        <div class="bg-muted p-4 rounded-lg">
+          <code class="text-sm whitespace-pre">
 {`import { createThreadView } from '@nostr-dev-kit/svelte';
 
 const thread = createThreadView(() => ({
@@ -156,81 +102,37 @@ thread.replies         // Direct replies to focused event
 thread.otherReplies    // Replies to other events in thread
 thread.focusedEventId  // ID of currently focused event
 thread.focusOn(event)  // Navigate to different event`}
-            </code>
-          </div>
-        </div>
-
-        <div class="border border-border rounded-lg p-6">
-          <h3 class="text-xl font-semibold mb-3">Automatic Features</h3>
-          <ul class="list-disc list-inside space-y-2 text-muted-foreground">
-            <li>Fetches parent chain and descendants automatically</li>
-            <li>Handles missing events with relay hints</li>
-            <li>Detects thread continuations (same-author chains)</li>
-            <li>Provides threading metadata for rendering</li>
-            <li>Reactive updates as events stream in</li>
-            <li>Loop protection and depth limiting</li>
-          </ul>
+          </code>
         </div>
       </div>
-    </section>
 
-    <!-- Components Section -->
-    <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+      <div class="border border-border rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-3">Automatic Features</h3>
+        <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+          <li>Fetches parent chain and descendants automatically</li>
+          <li>Handles missing events with relay hints</li>
+          <li>Detects thread continuations (same-author chains)</li>
+          <li>Provides threading metadata for rendering</li>
+          <li>Reactive updates as events stream in</li>
+          <li>Loop protection and depth limiting</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+{/snippet}
 
-    <section class="py-12 space-y-16">
-      <ComponentCard inline data={twitterBlockData}>
-        {#snippet preview()}
-          <TwitterCode {ndk} nevent={neventInput} />
-        {/snippet}
-      </ComponentCard>
-
-      <ComponentCard inline data={basicUIData}>
-        {#snippet preview()}
-          <UIBasic {ndk} nevent={neventInput} />
-        {/snippet}
-      </ComponentCard>
-
-      <ComponentCard inline data={fullCompositionData}>
-        {#snippet preview()}
-          <UIComposition {ndk} nevent={neventInput} />
-        {/snippet}
-      </ComponentCard>
-    </section>
-  {/if}
-
-  <!-- Component API -->
-  <ComponentAPI
-    components={[
-      {
-        name: 'ThreadViewTwitter',
-        description:
-          'Twitter-style thread view block with vertical connector lines and focused event highlighting.',
-        importPath: "import { ThreadViewTwitter } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance for Nostr operations',
-            required: true
-          },
-          {
-            name: 'thread',
-            type: 'ThreadView',
-            description: 'Thread view instance from createThreadView builder',
-            required: true
-          },
-          {
-            name: 'class',
-            type: 'string',
-            default: "''",
-            description: 'Additional CSS classes to apply to container'
-          }
-        ]
-      }
-    ]}
+<!-- Custom UI Primitives showcase section -->
+{#snippet afterShowcase()}
+  <ComponentPageSectionTitle
+    title="UI Primitives"
+    description="Primitive components for building custom thread layouts."
   />
 
-  <!-- Builder API -->
+  <ComponentsShowcaseGrid blocks={primitivesShowcaseBlocks} />
+{/snippet}
+
+<!-- Custom Builder API section -->
+{#snippet customSections()}
   <section class="mb-16">
     <h2 class="text-3xl font-bold mb-2">Builder API</h2>
 
@@ -325,4 +227,42 @@ thread.focusOn(event)  // Navigate to different event`}
       </div>
     </div>
   </section>
-</div>
+{/snippet}
+
+<!-- Import ComponentsShowcaseGrid for afterShowcase snippet -->
+<script context="module" lang="ts">
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+</script>
+
+<!-- Conditional rendering based on thread loading -->
+{#if !thread.focusedEventId}
+  <div class="px-8">
+    <div class="mb-12 pt-8">
+      <h1 class="text-4xl font-bold">{threadViewMetadata.title}</h1>
+      <p class="text-lg text-muted-foreground mb-6">{threadViewMetadata.description}</p>
+      {@render editPropsSection()}
+    </div>
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Loading thread...</div>
+    </div>
+  </div>
+{:else}
+  <ComponentPageTemplate
+    metadata={threadViewMetadata}
+    {ndk}
+    {editPropsSection}
+    {beforeShowcase}
+    showcaseBlocks={blocksShowcaseBlocks}
+    {afterShowcase}
+    {customSections}
+    componentsSection={{
+      cards: threadViewMetadata.cards,
+      previews: {
+        'thread-view-twitter': twitterPreview,
+        'thread-view-basic': basicPreview,
+        'thread-view-full': compositionPreview
+      }
+    }}
+    apiDocs={threadViewMetadata.apiDocs}
+  />
+{/if}

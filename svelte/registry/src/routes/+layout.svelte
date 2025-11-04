@@ -79,18 +79,18 @@
 </script>
 
 {#if !isInitialized}
-  <div class="loading-screen">
-    <div class="loading-content">
-      <svg class="loading-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <div class="flex items-center justify-center min-h-screen bg-background">
+    <div class="flex flex-col items-center gap-4">
+      <svg class="w-12 h-12 text-primary animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
         <path d="M2 17l10 5 10-5"></path>
         <path d="M2 12l10 5 10-5"></path>
       </svg>
-      <p class="loading-text">Initializing...</p>
+      <p class="text-base text-muted-foreground m-0">Initializing...</p>
     </div>
   </div>
 {:else}
-  <div class="app">
+  <div class="flex min-h-screen bg-background">
     <Navbar
       onLoginClick={() => showLoginModal = true}
       onLogoutClick={handleLogout}
@@ -100,14 +100,23 @@
       <Sidebar />
     {/if}
 
-    <main class="main" class:has-sidebar={showSidebar} class:sidebar-open={sidebar.open} class:sidebar-collapsed={sidebar.collapsed} class:has-toc={showTocForRoute}>
-      <div class="main-content">
+    <main
+      class="flex-1 mt-14 ml-0 mr-0 flex justify-center transition-[margin-left] duration-300 ease-in-out"
+      class:!ml-[280px]={showSidebar && !sidebar.collapsed}
+      class:!ml-16={showSidebar && sidebar.collapsed}
+      class:!mr-[280px]={showTocForRoute}
+      class:max-2xl:!mr-0={showTocForRoute}
+      class:max-md:!ml-0={showSidebar && !sidebar.open}
+      class:max-md:!ml-[280px]={showSidebar && sidebar.open && !sidebar.collapsed}
+      class:max-md:!ml-16={showSidebar && sidebar.open && sidebar.collapsed}
+    >
+      <div class="w-full max-w-[1000px] border-l border-r border-border">
         {@render children()}
       </div>
     </main>
 
     {#if showTocForRoute}
-      <aside class="right-sidebar">
+      <aside class="fixed right-0 top-14 w-[280px] h-[calc(100vh-3.5rem)] py-12 px-8 overflow-y-auto bg-background border-l border-border max-2xl:hidden">
         <Toc />
       </aside>
     {/if}
@@ -118,119 +127,3 @@
     onClose={() => showLoginModal = false}
   />
 {/if}
-
-<style>
-  .loading-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: var(--background);
-  }
-
-  .loading-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .loading-spinner {
-    width: 3rem;
-    height: 3rem;
-    color: var(--primary);
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .loading-text {
-    font-size: 1rem;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-
-  .app {
-    display: flex;
-    min-height: 100vh;
-    background: var(--background);
-  }
-
-  .main {
-    flex: 1;
-    margin-top: 3.5rem;
-    margin-left: 0;
-    margin-right: 0;
-    display: flex;
-    justify-content: center;
-    transition: margin-left 300ms ease-in-out;
-  }
-
-  .main.has-sidebar {
-    margin-left: 280px;
-  }
-
-  .main.has-sidebar.sidebar-collapsed {
-    margin-left: 64px;
-  }
-
-  .main.has-toc {
-    margin-right: 280px;
-  }
-
-  .main-content {
-    width: 100%;
-    max-width: 1000px;
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-  }
-
-  .right-sidebar {
-    position: fixed;
-    right: 0;
-    top: 3.5rem;
-    width: 280px;
-    height: calc(100vh - 3.5rem);
-    padding: 3rem 2rem;
-    overflow-y: auto;
-    background: var(--background);
-    border-left: 1px solid var(--border);
-  }
-
-  @media (max-width: 1600px) {
-    .right-sidebar {
-      display: none;
-    }
-
-    .main.has-toc {
-      margin-right: 0;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .main.has-sidebar {
-      margin-left: 0;
-    }
-
-    .main.has-sidebar.sidebar-open {
-      margin-left: 280px;
-    }
-
-    .main.has-sidebar.sidebar-open.sidebar-collapsed {
-      margin-left: 64px;
-    }
-  }
-</style>

@@ -20,12 +20,3 @@
 	{/if}
 </div>
 
-<style>
-	:global(.dark) {
-		--muted-foreground: 215deg 20.2% 65.1%;
-	}
-
-	:global(.light) {
-		--muted-foreground: 215.4deg 16.3% 46.9%;
-	}
-</style>

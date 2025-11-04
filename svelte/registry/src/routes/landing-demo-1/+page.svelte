@@ -210,6 +210,14 @@
 
 <svelte:window on:mousemove={handleMouseMove} />
 
+<svelte:head>
+	<style>
+		body {
+			background: black;
+		}
+	</style>
+</svelte:head>
+
 <div class="relative min-h-screen overflow-hidden bg-black">
 	<!-- Canvas for connections and particles -->
 	<canvas
@@ -332,12 +340,8 @@
 </div>
 
 <style>
-	:global(body) {
-		background: black;
-	}
-
 	.bg-gradient-radial {
-		background: radial-gradient(circle at 50% 50%, var(--tw-gradient-from), var(--tw-gradient-to));
+		background: radial-gradient(circle at 50% 50%, rgb(88 28 135 / 0.1), transparent);
 	}
 
 	.glass-card {
@@ -375,14 +379,5 @@
 
 	.floating-component:nth-child(even) {
 		animation-duration: 5s;
-	}
-
-	/* Hide some internal component styles that don't fit the aesthetic */
-	:global(.floating-component .text-muted-foreground) {
-		color: rgba(156, 163, 175, 0.8) !important;
-	}
-
-	:global(.floating-component .border) {
-		border-color: rgba(75, 85, 99, 0.3) !important;
 	}
 </style>

@@ -113,24 +113,16 @@
     outline-offset: -3px;
   }
 
-  /* DEBUG: Visualize EventCard.Root wrapper */
+  /* Remove EventCard.Root default styles that interfere with thread layout */
   :global(.tweet-event-card) {
-    outline: 3px solid orange !important;
-    outline-offset: -3px !important;
-
-    /* Remove EventCard.Root default styles that interfere with thread layout */
     padding: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     background: transparent !important;
   }
 
-  /* DEBUG: Visualize EventCard.Header */
+  /* Remove header border that conflicts with tweet layout */
   :global(.tweet-event-card .event-card-header) {
-    outline: 3px solid magenta !important;
-    outline-offset: -3px !important;
-
-    /* Remove header border that conflicts with tweet layout */
     border-bottom: none !important;
   }
 

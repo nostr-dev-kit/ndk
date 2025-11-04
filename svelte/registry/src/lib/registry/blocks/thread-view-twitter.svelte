@@ -175,7 +175,7 @@
     z-index: 1;
   }
 
-  :global(.tweet--focused .tweet-text) {
+  .tweet--focused :global(.tweet-text) {
     font-size: 1.0625rem;
     line-height: 1.5rem;
     margin-top: 0.375rem;

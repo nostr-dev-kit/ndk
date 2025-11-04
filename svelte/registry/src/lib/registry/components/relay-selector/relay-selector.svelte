@@ -162,18 +162,4 @@
 	.relay-selector-inline {
 		width: 100%;
 	}
-
-	:global(.dark) {
-		--secondary: 217.2deg 32.6% 17.5%;
-		--secondary-foreground: 210deg 40% 98%;
-		--muted-foreground: 215deg 20.2% 65.1%;
-		--border: 217.2deg 32.6% 17.5%;
-	}
-
-	:global(.light) {
-		--secondary: 210deg 40% 96.1%;
-		--secondary-foreground: 222.2deg 47.4% 11.2%;
-		--muted-foreground: 215.4deg 16.3% 46.9%;
-		--border: 214.3deg 31.8% 91.4%;
-	}
 </style>

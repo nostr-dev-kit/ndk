@@ -3,13 +3,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site-components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
+  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
-
-  // Import code examples
-  import DialogComposerCodeRaw from './examples/dialog-composer-code.svelte?raw';
-  import InlineComposerCodeRaw from './examples/inline-composer-code.svelte?raw';
-  import MinimalButtonCodeRaw from './examples/minimal-button-code.svelte?raw';
 
   // Import UI examples
   import DialogComposerExample from './examples/dialog-composer-code.svelte';
@@ -30,13 +27,40 @@
       }
     })();
   });
+
+  const dialogComposerCardData = {
+    name: 'reply-dialog-composer',
+    title: 'Dialog Composer',
+    description: 'Reply button with modal dialog.',
+    richDescription: 'A reply button that opens a modal dialog with a composer. This is a common pattern for focused reply composition.',
+    command: 'npx shadcn@latest add reply-button',
+    apiDocs: []
+  };
+
+  const inlineComposerCardData = {
+    name: 'reply-inline-composer',
+    title: 'Inline Composer',
+    description: 'Reply button with inline composer.',
+    richDescription: 'A reply button that expands to show an inline composer. Useful for threaded conversations and quick replies.',
+    command: 'npx shadcn@latest add reply-button',
+    apiDocs: []
+  };
+
+  const minimalButtonCardData = {
+    name: 'reply-minimal-button',
+    title: 'Minimal Button',
+    description: 'Simple reply button with count.',
+    richDescription: 'A simple reply button with count display. Handle the click event to integrate with your own composer implementation.',
+    command: 'npx shadcn@latest add reply-button',
+    apiDocs: []
+  };
 </script>
 
-<div class="container mx-auto p-8 max-w-7xl">
+<div class="px-8">
   <!-- Header -->
-  <div class="mb-12">
+  <div class="mb-12 pt-8">
     <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">Reply</h1>
+      <h1 class="text-4xl font-bold">Reply</h1>
     </div>
     <p class="text-lg text-muted-foreground mb-6">
       Build custom reply functionality using the createReplyAction builder. Reply is inherently
@@ -51,44 +75,76 @@
         default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
         bind:value={sampleEvent}
       />
-    	<EditProps.Button>Edit Examples</EditProps.Button>
+      <EditProps.Button>Edit Examples</EditProps.Button>
     </EditProps.Root>
   </div>
 
   {#if sampleEvent}
-    <!-- Using the Builder Section -->
-    <section class="mb-16">
-      <h2 class="text-3xl font-bold mb-2">Using the Builder</h2>
-      <p class="text-muted-foreground mb-8">
-        The createReplyAction builder provides reactive state management for reply functionality.
-        Use it to build custom reply buttons with your own composer implementation.
-      </p>
+    <!-- ComponentsShowcase Section -->
+    {#snippet dialogComposerPreview()}
+      <DialogComposerExample {ndk} event={sampleEvent} />
+    {/snippet}
 
-      <div class="space-y-12">
-        <Demo
-          title="Dialog Composer"
-          description="A reply button that opens a modal dialog with a composer. This is a common pattern for focused reply composition."
-          code={DialogComposerCodeRaw}
-        >
+    {#snippet inlineComposerPreview()}
+      <InlineComposerExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    {#snippet minimalButtonPreview()}
+      <MinimalButtonExample {ndk} event={sampleEvent} />
+    {/snippet}
+
+    <ComponentPageSectionTitle
+      title="Showcase"
+      description="Reply patterns using the createReplyAction builder."
+    />
+
+    <ComponentsShowcaseGrid
+      blocks={[
+        {
+          name: 'Dialog Composer',
+          description: 'Modal dialog with composer',
+          command: 'npx shadcn@latest add reply-button',
+          preview: dialogComposerPreview,
+          cardData: dialogComposerCardData
+        },
+        {
+          name: 'Inline Composer',
+          description: 'Expandable inline composer',
+          command: 'npx shadcn@latest add reply-button',
+          preview: inlineComposerPreview,
+          cardData: inlineComposerCardData
+        },
+        {
+          name: 'Minimal Button',
+          description: 'Simple button with count',
+          command: 'npx shadcn@latest add reply-button',
+          preview: minimalButtonPreview,
+          cardData: minimalButtonCardData
+        }
+      ]}
+    />
+
+    <!-- Components Section -->
+    <ComponentPageSectionTitle title="Components" description="Explore each reply pattern in detail" />
+
+    <section class="py-12 space-y-16">
+      <ComponentCard inline data={dialogComposerCardData}>
+        {#snippet preview()}
           <DialogComposerExample {ndk} event={sampleEvent} />
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="Inline Composer"
-          description="A reply button that expands to show an inline composer. Useful for threaded conversations and quick replies."
-          code={InlineComposerCodeRaw}
-        >
+      <ComponentCard inline data={inlineComposerCardData}>
+        {#snippet preview()}
           <InlineComposerExample {ndk} event={sampleEvent} />
-        </Demo>
+        {/snippet}
+      </ComponentCard>
 
-        <Demo
-          title="Minimal Button"
-          description="A simple reply button with count display. Handle the click event to integrate with your own composer implementation."
-          code={MinimalButtonCodeRaw}
-        >
+      <ComponentCard inline data={minimalButtonCardData}>
+        {#snippet preview()}
           <MinimalButtonExample {ndk} event={sampleEvent} />
-        </Demo>
-      </div>
+        {/snippet}
+      </ComponentCard>
     </section>
   {:else}
     <div class="flex items-center justify-center py-12">

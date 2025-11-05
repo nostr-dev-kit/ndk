@@ -1,0 +1,1 @@
+{"name":"repost-button","type":"registry:component","title":"Repost Button","description":"Repost button component - repost button variant","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/repost-button.svelte"}],"version":"0.2.0","updatedAt":"2025-10-31T07:15:56.000Z"}

@@ -7,7 +7,6 @@ import type { Snippet } from 'svelte';
 export function createCardData(config: {
   name: string;
   title: string;
-  description: string;
   richDescription?: string;
   command: string;
   apiDocs?: any[];
@@ -15,8 +14,7 @@ export function createCardData(config: {
   return {
     name: config.name,
     title: config.title,
-    description: config.description,
-    richDescription: config.richDescription || config.description,
+    richDescription: config.richDescription,
     command: config.command,
     apiDocs: config.apiDocs || []
   };
@@ -66,7 +64,6 @@ export function extractMetadataFromCardData(cardData: any): ComponentCardData {
   return {
     name: cardData.name || '',
     title: cardData.title || '',
-    description: cardData.description || '',
     richDescription: cardData.richDescription,
     command: cardData.command || '',
     apiDocs: cardData.apiDocs || []

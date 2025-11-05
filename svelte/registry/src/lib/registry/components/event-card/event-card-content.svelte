@@ -2,6 +2,7 @@
   import { getContext } from 'svelte';
   import EventContent from '../../ui/event-content.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../ui/content-renderer.context.js';
   import { cn } from '../../utils/cn.js';
 
   interface Props {
@@ -33,6 +34,9 @@
   if (!context) {
     throw new Error('EventCard.Content must be used within EventCard.Root');
   }
+
+  // Get renderer from context if available
+  const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 
   let contentElement: HTMLDivElement | undefined = $state();
   let expanded = $state(false);
@@ -82,6 +86,7 @@
       <EventContent
         ndk={context.ndk}
         event={context.event}
+        renderer={rendererContext?.renderer}
       />
     {/key}
   </div>

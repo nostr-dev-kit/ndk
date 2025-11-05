@@ -8,6 +8,7 @@
 	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import CodeSnippet from '$site-components/code-snippet.svelte';
+	import Preview from '$site-components/preview.svelte';
 
 	export interface ComponentDoc {
 		name: string;
@@ -33,7 +34,6 @@
 	export interface ComponentCardData {
 		name: string;
 		title: string;
-		description?: string;
 		richDescription?: string | Snippet;
 		command: string;
 		dependencies?: string[];
@@ -93,19 +93,9 @@
 				{/if}
 
 				{#if preview}
-					<section class="flex flex-col gap-4">
-						<h3 class="text-xl font-semibold text-foreground m-0">Preview</h3>
-						<div class="flex flex-col w-full border border-border rouded-lg">
-							<div class="rounded-lg max-h-[600px] overflow-y-auto">
-								<div class="p-8 flex justify-center items-center ">
-									{@render preview()}
-								</div>
-							</div>
-							{#if data.code}
-								<CodeSnippet code={data.code} lang="svelte" class="rounded-t-none" />
-							{/if}
-						</div>
-					</section>
+					<Preview code={data.code}>
+						{@render preview()}
+					</Preview>
 				{/if}
 
 				{#if data.relatedComponents && data.relatedComponents.length > 0}

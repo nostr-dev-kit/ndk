@@ -3,7 +3,6 @@ import type { ComponentCardData, ComponentPageMetadata } from '$lib/templates/ty
 export const imageCardInstagramCard: ComponentCardData = {
 	name: 'image-card-instagram',
 	title: 'ImageCardInstagram',
-	description: 'Instagram-style image card.',
 	richDescription: 'Classic Instagram-style card with user header, square image, caption, and action buttons. Perfect for social feed layouts.',
 	command: 'npx jsrepo add image-card-instagram',
 	apiDocs: [
@@ -24,7 +23,6 @@ export const imageCardInstagramCard: ComponentCardData = {
 export const imageCardHeroCard: ComponentCardData = {
 	name: 'image-card-hero',
 	title: 'ImageCardHero',
-	description: 'Fullbleed immersive image display.',
 	richDescription: 'Fullbleed immersive display with caption and author info anchored at bottom over gradient. Perfect for featured or detail views.',
 	command: 'npx jsrepo add image-card-hero',
 	apiDocs: [
@@ -46,7 +44,6 @@ export const imageCardHeroCard: ComponentCardData = {
 export const imageCardCard: ComponentCardData = {
 	name: 'image-card',
 	title: 'ImageCard',
-	description: 'General purpose image card.',
 	richDescription: 'Combines EventCard primitives with ImageContent for flexible layouts. Perfect for general purpose image display.',
 	command: 'npx jsrepo add image-card',
 	apiDocs: [
@@ -67,7 +64,6 @@ export const imageCardCard: ComponentCardData = {
 
 export const imageCardMetadata: ComponentPageMetadata = {
 	title: 'Image Card',
-	description: 'Display image events with metadata and interactions. ImageContent renders images from NIP-68 events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt text.',
 	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Image card variants from social feeds to hero displays.'
 };

@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const searchComboboxCard: ComponentCardData = {
   name: 'user-search-combobox',
   title: 'Search Combobox',
-  description: 'Accessible user search with keyboard navigation.',
   richDescription: 'Accessible user search with keyboard navigation using arrow keys, Enter, and Escape. Perfect for forms and user selection interfaces.',
   command: 'npx jsrepo add user-search-combobox',
   apiDocs: [
@@ -54,7 +53,6 @@ export const searchComboboxCard: ComponentCardData = {
 export const customTextareaCard: ComponentCardData = {
   name: 'custom-textarea',
   title: 'Custom Textarea Input',
-  description: 'Use input snippet for custom textarea.',
   richDescription: 'Use the input snippet to provide a custom textarea instead of the default input. Perfect for multi-line search contexts or custom styling.',
   command: 'npx jsrepo add user-search-combobox',
   apiDocs: [
@@ -104,7 +102,6 @@ export const customTextareaCard: ComponentCardData = {
 export const composablePartsCard: ComponentCardData = {
   name: 'composable-parts',
   title: 'Basic Usage',
-  description: 'Minimal primitives example.',
   richDescription: 'Minimal example with UserInput.Root, Search, Results, and ResultItem primitives.',
   command: 'npx jsrepo add user-input',
   apiDocs: [
@@ -137,7 +134,6 @@ export const composablePartsCard: ComponentCardData = {
 export const builderBasicCard: ComponentCardData = {
   name: 'builder-basic',
   title: 'Basic Usage',
-  description: 'Custom interfaces with builder.',
   richDescription: 'Use the builder to create custom user input interfaces with full control over state and rendering.',
   command: 'npx jsrepo add user-input',
   apiDocs: [
@@ -306,7 +302,6 @@ export const inputApiDocs: ApiDoc[] = [
 // All metadata for the input page
 export const inputMetadata = {
   title: 'User Input',
-  description: 'Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.',
   showcaseTitle: 'Blocks',
   showcaseDescription: 'Pre-composed layouts ready to use.',
   cards: [searchComboboxCard, customTextareaCard, composablePartsCard, builderBasicCard],

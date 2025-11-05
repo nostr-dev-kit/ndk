@@ -71,7 +71,7 @@
         <User.Avatar
           class={cn(
             'flex-shrink-0',
-            avatarSize === 'sm' ? 'w-8 h-8' : avatarSize === 'md' ? 'w-10 h-10' : 'w-12 h-12'
+            avatarSize === 'sm' ? 'w-6 h-6' : avatarSize === 'md' ? 'w-10 h-10' : 'w-12 h-12'
           )}
         />
       {/if}

@@ -1,9 +1,6 @@
 <script lang="ts">
   import { createReplyAction } from '@nostr-dev-kit/svelte';
-</script>
 
-<!-- Create reply action -->
-<script>
   const replyAction = createReplyAction(() => ({ event }), ndk);
 
   let showComposer = $state(false);
@@ -26,25 +23,16 @@
   }
 </script>
 
-<div class="space-y-3">
-  <!-- Reply button -->
-  <button onclick={() => showComposer = !showComposer}>
-    <svg class="w-4 h-4 {replyAction.hasReplied ? 'text-primary' : 'text-muted-foreground'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
-    </svg>
-    <span>{replyAction.count}</span>
-  </button>
+<button onclick={() => showComposer = !showComposer}>
+  <span>{replyAction.count}</span>
+</button>
 
-  <!-- Inline composer -->
-  {#if showComposer}
-    <div class="border rounded-lg p-4 bg-muted/50">
-      <textarea bind:value={replyContent} placeholder="Write your reply..."></textarea>
-      <div class="flex justify-end gap-2 mt-3">
-        <button onclick={() => showComposer = false}>Cancel</button>
-        <button onclick={handleSubmit} disabled={!replyContent.trim() || isSubmitting}>
-          {isSubmitting ? 'Sending...' : 'Reply'}
-        </button>
-      </div>
-    </div>
-  {/if}
-</div>
+{#if showComposer}
+  <div>
+    <textarea bind:value={replyContent} placeholder="Write your reply..."></textarea>
+    <button onclick={() => showComposer = false}>Cancel</button>
+    <button onclick={handleSubmit} disabled={!replyContent.trim() || isSubmitting}>
+      {isSubmitting ? 'Sending...' : 'Reply'}
+    </button>
+  </div>
+{/if}

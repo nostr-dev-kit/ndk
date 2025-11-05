@@ -1,12 +1,5 @@
 <script lang="ts">
-  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { Reaction } from '$lib/registry/ui/embedded-event.svelte';
-
-  interface Props {
-    event: NDKEvent;
-  }
-
-  let { event }: Props = $props();
 </script>
 
 <Reaction.Display {event} size={32} />

@@ -236,7 +236,7 @@ thread.focusOn(event)  // Navigate to different event`}
 <!-- Conditional rendering based on thread loading -->
 {#if !thread.focusedEventId}
   <div class="px-8">
-    <PageTitle title={threadViewMetadata.title} subtitle={threadViewMetadata.description}>
+    <PageTitle title={threadViewMetadata.title}>
       <EditProps.Prop name="Thread Event" type="text" bind:value={neventInput} />
     </PageTitle>
     <div class="flex items-center justify-center py-12">

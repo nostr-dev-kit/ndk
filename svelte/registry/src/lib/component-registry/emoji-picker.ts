@@ -91,7 +91,6 @@ export const emojiPickerApiDocs: ApiDoc[] = [
 export const emojiPickerListCard: ComponentCardData = {
   name: 'emoji-picker-list',
   title: 'EmojiPicker.List',
-  description: 'Basic emoji list primitive',
   richDescription: 'A primitive component that renders a grid of clickable emojis. Perfect for custom layouts when you need full control over the emoji picker behavior.',
   command: 'npx jsrepo add emoji-picker',
   apiDocs: emojiPickerApiDocs.filter(doc => doc.name === 'EmojiPicker.List')
@@ -100,7 +99,6 @@ export const emojiPickerListCard: ComponentCardData = {
 export const emojiPickerContentCard: ComponentCardData = {
   name: 'emoji-picker-content',
   title: 'EmojiPicker.Content',
-  description: 'Complete emoji picker with builder integration',
   richDescription: 'An opinionated component that integrates with the createEmojiPicker builder to show user\'s custom emojis and defaults in organized sections.',
   command: 'npx jsrepo add emoji-picker',
   apiDocs: emojiPickerApiDocs.filter(doc => doc.name === 'EmojiPicker.Content' || doc.name === 'createEmojiPicker')
@@ -109,7 +107,6 @@ export const emojiPickerContentCard: ComponentCardData = {
 export const emojiPickerPopoverCard: ComponentCardData = {
   name: 'emoji-picker-popover',
   title: 'EmojiPicker in Popover',
-  description: 'Emoji picker in a dropdown popover',
   richDescription: 'Use EmojiPicker.Content with bits-ui Popover for a dropdown picker. This is how ReactionAction uses it internally.',
   command: 'npx jsrepo add emoji-picker',
   apiDocs: emojiPickerApiDocs.filter(doc => doc.name === 'EmojiPicker.Content')
@@ -118,7 +115,6 @@ export const emojiPickerPopoverCard: ComponentCardData = {
 export const emojiPickerAutocompleteCard: ComponentCardData = {
   name: 'emoji-picker-autocomplete',
   title: 'Textarea Autocomplete',
-  description: 'Emoji autocomplete in textarea',
   richDescription: 'Type : followed by text to autocomplete with your custom emojis. Supports keyboard navigation (arrows, tab/enter to select, escape to close).',
   command: 'npx jsrepo add emoji-picker',
   apiDocs: emojiPickerApiDocs
@@ -127,7 +123,6 @@ export const emojiPickerAutocompleteCard: ComponentCardData = {
 // All metadata for the emoji picker page
 export const emojiPickerMetadata = {
   title: 'EmojiPicker',
-  description: 'Flexible emoji selection components with support for user\'s custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys.',
   showcaseTitle: 'Showcase',
   showcaseDescription: 'Emoji picker variants from basic primitives to autocomplete.',
   cards: [

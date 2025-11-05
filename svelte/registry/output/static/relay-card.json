@@ -1,0 +1,1 @@
+{"name":"relay-card","type":"registry:component","title":"Relay Card","description":"Display relay information and status","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"relay-card/relay-card.svelte"}],"version":"0.8.0","updatedAt":"2025-10-31T07:15:56.000Z"}

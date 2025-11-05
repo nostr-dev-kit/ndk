@@ -1,0 +1,1 @@
+{"name":"user-profile-hero","type":"registry:component","title":"User Profile Hero","description":"Block component - user profile hero","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/user-profile-hero.svelte"}],"version":"0.3.0","updatedAt":"2025-10-31T07:15:56.000Z"}

@@ -1,0 +1,25 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  const targetPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';
+</script>
+
+<div class="flex gap-4 flex-wrap">
+  <!-- Compact variant -->
+  <NotificationPanel
+    {ndk}
+    pubkey={targetPubkey}
+    variant="compact"
+  />
+
+  <!-- Expanded variant -->
+  <NotificationPanel
+    {ndk}
+    pubkey={targetPubkey}
+    variant="expanded"
+  />
+</div>

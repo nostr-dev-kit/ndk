@@ -53,7 +53,7 @@
 
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-semibold text-foreground">Feeds & Discovery</h2>
-      <span class="text-muted-foreground text-sm">3 blocks</span>
+      <span class="text-muted-foreground text-sm">4 blocks</span>
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6">
@@ -69,6 +69,19 @@
         ]}
         gradient="linear-gradient(135deg, rgba(245, 93, 108, 0.1) 0%, rgba(255, 100, 130, 0.1) 100%)"
         iconGradient="linear-gradient(135deg, #f55d6c 0%, #ff6482 100%)"
+      />
+
+      <BlockCard
+        title="Notification Panel"
+        description="Real-time notifications using $metaSubscription. Groups interactions by event with avatar groups and embedded content."
+        icon="🔔"
+        href="/blocks/notification-panel"
+        variantCount={2}
+        badges={[
+          { label: '$metaSubscription', variant: 'feature' }
+        ]}
+        gradient="linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
+        iconGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
       />
 
       <BlockCard

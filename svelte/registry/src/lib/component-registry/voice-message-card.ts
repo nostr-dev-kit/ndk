@@ -3,7 +3,6 @@ import type { ComponentCardData, ComponentPageMetadata } from '$lib/templates/ty
 export const voiceMessageCardCompactCard: ComponentCardData = {
 	name: 'voice-message-card-compact',
 	title: 'Compact',
-	description: 'Inline voice message display.',
 	richDescription: 'Use for inline voice message display in feeds or chat interfaces.',
 	command: 'npx jsrepo add voice-message-card-compact',
 	apiDocs: [
@@ -23,7 +22,6 @@ export const voiceMessageCardCompactCard: ComponentCardData = {
 export const voiceMessageCardExpandedCard: ComponentCardData = {
 	name: 'voice-message-card-expanded',
 	title: 'Expanded',
-	description: 'Detailed display with waveform.',
 	richDescription: 'Use for detailed voice message display with waveform visualization.',
 	command: 'npx jsrepo add voice-message-card-expanded',
 	apiDocs: [
@@ -43,7 +41,6 @@ export const voiceMessageCardExpandedCard: ComponentCardData = {
 export const voiceMessageCardBasicCard: ComponentCardData = {
 	name: 'voice-message-basic',
 	title: 'Basic Usage',
-	description: 'Minimal primitives example.',
 	richDescription: 'Minimal example with VoiceMessageCard.Root and player primitive.',
 	command: 'npx jsrepo add voice-message-card',
 	apiDocs: [
@@ -71,7 +68,6 @@ export const voiceMessageCardBasicCard: ComponentCardData = {
 export const voiceMessageCardCompositionCard: ComponentCardData = {
 	name: 'voice-message-composition',
 	title: 'Full Composition',
-	description: 'All primitives composed together.',
 	richDescription: 'All available primitives composed together.',
 	command: 'npx jsrepo add voice-message-card',
 	apiDocs: [
@@ -96,7 +92,6 @@ export const voiceMessageCardCompositionCard: ComponentCardData = {
 
 export const voiceMessageCardMetadata: ComponentPageMetadata = {
 	title: 'VoiceMessage',
-	description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.',
 	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Pre-composed layouts ready to use.'
 };

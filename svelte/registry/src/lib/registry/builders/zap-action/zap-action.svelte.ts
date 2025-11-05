@@ -43,24 +43,10 @@ export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) 
             return;
         }
 
-        // For events, filter by event ID
-        if (target instanceof NDKEvent && target.id) {
-            zapsSub = resolvedNDK.$subscribe(() => ({
-                filters: [{
-                    kinds: [NDKKind.Zap],
-                    "#e": [target.id]
-                }],
-                closeOnEose: false
-            }));
-            return;
-        }
-
-        // For users, filter by pubkey
-        const pubkey = target instanceof NDKEvent ? target.pubkey : target.pubkey;
         zapsSub = resolvedNDK.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Zap],
-                "#p": [pubkey]
+                ...target.filter(),
             }],
             closeOnEose: false
         }));
@@ -102,6 +88,8 @@ export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) 
         await zapper.zap();
     }
 
+    const events = $derived(zapsSub ? Array.from(zapsSub.events) : []);
+
     return {
         get count() {
             return stats.count;
@@ -111,6 +99,9 @@ export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) 
         },
         get hasZapped() {
             return stats.hasZapped;
+        },
+        get events() {
+            return events;
         },
         zap
     };

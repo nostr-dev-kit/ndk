@@ -14,8 +14,8 @@
 
 <div class="note-embedded-card">
   <EventCard.Root {ndk} {event}>
-    <EventCard.Header variant="full" avatarSize="md" showTimestamp={true} />
-    <EventCard.Content truncate={200} />
+    <EventCard.Header variant="compact" avatarSize="sm" showTimestamp={true} />
+    <EventCard.Content truncate={200} class="text-sm text-muted-foreground" />
   </EventCard.Root>
 </div>
 
@@ -23,7 +23,6 @@
   .note-embedded-card {
     border: 1px solid var(--border);
     border-radius: 0.75rem;
-    background: var(--card);
     padding: 1rem;
     overflow: hidden;
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);

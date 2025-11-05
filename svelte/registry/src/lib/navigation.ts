@@ -121,6 +121,7 @@ export const componentCategories: NavCategory[] = [
       { name: 'User Input', path: '/ui/user-input', icon: Search01Icon, title: 'User Input Primitives', description: 'Headless primitives for searching and selecting users.' },
       { name: 'Voice Message', path: '/ui/voice-message', icon: VoiceIcon, title: 'Voice Message Primitives', description: 'Headless primitives for playing voice messages with waveforms.' },
       { name: 'Zap', path: '/ui/zap', icon: ZapIcon, title: 'Zap Primitives', description: 'Headless primitives for displaying lightning payments.' },
+      { name: 'Notification', path: '/ui/notification', icon: Chat01Icon, title: 'Notification Primitives', description: 'Composable primitives for building notification UIs with grouped interactions.' },
       { name: 'Event Content', path: '/ui/event-content', icon: File01Icon, title: 'Event Content Primitive', description: 'Render event content with rich formatting, mentions, and embedded media.' },
       { name: 'Embedded Event', path: '/ui/embedded-event', icon: ViewIcon, title: 'Embedded Event Primitive', description: 'Load and display embedded Nostr events.' },
     ]
@@ -140,6 +141,7 @@ export const componentCategories: NavCategory[] = [
     title: 'Bits',
     items: [
       { name: 'Threads', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
+      { name: 'Notification', path: '/components/notification', icon: Chat01Icon, title: 'Notification', description: 'Real-time notification feed using $metaSubscription. Groups interactions by target event and provides composable primitives for custom layouts.' },
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
       { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
       { name: 'Event Dropdown', path: '/components/event-dropdown', icon: Layers01Icon, title: 'EventDropdown', description: 'Dropdown menu for event actions including mute, report, copy, and raw event viewing with optional relay information display.' },

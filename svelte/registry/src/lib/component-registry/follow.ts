@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const followButtonMinimalCard: ComponentCardData = {
   name: 'follow-button',
   title: 'FollowButton',
-  description: 'Minimal icon-first follow button.',
   richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name.',
   command: 'npx jsrepo add follow-button',
   apiDocs: [
@@ -53,7 +52,6 @@ export const followButtonMinimalCard: ComponentCardData = {
 export const followButtonPillCard: ComponentCardData = {
   name: 'follow-button-pill',
   title: 'FollowButtonPill',
-  description: 'Rounded pill-style follow button.',
   richDescription: 'Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name.',
   command: 'npx jsrepo add follow-button-pill',
   apiDocs: [
@@ -116,7 +114,6 @@ export const followButtonPillCard: ComponentCardData = {
 export const followButtonAnimatedCard: ComponentCardData = {
   name: 'follow-button-animated',
   title: 'FollowButtonAnimated',
-  description: 'Animated follow button with transitions.',
   richDescription: 'Animated follow button with smooth transitions and visual feedback. Features icon animations and checkmark confirmation on follow.',
   command: 'npx jsrepo add follow-button-animated',
   apiDocs: [
@@ -191,7 +188,6 @@ export const followApiDocs: ApiDoc[] = [
 // All metadata for the follow page
 export const followMetadata = {
   title: 'Follow',
-  description: 'Follow/unfollow buttons for users and hashtags. Choose from pre-built block variants or compose custom layouts using primitives.',
   showcaseTitle: 'Showcase',
   showcaseDescription: 'Follow button variants for users and hashtags. From minimal to animated.',
   cards: [followButtonMinimalCard, followButtonPillCard, followButtonAnimatedCard],

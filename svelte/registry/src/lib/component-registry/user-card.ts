@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc, AnatomyLayer } from '$lib/templates/typ
 export const userCardClassicCard: ComponentCardData = {
   name: 'user-card-classic',
   title: 'UserCardClassic',
-  description: 'Classic user card with banner, avatar, name, bio, and stats.',
   richDescription: 'Perfect for popovers, dialogs, and standalone displays. This card provides a complete user profile view with banner image, avatar overlay, display name, bio, and follower/following stats.',
   command: 'npx jsrepo add user-card-classic',
   apiDocs: [
@@ -38,7 +37,6 @@ export const userCardClassicCard: ComponentCardData = {
 export const userCardCompactCard: ComponentCardData = {
   name: 'user-card-compact',
   title: 'UserCardCompact',
-  description: 'Minimal user card for lists.',
   richDescription: 'Shows avatar, name, and follow button. Ideal for sidebars and compact layouts where space is limited but user identity needs to be clear.',
   command: 'npx jsrepo add user-card-compact',
   apiDocs: [
@@ -72,7 +70,6 @@ export const userCardCompactCard: ComponentCardData = {
 export const userCardListItemCard: ComponentCardData = {
   name: 'user-list-item',
   title: 'UserListItem',
-  description: 'Ultra-compact list item showing avatar, name, and follow status badge.',
   richDescription: 'Perfect for dense user lists and search results. Minimal design with just the essentials: avatar, name, and follow status indicator.',
   command: 'npx jsrepo add user-list-item',
   apiDocs: [
@@ -106,7 +103,6 @@ export const userCardListItemCard: ComponentCardData = {
 export const userCardPortraitCard: ComponentCardData = {
   name: 'user-card-portrait',
   title: 'UserCardPortrait',
-  description: 'Vertical card layout showing avatar, name, bio, and stats.',
   richDescription: 'Great for grids and profile galleries. This portrait-oriented card presents user information in a vertical layout ideal for grid displays and gallery views.',
   command: 'npx jsrepo add user-card-portrait',
   apiDocs: [
@@ -140,7 +136,6 @@ export const userCardPortraitCard: ComponentCardData = {
 export const userCardLandscapeCard: ComponentCardData = {
   name: 'user-card-landscape',
   title: 'UserCardLandscape',
-  description: 'Horizontal card layout with avatar on left.',
   richDescription: 'Perfect for feed views and detailed lists. This horizontal layout places the avatar on the left with name, bio, and stats flowing to the right.',
   command: 'npx jsrepo add user-card-landscape',
   apiDocs: [
@@ -174,7 +169,6 @@ export const userCardLandscapeCard: ComponentCardData = {
 export const userCardNeonCard: ComponentCardData = {
   name: 'user-card-neon',
   title: 'UserCardNeon',
-  description: 'Neon-style card with full background image and glossy top border.',
   richDescription: 'Features a full background image with darkening gradient and a neon glow effect at the top border. Perfect for modern, visually striking user displays.',
   command: 'npx jsrepo add user-card-neon',
   apiDocs: [
@@ -223,7 +217,6 @@ export const userCardNeonCard: ComponentCardData = {
 export const userCardGlassCard: ComponentCardData = {
   name: 'user-card-glass',
   title: 'UserCardGlass',
-  description: 'Glassmorphic card with frosted glass effect and gradient mesh background.',
   richDescription: 'Features a translucent frosted glass card over an animated gradient mesh background with sparkle effects. Modern, elegant design with soft glows and blur effects.',
   command: 'npx jsrepo add user-card-glass',
   apiDocs: [
@@ -391,7 +384,6 @@ export const userCardApiDocs: ApiDoc[] = [
 // All metadata for the user card page
 export const userCardMetadata = {
   title: 'User Card',
-  description: 'Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts for different contexts.',
   showcaseTitle: 'Components Showcase',
   showcaseDescription: 'Seven carefully crafted variants. From ultra-compact list items to full-featured glassmorphic cards. Choose the perfect fit for your layout.',
   cards: [

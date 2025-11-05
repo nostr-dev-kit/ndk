@@ -3,7 +3,3 @@
 </script>
 
 <FollowButton target={user} />
-
-<FollowButton target={user} showTarget={true} />
-
-<FollowButton target="bitcoin" showTarget={true} />

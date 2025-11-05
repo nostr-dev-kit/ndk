@@ -1,27 +1,23 @@
 <script lang="ts">
-  import { getContext, type Snippet } from 'svelte';
+  import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { zapMetadata, zapBasicCard, zapCustomCard } from '$lib/component-registry/zap';
+  import { zapMetadata, zapButtonCard, zapButtonAvatarsCard } from '$lib/component-registry/zap';
   import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import code examples
-  import zapBasicCode from './zap-basic.example?raw';
-  import zapCustomCode from './zap-custom.example?raw';
+  import zapButtonCode from './zap-button.example?raw';
+  import zapButtonAvatarsCode from './zap-button-avatars.example?raw';
 
-  // Import examples
-  import BasicExample from './examples/zap-action-basic.example.svelte';
-  import BuilderExample from './examples/zap-action-builder.example.svelte';
+  // Import components
+  import ZapButton from '$lib/registry/components/zap-button/zap-button.svelte';
+  import ZapButtonAvatars from '$lib/registry/components/zap-button-avatars/zap-button-avatars.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // State for examples
   let sampleEvent = $state<NDKEvent | undefined>();
 
-  // Load sample event
   $effect(() => {
     (async () => {
       try {
@@ -32,84 +28,68 @@
       }
     })();
   });
-
-  function createShowcaseBlocks(basicPreview: Snippet, customPreview: Snippet): ShowcaseBlock[] {
-    return [
-      {
-        name: 'Basic',
-        description: 'Simple with amount tracking',
-        command: 'npx jsrepo add zap-button',
-        preview: basicPreview,
-        cardData: zapBasicCard
-      },
-      {
-        name: 'Custom',
-        description: 'Full control over styling',
-        command: 'npx jsrepo add zap-button',
-        preview: customPreview,
-        cardData: zapCustomCard
-      }
-    ];
-  }
 </script>
 
-{#if sampleEvent}
-  {@const event = sampleEvent}
-  <!-- Preview snippets for showcase -->
-  {#snippet basicPreview()}
-    <BasicExample {ndk} {event} />
-  {/snippet}
-
-  {#snippet customPreview()}
-    <BuilderExample {ndk} {event} />
-  {/snippet}
-
-  <!-- Preview snippets for components section -->
-  {#snippet basicComponentPreview()}
-    <BasicExample {ndk} {event} />
-  {/snippet}
-
-  {#snippet customComponentPreview()}
-    <BuilderExample {ndk} {event} />
-  {/snippet}
-
-  <!-- Use the template -->
-  <ComponentPageTemplate
-    metadata={zapMetadata}
-    {ndk}
-    showcaseBlocks={createShowcaseBlocks(basicPreview, customPreview)}
-    componentsSection={{
-      cards: [
-        { ...zapBasicCard, code: zapBasicCode },
-        { ...zapCustomCard, code: zapCustomCode }
-      ],
-      previews: {
-        'zap-basic': basicComponentPreview,
-        'zap-custom': customComponentPreview
-      }
-    }}
-    apiDocs={zapMetadata.apiDocs}
-  >
-    <EditProps.Prop
-      name="Sample Event"
-      type="event"
-      default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-      bind:value={sampleEvent}
-    />
-  </ComponentPageTemplate>
-{:else}
-  <!-- Loading state -->
-  <div class="px-8">
-    <PageTitle title={zapMetadata.title} subtitle={zapMetadata.description}>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-    </PageTitle>
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading event...</div>
+<!-- Preview snippets for showcase -->
+{#snippet zapButtonsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <ZapButton {ndk} event={sampleEvent} variant="ghost" />
+      <ZapButton {ndk} event={sampleEvent} variant="outline" />
+      <ZapButton {ndk} event={sampleEvent} variant="pill" />
+      <ZapButton {ndk} event={sampleEvent} variant="solid" />
     </div>
-  </div>
-{/if}
+  {/if}
+{/snippet}
+
+{#snippet avatarsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <ZapButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
+      <ZapButtonAvatars {ndk} event={sampleEvent} variant="outline" />
+      <ZapButtonAvatars {ndk} event={sampleEvent} variant="pill" />
+      <ZapButtonAvatars {ndk} event={sampleEvent} variant="solid" />
+    </div>
+  {/if}
+{/snippet}
+
+<!-- Use the template -->
+<ComponentPageTemplate
+  metadata={zapMetadata}
+  {ndk}
+  showcaseBlocks={[
+    {
+      name: 'ZapButton',
+      description: 'Basic zap button with sat count',
+      command: 'npx jsrepo add zap-button',
+      preview: zapButtonsPreview,
+      cardData: zapMetadata.cards[0],
+      orientation: 'horizontal'
+    },
+    {
+      name: 'Zapper Avatars',
+      description: 'Show avatars of people who zapped',
+      command: 'npx jsrepo add zap-button-avatars',
+      preview: avatarsPreview,
+      orientation: 'horizontal'
+    }
+  ]}
+  componentsSection={{
+    cards: [
+      { ...zapButtonCard, code: zapButtonCode },
+      { ...zapButtonAvatarsCard, code: zapButtonAvatarsCode }
+    ],
+    previews: {
+      'zap-button': zapButtonsPreview,
+      'zap-button-avatars': avatarsPreview
+    }
+  }}
+  apiDocs={zapMetadata.apiDocs}
+>
+  <EditProps.Prop
+    name="Sample Event"
+    type="event"
+    default="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j"
+    bind:value={sampleEvent}
+  />
+</ComponentPageTemplate>

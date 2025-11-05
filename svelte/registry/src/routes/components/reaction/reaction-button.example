@@ -1,9 +1,5 @@
 <script lang="ts">
-  import ReactionButton from '$lib/registry/components/reaction/reaction-button.svelte';
+  import { ReactionButton } from '$lib/registry/components';
 </script>
 
-<ReactionButton event={event} />
-
-<ReactionButton event={event} emoji="🔥" />
-
-<ReactionButton event={event} showCount={false} />
+<ReactionButton {ndk} {event} variant="ghost" />

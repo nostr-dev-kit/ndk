@@ -1,9 +1,11 @@
 <!-- @ndk-version: event-content@0.8.0 -->
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createEventContent } from '@nostr-dev-kit/svelte';
+	import { createEventContent } from '$lib/registry/builders/event-content/event-content.svelte.js';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
+	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer.context.js';
 	import EmbeddedEvent from './embedded-event.svelte';
 
 	interface EventContentProps {
@@ -20,17 +22,20 @@
 		event,
 		content: contentProp,
 		emojiTags,
-		renderer = defaultContentRenderer,
+		renderer: rendererProp,
 		class: className = ''
 	}: EventContentProps = $props();
+
+	// Use renderer from prop, or from context, or fallback to default
+	const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
+	const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
 
 	const parsed = createEventContent(
 		() => ({
 			event,
 			content: contentProp,
 			emojiTags
-		}),
-		ndk
+		})
 	);
 </script>
 

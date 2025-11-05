@@ -3,7 +3,6 @@ import type { ComponentCardData, ComponentPageMetadata } from '$lib/templates/ty
 export const hashtagModernCard: ComponentCardData = {
 	name: 'hashtag-modern',
 	title: 'HashtagModern',
-	description: 'Rich hashtag with stats card on hover.',
 	richDescription: 'Modern hashtag with gradient indicator and stats card popover on hover. Shows hashtag activity, contributors, and follow button when hovered.',
 	command: 'npx jsrepo add hashtag-modern',
 	apiDocs: [
@@ -24,7 +23,6 @@ export const hashtagModernCard: ComponentCardData = {
 export const hashtagBasicCard: ComponentCardData = {
 	name: 'hashtag-basic',
 	title: 'Basic Hashtag',
-	description: 'Minimal clickable hashtag.',
 	richDescription: 'Minimal clickable hashtag component. Shows hashtag with default styling and optional click handler. Perfect for simple inline hashtags.',
 	command: 'npx jsrepo add hashtag',
 	apiDocs: [
@@ -44,7 +42,6 @@ export const hashtagBasicCard: ComponentCardData = {
 export const hashtagCustomCard: ComponentCardData = {
 	name: 'hashtag-custom',
 	title: 'Custom Styled Hashtag',
-	description: 'Hashtag with custom styling.',
 	richDescription: 'Hashtag with custom styling applied via class prop. Demonstrates style customization for matching your design system.',
 	command: 'npx jsrepo add hashtag',
 	apiDocs: [
@@ -64,7 +61,6 @@ export const hashtagCustomCard: ComponentCardData = {
 export const hashtagInteractiveCard: ComponentCardData = {
 	name: 'hashtag-interactive',
 	title: 'Interactive Hashtag',
-	description: 'Hashtag with click handler.',
 	richDescription: 'Interactive hashtag with click handler. Demonstrates how to handle hashtag clicks for navigation or filtering.',
 	command: 'npx jsrepo add hashtag',
 	apiDocs: [
@@ -83,7 +79,6 @@ export const hashtagInteractiveCard: ComponentCardData = {
 
 export const hashtagMetadata: ComponentPageMetadata = {
 	title: 'Hashtag',
-	description: 'Render inline hashtags with customizable styling and click handlers. Display hashtag references in event content with interactive features.',
 	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Different hashtag styles for various use cases.'
 };

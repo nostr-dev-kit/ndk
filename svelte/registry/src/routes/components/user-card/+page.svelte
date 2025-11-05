@@ -11,6 +11,7 @@
     userCardPortraitCard,
     userCardLandscapeCard,
     userCardNeonCard,
+    userCardGlassCard,
     userCardAnatomyLayers,
     userCardPrimitiveData
   } from '$lib/component-registry/user-card';
@@ -31,6 +32,7 @@
   import userCardPortraitCode from './user-card-portrait.example?raw';
   import userCardLandscapeCode from './user-card-landscape.example?raw';
   import userCardNeonCode from './user-card-neon.example?raw';
+  import userCardGlassCode from './user-card-glass.example?raw';
 
   // Import blocks
   import UserCardClassic from '$lib/registry/components/user-card-classic/user-card-classic.svelte';

@@ -1,0 +1,1 @@
+{"name":"reaction-slack","type":"registry:component","title":"Reaction Slack","description":"Reaction component - reaction slack variant","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/reaction-slack.svelte"}],"version":"0.2.0","updatedAt":"2025-10-31T07:15:56.000Z"}

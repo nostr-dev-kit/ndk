@@ -29,8 +29,7 @@
 	interface ComponentCardData {
 		name: string;
 		title: string;
-		description: string;
-		richDescription: string;
+		richDescription?: string;
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];

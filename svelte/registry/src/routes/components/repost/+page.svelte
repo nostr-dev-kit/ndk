@@ -1,30 +1,23 @@
 <script lang="ts">
-  import { getContext, type Snippet } from 'svelte';
+  import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { repostMetadata, repostButtonCard, repostButtonPillCard, repostBasicBuilderCard, repostCustomBuilderCard } from '$lib/component-registry/repost';
+  import { repostMetadata, repostButtonCard, repostButtonAvatarsCard } from '$lib/component-registry/repost';
   import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
-
-  // Import blocks
-  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
-  import RepostButtonPill from '$lib/registry/components/repost-button-pill/repost-button-pill.svelte';
-
-  // Import builder examples
-  import BasicExample from './examples/basic-code.example.svelte';
-  import BuilderExample from './examples/builder-code.example.svelte';
 
   // Import code examples
   import repostButtonCode from './repost-button.example?raw';
-  import repostButtonPillCode from './repost-button-pill.example?raw';
-  import repostBasicBuilderCode from './examples/basic-code.example.svelte?raw';
-  import repostCustomBuilderCode from './examples/builder-code.example.svelte?raw';
+  import repostButtonAvatarsCode from './repost-button-avatars.example?raw';
+
+  // Import components
+  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
+  import RepostButtonAvatars from '$lib/registry/components/repost-button-avatars/repost-button-avatars.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
+  let showQuoteDropdown = $state(false);
 
   $effect(() => {
     (async () => {
@@ -37,181 +30,97 @@
     })();
   });
 
-  function createShowcaseBlocks(
-    repostButtonPreview: Snippet,
-    pillSolidPreview: Snippet,
-    pillOutlinePreview: Snippet,
-    basicBuilderPreview: Snippet,
-    customBuilderPreview: Snippet
-  ): ShowcaseBlock[] {
-    return [
-      {
-        name: 'RepostButton',
-        description: 'Minimal with icon and count',
-        command: 'npx jsrepo add repost-button',
-        preview: repostButtonPreview,
-        cardData: repostButtonCard
-      },
-      {
-        name: 'Pill Solid',
-        description: 'Rounded with solid background',
-        command: 'npx jsrepo add repost-button-pill',
-        preview: pillSolidPreview,
-        cardData: repostButtonPillCard
-      },
-      {
-        name: 'Pill Outline',
-        description: 'Rounded with border only',
-        command: 'npx jsrepo add repost-button-pill',
-        preview: pillOutlinePreview,
-        cardData: repostButtonPillCard
-      },
-      {
-        name: 'Basic Builder',
-        description: 'Simple repost using builder',
-        command: 'npx jsrepo add repost-button',
-        preview: basicBuilderPreview,
-        cardData: repostBasicBuilderCard
-      },
-      {
-        name: 'Custom Builder',
-        description: 'Advanced features with builder',
-        command: 'npx jsrepo add repost-button',
-        preview: customBuilderPreview,
-        cardData: repostCustomBuilderCard
-      }
-    ];
+  function handleQuote() {
+    console.log('Quote handler called - you would open your quote composer here');
   }
 </script>
 
-{#if sampleEvent}
-  {@const event = sampleEvent}
-  <!-- Preview snippets for showcase -->
-  {#snippet repostButtonPreview()}
-    <RepostButton {ndk} {event} />
-  {/snippet}
-
-  {#snippet repostButtonPillSolidPreview()}
-    <RepostButtonPill {ndk} {event} variant="solid" />
-  {/snippet}
-
-  {#snippet repostButtonPillOutlinePreview()}
-    <RepostButtonPill {ndk} {event} variant="outline" />
-  {/snippet}
-
-  {#snippet basicBuilderPreview()}
-    <BasicExample {ndk} {event} />
-  {/snippet}
-
-  {#snippet customBuilderPreview()}
-    <BuilderExample {ndk} {event} />
-  {/snippet}
-
-  <!-- Preview snippets for components section -->
-  {#snippet repostButtonComponentPreview()}
-    <RepostButton {ndk} {event} />
-  {/snippet}
-
-  {#snippet repostButtonPillComponentPreview()}
-    <div class="flex items-center gap-4">
-      <RepostButtonPill {ndk} {event} variant="solid" />
-      <RepostButtonPill {ndk} {event} variant="outline" />
-    </div>
-  {/snippet}
-
-  {#snippet basicBuilderComponentPreview()}
-    <BasicExample {ndk} {event} />
-  {/snippet}
-
-  {#snippet customBuilderComponentPreview()}
-    <BuilderExample {ndk} {event} />
-  {/snippet}
-
-  <!-- Additional section for Builder API -->
-  {#snippet afterComponents()}
-    <section class="mt-16">
-      <h2 class="text-3xl font-bold mb-4">Builder API</h2>
-      <p class="text-muted-foreground mb-6">
-        The <code class="px-2 py-1 bg-muted rounded text-sm">createRepostAction</code> builder provides reactive state and methods.
-        Build custom repost buttons with full control over styling and behavior.
-      </p>
-
-      <div class="bg-muted/50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold mb-3">createRepostAction</h3>
-        <pre class="text-sm overflow-x-auto"><code>import &#123; createRepostAction &#125; from '@nostr-dev-kit/svelte';
-
-// Create repost action
-const repostState = createRepostAction(() => (&#123; event &#125;), ndk);
-
-// Access reactive state
-repostState.count        // number - Total repost count
-repostState.hasReposted  // boolean - Whether current user has reposted
-
-// Create a repost
-await repostState.repost();</code></pre>
-
-        <div class="mt-4">
-          <h4 class="font-semibold mb-2">Parameters:</h4>
-          <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-            <li><code>getter</code>: Function returning &#123; event: NDKEvent &#125;</li>
-            <li><code>ndk</code>: NDKSvelte instance</li>
-          </ul>
-        </div>
-
-        <div class="mt-4">
-          <h4 class="font-semibold mb-2">Returns:</h4>
-          <ul class="list-disc list-inside space-y-1 text-muted-foreground">
-            <li><code>count</code>: number - Total repost count (regular + quotes)</li>
-            <li><code>hasReposted</code>: boolean - Whether current user has reposted</li>
-            <li><code>repost()</code>: async function - Create a repost</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-  {/snippet}
-
-  <!-- Use the template -->
-  <ComponentPageTemplate
-    metadata={repostMetadata}
-    {ndk}
-    showcaseBlocks={createShowcaseBlocks(repostButtonPreview, repostButtonPillSolidPreview, repostButtonPillOutlinePreview, basicBuilderPreview, customBuilderPreview)}
-    {afterComponents}
-    componentsSection={{
-      cards: [
-        { ...repostButtonCard, code: repostButtonCode },
-        { ...repostButtonPillCard, code: repostButtonPillCode },
-        { ...repostBasicBuilderCard, code: repostBasicBuilderCode },
-        { ...repostCustomBuilderCard, code: repostCustomBuilderCode }
-      ],
-      previews: {
-        'repost-button': repostButtonComponentPreview,
-        'repost-button-pill': repostButtonPillComponentPreview,
-        'repost-basic-builder': basicBuilderComponentPreview,
-        'repost-custom-builder': customBuilderComponentPreview
-      }
-    }}
-    apiDocs={repostMetadata.apiDocs}
-  >
-    <EditProps.Prop
-      name="Sample Event"
-      type="event"
-      default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-      bind:value={sampleEvent}
-    />
-  </ComponentPageTemplate>
-{:else}
-  <!-- Loading state -->
-  <div class="px-8">
-    <PageTitle title={repostMetadata.title} subtitle={repostMetadata.description}>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
+<!-- Preview snippets for showcase -->
+{#snippet repostButtonsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <RepostButton
+        {ndk}
+        event={sampleEvent}
+        variant="ghost"
+        onquote={showQuoteDropdown ? handleQuote : undefined}
       />
-    </PageTitle>
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading event...</div>
+      <RepostButton
+        {ndk}
+        event={sampleEvent}
+        variant="outline"
+        onquote={showQuoteDropdown ? handleQuote : undefined}
+      />
+      <RepostButton
+        {ndk}
+        event={sampleEvent}
+        variant="pill"
+        onquote={showQuoteDropdown ? handleQuote : undefined}
+      />
+      <RepostButton
+        {ndk}
+        event={sampleEvent}
+        variant="solid"
+        onquote={showQuoteDropdown ? handleQuote : undefined}
+      />
     </div>
-  </div>
-{/if}
+  {/if}
+{/snippet}
+
+{#snippet avatarsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <RepostButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
+      <RepostButtonAvatars {ndk} event={sampleEvent} variant="outline" />
+      <RepostButtonAvatars {ndk} event={sampleEvent} variant="pill" />
+      <RepostButtonAvatars {ndk} event={sampleEvent} variant="solid" />
+    </div>
+  {/if}
+{/snippet}
+
+<!-- Use the template -->
+<ComponentPageTemplate
+  metadata={repostMetadata}
+  {ndk}
+  showcaseBlocks={[
+    {
+      name: 'RepostButton',
+      description: 'Basic repost button with count',
+      command: 'npx jsrepo add repost-button',
+      preview: repostButtonsPreview,
+      cardData: repostMetadata.cards[0],
+      orientation: 'horizontal'
+    },
+    {
+      name: 'Repost Authors Avatars',
+      description: 'Show avatars of people who reposted',
+      command: 'npx jsrepo add repost-button-avatars',
+      preview: avatarsPreview,
+      orientation: 'horizontal'
+    }
+  ]}
+  componentsSection={{
+    cards: [
+      { ...repostButtonCard, code: repostButtonCode },
+      { ...repostButtonAvatarsCard, code: repostButtonAvatarsCode }
+    ],
+    previews: {
+      'repost-button': repostButtonsPreview,
+      'repost-button-avatars': avatarsPreview
+    }
+  }}
+  apiDocs={repostMetadata.apiDocs}
+>
+  <EditProps.Prop
+    name="Sample Event"
+    type="event"
+    default="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j"
+    bind:value={sampleEvent}
+  />
+  <EditProps.Prop
+    name="Show Quote Dropdown"
+    type="boolean"
+    default={false}
+    bind:value={showQuoteDropdown}
+  />
+</ComponentPageTemplate>

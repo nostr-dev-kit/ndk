@@ -1,0 +1,1 @@
+{"name":"replies","type":"registry:component","title":"Replies","description":"Reply thread display and composition","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"replies/replies.svelte"}],"version":"0.7.0","updatedAt":"2025-10-30T07:19:17.000Z"}

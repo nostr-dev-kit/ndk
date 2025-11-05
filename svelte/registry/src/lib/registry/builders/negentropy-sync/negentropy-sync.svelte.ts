@@ -1,11 +1,19 @@
 import { NDKRelaySet, type NDKFilter, type NDKRelay, type NDKSubscription } from "@nostr-dev-kit/ndk";
-import { NDKSync, type NegotiationProgress } from "@nostr-dev-kit/sync";
+import { NDKSync } from "@nostr-dev-kit/sync";
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { getContext } from 'svelte';
 
 export interface NegentropySyncConfig {
     filters: NDKFilter | NDKFilter[];
     relayUrls?: string[];
+}
+
+interface NegotiationProgress {
+    phase: string;
+    round: number;
+    needCount: number;
+    haveCount: number;
+    timestamp: number;
 }
 
 export interface RelayNegotiationState {
@@ -90,7 +98,7 @@ export function createNegentropySync(
             : 0
     );
 
-    const relays = $derived(Array.from(state.relayProgress.values()));
+    const relays = $derived.by(() => Array.from(state.relayProgress.values()));
 
     const velocity = $derived(() => {
         if (!state.syncing || state.syncStartTime === 0) return 0;
@@ -123,6 +131,11 @@ export function createNegentropySync(
         const { filters, relayUrls } = config();
         const sync = new NDKSync(resolvedNDK);
 
+        // Unwrap any Svelte Proxies by creating plain objects with JSON round-trip
+        // Proxies can't be cloned by structured clone algorithm used by postMessage to workers
+        // Simple spread operator only does shallow copy, so use JSON to deep clone
+        const unwrappedFilters = JSON.parse(JSON.stringify(Array.isArray(filters) ? filters : [filters]));
+
         // Reset state
         state.syncing = true;
         state.completedRelays = 0;
@@ -145,18 +158,22 @@ export function createNegentropySync(
         state.totalRelays = allRelays.length;
 
         // Initialize relay progress
+        const newRelayProgress = new Map<string, RelayProgress>();
         for (const relay of allRelays) {
-            state.relayProgress.set(relay.url, {
+            newRelayProgress.set(relay.url, {
                 url: relay.url,
                 status: 'pending',
                 eventCount: 0
             });
         }
+        state.relayProgress = newRelayProgress;
 
         // Start sync and subscribe
-        const subscription = await sync.syncAndSubscribe(filters, {
+        console.log('[NegentropySyncBuilder] Starting sync with filters:', unwrappedFilters);
+        const subscription = await sync.syncAndSubscribe(unwrappedFilters, {
             relaySet,
             onNegotiationProgress: (relay: NDKRelay, progress: NegotiationProgress) => {
+                console.log('[NegentropySyncBuilder] onNegotiationProgress', relay.url, progress);
                 const relayProgress = state.relayProgress.get(relay.url);
                 if (relayProgress) {
                     relayProgress.status = 'syncing';
@@ -167,35 +184,39 @@ export function createNegentropySync(
                         haveCount: progress.haveCount,
                         lastUpdate: progress.timestamp
                     };
-                    state.relayProgress.set(relay.url, relayProgress);
+                    state.relayProgress = new Map(state.relayProgress.set(relay.url, relayProgress));
                 }
             },
             onRelaySynced: (relay: NDKRelay, eventCount: number) => {
+                console.log('[NegentropySyncBuilder] onRelaySynced', relay.url, eventCount);
                 const progress = state.relayProgress.get(relay.url);
                 if (progress) {
                     progress.status = 'completed';
                     progress.eventCount = eventCount;
                     progress.negotiation = undefined; // Clear negotiation state
-                    state.relayProgress.set(relay.url, progress);
+                    state.relayProgress = new Map(state.relayProgress.set(relay.url, progress));
                 }
                 state.completedRelays++;
                 state.totalEvents += eventCount;
             },
             onRelayError: (relay: NDKRelay, error: Error) => {
+                console.log('[NegentropySyncBuilder] onRelayError', relay.url, error);
                 const progress = state.relayProgress.get(relay.url);
                 if (progress) {
                     progress.status = 'error';
                     progress.error = error.message;
                     progress.negotiation = undefined; // Clear negotiation state
-                    state.relayProgress.set(relay.url, progress);
+                    state.relayProgress = new Map(state.relayProgress.set(relay.url, progress));
                 }
                 state.errors.set(relay.url, error);
                 state.completedRelays++;
             },
             onSyncComplete: () => {
+                console.log('[NegentropySyncBuilder] onSyncComplete');
                 state.syncing = false;
             }
         });
+        console.log('[NegentropySyncBuilder] Sync started, subscription:', subscription);
 
         state.subscription = subscription;
         return subscription;

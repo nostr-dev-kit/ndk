@@ -1,7 +1,0 @@
-<script lang="ts">
-  import RelaySelectorPopover from '$lib/registry/components/relay-selector/relay-selector-popover.svelte';
-
-  let selected = $state<string[]>([]);
-</script>
-
-<RelaySelectorPopover {ndk} bind:selected />

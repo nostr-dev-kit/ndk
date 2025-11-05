@@ -1,9 +1,0 @@
-<script lang="ts">
-  import { Relay } from '$lib/registry/ui/relay';
-
-  let selected = $state<string[]>([]);
-</script>
-
-<Relay.Selector.Root {ndk} bind:selected>
-  <Relay.Selector.List />
-</Relay.Selector.Root>

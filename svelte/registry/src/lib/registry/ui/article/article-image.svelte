@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './article.context.js';
+  import { cn } from "$lib/registry/utils/cn.js";
 
   interface Props {
     /** Additional CSS classes */
@@ -22,7 +23,7 @@
   <img
     src={imageUrl}
     alt={context.article.title || 'Article cover'}
-    class={className}
+    class={cn(className, "object-cover")}
     loading="lazy"
   />
 {/if}

@@ -42,17 +42,19 @@ export type HashtagComponent = Component<{
 
 /**
  * Link component interface
+ * Accepts either a single URL or an array of URLs (for grouped links)
  */
 export type LinkComponent = Component<{
-	url: string;
+	url: string | string[];
 	class?: string;
 }>;
 
 /**
  * Media component interface
+ * Accepts either a single URL or an array of URLs (for grouped media)
  */
 export type MediaComponent = Component<{
-	url: string;
+	url: string | string[];
 	type?: string;
 	class?: string;
 }>;

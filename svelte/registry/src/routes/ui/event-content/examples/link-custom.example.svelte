@@ -1,15 +1,20 @@
 <script lang="ts">
   interface Props {
-    url: string;
+    url: string | string[];
     class?: string;
   }
 
   let { url, class: className = '' }: Props = $props();
+
+  // Normalize to array
+  const urls = $derived(Array.isArray(url) ? url : [url]);
 </script>
 
-<a href={url} class="custom-link {className}" target="_blank" rel="noopener noreferrer">
-  {url}
-</a>
+{#each urls as linkUrl, i (i)}
+  <a href={linkUrl} class="custom-link {className}" target="_blank" rel="noopener noreferrer">
+    {linkUrl}
+  </a>
+{/each}
 
 <style>
   .custom-link {

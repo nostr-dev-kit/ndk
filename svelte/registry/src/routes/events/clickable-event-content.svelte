@@ -54,7 +54,7 @@
 			{#if segment.data && typeof segment.data === 'string'}
 				{#if renderer.hashtagComponent}
 					{@const Component = renderer.hashtagComponent}
-					<Component {ndk} tag={segment.data} />
+					<Component tag={segment.data} />
 				{:else}
 					#{segment.data}
 				{/if}

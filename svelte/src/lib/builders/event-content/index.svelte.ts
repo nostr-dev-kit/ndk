@@ -5,6 +5,7 @@ import {
     buildEmojiMap,
     parseContentToSegments,
     groupConsecutiveImages,
+    groupConsecutiveLinks,
     type ParsedSegment,
 } from './utils.js';
 
@@ -60,7 +61,8 @@ export function createEventContent(
             const cleanedContent = actualContent.replace(/\[Image #\d+\]/gi, '').trim();
             const emojiMap = buildEmojiMap(actualEmojiTags);
             const parsedSegments = parseContentToSegments(cleanedContent, emojiMap);
-            return groupConsecutiveImages(parsedSegments);
+            const groupedImages = groupConsecutiveImages(parsedSegments);
+            return groupConsecutiveLinks(groupedImages);
         },
         get content() {
             const actualContent = String(config().event?.content ?? config().content ?? '');

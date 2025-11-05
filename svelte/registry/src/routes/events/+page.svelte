@@ -5,10 +5,7 @@
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import InteractiveDemo from './interactive-demo.svelte';
 	import LayerVisualization from './layer-visualization.svelte';
-	import {
-		eventsIntroductionMetadata,
-		eventsIntroductionCards
-	} from '$lib/component-registry/events-introduction';
+	import { eventsIntroductionMetadata } from '$lib/component-registry/events-introduction';
 	import { EditProps } from '$lib/site-components/edit-props';
 
 	const ndk = getContext<NDKSvelte>('ndk');

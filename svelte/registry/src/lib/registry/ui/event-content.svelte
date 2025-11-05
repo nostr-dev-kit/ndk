@@ -102,11 +102,32 @@
 			{/if}
 		{:else if segment.type === 'image-grid'}
 			{#if segment.data && Array.isArray(segment.data)}
-				<div class="image-grid">
-					{#each segment.data as url, j (j)}
-						<img src={url} alt="" class="grid-image" />
-					{/each}
-				</div>
+				{#if renderer.mediaComponent}
+					{@const Component = renderer.mediaComponent}
+					<Component url={segment.data} />
+				{:else}
+					<div class="image-grid">
+						{#each segment.data as url, j (j)}
+							<img src={url} alt="" class="grid-image" />
+						{/each}
+					</div>
+				{/if}
+			{/if}
+		{:else if segment.type === 'link-group'}
+			{#if segment.data && Array.isArray(segment.data)}
+				{#if renderer.linkComponent}
+					{@const Component = renderer.linkComponent}
+					<Component url={segment.data} />
+				{:else}
+					<div class="link-group">
+						{#each segment.data as url, j (j)}
+							<!-- svelte-ignore a11y_invalid_attribute -->
+							<a href={url} target="_blank" rel="noopener noreferrer" class="link">
+								{url}
+							</a>
+						{/each}
+					</div>
+				{/if}
 			{/if}
 		{/if}
 	{/each}
@@ -170,5 +191,12 @@
 		object-fit: cover;
 		border-radius: 0.5rem;
 		aspect-ratio: 1;
+	}
+
+	.link-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		margin: 0.5rem 0;
 	}
 </style>

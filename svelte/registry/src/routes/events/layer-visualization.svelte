@@ -8,33 +8,31 @@
 		<div class="step-number bg-blue-500/10 text-blue-500">1</div>
 		<div class="step-content">
 			<div class="wireframe-box chrome-layer">
-			<!-- Header Section -->
-			<div class="wireframe-header">
-				<div class="wireframe-avatar"></div>
-				<div class="wireframe-meta">
-					<div class="wireframe-line short"></div>
-					<div class="wireframe-line shorter"></div>
+				<!-- Header Section -->
+				<div class="wireframe-header">
+					<div class="wireframe-avatar"></div>
+					<div class="wireframe-meta">
+						<div class="wireframe-line short"></div>
+						<div class="wireframe-line shorter"></div>
+					</div>
+				</div>
+
+				<!-- Content placeholder -->
+				<div class="content-placeholder">
+					<div class="wireframe-line"></div>
+					<div class="wireframe-line"></div>
+					<div class="wireframe-line medium"></div>
+				</div>
+
+				<!-- Actions -->
+				<div class="wireframe-actions">
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
 				</div>
 			</div>
-
-			<!-- Content placeholder -->
-			<div class="content-placeholder">
-				<div class="wireframe-line"></div>
-				<div class="wireframe-line"></div>
-				<div class="wireframe-line medium"></div>
-			</div>
-
-			<!-- Actions -->
-			<div class="wireframe-actions">
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-			</div>
-
-			<div class="layer-label chrome-label">Chrome Layer</div>
-		</div>
-		<div class="info-card">
+		<div class="info-card chrome-card">
 			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[0].title}</h3>
 			<p class="text-sm text-muted-foreground mb-4">
 				{eventsIntroductionCards[0].richDescription}
@@ -55,39 +53,33 @@
 	<div class="layer-step">
 		<div class="step-number bg-purple-500/10 text-purple-500">2</div>
 		<div class="step-content">
-			<div class="wireframe-box chrome-layer">
-			<div class="wireframe-header dimmed">
-				<div class="wireframe-avatar"></div>
-				<div class="wireframe-meta">
-					<div class="wireframe-line short"></div>
-					<div class="wireframe-line shorter"></div>
+			<div class="wireframe-box chrome-layer chrome-layer-dimmed">
+				<div class="wireframe-header dimmed">
+					<div class="wireframe-avatar"></div>
+					<div class="wireframe-meta">
+						<div class="wireframe-line short"></div>
+						<div class="wireframe-line shorter"></div>
+					</div>
 				</div>
-			</div>
 
-			<!-- Content with highlights -->
-			<div class="content-active">
+				<!-- Content with highlights -->
+				<div class="content-active">
 				<div class="content-text">
-					<span class="content-plain">Check out this article about </span>
-					<span class="content-mention">@alice</span>
-					<span class="content-plain"> and </span>
-					<span class="content-hashtag">#nostr</span>
-					<span class="content-plain">!</span>
+					Check out this article about nostr:nprofile1... and #nostr!
 				</div>
-				<div class="content-embed-ref">
-					<div class="wireframe-line short"></div>
+				<div class="content-text">
+					nostr:nevent1...
+				</div>
+				</div>
+
+				<div class="wireframe-actions dimmed">
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
 				</div>
 			</div>
-
-			<div class="wireframe-actions dimmed">
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-			</div>
-
-			<div class="layer-label content-label">Content Layer</div>
-		</div>
-		<div class="info-card">
+		<div class="info-card content-card">
 			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[1].title}</h3>
 			<p class="text-sm text-muted-foreground mb-4">
 				{eventsIntroductionCards[1].richDescription}
@@ -108,49 +100,47 @@
 	<div class="layer-step">
 		<div class="step-number bg-orange-500/10 text-orange-500">3</div>
 		<div class="step-content">
-			<div class="wireframe-box chrome-layer">
-			<div class="wireframe-header dimmed">
-				<div class="wireframe-avatar"></div>
-				<div class="wireframe-meta">
-					<div class="wireframe-line short"></div>
-					<div class="wireframe-line shorter"></div>
-				</div>
-			</div>
-
-			<div class="content-dimmed">
-				<div class="content-text">
-					<span class="content-plain">Check out this article about </span>
-					<span class="content-mention">@alice</span>
-					<span class="content-plain"> and </span>
-					<span class="content-hashtag">#nostr</span>
-					<span class="content-plain">!</span>
+			<div class="wireframe-box chrome-layer chrome-layer-dimmed">
+				<div class="wireframe-header dimmed">
+					<div class="wireframe-avatar"></div>
+					<div class="wireframe-meta">
+						<div class="wireframe-line short"></div>
+						<div class="wireframe-line shorter"></div>
+					</div>
 				</div>
 
-				<!-- Embedded Preview -->
-				<div class="embed-preview">
-					<div class="embed-header">
-						<div class="embed-avatar"></div>
-						<div class="embed-meta">
-							<div class="wireframe-line tiny"></div>
+				<div class="content-layer-step3">
+					<div class="content-text">
+						<span class="content-plain dimmed">Check out this article about </span>
+						<span class="content-mention">@alice</span>
+						<span class="content-plain dimmed"> and </span>
+						<span class="content-hashtag">#nostr</span>
+						<span class="content-plain dimmed">!</span>
+					</div>
+
+					<!-- Embedded Preview -->
+					<div class="embed-preview">
+						<div class="embed-header">
+							<div class="embed-avatar"></div>
+							<div class="embed-meta">
+								<div class="wireframe-line tiny"></div>
+							</div>
+						</div>
+						<div class="embed-content">
+							<div class="wireframe-line short"></div>
+							<div class="wireframe-line medium"></div>
 						</div>
 					</div>
-					<div class="embed-content">
-						<div class="wireframe-line short"></div>
-						<div class="wireframe-line medium"></div>
-					</div>
+				</div>
+
+				<div class="wireframe-actions dimmed">
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
+					<div class="wireframe-button"></div>
 				</div>
 			</div>
-
-			<div class="wireframe-actions dimmed">
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-				<div class="wireframe-button"></div>
-			</div>
-
-			<div class="layer-label embed-label">Embed Layer</div>
-		</div>
-		<div class="info-card">
+		<div class="info-card embed-card">
 			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[2].title}</h3>
 			<p class="text-sm text-muted-foreground mb-4">
 				{eventsIntroductionCards[2].richDescription}
@@ -193,9 +183,24 @@
 
 	.info-card {
 		padding: 1.5rem;
-		border: 1px solid var(--border);
+		border: 2px solid var(--border);
 		border-radius: 0.75rem;
 		background: var(--card);
+	}
+
+	.chrome-card {
+		border-color: rgb(59 130 246);
+		background: rgb(59 130 246 / 0.02);
+	}
+
+	.content-card {
+		border-color: rgb(168 85 247);
+		background: rgb(168 85 247 / 0.02);
+	}
+
+	.embed-card {
+		border-color: rgb(249 115 22);
+		background: rgb(249 115 22 / 0.02);
 	}
 
 	.step-number {
@@ -222,6 +227,10 @@
 	}
 
 	.chrome-layer {
+		border-color: rgb(59 130 246);
+	}
+
+	.chrome-layer-dimmed {
 		border-color: rgb(59 130 246 / 0.3);
 	}
 
@@ -308,7 +317,6 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		padding: 0.75rem;
-		opacity: 0.3;
 	}
 
 	.wireframe-actions {
@@ -332,7 +340,7 @@
 		padding: 0.75rem;
 		border-radius: 0.5rem;
 		background: rgb(168 85 247 / 0.05);
-		border: 2px solid rgb(168 85 247 / 0.3);
+		border: 2px solid rgb(168 85 247);
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
@@ -353,7 +361,7 @@
 		padding: 0.125rem 0.25rem;
 		border-radius: 0.25rem;
 		background: rgb(249 115 22 / 0.1);
-		border: 1px dashed rgb(249 115 22 / 0.3);
+		border: 1px dashed rgb(249 115 22);
 	}
 
 	.content-hashtag {
@@ -362,21 +370,20 @@
 		padding: 0.125rem 0.25rem;
 		border-radius: 0.25rem;
 		background: rgb(249 115 22 / 0.1);
-		border: 1px dashed rgb(249 115 22 / 0.3);
+		border: 1px dashed rgb(249 115 22);
 	}
 
 	.content-embed-ref {
 		padding: 0.5rem;
 		background: rgb(249 115 22 / 0.1);
 		border-radius: 0.375rem;
-		border: 1px dashed rgb(249 115 22 / 0.3);
+		border: 1px dashed rgb(249 115 22);
 	}
 
 	/* Embed layer specific */
-	.content-dimmed {
+	.content-layer-step3 {
 		padding: 0.75rem;
 		border-radius: 0.5rem;
-		opacity: 0.4;
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
@@ -386,11 +393,10 @@
 		padding: 0.75rem;
 		background: rgb(249 115 22 / 0.1);
 		border-radius: 0.5rem;
-		border: 2px solid rgb(249 115 22 / 0.3);
+		border: 2px dashed rgb(249 115 22);
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		opacity: 1;
 	}
 
 	.embed-header {

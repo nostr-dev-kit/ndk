@@ -80,7 +80,9 @@ export type MediaComponent = Component<{
  * ```ts
  * import { defaultContentRenderer } from '$lib/ui';
  * import Mention from '$lib/components/mention.svelte';
- * import '$lib/components/embedded-handlers';
+ * // Import embedded components to auto-register handlers
+ * import '$lib/registry/components/article-embedded';
+ * import '$lib/registry/components/note-embedded';
  *
  * defaultContentRenderer.mentionComponent = Mention;
  * ```
@@ -218,7 +220,10 @@ export class ContentRenderer {
  * ```ts
  * import '$lib/components/mention';
  * import '$lib/components/hashtag';
- * import '$lib/components/embedded-handlers';
+ * // Import embedded components to auto-register handlers
+ * import '$lib/registry/components/article-embedded';
+ * import '$lib/registry/components/note-embedded';
+ * import '$lib/registry/components/highlight-embedded';
  * ```
  */
 export const defaultContentRenderer = new ContentRenderer();

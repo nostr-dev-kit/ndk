@@ -388,9 +388,9 @@
         </div>
 
         <div>
-          <div class="text-sm font-semibold mb-2">3. Import in embedded-handlers.ts</div>
+          <div class="text-sm font-semibold mb-2">3. Auto-registration via index.ts</div>
           <div class="p-3 bg-muted rounded text-xs font-mono">
-            import './kinds/my-kind-embedded';
+            // Handler automatically registers when component is imported
           </div>
         </div>
 

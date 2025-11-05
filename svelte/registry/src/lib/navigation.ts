@@ -78,6 +78,7 @@ export const eventCategories: NavCategory[] = [
       { name: 'Article', path: '/events/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.', nip: 'NIP-23' },
       { name: 'Highlight', path: '/events/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.', nip: 'NIP-84' },
       { name: 'Audio', path: '/events/cards/voice-message', icon: VoiceIcon, title: 'VoiceMessageCard', description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.', nip: 'NIP-A0' },
+      { name: 'Image', path: '/events/cards/image', icon: Image02Icon, title: 'ImageCard', description: 'Composable image card components for displaying NIP-68 image events (kind 20) with customizable layouts.', nip: 'NIP-68' },
     ]
   },
   {
@@ -85,7 +86,6 @@ export const eventCategories: NavCategory[] = [
     items: [
       { name: 'Note', path: '/events/content/note', icon: File01Icon, title: 'Event Content', description: 'Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.', nip: 'Kind:1' },
       { name: 'Article', path: '/events/content/article', icon: NewsIcon, title: 'ArticleContent', description: 'Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars.', nip: 'NIP-23' },
-      { name: 'Image', path: '/events/content/image', icon: Image02Icon, title: 'Image Content', description: 'Display image events with metadata and interactions. Renders images from NIP-68 events (kind 20).', nip: 'NIP-68' },
     ]
   },
   {
@@ -140,6 +140,7 @@ export const componentCategories: NavCategory[] = [
       { name: 'Threads', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
       { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
+      { name: 'Event Dropdown', path: '/components/event-dropdown', icon: Layers01Icon, title: 'EventDropdown', description: 'Dropdown menu for event actions including mute, report, copy, and raw event viewing with optional relay information display.' },
     ]
   },
   {

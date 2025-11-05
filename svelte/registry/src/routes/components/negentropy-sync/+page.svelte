@@ -21,11 +21,12 @@
   import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-detailed.svelte';
   import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-animated.svelte';
   import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-compact.svelte';
+  import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Demo state
-  let filters = $state({ kinds: [1], limit: 100 });
+  let filters = $state<NDKFilter[]>([{ kinds: [1], limit: 100 }]);
   let relayUrls = $state<string[] | undefined>(['wss://relay.damus.io']);
   let demoSyncBuilder = $state<ReturnType<typeof createNegentropySync>>();
 

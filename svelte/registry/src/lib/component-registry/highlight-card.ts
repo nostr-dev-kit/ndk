@@ -57,7 +57,7 @@ export const highlightCardCompositionCard: ComponentCardData = {
 export const highlightCardMetadata: ComponentPageMetadata = {
 	title: 'HighlightCard',
 	description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts. Automatically extracts and displays source references.',
-	showcaseTitle: 'Blocks',
+	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Pre-composed layouts ready to use.'
 };
 
@@ -65,7 +65,5 @@ export const highlightCardCards = [
 	highlightCardFeedCard,
 	highlightCardElegantCard,
 	highlightCardCompactCard,
-	highlightCardGridCard,
-	highlightCardBasicCard,
-	highlightCardCompositionCard
+	highlightCardGridCard
 ];

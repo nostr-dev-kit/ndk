@@ -28,8 +28,8 @@ export const eventCardClassicCard: ComponentCardData = {
 export const eventCardMenuCard: ComponentCardData = {
 	name: 'event-card-menu',
 	title: 'EventCardMenu',
-	description: 'Dropdown menu with event actions.',
-	richDescription: 'Use for dropdown menus with event actions (mute, report, copy, view raw). Can be placed in any EventCard.Header.',
+	description: 'Dropdown menu for event actions.',
+	richDescription: 'Fully-styled dropdown menu for event actions including mute, report, copy link, and view raw event. Can be used standalone or within EventCard compositions.',
 	command: 'npx shadcn@latest add event-card-menu',
 	apiDocs: [
 		{
@@ -76,13 +76,10 @@ export const eventCardChromeCard: ComponentCardData = {
 export const eventCardMetadata: ComponentPageMetadata = {
 	title: 'EventCard',
 	description: 'Composable components for displaying any NDKEvent type with flexible layouts and interactions. Perfect for feeds, threads, and social content.',
-	showcaseTitle: 'Blocks',
+	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Pre-composed layouts ready to use.'
 };
 
 export const eventCardCards = [
-	eventCardClassicCard,
-	eventCardMenuCard,
-	eventCardBasicCard,
-	eventCardFullCard
+	eventCardClassicCard
 ];

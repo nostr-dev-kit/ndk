@@ -3,7 +3,6 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventCardClassic from '$lib/registry/components/event-card/event-card-classic.svelte';
-	import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.svelte';
 	import { EventCard } from '$lib/registry/components/event-card';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
@@ -11,16 +10,16 @@
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { eventCardMetadata, eventCardCards, eventCardClassicCard, eventCardMenuCard, eventCardBasicCard, eventCardFullCard } from '$lib/component-registry/event-card';
+	import { eventCardMetadata, eventCardCards, eventCardClassicCard, eventCardBasicCard, eventCardFullCard } from '$lib/component-registry/event-card';
 	import type { ShowcaseBlock } from '$lib/templates/types';
-
-	// TODO: These files don't exist yet
-	// import UIBasic from './generic/examples/ui-basic.example.svelte';
-	// import UIFull from './generic/examples/ui-full.example.svelte';
-	// import ChromeDemo from './generic/examples/chrome-demo.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleEvent = $state<NDKEvent | undefined>();
+
+	// State for controlling content visibility
+	let showClassicContent = $state(false);
+	let showBasicContent = $state(false);
+	let showFullContent = $state(false);
 
 	const showcaseBlocks: ShowcaseBlock[] = [
 		{
@@ -29,15 +28,8 @@
 			command: 'npx shadcn@latest add event-card-classic',
 			preview: classicPreview,
 			cardData: eventCardClassicCard,
-			orientation: 'vertical'
-		},
-		{
-			name: 'Menu',
-			description: 'Dropdown with event actions',
-			command: 'npx shadcn@latest add event-card-menu',
-			preview: menuPreview,
-			cardData: eventCardMenuCard,
-			orientation: 'vertical'
+			orientation: 'vertical',
+			control: classicControl
 		}
 	];
 </script>
@@ -122,27 +114,107 @@
 	{/if}
 {/snippet}
 
+{#snippet classicControl()}
+	<div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
+		<button
+			class="px-3 py-1.5 text-xs rounded-md transition-colors {!showClassicContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+			onclick={() => showClassicContent = false}
+		>
+			Chrome
+		</button>
+		<button
+			class="px-3 py-1.5 text-xs rounded-md transition-colors {showClassicContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+			onclick={() => showClassicContent = true}
+		>
+			Content
+		</button>
+	</div>
+{/snippet}
+
 {#snippet classicPreview()}
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
-			<EventCardClassic {ndk} event={sampleEvent} />
+			{#if showClassicContent}
+				<EventCardClassic {ndk} event={sampleEvent} />
+			{:else}
+				<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
+					<div class="flex items-start justify-between gap-2">
+						<EventCard.Header />
+						<EventCard.Dropdown />
+					</div>
+
+					<div class="my-4 p-8 border-2 border-dashed border-muted-foreground/20 rounded-md bg-muted/10">
+						<p class="text-sm text-muted-foreground/60 text-center italic">Content area</p>
+					</div>
+
+					<EventCard.Actions>
+						<div class="flex gap-4 text-muted-foreground/40">
+							<div class="flex items-center gap-1">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+								<span class="text-xs">0</span>
+							</div>
+							<div class="flex items-center gap-1">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+								<span class="text-xs">0</span>
+							</div>
+						</div>
+					</EventCard.Actions>
+				</EventCard.Root>
+			{/if}
 		</div>
 	{/if}
 {/snippet}
 
-{#snippet menuPreview()}
-	{#if sampleEvent}
-		<div class="flex items-center justify-center p-8">
-			<EventCardMenu {ndk} event={sampleEvent} />
-		</div>
-	{/if}
+{#snippet basicControl()}
+	<div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
+		<button
+			class="px-3 py-1.5 text-xs rounded-md transition-colors {!showBasicContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+			onclick={() => showBasicContent = false}
+		>
+			Chrome
+		</button>
+		<button
+			class="px-3 py-1.5 text-xs rounded-md transition-colors {showBasicContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+			onclick={() => showBasicContent = true}
+		>
+			Content
+		</button>
+	</div>
+{/snippet}
+
+{#snippet fullControl()}
+	<div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
+		<button
+			class="px-3 py-1.5 text-xs rounded-md transition-colors {!showFullContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+			onclick={() => showFullContent = false}
+		>
+			Chrome
+		</button>
+		<button
+			class="px-3 py-1.5 text-xs rounded-md transition-colors {showFullContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+			onclick={() => showFullContent = true}
+		>
+			Content
+		</button>
+	</div>
 {/snippet}
 
 {#snippet basicPreview()}
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
-			<!-- TODO: UIBasic component not yet created -->
-			<p>Basic preview placeholder</p>
+			{#if showBasicContent}
+				<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
+					<EventCard.Header />
+					<EventCard.Content />
+				</EventCard.Root>
+			{:else}
+				<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
+					<EventCard.Header />
+					<div class="my-4 p-8 border-2 border-dashed border-muted-foreground/20 rounded-md bg-muted/10">
+						<p class="text-sm text-muted-foreground/60 text-center italic">Content area</p>
+					</div>
+				</EventCard.Root>
+			{/if}
 		</div>
 	{/if}
 {/snippet}
@@ -150,8 +222,57 @@
 {#snippet fullPreview()}
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
-			<!-- TODO: UIFull component not yet created -->
-			<p>Full preview placeholder</p>
+			{#if showFullContent}
+				<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
+					<div class="flex items-start justify-between gap-2">
+						<EventCard.Header />
+						<EventCard.Dropdown />
+					</div>
+					<EventCard.Content />
+					<EventCard.Actions>
+						<div class="flex gap-4 text-muted-foreground">
+							<button class="flex items-center gap-1 hover:text-foreground transition-colors">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+								<span class="text-xs">0</span>
+							</button>
+							<button class="flex items-center gap-1 hover:text-foreground transition-colors">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+								<span class="text-xs">0</span>
+							</button>
+						</div>
+					</EventCard.Actions>
+				</EventCard.Root>
+			{:else}
+				<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
+					<div class="flex items-start justify-between gap-2">
+						<EventCard.Header />
+						<EventCard.Dropdown />
+					</div>
+					<div class="my-4 p-8 border-2 border-dashed border-muted-foreground/20 rounded-md bg-muted/10">
+						<p class="text-sm text-muted-foreground/60 text-center italic">Content area</p>
+					</div>
+					<EventCard.Actions>
+						<div class="flex gap-4 text-muted-foreground/40">
+							<div class="flex items-center gap-1">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+								<span class="text-xs">0</span>
+							</div>
+							<div class="flex items-center gap-1">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+								<span class="text-xs">0</span>
+							</div>
+						</div>
+					</EventCard.Actions>
+				</EventCard.Root>
+			{/if}
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet classicComponentPreview()}
+	{#if sampleEvent}
+		<div class="max-w-2xl mx-auto">
+			<EventCardClassic {ndk} event={sampleEvent} />
 		</div>
 	{/if}
 {/snippet}
@@ -171,14 +292,18 @@
 					description: 'Minimal primitives composition',
 					command: 'npx shadcn@latest add event-card',
 					preview: basicPreview,
-					cardData: eventCardBasicCard
+					cardData: eventCardBasicCard,
+					orientation: 'vertical',
+					control: basicControl
 				},
 				{
 					name: 'Full',
 					description: 'All primitives together',
 					command: 'npx shadcn@latest add event-card',
 					preview: fullPreview,
-					cardData: eventCardFullCard
+					cardData: eventCardFullCard,
+					orientation: 'vertical',
+					control: fullControl
 				}
 			]}
 		/>
@@ -216,7 +341,7 @@
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 				],
 				slots: [
-					{ name: 'children', description: 'Custom actions (e.g., EventCardMenu)' }
+					{ name: 'children', description: 'Custom actions (e.g., EventDropdown)' }
 				]
 			},
 			{
@@ -253,17 +378,6 @@
 					{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 				]
-			},
-			{
-				name: 'EventCardMenu',
-				description: 'Fully-styled dropdown menu for event actions including mute, report, copy, and raw event viewing.',
-				importPath: "import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.svelte'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-					{ name: 'event', type: 'NDKEvent', description: 'The event for this menu', required: true },
-					{ name: 'showRelayInfo', type: 'boolean', default: 'true', description: 'Show relay information in dropdown' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
 			}
 		]}
 	/>
@@ -279,10 +393,7 @@
 		componentsSection={{
 			cards: eventCardCards,
 			previews: {
-				'event-card-classic': classicPreview,
-				'event-card-menu': menuPreview,
-				'event-card-basic': basicPreview,
-				'event-card-full': fullPreview
+				'event-card-classic': classicComponentPreview
 			}
 		}}
 		{customSections}

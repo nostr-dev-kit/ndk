@@ -45,11 +45,26 @@
 	let debouncedUrl = $state(value);
 	let debounceTimer: NodeJS.Timeout | null = null;
 
+	// Normalize relay URL by adding wss:// prefix if missing
+	const normalizedUrl = $derived.by(() => {
+		if (!debouncedUrl) return '';
+		const trimmed = debouncedUrl.trim();
+		if (!trimmed) return '';
+
+		// If it already has a protocol, use as-is
+		if (trimmed.startsWith('wss://') || trimmed.startsWith('ws://')) {
+			return trimmed;
+		}
+
+		// Add wss:// prefix
+		return `wss://${trimmed}`;
+	});
+
 	// Validate URL format
 	const isValidUrl = $derived.by(() => {
-		if (!debouncedUrl) return false;
+		if (!normalizedUrl) return false;
 		try {
-			const url = new URL(debouncedUrl);
+			const url = new URL(normalizedUrl);
 			return url.protocol === 'wss:' || url.protocol === 'ws:';
 		} catch {
 			return false;
@@ -59,7 +74,7 @@
 	// Fetch relay info (NIP-11) when URL is valid
 	const relayInfo = $derived.by(() => {
 		if (isValidUrl) {
-			return createRelayInfo(() => ({ relayUrl: debouncedUrl }), ndk);
+			return createRelayInfo(() => ({ relayUrl: normalizedUrl }), ndk);
 		}
 		return null;
 	});
@@ -88,19 +103,19 @@
 
 <div class="relay-input-container">
 	<div class="relative">
-		{#if showRelayInfo && isValidUrl}
+		{#if showRelayInfo}
 			<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-				{#if isLoading}
+				{#if isValidUrl && isLoading}
 					<!-- Loading spinner -->
 					<div
 						class="animate-spin rounded-full border-2 border-muted border-t-foreground"
 						style="width: {iconSize}px; height: {iconSize}px;"
 					></div>
-				{:else if icon}
+				{:else if isValidUrl && icon}
 					<!-- Relay icon -->
 					<img
 						src={icon}
-						alt={name || debouncedUrl}
+						alt={name || normalizedUrl}
 						class="relay-input-icon rounded-md object-cover"
 						style="width: {iconSize}px; height: {iconSize}px;">
 				{:else}
@@ -132,7 +147,7 @@
 			{placeholder}
 			class={cn(
 				'relay-input',
-				showRelayInfo && isValidUrl && 'pl-12',
+				showRelayInfo && 'pl-12',
 				className
 			)}
 			{...rest}

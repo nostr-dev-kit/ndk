@@ -39,7 +39,7 @@ export const voiceMessageCardCompositionCard: ComponentCardData = {
 export const voiceMessageCardMetadata: ComponentPageMetadata = {
 	title: 'VoiceMessage',
 	description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.',
-	showcaseTitle: 'Blocks',
+	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Pre-composed layouts ready to use.'
 };
 

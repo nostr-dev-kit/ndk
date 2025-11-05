@@ -74,15 +74,6 @@ export const imageCardBasicCard: ComponentCardData = {
 	apiDocs: []
 };
 
-export const imageCardCustomCard: ComponentCardData = {
-	name: 'image-custom',
-	title: 'Custom Image Layout',
-	description: 'Custom image composition.',
-	richDescription: 'Custom image layout using ImageContent primitives for full control over appearance.',
-	command: 'npx shadcn@latest add image-card',
-	apiDocs: []
-};
-
 export const imageCardMetadata: ComponentPageMetadata = {
 	title: 'Image Content',
 	description: 'Display image events with metadata and interactions. ImageContent renders images from NIP-68 events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt text.',
@@ -94,6 +85,5 @@ export const imageCardCards = [
 	imageCardInstagramCard,
 	imageCardHeroCard,
 	imageCardCard,
-	imageCardBasicCard,
-	imageCardCustomCard
+	imageCardBasicCard
 ];

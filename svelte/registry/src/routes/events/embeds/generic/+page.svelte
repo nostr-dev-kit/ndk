@@ -48,13 +48,8 @@
   <!-- Header -->
   <div class="mb-12 pt-8">
     <h1 class="text-4xl font-bold mb-4">Generic Embedded Preview</h1>
-    <p class="text-lg text-muted-foreground mb-2">
+    <p class="text-lg text-muted-foreground mb-6">
       Intelligent fallback handler for unknown event kinds, powered by NIP-31 (Alt Tags) and NIP-89 (App Discovery).
-    </p>
-    <p class="text-sm text-muted-foreground mb-6">
-      <a href="/components/previews/introduction" class="text-primary hover:underline">
-        ← Back to Embedded Previews
-      </a>
     </p>
 
     <EditProps.Root>

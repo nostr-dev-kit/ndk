@@ -48,19 +48,15 @@
   <!-- Header -->
   <div class="mb-12 pt-8">
     <h1 class="text-4xl font-bold mb-4">Note Embedded Preview</h1>
-    <p class="text-lg text-muted-foreground mb-2">
+    <p class="text-lg text-muted-foreground mb-6">
       Embedded preview handler for short text notes (Kind 1) and generic replies (Kind 1111).
-    </p>
-    <p class="text-sm text-muted-foreground mb-6">
-      <a href="/components/previews/introduction" class="text-primary hover:underline">
-        ← Back to Embedded Previews
-      </a>
     </p>
 
     <EditProps.Root>
       <EditProps.Prop
         name="Sample Note (Kind:1 embedding another note)"
         type="event"
+        default="nevent1qvzqqqqqqypzq0mgmm0gz4yuczzyltl99rc4wj63uz27wjglg69aj6ylsamehwqaqqst6h0tdve9v0xwwpz4d4ckwfc9ksjtjjjutc4smjzewp85u7a9v0qhd8czh"
         bind:value={sampleNote}
       />
     </EditProps.Root>

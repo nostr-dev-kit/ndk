@@ -4,7 +4,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   import InteractiveDemo from './examples/interactive-demo.example.svelte';
@@ -53,9 +53,9 @@
       component renders each event kind.
     </p>
 
-    <div class="space-y-8">
+    <div class="space-y-12">
       <!-- Architecture Overview -->
-      <div class="p-6 border border-border rounded-lg bg-card">
+      <div>
         <h3 class="text-xl font-semibold mb-4">Architecture</h3>
         <div class="space-y-4 text-muted-foreground">
           <div class="flex items-start gap-3">
@@ -90,7 +90,7 @@
       </div>
 
       <!-- ContentRenderer System -->
-      <div class="p-6 border border-border rounded-lg bg-muted/30">
+      <div>
         <h3 class="text-xl font-semibold mb-4">ContentRenderer System</h3>
         <p class="text-sm text-muted-foreground mb-4">
           Self-registering handlers using NDK wrapper classes for automatic kind mapping and type-safe event wrapping.
@@ -128,7 +128,7 @@
       </div>
 
       <!-- Adding New Handlers -->
-      <div class="p-6 border border-border rounded-lg bg-muted/30">
+      <div>
         <h3 class="text-xl font-semibold mb-4">Adding New Kind Handlers</h3>
         <p class="text-sm text-muted-foreground mb-4">
           Kind handlers self-register automatically via side effects. Just install and import - no manual registration needed.
@@ -180,7 +180,7 @@
       </div>
 
       <!-- Fallback Behavior -->
-      <div class="p-6 border border-border rounded-lg bg-card">
+      <div>
         <h3 class="text-xl font-semibold mb-4">Fallback Behavior</h3>
         <p class="text-sm text-muted-foreground mb-4">
           When an event kind has no registered handler, the system automatically falls back
@@ -285,7 +285,7 @@
       </a>
 
       <!-- Generic Fallback -->
-      <a href="/components/embeds/generic" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/events/embeds/generic" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Generic Fallback</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">Unknown kinds</span>
@@ -305,7 +305,7 @@
     <InteractiveDemo {ndk} />
   {/snippet}
 
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Interactive Demo"
     description="Try pasting any Nostr event reference."
   />
@@ -327,7 +327,7 @@
     <VariantComparison {ndk} />
   {/snippet}
 
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Variant Support"
     description="All handlers support three display variants."
   />
@@ -345,7 +345,7 @@
   />
 
   <!-- Components Section -->
-  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+  <SectionTitle title="Components" description="Explore each variant in detail" />
 
   <section class="py-12 space-y-16">
     <ComponentCard data={liveDemoData}>

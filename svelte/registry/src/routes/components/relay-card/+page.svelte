@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import { relayCardMetadata } from '$lib/component-registry/relay-card';
   import type { ShowcaseBlock } from '$lib/templates/types';
@@ -135,7 +135,7 @@
 
 <!-- UI Primitives section -->
 {#snippet afterComponents()}
-  <ComponentPageSectionTitle title="UI Primitives" description="Primitive components for building custom relay card layouts" />
+  <SectionTitle title="UI Primitives" description="Primitive components for building custom relay card layouts" />
 
   <section class="py-12 space-y-16">
     <ComponentCard data={relayCardMetadata.cards[3]}>

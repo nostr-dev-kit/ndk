@@ -4,19 +4,19 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventCardClassic from '$lib/registry/components/event-card/event-card-classic.svelte';
 	import EventCardMenu from '$lib/registry/components/event-card/event-card-menu.svelte';
+	import { EventCard } from '$lib/registry/components/event-card';
 	import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
+	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-	import ComponentCard from '$site-components/ComponentCard.svelte';
-	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { eventCardMetadata, eventCardCards, eventCardClassicCard, eventCardMenuCard, eventCardBasicCard, eventCardFullCard } from '$lib/component-registry/event-card';
 	import type { ShowcaseBlock } from '$lib/templates/types';
 
-	import UIBasic from './examples/ui-basic.example.svelte';
-	import UIFull from './examples/ui-full.example.svelte';
-	import ChromeDemo from './examples/chrome-demo.example.svelte';
+	import UIBasic from './generic/examples/ui-basic.example.svelte';
+	import UIFull from './generic/examples/ui-full.example.svelte';
+	import ChromeDemo from './generic/examples/chrome-demo.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleEvent = $state<NDKEvent | undefined>();
@@ -40,52 +40,82 @@
 		}
 	];
 </script>
+
 {#snippet beforeShowcase()}
 	{#if sampleEvent}
 		<section class="mb-16">
-			<h2 class="text-3xl font-bold mb-4">Understanding the Chrome</h2>
+			<h2 class="text-3xl font-bold mb-4">EventCard Primitives</h2>
 			<p class="text-muted-foreground mb-6">
-				EventCard provides the <strong>chrome</strong> — the consistent visual frame around your content.
-				Think of it as the picture frame that stays the same while the artwork inside changes.
+				EventCard provides composable building blocks for displaying Nostr events. Use these primitives
+				to build custom card layouts, or use pre-built blocks like EventCardClassic for common patterns.
 			</p>
 
-			<div class="bg-muted/30 border border-border rounded-lg p-6 mb-6">
-				<h3 class="text-lg font-semibold mb-3">The chrome includes:</h3>
+			<div class="bg-muted/30 border border-border rounded-lg p-6 mb-8">
+				<h3 class="text-lg font-semibold mb-3">Core Components</h3>
 				<ul class="space-y-2 text-muted-foreground">
 					<li class="flex items-start gap-2">
 						<span class="text-primary">•</span>
-						<span><strong>Header</strong> — Author info, avatar, timestamp, and actions menu</span>
+						<span><strong>EventCard.Root</strong> — Container providing context to child components</span>
 					</li>
 					<li class="flex items-start gap-2">
 						<span class="text-primary">•</span>
-						<span><strong>Content slot</strong> — Where any event kind renders (notes, articles, videos, etc.)</span>
+						<span><strong>EventCard.Header</strong> — Author avatar, name, and timestamp</span>
 					</li>
 					<li class="flex items-start gap-2">
 						<span class="text-primary">•</span>
-						<span><strong>Actions</strong> — Interaction buttons (reply, repost, reactions)</span>
+						<span><strong>EventCard.Content</strong> — Event content renderer</span>
 					</li>
 					<li class="flex items-start gap-2">
 						<span class="text-primary">•</span>
-						<span><strong>Thread indicators</strong> — Visual lines connecting related events</span>
+						<span><strong>EventCard.Actions</strong> — Interaction buttons (reply, repost, reactions)</span>
+					</li>
+					<li class="flex items-start gap-2">
+						<span class="text-primary">•</span>
+						<span><strong>EventCard.Dropdown</strong> — Menu for additional actions</span>
 					</li>
 				</ul>
 			</div>
 
-			<ComponentCard data={{ name: 'chrome-demo', title: 'Interactive Chrome Demo', description: 'See how the chrome adapts to different event kinds', richDescription: 'See how the same chrome adapts to different event kinds. The header, layout, and actions stay consistent while the content changes.', command: 'npx shadcn@latest add event-card', apiDocs: [] }}>
-				{#snippet preview()}
-					<div class="max-w-2xl mx-auto">
-						<ChromeDemo {ndk} event={sampleEvent} />
-					</div>
-				{/snippet}
-			</ComponentCard>
-
 			<div class="mt-6 p-4 bg-primary/5 border-l-4 border-primary rounded">
 				<p class="text-sm text-muted-foreground">
-					<strong class="text-foreground">Why this matters:</strong> By separating the chrome from the content,
-					you can display any Nostr event kind (kind 1 notes, kind 30023 articles, kind 30040 videos, etc.)
-					with a consistent, familiar interface. Your users always know where to find the author, how to interact,
-					and how events relate to each other — regardless of content type.
+					<strong class="text-foreground">Composable-first approach:</strong> Use the primitives for full control,
+					or use pre-built blocks for speed. Both use the same underlying components, so you can start with blocks
+					and refactor to primitives as your needs evolve.
 				</p>
+			</div>
+		</section>
+
+		<section class="mb-16">
+			<h2 class="text-3xl font-bold mb-4">Specialized Cards</h2>
+			<p class="text-muted-foreground mb-6">
+				For specific event kinds, the registry provides specialized card components with optimized
+				layouts and metadata display.
+			</p>
+
+			<div class="grid gap-4 md:grid-cols-3">
+				<a href="/events/cards/article" class="group p-6 border rounded-lg hover:bg-accent/50 transition-colors">
+					<h3 class="font-semibold mb-2 group-hover:text-primary">ArticleCard</h3>
+					<p class="text-sm text-muted-foreground mb-3">
+						Long-form article layouts with hero images and reading time.
+					</p>
+					<span class="text-sm text-primary">View variants →</span>
+				</a>
+
+				<a href="/events/cards/highlight" class="group p-6 border rounded-lg hover:bg-accent/50 transition-colors">
+					<h3 class="font-semibold mb-2 group-hover:text-primary">HighlightCard</h3>
+					<p class="text-sm text-muted-foreground mb-3">
+						Text highlight displays with source context and attribution.
+					</p>
+					<span class="text-sm text-primary">View variants →</span>
+				</a>
+
+				<a href="/events/cards/voice-message" class="group p-6 border rounded-lg hover:bg-accent/50 transition-colors">
+					<h3 class="font-semibold mb-2 group-hover:text-primary">VoiceMessageCard</h3>
+					<p class="text-sm text-muted-foreground mb-3">
+						Audio message players with waveform visualization.
+					</p>
+					<span class="text-sm text-primary">View variants →</span>
+				</a>
 			</div>
 		</section>
 	{/if}
@@ -125,7 +155,7 @@
 
 {#snippet afterShowcase()}
 	{#if sampleEvent}
-		<ComponentPageSectionTitle
+		<SectionTitle
 			title="UI Primitives"
 			description="Primitive components for building custom event card layouts."
 		/>
@@ -240,7 +270,8 @@
 	<ComponentPageTemplate
 		metadata={eventCardMetadata}
 		{ndk}
-		{showcaseBlocks}{beforeShowcase}
+		{showcaseBlocks}
+		{beforeShowcase}
 		{afterShowcase}
 		componentsSection={{
 			cards: eventCardCards,
@@ -253,23 +284,23 @@
 		}}
 		{customSections}
 	>
-    <EditProps.Prop
+		<EditProps.Prop
 			name="Sample Event"
 			type="event"
 			bind:value={sampleEvent}
 			default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
 		/>
-  </ComponentPageTemplate>
+	</ComponentPageTemplate>
 {:else}
 	<div class="px-8">
 		<PageTitle title={eventCardMetadata.title} subtitle={eventCardMetadata.description}>
-      <EditProps.Prop
-			name="Sample Event"
-			type="event"
-			bind:value={sampleEvent}
-			default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-		/>
-    </PageTitle>
+			<EditProps.Prop
+				name="Sample Event"
+				type="event"
+				bind:value={sampleEvent}
+				default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+			/>
+		</PageTitle>
 		<div class="py-16 text-center text-muted-foreground">
 			Loading sample event...
 		</div>

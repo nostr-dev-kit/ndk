@@ -7,7 +7,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
 
   import TwitterCode from './examples/twitter-code.example.svelte';
   import UIBasic from './examples/ui-basic.example.svelte';
@@ -117,7 +117,7 @@ thread.focusOn(event)  // Navigate to different event`}
 
 <!-- Custom UI Primitives showcase section -->
 {#snippet afterShowcase()}
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="UI Primitives"
     description="Primitive components for building custom thread layouts."
   />

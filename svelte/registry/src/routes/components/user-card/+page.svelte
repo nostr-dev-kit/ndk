@@ -16,7 +16,7 @@
     userCardPrimitiveData
   } from '$lib/component-registry/user-card';
   import { EditProps } from '$lib/site-components/edit-props';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { User } from '$lib/registry/ui';
   import { ScrollArea } from '$lib/site-components/ui/scroll-area';
@@ -204,7 +204,7 @@
 {#snippet customSections()}
   {#if displayUsers.length > 0}
     <!-- Anatomy Section -->
-    <ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
+    <SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
     <ComponentAnatomy.Root>
       <ComponentAnatomy.Preview>
@@ -249,7 +249,7 @@
     </ComponentAnatomy.Root>
 
     <!-- Primitives Section -->
-    <ComponentPageSectionTitle title="Primitives" />
+    <SectionTitle title="Primitives" />
 
     <section class="min-h-[500px] lg:min-h-[60vh] py-12">
       <div class="grid grid-cols-3">

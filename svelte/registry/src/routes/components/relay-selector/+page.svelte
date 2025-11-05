@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import { relaySelectorMetadata } from '$lib/component-registry/relay-selector';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
@@ -84,7 +84,7 @@
 
 <!-- Additional showcase for UI Primitives -->
 {#snippet afterShowcase()}
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="UI Primitives"
     description="Primitive components for building custom relay selector layouts."
   />

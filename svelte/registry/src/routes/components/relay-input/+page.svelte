@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import { relayInputMetadata } from '$lib/component-registry/relay-input';
   import type { ShowcaseBlock } from '$lib/templates/types';
@@ -137,7 +137,7 @@
 
 <!-- Additional showcases section -->
 {#snippet afterShowcase()}
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Component Usage"
     description="Use individual components to build custom relay input experiences."
   />
@@ -147,7 +147,7 @@
 
 <!-- Custom sections for Block Variants, Component Variants, and Features -->
 {#snippet customSections()}
-  <ComponentPageSectionTitle title="Block Variants" description="Explore each relay input block variant in detail" />
+  <SectionTitle title="Block Variants" description="Explore each relay input block variant in detail" />
 
   <section class="py-12 space-y-16">
     <ComponentCard data={relayInputMetadata.cards[0]}>
@@ -191,7 +191,7 @@
     </ComponentCard>
   </section>
 
-  <ComponentPageSectionTitle title="Component Variants" description="Explore each component variant in detail" />
+  <SectionTitle title="Component Variants" description="Explore each component variant in detail" />
 
   <section class="py-12 space-y-16">
     <ComponentCard data={relayInputMetadata.cards[4]}>

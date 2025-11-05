@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy/index.js';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import type { UIPrimitivePageTemplateProps } from './types';
@@ -87,7 +87,7 @@
 
     <!-- Primitives Grid Showcase -->
     {#if showcaseBlocks.length > 0}
-      <ComponentPageSectionTitle
+      <SectionTitle
         title="Primitives"
         description="Available components in this primitive namespace"
       />
@@ -101,7 +101,7 @@
 
     <!-- Anatomy Section (Mandatory) -->
     <section class="mt-16">
-      <ComponentPageSectionTitle
+      <SectionTitle
         title="Anatomy"
         description="Interactive layer view of the primitive composition"
       />
@@ -121,7 +121,7 @@
     <!-- Detailed Primitives with API docs -->
     {#if metadata.primitives.length > 0}
       <section class="mt-16">
-        <ComponentPageSectionTitle
+        <SectionTitle
           title="API Reference"
           description="Detailed API documentation for each primitive"
         />

@@ -32,8 +32,8 @@
 
 <span
 	class="inline-block cursor-pointer border-2 {isSelected
-		? 'border-purple-500'
-		: 'border-purple-500/30'} border-dashed rounded px-1 transition-colors {className}"
+		? 'border-orange-500'
+		: 'border-orange-500/30'} border-dashed rounded px-1 transition-colors {className}"
 	role="button"
 	tabindex="0"
 	onclick={handleSelect}

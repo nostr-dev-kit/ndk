@@ -15,7 +15,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
 
@@ -126,7 +126,7 @@
 <!-- Custom Anatomy section -->
 {#snippet customSections()}
   {#if displayPacks.length > 0}
-    <ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
+    <SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
     <ComponentAnatomy.Root>
       <ComponentAnatomy.Preview>

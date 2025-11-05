@@ -10,7 +10,7 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
-	import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { articleCardMetadata, articleCardCards } from '$lib/component-registry/article-card';
 	import type { ShowcaseBlock } from '$lib/templates/types';
@@ -246,7 +246,7 @@
 {#snippet customSections()}
 	{#if !loading}
 		<!-- Anatomy Section -->
-		<ComponentPageSectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
+		<SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
 		<ComponentAnatomy.Root>
 			<ComponentAnatomy.Preview>
@@ -279,7 +279,7 @@
 		</ComponentAnatomy.Root>
 
 		<!-- Primitives Grid -->
-		<ComponentPageSectionTitle title="Primitives" />
+		<SectionTitle title="Primitives" />
 
 		<section class="min-h-[500px] lg:min-h-[60vh] pb-12">
 

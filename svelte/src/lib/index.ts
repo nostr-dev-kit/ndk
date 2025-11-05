@@ -85,19 +85,6 @@ export {
 } from "./builders/event/thread/index.svelte.js";
 
 // ============================================================================
-// Event Content Rendering Builders
-// ============================================================================
-
-export {
-    createEventContent,
-    createEmbeddedEvent,
-    type EmbeddedEventConfig,
-    type EventContentConfig,
-    type EmbeddedEventState,
-    type EventContentState,
-} from "./builders/event-content/index.svelte.js";
-
-// ============================================================================
 // Profile Builder
 // ============================================================================
 
@@ -179,23 +166,6 @@ export {
     type ReplyStats,
     type RepostStats,
 } from "./builders/actions/index.js";
-
-// Content parsing utilities
-export {
-    buildEmojiMap,
-    classifyMatch,
-    collectMatches,
-    createEmojiSegment,
-    decodeNostrUri,
-    extractYouTubeId,
-    groupConsecutiveImages,
-    isImage,
-    isVideo,
-    isYouTube,
-    parseContentToSegments,
-    PATTERNS,
-    type ParsedSegment,
-} from "./builders/event-content/utils.js";
 
 // Utilities
 export { deterministicPubkeyGradient } from "./utils/deterministic-gradient.js";

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createEventContent } from './index.svelte';
+import { createEventContent } from './event-content.svelte';
 import { NDKEvent } from '@nostr-dev-kit/ndk';
 
 describe('createEventContent', () => {

@@ -17,6 +17,12 @@
   import UiPopover from './examples/ui-popover.example.svelte';
   import UiAutocomplete from './examples/ui-autocomplete.example.svelte';
 
+  // Import code examples
+  import emojiPickerListCode from './emoji-picker-list.example?raw';
+  import emojiPickerContentCode from './emoji-picker-content.example?raw';
+  import emojiPickerPopoverCode from './emoji-picker-popover.example?raw';
+  import emojiPickerAutocompleteCode from './emoji-picker-autocomplete.example?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
@@ -96,7 +102,12 @@
   {showcaseBlocks}
   {customSections}
   componentsSection={{
-    cards: emojiPickerMetadata.cards,
+    cards: [
+      { ...emojiPickerListCard, code: emojiPickerListCode },
+      { ...emojiPickerContentCard, code: emojiPickerContentCode },
+      { ...emojiPickerPopoverCard, code: emojiPickerPopoverCode },
+      { ...emojiPickerAutocompleteCard, code: emojiPickerAutocompleteCode }
+    ],
     previews: {
       'emoji-picker-list': basicPreview,
       'emoji-picker-content': contentPreview,

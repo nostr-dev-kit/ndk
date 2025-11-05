@@ -24,6 +24,12 @@
   import FollowPackCompact from '$lib/registry/components/follow-pack/follow-pack-compact.svelte';
   import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte';
 
+  // Import code examples
+  import followPackHeroCode from './follow-pack-hero.example?raw';
+  import followPackPortraitCode from './follow-pack-portrait.example?raw';
+  import followPackCompactCode from './follow-pack-compact.example?raw';
+  import followPackListItemCode from './follow-pack-list-item.example?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   let followPacks = $state<NDKFollowPack[]>([]);
@@ -131,7 +137,7 @@
     <ComponentAnatomy.Root>
       <ComponentAnatomy.Preview>
         <div class="relative bg-card border border-border rounded-xl overflow-hidden">
-          <FollowPack.Root {ndk} followPack={pack1}>
+          <FollowPack.Root {ndk} followPack={pack1!}>
             <ComponentAnatomy.Layer id="image" label="FollowPack.Image" class="h-48 overflow-hidden" absolute={true}>
               <FollowPack.Image class="w-full h-full object-cover" />
             </ComponentAnatomy.Layer>
@@ -199,7 +205,12 @@
     showcaseComponent={ComponentsShowcase}
     {showcaseBlocks}{customSections}
     componentsSection={{
-      cards: followPackMetadata.cards,
+      cards: [
+        { ...followPackHeroCard, code: followPackHeroCode },
+        { ...followPackPortraitCard, code: followPackPortraitCode },
+        { ...followPackCompactCard, code: followPackCompactCode },
+        { ...followPackListItemCard, code: followPackListItemCode }
+      ],
       previews: {
         'follow-pack-hero': heroComponentPreview,
         'follow-pack-portrait': portraitComponentPreview,

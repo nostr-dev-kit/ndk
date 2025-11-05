@@ -1,0 +1,5 @@
+<script lang="ts">
+  import UserListItem from '$lib/registry/components/user-card/user-list-item.svelte';
+</script>
+
+<UserListItem {ndk} pubkey={user.pubkey} />

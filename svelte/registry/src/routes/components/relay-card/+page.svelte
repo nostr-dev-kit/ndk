@@ -13,6 +13,11 @@
   import RelayCardCompact from '$lib/registry/components/relay-card/relay-card-compact.svelte';
   import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
 
+  // Import code examples
+  import relayCardPortraitCode from './relay-card-portrait.example?raw';
+  import relayCardCompactCode from './relay-card-compact.example?raw';
+  import relayCardListCode from './relay-card-list.example?raw';
+
   // UI component examples
   import BasicExample from './examples/basic.example.svelte';
   import BuilderUsageExample from './examples/builder-usage.example.svelte';
@@ -37,12 +42,14 @@
       description: 'Vertical card with icon on top',
       command: 'npx shadcn@latest add relay-card-portrait',
       preview: portraitPreview,
+      orientation: 'horizontal',
       cardData: relayCardMetadata.cards[0]
     },
     {
       name: 'Compact',
       description: 'Small square card',
       command: 'npx shadcn@latest add relay-card-compact',
+      orientation: 'horizontal',
       preview: compactPreview,
       cardData: relayCardMetadata.cards[1]
     },
@@ -50,6 +57,7 @@
       name: 'List',
       description: 'Horizontal list layout',
       command: 'npx shadcn@latest add relay-card-list',
+      orientation: 'vertical',
       preview: listPreview,
       cardData: relayCardMetadata.cards[2]
     }
@@ -58,7 +66,7 @@
 
 <!-- Preview snippets for blocks -->
 {#snippet portraitPreview()}
-  <div class="flex gap-6 overflow-x-auto pb-4">
+  <div class="flex gap-6 pb-4 w-full">
     {#each displayRelays as relayUrl (relayUrl)}
       <RelayCardPortrait {ndk} {relayUrl} class="flex-none" />
     {/each}
@@ -66,15 +74,15 @@
 {/snippet}
 
 {#snippet compactPreview()}
-  <div class="flex gap-4 overflow-x-auto pb-4">
+  <div class="flex gap-4 pb-4">
     {#each displayRelays as relayUrl (relayUrl)}
-      <RelayCardCompact {ndk} {relayUrl} />
+      <RelayCardCompact {ndk} {relayUrl} class="flex-none" />
     {/each}
   </div>
 {/snippet}
 
 {#snippet listPreview()}
-  <div class="space-y-4">
+  <div class="space-y-4 max-h-[300px]">
     <div>
       <h3 class="text-sm font-semibold mb-2">Default</h3>
       <div class="space-y-0 border border-border rounded-lg overflow-hidden">
@@ -246,7 +254,11 @@
   {ndk}
   showcaseComponent={ComponentsShowcase}
   {showcaseBlocks}componentsSection={{
-    cards: relayCardMetadata.cards.slice(0, 3),
+    cards: [
+      { ...relayCardMetadata.cards[0], code: relayCardPortraitCode },
+      { ...relayCardMetadata.cards[1], code: relayCardCompactCode },
+      { ...relayCardMetadata.cards[2], code: relayCardListCode }
+    ],
     previews: {
       'relay-card-portrait': portraitComponentPreview,
       'relay-card-compact': compactComponentPreview,

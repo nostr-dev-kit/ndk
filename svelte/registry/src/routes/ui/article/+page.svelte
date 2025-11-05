@@ -22,8 +22,9 @@
   let sampleArticle = $state<NDKArticle | null>(null);
 
   $effect(() => {
-    if (articleFetcher.events.length > 0) {
-      sampleArticle = NDKArticle.from(articleFetcher.events[0]);
+    const events = articleFetcher.events as any;
+    if (events && events.length > 0) {
+      sampleArticle = NDKArticle.from(events[0]);
     }
   });
 </script>
@@ -36,19 +37,19 @@
 {#if sampleArticle}
   <UIPrimitivePageTemplate metadata={articleMetadata} {ndk}>
     {#snippet anatomyPreview()}
-      <Article.Root {ndk} article={sampleArticle}>
-        <ComponentAnatomy.Layer id="root" label="Article.Root" description="Context provider for article data">
+      <Article.Root {ndk} article={sampleArticle!}>
+        <ComponentAnatomy.Layer id="root" label="Article.Root">
           <div class="border border-border rounded-lg p-6 bg-background">
-            <ComponentAnatomy.Layer id="image" label="Article.Image" description="Article cover image">
+            <ComponentAnatomy.Layer id="image" label="Article.Image">
               <Article.Image class="w-full h-48 object-cover rounded-md mb-4" />
             </ComponentAnatomy.Layer>
-            <ComponentAnatomy.Layer id="title" label="Article.Title" description="Article title">
+            <ComponentAnatomy.Layer id="title" label="Article.Title">
               <Article.Title class="text-2xl font-bold mb-2" />
             </ComponentAnatomy.Layer>
-            <ComponentAnatomy.Layer id="summary" label="Article.Summary" description="Article summary">
+            <ComponentAnatomy.Layer id="summary" label="Article.Summary">
               <Article.Summary class="text-muted-foreground mb-4" />
             </ComponentAnatomy.Layer>
-            <ComponentAnatomy.Layer id="reading-time" label="Article.ReadingTime" description="Estimated reading time">
+            <ComponentAnatomy.Layer id="reading-time" label="Article.ReadingTime">
               <Article.ReadingTime class="text-sm text-muted-foreground" />
             </ComponentAnatomy.Layer>
           </div>

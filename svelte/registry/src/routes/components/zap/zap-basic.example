@@ -1,0 +1,5 @@
+<script lang="ts">
+  import ZapButton from '$lib/registry/components/zap-button/zap-button.svelte';
+</script>
+
+<ZapButton {event} />

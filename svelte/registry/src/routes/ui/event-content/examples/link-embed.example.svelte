@@ -113,7 +113,9 @@
 		<a href={linkUrl} target="_blank" rel="noopener noreferrer" class="link-embed-card">
 			{#if loading}
 				<div class="embed-loading">
-					<HugeiconsIcon icon={Loading03Icon} size={20} class="animate-spin" />
+					<div class="animate-spin">
+						<HugeiconsIcon icon={Loading03Icon} size={20} />
+					</div>
 					<span class="loading-text">Loading preview...</span>
 				</div>
 			{:else if metadata}
@@ -134,7 +136,9 @@
 								<img src={metadata.favicon} alt="" class="embed-favicon" />
 							{/if}
 							<span class="embed-domain">{metadata.domain}</span>
-							<HugeiconsIcon icon={Link03Icon} size={12} class="embed-external-icon" />
+							<div class="embed-external-icon">
+								<HugeiconsIcon icon={Link03Icon} size={12} />
+							</div>
 						</div>
 
 						{#if metadata.title}
@@ -160,7 +164,9 @@
 					<div class="embed-body">
 						<div class="embed-header">
 							<span class="embed-domain">{getDomain(linkUrl)}</span>
-							<HugeiconsIcon icon={Link03Icon} size={12} class="embed-external-icon" />
+							<div class="embed-external-icon">
+								<HugeiconsIcon icon={Link03Icon} size={12} />
+							</div>
 						</div>
 						<p class="embed-url">{linkUrl}</p>
 					</div>

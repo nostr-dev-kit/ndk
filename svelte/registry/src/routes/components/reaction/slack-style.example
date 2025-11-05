@@ -1,0 +1,31 @@
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
+  import { Reaction } from '$lib/registry/ui';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
+
+  const reactionState = createReactionAction(() => ({ event }), ndk);
+</script>
+
+<div class="flex flex-wrap gap-2">
+  {#each reactionState.reactions as [emoji, { count, users }]}
+    <button
+      onclick={() => reactionState.react(emoji)}
+      class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${
+        reactionState.hasReacted(emoji)
+          ? 'bg-primary/10 border-primary'
+          : 'bg-muted/30 border-transparent hover:border-muted-foreground/20'
+      } transition-colors`}
+    >
+      <Reaction.Display content={emoji} size={16} />
+      <span class="text-sm font-medium">{count}</span>
+    </button>
+  {/each}
+</div>

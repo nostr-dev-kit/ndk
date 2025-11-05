@@ -1,0 +1,5 @@
+<script lang="ts">
+  import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
+</script>
+
+<RepostButton event={event} />

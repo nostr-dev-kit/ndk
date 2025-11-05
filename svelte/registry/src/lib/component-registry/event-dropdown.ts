@@ -25,8 +25,7 @@ export const eventDropdownMetadata: ComponentPageMetadata = {
 	title: 'EventDropdown',
 	description: 'A dropdown menu component for event actions. Includes mute, report, copy, and raw event viewing functionality with optional relay information display.',
 	showcaseTitle: 'Variants',
-	showcaseDescription: 'EventDropdown can be used standalone or within event cards.',
-	apiDocs: eventDropdownCard.apiDocs
+	showcaseDescription: 'EventDropdown can be used standalone or within event cards.'
 };
 
 export const eventDropdownCards = [eventDropdownCard];

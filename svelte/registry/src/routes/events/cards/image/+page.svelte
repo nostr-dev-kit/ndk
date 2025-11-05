@@ -8,11 +8,9 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { imageCardMetadata, imageCardCards, imageCardInstagramCard, imageCardHeroCard, imageCardCard, imageCardBasicCard } from '$lib/component-registry/image-card';
+	import { imageCardMetadata, imageCardCards, imageCardInstagramCard, imageCardHeroCard, imageCardCard } from '$lib/component-registry/image-card';
 	import type { ShowcaseBlock } from '$lib/templates/types';
 	import ComponentAPI from '$site-components/component-api.svelte';
-
-	import UIBasic from './examples/ui-basic.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleImage = $state<NDKImage | undefined>();
@@ -59,14 +57,6 @@
 			preview: imageCardPreview,
 			cardData: imageCardCard,
 			orientation: 'vertical'
-		},
-		{
-			name: 'Basic',
-			description: 'Minimal image primitive',
-			command: 'npx shadcn@latest add image-card',
-			preview: basicPreview,
-			cardData: imageCardBasicCard,
-			orientation: 'vertical'
 		}
 	];
 </script>
@@ -89,12 +79,6 @@
 {#snippet imageCardPreview()}
 	{#if sampleImage}
 		<ImageCard {ndk} image={sampleImage} />
-	{/if}
-{/snippet}
-
-{#snippet basicPreview()}
-	{#if sampleImage}
-		<UIBasic {ndk} image={sampleImage} />
 	{/if}
 {/snippet}
 
@@ -150,8 +134,7 @@
 			previews: {
 				'image-card-instagram': instagramPreview,
 				'image-card-hero': heroPreview,
-				'image-card': imageCardPreview,
-				'image-basic': basicPreview
+				'image-card': imageCardPreview
 			}
 		}}
 		{customSections}

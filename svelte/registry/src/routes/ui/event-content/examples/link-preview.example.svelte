@@ -104,7 +104,9 @@
 			<LinkPreview.Content class="link-preview-content">
 				{#if loadingStates.get(linkUrl)}
 					<div class="preview-loading">
-						<HugeiconsIcon icon={Loading03Icon} size={20} class="animate-spin" />
+						<div class="animate-spin">
+							<HugeiconsIcon icon={Loading03Icon} size={20} />
+						</div>
 						<span>Loading preview...</span>
 					</div>
 				{:else if hoveredUrl === linkUrl && previewData}

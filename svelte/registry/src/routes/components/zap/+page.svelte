@@ -8,6 +8,10 @@
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import zapBasicCode from './zap-basic.example?raw';
+  import zapCustomCode from './zap-custom.example?raw';
+
   // Import examples
   import BasicExample from './examples/zap-action-basic.example.svelte';
   import BuilderExample from './examples/zap-action-builder.example.svelte';
@@ -29,7 +33,29 @@
     })();
   });
 
-  const showcaseBlocks: ShowcaseBlock[] = [
+</script>
+
+{#if sampleEvent}
+  {@const event = sampleEvent}
+  <!-- Preview snippets for showcase -->
+  {#snippet basicPreview()}
+    <BasicExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet customPreview()}
+    <BuilderExample {ndk} {event} />
+  {/snippet}
+
+  <!-- Preview snippets for components section -->
+  {#snippet basicComponentPreview()}
+    <BasicExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet customComponentPreview()}
+    <BuilderExample {ndk} {event} />
+  {/snippet}
+
+  {@const showcaseBlocks = [
     {
       name: 'Basic',
       description: 'Simple with amount tracking',
@@ -44,27 +70,7 @@
       preview: customPreview,
       cardData: zapCustomCard
     }
-  ];
-</script>
-
-{#if sampleEvent}
-  <!-- Preview snippets for showcase -->
-  {#snippet basicPreview()}
-    <BasicExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet customPreview()}
-    <BuilderExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  <!-- Preview snippets for components section -->
-  {#snippet basicComponentPreview()}
-    <BasicExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet customComponentPreview()}
-    <BuilderExample {ndk} event={sampleEvent} />
-  {/snippet}
+  ]}
 
   <!-- Use the template -->
   <ComponentPageTemplate
@@ -72,7 +78,10 @@
     {ndk}
     {showcaseBlocks}
     componentsSection={{
-      cards: zapMetadata.cards,
+      cards: [
+        { ...zapBasicCard, code: zapBasicCode },
+        { ...zapCustomCard, code: zapCustomCode }
+      ],
       previews: {
         'zap-basic': basicComponentPreview,
         'zap-custom': customComponentPreview

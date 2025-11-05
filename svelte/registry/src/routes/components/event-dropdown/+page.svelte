@@ -13,6 +13,9 @@
 	import { EventCard } from '$lib/registry/components/event-card';
 	import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
 
+	// Import code example
+	import eventDropdownCode from './event-dropdown.example?raw';
+
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	let sampleEvent = $state<NDKEvent | undefined>();
@@ -116,7 +119,6 @@
 		showcaseComponent={ComponentsShowcase}
 		{showcaseBlocks}
 		{customSections}
-		apiDocs={eventDropdownMetadata.apiDocs}
 	>
 		<EditProps.Prop
 			name="Sample Event"

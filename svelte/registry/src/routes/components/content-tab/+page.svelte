@@ -14,6 +14,9 @@
   import { kindLabel } from '$lib/registry/utils';
   import { User } from '$lib/registry/ui';
 
+  // Import code example
+  import contentTabCode from './content-tab.example?raw';
+
   // Import the component
   import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
   import { byCount, byRecency } from '$lib/registry/hooks/content-tab';
@@ -95,7 +98,7 @@
 
 {#snippet customTabPreview()}
   <div class="flex flex-col gap-8 py-8">
-    {#each [user10, user8].filter(Boolean) as user (user.pubkey)}
+    {#each [user10, user8].filter((u): u is NonNullable<typeof u> => Boolean(u)) as user (user.pubkey)}
       <div class="flex flex-col gap-4">
         <div class="flex items-center gap-3">
           <User.Root {ndk} {user}>
@@ -163,14 +166,14 @@
 
     <section class="min-h-[500px] lg:min-h-[60vh] py-12">
       <Tabs.Content value="basic">
-        <ComponentCard data={contentTabCard}>
+        <ComponentCard data={{ ...contentTabCard, code: contentTabCode }}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
                 <span class="text-sm text-muted-foreground">Default (no sorting):</span>
                 <ContentTab
                   {ndk}
-                  pubkeys={[user1.pubkey]}
+                  pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                 />
               </div>
@@ -178,7 +181,7 @@
                 <span class="text-sm text-muted-foreground">With click handler:</span>
                 <ContentTab
                   {ndk}
-                  pubkeys={[user1.pubkey]}
+                  pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063]}
                   onTabClick={(tab) => console.log('Clicked:', tab)}
                 />
@@ -189,14 +192,14 @@
       </Tabs.Content>
 
       <Tabs.Content value="sorting">
-        <ComponentCard data={contentTabCard}>
+        <ComponentCard data={{ ...contentTabCard, code: contentTabCode }}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
                 <span class="text-sm text-muted-foreground">Sorted by count (most published):</span>
                 <ContentTab
                   {ndk}
-                  pubkeys={[user1.pubkey]}
+                  pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byCount}
                 />
@@ -205,7 +208,7 @@
                 <span class="text-sm text-muted-foreground">Sorted by recency (most recent):</span>
                 <ContentTab
                   {ndk}
-                  pubkeys={[user1.pubkey]}
+                  pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byRecency}
                 />
@@ -216,14 +219,14 @@
       </Tabs.Content>
 
       <Tabs.Content value="custom">
-        <ComponentCard data={contentTabCard}>
+        <ComponentCard data={{ ...contentTabCard, code: contentTabCode }}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
                 <span class="text-sm text-muted-foreground">Custom tab rendering with kindLabel:</span>
                 <ContentTab
                   {ndk}
-                  pubkeys={[user1.pubkey]}
+                  pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byCount}
                 >
@@ -242,7 +245,7 @@
                 <span class="text-sm text-muted-foreground">Pill style tabs:</span>
                 <ContentTab
                   {ndk}
-                  pubkeys={[user1.pubkey]}
+                  pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byRecency}
                 >

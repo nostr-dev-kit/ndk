@@ -9,6 +9,10 @@
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import Alert from '$site-components/alert.svelte';
 
+  // Import code examples
+  import muteButtonCode from './mute-button.example?raw';
+  import muteCustomCode from './mute-custom.example?raw';
+
   import MuteButton from '$lib/registry/components/actions/mute-button.svelte';
   import UIComposition from './examples/mute-action-builder.example.svelte';
 
@@ -40,17 +44,17 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">Default:</span>
-      <MuteButton {ndk} target={sampleUser} />
+      <MuteButton {ndk} target={sampleUser!} />
     </div>
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">With User:</span>
-      <MuteButton {ndk} target={sampleUser} showTarget={true} />
+      <MuteButton {ndk} target={sampleUser!} showTarget={true} />
     </div>
   </div>
 {/snippet}
 
 {#snippet customPreview()}
-  <UIComposition {ndk} user={sampleUser} />
+  <UIComposition {ndk} user={sampleUser!} />
 {/snippet}
 
 <!-- Title section -->
@@ -59,17 +63,17 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">Default:</span>
-      <MuteButton {ndk} target={sampleUser} />
+      <MuteButton {ndk} target={sampleUser!} />
     </div>
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">With User:</span>
-      <MuteButton {ndk} target={sampleUser} showTarget={true} />
+      <MuteButton {ndk} target={sampleUser!} showTarget={true} />
     </div>
   </div>
 {/snippet}
 
 {#snippet customComponentPreview()}
-  <UIComposition {ndk} user={sampleUser} />
+  <UIComposition {ndk} user={sampleUser!} />
 {/snippet}
 
 <!-- Custom sections for Builder API and ndk.$mutes API -->
@@ -149,8 +153,12 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
   <ComponentPageTemplate
     metadata={muteMetadata}
     {ndk}
-    {showcaseBlocks}componentsSection={{
-      cards: muteMetadata.cards,
+    {showcaseBlocks}
+    componentsSection={{
+      cards: [
+        { ...muteMetadata.cards[0], code: muteButtonCode },
+        { ...muteMetadata.cards[1], code: muteCustomCode }
+      ],
       previews: {
         'mute-button': muteButtonComponentPreview,
         'mute-custom': customComponentPreview

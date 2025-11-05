@@ -61,13 +61,7 @@
       />
     {:else}
       <!-- Default to ComponentsShowcaseGrid -->
-      <ComponentsShowcaseGrid blocks={showcaseBlocks}>
-        {#if showcaseControls}
-          {#snippet control(block)}
-            {@render showcaseControls(block)}
-          {/snippet}
-        {/if}
-      </ComponentsShowcaseGrid>
+      <ComponentsShowcaseGrid blocks={showcaseBlocks} />
     {/if}
   {:else if emptyState}
     {@render emptyState()}
@@ -92,7 +86,7 @@
 
     <section class="py-12 space-y-16">
       {#each componentsSection.cards as cardData, index (cardData.name)}
-        <ComponentCard inline data={cardData}>
+        <ComponentCard data={cardData}>
           {#snippet preview()}
             {#if componentsSection.previews?.[cardData.name]}
               {@render componentsSection.previews[cardData.name]()}

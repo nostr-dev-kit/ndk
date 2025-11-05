@@ -7,6 +7,12 @@
   import { relaySelectorMetadata } from '$lib/component-registry/relay-selector';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import relaySelectorPopoverCode from './relay-selector-popover.example?raw';
+  import relaySelectorInlineCode from './relay-selector-inline.example?raw';
+  import relaySelectorBasicCode from './relay-selector-basic.example?raw';
+  import relaySelectorFullCode from './relay-selector-full.example?raw';
+
   import RelaySelectorPopover from '$lib/registry/components/relay-selector/relay-selector-popover.svelte';
   import RelaySelectorInline from '$lib/registry/components/relay-selector/relay-selector.svelte';
 
@@ -123,7 +129,12 @@
   showcaseBlocks={blocksShowcaseBlocks}
   {afterShowcase}
   componentsSection={{
-    cards: relaySelectorMetadata.cards,
+    cards: [
+      { ...relaySelectorMetadata.cards[0], code: relaySelectorPopoverCode },
+      { ...relaySelectorMetadata.cards[1], code: relaySelectorInlineCode },
+      { ...relaySelectorMetadata.cards[2], code: relaySelectorBasicCode },
+      { ...relaySelectorMetadata.cards[3], code: relaySelectorFullCode }
+    ],
     previews: {
       'relay-selector-popover': popoverComponentPreview,
       'relay-selector-inline': inlineComponentPreview,

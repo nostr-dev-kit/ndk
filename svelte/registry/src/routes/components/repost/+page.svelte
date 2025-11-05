@@ -16,6 +16,12 @@
   import BasicExample from './examples/basic-code.example.svelte';
   import BuilderExample from './examples/builder-code.example.svelte';
 
+  // Import code examples
+  import repostButtonCode from './repost-button.example?raw';
+  import repostButtonPillCode from './repost-button-pill.example?raw';
+  import repostBasicBuilderCode from './examples/basic-code.example.svelte?raw';
+  import repostCustomBuilderCode from './examples/builder-code.example.svelte?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
@@ -30,8 +36,52 @@
       }
     })();
   });
+</script>
 
-  const showcaseBlocks: ShowcaseBlock[] = [
+{#if sampleEvent}
+  {@const event = sampleEvent}
+  <!-- Preview snippets for showcase -->
+  {#snippet repostButtonPreview()}
+    <RepostButton {ndk} {event} />
+  {/snippet}
+
+  {#snippet repostButtonPillSolidPreview()}
+    <RepostButtonPill {ndk} {event} variant="solid" />
+  {/snippet}
+
+  {#snippet repostButtonPillOutlinePreview()}
+    <RepostButtonPill {ndk} {event} variant="outline" />
+  {/snippet}
+
+  {#snippet basicBuilderPreview()}
+    <BasicExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet customBuilderPreview()}
+    <BuilderExample {ndk} {event} />
+  {/snippet}
+
+  <!-- Preview snippets for components section -->
+  {#snippet repostButtonComponentPreview()}
+    <RepostButton {ndk} {event} />
+  {/snippet}
+
+  {#snippet repostButtonPillComponentPreview()}
+    <div class="flex items-center gap-4">
+      <RepostButtonPill {ndk} {event} variant="solid" />
+      <RepostButtonPill {ndk} {event} variant="outline" />
+    </div>
+  {/snippet}
+
+  {#snippet basicBuilderComponentPreview()}
+    <BasicExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet customBuilderComponentPreview()}
+    <BuilderExample {ndk} {event} />
+  {/snippet}
+
+  {@const showcaseBlocks = [
     {
       name: 'RepostButton',
       description: 'Minimal with icon and count',
@@ -67,50 +117,7 @@
       preview: customBuilderPreview,
       cardData: repostCustomBuilderCard
     }
-  ];
-</script>
-
-{#if sampleEvent}
-  <!-- Preview snippets for showcase -->
-  {#snippet repostButtonPreview()}
-    <RepostButton {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet repostButtonPillSolidPreview()}
-    <RepostButtonPill {ndk} event={sampleEvent} variant="solid" />
-  {/snippet}
-
-  {#snippet repostButtonPillOutlinePreview()}
-    <RepostButtonPill {ndk} event={sampleEvent} variant="outline" />
-  {/snippet}
-
-  {#snippet basicBuilderPreview()}
-    <BasicExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet customBuilderPreview()}
-    <BuilderExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  <!-- Preview snippets for components section -->
-  {#snippet repostButtonComponentPreview()}
-    <RepostButton {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet repostButtonPillComponentPreview()}
-    <div class="flex items-center gap-4">
-      <RepostButtonPill {ndk} event={sampleEvent} variant="solid" />
-      <RepostButtonPill {ndk} event={sampleEvent} variant="outline" />
-    </div>
-  {/snippet}
-
-  {#snippet basicBuilderComponentPreview()}
-    <BasicExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet customBuilderComponentPreview()}
-    <BuilderExample {ndk} event={sampleEvent} />
-  {/snippet}
+  ]}
 
   <!-- Additional section for Builder API -->
   {#snippet afterComponents()}
@@ -162,7 +169,12 @@ await repostState.repost();</code></pre>
     {showcaseBlocks}
     {afterComponents}
     componentsSection={{
-      cards: repostMetadata.cards,
+      cards: [
+        { ...repostButtonCard, code: repostButtonCode },
+        { ...repostButtonPillCard, code: repostButtonPillCode },
+        { ...repostBasicBuilderCard, code: repostBasicBuilderCode },
+        { ...repostCustomBuilderCard, code: repostCustomBuilderCode }
+      ],
       previews: {
         'repost-button': repostButtonComponentPreview,
         'repost-button-pill': repostButtonPillComponentPreview,

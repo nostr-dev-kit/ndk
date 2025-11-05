@@ -345,107 +345,107 @@
     transition: transform 0.2s;
   }
 
-  .article-content {
+  :global(.article-content) {
     color: var(--foreground);
   }
 
-  .article-content :global(h1) {
+  :global(.article-content h1) {
     @apply text-3xl sm:text-4xl font-bold mt-12 mb-6;
     font-family: var(--font-serif);
     color: var(--foreground);
   }
 
-  .article-content :global(h2) {
+  :global(.article-content h2) {
     @apply text-2xl sm:text-3xl font-bold mt-10 mb-5;
     font-family: var(--font-serif);
     color: var(--foreground);
   }
 
-  .article-content :global(h3) {
+  :global(.article-content h3) {
     @apply text-xl sm:text-2xl font-bold mt-8 mb-4;
     font-family: var(--font-serif);
     color: var(--foreground);
   }
 
   /* Remove top margin from first heading */
-  .article-content > :global(h1:first-child),
-  .article-content > :global(h2:first-child),
-  .article-content > :global(h3:first-child),
-  .article-content > :global(h4:first-child),
-  .article-content > :global(h5:first-child),
-  .article-content > :global(h6:first-child) {
+  :global(.article-content > h1:first-child),
+  :global(.article-content > h2:first-child),
+  :global(.article-content > h3:first-child),
+  :global(.article-content > h4:first-child),
+  :global(.article-content > h5:first-child),
+  :global(.article-content > h6:first-child) {
     margin-top: 0;
   }
 
-  .article-content :global(p) {
+  :global(.article-content p) {
     @apply text-lg leading-[1.8] mb-6;
     font-family: var(--font-serif);
     color: var(--foreground);
   }
 
-  .article-content :global(a) {
+  :global(.article-content a) {
     @apply text-blue-600 dark:text-blue-400 underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300 transition-colors;
   }
 
-  .article-content :global(img) {
+  :global(.article-content img) {
     @apply w-full rounded-lg shadow-sm my-8;
   }
 
-  .article-content :global(ul) {
+  :global(.article-content ul) {
     @apply list-disc pl-6 mb-6 space-y-2 text-lg;
     font-family: var(--font-serif);
     color: var(--foreground);
   }
 
-  .article-content :global(ol) {
+  :global(.article-content ol) {
     @apply list-decimal pl-6 mb-6 space-y-2 text-lg;
     font-family: var(--font-serif);
     color: var(--foreground);
   }
 
-  .article-content :global(li) {
+  :global(.article-content li) {
     @apply leading-[1.8];
   }
 
-  .article-content :global(blockquote) {
+  :global(.article-content blockquote) {
     @apply border-l-4 pl-6 my-8 italic text-xl leading-[1.8];
     font-family: var(--font-serif);
     border-color: var(--border);
     color: var(--muted-foreground);
   }
 
-  .article-content :global(code) {
+  :global(.article-content code) {
     @apply px-1.5 py-0.5 rounded text-sm font-mono;
     background-color: var(--muted);
     color: var(--foreground);
   }
 
-  .article-content :global(pre) {
+  :global(.article-content pre) {
     @apply mb-6 overflow-hidden rounded-lg;
   }
 
-  .article-content :global(pre code) {
+  :global(.article-content pre code) {
     @apply block border rounded-lg p-4 overflow-x-auto text-sm font-mono leading-relaxed;
     background-color: var(--background);
     border-color: var(--border);
   }
 
-  .article-content :global(hr) {
+  :global(.article-content hr) {
     @apply my-12 border-t;
     border-color: var(--border);
   }
 
-  .article-content :global(strong) {
+  :global(.article-content strong) {
     @apply font-bold;
     color: var(--foreground);
   }
 
-  .article-content :global(em) {
+  :global(.article-content em) {
     @apply italic;
   }
 
   /* Nostr highlight styles */
-  .article-content :global(mark.nostr-highlight) {
+  :global(.article-content mark.nostr-highlight) {
     background-color: color-mix(in srgb, var(--primary) 20%, transparent);
     border-bottom: 2px solid color-mix(in srgb, var(--primary) 60%, transparent);
     color: var(--foreground);
@@ -456,7 +456,7 @@
     user-select: none;
   }
 
-  .article-content :global(mark.nostr-highlight:hover) {
+  :global(.article-content mark.nostr-highlight:hover) {
     background-color: color-mix(in srgb, var(--primary) 30%, transparent);
     border-bottom-color: var(--primary);
   }

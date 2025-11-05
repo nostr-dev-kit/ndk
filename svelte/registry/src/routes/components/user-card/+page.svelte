@@ -25,6 +25,15 @@
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import userCardClassicCode from './user-card-classic.example?raw';
+  import userCardCompactCode from './user-card-compact.example?raw';
+  import userListItemCode from './user-list-item.example?raw';
+  import userCardPortraitCode from './user-card-portrait.example?raw';
+  import userCardLandscapeCode from './user-card-landscape.example?raw';
+  import userCardNeonCode from './user-card-neon.example?raw';
+  import userCardGlassCode from './user-card-glass.example?raw';
+
   // Import blocks
   import UserCardClassic from '$lib/registry/components/user-card/user-card-classic.svelte';
   import UserCardPortrait from '$lib/registry/components/user-card/user-card-portrait.svelte';
@@ -367,7 +376,15 @@
     showcaseBlocks={showcaseBlocks}
     {customSections}
     componentsSection={{
-      cards: userCardMetadata.cards,
+      cards: [
+        { ...userCardClassicCard, code: userCardClassicCode },
+        { ...userCardCompactCard, code: userCardCompactCode },
+        { ...userCardListItemCard, code: userListItemCode },
+        { ...userCardPortraitCard, code: userCardPortraitCode },
+        { ...userCardLandscapeCard, code: userCardLandscapeCode },
+        { ...userCardNeonCard, code: userCardNeonCode },
+        { ...userCardGlassCard, code: userCardGlassCode }
+      ],
       previews: {
         'user-card-classic': classicComponentPreview,
         'user-card-compact': compactComponentPreview,

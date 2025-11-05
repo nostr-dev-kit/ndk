@@ -1,13 +1,9 @@
-import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import type { RelayProgress } from '../../builders/negentropy-sync/index.js';
 
 /**
  * Context shared between NegentrogySync components
  */
 export interface NegentropySyncContext {
-    /** NDK instance */
-    ndk: NDKSvelte;
-
     /** Whether sync is currently in progress */
     syncing: boolean;
 

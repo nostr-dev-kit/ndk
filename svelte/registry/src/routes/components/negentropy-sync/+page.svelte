@@ -16,6 +16,12 @@
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 
+  // Import code examples
+  import negentropySyncProgressMinimalCode from './negentropy-sync-progress-minimal.example?raw';
+  import negentropySyncProgressDetailedCode from './negentropy-sync-progress-detailed.example?raw';
+  import negentropySyncProgressAnimatedCode from './negentropy-sync-progress-animated.example?raw';
+  import negentropySyncProgressCompactCode from './negentropy-sync-progress-compact.example?raw';
+
   // Import block components
   import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-minimal.svelte';
   import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-detailed.svelte';
@@ -26,14 +32,28 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Demo state
-  let filters = $state<NDKFilter[]>([{ kinds: [1], limit: 100 }]);
-  let relayUrls = $state<string[] | undefined>(['wss://relay.damus.io']);
-  let demoSyncBuilder = $state<ReturnType<typeof createNegentropySync>>();
+  let filters = $state<NDKFilter[]>([{ kinds: [0, 1] }]);
+  let relayUrls = $state<string[] | undefined>(['wss://relay.damus.io', 'wss://relay.nostr.band']);
 
-  demoSyncBuilder = createNegentropySync(() => ({
-    filters,
-    relayUrls
-  }), ndk);
+  let demoSyncBuilder = $state<ReturnType<typeof createNegentropySync>>(
+    createNegentropySync(() => {
+      // Get 5 random pubkeys from follows
+      const follows = Array.from(ndk.$follows || []);
+      const randomFollows = follows
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5)
+
+      // Add authors to filter if we have follows
+      const filterWithAuthors = randomFollows.length > 0
+        ? [{ ...filters[0], authors: randomFollows }]
+        : filters;
+
+      return {
+        filters: filterWithAuthors,
+        relayUrls
+      };
+    }, ndk)
+  );
 
   // Showcase blocks
   const showcaseBlocks: ShowcaseBlock[] = [
@@ -70,19 +90,19 @@
 
 <!-- Preview snippets for showcase -->
 {#snippet minimalPreview()}
-  <NegentropySyncProgressMinimal {ndk} {filters} {relayUrls} />
+  <NegentropySyncProgressMinimal syncBuilder={demoSyncBuilder} />
 {/snippet}
 
 {#snippet detailedPreview()}
-  <NegentropySyncProgressDetailed {ndk} {filters} {relayUrls} />
+  <NegentropySyncProgressDetailed syncBuilder={demoSyncBuilder} />
 {/snippet}
 
 {#snippet animatedPreview()}
-  <NegentropySyncProgressAnimated {ndk} {filters} {relayUrls} />
+  <NegentropySyncProgressAnimated syncBuilder={demoSyncBuilder} />
 {/snippet}
 
 {#snippet compactPreview()}
-  <NegentropySyncProgressCompact {ndk} {filters} {relayUrls} />
+  <NegentropySyncProgressCompact syncBuilder={demoSyncBuilder} />
 {/snippet}
 
 <!-- EditProps snippet -->
@@ -94,10 +114,10 @@
   />
 
   <section class="py-12 space-y-16">
-    <ComponentCard data={negentropySyncProgressMinimalCard}>
+    <ComponentCard data={{ ...negentropySyncProgressMinimalCard, code: negentropySyncProgressMinimalCode }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-md mx-auto">
-          <NegentropySyncProgressMinimal {ndk} {filters} {relayUrls} />
+          <NegentropySyncProgressMinimal syncBuilder={demoSyncBuilder} />
           <div class="text-xs text-muted-foreground text-center">
             Click "Start Demo Sync" above to see progress
           </div>
@@ -105,27 +125,27 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={negentropySyncProgressDetailedCard}>
+    <ComponentCard data={{ ...negentropySyncProgressDetailedCard, code: negentropySyncProgressDetailedCode }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-          <NegentropySyncProgressDetailed {ndk} {filters} {relayUrls} />
+          <NegentropySyncProgressDetailed syncBuilder={demoSyncBuilder} />
         </div>
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={negentropySyncProgressAnimatedCard}>
+    <ComponentCard data={{ ...negentropySyncProgressAnimatedCard, code: negentropySyncProgressAnimatedCode }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-          <NegentropySyncProgressAnimated {ndk} {filters} {relayUrls} />
+          <NegentropySyncProgressAnimated syncBuilder={demoSyncBuilder} />
         </div>
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={negentropySyncProgressCompactCard}>
+    <ComponentCard data={{ ...negentropySyncProgressCompactCard, code: negentropySyncProgressCompactCode }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 items-center">
           <div class="flex items-center gap-4">
-            <NegentropySyncProgressCompact {ndk} {filters} {relayUrls} />
+            <NegentropySyncProgressCompact syncBuilder={demoSyncBuilder} />
             <span class="text-xs text-muted-foreground">Hover to expand</span>
           </div>
         </div>
@@ -267,9 +287,15 @@ sync.activeNegotiations.forEach(relay => &#123;
 
     <div class="bg-muted/50 rounded-lg p-6">
       <h3 class="text-lg font-semibold mb-3">Using Primitives</h3>
-      <pre class="text-sm overflow-x-auto"><code>import &#123; NegentrogySync &#125; from '@/registry/ui/negentropy-sync';
+      <pre class="text-sm overflow-x-auto"><code>import &#123; createNegentropySync &#125; from '@/registry/builders/negentropy-sync';
+import &#123; NegentrogySync &#125; from '@/registry/ui/negentropy-sync';
 
-&lt;NegentrogySync.Root ndk=&#123;ndk&#125; filters=&#123;filters&#125;&gt;
+const syncBuilder = createNegentropySync(() => (&#123;
+  filters: &#123; kinds: [1], limit: 100 &#125;,
+  relayUrls: ['wss://relay.damus.io'] // optional
+&#125;), ndk);
+
+&lt;NegentrogySync.Root syncBuilder=&#123;syncBuilder&#125;&gt;
   &lt;NegentrogySync.ProgressBar showPercentage /&gt;
   &lt;NegentrogySync.Stats direction="horizontal" /&gt;
   &lt;NegentrogySync.RelayStatus showCounts /&gt;

@@ -6,6 +6,9 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import avatarGroupCode from './avatar-group.example?raw';
+
   import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -60,6 +63,16 @@
       cardData: avatarGroupCard
     }
   ];
+
+  // Components section
+  const componentsSection = $derived({
+    cards: [
+      { ...avatarGroupCard, code: avatarGroupCode }
+    ],
+    previews: {
+      [avatarGroupCard.name]: avatarGroupCardPreview
+    }
+  });
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -88,6 +101,28 @@
 
 {#snippet verticalPreview()}
   <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
+{/snippet}
+
+<!-- Component card preview snippet -->
+{#snippet avatarGroupCardPreview()}
+  <div class="flex flex-col gap-6 items-center">
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Default</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">With Overflow (max: 3)</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} />
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Text Overflow</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Vertical Stack</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
+    </div>
+  </div>
 {/snippet}
 
 <!-- EditProps snippet -->
@@ -180,7 +215,9 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 <ComponentPageTemplate
   metadata={avatarGroupMetadata}
   {ndk}
-  {showcaseBlocks}{customSections}
+  {showcaseBlocks}
+  {componentsSection}
+  {customSections}
   apiDocs={avatarGroupMetadata.apiDocs}
 >
     <EditProps.Prop

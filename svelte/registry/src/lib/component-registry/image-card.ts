@@ -65,15 +65,6 @@ export const imageCardCard: ComponentCardData = {
 	]
 };
 
-export const imageCardBasicCard: ComponentCardData = {
-	name: 'image-basic',
-	title: 'Basic Image Content',
-	description: 'Basic image rendering primitive.',
-	richDescription: 'Minimal image rendering with ImageContent primitive. Perfect for building custom layouts.',
-	command: 'npx shadcn@latest add image-card',
-	apiDocs: []
-};
-
 export const imageCardMetadata: ComponentPageMetadata = {
 	title: 'Image Card',
 	description: 'Display image events with metadata and interactions. ImageContent renders images from NIP-68 events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt text.',
@@ -84,6 +75,5 @@ export const imageCardMetadata: ComponentPageMetadata = {
 export const imageCardCards = [
 	imageCardInstagramCard,
 	imageCardHeroCard,
-	imageCardCard,
-	imageCardBasicCard
+	imageCardCard
 ];

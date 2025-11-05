@@ -1,0 +1,7 @@
+<script lang="ts">
+  import MuteButton from '$lib/registry/components/actions/mute-button.svelte';
+</script>
+
+<MuteButton target={user} />
+
+<MuteButton target={user} showTarget={true} />

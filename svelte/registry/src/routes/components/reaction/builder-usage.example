@@ -1,0 +1,42 @@
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
+  import { Reaction } from '$lib/registry/ui';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
+
+  const reactionState = createReactionAction(() => ({ event }), ndk);
+</script>
+
+<div class="flex flex-col gap-4">
+  <div class="flex items-center gap-2">
+    <button
+      onclick={() => reactionState.react('❤️')}
+      class="p-2 rounded hover:bg-muted transition-colors"
+    >
+      <Reaction.Display content="❤️" size={20} />
+    </button>
+    <button
+      onclick={() => reactionState.react('🔥')}
+      class="p-2 rounded hover:bg-muted transition-colors"
+    >
+      <Reaction.Display content="🔥" size={20} />
+    </button>
+    <button
+      onclick={() => reactionState.react('👍')}
+      class="p-2 rounded hover:bg-muted transition-colors"
+    >
+      <Reaction.Display content="👍" size={20} />
+    </button>
+  </div>
+
+  <div class="text-sm text-muted-foreground">
+    Total reactions: {reactionState.count}
+  </div>
+</div>

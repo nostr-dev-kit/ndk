@@ -18,13 +18,18 @@
   }
 
   let { emojis, onSelect, columns = 6, class: className = '' }: Props = $props();
+
+  // Helper to create unique key for emoji (matching createEmojiPicker logic)
+  const getEmojiKey = (emoji: EmojiData): string => {
+    return emoji.url ? emoji.url : emoji.emoji;
+  };
 </script>
 
 <div
   class={cn('grid gap-2 max-w-full', className)}
   style="grid-template-columns: repeat({columns}, minmax(0, 1fr));"
 >
-  {#each emojis as emojiData (emojiData.emoji)}
+  {#each emojis as emojiData (getEmojiKey(emojiData))}
     <Item emoji={emojiData} {onSelect} />
   {/each}
 </div>

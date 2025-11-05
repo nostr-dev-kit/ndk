@@ -55,7 +55,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; EventContent &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; EventContent &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
   </section>
 
   <section class="demo space-y-8">
@@ -209,7 +209,7 @@ const urls = Array.isArray(url) ? url : [url];</code></pre>
   <section class="info">
     <h2>ContentRenderer</h2>
     <p class="mb-4">Customize how content elements are rendered by creating a ContentRenderer instance and setting custom components:</p>
-    <pre><code>import &#123; ContentRenderer &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; ContentRenderer &#125; from '$lib/registry/ui/embedded-event.svelte';
 
 const renderer = new ContentRenderer();
 
@@ -270,7 +270,7 @@ interface MediaComponent &#123;
   <section class="info">
     <h2>Default Renderer</h2>
     <p class="mb-4">The defaultContentRenderer provides basic styling for all content types. Import it to extend or reference:</p>
-    <pre><code>import &#123; defaultContentRenderer &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; defaultContentRenderer &#125; from '$lib/registry/ui/embedded-event.svelte';
 
 // Use as-is
 &lt;EventContent &#123;ndk&#125; &#123;event&#125; renderer=&#123;defaultContentRenderer&#125; /&gt;

@@ -1,1 +1,1 @@
-export { default as MentionModern } from '../mention-modern/mention-modern.svelte';
+export { default as MentionModern } from './mention-modern.svelte';

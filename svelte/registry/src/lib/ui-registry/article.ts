@@ -184,7 +184,7 @@ export const articleAnatomyLayers: AnatomyLayer[] = [
 export const articleMetadata: UIPrimitiveMetadata = {
   title: 'Article',
   description: 'Headless, composable primitives for displaying long-form articles (NIP-23). Complete control over styling and layout.',
-  importPath: "import { Article } from '$lib/registry/ui';",
+  importPath: "import { Article } from '$lib/registry/ui/embedded-event.svelte';",
   nips: ['23'],
   primitives: [
     articleRootCard,

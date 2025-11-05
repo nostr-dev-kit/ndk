@@ -1,1 +1,1 @@
-export { default as VoiceMessagePlayer } from '../voice-message-player/voice-message-player.svelte';
+export { default as VoiceMessagePlayer } from './voice-message-player.svelte';

@@ -1,1 +1,1 @@
-export { default as ArticleEmbeddedCompact } from '../article-embedded-compact/article-embedded-compact.svelte';
+export { default as ArticleEmbeddedCompact } from './article-embedded-compact.svelte';

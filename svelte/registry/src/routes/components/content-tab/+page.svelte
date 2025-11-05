@@ -11,8 +11,8 @@
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
-  import { kindLabel } from '$lib/registry/utils';
-  import { User } from '$lib/registry/ui';
+  import { kindLabel } from '$lib/registry/utils/kind-label.js';
+  import { User } from '$lib/registry/ui/user';
 
   // Import code example
   import contentTabCode from './content-tab.example?raw';
@@ -283,7 +283,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
       <div class="bg-muted/50 rounded-lg p-6">
         <h3 class="text-lg font-semibold mb-3">Custom Tab Rendering with kindLabel</h3>
         <pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
-  import &#123; kindLabel &#125; from '$lib/registry/utils';
+  import &#123; kindLabel &#125; from '$lib/registry/utils/kind-label.js';
 &lt;/script&gt;
 
 &lt;ContentTab &#123;ndk&#125; &#123;pubkeys&#125; &#123;kinds&#125; sort=&#123;byRecency&#125;&gt;
@@ -299,7 +299,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
         <h3 class="text-lg font-semibold mb-3">Using the Builder Directly</h3>
         <pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
   import &#123; createContentSampler, byCount &#125; from '$lib/registry/builders/content-tab';
-  import &#123; kindLabel &#125; from '$lib/registry/utils';
+  import &#123; kindLabel &#125; from '$lib/registry/utils/kind-label.js';
 
   const tabSampler = createContentSampler(() => (&#123;
     pubkeys: ['hexpubkey'],

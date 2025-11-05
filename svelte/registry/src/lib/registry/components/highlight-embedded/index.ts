@@ -1,5 +1,5 @@
 import { NDKHighlight } from '@nostr-dev-kit/ndk';
-import HighlightEmbedded from '../highlight-embedded/highlight-embedded.svelte';
+import HighlightEmbedded from './highlight-embedded.svelte';
 import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
 
 // Self-register this handler for NDKHighlight events

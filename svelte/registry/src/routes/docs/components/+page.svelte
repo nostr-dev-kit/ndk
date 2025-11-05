@@ -15,7 +15,7 @@
     <h2>What Are Registry Components?</h2>
     <p>
       Registry components are templates that copy into your project, not dependencies locked in <code>node_modules</code>.
-      Install them with <code>npx shadcn-svelte add event-card</code>, and the files copy to <code>src/lib/components/ui/</code>.
+      Install them with <code>jsrepo add components/event-card</code>, and the files copy to your configured paths.
       You own the code and can modify it however you want.
     </p>
 
@@ -28,23 +28,19 @@
   <section>
     <h2>Structure</h2>
     <p>
-      Registry components follow a Root + Children pattern. The Root creates the builder and shares state via context.
-      Children get the context and render UI.
+      Registry components follow a Root + Children pattern. The Root provides NDK and data via context.
+      Children get the context and create builders as needed to render UI.
     </p>
 
     <CodeBlock lang="svelte" code={`<!-- event-card-root.svelte -->
 <script>
   import { setContext } from 'svelte';
-  import { createEventCard } from '@nostr-dev-kit/svelte';
 
   let { ndk, event }: Props = $props();
 
-  const state = createEventCard(() => ({ event }), ndk);
-
   setContext(EVENT_CARD_CONTEXT_KEY, {
     get ndk() { return ndk; },
-    get event() { return event; },
-    get state() { return state; }
+    get event() { return event; }
   });
 </script>
 
@@ -55,13 +51,15 @@
     <CodeBlock lang="svelte" code={`<!-- event-card-header.svelte -->
 <script>
   import { getContext } from 'svelte';
+  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
 
-  const { event, state } = getContext(EVENT_CARD_CONTEXT_KEY);
+  const { ndk, event } = getContext(EVENT_CARD_CONTEXT_KEY);
+  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
 </script>
 
 <header>
-  <img src={state.profile?.picture} alt="" />
-  <span>{event.created_at}</span>
+  <img src={profile.profile?.picture} alt="" />
+  <span>{new Date(event.created_at * 1000).toISOString()}</span>
 </header>`} />
 
     <CodeBlock lang="svelte" code={`<!-- Usage -->
@@ -72,7 +70,7 @@
 </EventCard.Root>`} />
 
     <p>
-      Root creates the builder in one place. Context shares state with children. Children compose together as needed.
+      Root provides NDK and data via context. Children create their own builders as needed. Children compose together as needed.
     </p>
   </section>
 
@@ -108,19 +106,23 @@
   <EventCard.Actions />
 </EventCard.Root>`} />
 
-    <h3>Extract the Builder</h3>
-    <p>Keep the builder, replace all UI with your own design.</p>
+    <h3>Use Builders Directly</h3>
+    <p>Skip the component structure entirely and use builders directly for full control.</p>
 
     <CodeBlock lang="svelte" code={`<script>
-  import { createEventCard } from '@nostr-dev-kit/svelte';
+  import { createProfileFetcher, createEventContent } from '@nostr-dev-kit/svelte';
 
-  const state = createEventCard(() => ({ event }), ndk);
+  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
+  const content = createEventContent(() => ({ event }), ndk);
 </script>
 
 <div class="my-design">
-  <h2>{state.profile?.displayName}</h2>
-  <p>{event.content}</p>
-  <footer>{state.replies.count} replies</footer>
+  <h2>{profile.profile?.displayName}</h2>
+  {#each content.segments as segment}
+    {#if segment.type === 'text'}
+      <p>{segment.text}</p>
+    {/if}
+  {/each}
 </div>`} />
   </section>
 
@@ -130,29 +132,25 @@
       You can build your own child components that access the same context.
     </p>
 
-    <CodeBlock lang="svelte" code={`<!-- my-custom-engagement.svelte -->
+    <CodeBlock lang="svelte" code={`<!-- my-custom-timestamp.svelte -->
 <script>
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY } from './context.svelte';
+  import { createTimeAgo } from '$lib/utils/time-ago.svelte';
 
-  const { state } = getContext(EVENT_CARD_CONTEXT_KEY);
-
-  const engagementScore = $derived(
-    state.replies.count +
-    state.reactions.count +
-    state.reposts.count
-  );
+  const { event } = getContext(EVENT_CARD_CONTEXT_KEY);
+  const timeAgo = createTimeAgo(event.created_at);
 </script>
 
-<div class="engagement">
-  Score: {engagementScore}
+<div class="timestamp">
+  {timeAgo}
 </div>`} />
 
     <CodeBlock lang="svelte" code={`<!-- Use alongside registry parts -->
 <EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
-  <MyCustomEngagement />
+  <MyCustomTimestamp />
 </EventCard.Root>`} />
   </section>
 

@@ -3,7 +3,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
 import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
-  import { ReactionAction } from '$lib/registry/components';
+  import { ReactionAction } from '$lib/registry/components/reaction';
 
   interface Props {
     ndk: NDKSvelte;

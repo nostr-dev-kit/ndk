@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { Relay } from '$lib/registry/ui';
+  import { Relay } from '$lib/registry/ui/relay';
 
   const ndk = getContext<NDKSvelte>('ndk');
   const relayUrl = 'wss://relay.damus.io';

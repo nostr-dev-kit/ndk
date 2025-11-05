@@ -1,1 +1,1 @@
-export { default as HighlightCardCompact } from '../highlight-card-compact/highlight-card-compact.svelte';
+export { default as HighlightCardCompact } from './highlight-card-compact.svelte';

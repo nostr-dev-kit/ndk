@@ -5,7 +5,7 @@
     type HighlightContext,
   } from './highlight.context.js';
   import type { Snippet } from 'svelte';
-  import { mergeProps } from '../../utils/merge-props/index.js';
+  import { mergeProps } from '../../utils/merge-props.js';
 
   interface SourceSnippetProps {
     source: typeof context.state.source;

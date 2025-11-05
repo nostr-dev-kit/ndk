@@ -7,7 +7,63 @@ export const relayInputBasicBlockCard: ComponentCardData = {
   description: 'Simple relay input with NIP-11.',
   richDescription: 'Pre-configured relay input block with NIP-11 autocomplete ready for use.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'RelayInputBlock',
+      description: 'Opinionated relay input with label and helper text',
+      importPath: "import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          default: "'relay.example.com'",
+          description: 'Placeholder text'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          default: 'false',
+          description: 'Disable the input'
+        },
+        {
+          name: 'label',
+          type: 'string',
+          description: 'Label for the input'
+        },
+        {
+          name: 'helperText',
+          type: 'string',
+          description: 'Helper text below the input'
+        },
+        {
+          name: 'error',
+          type: 'string',
+          description: 'Error message to display'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const relayInputLabelBlockCard: ComponentCardData = {
@@ -16,7 +72,63 @@ export const relayInputLabelBlockCard: ComponentCardData = {
   description: 'Input with label and helper text.',
   richDescription: 'Relay input block with label and helper text for better UX.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'RelayInputBlock',
+      description: 'Opinionated relay input with label and helper text',
+      importPath: "import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          default: "'relay.example.com'",
+          description: 'Placeholder text'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          default: 'false',
+          description: 'Disable the input'
+        },
+        {
+          name: 'label',
+          type: 'string',
+          description: 'Label for the input'
+        },
+        {
+          name: 'helperText',
+          type: 'string',
+          description: 'Helper text below the input'
+        },
+        {
+          name: 'error',
+          type: 'string',
+          description: 'Error message to display'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const relayInputErrorBlockCard: ComponentCardData = {
@@ -25,7 +137,63 @@ export const relayInputErrorBlockCard: ComponentCardData = {
   description: 'Input showing validation error.',
   richDescription: 'Relay input block displaying validation error state.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'RelayInputBlock',
+      description: 'Opinionated relay input with label and helper text',
+      importPath: "import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          default: "'relay.example.com'",
+          description: 'Placeholder text'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          default: 'false',
+          description: 'Disable the input'
+        },
+        {
+          name: 'label',
+          type: 'string',
+          description: 'Label for the input'
+        },
+        {
+          name: 'helperText',
+          type: 'string',
+          description: 'Helper text below the input'
+        },
+        {
+          name: 'error',
+          type: 'string',
+          description: 'Error message to display'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const relayInputDisabledBlockCard: ComponentCardData = {
@@ -34,7 +202,63 @@ export const relayInputDisabledBlockCard: ComponentCardData = {
   description: 'Disabled relay input state.',
   richDescription: 'Relay input block in disabled state for read-only scenarios.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'RelayInputBlock',
+      description: 'Opinionated relay input with label and helper text',
+      importPath: "import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          default: "'relay.example.com'",
+          description: 'Placeholder text'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          default: 'false',
+          description: 'Disable the input'
+        },
+        {
+          name: 'label',
+          type: 'string',
+          description: 'Label for the input'
+        },
+        {
+          name: 'helperText',
+          type: 'string',
+          description: 'Helper text below the input'
+        },
+        {
+          name: 'error',
+          type: 'string',
+          description: 'Error message to display'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 // Card data for component usage
@@ -44,7 +268,53 @@ export const relayInputBasicCard: ComponentCardData = {
   description: 'Basic relay input component.',
   richDescription: 'Use individual components to build custom relay input experiences.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'Relay.Input',
+      description: 'Input field for relay URLs with NIP-11 autocomplete',
+      importPath: "import { Relay } from '$lib/registry/ui/relay'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional, falls back to context)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          description: 'Placeholder text'
+        },
+        {
+          name: 'iconSize',
+          type: 'number',
+          default: '24',
+          description: 'Icon size in pixels'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '1500',
+          description: 'Debounce delay in milliseconds'
+        },
+        {
+          name: '...rest',
+          type: 'HTMLInputAttributes',
+          description: 'All standard input attributes (disabled, etc.)'
+        }
+      ]
+    }
+  ]
 };
 
 export const relayInputWithLabelCard: ComponentCardData = {
@@ -53,7 +323,53 @@ export const relayInputWithLabelCard: ComponentCardData = {
   description: 'Component with label.',
   richDescription: 'Relay input component with custom label implementation.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'Relay.Input',
+      description: 'Input field for relay URLs with NIP-11 autocomplete',
+      importPath: "import { Relay } from '$lib/registry/ui/relay'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional, falls back to context)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          description: 'Placeholder text'
+        },
+        {
+          name: 'iconSize',
+          type: 'number',
+          default: '24',
+          description: 'Icon size in pixels'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '1500',
+          description: 'Debounce delay in milliseconds'
+        },
+        {
+          name: '...rest',
+          type: 'HTMLInputAttributes',
+          description: 'All standard input attributes (disabled, etc.)'
+        }
+      ]
+    }
+  ]
 };
 
 export const relayInputValidationCard: ComponentCardData = {
@@ -62,7 +378,53 @@ export const relayInputValidationCard: ComponentCardData = {
   description: 'Component with validation.',
   richDescription: 'Relay input component with custom validation logic.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'Relay.Input',
+      description: 'Input field for relay URLs with NIP-11 autocomplete',
+      importPath: "import { Relay } from '$lib/registry/ui/relay'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional, falls back to context)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          description: 'Placeholder text'
+        },
+        {
+          name: 'iconSize',
+          type: 'number',
+          default: '24',
+          description: 'Icon size in pixels'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '1500',
+          description: 'Debounce delay in milliseconds'
+        },
+        {
+          name: '...rest',
+          type: 'HTMLInputAttributes',
+          description: 'All standard input attributes (disabled, etc.)'
+        }
+      ]
+    }
+  ]
 };
 
 export const relayInputDisabledComponentCard: ComponentCardData = {
@@ -71,7 +433,53 @@ export const relayInputDisabledComponentCard: ComponentCardData = {
   description: 'Disabled component state.',
   richDescription: 'Relay input component in disabled state.',
   command: 'npx jsrepo add relay-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'Relay.Input',
+      description: 'Input field for relay URLs with NIP-11 autocomplete',
+      importPath: "import { Relay } from '$lib/registry/ui/relay'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional, falls back to context)'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          description: 'Relay URL value (two-way binding)'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          description: 'Placeholder text'
+        },
+        {
+          name: 'iconSize',
+          type: 'number',
+          default: '24',
+          description: 'Icon size in pixels'
+        },
+        {
+          name: 'showRelayInfo',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show relay info on the right side'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '1500',
+          description: 'Debounce delay in milliseconds'
+        },
+        {
+          name: '...rest',
+          type: 'HTMLInputAttributes',
+          description: 'All standard input attributes (disabled, etc.)'
+        }
+      ]
+    }
+  ]
 };
 
 // API documentation

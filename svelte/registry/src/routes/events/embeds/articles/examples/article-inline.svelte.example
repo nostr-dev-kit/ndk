@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle } from '@nostr-dev-kit/ndk';
-  import { EventContent, ContentRenderer } from '$lib/registry/ui';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui/embedded-event.svelte';
   import ArticleEmbeddedInline from '$lib/registry/components/article-embedded/article-embedded-inline.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 

@@ -1,1 +1,1 @@
-export { default as ArticleCardPortrait } from '../article-card-portrait/article-card-portrait.svelte';
+export { default as ArticleCardPortrait } from './article-card-portrait.svelte';

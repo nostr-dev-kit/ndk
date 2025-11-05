@@ -3,7 +3,7 @@
 	import { Dialog } from 'bits-ui';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import { PMCommand } from '$lib/components/ui/pm-command';
-    import { cn } from '$lib/registry/utils';
+    import { cn } from '$lib/registry/utils/cn.js';
 
 	interface ComponentDoc {
 		name: string;

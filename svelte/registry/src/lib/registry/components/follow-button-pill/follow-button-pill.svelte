@@ -5,7 +5,9 @@
   import { createFollowAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn.js';
-  import { HashtagIcon, UserAddIcon, UserFollowingIcon } from '../../icons/index.js';
+  import HashtagIcon from '../../icons/hashtag.svelte';
+  import UserAddIcon from '../../icons/user-add.svelte';
+  import UserFollowingIcon from '../../icons/user-following.svelte';
   import { User } from '../../ui/user/index.js';
 
   interface Props {

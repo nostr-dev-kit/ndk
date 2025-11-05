@@ -1,4 +1,4 @@
-import NoteEmbedded from '../note-embedded/note-embedded.svelte';
+import NoteEmbedded from './note-embedded.svelte';
 import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
 
 // Self-register this handler for kind 1 (notes) and kind 1111 (generic replies)

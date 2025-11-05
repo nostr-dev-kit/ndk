@@ -2,7 +2,7 @@
   import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { Reaction } from '../../ui/reaction';
   import type { Snippet } from 'svelte';
-  import { mergeProps } from '../../utils/merge-props/index.js';
+  import { mergeProps } from '../../utils/merge-props.js';
 
   interface EmojiSnippetProps {
     emoji: EmojiData;

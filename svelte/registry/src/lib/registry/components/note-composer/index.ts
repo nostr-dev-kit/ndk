@@ -12,7 +12,7 @@ export const NoteComposer = {
 	Submit
 };
 
-export { default as NoteComposerInline } from '../note-composer-inline/note-composer-inline.svelte';
-export { default as NoteComposerCard } from '../note-composer-card/note-composer-card.svelte';
-export { default as NoteComposerMinimal } from '../note-composer-minimal/note-composer-minimal.svelte';
-export { default as NoteComposerModal } from '../note-composer-modal/note-composer-modal.svelte';
+export { default as NoteComposerInline } from './note-composer-inline.svelte';
+export { default as NoteComposerCard } from './note-composer-card.svelte';
+export { default as NoteComposerMinimal } from './note-composer-minimal.svelte';
+export { default as NoteComposerModal } from './note-composer-modal.svelte';

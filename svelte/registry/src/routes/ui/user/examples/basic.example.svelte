@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { User } from '$lib/registry/ui';
+  import { User } from '$lib/registry/ui/user';
 
   interface Props {
     ndk: NDKSvelte;

@@ -3,7 +3,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { PropType } from './edit-props-context.svelte';
-	import { User } from '$lib/registry/ui';
+	import { User } from '$lib/registry/ui/user';
 
 	interface Props {
 		type: PropType;

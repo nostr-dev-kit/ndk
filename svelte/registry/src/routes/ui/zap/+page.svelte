@@ -47,7 +47,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui/zap';</code></pre>
   </section>
 
   <section class="demo space-y-8">
@@ -125,7 +125,7 @@ interface ProcessedZap &#123;
   <section class="info">
     <h2>Basic Usage</h2>
     <p class="mb-4">Display zap amount and content:</p>
-    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui/zap';
 import type &#123; ProcessedZap &#125; from '@nostr-dev-kit/svelte';
 
 let zap: ProcessedZap = &#123;
@@ -181,7 +181,7 @@ $effect(() => &#123;
   <section class="info">
     <h2>Zap Lists</h2>
     <p class="mb-4">Display lists of zaps:</p>
-    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui/zap';
 
 let zaps: ProcessedZap[] = zapFeed.zaps;
 
@@ -231,7 +231,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
   <section class="info">
     <h2>Integration with User Primitives</h2>
     <p class="mb-4">Combine with User primitives to show zap senders:</p>
-    <pre><code>import &#123; ZapAmount, ZapContent, User &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; ZapAmount, ZapContent, User &#125; from '$lib/registry/ui/zap';
 
 &#123;#each zaps as zap&#125;
   &lt;div class="zap-with-sender"&gt;

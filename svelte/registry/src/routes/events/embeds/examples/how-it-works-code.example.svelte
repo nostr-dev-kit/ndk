@@ -3,7 +3,7 @@
   import { NDKEvent, NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
-  import { EmbeddedEvent as GenericEmbedded } from '$lib/registry/ui';
+  import GenericEmbedded from '$lib/registry/ui/embedded-event.svelte';
 
   // Import kind handlers
   import { ArticleEmbedded } from '$lib/registry/components/article-embedded';

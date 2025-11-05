@@ -1,1 +1,1 @@
-export { default } from "../note-embedded-card/note-embedded-card.svelte";
+export { default } from "./note-embedded-card.svelte";

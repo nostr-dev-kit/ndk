@@ -1,3 +1,3 @@
-import Root from "../zaps-root/zaps-root.svelte";
+import Root from "./zaps-root.svelte";
 
 export { Root };

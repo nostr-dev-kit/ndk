@@ -7,7 +7,36 @@ export const followPackHeroCard: ComponentCardData = {
   description: 'Featured display with full-bleed imagery.',
   richDescription: 'The Follow Pack Hero component is designed to showcase follow packs in a dramatic, full-width layout. It features large imagery with overlaid text, making it perfect for landing pages, featured sections, and hero areas where you want to make a strong visual impact.',
   command: 'npx jsrepo add follow-pack-hero',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowPackHero',
+      description: 'Featured display with full-bleed imagery for landing pages and hero sections.',
+      importPath: "import FollowPackHero from '$lib/registry/components/follow-pack-hero/follow-pack-hero.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional if available in context)'
+        },
+        {
+          name: 'followPack',
+          type: 'NDKFollowPack',
+          required: true,
+          description: 'The follow pack event (kind 39089)'
+        },
+        {
+          name: 'onclick',
+          type: '(e: MouseEvent) => void',
+          description: 'Optional click handler'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const followPackPortraitCard: ComponentCardData = {
@@ -16,7 +45,36 @@ export const followPackPortraitCard: ComponentCardData = {
   description: 'Vertical elegance for grid displays.',
   richDescription: 'The Follow Pack Portrait component presents follow packs in a vertical card format, perfect for grid layouts and gallery displays. Its portrait orientation makes it ideal for showing multiple packs side-by-side.',
   command: 'npx jsrepo add follow-pack-portrait',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowPackPortrait',
+      description: 'Vertical card format perfect for grid layouts and gallery displays.',
+      importPath: "import FollowPackPortrait from '$lib/registry/components/follow-pack-portrait/follow-pack-portrait.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional if available in context)'
+        },
+        {
+          name: 'followPack',
+          type: 'NDKFollowPack',
+          required: true,
+          description: 'The follow pack event (kind 39089)'
+        },
+        {
+          name: 'onclick',
+          type: '(e: MouseEvent) => void',
+          description: 'Optional click handler'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const followPackCompactCard: ComponentCardData = {
@@ -25,7 +83,36 @@ export const followPackCompactCard: ComponentCardData = {
   description: 'Information-dense for feeds.',
   richDescription: 'The Follow Pack Compact component provides a horizontal, information-dense display perfect for content feeds and streams. It efficiently uses horizontal space while presenting all essential information.',
   command: 'npx jsrepo add follow-pack-compact',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowPackCompact',
+      description: 'Horizontal, information-dense display for content feeds and streams.',
+      importPath: "import FollowPackCompact from '$lib/registry/components/follow-pack-compact/follow-pack-compact.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional if available in context)'
+        },
+        {
+          name: 'followPack',
+          type: 'NDKFollowPack',
+          required: true,
+          description: 'The follow pack event (kind 39089)'
+        },
+        {
+          name: 'onclick',
+          type: '(e: MouseEvent) => void',
+          description: 'Optional click handler'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const followPackListItemCard: ComponentCardData = {
@@ -34,7 +121,36 @@ export const followPackListItemCard: ComponentCardData = {
   description: 'Minimal design for sidebars.',
   richDescription: 'The Follow Pack List Item component provides a minimal, space-efficient display designed for sidebar navigation and compact lists. It delivers essential information in a clean format.',
   command: 'npx jsrepo add follow-pack-list-item',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'FollowPackListItem',
+      description: 'Minimal, space-efficient display for sidebar navigation and compact lists.',
+      importPath: "import FollowPackListItem from '$lib/registry/components/follow-pack-list-item/follow-pack-list-item.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional if available in context)'
+        },
+        {
+          name: 'followPack',
+          type: 'NDKFollowPack',
+          required: true,
+          description: 'The follow pack event (kind 39089)'
+        },
+        {
+          name: 'onclick',
+          type: '(e: MouseEvent) => void',
+          description: 'Optional click handler'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 // Anatomy layers

@@ -1,1 +1,1 @@
-export { default } from "../article-embedded-inline/article-embedded-inline.svelte";
+export { default } from "./article-embedded-inline.svelte";

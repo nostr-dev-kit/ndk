@@ -46,7 +46,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; VoiceMessage &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; VoiceMessage &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
   </section>
 
   <section class="demo space-y-8">
@@ -194,7 +194,7 @@ voiceMessage.waveform   // Waveform data (optional)</code></pre>
     <h2>Complete Example</h2>
     <p class="mb-4">Build a complete voice message player:</p>
     <pre><code>&lt;script lang="ts"&gt;
-  import &#123; VoiceMessage &#125; from '$lib/registry/ui';
+  import &#123; VoiceMessage &#125; from '$lib/registry/ui/embedded-event.svelte';
   import type &#123; NDKVoiceMessage &#125; from '@nostr-dev-kit/ndk';
 
   let voiceMessage: NDKVoiceMessage = ...;

@@ -47,7 +47,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; MediaUpload &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; MediaUpload &#125; from '$lib/registry/ui/media-upload';</code></pre>
   </section>
 
   <section class="demo space-y-8">
@@ -194,7 +194,7 @@
   <section class="info">
     <h2>Upload State Management</h2>
     <p class="mb-4">Access and manage uploads with the bindable uploads prop:</p>
-    <pre><code>import type &#123; MediaUploadResult &#125; from '$lib/registry/ui';
+    <pre><code>import type &#123; MediaUploadResult &#125; from '$lib/registry/ui/media-upload';
 
 let uploads = $state&lt;MediaUploadResult[]&gt;([]);
 
@@ -237,7 +237,7 @@ let uploads = $state&lt;MediaUploadResult[]&gt;([]);
   <section class="info">
     <h2>Builder Access</h2>
     <p class="mb-4">For advanced use cases, use the builder directly:</p>
-    <pre><code>import &#123; createMediaUpload, type MediaUploadOptions &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; createMediaUpload, type MediaUploadOptions &#125; from '$lib/registry/ui/media-upload';
 
 const options: MediaUploadOptions = &#123;
   fallbackServer: 'https://blossom.primal.net',

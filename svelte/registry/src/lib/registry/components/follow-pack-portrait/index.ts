@@ -1,1 +1,1 @@
-export { default as FollowPackPortrait } from '../follow-pack-portrait/follow-pack-portrait.svelte';
+export { default as FollowPackPortrait } from './follow-pack-portrait.svelte';

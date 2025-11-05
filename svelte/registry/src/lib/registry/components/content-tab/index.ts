@@ -44,7 +44,7 @@
  * ```
  */
 
-import ContentTab from '../content-tab/content-tab.svelte';
+import ContentTab from './content-tab.svelte';
 
 export { ContentTab };
 export { createContentSampler, byCount, byRecency } from '../../builders/content-tab';

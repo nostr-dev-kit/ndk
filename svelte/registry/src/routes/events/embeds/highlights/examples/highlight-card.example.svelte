@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
-  import { EventContent, ContentRenderer } from '$lib/registry/ui';
+  import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
   import HighlightEmbeddedCard from '$lib/registry/components/highlight-embedded/highlight-embedded-card.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 

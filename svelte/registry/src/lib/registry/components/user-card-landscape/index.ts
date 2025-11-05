@@ -1,1 +1,1 @@
-export { default as UserCardLandscape } from '../user-card-landscape/user-card-landscape.svelte';
+export { default as UserCardLandscape } from './user-card-landscape.svelte';

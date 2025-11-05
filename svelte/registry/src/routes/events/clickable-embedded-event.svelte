@@ -3,7 +3,7 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
-	import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
+	import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
 	import { getContext } from 'svelte';
 	import NoteEmbeddedCard from '$lib/registry/components/note-embedded-card/note-embedded-card.svelte';
 	import NoteEmbeddedInline from '$lib/registry/components/note-embedded-inline/note-embedded-inline.svelte';

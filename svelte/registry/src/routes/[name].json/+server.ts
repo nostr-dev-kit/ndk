@@ -31,8 +31,19 @@ function transformItem(item: RegistryItem): TransformedItem {
     ...item,
     files: item.files.map((file): TransformedFile => {
       // Read the actual file content
-      // Convert registry/ndk/ path to lib/registry/components/ for actual file location
-      const actualPath = file.path.replace(/^registry\/ndk\//, 'lib/registry/components/');
+      // Convert registry/ndk/ path to actual file location
+      // If path starts with components/, use lib/registry/components/
+      // If path starts with ui/, use lib/registry/ui/
+      // Otherwise, default to lib/registry/components/
+      let actualPath: string;
+      if (file.path.startsWith('registry/ndk/components/')) {
+        actualPath = file.path.replace(/^registry\/ndk\//, 'lib/registry/');
+      } else if (file.path.startsWith('registry/ndk/ui/')) {
+        actualPath = file.path.replace(/^registry\/ndk\//, 'lib/registry/');
+      } else {
+        // For paths without components/ or ui/, assume components/
+        actualPath = file.path.replace(/^registry\/ndk\//, 'lib/registry/components/');
+      }
       const filePath = join(process.cwd(), 'src', actualPath);
       let content = '';
 

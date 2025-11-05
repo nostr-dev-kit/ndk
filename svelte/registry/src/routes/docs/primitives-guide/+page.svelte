@@ -17,9 +17,6 @@
 
 <div class="docs-page">
   <section>
-    <p>
-  </p>
-
   <Alert>
     <strong>Key Principle:</strong> UI primitives should be completely unstyled and provide maximum flexibility. They manage behavior and state, while users control rendering and styling.
   </Alert>
@@ -430,26 +427,5 @@ import { User } from '$lib/registry/ui/user';
   <Alert type="info">
     <strong>Remember:</strong> The goal is maximum flexibility. If users can't completely change how a component looks and behaves, it's not truly headless.
   </Alert>
+  </section>
 </div>
-
-<style>
-  .prose {
-    color: var(--foreground);
-  }
-
-  .prose h1, .prose h2, .prose h3, .prose h4 {
-    color: var(--foreground);
-  }
-
-  .prose .lead {
-    color: var(--muted-foreground);
-    font-size: 1.25rem;
-    line-height: 1.75;
-  }
-
-  .prose code {
-    background: var(--muted);
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-  }
-</style>

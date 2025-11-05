@@ -9,27 +9,27 @@
 		<div class="step-content">
 			<div class="wireframe-box chrome-layer">
 				<!-- Header Section -->
-				<div class="wireframe-header">
-					<div class="wireframe-avatar"></div>
-					<div class="wireframe-meta">
-						<div class="wireframe-line short"></div>
-						<div class="wireframe-line shorter"></div>
+				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20">
+					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
+					<div class="flex flex-col gap-1.5 flex-1">
+						<div class="h-2 bg-muted rounded w-2/5"></div>
+						<div class="h-2 bg-muted rounded w-1/4"></div>
 					</div>
 				</div>
 
 				<!-- Content placeholder -->
-				<div class="content-placeholder">
-					<div class="wireframe-line"></div>
-					<div class="wireframe-line"></div>
-					<div class="wireframe-line medium"></div>
+				<div class="flex flex-col gap-2 p-3">
+					<div class="h-2 bg-muted rounded"></div>
+					<div class="h-2 bg-muted rounded"></div>
+					<div class="h-2 bg-muted rounded w-3/5"></div>
 				</div>
 
 				<!-- Actions -->
-				<div class="wireframe-actions">
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
+				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20">
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
 				</div>
 			</div>
 		<div class="info-card chrome-card">
@@ -47,36 +47,36 @@
 	</div>
 
 	<!-- Arrow -->
-	<div class="arrow-down">↓</div>
+	<div class="text-center text-2xl text-muted-foreground opacity-50">↓</div>
 
 	<!-- Step 2: Content Layer -->
 	<div class="layer-step">
 		<div class="step-number bg-purple-500/10 text-purple-500">2</div>
 		<div class="step-content">
 			<div class="wireframe-box chrome-layer chrome-layer-dimmed">
-				<div class="wireframe-header dimmed">
-					<div class="wireframe-avatar"></div>
-					<div class="wireframe-meta">
-						<div class="wireframe-line short"></div>
-						<div class="wireframe-line shorter"></div>
+				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
+					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
+					<div class="flex flex-col gap-1.5 flex-1">
+						<div class="h-2 bg-muted rounded w-2/5"></div>
+						<div class="h-2 bg-muted rounded w-1/4"></div>
 					</div>
 				</div>
 
 				<!-- Content with highlights -->
-				<div class="content-active">
-				<div class="content-text">
+				<div class="p-3 rounded-lg bg-purple-500/5 border-2 border-purple-500 flex flex-col gap-3">
+				<div class="text-sm leading-relaxed">
 					Check out this article about nostr:nprofile1... and #nostr!
 				</div>
-				<div class="content-text">
+				<div class="text-sm leading-relaxed">
 					nostr:nevent1...
 				</div>
 				</div>
 
-				<div class="wireframe-actions dimmed">
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
+				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
 				</div>
 			</div>
 		<div class="info-card content-card">
@@ -94,50 +94,50 @@
 	</div>
 
 	<!-- Arrow -->
-	<div class="arrow-down">↓</div>
+	<div class="text-center text-2xl text-muted-foreground opacity-50">↓</div>
 
 	<!-- Step 3: Embed Layer -->
 	<div class="layer-step">
 		<div class="step-number bg-orange-500/10 text-orange-500">3</div>
 		<div class="step-content">
 			<div class="wireframe-box chrome-layer chrome-layer-dimmed">
-				<div class="wireframe-header dimmed">
-					<div class="wireframe-avatar"></div>
-					<div class="wireframe-meta">
-						<div class="wireframe-line short"></div>
-						<div class="wireframe-line shorter"></div>
+				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
+					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
+					<div class="flex flex-col gap-1.5 flex-1">
+						<div class="h-2 bg-muted rounded w-2/5"></div>
+						<div class="h-2 bg-muted rounded w-1/4"></div>
 					</div>
 				</div>
 
-				<div class="content-layer-step3">
-					<div class="content-text">
-						<span class="content-plain dimmed">Check out this article about </span>
-						<span class="content-mention">@alice</span>
-						<span class="content-plain dimmed"> and </span>
-						<span class="content-hashtag">#nostr</span>
-						<span class="content-plain dimmed">!</span>
+				<div class="p-3 rounded-lg flex flex-col gap-3">
+					<div class="text-sm leading-relaxed">
+						<span class="text-foreground opacity-30">Check out this article about </span>
+						<span class="text-orange-500 font-semibold px-1 py-0.5 rounded bg-orange-500/10 border border-dashed border-orange-500">@alice</span>
+						<span class="text-foreground opacity-30"> and </span>
+						<span class="text-orange-500 font-semibold px-1 py-0.5 rounded bg-orange-500/10 border border-dashed border-orange-500">#nostr</span>
+						<span class="text-foreground opacity-30">!</span>
 					</div>
 
 					<!-- Embedded Preview -->
-					<div class="embed-preview">
-						<div class="embed-header">
-							<div class="embed-avatar"></div>
-							<div class="embed-meta">
-								<div class="wireframe-line tiny"></div>
+					<div class="p-3 bg-orange-500/10 rounded-lg border-2 border-dashed border-orange-500 flex flex-col gap-2">
+						<div class="flex gap-2 items-center">
+							<div class="w-6 h-6 rounded-full bg-muted shrink-0"></div>
+							<div class="flex-1">
+								<div class="h-2 bg-muted rounded w-3/10"></div>
 							</div>
 						</div>
-						<div class="embed-content">
-							<div class="wireframe-line short"></div>
-							<div class="wireframe-line medium"></div>
+						<div class="flex flex-col gap-1.5">
+							<div class="h-2 bg-muted rounded w-2/5"></div>
+							<div class="h-2 bg-muted rounded w-3/5"></div>
 						</div>
 					</div>
 				</div>
 
-				<div class="wireframe-actions dimmed">
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
-					<div class="wireframe-button"></div>
+				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
+					<div class="w-8 h-6 bg-muted rounded"></div>
 				</div>
 			</div>
 		<div class="info-card embed-card">
@@ -232,218 +232,6 @@
 
 	.chrome-layer-dimmed {
 		border-color: rgb(59 130 246 / 0.3);
-	}
-
-	.layer-label {
-		position: absolute;
-		top: -0.75rem;
-		left: 1rem;
-		padding: 0.25rem 0.75rem;
-		border-radius: 0.375rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		background: var(--background);
-		border: 1px solid;
-	}
-
-	.chrome-label {
-		color: rgb(59 130 246);
-		border-color: rgb(59 130 246 / 0.3);
-		background: rgb(59 130 246 / 0.05);
-	}
-
-	.content-label {
-		color: rgb(168 85 247);
-		border-color: rgb(168 85 247 / 0.3);
-		background: rgb(168 85 247 / 0.05);
-	}
-
-	.embed-label {
-		color: rgb(249 115 22);
-		border-color: rgb(249 115 22 / 0.3);
-		background: rgb(249 115 22 / 0.05);
-	}
-
-	/* Wireframe elements */
-	.wireframe-header {
-		display: flex;
-		gap: 0.75rem;
-		align-items: center;
-		padding: 0.5rem;
-		border-radius: 0.5rem;
-		background: rgb(59 130 246 / 0.05);
-		border: 1px solid rgb(59 130 246 / 0.2);
-	}
-
-	.wireframe-avatar {
-		width: 2.5rem;
-		height: 2.5rem;
-		border-radius: 50%;
-		background: var(--muted);
-		flex-shrink: 0;
-	}
-
-	.wireframe-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 0.375rem;
-		flex: 1;
-	}
-
-	.wireframe-line {
-		height: 0.5rem;
-		background: var(--muted);
-		border-radius: 0.25rem;
-	}
-
-	.wireframe-line.short {
-		width: 40%;
-	}
-
-	.wireframe-line.shorter {
-		width: 25%;
-	}
-
-	.wireframe-line.medium {
-		width: 60%;
-	}
-
-	.wireframe-line.tiny {
-		width: 30%;
-	}
-
-	.content-placeholder {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		padding: 0.75rem;
-	}
-
-	.wireframe-actions {
-		display: flex;
-		gap: 0.75rem;
-		padding: 0.5rem;
-		border-radius: 0.5rem;
-		background: rgb(59 130 246 / 0.05);
-		border: 1px solid rgb(59 130 246 / 0.2);
-	}
-
-	.wireframe-button {
-		width: 2rem;
-		height: 1.5rem;
-		background: var(--muted);
-		border-radius: 0.25rem;
-	}
-
-	/* Content layer specific */
-	.content-active {
-		padding: 0.75rem;
-		border-radius: 0.5rem;
-		background: rgb(168 85 247 / 0.05);
-		border: 2px solid rgb(168 85 247);
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.content-text {
-		font-size: 0.875rem;
-		line-height: 1.5;
-	}
-
-	.content-plain {
-		color: var(--foreground);
-	}
-
-	.content-mention {
-		color: rgb(249 115 22);
-		font-weight: 600;
-		padding: 0.125rem 0.25rem;
-		border-radius: 0.25rem;
-		background: rgb(249 115 22 / 0.1);
-		border: 1px dashed rgb(249 115 22);
-	}
-
-	.content-hashtag {
-		color: rgb(249 115 22);
-		font-weight: 600;
-		padding: 0.125rem 0.25rem;
-		border-radius: 0.25rem;
-		background: rgb(249 115 22 / 0.1);
-		border: 1px dashed rgb(249 115 22);
-	}
-
-	.content-embed-ref {
-		padding: 0.5rem;
-		background: rgb(249 115 22 / 0.1);
-		border-radius: 0.375rem;
-		border: 1px dashed rgb(249 115 22);
-	}
-
-	/* Embed layer specific */
-	.content-layer-step3 {
-		padding: 0.75rem;
-		border-radius: 0.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.embed-preview {
-		padding: 0.75rem;
-		background: rgb(249 115 22 / 0.1);
-		border-radius: 0.5rem;
-		border: 2px dashed rgb(249 115 22);
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.embed-header {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	.embed-avatar {
-		width: 1.5rem;
-		height: 1.5rem;
-		border-radius: 50%;
-		background: var(--muted);
-		flex-shrink: 0;
-	}
-
-	.embed-meta {
-		flex: 1;
-	}
-
-	.embed-content {
-		display: flex;
-		flex-direction: column;
-		gap: 0.375rem;
-	}
-
-	.dimmed {
-		opacity: 0.3;
-	}
-
-	.arrow-down {
-		text-align: center;
-		font-size: 2rem;
-		color: var(--muted-foreground);
-		opacity: 0.5;
-	}
-
-	.layer-description {
-		text-align: center;
-		font-size: 0.875rem;
-		color: var(--muted-foreground);
-		max-width: 500px;
-		margin: 0;
-	}
-
-	.layer-description strong {
-		color: var(--foreground);
 	}
 
 	@media (max-width: 768px) {

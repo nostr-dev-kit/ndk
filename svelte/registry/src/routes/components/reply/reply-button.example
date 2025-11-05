@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ReplyButton } from '$lib/registry/components/actions';
+  import { ReplyButton } from '$lib/registry/components/reply-button';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
 

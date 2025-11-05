@@ -1,5 +1,5 @@
 <script lang="ts">
-  import FollowButton from '$lib/registry/components/actions/follow-button.svelte';
+  import FollowButton from '$lib/registry/components/follow-button/follow-button.svelte';
 </script>
 
 <FollowButton target={user} />

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { FollowButtonAvatars } from '$lib/registry/components/actions';
+  import { FollowButtonAvatars } from '$lib/registry/components/follow-button-avatars';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
 

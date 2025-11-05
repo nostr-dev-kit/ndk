@@ -60,6 +60,9 @@
 		return `wss://${trimmed}`;
 	});
 
+	// Fetch relay info (NIP-11) - reactive to normalizedUrl changes
+	const relayInfo = createRelayInfo(() => ({ relayUrl: normalizedUrl }), ndk);
+
 	// Validate URL format
 	const isValidUrl = $derived.by(() => {
 		if (!normalizedUrl) return false;
@@ -69,14 +72,6 @@
 		} catch {
 			return false;
 		}
-	});
-
-	// Fetch relay info (NIP-11) when URL is valid
-	const relayInfo = $derived.by(() => {
-		if (isValidUrl) {
-			return createRelayInfo(() => ({ relayUrl: normalizedUrl }), ndk);
-		}
-		return null;
 	});
 
 	const icon = $derived(relayInfo?.nip11?.icon);

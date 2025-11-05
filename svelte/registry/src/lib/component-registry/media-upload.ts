@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const uploadButtonCard: ComponentCardData = {
   name: 'upload-button',
   title: 'Upload Button',
-  description: 'Simple file uploads without previews.',
   richDescription: 'Use for simple file uploads without showing previews. Perfect for forms where uploaded files are managed elsewhere.',
   command: 'npx jsrepo add upload-button',
   apiDocs: [
@@ -28,7 +27,6 @@ export const uploadButtonCard: ComponentCardData = {
 export const mediaUploadCarouselCard: ComponentCardData = {
   name: 'media-upload-carousel',
   title: 'Media Upload Carousel',
-  description: 'Upload with visual previews.',
   richDescription: 'Use for uploading and managing multiple media files with visual previews. Shows a + button that expands into a carousel as files are uploaded.',
   command: 'npx jsrepo add media-upload-carousel',
   apiDocs: [
@@ -51,7 +49,6 @@ export const mediaUploadCarouselCard: ComponentCardData = {
 export const basicUICard: ComponentCardData = {
   name: 'media-upload-basic',
   title: 'Basic Usage',
-  description: 'Minimal upload primitives.',
   richDescription: 'Minimal example with MediaUpload.Root, Button, and Preview components.',
   command: 'npx jsrepo add media-upload',
   apiDocs: [
@@ -93,7 +90,6 @@ export const basicUICard: ComponentCardData = {
 export const fullUICard: ComponentCardData = {
   name: 'media-upload-full',
   title: 'Full Composition',
-  description: 'All primitives together.',
   richDescription: 'All available primitives composed together with carousel, drag-to-reorder, and remove capabilities.',
   command: 'npx jsrepo add media-upload',
   apiDocs: [
@@ -339,7 +335,6 @@ export const mediaUploadApiDocs: ApiDoc[] = [
 // All metadata for the media upload page
 export const mediaUploadMetadata = {
   title: 'Media Upload',
-  description: 'Upload media files to Blossom servers. Support for images, videos, audio, and other file types with progress tracking, drag-to-reorder, and remove capabilities.',
   showcaseTitle: 'Blocks',
   showcaseDescription: 'Pre-composed upload components ready to use.',
   cards: [uploadButtonCard, mediaUploadCarouselCard, basicUICard, fullUICard],

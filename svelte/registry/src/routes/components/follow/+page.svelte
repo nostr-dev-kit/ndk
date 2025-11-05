@@ -257,7 +257,7 @@ await followAction.follow();</code></pre>
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <PageTitle title={followMetadata.title} subtitle={followMetadata.description}>
+    <PageTitle title={followMetadata.title}>
       <EditProps.Prop
         name="Sample User"
         type="user"

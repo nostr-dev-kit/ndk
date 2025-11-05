@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const contentTabCard: ComponentCardData = {
   name: 'content-tab',
   title: 'ContentTab',
-  description: 'Display tabs based on user content types.',
   richDescription: 'Automatically samples user content and displays tabs only for content types they actually publish. Useful for conditionally showing UI based on what content a user creates.',
   command: 'npx jsrepo add content-tab',
   apiDocs: [
@@ -139,7 +138,6 @@ export const contentTabApiDocs: ApiDoc[] = [
 // All metadata for the content tab page
 export const contentTabMetadata = {
   title: 'Content Tab',
-  description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.',
   showcaseTitle: 'Showcase',
   showcaseDescription: 'Content tabs that adapt to what users actually publish.',
   cards: [contentTabCard],

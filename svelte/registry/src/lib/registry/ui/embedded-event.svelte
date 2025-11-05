@@ -1,8 +1,10 @@
 <!-- @ndk-version: embedded-event@0.9.0 -->
 <script lang="ts">
+	import { setContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
+	import { CONTENT_RENDERER_CONTEXT_KEY } from './content-renderer.context.js';
+    import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;
@@ -19,6 +21,9 @@
 		renderer = defaultContentRenderer,
 		class: className = ''
 	}: EmbeddedEventProps = $props();
+
+	// Set renderer in context so nested components can access it
+	setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
 
 	const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
 

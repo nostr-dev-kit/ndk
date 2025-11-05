@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const relayInputBasicBlockCard: ComponentCardData = {
   name: 'relay-input-basic',
   title: 'Basic Input Block',
-  description: 'Simple relay input with NIP-11.',
   richDescription: 'Pre-configured relay input block with NIP-11 autocomplete ready for use.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -69,7 +68,6 @@ export const relayInputBasicBlockCard: ComponentCardData = {
 export const relayInputLabelBlockCard: ComponentCardData = {
   name: 'relay-input-label',
   title: 'With Label and Helper',
-  description: 'Input with label and helper text.',
   richDescription: 'Relay input block with label and helper text for better UX.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -134,7 +132,6 @@ export const relayInputLabelBlockCard: ComponentCardData = {
 export const relayInputErrorBlockCard: ComponentCardData = {
   name: 'relay-input-error',
   title: 'With Validation Error',
-  description: 'Input showing validation error.',
   richDescription: 'Relay input block displaying validation error state.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -199,7 +196,6 @@ export const relayInputErrorBlockCard: ComponentCardData = {
 export const relayInputDisabledBlockCard: ComponentCardData = {
   name: 'relay-input-disabled',
   title: 'Disabled Input',
-  description: 'Disabled relay input state.',
   richDescription: 'Relay input block in disabled state for read-only scenarios.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -265,7 +261,6 @@ export const relayInputDisabledBlockCard: ComponentCardData = {
 export const relayInputBasicCard: ComponentCardData = {
   name: 'relay-input-component-basic',
   title: 'Basic Component',
-  description: 'Basic relay input component.',
   richDescription: 'Use individual components to build custom relay input experiences.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -320,7 +315,6 @@ export const relayInputBasicCard: ComponentCardData = {
 export const relayInputWithLabelCard: ComponentCardData = {
   name: 'relay-input-component-label',
   title: 'With Label',
-  description: 'Component with label.',
   richDescription: 'Relay input component with custom label implementation.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -375,7 +369,6 @@ export const relayInputWithLabelCard: ComponentCardData = {
 export const relayInputValidationCard: ComponentCardData = {
   name: 'relay-input-component-validation',
   title: 'With Validation',
-  description: 'Component with validation.',
   richDescription: 'Relay input component with custom validation logic.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -430,7 +423,6 @@ export const relayInputValidationCard: ComponentCardData = {
 export const relayInputDisabledComponentCard: ComponentCardData = {
   name: 'relay-input-component-disabled',
   title: 'Disabled State',
-  description: 'Disabled component state.',
   richDescription: 'Relay input component in disabled state.',
   command: 'npx jsrepo add relay-input',
   apiDocs: [
@@ -595,7 +587,6 @@ export const relayInputApiDocs: ApiDoc[] = [
 // All metadata for the relay input page
 export const relayInputMetadata = {
   title: 'Relay Input',
-  description: 'Input field for Nostr relay URLs with NIP-11 autocomplete and relay information display.',
   showcaseTitle: 'Block Presets',
   showcaseDescription: 'Pre-configured relay input blocks ready for use.',
   cards: [

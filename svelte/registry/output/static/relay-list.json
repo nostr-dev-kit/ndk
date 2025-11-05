@@ -1,0 +1,1 @@
+{"name":"relay-list","type":"registry:component","title":"Relay List","description":"Display a list of relays with status","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"relay-list/relay-list.svelte"}],"version":"0.6.0","updatedAt":"2025-10-30T07:19:17.000Z"}

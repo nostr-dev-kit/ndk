@@ -2,6 +2,4 @@
   import ReactionSlack from '$lib/registry/components/reaction/reaction-slack.svelte';
 </script>
 
-<ReactionSlack event={event} />
-
-<ReactionSlack event={event} variant="vertical" />
+<ReactionSlack {ndk} {event} variant="horizontal" />

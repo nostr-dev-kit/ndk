@@ -3,7 +3,3 @@
 </script>
 
 <FollowButtonAnimated target={user} />
-
-<FollowButtonAnimated target={user} showTarget={true} />
-
-<FollowButtonAnimated target="nostr" showTarget={true} />

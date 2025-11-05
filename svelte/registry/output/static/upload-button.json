@@ -1,0 +1,1 @@
+{"name":"upload-button","type":"registry:component","title":"Upload Button","description":"Block component - upload button","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/upload-button.svelte"}],"version":"0.0.0","updatedAt":"2025-11-01T10:50:47.795Z"}

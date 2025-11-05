@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const relayCardPortraitCard: ComponentCardData = {
   name: 'relay-card-portrait',
   title: 'Portrait',
-  description: 'Vertical relay card with icon on top.',
   richDescription: 'Vertical card layout with icon on top. Perfect for relay grids and discovery displays.',
   command: 'npx jsrepo add relay-card-portrait',
   apiDocs: [
@@ -55,7 +54,6 @@ export const relayCardPortraitCard: ComponentCardData = {
 export const relayCardCompactCard: ComponentCardData = {
   name: 'relay-card-compact',
   title: 'Compact',
-  description: 'Small square relay card.',
   richDescription: 'Small square card with icon and name. Ideal for compact grids where space is limited.',
   command: 'npx jsrepo add relay-card-compact',
   apiDocs: [
@@ -100,7 +98,6 @@ export const relayCardCompactCard: ComponentCardData = {
 export const relayCardListCard: ComponentCardData = {
   name: 'relay-card-list',
   title: 'List',
-  description: 'Horizontal relay card for lists.',
   richDescription: 'Horizontal card layout. Perfect for relay lists and feeds with optional description.',
   command: 'npx jsrepo add relay-card-list',
   apiDocs: [
@@ -151,7 +148,6 @@ export const relayCardListCard: ComponentCardData = {
 export const relayBasicCard: ComponentCardData = {
   name: 'relay-basic',
   title: 'Basic Usage',
-  description: 'Minimal relay primitives example.',
   richDescription: 'Minimal example with Relay.Root and essential primitives. All primitives can be composed together: Icon, Name, Url, Description, BookmarkButton, and BookmarkedBy.',
   command: 'npx jsrepo add relay-card',
   apiDocs: [
@@ -189,7 +185,6 @@ export const relayBasicCard: ComponentCardData = {
 export const relayBuilderCard: ComponentCardData = {
   name: 'relay-builder',
   title: 'Using the Builder',
-  description: 'Bookmarked relay list builder.',
   richDescription: 'Use createBookmarkedRelayList() to create a reactive bookmarked relay list that tracks relays bookmarked by users you follow. Includes bookmark counts and toggle functionality.',
   command: 'npx jsrepo add relay-card',
   apiDocs: [
@@ -312,7 +307,6 @@ export const relayCardApiDocs: ApiDoc[] = [
 // All metadata for the relay card page
 export const relayCardMetadata = {
   title: 'RelayCard',
-  description: 'Composable relay display components with NIP-11 info and bookmark functionality. Build custom relay cards with flexible primitive components.',
   showcaseTitle: 'Blocks',
   showcaseDescription: 'Pre-composed relay card layouts ready to use.',
   cards: [relayCardPortraitCard, relayCardCompactCard, relayCardListCard, relayBasicCard, relayBuilderCard],

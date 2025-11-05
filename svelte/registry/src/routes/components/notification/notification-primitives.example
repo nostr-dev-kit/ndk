@@ -1,0 +1,43 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createNotificationFeed } from '$lib/registry/builders/notification';
+  import * as NotificationItem from '$lib/registry/ui/notification';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  const targetPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';
+
+  const feed = createNotificationFeed(() => ({
+    pubkey: targetPubkey,
+    since: Date.now() / 1000 - 24 * 60 * 60,
+    limit: 5
+  }), ndk);
+</script>
+
+<div class="space-y-4">
+  {#each feed.all as notification}
+    <NotificationItem.Root {ndk} {notification}>
+      <!-- Custom layout using primitives -->
+      <div class="border rounded-lg p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <NotificationItem.Action />
+          <NotificationItem.Timestamp />
+        </div>
+
+        <NotificationItem.Content class="text-sm text-muted-foreground" />
+
+        <div class="flex items-center gap-3 pt-3 border-t">
+          <NotificationItem.Actors max={5} size={28} spacing="tight" />
+          <NotificationItem.Actors
+            snippet={({ count }) => (
+              <span class="text-xs text-muted-foreground">
+                {count} {count === 1 ? 'person' : 'people'}
+              </span>
+            )}
+          />
+        </div>
+      </div>
+    </NotificationItem.Root>
+  {/each}
+</div>

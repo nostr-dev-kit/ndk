@@ -1,9 +1,6 @@
 <script lang="ts">
   import { createReplyAction } from '@nostr-dev-kit/svelte';
-</script>
 
-<!-- Create reply action -->
-<script>
   const replyAction = createReplyAction(() => ({ event }), ndk);
 
   let showDialog = $state(false);
@@ -26,26 +23,16 @@
   }
 </script>
 
-<!-- Trigger button -->
 <button onclick={() => showDialog = true}>
-  <svg class="w-4 h-4 {replyAction.hasReplied ? 'text-primary' : 'text-muted-foreground'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
-  </svg>
   <span>{replyAction.count}</span>
 </button>
 
-<!-- Dialog -->
 {#if showDialog}
-  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-background border rounded-lg p-6 w-[90%] max-w-[500px]">
-      <h3 class="text-lg font-semibold mb-4">Reply</h3>
-      <textarea bind:value={replyContent} placeholder="Write your reply..."></textarea>
-      <div class="flex justify-end gap-2 mt-4">
-        <button onclick={() => showDialog = false}>Cancel</button>
-        <button onclick={handleSubmit} disabled={!replyContent.trim() || isSubmitting}>
-          {isSubmitting ? 'Sending...' : 'Reply'}
-        </button>
-      </div>
-    </div>
+  <div>
+    <textarea bind:value={replyContent} placeholder="Write your reply..."></textarea>
+    <button onclick={() => showDialog = false}>Cancel</button>
+    <button onclick={handleSubmit} disabled={!replyContent.trim() || isSubmitting}>
+      {isSubmitting ? 'Sending...' : 'Reply'}
+    </button>
   </div>
 {/if}

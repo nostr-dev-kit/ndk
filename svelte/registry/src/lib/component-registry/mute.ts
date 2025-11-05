@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const muteButtonCard: ComponentCardData = {
   name: 'mute-button',
   title: 'MuteButton',
-  description: 'Minimal mute button with icon-first design.',
   richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar and name.',
   command: 'npx jsrepo add mute-button',
   apiDocs: [
@@ -45,7 +44,6 @@ export const muteButtonCard: ComponentCardData = {
 export const muteCustomCard: ComponentCardData = {
   name: 'mute-custom',
   title: 'Custom Implementation',
-  description: 'Build custom mute buttons with createMuteAction.',
   richDescription: 'Use the createMuteAction builder directly to create custom mute buttons with full control over appearance and behavior.',
   command: 'npx jsrepo add mute-button',
   apiDocs: [
@@ -132,7 +130,6 @@ export const muteApiDocs: ApiDoc[] = [
 // All metadata for the mute page
 export const muteMetadata = {
   title: 'Mute',
-  description: 'Mute/unmute buttons for users. Choose from pre-built block variants or compose custom layouts using the builder.',
   showcaseTitle: 'Showcase',
   showcaseDescription: 'Mute button variants from minimal to custom implementations.',
   cards: [muteButtonCard, muteCustomCard],

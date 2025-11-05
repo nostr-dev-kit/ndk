@@ -1,0 +1,18 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import NotificationFeed from '$lib/registry/components/notification-feed/notification-feed.svelte';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  const targetPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';
+</script>
+
+<div class="border rounded-lg overflow-hidden max-h-[600px] overflow-y-auto">
+  <NotificationFeed
+    {ndk}
+    pubkey={targetPubkey}
+    since={Date.now() / 1000 - 24 * 60 * 60}
+    limit={20}
+  />
+</div>

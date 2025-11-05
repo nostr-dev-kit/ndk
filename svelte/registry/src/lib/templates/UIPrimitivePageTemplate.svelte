@@ -133,7 +133,7 @@
             <ComponentCard data={{
               name: primitive.name,
               title: primitive.title,
-              description: primitive.description,
+              richDescription: primitive.description,
               command: '',
               apiDocs: primitive.apiDocs || []
             }}>

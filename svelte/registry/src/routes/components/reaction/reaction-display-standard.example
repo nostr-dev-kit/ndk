@@ -3,7 +3,3 @@
 </script>
 
 <Reaction.Display content="❤️" size={32} />
-
-<Reaction.Display content="🔥" size={32} />
-
-<Reaction.Display content="👍" size={32} />

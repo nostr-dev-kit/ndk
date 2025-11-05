@@ -182,7 +182,7 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <PageTitle title={muteMetadata.title} subtitle={muteMetadata.description}>
+    <PageTitle title={muteMetadata.title}>
       {#if !ndk.$currentUser}
       <Alert variant="warning" title="Login required">
         <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>

@@ -228,7 +228,7 @@
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <PageTitle title={followPackMetadata.title} subtitle={followPackMetadata.description}>
+    <PageTitle title={followPackMetadata.title}>
       <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
       <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
       <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />

@@ -1,0 +1,1 @@
+{"name":"article-card-medium","type":"registry:component","title":"Article Card Medium","description":"Block component - article card medium","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/article-card-medium.svelte"}],"version":"0.5.0","updatedAt":"2025-10-31T07:15:56.000Z"}

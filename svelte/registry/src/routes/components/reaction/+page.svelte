@@ -2,365 +2,152 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { reactionMetadata, reactionDisplayStandardCard, reactionDisplayCustomCard, reactionButtonCard, reactionSlackCard, reactionEmojiButtonCard, reactionActionBasicCard, reactionSlackStyleCard, reactionBuilderCard, reactionDelayedCard } from '$lib/component-registry/reaction';
+  import { reactionMetadata, reactionButtonCard, reactionButtonAvatarsCard, reactionSlackCard } from '$lib/component-registry/reaction';
   import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import SectionTitle from '$lib/site-components/SectionTitle.svelte';
+  import Preview from '$lib/site-components/preview.svelte';
 
-  // Import code examples as raw
-  import reactionDisplayStandardCode from './reaction-display-standard.example?raw';
-  import reactionDisplayCustomCode from './reaction-display-custom.example?raw';
+  // Import code examples
   import reactionButtonCode from './reaction-button.example?raw';
+  import reactionButtonAvatarsCode from './reaction-button-avatars.example?raw';
   import reactionSlackCode from './reaction-slack.example?raw';
-  import reactionEmojiButtonCode from './reaction-emoji-button.example?raw';
-  import reactionActionBasicCode from './reaction-action-basic.example?raw';
-  import slackStyleCode from './slack-style.example?raw';
-  import builderUsageCode from './builder-usage.example?raw';
-  import delayedReactionsCode from './delayed-reactions.example?raw';
+  import reactionBuilderCode from './reaction-builder.example?raw';
 
-  // Import block components
-  import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components/reaction';
-
-  // Import examples
-  import ReactionDisplayBasic from './examples/reaction-display-basic.example.svelte';
-  import ReactionDisplayCustom from './examples/reaction-display-custom.example.svelte';
-  import ReactionEmojiButtonExample from './examples/reaction-emoji-button-code.example.svelte';
-  import BasicExample from './examples/reaction-action-basic.example.svelte';
-  import SlackLikeExample from './examples/slack-like.example.svelte';
-  import BuilderExample from './examples/reaction-action-builder.example.svelte';
-  import DelayedExample from './examples/delayed.example.svelte';
+  // Import components
+  import ReactionButton from '$lib/registry/components/reaction/reaction-button.svelte';
+  import ReactionButtonAvatars from '$lib/registry/components/reaction-button-avatars/reaction-button-avatars.svelte';
+  import ReactionSlack from '$lib/registry/components/reaction/reaction-slack.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
-  let nip30ReactionEvent = $state<NDKEvent | undefined>();
+</script>
 
-  $effect(() => {
-    (async () => {
-      try {
-        const event = await ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
-        if (event && !sampleEvent) sampleEvent = event;
-      } catch (err) {
-        console.error('Failed to fetch sample event:', err);
-      }
-    })();
-  });
+<!-- Preview snippets for showcase -->
+{#snippet reactionButtonsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <ReactionButton {ndk} event={sampleEvent} variant="ghost" />
+      <ReactionButton {ndk} event={sampleEvent} variant="outline" />
+      <ReactionButton {ndk} event={sampleEvent} variant="pill" />
+      <ReactionButton {ndk} event={sampleEvent} variant="solid" />
+    </div>
+  {/if}
+{/snippet}
 
-  $effect(() => {
-    (async () => {
-      try {
-        const event = await ndk.fetchEvent('nevent1qqsr32zfznhjj7nd5ycher9gwcparzvtrvd6cdxcf769nr5ag37y5fqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgzy86t6');
-        if (event && !nip30ReactionEvent) nip30ReactionEvent = event;
-      } catch (err) {
-        console.error('Failed to fetch nip-30 reaction event:', err);
-      }
-    })();
-  });
+{#snippet avatarsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="outline" />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="pill" />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="solid" />
+    </div>
+  {/if}
+{/snippet}
 
-  // Move const declarations here to avoid TDZ issues with snippets
-  const getPrimitivesBlocks = (displayStandardPreview: any, displayCustomPreview: any, hasNip30Event: boolean): ShowcaseBlock[] => [
-    {
-      name: 'Standard Emojis',
-      description: 'Unicode emoji display',
-      command: 'npx jsrepo add reaction',
-      preview: displayStandardPreview,
-      cardData: reactionDisplayStandardCard
-    },
-    ...(hasNip30Event ? [{
-      name: 'Custom Emojis',
-      description: 'NIP-30 custom emojis',
-      command: 'npx jsrepo add reaction',
-      preview: displayCustomPreview,
-      cardData: reactionDisplayCustomCard
-    }] : [])
-  ];
+{#snippet slackPreview()}
+  {#if sampleEvent}
+    <div class="space-y-6">
+      <div>
+        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
+        <ReactionSlack {ndk} event={sampleEvent} variant="horizontal" />
+      </div>
+      <div>
+        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
+        <ReactionSlack {ndk} event={sampleEvent} variant="vertical" />
+      </div>
+    </div>
+  {/if}
+{/snippet}
 
-  const getBlocksBlocks = (buttonPreview: any, slackPreview: any, emojiButtonPreview: any): ShowcaseBlock[] => [
+<!-- Use the template -->
+<ComponentPageTemplate
+  metadata={reactionMetadata}
+  {ndk}
+  showcaseBlocks={[
     {
       name: 'ReactionButton',
-      description: 'Minimal icon-first design',
+      description: 'Basic reaction button with count',
       command: 'npx jsrepo add reaction-button',
-      preview: buttonPreview,
-      cardData: reactionButtonCard
+      preview: reactionButtonsPreview,
+      cardData: reactionMetadata.cards[0],
+      orientation: 'horizontal'
+    },
+    {
+      name: 'Reaction Authors Avatars',
+      description: 'Show avatars of people who reacted',
+      command: 'npx jsrepo add reaction-button-avatars',
+      preview: avatarsPreview,
+      orientation: 'horizontal'
     },
     {
       name: 'ReactionSlack',
-      description: 'Slack-style reactions',
+      description: 'Slack-style reactions display',
       command: 'npx jsrepo add reaction-slack',
       preview: slackPreview,
-      cardData: reactionSlackCard
-    },
-    {
-      name: 'ReactionEmojiButton',
-      description: 'With emoji picker',
-      command: 'npx jsrepo add reaction-emoji-button',
-      preview: emojiButtonPreview,
-      cardData: reactionEmojiButtonCard
+      cardData: reactionMetadata.cards[2],
+      orientation: 'vertical'
     }
-  ];
-
-  const getCustomBlocks = (basicActionPreview: any, slackStylePreview: any, builderPreview: any, delayedPreview: any): ShowcaseBlock[] => [
-    {
-      name: 'Basic',
-      description: 'Click to react',
-      command: 'npx jsrepo add reaction',
-      preview: basicActionPreview,
-      cardData: reactionActionBasicCard
-    },
-    {
-      name: 'Slack-Style',
-      description: 'All reactions display',
-      command: 'npx jsrepo add reaction',
-      preview: slackStylePreview,
-      cardData: reactionSlackStyleCard
-    },
-    {
-      name: 'Builder',
-      description: 'Full control',
-      command: 'npx jsrepo add reaction',
-      preview: builderPreview,
-      cardData: reactionBuilderCard
-    },
-    {
-      name: 'Delayed',
-      description: 'Cancellable reactions',
-      command: 'npx jsrepo add reaction',
-      preview: delayedPreview,
-      cardData: reactionDelayedCard
+  ]}
+  componentsSection={{
+    cards: [
+      { ...reactionButtonCard, code: reactionButtonCode },
+      { ...reactionButtonAvatarsCard, code: reactionButtonAvatarsCode },
+      { ...reactionSlackCard, code: reactionSlackCode }
+    ],
+    previews: {
+      'reaction-button': reactionButtonsPreview,
+      'reaction-button-avatars': avatarsPreview,
+      'reaction-slack': slackPreview
     }
-  ];
-</script>
-
-{#if sampleEvent}
-  <!-- Title section -->
-  
-  <!-- Reaction Primitives Showcase snippets -->
-  {#snippet displayStandardPreview()}
-    <ReactionDisplayBasic />
-  {/snippet}
-
-  {#snippet displayCustomPreview()}
-    {#if nip30ReactionEvent}
-      <ReactionDisplayCustom event={nip30ReactionEvent} />
-    {/if}
-  {/snippet}
-
-  <!-- Blocks Showcase snippets -->
-  {#snippet buttonPreview()}
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">Default:</span>
-        <ReactionButton {ndk} event={sampleEvent!} />
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">Fire emoji:</span>
-        <ReactionButton {ndk} event={sampleEvent!} emoji="🔥" />
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">No count:</span>
-        <ReactionButton {ndk} event={sampleEvent!} showCount={false} />
-      </div>
-    </div>
-  {/snippet}
-
-  {#snippet slackPreview()}
-    <div class="space-y-8">
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
-        <ReactionSlack {ndk} event={sampleEvent!} />
-      </div>
-
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
-        <ReactionSlack {ndk} event={sampleEvent!} variant="vertical" />
-      </div>
-    </div>
-  {/snippet}
-
-  {#snippet emojiButtonPreview()}
-    <ReactionEmojiButtonExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  <!-- Custom Implementation Showcase snippets -->
-  {#snippet basicActionPreview()}
-    <BasicExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet slackStylePreview()}
-    <SlackLikeExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet builderPreview()}
-    <BuilderExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet delayedPreview()}
-    <DelayedExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  <!-- Component preview snippets -->
-  {#snippet displayStandardComponentPreview()}
-    <ReactionDisplayBasic />
-  {/snippet}
-
-  {#snippet displayCustomComponentPreview()}
-    {#if nip30ReactionEvent}
-      <ReactionDisplayCustom event={nip30ReactionEvent} />
-    {/if}
-  {/snippet}
-
-  {#snippet buttonComponentPreview()}
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">Default:</span>
-        <ReactionButton {ndk} event={sampleEvent!} />
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">Fire emoji:</span>
-        <ReactionButton {ndk} event={sampleEvent!} emoji="🔥" />
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">No count:</span>
-        <ReactionButton {ndk} event={sampleEvent!} showCount={false} />
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">Delayed (5s):</span>
-        <ReactionButton {ndk} event={sampleEvent!} delayed={5} />
-        <span class="text-xs text-muted-foreground">← Click twice to cancel</span>
-      </div>
-    </div>
-  {/snippet}
-
-  {#snippet slackComponentPreview()}
-    <div class="space-y-8">
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
-        <ReactionSlack {ndk} event={sampleEvent!} />
-      </div>
-
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
-        <ReactionSlack {ndk} event={sampleEvent!} variant="vertical" />
-      </div>
-
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">With Delayed Reactions (5s)</h4>
-        <ReactionSlack {ndk} event={sampleEvent!} delayed={5} />
-        <p class="text-xs text-muted-foreground mt-2">💡 Click any reaction twice within 5 seconds to cancel</p>
-      </div>
-    </div>
-  {/snippet}
-
-  {#snippet emojiButtonComponentPreview()}
-    <ReactionEmojiButtonExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet basicActionComponentPreview()}
-    <BasicExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet slackStyleComponentPreview()}
-    <SlackLikeExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet builderComponentPreview()}
-    <BuilderExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  {#snippet delayedComponentPreview()}
-    <DelayedExample {ndk} event={sampleEvent!} />
-  {/snippet}
-
-  <!-- Custom sections for additional showcase sections -->
+  }}
+  apiDocs={reactionMetadata.apiDocs}
+>
   {#snippet customSections()}
-    {@const blocksBlocks = getBlocksBlocks(buttonPreview, slackPreview, emojiButtonPreview)}
-    {@const customBlocks = getCustomBlocks(basicActionPreview, slackStylePreview, builderPreview, delayedPreview)}
-
-    <!-- Blocks Showcase -->
     <SectionTitle
-      title="Blocks"
-      description="Pre-composed reaction button layouts ready to use."
+      title="Builder Pattern"
+      description="All reaction components use the createReactionAction builder from @nostr-dev-kit/svelte. This builder provides reactive state management for reactions, making it easy to build custom reaction interfaces."
     />
 
-    <ComponentsShowcaseGrid blocks={blocksBlocks} />
+    <div class="py-12 space-y-8">
+      {#if sampleEvent}
+        {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
 
-    <!-- Custom Implementation Showcase -->
-    <SectionTitle
-      title="Custom Implementation"
-      description="Use the createReactionAction builder directly."
-    />
+        <Preview title="Building from Scratch" code={reactionBuilderCode}>
+          <button
+            onclick={() => reactionState.react('❤️')}
+            class="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+          >
+            <span>❤️</span>
+            {#if reactionState.totalCount > 0}
+              <span>{reactionState.totalCount}</span>
+            {/if}
+          </button>
+        </Preview>
 
-    <ComponentsShowcaseGrid blocks={customBlocks} />
+        <div class="prose prose-sm max-w-none">
+          <p class="text-muted-foreground">
+            The <code>createReactionAction</code> builder returns a reactive state object that:
+          </p>
+          <ul class="text-muted-foreground space-y-2">
+            <li>Tracks all reactions on the event</li>
+            <li>Provides <code>react(emoji)</code> method to add/remove reactions</li>
+            <li>Exposes <code>totalCount</code> for the total number of reactions</li>
+            <li>Offers <code>get(emoji)</code> to get stats for a specific emoji</li>
+            <li>Includes <code>reactions</code> map of all emoji reactions</li>
+          </ul>
+        </div>
+      {/if}
+    </div>
   {/snippet}
 
-  <!-- Use the template -->
-  {@const primitivesBlocks = getPrimitivesBlocks(displayStandardPreview, displayCustomPreview, !!nip30ReactionEvent)}
-  <ComponentPageTemplate
-    metadata={reactionMetadata}
-    {ndk}
-    showcaseBlocks={primitivesBlocks}
-    {customSections}
-    componentsSection={{
-      cards: [
-        { ...reactionDisplayStandardCard, code: reactionDisplayStandardCode },
-        { ...reactionDisplayCustomCard, code: reactionDisplayCustomCode },
-        { ...reactionButtonCard, code: reactionButtonCode },
-        { ...reactionSlackCard, code: reactionSlackCode },
-        { ...reactionEmojiButtonCard, code: reactionEmojiButtonCode },
-        { ...reactionActionBasicCard, code: reactionActionBasicCode },
-        { ...reactionSlackStyleCard, code: slackStyleCode },
-        { ...reactionBuilderCard, code: builderUsageCode },
-        { ...reactionDelayedCard, code: delayedReactionsCode }
-      ],
-      previews: {
-        'reaction-display-standard': displayStandardComponentPreview,
-        ...(nip30ReactionEvent ? { 'reaction-display-custom': displayCustomComponentPreview } : {}),
-        'reaction-button': buttonComponentPreview,
-        'reaction-slack': slackComponentPreview,
-        'reaction-emoji-button': emojiButtonComponentPreview,
-        'reaction-action-basic': basicActionComponentPreview,
-        'slack-style': slackStyleComponentPreview,
-        'builder-usage': builderComponentPreview,
-        'delayed-reactions': delayedComponentPreview
-      }
-    }}
-    apiDocs={reactionMetadata.apiDocs}
-  >
-    <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-      <EditProps.Prop
-        name="NIP-30 Reaction"
-        type="event"
-        default="nevent1qqsr32zfznhjj7nd5ycher9gwcparzvtrvd6cdxcf769nr5ag37y5fqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgzy86t6"
-        bind:value={nip30ReactionEvent}
-      />
-  </ComponentPageTemplate>
-{:else}
-  <!-- Loading state -->
-  <div class="px-8">
-    <PageTitle title={reactionMetadata.title} subtitle={reactionMetadata.description}>
-      <EditProps.Prop
-        name="Sample Event"
-        type="event"
-        default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-        bind:value={sampleEvent}
-      />
-      <EditProps.Prop
-        name="NIP-30 Reaction"
-        type="event"
-        default="nevent1qqsr32zfznhjj7nd5ycher9gwcparzvtrvd6cdxcf769nr5ag37y5fqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgzy86t6"
-        bind:value={nip30ReactionEvent}
-      />
-    </PageTitle>
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading event...</div>
-    </div>
-  </div>
-{/if}
+  <EditProps.Prop
+    name="Sample Event"
+    type="event"
+    default="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j"
+    bind:value={sampleEvent}
+  />
+</ComponentPageTemplate>

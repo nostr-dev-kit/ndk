@@ -1,0 +1,1 @@
+{"name":"reactions","type":"registry:component","title":"Reactions","description":"Reaction component with custom emoji support","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"reactions/reactions.svelte"}],"version":"0.0.0","updatedAt":"2025-11-01T10:50:46.192Z"}

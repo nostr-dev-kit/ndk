@@ -1,0 +1,1 @@
+{"name":"article-card-neon","type":"registry:component","title":"Article Card Neon","description":"Block component - article card neon","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/article-card-neon.svelte"}],"version":"0.6.0","updatedAt":"2025-10-31T07:15:56.000Z"}

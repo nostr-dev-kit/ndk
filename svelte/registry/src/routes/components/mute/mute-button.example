@@ -3,5 +3,3 @@
 </script>
 
 <MuteButton target={user} />
-
-<MuteButton target={user} showTarget={true} />

@@ -5,6 +5,7 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { cn } from '../../utils/cn.js';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
+  import ReplyIcon from '../../icons/reply.svelte';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -78,6 +79,7 @@
   )}
   aria-label={`${totalReplies} ${totalReplies === 1 ? 'reply' : 'replies'}`}
 >
+  <ReplyIcon size={16} class="flex-shrink-0" />
   {#if replyAuthorPubkeys.length > 0}
     <AvatarGroup
       {ndk}
@@ -85,6 +87,7 @@
       {max}
       size={avatarSize}
       {spacing}
+      overflowVariant="none"
       skipCurrentUser={false}
     />
     {#if showCount && totalReplies > 0}

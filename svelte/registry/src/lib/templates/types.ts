@@ -59,7 +59,7 @@ import type { PropType } from '$lib/site-components/edit-props';
 // Page metadata structure
 export interface ComponentPageMetadata {
   title: string;
-  description: string;
+  description?: string;
   showcaseTitle?: string;
   showcaseDescription?: string;
   componentsTitle?: string;

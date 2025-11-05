@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const negentropySyncProgressMinimalCard: ComponentCardData = {
   name: 'negentropy-sync-progress-minimal',
   title: 'NegentropySyncProgressMinimal',
-  description: 'Minimal progress bar with basic sync stats.',
   richDescription: 'Clean, simple progress bar showing sync completion percentage and basic stats. Perfect for inline use in headers or status bars.',
   command: 'npx jsrepo add negentropy-sync-progress-minimal',
   apiDocs: [
@@ -41,7 +40,6 @@ export const negentropySyncProgressMinimalCard: ComponentCardData = {
 export const negentropySyncProgressDetailedCard: ComponentCardData = {
   name: 'negentropy-sync-progress-detailed',
   title: 'NegentropySyncProgressDetailed',
-  description: 'Detailed progress view with relay status.',
   richDescription: 'Comprehensive sync progress display showing overall stats, progress bar, and individual relay status with event counts. Ideal for debugging and monitoring.',
   command: 'npx jsrepo add negentropy-sync-progress-detailed',
   apiDocs: [
@@ -78,7 +76,6 @@ export const negentropySyncProgressDetailedCard: ComponentCardData = {
 export const negentropySyncProgressAnimatedCard: ComponentCardData = {
   name: 'negentropy-sync-progress-animated',
   title: 'NegentropySyncProgressAnimated',
-  description: 'Animated progress bar with smooth transitions.',
   richDescription: 'Eye-catching animated progress display with shimmer effects, pulse animations, and gradient backgrounds. Great for prominent placement and user engagement.',
   command: 'npx jsrepo add negentropy-sync-progress-animated',
   apiDocs: [
@@ -115,7 +112,6 @@ export const negentropySyncProgressAnimatedCard: ComponentCardData = {
 export const negentropySyncProgressCompactCard: ComponentCardData = {
   name: 'negentropy-sync-progress-compact',
   title: 'NegentropySyncProgressCompact',
-  description: 'Compact badge with expandable details.',
   richDescription: 'Space-efficient badge showing sync status and percentage. Expands on hover to reveal detailed stats. Perfect for navigation bars and toolbars.',
   command: 'npx jsrepo add negentropy-sync-progress-compact',
   apiDocs: [
@@ -269,7 +265,6 @@ export const negentropySyncApiDocs: ApiDoc[] = [
 // All metadata for the negentropy-sync page
 export const negentropySyncMetadata = {
   title: 'Negentropy Sync',
-  description: 'Negentropy sync progress components for monitoring real-time sync status across multiple relays. Choose from pre-built block variants or compose custom layouts using primitives.',
   showcaseTitle: 'Showcase',
   showcaseDescription: 'Negentropy sync progress variants. From minimal badges to detailed monitoring dashboards.',
   cards: [

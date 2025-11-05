@@ -349,7 +349,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <PageTitle title={contentTabMetadata.title} subtitle={contentTabMetadata.description}>
+    <PageTitle title={contentTabMetadata.title}>
       <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
     <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />

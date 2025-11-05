@@ -1,0 +1,16 @@
+<script lang="ts">
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
+
+  const reactionState = createReactionAction(() => ({ event }), ndk);
+
+  async function handleReact() {
+    await reactionState.react('❤️');
+  }
+</script>
+
+<button onclick={handleReact}>
+  <span>❤️</span>
+  {#if reactionState.totalCount > 0}
+    <span>{reactionState.totalCount}</span>
+  {/if}
+</button>

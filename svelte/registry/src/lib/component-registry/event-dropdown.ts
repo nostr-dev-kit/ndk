@@ -3,7 +3,6 @@ import type { ComponentCardData, ComponentPageMetadata } from '$lib/templates/ty
 export const eventDropdownCard: ComponentCardData = {
 	name: 'event-dropdown',
 	title: 'EventDropdown',
-	description: 'Dropdown menu for event actions.',
 	richDescription: 'Fully-styled dropdown menu with event actions including mute, report, copy ID, copy author, view raw event, and relay information. Perfect for event card menus and context actions.',
 	command: 'npx jsrepo add event-dropdown',
 	apiDocs: [
@@ -23,7 +22,6 @@ export const eventDropdownCard: ComponentCardData = {
 
 export const eventDropdownMetadata: ComponentPageMetadata = {
 	title: 'EventDropdown',
-	description: 'A dropdown menu component for event actions. Includes mute, report, copy, and raw event viewing functionality with optional relay information display.',
 	showcaseTitle: 'Variants',
 	showcaseDescription: 'EventDropdown can be used standalone or within event cards.'
 };

@@ -3,7 +3,6 @@ import type { ComponentCardData } from '$lib/templates/types';
 export const replyButtonCard: ComponentCardData = {
 	name: 'reply-button',
 	title: 'Reply Button',
-	description: 'Simple reply button with count.',
 	richDescription: 'A minimal reply button showing icon and count. Handle the click event to open your own composer implementation. Available in ghost, outline, pill, and solid variants.',
 	command: 'npx jsrepo add reply-button',
 	apiDocs: [
@@ -26,7 +25,6 @@ export const replyButtonCard: ComponentCardData = {
 export const followButtonAvatarsCard: ComponentCardData = {
 	name: 'follow-button-avatars',
 	title: 'Reply Authors Avatars',
-	description: 'Shows avatars of people who replied to an event.',
 	richDescription: 'Displays a group of avatars representing the authors of replies to an event. Shows up to a configurable number of avatars with an overflow count. Available in ghost, outline, pill, and solid variants.',
 	command: 'npx jsrepo add follow-button-avatars',
 	apiDocs: [
@@ -51,7 +49,6 @@ export const followButtonAvatarsCard: ComponentCardData = {
 
 export const replyMetadata = {
 	title: 'Reply',
-	description: 'Reply button component with multiple variants. Shows reply count and handles click events. Use with your own composer implementation to publish replies.',
 	showcaseTitle: 'Variants',
 	showcaseDescription: 'Reply button variants for different design needs.',
 	cards: [

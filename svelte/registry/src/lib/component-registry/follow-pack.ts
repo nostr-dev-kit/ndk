@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc, AnatomyLayer } from '$lib/templates/typ
 export const followPackHeroCard: ComponentCardData = {
   name: 'follow-pack-hero',
   title: 'FollowPackHero',
-  description: 'Featured display with full-bleed imagery.',
   richDescription: 'The Follow Pack Hero component is designed to showcase follow packs in a dramatic, full-width layout. It features large imagery with overlaid text, making it perfect for landing pages, featured sections, and hero areas where you want to make a strong visual impact.',
   command: 'npx jsrepo add follow-pack-hero',
   apiDocs: [
@@ -42,7 +41,6 @@ export const followPackHeroCard: ComponentCardData = {
 export const followPackPortraitCard: ComponentCardData = {
   name: 'follow-pack-portrait',
   title: 'FollowPackPortrait',
-  description: 'Vertical elegance for grid displays.',
   richDescription: 'The Follow Pack Portrait component presents follow packs in a vertical card format, perfect for grid layouts and gallery displays. Its portrait orientation makes it ideal for showing multiple packs side-by-side.',
   command: 'npx jsrepo add follow-pack-portrait',
   apiDocs: [
@@ -80,7 +78,6 @@ export const followPackPortraitCard: ComponentCardData = {
 export const followPackCompactCard: ComponentCardData = {
   name: 'follow-pack-compact',
   title: 'FollowPackCompact',
-  description: 'Information-dense for feeds.',
   richDescription: 'The Follow Pack Compact component provides a horizontal, information-dense display perfect for content feeds and streams. It efficiently uses horizontal space while presenting all essential information.',
   command: 'npx jsrepo add follow-pack-compact',
   apiDocs: [
@@ -118,7 +115,6 @@ export const followPackCompactCard: ComponentCardData = {
 export const followPackListItemCard: ComponentCardData = {
   name: 'follow-pack-list-item',
   title: 'FollowPackListItem',
-  description: 'Minimal design for sidebars.',
   richDescription: 'The Follow Pack List Item component provides a minimal, space-efficient display designed for sidebar navigation and compact lists. It delivers essential information in a clean format.',
   command: 'npx jsrepo add follow-pack-list-item',
   apiDocs: [
@@ -301,7 +297,6 @@ export const followPackApiDocs: ApiDoc[] = [
 // All metadata for the follow pack page
 export const followPackMetadata = {
   title: 'FollowPack',
-  description: 'Display curated lists of people (kind 39089). Follow packs are collections of users grouped by topic, interest, or community. Perfect for showcasing recommended follows, team members, or thematic user lists.',
   showcaseTitle: 'Components Showcase',
   showcaseDescription: 'Four follow pack variants. Hero for landing pages, portrait for grids, compact for feeds, and list item for sidebars.',
   cards: [followPackHeroCard, followPackPortraitCard, followPackCompactCard, followPackListItemCard],

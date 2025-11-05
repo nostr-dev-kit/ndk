@@ -8,13 +8,15 @@
   interface Props {
     ndk?: NDKSvelte;
     event: NDKEvent;
+    variant?: 'ghost' | 'outline' | 'pill' | 'solid';
     emoji?: string;
     showCount?: boolean;
     delayed?: number;
+    onclick?: () => void;
     class?: string;
   }
 
-  let { ndk: ndkProp, event, emoji = '❤️', showCount = true, delayed, class: className = '' }: Props = $props();
+  let { ndk: ndkProp, event, variant = 'ghost', emoji = '❤️', showCount = true, delayed, onclick, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
   const ndk = ndkProp || ndkContext;
@@ -23,24 +25,35 @@
 
   const stats = $derived(reactionState.get(emoji) ?? { count: 0, hasReacted: false, pubkeys: [], emoji });
 
-  async function handleReact() {
-    if (!ndk?.$currentPubkey) return;
-    try {
-      await reactionState.react(emoji);
-    } catch (error) {
-      console.error('Failed to react:', error);
+  // Get total count of all reactions
+  const totalCount = $derived(reactionState.totalCount ?? 0);
+
+  async function handleClick() {
+    if (onclick) {
+      onclick();
+    } else {
+      if (!ndk?.$currentPubkey) return;
+      try {
+        await reactionState.react(emoji);
+      } catch (error) {
+        console.error('Failed to react:', error);
+      }
     }
   }
 </script>
 
 <button
-  onclick={handleReact}
+  onclick={handleClick}
   class={cn(
-    'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-colors',
+    'inline-flex items-center gap-2 cursor-pointer transition-all',
+    variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
+    variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
+    variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
+    variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
     stats.hasReacted && 'text-red-500',
     className
   )}
-  aria-label={`React with ${emoji} (${stats.count})`}
+  aria-label={`React with ${emoji} (${totalCount} total reactions)`}
 >
   {#if emoji === '❤️'}
     <svg
@@ -61,8 +74,8 @@
     <span class="text-lg leading-none flex-shrink-0">{emoji}</span>
   {/if}
 
-  {#if showCount && stats.count > 0}
-    <span class="text-sm font-medium">{stats.count}</span>
+  {#if showCount && totalCount > 0}
+    <span class="text-sm font-medium">{totalCount}</span>
   {/if}
 </button>
 

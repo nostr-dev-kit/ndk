@@ -1,0 +1,1 @@
+{"name":"user-card-classic","type":"registry:component","title":"User Card Classic","description":"User card component - user card classic layout","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/user-card-classic.svelte"}],"version":"0.3.0","updatedAt":"2025-10-31T07:15:56.000Z"}

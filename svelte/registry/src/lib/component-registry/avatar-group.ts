@@ -4,7 +4,6 @@ import type { ComponentCardData, ApiDoc } from '$lib/templates/types';
 export const avatarGroupCard: ComponentCardData = {
   name: 'avatar-group',
   title: 'AvatarGroup',
-  description: 'Display multiple user avatars with overflow count.',
   richDescription: 'Displays multiple user avatars in a stacked group with smart ordering (prioritizes followed users) and flexible overflow display options.',
   command: 'npx jsrepo add avatar-group',
   apiDocs: [
@@ -150,7 +149,6 @@ export const avatarGroupApiDocs: ApiDoc[] = [
 // All metadata for the avatar group page
 export const avatarGroupMetadata = {
   title: 'AvatarGroup',
-  description: 'Display multiple user avatars in a stacked group with smart ordering and flexible overflow display options.',
   showcaseTitle: 'Showcase',
   showcaseDescription: 'Avatar group variants with different overflow display options.',
   cards: [avatarGroupCard],

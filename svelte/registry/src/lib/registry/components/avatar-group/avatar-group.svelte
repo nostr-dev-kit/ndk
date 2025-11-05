@@ -25,7 +25,7 @@
     spacing?: 'tight' | 'normal' | 'loose';
 
     /** Overflow display variant */
-    overflowVariant?: 'avatar' | 'text';
+    overflowVariant?: 'avatar' | 'text' | 'none';
 
     /** Stack direction */
     direction?: 'horizontal' | 'vertical';
@@ -119,7 +119,7 @@
     </div>
   {/each}
 
-  {#if overflowCount > 0}
+  {#if overflowCount > 0 && overflowVariant !== 'none'}
     {#if overflowSnippet}
       {@render overflowSnippet(overflowCount)}
     {:else if overflowVariant === 'text'}

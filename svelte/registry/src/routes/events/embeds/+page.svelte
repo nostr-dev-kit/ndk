@@ -141,15 +141,15 @@
             </code>
           </div>
           <div>
-            <div class="text-sm font-semibold mb-2">Step 2: Import in embedded-handlers.ts</div>
+            <div class="text-sm font-semibold mb-2">Step 2: Auto-registration</div>
             <p class="text-xs text-muted-foreground mb-2">
-              Post-install automatically appends to <code class="px-1 py-0.5 bg-muted rounded">embedded-handlers.ts</code>:
+              The component automatically registers itself when imported:
             </p>
             <div class="p-3 bg-card rounded text-sm font-mono">
-              <div>import './kinds/video-embedded';</div>
+              <div>// Registration happens via component's index.ts</div>
             </div>
             <p class="text-xs text-muted-foreground mt-2">
-              Or add manually if installing without CLI
+              No manual registration required
             </p>
           </div>
           <p class="text-sm text-muted-foreground">

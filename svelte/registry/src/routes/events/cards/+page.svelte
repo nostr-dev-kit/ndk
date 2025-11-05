@@ -28,7 +28,7 @@
 			command: 'npx shadcn@latest add event-card-classic',
 			preview: classicPreview,
 			cardData: eventCardClassicCard,
-			orientation: 'vertical',
+			orientation: 'horizontal',
 			control: classicControl
 		}
 	];
@@ -277,39 +277,6 @@
 	{/if}
 {/snippet}
 
-{#snippet afterShowcase()}
-	{#if sampleEvent}
-		<SectionTitle
-			title="UI Primitives"
-			description="Primitive components for building custom event card layouts."
-		/>
-
-		<ComponentsShowcase
-			class="-mx-8 px-8"
-			blocks={[
-				{
-					name: 'Basic',
-					description: 'Minimal primitives composition',
-					command: 'npx shadcn@latest add event-card',
-					preview: basicPreview,
-					cardData: eventCardBasicCard,
-					orientation: 'vertical',
-					control: basicControl
-				},
-				{
-					name: 'Full',
-					description: 'All primitives together',
-					command: 'npx shadcn@latest add event-card',
-					preview: fullPreview,
-					cardData: eventCardFullCard,
-					orientation: 'vertical',
-					control: fullControl
-				}
-			]}
-		/>
-	{/if}
-{/snippet}
-
 {#snippet customSections()}
 	<ComponentAPI
 		components={[
@@ -389,7 +356,6 @@
 		{ndk}
 		{showcaseBlocks}
 		{beforeShowcase}
-		{afterShowcase}
 		componentsSection={{
 			cards: eventCardCards,
 			previews: {

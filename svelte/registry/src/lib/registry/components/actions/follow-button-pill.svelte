@@ -50,11 +50,11 @@
   const variantStyles = $derived(
     variant === 'solid'
       ? followAction.isFollowing
-        ? 'bg-muted text-foreground hover:bg-red-500 hover:text-white'
-        : 'bg-primary text-primary-foreground hover:bg-primary/90'
+        ? 'bg-muted text-foreground hover:bg-primary hover:text-white'
+        : 'bg-background border border-border text-foreground hover:bg-background/90'
       : followAction.isFollowing
-        ? 'bg-transparent border border-border text-muted-foreground hover:border-red-500 hover:text-red-500'
-        : 'bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+        ? 'bg-transparent border text-muted-foreground hover:border-border hover:text-foreground'
+        : 'bg-transparent border border-border text-foreground hover:bg-background hover:text-foreground'
   );
 
   const ariaLabel = $derived(
@@ -80,7 +80,7 @@
         class={cn(
           'absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold leading-none transition-opacity duration-300 z-10',
           followAction.isFollowing
-            ? 'bg-red-500 text-white opacity-0 group-hover:opacity-100'
+            ? 'bg-primary text-primary-foreground opacity-0 group-hover:opacity-100'
             : 'bg-primary text-primary-foreground',
           'shadow-sm pointer-events-none'
         )}
@@ -92,12 +92,12 @@
       type="button"
       onclick={handleToggle}
       class={cn(
-        'inline-flex items-center cursor-pointer transition-all duration-1000 font-medium text-sm rounded-full',
+        'inline-flex items-center cursor-pointer font-medium text-sm rounded-full',
         compact
           ? showTarget && !isHashtag
-            ? 'w-10 h-10 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:pl-2 hover:justify-start hover:z-50'
-            : 'w-10 h-10 px-3 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50'
-          : 'gap-2 px-4 py-2',
+            ? 'w-auto h-10 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50 transition-all duration-300'
+            : 'w-auto h-10 px-3 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50 transition-all duration-300'
+          : 'gap-2 px-4 py-2 transition-all duration-200',
         variantStyles,
         className
       )}
@@ -112,7 +112,7 @@
         </span>
       {:else if targetUser}
         <User.Root {ndk} user={targetUser} class="flex items-center gap-2">
-          <User.Avatar class="w-5 h-5" />
+          <User.Avatar class="w-6 h-6" />
           <span class="inline-flex items-baseline gap-1">
             <span class="font-bold">{buttonLabel}</span>
             <User.Name field="displayName" class="text-sm font-normal" />
@@ -142,7 +142,7 @@
       {#if !compact}
         <span>{buttonLabel}</span>
       {:else if showTarget}
-        <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[200px] ml-2 inline-flex items-baseline gap-1">
+        <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[200px] group-hover:pl-2 inline-flex items-baseline gap-1">
           <span class="font-bold">{buttonLabel}</span>
           {#if isHashtag}
             <span class="font-normal">#{target}</span>
@@ -153,7 +153,7 @@
           {/if}
         </span>
       {:else}
-        <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[100px] ml-2">
+        <span class="opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-w-[100px] group-hover:pl-2">
           {buttonLabel}
         </span>
       {/if}

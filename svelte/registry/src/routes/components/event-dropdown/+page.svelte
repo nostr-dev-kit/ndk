@@ -27,14 +27,6 @@
 			preview: standalonePreview,
 			cardData: eventDropdownCard,
 			control: relayInfoControl
-		},
-		{
-			name: 'In Card',
-			description: 'EventDropdown within an EventCard',
-			command: 'npx shadcn@latest add event-dropdown',
-			preview: inCardPreview,
-			cardData: eventDropdownCard,
-			orientation: 'vertical'
 		}
 	];
 </script>
@@ -63,23 +55,6 @@
 			Without Relay Info
 		</button>
 	</div>
-{/snippet}
-
-{#snippet inCardPreview()}
-	{#if sampleEvent}
-		<div class="max-w-md mx-auto">
-			<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
-				<div class="flex items-start justify-between gap-2 mb-4">
-					<EventCard.Header />
-					<EventDropdown {ndk} event={sampleEvent} />
-				</div>
-
-				<div class="p-8 border-2 border-dashed border-muted-foreground/20 rounded-md bg-muted/10">
-					<p class="text-sm text-muted-foreground/60 text-center italic">Content area</p>
-				</div>
-			</EventCard.Root>
-		</div>
-	{/if}
 {/snippet}
 
 <!-- Custom sections for usage examples -->

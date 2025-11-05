@@ -29,43 +29,33 @@
 		<p class="text-base leading-normal text-muted-foreground">
 			A lightweight renderer for NIP-23 long-form articles with intelligent markdown detection and beautiful typography.
 		</p>
-		<div class="grid gap-3">
-			<div class="rounded-lg border border-border bg-muted/30 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">🎨 Intelligent Rendering</div>
-				<div class="text-sm text-muted-foreground">Automatically detects markdown or renders clean plain text with serif fonts</div>
-			</div>
-			<div class="rounded-lg border border-border bg-muted/30 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">⚡ Lightweight</div>
-				<div class="text-sm text-muted-foreground">Zero subscriptions, zero highlights—just beautiful article rendering</div>
-			</div>
-		</div>
 	</div>
 {/snippet}
 
 {#snippet articleContentDescription()}
 	<div class="space-y-4">
-		<p class="text-base leading-normal text-muted-foreground">
+		<p class="text-lg leading-normal text-muted-foreground">
 			Transform your articles into collaborative reading experiences with real-time highlights, floating avatars, and interactive text selection.
 		</p>
 		<div class="grid grid-cols-2 gap-3">
 			<div class="col-span-2 rounded-lg border border-border bg-gradient-to-br from-primary/10 to-primary/5 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">✨ Collaborative Highlights</div>
+				<div class="text-base font-medium text-foreground mb-1">✨ Collaborative Highlights</div>
 				<div class="text-sm text-muted-foreground">Real-time NIP-23 highlight sync with floating avatars showing who's reading what</div>
 			</div>
 			<div class="rounded-lg border border-border bg-muted/30 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">🖱️ Text Selection</div>
+				<div class="text-base font-medium text-foreground mb-1">🖱️ Text Selection</div>
 				<div class="text-sm text-muted-foreground">Instant highlight creation with floating toolbar</div>
 			</div>
 			<div class="rounded-lg border border-border bg-muted/30 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">🎯 Smart Filtering</div>
+				<div class="text-base font-medium text-foreground mb-1">🎯 Smart Filtering</div>
 				<div class="text-sm text-muted-foreground">Show highlights from specific users or communities</div>
 			</div>
 			<div class="rounded-lg border border-border bg-muted/30 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">👥 Contextual Avatars</div>
+				<div class="text-base font-medium text-foreground mb-1">👥 Contextual Avatars</div>
 				<div class="text-sm text-muted-foreground">Author avatars float beside highlighted paragraphs</div>
 			</div>
 			<div class="rounded-lg border border-border bg-muted/30 p-4">
-				<div class="text-sm font-medium text-foreground mb-1">🔗 Custom Actions</div>
+				<div class="text-base font-medium text-foreground mb-1">🔗 Custom Actions</div>
 				<div class="text-sm text-muted-foreground">Click handlers for views, drawers, navigation</div>
 			</div>
 		</div>

@@ -15,6 +15,7 @@ export { default as EmbeddedEvent } from './embedded-event.svelte';
 
 // Other UI primitives
 export { default as Input } from './input.svelte';
+export { Portal } from './portal/index.js';
 
 // Namespaced primitives
 export { User, type UserContext } from './user/index.js';

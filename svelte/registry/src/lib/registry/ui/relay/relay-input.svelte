@@ -32,23 +32,23 @@
 	let {
 		ndk: providedNdk,
 		value = $bindable(''),
-		placeholder = 'wss://relay.example.com',
+		placeholder = '',
 		iconSize = 24,
 		showRelayInfo = true,
 		class: className = '',
-		debounceMs = 300,
+		debounceMs = 1500,
 		...rest
 	}: Props = $props();
 
 	const ndk = getNDKFromContext(providedNdk);
 
-	let debouncedUrl = $state(value);
+	let normalizedUrl = $state('');
 	let debounceTimer: NodeJS.Timeout | null = null;
 
 	// Normalize relay URL by adding wss:// prefix if missing
-	const normalizedUrl = $derived.by(() => {
-		if (!debouncedUrl) return '';
-		const trimmed = debouncedUrl.trim();
+	function normalizeUrl(url: string): string {
+		if (!url) return '';
+		const trimmed = url.trim();
 		if (!trimmed) return '';
 
 		// If it already has a protocol, use as-is
@@ -60,7 +60,7 @@
 		const withPrefix = `wss://${trimmed}`;
 		console.log('[RelayInput] Normalized URL:', trimmed, '->', withPrefix);
 		return withPrefix;
-	});
+	}
 
 	// Fetch relay info (NIP-11) - validates and fetches URL
 	const relayInfo = createRelayInfo(() => {
@@ -71,6 +71,7 @@
 		}
 
 		try {
+			console.log('normalized url ', normalizedUrl);
 			const url = new URL(normalizedUrl);
 			const isValid = url.protocol === 'wss:' || url.protocol === 'ws:';
 			if (isValid) {
@@ -100,20 +101,36 @@
 	const icon = $derived(relayInfo?.nip11?.icon);
 	const name = $derived(relayInfo?.nip11?.name);
 	const description = $derived(relayInfo?.nip11?.description);
-	const isLoading = $derived(relayInfo?.loading === true);
+	// Only show loading when actually fetching a valid URL
+	const isLoading = $derived(isValidUrl && relayInfo?.loading === true);
 
-	// Debounce URL changes
+	// Debounce URL changes and normalize
 	$effect(() => {
+		console.log('[RelayInput] Effect running for value:', value);
+
+		// Clear any existing timer
 		if (debounceTimer) {
+			console.log('[RelayInput] Clearing existing timer');
 			clearTimeout(debounceTimer);
+			debounceTimer = null;
 		}
+
+		// Set new timer
 		debounceTimer = setTimeout(() => {
-			debouncedUrl = value;
+			console.log('[RelayInput] Debounce FIRED for:', value);
+			normalizedUrl = normalizeUrl(value);
+			debounceTimer = null;
 		}, debounceMs);
 
+		console.log('[RelayInput] Timer set for:', debounceMs, 'ms');
+
+		// Cleanup function - runs when effect re-runs or component unmounts
 		return () => {
+			console.log('[RelayInput] Cleanup running');
 			if (debounceTimer) {
+				console.log('[RelayInput] Cleanup clearing timer');
 				clearTimeout(debounceTimer);
+				debounceTimer = null;
 			}
 		};
 	});
@@ -123,7 +140,7 @@
 	<div class="relative">
 		{#if showRelayInfo}
 			<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-				{#if isValidUrl && isLoading}
+				{#if isLoading}
 					<!-- Loading spinner -->
 					<div
 						class="animate-spin rounded-full border-2 border-muted border-t-foreground"

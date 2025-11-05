@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ZapAmount, ZapContent } from '$lib/registry/ui';
+  import { Amount as ZapAmount, Content as ZapContent } from '$lib/registry/ui/zap';
   import type { ProcessedZap } from '@nostr-dev-kit/svelte';
 
   // Example zap data

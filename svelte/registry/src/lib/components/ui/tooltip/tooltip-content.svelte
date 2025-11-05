@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import { Tooltip as TooltipPrimitive } from 'bits-ui';
-	import { cn } from '$lib/registry/utils/index.js';
+	import { cn } from '$lib/registry/utils/cn.js';
 
 	let {
 		ref = $bindable(null),

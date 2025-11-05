@@ -23,9 +23,9 @@
 const content = createEventContent(() => ({ event }), ndk);
 
 // Access reactive state
-content.segments    // Parsed content segments
-content.images      // Image URLs found in content
-content.videos      // Video URLs found in content`} />
+content.segments    // ParsedSegment[] - parsed content with mentions, links, media
+content.content     // string - raw content
+content.emojiMap    // Map<string, string> - custom emoji mappings`} />
   </section>
 
   <section>
@@ -129,7 +129,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
     <CodeBlock lang="svelte" code={`<details>
   <summary>Show content</summary>
   <!-- Processing starts when details opens -->
-  <p>{content.images.length} images</p>
+  <p>{content.segments.length} content segments</p>
 </details>`} />
 
     <h3>Multiple Instances</h3>
@@ -145,7 +145,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
 {#each cards as { event, state } (event.id)}
   <article>
     <p>{event.content}</p>
-    <p>{state.images.length} images</p>
+    <p>{state.segments.length} content segments</p>
   </article>
 {/each}`} />
   </section>
@@ -187,7 +187,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
         {/if}
       {/each}
       <footer>
-        <span>{state.images.length} images</span>
+        <span>{state.segments.length} segments</span>
       </footer>
     </article>
   {/each}

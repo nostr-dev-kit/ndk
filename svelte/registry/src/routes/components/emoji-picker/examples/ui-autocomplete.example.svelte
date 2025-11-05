@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { EmojiData } from '$lib/registry/components/emoji-picker';
   import { createEmojiPicker } from '$lib/registry/components/emoji-picker';
-  import { EventContent } from '$lib/registry/ui';
+  import EventContent from '$lib/registry/ui/event-content.svelte';
 
   interface Props {
     ndk: NDKSvelte;

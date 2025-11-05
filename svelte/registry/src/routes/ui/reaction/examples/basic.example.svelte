@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Reaction } from '$lib/registry/ui';
+  import { Reaction } from '$lib/registry/ui/reaction';
 </script>
 
 <div class="reaction-demo">

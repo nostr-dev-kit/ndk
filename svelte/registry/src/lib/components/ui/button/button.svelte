@@ -66,7 +66,7 @@
 </script>
 
 <script lang="ts">
-	import { cn } from '$lib/registry/utils/index.js';
+	import { cn } from '$lib/registry/utils/cn.js';
 	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
 
 	let {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from '../../utils/merge-props/index.js';
+	import { mergeProps } from '../../utils/merge-props.js';
 	import type { Snippet } from 'svelte';
 	import type { MediaUploadResult } from './createMediaUpload.svelte';
 

@@ -7,7 +7,48 @@ export const searchComboboxCard: ComponentCardData = {
   description: 'Accessible user search with keyboard navigation.',
   richDescription: 'Accessible user search with keyboard navigation using arrow keys, Enter, and Escape. Perfect for forms and user selection interfaces.',
   command: 'npx jsrepo add user-search-combobox',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserSearchCombobox',
+      description: 'Pre-composed combobox block with keyboard navigation',
+      importPath: "import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'onSelect',
+          type: '(user: NDKUser) => void',
+          description: 'Callback when user is selected'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          default: "'Search users...'",
+          description: 'Placeholder text for the input'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '300',
+          description: 'Debounce delay in milliseconds'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        },
+        {
+          name: 'input',
+          type: 'Snippet',
+          description: 'Custom input snippet for custom rendering'
+        }
+      ]
+    }
+  ]
 };
 
 export const customTextareaCard: ComponentCardData = {
@@ -16,7 +57,48 @@ export const customTextareaCard: ComponentCardData = {
   description: 'Use input snippet for custom textarea.',
   richDescription: 'Use the input snippet to provide a custom textarea instead of the default input. Perfect for multi-line search contexts or custom styling.',
   command: 'npx jsrepo add user-search-combobox',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserSearchCombobox',
+      description: 'Pre-composed combobox block with keyboard navigation',
+      importPath: "import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'onSelect',
+          type: '(user: NDKUser) => void',
+          description: 'Callback when user is selected'
+        },
+        {
+          name: 'placeholder',
+          type: 'string',
+          default: "'Search users...'",
+          description: 'Placeholder text for the input'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '300',
+          description: 'Debounce delay in milliseconds'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        },
+        {
+          name: 'input',
+          type: 'Snippet',
+          description: 'Custom input snippet for custom rendering'
+        }
+      ]
+    }
+  ]
 };
 
 export const composablePartsCard: ComponentCardData = {
@@ -25,7 +107,31 @@ export const composablePartsCard: ComponentCardData = {
   description: 'Minimal primitives example.',
   richDescription: 'Minimal example with UserInput.Root, Search, Results, and ResultItem primitives.',
   command: 'npx jsrepo add user-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserInput.Root',
+      description: 'Root component that provides user input context to all child components',
+      importPath: "import { UserInput } from '$lib/registry/ui/user-input'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (optional, falls back to context)'
+        },
+        {
+          name: 'onSelect',
+          type: '(user: NDKUser) => void',
+          description: 'Callback when user is selected'
+        },
+        {
+          name: 'debounceMs',
+          type: 'number',
+          default: '300',
+          description: 'Debounce delay for NIP-05/npub lookups'
+        }
+      ]
+    }
+  ]
 };
 
 export const builderBasicCard: ComponentCardData = {
@@ -34,7 +140,27 @@ export const builderBasicCard: ComponentCardData = {
   description: 'Custom interfaces with builder.',
   richDescription: 'Use the builder to create custom user input interfaces with full control over state and rendering.',
   command: 'npx jsrepo add user-input',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'createUserInput',
+      description: 'Create a reactive user input state and search functionality',
+      importPath: "import { createUserInput } from '$lib/registry/builders/user-input'",
+      props: [
+        {
+          name: 'config',
+          type: '(ndk: NDKSvelte) => { query: string; onSelect: (user: NDKUser) => void; debounceMs: number; relaySearch: string[] }',
+          required: true,
+          description: 'Configuration function that returns query, onSelect callback, debounce delay, and relay search list'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        }
+      ]
+    }
+  ]
 };
 
 // API documentation

@@ -1,6 +1,6 @@
 {
 	"name": "@nostr/svelte",
-	"version": "0.0.10",
+	"version": "0.0.13",
 	"categories": [
 		{
 			"name": "blocks",
@@ -553,7 +553,7 @@
 						"../../utils/cn.js": "{{utils/cn}}.js",
 						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
 						"../../ui/reaction": "{{ui/reaction}}",
-						"../../utils/merge-props/index.js": "{{utils/merge-props}}/index.js"
+						"../../utils/merge-props.js": "{{utils/merge-props}}.js"
 					}
 				},
 				{
@@ -720,7 +720,9 @@
 					],
 					"localDependencies": [
 						"utils/cn",
-						"icons/index",
+						"icons/hashtag",
+						"icons/user-add",
+						"icons/user-following",
 						"ui/user"
 					],
 					"dependencies": [
@@ -730,7 +732,9 @@
 					"devDependencies": [],
 					"_imports_": {
 						"../../utils/cn.js": "{{utils/cn}}.js",
-						"../../icons/index.js": "{{icons/index}}.js",
+						"../../icons/hashtag.svelte": "{{icons/hashtag}}.svelte",
+						"../../icons/user-add.svelte": "{{icons/user-add}}.svelte",
+						"../../icons/user-following.svelte": "{{icons/user-following}}.svelte",
 						"../../ui/user/index.js": "{{ui/user}}/index.js"
 					}
 				},
@@ -2412,52 +2416,6 @@
 					"devDependencies": []
 				},
 				{
-					"name": "index",
-					"directory": "src/lib/registry/icons",
-					"category": "icons",
-					"tests": false,
-					"docs": false,
-					"subdirectory": false,
-					"list": true,
-					"files": [
-						"index.ts"
-					],
-					"localDependencies": [
-						"icons/bookmark",
-						"icons/calendar",
-						"icons/cancel",
-						"icons/file",
-						"icons/hashtag",
-						"icons/image-add",
-						"icons/link",
-						"icons/loading",
-						"icons/pause",
-						"icons/play",
-						"icons/reply",
-						"icons/repost",
-						"icons/user-add",
-						"icons/user-following"
-					],
-					"_imports_": {
-						"./bookmark.svelte": "{{icons/bookmark}}.svelte",
-						"./calendar.svelte": "{{icons/calendar}}.svelte",
-						"./cancel.svelte": "{{icons/cancel}}.svelte",
-						"./file.svelte": "{{icons/file}}.svelte",
-						"./hashtag.svelte": "{{icons/hashtag}}.svelte",
-						"./image-add.svelte": "{{icons/image-add}}.svelte",
-						"./link.svelte": "{{icons/link}}.svelte",
-						"./loading.svelte": "{{icons/loading}}.svelte",
-						"./pause.svelte": "{{icons/pause}}.svelte",
-						"./play.svelte": "{{icons/play}}.svelte",
-						"./reply.svelte": "{{icons/reply}}.svelte",
-						"./repost.svelte": "{{icons/repost}}.svelte",
-						"./user-add.svelte": "{{icons/user-add}}.svelte",
-						"./user-following.svelte": "{{icons/user-following}}.svelte"
-					},
-					"dependencies": [],
-					"devDependencies": []
-				},
-				{
 					"name": "link",
 					"directory": "src/lib/registry/icons",
 					"category": "icons",
@@ -2779,7 +2737,7 @@
 					"_imports_": {
 						"../../utils/cn.js": "{{utils/cn}}.js",
 						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
-						"../../utils/merge-props/index.js": "{{utils/merge-props}}/index.js"
+						"../../utils/merge-props.js": "{{utils/merge-props}}.js"
 					}
 				},
 				{
@@ -2828,7 +2786,7 @@
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../utils/merge-props/index.js": "{{utils/merge-props}}/index.js"
+						"../../utils/merge-props.js": "{{utils/merge-props}}.js"
 					}
 				},
 				{
@@ -2930,7 +2888,7 @@
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../utils/merge-props/index.js": "{{utils/merge-props}}/index.js",
+						"../../utils/merge-props.js": "{{utils/merge-props}}.js",
 						"../../utils/cn.js": "{{utils/cn}}.js",
 						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
 						"../../ui/input.svelte": "{{ui/input}}.svelte"
@@ -3026,7 +2984,7 @@
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../utils/merge-props/index.js": "{{utils/merge-props}}/index.js",
+						"../../utils/merge-props.js": "{{utils/merge-props}}.js",
 						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
 					}
 				},
@@ -3056,7 +3014,7 @@
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../utils/merge-props/index.js": "{{utils/merge-props}}/index.js",
+						"../../utils/merge-props.js": "{{utils/merge-props}}.js",
 						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
 					}
 				},
@@ -3140,20 +3098,19 @@
 				},
 				{
 					"name": "merge-props",
-					"directory": "src/lib/registry/utils/merge-props",
+					"directory": "src/lib/registry/utils",
 					"category": "utils",
 					"tests": false,
 					"docs": false,
-					"subdirectory": true,
+					"subdirectory": false,
 					"list": true,
 					"files": [
-						"index.ts",
 						"merge-props.ts"
 					],
 					"localDependencies": [],
+					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": [],
-					"_imports_": {}
+					"devDependencies": []
 				},
 				{
 					"name": "ndk-context.svelte",

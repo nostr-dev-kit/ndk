@@ -47,7 +47,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; FollowPack &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; FollowPack &#125; from '$lib/registry/ui/follow-pack';</code></pre>
   </section>
 
   <section class="demo space-y-8">

@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { NDKEvent as NDKEventClass } from '@nostr-dev-kit/ndk';
-  import { Event } from '$lib/registry/ui';
+  import { Event } from '$lib/registry/ui/embedded-event.svelte';
 
   interface Props {
     ndk: NDKSvelte;

@@ -1,1 +1,1 @@
-export { default as UserCardClassic } from '../user-card-classic/user-card-classic.svelte';
+export { default as UserCardClassic } from './user-card-classic.svelte';

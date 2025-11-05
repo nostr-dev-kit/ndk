@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { nip19 } from '@nostr-dev-kit/ndk';
-	import { User } from '$lib/registry/ui';
+	import { User } from '$lib/registry/ui/user';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';

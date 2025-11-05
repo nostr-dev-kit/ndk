@@ -1,1 +1,1 @@
-export { default as UserCardPortrait } from '../user-card-portrait/user-card-portrait.svelte';
+export { default as UserCardPortrait } from './user-card-portrait.svelte';

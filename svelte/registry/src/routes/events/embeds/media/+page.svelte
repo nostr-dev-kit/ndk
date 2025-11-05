@@ -129,7 +129,7 @@ const urls = Array.isArray(url) ? url : [url];</code></pre>
 	<section class="info">
 		<h2>Usage</h2>
 		<p class="mb-4">Set your custom media component in the ContentRenderer:</p>
-		<pre><code>import &#123; ContentRenderer, EventContent &#125; from '$lib/registry/ui';
+		<pre><code>import &#123; ContentRenderer, EventContent &#125; from '$lib/registry/ui/embedded-event.svelte';
 import MediaCarousel from './media-carousel.svelte';
 
 const renderer = new ContentRenderer();

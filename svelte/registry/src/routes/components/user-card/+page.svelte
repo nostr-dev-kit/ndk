@@ -17,7 +17,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
-  import { User } from '$lib/registry/ui';
+  import { User } from '$lib/registry/ui/user';
   import { ScrollArea } from '$lib/site-components/ui/scroll-area';
   import { Select } from 'bits-ui';
   import ComponentCard from '$site-components/ComponentCard.svelte';

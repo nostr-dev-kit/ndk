@@ -56,7 +56,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; EmbeddedEvent &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; EmbeddedEvent &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
   </section>
 
   <section class="demo space-y-8">
@@ -114,7 +114,7 @@
   <section class="info">
     <h2>Registering Event Handlers</h2>
     <p class="mb-4">Use ContentRenderer to register custom components for specific event kinds:</p>
-    <pre><code>import &#123; ContentRenderer, EmbeddedEvent &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; ContentRenderer, EmbeddedEvent &#125; from '$lib/registry/ui/embedded-event.svelte';
 import NoteCard from './NoteCard.svelte';
 import ArticleCard from './ArticleCard.svelte';
 
@@ -197,7 +197,7 @@ renderer.addKind([30023], ArticleCard, NDKArticle);
   <section class="info">
     <h2>Integration with EventContent</h2>
     <p class="mb-4">EmbeddedEvent is automatically used by EventContent when it encounters event references:</p>
-    <pre><code>import &#123; EventContent, ContentRenderer &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; EventContent, ContentRenderer &#125; from '$lib/registry/ui/embedded-event.svelte';
 
 const renderer = new ContentRenderer();
 renderer.addKind([1, 1111], NoteCard);

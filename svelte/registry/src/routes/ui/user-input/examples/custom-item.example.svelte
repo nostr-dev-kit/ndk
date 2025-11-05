@@ -2,7 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import { UserInput, User } from '$lib/registry/ui';
+  import { UserInput } from '$lib/registry/ui/user-input';
+  import { User } from '$lib/registry/ui/user';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

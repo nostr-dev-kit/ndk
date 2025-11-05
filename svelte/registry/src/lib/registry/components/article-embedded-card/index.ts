@@ -1,1 +1,1 @@
-export { default } from "../article-embedded-card/article-embedded-card.svelte";
+export { default } from "./article-embedded-card.svelte";

@@ -1,1 +1,1 @@
-export { default as RelayCardPortrait } from '../relay-card-portrait/relay-card-portrait.svelte';
+export { default as RelayCardPortrait } from './relay-card-portrait.svelte';

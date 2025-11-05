@@ -1,1 +1,1 @@
-export { default } from "../image-card-instagram/image-card-instagram.svelte";
+export { default } from "./image-card-instagram.svelte";

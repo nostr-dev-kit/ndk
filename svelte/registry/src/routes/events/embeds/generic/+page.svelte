@@ -379,7 +379,7 @@
           <div class="text-sm font-semibold mb-2">2. Create index.ts and register the handler</div>
           <div class="p-3 bg-muted rounded text-xs font-mono space-y-1">
             <div>import MyKindEmbedded from './my-kind-embedded.svelte';</div>
-            <div>import {`{ defaultContentRenderer }`} from '$lib/registry/ui';</div>
+            <div>import {`{ defaultContentRenderer }`} from '$lib/registry/ui/embedded-event.svelte';</div>
             <div class="h-2"></div>
             <div>defaultContentRenderer.addKind([9999], MyKindEmbedded);</div>
             <div class="h-2"></div>

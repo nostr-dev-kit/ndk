@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { ndk } from '$lib/ndk.svelte';
   import { themeManager } from '$lib/theme.svelte';
-  import { User } from '$lib/registry/ui';
+  import { User } from '$lib/registry/ui/user';
   import { sidebar } from '$lib/stores/sidebar.svelte';
   import { mainNav } from '$lib/navigation';
 

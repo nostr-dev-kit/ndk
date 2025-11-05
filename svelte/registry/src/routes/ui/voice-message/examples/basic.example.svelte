@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
-  import { VoiceMessage } from '$lib/registry/ui';
+  import { VoiceMessage } from '$lib/registry/ui/voice-message';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

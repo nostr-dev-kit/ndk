@@ -7,7 +7,32 @@ export const userCardClassicCard: ComponentCardData = {
   description: 'Classic user card with banner, avatar, name, bio, and stats.',
   richDescription: 'Perfect for popovers, dialogs, and standalone displays. This card provides a complete user profile view with banner image, avatar overlay, display name, bio, and follower/following stats.',
   command: 'npx jsrepo add user-card-classic',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserCardClassic',
+      description: 'Classic user card with banner, avatar, name, bio, and stats.',
+      importPath: "import UserCardClassic from '$lib/registry/components/user-card-classic/user-card-classic.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const userCardCompactCard: ComponentCardData = {
@@ -16,7 +41,32 @@ export const userCardCompactCard: ComponentCardData = {
   description: 'Minimal user card for lists.',
   richDescription: 'Shows avatar, name, and follow button. Ideal for sidebars and compact layouts where space is limited but user identity needs to be clear.',
   command: 'npx jsrepo add user-card-compact',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserCardCompact',
+      description: 'Minimal user card for lists.',
+      importPath: "import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const userCardListItemCard: ComponentCardData = {
@@ -25,7 +75,32 @@ export const userCardListItemCard: ComponentCardData = {
   description: 'Ultra-compact list item showing avatar, name, and follow status badge.',
   richDescription: 'Perfect for dense user lists and search results. Minimal design with just the essentials: avatar, name, and follow status indicator.',
   command: 'npx jsrepo add user-list-item',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserListItem',
+      description: 'Ultra-compact list item for dense user lists.',
+      importPath: "import UserListItem from '$lib/registry/components/user-list-item/user-list-item.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const userCardPortraitCard: ComponentCardData = {
@@ -34,7 +109,32 @@ export const userCardPortraitCard: ComponentCardData = {
   description: 'Vertical card layout showing avatar, name, bio, and stats.',
   richDescription: 'Great for grids and profile galleries. This portrait-oriented card presents user information in a vertical layout ideal for grid displays and gallery views.',
   command: 'npx jsrepo add user-card-portrait',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserCardPortrait',
+      description: 'Vertical card layout for grids and profile galleries.',
+      importPath: "import UserCardPortrait from '$lib/registry/components/user-card-portrait/user-card-portrait.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const userCardLandscapeCard: ComponentCardData = {
@@ -43,7 +143,32 @@ export const userCardLandscapeCard: ComponentCardData = {
   description: 'Horizontal card layout with avatar on left.',
   richDescription: 'Perfect for feed views and detailed lists. This horizontal layout places the avatar on the left with name, bio, and stats flowing to the right.',
   command: 'npx jsrepo add user-card-landscape',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserCardLandscape',
+      description: 'Horizontal card layout for feed views and detailed lists.',
+      importPath: "import UserCardLandscape from '$lib/registry/components/user-card-landscape/user-card-landscape.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const userCardNeonCard: ComponentCardData = {
@@ -52,7 +177,47 @@ export const userCardNeonCard: ComponentCardData = {
   description: 'Neon-style card with full background image and glossy top border.',
   richDescription: 'Features a full background image with darkening gradient and a neon glow effect at the top border. Perfect for modern, visually striking user displays.',
   command: 'npx jsrepo add user-card-neon',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserCardNeon',
+      description: 'Neon-style card with full background image and glossy top border.',
+      importPath: "import UserCardNeon from '$lib/registry/components/user-card-neon/user-card-neon.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'width',
+          type: 'string',
+          description: 'Width CSS classes'
+        },
+        {
+          name: 'height',
+          type: 'string',
+          description: 'Height CSS classes'
+        },
+        {
+          name: 'onclick',
+          type: '(e: MouseEvent) => void',
+          description: 'Optional click handler'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 export const userCardGlassCard: ComponentCardData = {
@@ -61,7 +226,57 @@ export const userCardGlassCard: ComponentCardData = {
   description: 'Glassmorphic card with frosted glass effect and gradient mesh background.',
   richDescription: 'Features a translucent frosted glass card over an animated gradient mesh background with sparkle effects. Modern, elegant design with soft glows and blur effects.',
   command: 'npx jsrepo add user-card-glass',
-  apiDocs: []
+  apiDocs: [
+    {
+      name: 'UserCardGlass',
+      description: 'Glassmorphic card with frosted glass effect and gradient mesh background.',
+      importPath: "import UserCardGlass from '$lib/registry/components/user-card-glass/user-card-glass.svelte'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance for Nostr operations'
+        },
+        {
+          name: 'pubkey',
+          type: 'string',
+          required: true,
+          description: 'User public key in hex format'
+        },
+        {
+          name: 'width',
+          type: 'string',
+          description: 'Width CSS classes'
+        },
+        {
+          name: 'height',
+          type: 'string',
+          description: 'Height CSS classes'
+        },
+        {
+          name: 'primaryColor',
+          type: 'string',
+          description: 'Primary color for gradient'
+        },
+        {
+          name: 'variant',
+          type: "'gradient' | 'transparent'",
+          description: 'Background variant style'
+        },
+        {
+          name: 'onclick',
+          type: '(e: MouseEvent) => void',
+          description: 'Optional click handler'
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes'
+        }
+      ]
+    }
+  ]
 };
 
 // Anatomy layers for the anatomy section

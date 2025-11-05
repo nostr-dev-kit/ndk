@@ -1,1 +1,1 @@
-export { default as HashtagCardCompact } from '../hashtag-card-compact/hashtag-card-compact.svelte';
+export { default as HashtagCardCompact } from './hashtag-card-compact.svelte';

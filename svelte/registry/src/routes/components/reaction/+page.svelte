@@ -22,7 +22,7 @@
   import delayedReactionsCode from './delayed-reactions.example?raw';
 
   // Import block components
-  import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components';
+  import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components/reaction';
 
   // Import examples
   import ReactionDisplayBasic from './examples/reaction-display-basic.example.svelte';

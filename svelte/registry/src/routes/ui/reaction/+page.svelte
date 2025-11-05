@@ -48,7 +48,7 @@
 
   <section class="installation">
     <h2>Installation</h2>
-    <pre><code>import &#123; Reaction &#125; from '$lib/registry/ui';</code></pre>
+    <pre><code>import &#123; Reaction &#125; from '$lib/registry/ui/reaction';</code></pre>
   </section>
 
   <section class="demo space-y-8">
@@ -204,7 +204,7 @@ let reactions: ReactionGroup[] = $state([...]);
   <section class="info">
     <h2>Integration with Other Primitives</h2>
     <p class="mb-4">Reaction.Display works seamlessly with other UI primitives:</p>
-    <pre><code>import &#123; Reaction, EmojiPicker &#125; from '$lib/registry/ui';
+    <pre><code>import &#123; Reaction, EmojiPicker &#125; from '$lib/registry/ui/reaction';
 
 // Select emoji from picker
 function handleEmojiSelect(emojiData: EmojiData) &#123;

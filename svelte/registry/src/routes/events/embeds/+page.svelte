@@ -367,7 +367,7 @@
       {
         name: 'EmbeddedEvent',
         description: 'Main orchestrator component that fetches events and routes to kind-specific handlers.',
-        importPath: "import { EmbeddedEvent } from '$lib/registry/ui'",
+        importPath: "import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte'",
         props: [
           {
             name: 'ndk',

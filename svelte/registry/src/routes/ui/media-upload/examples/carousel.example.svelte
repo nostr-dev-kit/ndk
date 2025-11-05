@@ -1,8 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { MediaUploadResult } from '$lib/registry/ui';
-  import { MediaUpload } from '$lib/registry/ui';
+  import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
+  import { MediaUpload } from '$lib/registry/ui/media-upload';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

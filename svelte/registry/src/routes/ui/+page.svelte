@@ -268,7 +268,7 @@
         <div class="code-header">
           <span>Import primitives from /ui</span>
         </div>
-        <pre><code>import &#123; Article, User &#125; from '$lib/registry/ui';</code></pre>
+        <pre><code>import &#123; Article, User &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
       </div>
 
       <div class="code-example">

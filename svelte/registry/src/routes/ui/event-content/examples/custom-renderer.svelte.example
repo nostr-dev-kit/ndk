@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventContent, ContentRenderer } from '$lib/registry/ui';
+  import { EventContent, ContentRenderer } from '$lib/registry/ui/embedded-event.svelte';
   import CustomHashtag from './hashtag-custom.svelte';
   import CustomLink from './link-custom.svelte';
 

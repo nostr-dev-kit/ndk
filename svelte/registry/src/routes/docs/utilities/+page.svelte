@@ -2,7 +2,7 @@
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
-  import { kindLabel } from '$lib/registry/utils';
+  import { kindLabel } from '$lib/registry/utils/kind-label';
   import "../../../lib/styles/docs-page.css";
 
   // Sample pubkeys to demonstrate different gradients
@@ -135,7 +135,7 @@
 
   <section>
     <h3>Installation</h3>
-    <CodeBlock lang="typescript" code={`import { kindLabel } from '$lib/registry/utils';`} />
+    <CodeBlock lang="typescript" code={`import { kindLabel } from '$lib/registry/utils/kind-label';`} />
   </section>
 
   <section>

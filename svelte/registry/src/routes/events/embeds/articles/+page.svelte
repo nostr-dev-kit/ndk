@@ -235,7 +235,7 @@
       <div class="p-4 bg-muted rounded font-mono text-sm space-y-2">
         <div class="text-muted-foreground">// Import the variant component</div>
         <div>import ArticleEmbeddedCompact from './article-embedded-compact.svelte';</div>
-        <div>import {'{ ContentRenderer }'} from '$lib/registry/ui';</div>
+        <div>import {'{ ContentRenderer }'} from '$lib/registry/ui/embedded-event.svelte';</div>
         <div>import {'{ NDKArticle }'} from '@nostr-dev-kit/ndk';</div>
         <div class="h-2"></div>
         <div class="text-muted-foreground">// Create custom registry</div>

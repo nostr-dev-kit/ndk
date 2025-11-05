@@ -4,7 +4,7 @@
   import BlockDetailHeader from '$site-components/blocks/BlockDetailHeader.svelte';
   import BlockInstallSection from '$site-components/blocks/BlockInstallSection.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
-  import { LoginCompact } from '$lib/registry/blocks';
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -50,7 +50,7 @@
 
       <div class="bg-background overflow-x-auto">
         <CodeBlock lang="svelte" code={`<script lang="ts">
-  import { LoginCompact } from '$lib/registry/blocks';
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
@@ -84,7 +84,7 @@
 
       <div class="bg-background overflow-x-auto">
         <CodeBlock lang="svelte" code={`<script lang="ts">
-  import { LoginCompact } from '$lib/registry/blocks';
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
@@ -187,7 +187,7 @@
     <div class="mb-10">
       <h3 class="text-lg font-semibold mb-4 text-foreground">Basic Login Flow</h3>
       <CodeBlock lang="svelte" code={`<script lang="ts">
-  import { LoginCompact } from '$lib/registry/blocks';
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
   import { ndk } from '$lib/ndk.svelte';
 
   function handleLoginSuccess() {
@@ -203,7 +203,7 @@
     <div class="mb-10">
       <h3 class="text-lg font-semibold mb-4 text-foreground">With Custom Styling</h3>
       <CodeBlock lang="svelte" code={`<script lang="ts">
-  import { LoginCompact } from '$lib/registry/blocks';
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
   import { ndk } from '$lib/ndk.svelte';
 </script>
 
@@ -219,7 +219,7 @@
     <div class="mb-10">
       <h3 class="text-lg font-semibold mb-4 text-foreground">In a Modal</h3>
       <CodeBlock lang="svelte" code={`<script lang="ts">
-  import { LoginCompact } from '$lib/registry/blocks';
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
   import { ndk } from '$lib/ndk.svelte';
 
   let showLoginModal = $state(false);

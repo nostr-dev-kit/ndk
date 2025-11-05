@@ -21,7 +21,7 @@
     title: 'Card Variant',
     description: 'Full book-page style display.',
     richDescription: 'Full book-page style display with source badge. Default variant for embedded highlights.',
-    command: 'npx shadcn@latest add highlight-embedded-card',
+    command: 'npx jsrepo add highlight-embedded-card',
     apiDocs: []
   };
 
@@ -30,7 +30,7 @@
     title: 'Inline Variant',
     description: 'Medium-sized for inline references.',
     richDescription: 'Medium-sized display for inline references with line clamping.',
-    command: 'npx shadcn@latest add highlight-embedded-inline',
+    command: 'npx jsrepo add highlight-embedded-inline',
     apiDocs: []
   };
 
@@ -39,7 +39,7 @@
     title: 'Compact Variant',
     description: 'Minimal with truncated content.',
     richDescription: 'Minimal display with heavily truncated content (2 lines).',
-    command: 'npx shadcn@latest add highlight-embedded-compact',
+    command: 'npx jsrepo add highlight-embedded-compact',
     apiDocs: []
   };
 </script>
@@ -128,21 +128,21 @@
       {
         name: 'Card Variant',
         description: 'Full book-page style',
-        command: 'npx shadcn@latest add highlight-embedded-card',
+        command: 'npx jsrepo add highlight-embedded-card',
         preview: cardPreview,
         cardData: cardData
       },
       {
         name: 'Inline Variant',
         description: 'Medium-sized display',
-        command: 'npx shadcn@latest add highlight-embedded-inline',
+        command: 'npx jsrepo add highlight-embedded-inline',
         preview: inlinePreview,
         cardData: inlineData
       },
       {
         name: 'Compact Variant',
         description: 'Minimal truncated',
-        command: 'npx shadcn@latest add highlight-embedded-compact',
+        command: 'npx jsrepo add highlight-embedded-compact',
         preview: compactPreview,
         cardData: compactData
       }

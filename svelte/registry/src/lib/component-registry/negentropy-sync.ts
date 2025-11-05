@@ -6,8 +6,36 @@ export const negentropySyncProgressMinimalCard: ComponentCardData = {
   title: 'NegentropySyncProgressMinimal',
   description: 'Minimal progress bar with basic sync stats.',
   richDescription: 'Clean, simple progress bar showing sync completion percentage and basic stats. Perfect for inline use in headers or status bars.',
-  command: 'npx shadcn@latest add negentropy-sync-progress-minimal',
-  apiDocs: []
+  command: 'npx jsrepo add negentropy-sync-progress-minimal',
+  apiDocs: [
+    {
+      name: 'NegentropySyncProgressMinimal',
+      description: 'Minimal progress bar block with basic sync stats',
+      importPath: "import { NegentropySyncProgressMinimal } from '$lib/registry/components/negentropy-sync'",
+      props: [
+        { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    },
+    {
+      name: 'createNegentropySync',
+      description: 'Builder function that manages Negentropy sync state across multiple relays',
+      importPath: "import { createNegentropySync } from '$lib/registry/builders/negentropy-sync'",
+      props: [
+        {
+          name: 'config',
+          type: '() => NegentropySyncConfig',
+          required: true,
+          description: 'Reactive function returning sync configuration with filters and optional relay URLs'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (uses context if not provided)'
+        }
+      ]
+    }
+  ]
 };
 
 export const negentropySyncProgressDetailedCard: ComponentCardData = {
@@ -15,8 +43,36 @@ export const negentropySyncProgressDetailedCard: ComponentCardData = {
   title: 'NegentropySyncProgressDetailed',
   description: 'Detailed progress view with relay status.',
   richDescription: 'Comprehensive sync progress display showing overall stats, progress bar, and individual relay status with event counts. Ideal for debugging and monitoring.',
-  command: 'npx shadcn@latest add negentropy-sync-progress-detailed',
-  apiDocs: []
+  command: 'npx jsrepo add negentropy-sync-progress-detailed',
+  apiDocs: [
+    {
+      name: 'NegentropySyncProgressDetailed',
+      description: 'Detailed progress block showing overall stats, progress bar, and individual relay status',
+      importPath: "import { NegentropySyncProgressDetailed } from '$lib/registry/components/negentropy-sync'",
+      props: [
+        { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    },
+    {
+      name: 'createNegentropySync',
+      description: 'Builder function that manages Negentropy sync state across multiple relays',
+      importPath: "import { createNegentropySync } from '$lib/registry/builders/negentropy-sync'",
+      props: [
+        {
+          name: 'config',
+          type: '() => NegentropySyncConfig',
+          required: true,
+          description: 'Reactive function returning sync configuration with filters and optional relay URLs'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (uses context if not provided)'
+        }
+      ]
+    }
+  ]
 };
 
 export const negentropySyncProgressAnimatedCard: ComponentCardData = {
@@ -24,8 +80,36 @@ export const negentropySyncProgressAnimatedCard: ComponentCardData = {
   title: 'NegentropySyncProgressAnimated',
   description: 'Animated progress bar with smooth transitions.',
   richDescription: 'Eye-catching animated progress display with shimmer effects, pulse animations, and gradient backgrounds. Great for prominent placement and user engagement.',
-  command: 'npx shadcn@latest add negentropy-sync-progress-animated',
-  apiDocs: []
+  command: 'npx jsrepo add negentropy-sync-progress-animated',
+  apiDocs: [
+    {
+      name: 'NegentropySyncProgressAnimated',
+      description: 'Animated progress block with shimmer effects and smooth transitions',
+      importPath: "import { NegentropySyncProgressAnimated } from '$lib/registry/components/negentropy-sync'",
+      props: [
+        { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    },
+    {
+      name: 'createNegentropySync',
+      description: 'Builder function that manages Negentropy sync state across multiple relays',
+      importPath: "import { createNegentropySync } from '$lib/registry/builders/negentropy-sync'",
+      props: [
+        {
+          name: 'config',
+          type: '() => NegentropySyncConfig',
+          required: true,
+          description: 'Reactive function returning sync configuration with filters and optional relay URLs'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (uses context if not provided)'
+        }
+      ]
+    }
+  ]
 };
 
 export const negentropySyncProgressCompactCard: ComponentCardData = {
@@ -33,8 +117,36 @@ export const negentropySyncProgressCompactCard: ComponentCardData = {
   title: 'NegentropySyncProgressCompact',
   description: 'Compact badge with expandable details.',
   richDescription: 'Space-efficient badge showing sync status and percentage. Expands on hover to reveal detailed stats. Perfect for navigation bars and toolbars.',
-  command: 'npx shadcn@latest add negentropy-sync-progress-compact',
-  apiDocs: []
+  command: 'npx jsrepo add negentropy-sync-progress-compact',
+  apiDocs: [
+    {
+      name: 'NegentropySyncProgressCompact',
+      description: 'Compact badge block showing sync status with expandable details on hover',
+      importPath: "import { NegentropySyncProgressCompact } from '$lib/registry/components/negentropy-sync-progress-compact'",
+      props: [
+        { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    },
+    {
+      name: 'createNegentropySync',
+      description: 'Builder function that manages Negentropy sync state across multiple relays',
+      importPath: "import { createNegentropySync } from '$lib/registry/builders/negentropy-sync'",
+      props: [
+        {
+          name: 'config',
+          type: '() => NegentropySyncConfig',
+          required: true,
+          description: 'Reactive function returning sync configuration with filters and optional relay URLs'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (uses context if not provided)'
+        }
+      ]
+    }
+  ]
 };
 
 // API documentation

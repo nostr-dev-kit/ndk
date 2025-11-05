@@ -1,5 +1,5 @@
 import { NDKArticle } from '@nostr-dev-kit/ndk';
-import ArticleEmbedded from './article-embedded.svelte';
+import ArticleEmbedded from '../article-embedded/article-embedded.svelte';
 import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
 
 // Self-register this handler for NDKArticle events

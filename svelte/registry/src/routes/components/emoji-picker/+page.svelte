@@ -5,55 +5,35 @@
   import {
     emojiPickerMetadata,
     emojiPickerListCard,
-    emojiPickerContentCard,
-    emojiPickerPopoverCard,
-    emojiPickerAutocompleteCard
+    emojiPickerContentCard
   } from '$lib/component-registry/emoji-picker';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import examples
   import UiBasic from './examples/ui-basic.example.svelte';
   import UiComposition from './examples/ui-composition.example.svelte';
-  import UiPopover from './examples/ui-popover.example.svelte';
-  import UiAutocomplete from './examples/ui-autocomplete.example.svelte';
 
   // Import code examples
   import emojiPickerListCode from './emoji-picker-list.example?raw';
   import emojiPickerContentCode from './emoji-picker-content.example?raw';
-  import emojiPickerPopoverCode from './emoji-picker-popover.example?raw';
-  import emojiPickerAutocompleteCode from './emoji-picker-autocomplete.example?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
   const showcaseBlocks: ShowcaseBlock[] = [
     {
-      name: 'Basic List',
+      name: 'List',
       description: 'Grid of clickable emojis',
-      command: 'npx shadcn@latest add emoji-picker',
+      command: 'npx jsrepo add emoji-picker',
       preview: basicPreview,
       cardData: emojiPickerListCard
     },
     {
       name: 'Content',
       description: 'Complete picker with builder',
-      command: 'npx shadcn@latest add emoji-picker',
+      command: 'npx jsrepo add emoji-picker',
       preview: contentPreview,
       cardData: emojiPickerContentCard
-    },
-    {
-      name: 'Popover',
-      description: 'Dropdown emoji picker',
-      command: 'npx shadcn@latest add emoji-picker',
-      preview: popoverPreview,
-      cardData: emojiPickerPopoverCard
-    },
-    {
-      name: 'Autocomplete',
-      description: 'Textarea emoji autocomplete',
-      command: 'npx shadcn@latest add emoji-picker',
-      preview: autocompletePreview,
-      cardData: emojiPickerAutocompleteCard
     }
   ];
 </script>
@@ -65,14 +45,6 @@
 
 {#snippet contentPreview()}
   <UiComposition {ndk} />
-{/snippet}
-
-{#snippet popoverPreview()}
-  <UiPopover {ndk} />
-{/snippet}
-
-{#snippet autocompletePreview()}
-  <UiAutocomplete {ndk} />
 {/snippet}
 
 <!-- Custom sections for Builder API -->
@@ -104,15 +76,11 @@
   componentsSection={{
     cards: [
       { ...emojiPickerListCard, code: emojiPickerListCode },
-      { ...emojiPickerContentCard, code: emojiPickerContentCode },
-      { ...emojiPickerPopoverCard, code: emojiPickerPopoverCode },
-      { ...emojiPickerAutocompleteCard, code: emojiPickerAutocompleteCode }
+      { ...emojiPickerContentCard, code: emojiPickerContentCode }
     ],
     previews: {
       'emoji-picker-list': basicPreview,
-      'emoji-picker-content': contentPreview,
-      'emoji-picker-popover': popoverPreview,
-      'emoji-picker-autocomplete': autocompletePreview
+      'emoji-picker-content': contentPreview
     }
   }}
   apiDocs={emojiPickerMetadata.apiDocs}

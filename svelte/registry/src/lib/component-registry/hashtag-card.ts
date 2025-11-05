@@ -5,7 +5,7 @@ export const hashtagCardPortraitCard: ComponentCardData = {
 	title: 'HashtagCardPortrait',
 	description: 'Vertical hashtag card showing stats, activity chart, and contributors.',
 	richDescription: 'Great for grids and hashtag galleries. This portrait-oriented card displays hashtag activity with a beautiful deterministic gradient, 7-day bar chart, recent notes, top contributors, and follow functionality.',
-	command: 'npx shadcn@latest add hashtag-card-portrait',
+	command: 'npx jsrepo add hashtag-card-portrait',
 	apiDocs: [
 		{
 			name: 'HashtagCardPortrait',
@@ -25,7 +25,7 @@ export const hashtagCardCompactCard: ComponentCardData = {
 	title: 'HashtagCardCompact',
 	description: 'Compact horizontal hashtag card for lists.',
 	richDescription: 'Perfect for hashtag lists and sidebars. Shows hashtag with gradient indicator, note count, contributor avatars, and follow button in a compact horizontal layout.',
-	command: 'npx shadcn@latest add hashtag-card-compact',
+	command: 'npx jsrepo add hashtag-card-compact',
 	apiDocs: [
 		{
 			name: 'HashtagCardCompact',
@@ -49,5 +49,26 @@ export const hashtagCardMetadata = {
 		hashtagCardPortraitCard,
 		hashtagCardCompactCard
 	],
-	apiDocs: []
+	apiDocs: [
+		{
+			name: 'HashtagCardPortrait',
+			description: 'Portrait hashtag card component showing stats, activity chart, and contributors',
+			importPath: "import { HashtagCardPortrait } from '$lib/registry/components/hashtag-card'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'hashtag', type: 'string', required: true, description: 'Hashtag (with or without # prefix)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		},
+		{
+			name: 'HashtagCardCompact',
+			description: 'Compact horizontal hashtag card for lists and sidebars',
+			importPath: "import { HashtagCardCompact } from '$lib/registry/components/hashtag-card'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'hashtag', type: 'string', required: true, description: 'Hashtag (with or without # prefix)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };

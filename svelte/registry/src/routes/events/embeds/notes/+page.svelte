@@ -21,7 +21,7 @@
     title: 'Card Variant',
     description: 'Full display with maximum detail.',
     richDescription: 'Full display with maximum detail. Default variant for embedded notes.',
-    command: 'npx shadcn@latest add note-embedded-card',
+    command: 'npx jsrepo add note-embedded-card',
     apiDocs: []
   };
 
@@ -30,7 +30,7 @@
     title: 'Inline Variant',
     description: 'Constrained width for inline.',
     richDescription: 'Constrained width for inline display within flowing content.',
-    command: 'npx shadcn@latest add note-embedded-inline',
+    command: 'npx jsrepo add note-embedded-inline',
     apiDocs: []
   };
 
@@ -39,7 +39,7 @@
     title: 'Compact Variant',
     description: 'Minimal with truncated content.',
     richDescription: 'Minimal display with heavily truncated content for dense layouts.',
-    command: 'npx shadcn@latest add note-embedded-compact',
+    command: 'npx jsrepo add note-embedded-compact',
     apiDocs: []
   };
 </script>
@@ -129,21 +129,21 @@
       {
         name: 'Card Variant',
         description: 'Full display',
-        command: 'npx shadcn@latest add note-embedded-card',
+        command: 'npx jsrepo add note-embedded-card',
         preview: cardPreview,
         cardData: cardData
       },
       {
         name: 'Inline Variant',
         description: 'Constrained width',
-        command: 'npx shadcn@latest add note-embedded-inline',
+        command: 'npx jsrepo add note-embedded-inline',
         preview: inlinePreview,
         cardData: inlineData
       },
       {
         name: 'Compact Variant',
         description: 'Minimal truncated',
-        command: 'npx shadcn@latest add note-embedded-compact',
+        command: 'npx jsrepo add note-embedded-compact',
         preview: compactPreview,
         cardData: compactData
       }

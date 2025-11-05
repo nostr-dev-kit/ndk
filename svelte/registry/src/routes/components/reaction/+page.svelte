@@ -65,14 +65,14 @@
     {
       name: 'Standard Emojis',
       description: 'Unicode emoji display',
-      command: 'npx shadcn@latest add reaction',
+      command: 'npx jsrepo add reaction',
       preview: displayStandardPreview,
       cardData: reactionDisplayStandardCard
     },
     ...(hasNip30Event ? [{
       name: 'Custom Emojis',
       description: 'NIP-30 custom emojis',
-      command: 'npx shadcn@latest add reaction',
+      command: 'npx jsrepo add reaction',
       preview: displayCustomPreview,
       cardData: reactionDisplayCustomCard
     }] : [])
@@ -82,21 +82,21 @@
     {
       name: 'ReactionButton',
       description: 'Minimal icon-first design',
-      command: 'npx shadcn@latest add reaction-button',
+      command: 'npx jsrepo add reaction-button',
       preview: buttonPreview,
       cardData: reactionButtonCard
     },
     {
       name: 'ReactionSlack',
       description: 'Slack-style reactions',
-      command: 'npx shadcn@latest add reaction-slack',
+      command: 'npx jsrepo add reaction-slack',
       preview: slackPreview,
       cardData: reactionSlackCard
     },
     {
       name: 'ReactionEmojiButton',
       description: 'With emoji picker',
-      command: 'npx shadcn@latest add reaction-emoji-button',
+      command: 'npx jsrepo add reaction-emoji-button',
       preview: emojiButtonPreview,
       cardData: reactionEmojiButtonCard
     }
@@ -106,28 +106,28 @@
     {
       name: 'Basic',
       description: 'Click to react',
-      command: 'npx shadcn@latest add reaction',
+      command: 'npx jsrepo add reaction',
       preview: basicActionPreview,
       cardData: reactionActionBasicCard
     },
     {
       name: 'Slack-Style',
       description: 'All reactions display',
-      command: 'npx shadcn@latest add reaction',
+      command: 'npx jsrepo add reaction',
       preview: slackStylePreview,
       cardData: reactionSlackStyleCard
     },
     {
       name: 'Builder',
       description: 'Full control',
-      command: 'npx shadcn@latest add reaction',
+      command: 'npx jsrepo add reaction',
       preview: builderPreview,
       cardData: reactionBuilderCard
     },
     {
       name: 'Delayed',
       description: 'Cancellable reactions',
-      command: 'npx shadcn@latest add reaction',
+      command: 'npx jsrepo add reaction',
       preview: delayedPreview,
       cardData: reactionDelayedCard
     }

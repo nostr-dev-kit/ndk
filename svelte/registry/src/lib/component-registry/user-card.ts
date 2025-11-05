@@ -6,7 +6,7 @@ export const userCardClassicCard: ComponentCardData = {
   title: 'UserCardClassic',
   description: 'Classic user card with banner, avatar, name, bio, and stats.',
   richDescription: 'Perfect for popovers, dialogs, and standalone displays. This card provides a complete user profile view with banner image, avatar overlay, display name, bio, and follower/following stats.',
-  command: 'npx shadcn@latest add user-card-classic',
+  command: 'npx jsrepo add user-card-classic',
   apiDocs: []
 };
 
@@ -15,7 +15,7 @@ export const userCardCompactCard: ComponentCardData = {
   title: 'UserCardCompact',
   description: 'Minimal user card for lists.',
   richDescription: 'Shows avatar, name, and follow button. Ideal for sidebars and compact layouts where space is limited but user identity needs to be clear.',
-  command: 'npx shadcn@latest add user-card-compact',
+  command: 'npx jsrepo add user-card-compact',
   apiDocs: []
 };
 
@@ -24,7 +24,7 @@ export const userCardListItemCard: ComponentCardData = {
   title: 'UserListItem',
   description: 'Ultra-compact list item showing avatar, name, and follow status badge.',
   richDescription: 'Perfect for dense user lists and search results. Minimal design with just the essentials: avatar, name, and follow status indicator.',
-  command: 'npx shadcn@latest add user-list-item',
+  command: 'npx jsrepo add user-list-item',
   apiDocs: []
 };
 
@@ -33,7 +33,7 @@ export const userCardPortraitCard: ComponentCardData = {
   title: 'UserCardPortrait',
   description: 'Vertical card layout showing avatar, name, bio, and stats.',
   richDescription: 'Great for grids and profile galleries. This portrait-oriented card presents user information in a vertical layout ideal for grid displays and gallery views.',
-  command: 'npx shadcn@latest add user-card-portrait',
+  command: 'npx jsrepo add user-card-portrait',
   apiDocs: []
 };
 
@@ -42,7 +42,7 @@ export const userCardLandscapeCard: ComponentCardData = {
   title: 'UserCardLandscape',
   description: 'Horizontal card layout with avatar on left.',
   richDescription: 'Perfect for feed views and detailed lists. This horizontal layout places the avatar on the left with name, bio, and stats flowing to the right.',
-  command: 'npx shadcn@latest add user-card-landscape',
+  command: 'npx jsrepo add user-card-landscape',
   apiDocs: []
 };
 
@@ -51,7 +51,7 @@ export const userCardNeonCard: ComponentCardData = {
   title: 'UserCardNeon',
   description: 'Neon-style card with full background image and glossy top border.',
   richDescription: 'Features a full background image with darkening gradient and a neon glow effect at the top border. Perfect for modern, visually striking user displays.',
-  command: 'npx shadcn@latest add user-card-neon',
+  command: 'npx jsrepo add user-card-neon',
   apiDocs: []
 };
 
@@ -60,7 +60,7 @@ export const userCardGlassCard: ComponentCardData = {
   title: 'UserCardGlass',
   description: 'Glassmorphic card with frosted glass effect and gradient mesh background.',
   richDescription: 'Features a translucent frosted glass card over an animated gradient mesh background with sparkle effects. Modern, elegant design with soft glows and blur effects.',
-  command: 'npx shadcn@latest add user-card-glass',
+  command: 'npx jsrepo add user-card-glass',
   apiDocs: []
 };
 

@@ -39,14 +39,14 @@ Pretty cool, right? #awesome`);
     {
       name: 'Basic Rendering',
       description: 'Auto-detects content',
-      command: 'npx shadcn@latest add event-content',
+      command: 'npx jsrepo add event-content',
       preview: basicPreview,
       cardData: contentNoteBasicCard
     },
     {
       name: 'Custom Snippets',
       description: 'Override rendering',
-      command: 'npx shadcn@latest add event-content',
+      command: 'npx jsrepo add event-content',
       preview: customSnippetsPreview,
       cardData: contentNoteCustomSnippetsCard
     }

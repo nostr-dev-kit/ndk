@@ -13,7 +13,7 @@
   import muteButtonCode from './mute-button.example?raw';
   import muteCustomCode from './mute-custom.example?raw';
 
-  import MuteButton from '$lib/registry/components/actions/mute-button.svelte';
+  import MuteButton from '$lib/registry/components/mute-button/mute-button.svelte';
   import UIComposition from './examples/mute-action-builder.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -25,14 +25,14 @@
     {
       name: 'MuteButton',
       description: 'Minimal icon-first design',
-      command: 'npx shadcn@latest add mute-button',
+      command: 'npx jsrepo add mute-button',
       preview: muteButtonPreview,
       cardData: muteMetadata.cards[0]
     },
     {
       name: 'Custom',
       description: 'Custom implementation with builder',
-      command: 'npx shadcn@latest add mute-button',
+      command: 'npx jsrepo add mute-button',
       preview: customPreview,
       cardData: muteMetadata.cards[1]
     }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from '$lib/registry/utils/index.js';
+  import { cn } from '$lib/registry/utils/cn.js';
 
   interface GridBlock {
     name: string;

@@ -21,7 +21,7 @@
     title: 'Card Variant',
     description: 'Full display with cover and metadata.',
     richDescription: 'Full display with cover image, title, summary, and metadata. Default variant for embedded articles.',
-    command: 'npx shadcn@latest add article-embedded-card',
+    command: 'npx jsrepo add article-embedded-card',
     apiDocs: []
   };
 
@@ -30,7 +30,7 @@
     title: 'Inline Variant',
     description: 'Medium-sized inline display.',
     richDescription: 'Medium-sized display suitable for inline references within content.',
-    command: 'npx shadcn@latest add article-embedded-inline',
+    command: 'npx jsrepo add article-embedded-inline',
     apiDocs: []
   };
 
@@ -39,7 +39,7 @@
     title: 'Compact Variant',
     description: 'Minimal horizontal layout.',
     richDescription: 'Minimal horizontal layout with small image and truncated text.',
-    command: 'npx shadcn@latest add article-embedded-compact',
+    command: 'npx jsrepo add article-embedded-compact',
     apiDocs: []
   };
 </script>
@@ -129,21 +129,21 @@
       {
         name: 'Card Variant',
         description: 'Full display',
-        command: 'npx shadcn@latest add article-embedded-card',
+        command: 'npx jsrepo add article-embedded-card',
         preview: cardPreview,
         cardData: cardData
       },
       {
         name: 'Inline Variant',
         description: 'Medium display',
-        command: 'npx shadcn@latest add article-embedded-inline',
+        command: 'npx jsrepo add article-embedded-inline',
         preview: inlinePreview,
         cardData: inlineData
       },
       {
         name: 'Compact Variant',
         description: 'Minimal horizontal',
-        command: 'npx shadcn@latest add article-embedded-compact',
+        command: 'npx jsrepo add article-embedded-compact',
         preview: compactPreview,
         cardData: compactData
       }

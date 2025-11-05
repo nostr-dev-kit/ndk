@@ -21,7 +21,7 @@
     title: 'Card Variant',
     description: 'Full display with kind badge.',
     richDescription: 'Full display with event content and kind badge. Shows NIP-31 alt tag when available.',
-    command: 'npx shadcn@latest add generic-embedded-card',
+    command: 'npx jsrepo add generic-embedded-card',
     apiDocs: []
   };
 
@@ -30,7 +30,7 @@
     title: 'Inline Variant',
     description: 'Medium-sized display.',
     richDescription: 'Medium-sized display suitable for inline references within content.',
-    command: 'npx shadcn@latest add generic-embedded-inline',
+    command: 'npx jsrepo add generic-embedded-inline',
     apiDocs: []
   };
 
@@ -39,7 +39,7 @@
     title: 'Compact Variant',
     description: 'Minimal with truncated content.',
     richDescription: 'Minimal display with truncated content and compact header.',
-    command: 'npx shadcn@latest add generic-embedded-compact',
+    command: 'npx jsrepo add generic-embedded-compact',
     apiDocs: []
   };
 </script>
@@ -183,21 +183,21 @@
       {
         name: 'Card Variant',
         description: 'Full display',
-        command: 'npx shadcn@latest add generic-embedded-card',
+        command: 'npx jsrepo add generic-embedded-card',
         preview: cardPreview,
         cardData: cardData
       },
       {
         name: 'Inline Variant',
         description: 'Medium-sized display',
-        command: 'npx shadcn@latest add generic-embedded-inline',
+        command: 'npx jsrepo add generic-embedded-inline',
         preview: inlinePreview,
         cardData: inlineData
       },
       {
         name: 'Compact Variant',
         description: 'Minimal truncated',
-        command: 'npx shadcn@latest add generic-embedded-compact',
+        command: 'npx jsrepo add generic-embedded-compact',
         preview: compactPreview,
         cardData: compactData
       }

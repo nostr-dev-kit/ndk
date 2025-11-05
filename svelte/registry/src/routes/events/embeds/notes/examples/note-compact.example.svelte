@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EventContent, ContentRenderer } from '$lib/registry/ui';
-  import NoteEmbedded from '$lib/registry/components/note-embedded/note-embedded-compact.svelte';
+  import NoteEmbedded from '$lib/registry/components/note-embedded-compact/note-embedded-compact.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {

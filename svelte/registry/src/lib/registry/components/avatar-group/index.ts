@@ -42,7 +42,7 @@
  * ```
  */
 
-import AvatarGroup from './avatar-group.svelte';
+import AvatarGroup from '../avatar-group/avatar-group.svelte';
 
 export { AvatarGroup };
 export default AvatarGroup;

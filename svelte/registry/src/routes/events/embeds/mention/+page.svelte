@@ -17,21 +17,21 @@
 		{
 			name: 'Modern',
 			description: 'Rich mention with avatar',
-			command: 'npx shadcn@latest add mention-modern',
+			command: 'npx jsrepo add mention-modern',
 			preview: mentionModernPreview,
 			cardData: mentionModernCard
 		},
 		{
 			name: 'Basic',
 			description: 'Minimal mention',
-			command: 'npx shadcn@latest add mention',
+			command: 'npx jsrepo add mention',
 			preview: basicPreview,
 			cardData: mentionBasicCard
 		},
 		{
 			name: 'Custom',
 			description: 'Custom styled',
-			command: 'npx shadcn@latest add mention',
+			command: 'npx jsrepo add mention',
 			preview: customPreview,
 			cardData: mentionCustomCard
 		}

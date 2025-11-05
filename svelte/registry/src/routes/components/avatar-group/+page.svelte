@@ -30,35 +30,35 @@
     {
       name: 'Default',
       description: 'Basic stacked avatars with smart ordering',
-      command: 'npx shadcn@latest add avatar-group',
+      command: 'npx jsrepo add avatar-group',
       preview: defaultPreview,
       cardData: avatarGroupCard
     },
     {
       name: 'With Overflow',
       description: 'Circular badge for overflow count',
-      command: 'npx shadcn@latest add avatar-group',
+      command: 'npx jsrepo add avatar-group',
       preview: withOverflowPreview,
       cardData: avatarGroupCard
     },
     {
       name: 'Text Overflow',
       description: 'Text-based overflow display',
-      command: 'npx shadcn@latest add avatar-group',
+      command: 'npx jsrepo add avatar-group',
       preview: textOverflowPreview,
       cardData: avatarGroupCard
     },
     {
       name: 'Vertical Stack',
       description: 'Vertically stacked avatars',
-      command: 'npx shadcn@latest add avatar-group',
+      command: 'npx jsrepo add avatar-group',
       preview: verticalPreview,
       cardData: avatarGroupCard
     },
     {
       name: 'Custom Snippet',
       description: 'Fully customizable overflow rendering',
-      command: 'npx shadcn@latest add avatar-group',
+      command: 'npx jsrepo add avatar-group',
       preview: snippetPreview,
       cardData: avatarGroupCard
     }

@@ -5,7 +5,7 @@ export const imageCardInstagramCard: ComponentCardData = {
 	title: 'ImageCardInstagram',
 	description: 'Instagram-style image card.',
 	richDescription: 'Classic Instagram-style card with user header, square image, caption, and action buttons. Perfect for social feed layouts.',
-	command: 'npx shadcn@latest add image-card-instagram',
+	command: 'npx jsrepo add image-card-instagram',
 	apiDocs: [
 		{
 			name: 'ImageCardInstagram',
@@ -26,7 +26,7 @@ export const imageCardHeroCard: ComponentCardData = {
 	title: 'ImageCardHero',
 	description: 'Fullbleed immersive image display.',
 	richDescription: 'Fullbleed immersive display with caption and author info anchored at bottom over gradient. Perfect for featured or detail views.',
-	command: 'npx shadcn@latest add image-card-hero',
+	command: 'npx jsrepo add image-card-hero',
 	apiDocs: [
 		{
 			name: 'ImageCardHero',
@@ -48,7 +48,7 @@ export const imageCardCard: ComponentCardData = {
 	title: 'ImageCard',
 	description: 'General purpose image card.',
 	richDescription: 'Combines EventCard primitives with ImageContent for flexible layouts. Perfect for general purpose image display.',
-	command: 'npx shadcn@latest add image-card',
+	command: 'npx jsrepo add image-card',
 	apiDocs: [
 		{
 			name: 'ImageCard',

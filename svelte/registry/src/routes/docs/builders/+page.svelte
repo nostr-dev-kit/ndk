@@ -1,14 +1,15 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import PageTitle from '$site-components/PageTitle.svelte';
+  import "../../../lib/styles/docs-page.css";
 </script>
 
+<PageTitle
+  title="Builders"
+  subtitle="Reactive state factories for building custom Nostr UIs"
+/>
+
 <div class="docs-page">
-  <header class="docs-header">
-    <h1>Builders</h1>
-    <p class="subtitle">
-      Reactive state factories for building custom Nostr UIs
-    </p>
-  </header>
 
   <section>
     <h2>What is a Builder?</h2>

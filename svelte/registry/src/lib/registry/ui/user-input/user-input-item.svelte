@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { mergeProps } from '../../utils/index.js';
+  import { mergeProps } from '../../utils/merge-props/index.js';
   import { getContext } from 'svelte';
   import type { Snippet } from 'svelte';
   import type { UserInputResult } from '@nostr-dev-kit/svelte';

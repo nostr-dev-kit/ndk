@@ -6,8 +6,40 @@ export const muteButtonCard: ComponentCardData = {
   title: 'MuteButton',
   description: 'Minimal mute button with icon-first design.',
   richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar and name.',
-  command: 'npx shadcn@latest add mute-button',
-  apiDocs: []
+  command: 'npx jsrepo add mute-button',
+  apiDocs: [
+    {
+      name: 'MuteButton',
+      description: 'Minimal mute button block with icon-first design',
+      importPath: "import MuteButton from '$lib/registry/components/mute-button.svelte'",
+      props: [
+        { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+        { name: 'target', type: 'NDKUser | string', required: true, description: 'User to mute' },
+        { name: 'showIcon', type: 'boolean', default: 'true', description: 'Whether to show icon' },
+        { name: 'showTarget', type: 'boolean', default: 'false', description: 'When true, shows user avatar and name' },
+        { name: 'class', type: 'string', description: 'Custom CSS classes' }
+      ]
+    },
+    {
+      name: 'createMuteAction',
+      description: 'Builder function that provides mute/unmute state and methods',
+      importPath: "import { createMuteAction } from '@nostr-dev-kit/svelte'",
+      props: [
+        {
+          name: 'config',
+          type: '() => { target: NDKUser | string }',
+          required: true,
+          description: 'Reactive function returning target configuration'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance'
+        }
+      ]
+    }
+  ]
 };
 
 export const muteCustomCard: ComponentCardData = {
@@ -15,8 +47,28 @@ export const muteCustomCard: ComponentCardData = {
   title: 'Custom Implementation',
   description: 'Build custom mute buttons with createMuteAction.',
   richDescription: 'Use the createMuteAction builder directly to create custom mute buttons with full control over appearance and behavior.',
-  command: 'npx shadcn@latest add mute-button',
-  apiDocs: []
+  command: 'npx jsrepo add mute-button',
+  apiDocs: [
+    {
+      name: 'createMuteAction',
+      description: 'Builder function that provides mute/unmute state and methods',
+      importPath: "import { createMuteAction } from '@nostr-dev-kit/svelte'",
+      props: [
+        {
+          name: 'config',
+          type: '() => { target: NDKUser | string }',
+          required: true,
+          description: 'Reactive function returning target configuration'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          required: true,
+          description: 'NDK instance'
+        }
+      ]
+    }
+  ]
 };
 
 // API documentation
@@ -43,7 +95,7 @@ export const muteApiDocs: ApiDoc[] = [
   {
     name: 'MuteButton',
     description: 'Minimal mute button block with icon-first design.',
-    importPath: "import MuteButton from '$lib/registry/components/actions/mute-button.svelte'",
+    importPath: "import MuteButton from '$lib/registry/components/mute-button.svelte'",
     props: [
       {
         name: 'ndk',

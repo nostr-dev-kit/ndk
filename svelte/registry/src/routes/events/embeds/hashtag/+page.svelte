@@ -18,28 +18,28 @@
 		{
 			name: 'Modern',
 			description: 'Rich hashtag with hover card',
-			command: 'npx shadcn@latest add hashtag-modern',
+			command: 'npx jsrepo add hashtag-modern',
 			preview: modernPreview,
 			cardData: hashtagModernCard
 		},
 		{
 			name: 'Basic',
 			description: 'Minimal hashtag',
-			command: 'npx shadcn@latest add hashtag',
+			command: 'npx jsrepo add hashtag',
 			preview: basicPreview,
 			cardData: hashtagBasicCard
 		},
 		{
 			name: 'Custom',
 			description: 'Custom styled',
-			command: 'npx shadcn@latest add hashtag',
+			command: 'npx jsrepo add hashtag',
 			preview: customPreview,
 			cardData: hashtagCustomCard
 		},
 		{
 			name: 'Interactive',
 			description: 'With click handler',
-			command: 'npx shadcn@latest add hashtag',
+			command: 'npx jsrepo add hashtag',
 			preview: interactivePreview,
 			cardData: hashtagInteractiveCard
 		}

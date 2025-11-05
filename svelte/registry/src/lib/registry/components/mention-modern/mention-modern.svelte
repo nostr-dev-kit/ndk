@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
-  import UserCardClassic from '../user-card/user-card-classic.svelte';
+  import UserCardClassic from '../user-card-classic/user-card-classic.svelte';
   import { Popover } from 'bits-ui';
   import { cn } from '../../utils/cn.js';
 

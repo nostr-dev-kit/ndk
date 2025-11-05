@@ -8,6 +8,7 @@ export { default as LinkIcon } from './link.svelte';
 export { default as LoadingIcon } from './loading.svelte';
 export { default as PauseIcon } from './pause.svelte';
 export { default as PlayIcon } from './play.svelte';
+export { default as ReplyIcon } from './reply.svelte';
 export { default as RepostIcon } from './repost.svelte';
 export { default as UserAddIcon } from './user-add.svelte';
 export { default as UserFollowingIcon } from './user-following.svelte';

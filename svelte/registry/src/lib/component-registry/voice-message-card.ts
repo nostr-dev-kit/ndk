@@ -5,8 +5,19 @@ export const voiceMessageCardCompactCard: ComponentCardData = {
 	title: 'Compact',
 	description: 'Inline voice message display.',
 	richDescription: 'Use for inline voice message display in feeds or chat interfaces.',
-	command: 'npx shadcn@latest add voice-message-card-compact',
-	apiDocs: []
+	command: 'npx jsrepo add voice-message-card-compact',
+	apiDocs: [
+		{
+			name: 'VoiceMessageCardCompact',
+			description: 'Compact voice message card for inline display',
+			importPath: "import { VoiceMessageCardCompact } from '$lib/registry/components/voice-message-card'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'event', type: 'NDKEvent', required: true, description: 'Voice message event (NIP-A0)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const voiceMessageCardExpandedCard: ComponentCardData = {
@@ -14,8 +25,19 @@ export const voiceMessageCardExpandedCard: ComponentCardData = {
 	title: 'Expanded',
 	description: 'Detailed display with waveform.',
 	richDescription: 'Use for detailed voice message display with waveform visualization.',
-	command: 'npx shadcn@latest add voice-message-card-expanded',
-	apiDocs: []
+	command: 'npx jsrepo add voice-message-card-expanded',
+	apiDocs: [
+		{
+			name: 'VoiceMessageCardExpanded',
+			description: 'Expanded voice message card with waveform visualization',
+			importPath: "import { VoiceMessageCardExpanded } from '$lib/registry/components/voice-message-card'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'event', type: 'NDKEvent', required: true, description: 'Voice message event (NIP-A0)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const voiceMessageCardBasicCard: ComponentCardData = {
@@ -23,8 +45,27 @@ export const voiceMessageCardBasicCard: ComponentCardData = {
 	title: 'Basic Usage',
 	description: 'Minimal primitives example.',
 	richDescription: 'Minimal example with VoiceMessageCard.Root and player primitive.',
-	command: 'npx shadcn@latest add voice-message-card',
-	apiDocs: []
+	command: 'npx jsrepo add voice-message-card',
+	apiDocs: [
+		{
+			name: 'VoiceMessage.Root',
+			description: 'Root component providing voice message context to all child primitives',
+			importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'event', type: 'NDKEvent', required: true, description: 'Voice message event (NIP-A0)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		},
+		{
+			name: 'VoiceMessage.Player',
+			description: 'Audio player primitive with play/pause controls and progress bar',
+			importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
+			props: [
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const voiceMessageCardCompositionCard: ComponentCardData = {
@@ -32,8 +73,25 @@ export const voiceMessageCardCompositionCard: ComponentCardData = {
 	title: 'Full Composition',
 	description: 'All primitives composed together.',
 	richDescription: 'All available primitives composed together.',
-	command: 'npx shadcn@latest add voice-message-card',
-	apiDocs: []
+	command: 'npx jsrepo add voice-message-card',
+	apiDocs: [
+		{
+			name: 'VoiceMessage.Waveform',
+			description: 'Waveform visualization primitive',
+			importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
+			props: [
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		},
+		{
+			name: 'VoiceMessage.Duration',
+			description: 'Displays voice message duration',
+			importPath: "import { VoiceMessage } from '$lib/registry/ui/voice-message'",
+			props: [
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const voiceMessageCardMetadata: ComponentPageMetadata = {

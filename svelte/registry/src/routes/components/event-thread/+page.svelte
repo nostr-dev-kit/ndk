@@ -36,7 +36,7 @@
     {
       name: 'Twitter Style',
       description: 'Vertical with connectors',
-      command: 'npx shadcn@latest add thread-view-twitter',
+      command: 'npx jsrepo add thread-view-twitter',
       preview: twitterPreview,
       cardData: threadViewTwitterCard
     }
@@ -47,14 +47,14 @@
     {
       name: 'Basic Usage',
       description: 'Minimal primitives',
-      command: 'npx shadcn@latest add thread-view',
+      command: 'npx jsrepo add thread-view',
       preview: basicPreview,
       cardData: threadViewBasicCard
     },
     {
       name: 'Full Composition',
       description: 'All primitives together',
-      command: 'npx shadcn@latest add thread-view',
+      command: 'npx jsrepo add thread-view',
       preview: compositionPreview,
       cardData: threadViewFullCard
     }

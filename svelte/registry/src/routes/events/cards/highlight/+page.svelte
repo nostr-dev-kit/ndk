@@ -5,7 +5,7 @@
   import { Highlight as HighlightCard } from '$lib/registry/ui/highlight';
   import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
   import HighlightCardElegant from '$lib/registry/components/highlight-card/highlight-card-elegant.svelte';
-  import HighlightCardCompact from '$lib/registry/components/highlight-card/highlight-card-compact.svelte';
+  import HighlightCardCompact from '$lib/registry/components/highlight-card-compact/highlight-card-compact.svelte';
   import HighlightCardGrid from '$lib/registry/components/highlight-card/highlight-card-grid.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -85,7 +85,7 @@
     {
       name: 'Feed',
       description: 'Full-width card for feeds',
-      command: 'npx shadcn@latest add highlight-card-feed',
+      command: 'npx jsrepo add highlight-card-feed',
       preview: feedPreview,
       cardData: highlightCardFeedCard,
       orientation: 'vertical'
@@ -93,7 +93,7 @@
     {
       name: 'Elegant',
       description: 'Square with gradient',
-      command: 'npx shadcn@latest add highlight-card-elegant',
+      command: 'npx jsrepo add highlight-card-elegant',
       preview: elegantPreview,
       cardData: highlightCardElegantCard,
       orientation: 'horizontal'
@@ -101,7 +101,7 @@
     {
       name: 'Compact',
       description: 'Horizontal list layout',
-      command: 'npx shadcn@latest add highlight-card-compact',
+      command: 'npx jsrepo add highlight-card-compact',
       preview: compactPreview,
       cardData: highlightCardCompactCard,
       orientation: 'vertical'
@@ -109,7 +109,7 @@
     {
       name: 'Grid',
       description: 'Square for grids',
-      command: 'npx shadcn@latest add highlight-card-grid',
+      command: 'npx jsrepo add highlight-card-grid',
       preview: gridPreview,
       cardData: highlightCardGridCard,
       orientation: 'horizontal'

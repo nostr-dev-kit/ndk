@@ -84,8 +84,7 @@
               field="displayName"
               class="font-semibold text-[15px] text-foreground truncate"
             />
-            <User.Field
-              field="nip05"
+            <User.Nip05
               class="text-sm text-muted-foreground truncate"
             />
           </div>

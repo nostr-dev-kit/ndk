@@ -4,7 +4,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import ImageCard from '$lib/registry/components/image-card/image-card.svelte';
 	import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte';
-	import ImageCardHero from '$lib/registry/components/image-card/image-card-hero.svelte';
+	import ImageCardHero from '$lib/registry/components/image-card-hero/image-card-hero.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -37,7 +37,7 @@
 		{
 			name: 'Instagram',
 			description: 'Social feed style card',
-			command: 'npx shadcn@latest add image-card-instagram',
+			command: 'npx jsrepo add image-card-instagram',
 			preview: instagramPreview,
 			cardData: imageCardInstagramCard,
 			orientation: 'vertical'
@@ -45,7 +45,7 @@
 		{
 			name: 'Hero',
 			description: 'Fullbleed immersive display',
-			command: 'npx shadcn@latest add image-card-hero',
+			command: 'npx jsrepo add image-card-hero',
 			preview: heroPreview,
 			cardData: imageCardHeroCard,
 			orientation: 'vertical'
@@ -53,7 +53,7 @@
 		{
 			name: 'ImageCard',
 			description: 'General purpose card',
-			command: 'npx shadcn@latest add image-card',
+			command: 'npx jsrepo add image-card',
 			preview: imageCardPreview,
 			cardData: imageCardCard,
 			orientation: 'vertical'
@@ -99,7 +99,7 @@
 			{
 				name: 'ImageCardHero',
 				description: 'Fullbleed immersive display with caption and author info anchored at bottom.',
-				importPath: "import ImageCardHero from '$lib/registry/components/image-card/image-card-hero.svelte'",
+				importPath: "import ImageCardHero from '$lib/registry/components/image-card-hero/image-card-hero.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
+  import { getContext, type Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -33,6 +33,24 @@
     })();
   });
 
+  function createShowcaseBlocks(basicPreview: Snippet, customPreview: Snippet): ShowcaseBlock[] {
+    return [
+      {
+        name: 'Basic',
+        description: 'Simple with amount tracking',
+        command: 'npx jsrepo add zap-button',
+        preview: basicPreview,
+        cardData: zapBasicCard
+      },
+      {
+        name: 'Custom',
+        description: 'Full control over styling',
+        command: 'npx jsrepo add zap-button',
+        preview: customPreview,
+        cardData: zapCustomCard
+      }
+    ];
+  }
 </script>
 
 {#if sampleEvent}
@@ -55,28 +73,11 @@
     <BuilderExample {ndk} {event} />
   {/snippet}
 
-  {@const showcaseBlocks = [
-    {
-      name: 'Basic',
-      description: 'Simple with amount tracking',
-      command: 'npx shadcn@latest add zap-button',
-      preview: basicPreview,
-      cardData: zapBasicCard
-    },
-    {
-      name: 'Custom',
-      description: 'Full control over styling',
-      command: 'npx shadcn@latest add zap-button',
-      preview: customPreview,
-      cardData: zapCustomCard
-    }
-  ]}
-
   <!-- Use the template -->
   <ComponentPageTemplate
     metadata={zapMetadata}
     {ndk}
-    {showcaseBlocks}
+    showcaseBlocks={createShowcaseBlocks(basicPreview, customPreview)}
     componentsSection={{
       cards: [
         { ...zapBasicCard, code: zapBasicCode },

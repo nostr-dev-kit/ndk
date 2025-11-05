@@ -1,14 +1,15 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import PageTitle from '$site-components/PageTitle.svelte';
+  import "../../../lib/styles/docs-page.css";
 </script>
 
+<PageTitle
+  title="Architecture"
+  subtitle="How NDK-svelte separates data from presentation"
+/>
+
 <div class="docs-page">
-  <header class="docs-header">
-    <h1>Architecture</h1>
-    <p class="subtitle">
-      How NDK-svelte separates data from presentation
-    </p>
-  </header>
 
   <section>
     <h2>Two Layers</h2>
@@ -30,9 +31,9 @@
 const content = createEventContent(() => ({ event }), ndk);
 
 // Access reactive state
-content.segments
-content.images
-content.videos`} />
+content.segments  // ParsedSegment[] - parsed content with mentions, links, media
+content.content   // string - raw content
+content.emojiMap  // Map<string, string> - custom emoji mappings`} />
 
     <h3>Components (UI Layer)</h3>
     <p>
@@ -83,9 +84,13 @@ content.videos`} />
       working UI immediately and you can customize them by editing your copies.
     </p>
 
-    <CodeBlock lang="bash" code={`npx shadcn-svelte add event-card`} />
+    <CodeBlock lang="bash" code={`jsrepo add components/event-card`} />
 
-    <CodeBlock lang="svelte" code={`<EventCard.Root {ndk} {event}>
+    <CodeBlock lang="svelte" code={`<script>
+  import { EventCard } from '$lib/registry/components/event-card';
+</script>
+
+<EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
 </EventCard.Root>`} />

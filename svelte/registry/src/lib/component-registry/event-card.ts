@@ -5,7 +5,7 @@ export const eventCardClassicCard: ComponentCardData = {
 	title: 'EventCardClassic',
 	description: 'Standard event display for feeds.',
 	richDescription: 'Use for standard event displays in feeds and lists. Includes background, header with dropdown menu, content, and action buttons (repost, reaction).',
-	command: 'npx shadcn@latest add event-card-classic',
+	command: 'npx jsrepo add event-card-classic',
 	apiDocs: [
 		{
 			name: 'EventCardClassic',
@@ -30,7 +30,7 @@ export const eventCardMenuCard: ComponentCardData = {
 	title: 'EventCardMenu',
 	description: 'Dropdown menu for event actions.',
 	richDescription: 'Fully-styled dropdown menu for event actions including mute, report, copy link, and view raw event. Can be used standalone or within EventCard compositions.',
-	command: 'npx shadcn@latest add event-card-menu',
+	command: 'npx jsrepo add event-card-menu',
 	apiDocs: [
 		{
 			name: 'EventCardMenu',
@@ -51,8 +51,40 @@ export const eventCardBasicCard: ComponentCardData = {
 	title: 'Basic Usage',
 	description: 'Minimal example with EventCard primitives.',
 	richDescription: 'Minimal example with EventCard.Root and essential primitives. Build custom layouts by composing EventCard.Header, EventCard.Content, and EventCard.Actions.',
-	command: 'npx shadcn@latest add event-card',
-	apiDocs: []
+	command: 'npx jsrepo add event-card',
+	apiDocs: [
+		{
+			name: 'EventCard.Root',
+			description: 'Root component providing event context to all child primitives',
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, falls back to context)' },
+				{ name: 'event', type: 'NDKEvent', required: true, description: 'The event to display (any kind)' },
+				{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler (if provided, card becomes interactive)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		},
+		{
+			name: 'EventCard.Header',
+			description: 'Displays event author information with avatar, name, and timestamp',
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			props: [
+				{ name: 'variant', type: "'full' | 'compact'", default: "'full'", description: 'Header layout variant' },
+				{ name: 'avatarSize', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Avatar size' },
+				{ name: 'showTimestamp', type: 'boolean', default: 'true', description: 'Show timestamp' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		},
+		{
+			name: 'EventCard.Content',
+			description: 'Renders event content with automatic parsing of mentions, hashtags, and media',
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			props: [
+				{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const eventCardFullCard: ComponentCardData = {
@@ -60,8 +92,26 @@ export const eventCardFullCard: ComponentCardData = {
 	title: 'Full Composition',
 	description: 'All available primitives composed together.',
 	richDescription: 'All available primitives composed together with full header, content truncation, and multiple reaction options. Demonstrates the flexibility of the primitive-based approach.',
-	command: 'npx shadcn@latest add event-card',
-	apiDocs: []
+	command: 'npx jsrepo add event-card',
+	apiDocs: [
+		{
+			name: 'EventCard.Actions',
+			description: 'Container for event action buttons (repost, reaction, etc.)',
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			props: [
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		},
+		{
+			name: 'EventCard.Dropdown',
+			description: 'Dropdown menu for event actions (mute, report, copy, etc.)',
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			props: [
+				{ name: 'showRelayInfo', type: 'boolean', default: 'true', description: 'Show relay information in dropdown' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const eventCardChromeCard: ComponentCardData = {
@@ -69,8 +119,20 @@ export const eventCardChromeCard: ComponentCardData = {
 	title: 'Interactive Chrome Demo',
 	description: 'See how the chrome adapts to different event kinds.',
 	richDescription: 'See how the same chrome adapts to different event kinds. The header, layout, and actions stay consistent while the content changes.',
-	command: 'npx shadcn@latest add event-card',
-	apiDocs: []
+	command: 'npx jsrepo add event-card',
+	apiDocs: [
+		{
+			name: 'EventCard.Root',
+			description: 'Root component providing event context to all child primitives',
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, falls back to context)' },
+				{ name: 'event', type: 'NDKEvent', required: true, description: 'The event to display (any kind)' },
+				{ name: 'onclick', type: '(e: MouseEvent) => void', description: 'Click handler (if provided, card becomes interactive)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const eventCardMetadata: ComponentPageMetadata = {

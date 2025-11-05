@@ -11,52 +11,30 @@
   // Import code examples
   import uploadButtonCode from './upload-button.example?raw';
   import mediaUploadCarouselCode from './media-upload-carousel.example?raw';
-  import mediaUploadBasicCode from './media-upload-basic.example?raw';
-  import mediaUploadFullCode from './media-upload-full.example?raw';
 
-  import UploadButton from '$lib/registry/components/actions/upload-button.svelte';
+  import UploadButton from '$lib/registry/components/upload-button/upload-button.svelte';
   import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
-  import UIBasic from './examples/ui-basic.example.svelte';
-  import UIFull from './examples/ui-full.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let buttonUploads = $state<MediaUploadResult[]>([]);
   let carouselUploads = $state<MediaUploadResult[]>([]);
 
-  // Blocks showcase
-  const blocksShowcaseBlocks: ShowcaseBlock[] = [
+  // Showcase blocks
+  const showcaseBlocks: ShowcaseBlock[] = [
     {
       name: 'Upload Button',
       description: 'Simple file uploads',
-      command: 'npx shadcn@latest add upload-button',
+      command: 'npx jsrepo add upload-button',
       preview: uploadButtonPreview,
       cardData: mediaUploadMetadata.cards[0]
     },
     {
       name: 'Media Upload Carousel',
       description: 'With visual previews',
-      command: 'npx shadcn@latest add media-upload-carousel',
+      command: 'npx jsrepo add media-upload-carousel',
       preview: carouselPreview,
       cardData: mediaUploadMetadata.cards[1]
-    }
-  ];
-
-  // UI Primitives showcase
-  const primitivesShowcaseBlocks: ShowcaseBlock[] = [
-    {
-      name: 'Basic Usage',
-      description: 'Minimal primitives',
-      command: 'npx shadcn@latest add media-upload',
-      preview: basicPreview,
-      cardData: mediaUploadMetadata.cards[2]
-    },
-    {
-      name: 'Full Composition',
-      description: 'All primitives together',
-      command: 'npx shadcn@latest add media-upload',
-      preview: fullPreview,
-      cardData: mediaUploadMetadata.cards[3]
     }
   ];
 </script>
@@ -75,81 +53,6 @@
 
 {#snippet carouselPreview()}
   <MediaUploadCarousel {ndk} bind:uploads={carouselUploads} accept="image/*,video/*" />
-{/snippet}
-
-<!-- Preview snippets for UI Primitives -->
-{#snippet basicPreview()}
-  <UIBasic {ndk} />
-{/snippet}
-
-{#snippet fullPreview()}
-  <UIFull {ndk} />
-{/snippet}
-
-<!-- Additional showcase for UI Primitives -->
-{#snippet afterShowcase()}
-  <SectionTitle
-    title="UI Primitives"
-    description="Primitive components for building custom upload layouts."
-  />
-
-  <ComponentsShowcaseGrid blocks={primitivesShowcaseBlocks} />
-
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Builder</h2>
-    <p class="text-muted-foreground mb-8">
-      The <code class="text-sm bg-muted px-1 py-0.5 rounded">createMediaUpload</code> builder provides
-      reactive state management for file uploads.
-    </p>
-
-    <div class="bg-muted/50 rounded-lg p-6 space-y-4">
-      <h3 class="text-lg font-semibold">Basic Usage</h3>
-      <pre class="bg-background p-4 rounded-md overflow-x-auto"><code
-          class="text-sm">{`import { createMediaUpload } from '$lib/registry/ui/media-upload';
-
-const mediaUpload = createMediaUpload(ndk, {
-  fallbackServer: 'https://blossom.primal.net',
-  accept: 'image/*,video/*',
-  maxFiles: 10
-});
-
-// Upload files
-await mediaUpload.uploadFiles(fileList);
-
-// Access uploaded files
-console.log(mediaUpload.uploads);
-
-// Remove an upload
-mediaUpload.removeUpload(0);
-
-// Reorder uploads
-mediaUpload.reorderUpload(0, 2);`}</code></pre>
-    </div>
-  </section>
-{/snippet}
-
-<!-- Component previews for Components section -->
-{#snippet uploadButtonComponentPreview()}
-  <div class="flex flex-col gap-4">
-    <UploadButton {ndk} bind:uploads={buttonUploads} />
-    {#if buttonUploads.length > 0}
-      <div class="text-sm text-muted-foreground">
-        {buttonUploads.length} file{buttonUploads.length === 1 ? '' : 's'} uploaded
-      </div>
-    {/if}
-  </div>
-{/snippet}
-
-{#snippet carouselComponentPreview()}
-  <MediaUploadCarousel {ndk} bind:uploads={carouselUploads} accept="image/*,video/*" />
-{/snippet}
-
-{#snippet basicComponentPreview()}
-  <UIBasic {ndk} />
-{/snippet}
-
-{#snippet fullComponentPreview()}
-  <UIFull {ndk} />
 {/snippet}
 
 <!-- Custom Builder API section -->
@@ -237,20 +140,15 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
 <ComponentPageTemplate
   metadata={mediaUploadMetadata}
   {ndk}
-  showcaseBlocks={blocksShowcaseBlocks}
-  {afterShowcase}
+  showcaseBlocks={showcaseBlocks}
   componentsSection={{
     cards: [
       { ...mediaUploadMetadata.cards[0], code: uploadButtonCode },
-      { ...mediaUploadMetadata.cards[1], code: mediaUploadCarouselCode },
-      { ...mediaUploadMetadata.cards[2], code: mediaUploadBasicCode },
-      { ...mediaUploadMetadata.cards[3], code: mediaUploadFullCode }
+      { ...mediaUploadMetadata.cards[1], code: mediaUploadCarouselCode }
     ],
     previews: {
-      'upload-button': uploadButtonComponentPreview,
-      'media-upload-carousel': carouselComponentPreview,
-      'media-upload-basic': basicComponentPreview,
-      'media-upload-full': fullComponentPreview
+      'upload-button': uploadButtonPreview,
+      'media-upload-carousel': carouselPreview
     }
   }}
   apiDocs={mediaUploadMetadata.apiDocs}

@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
   import { EventContent, ContentRenderer } from '$lib/registry/ui';
-  import HighlightEmbeddedCompact from '$lib/registry/components/highlight-embedded/highlight-embedded-compact.svelte';
+  import HighlightEmbeddedCompact from '$lib/registry/components/highlight-embedded-compact/highlight-embedded-compact.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {

@@ -5,7 +5,7 @@ export const hashtagModernCard: ComponentCardData = {
 	title: 'HashtagModern',
 	description: 'Rich hashtag with stats card on hover.',
 	richDescription: 'Modern hashtag with gradient indicator and stats card popover on hover. Shows hashtag activity, contributors, and follow button when hovered.',
-	command: 'npx shadcn@latest add hashtag-modern',
+	command: 'npx jsrepo add hashtag-modern',
 	apiDocs: [
 		{
 			name: 'HashtagModern',
@@ -26,8 +26,19 @@ export const hashtagBasicCard: ComponentCardData = {
 	title: 'Basic Hashtag',
 	description: 'Minimal clickable hashtag.',
 	richDescription: 'Minimal clickable hashtag component. Shows hashtag with default styling and optional click handler. Perfect for simple inline hashtags.',
-	command: 'npx shadcn@latest add hashtag',
-	apiDocs: []
+	command: 'npx jsrepo add hashtag',
+	apiDocs: [
+		{
+			name: 'Hashtag',
+			description: 'Minimal clickable hashtag component',
+			importPath: "import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte'",
+			props: [
+				{ name: 'tag', type: 'string', required: true, description: 'Hashtag text (with or without # prefix)' },
+				{ name: 'onclick', type: '(tag: string) => void', description: 'Optional click handler' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const hashtagCustomCard: ComponentCardData = {
@@ -35,8 +46,19 @@ export const hashtagCustomCard: ComponentCardData = {
 	title: 'Custom Styled Hashtag',
 	description: 'Hashtag with custom styling.',
 	richDescription: 'Hashtag with custom styling applied via class prop. Demonstrates style customization for matching your design system.',
-	command: 'npx shadcn@latest add hashtag',
-	apiDocs: []
+	command: 'npx jsrepo add hashtag',
+	apiDocs: [
+		{
+			name: 'Hashtag',
+			description: 'Minimal clickable hashtag component',
+			importPath: "import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte'",
+			props: [
+				{ name: 'tag', type: 'string', required: true, description: 'Hashtag text (with or without # prefix)' },
+				{ name: 'onclick', type: '(tag: string) => void', description: 'Optional click handler' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const hashtagInteractiveCard: ComponentCardData = {
@@ -44,8 +66,19 @@ export const hashtagInteractiveCard: ComponentCardData = {
 	title: 'Interactive Hashtag',
 	description: 'Hashtag with click handler.',
 	richDescription: 'Interactive hashtag with click handler. Demonstrates how to handle hashtag clicks for navigation or filtering.',
-	command: 'npx shadcn@latest add hashtag',
-	apiDocs: []
+	command: 'npx jsrepo add hashtag',
+	apiDocs: [
+		{
+			name: 'Hashtag',
+			description: 'Minimal clickable hashtag component',
+			importPath: "import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte'",
+			props: [
+				{ name: 'tag', type: 'string', required: true, description: 'Hashtag text (with or without # prefix)' },
+				{ name: 'onclick', type: '(tag: string) => void', description: 'Optional click handler' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const hashtagMetadata: ComponentPageMetadata = {

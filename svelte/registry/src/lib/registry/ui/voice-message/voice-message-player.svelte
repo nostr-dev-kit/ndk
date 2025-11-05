@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { Snippet } from 'svelte';
   import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './voice-message.context.js';
-  import { mergeProps } from '../../utils/index.js';
+  import { mergeProps } from '../../utils/merge-props/index.js';
 
   interface PlayerSnippetProps {
     isPlaying: boolean;

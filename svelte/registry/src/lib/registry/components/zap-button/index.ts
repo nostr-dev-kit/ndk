@@ -1,1 +1,1 @@
-export { default as ZapButton } from './zap-button.svelte';
+export { default as ZapButton } from '../zap-button/zap-button.svelte';

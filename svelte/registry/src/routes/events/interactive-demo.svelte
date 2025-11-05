@@ -118,12 +118,6 @@
 					}
 				}}
 			>
-				<div
-					class="absolute top-2 left-2 bg-card px-2 py-1 rounded border-2 border-blue-500 text-blue-500 text-xs font-bold uppercase"
-				>
-					Layer 1: Chrome
-				</div>
-
 				<EventCard.Root {ndk} {event}>
 					<EventCard.Header />
 
@@ -134,7 +128,7 @@
 							tabindex="0"
 							class="border-2 {selectedEmbed === 'mention' || selectedEmbed === 'hashtag'
 								? 'border-purple-500'
-								: 'border-purple-500/30'} border-dashed rounded p-3 relative cursor-pointer transition-colors"
+								: 'border-purple-500/30'} border-dashed rounded p-3 relative cursor-pointer transition-all"
 							onclick={(e) => {
 								e.stopPropagation();
 								selectEmbed('mention');
@@ -147,14 +141,7 @@
 								}
 							}}
 						>
-							<div
-								class="absolute top-2 left-2 bg-card px-2 py-1 rounded border-2 border-purple-500 text-purple-500 text-xs font-bold uppercase z-10"
-							>
-								Layer 2: Content
-							</div>
-							<div class="pt-6">
-								<ClickableEventContent {ndk} {event} renderer={customRenderer} />
-							</div>
+							<ClickableEventContent {ndk} {event} renderer={customRenderer} />
 						</div>
 					</div>
 

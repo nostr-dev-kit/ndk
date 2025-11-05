@@ -8,6 +8,14 @@
   import BasicRaw from './examples/basic.example.svelte?raw';
   import CustomRenderer from './examples/custom-renderer.example.svelte';
   import CustomRendererRaw from './examples/custom-renderer.example.svelte?raw';
+  import CustomRendererCarousel from './examples/custom-renderer-carousel.example.svelte';
+  import CustomRendererCarouselRaw from './examples/custom-renderer-carousel.example.svelte?raw';
+  import CustomRendererBento from './examples/custom-renderer-bento.example.svelte';
+  import CustomRendererBentoRaw from './examples/custom-renderer-bento.example.svelte?raw';
+  import CustomRendererLinkPreview from './examples/custom-renderer-link-preview.example.svelte';
+  import CustomRendererLinkPreviewRaw from './examples/custom-renderer-link-preview.example.svelte?raw';
+  import CustomRendererLinkEmbed from './examples/custom-renderer-link-embed.example.svelte';
+  import CustomRendererLinkEmbedRaw from './examples/custom-renderer-link-embed.example.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -68,6 +76,38 @@
     >
       <CustomRenderer />
     </Demo>
+
+    <Demo
+      title="Carousel Media Component"
+      description="Display grouped media in an elegant carousel with navigation controls. Media separated only by whitespace are automatically grouped together."
+      code={CustomRendererCarouselRaw}
+    >
+      <CustomRendererCarousel />
+    </Demo>
+
+    <Demo
+      title="Bento Grid Media Component"
+      description="Display grouped media in a dynamic bento/masonry grid layout that adapts based on the number of items."
+      code={CustomRendererBentoRaw}
+    >
+      <CustomRendererBento />
+    </Demo>
+
+    <Demo
+      title="Link Preview Component"
+      description="Show rich link previews on hover using bits-ui LinkPreview. Grouped links (separated by whitespace) are handled together."
+      code={CustomRendererLinkPreviewRaw}
+    >
+      <CustomRendererLinkPreview />
+    </Demo>
+
+    <Demo
+      title="Embedded Link Preview Component"
+      description="Auto-fetch and display rich link previews inline with OpenGraph metadata. Handles grouped links elegantly."
+      code={CustomRendererLinkEmbedRaw}
+    >
+      <CustomRendererLinkEmbed />
+    </Demo>
   </section>
 
   <section class="info">
@@ -119,7 +159,49 @@
       </div>
       <div class="content-type-item">
         <strong>Image Grids</strong>
-        <p>Multiple images in a grid</p>
+        <p>Multiple images grouped together</p>
+      </div>
+      <div class="content-type-item">
+        <strong>Link Groups</strong>
+        <p>Multiple links grouped together</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="info">
+    <h2>Content Grouping Behavior</h2>
+    <p class="mb-4">EventContent automatically groups consecutive media and links for better presentation:</p>
+    <div class="grouping-info">
+      <div class="grouping-card">
+        <strong>Image Grouping</strong>
+        <p>Consecutive images separated only by whitespace (spaces, newlines) are automatically grouped into an <code>image-grid</code>. Single images remain as individual <code>media</code> segments.</p>
+        <pre><code>// These images will be grouped:
+https://example.com/1.jpg
+https://example.com/2.jpg
+
+https://example.com/3.jpg
+
+// Result: One image-grid with 3 images</code></pre>
+      </div>
+      <div class="grouping-card">
+        <strong>Link Grouping</strong>
+        <p>Consecutive links separated only by whitespace are automatically grouped into a <code>link-group</code>. Single links remain as individual <code>link</code> segments.</p>
+        <pre><code>// These links will be grouped:
+https://github.com/nostr
+https://nostr.com
+
+https://njump.me
+
+// Result: One link-group with 3 URLs</code></pre>
+      </div>
+      <div class="grouping-card">
+        <strong>Custom Components Receive Groups</strong>
+        <p>When you set a custom <code>mediaComponent</code> or <code>linkComponent</code>, it receives either a single URL string or an array of URLs for grouped content.</p>
+        <pre><code>// Your component receives:
+url: string | string[]
+
+// Handle both cases:
+const urls = Array.isArray(url) ? url : [url];</code></pre>
       </div>
     </div>
   </section>
@@ -161,21 +243,27 @@ renderer.addKind([30023], MyArticleComponent);</code></pre>
 interface MentionComponent &#123;
   ndk: NDKSvelte;
   bech32: string; // npub or nprofile
+  class?: string;
 &#125;
 
 // Hashtag component receives:
 interface HashtagComponent &#123;
   tag: string; // hashtag without #
+  onclick?: (tag: string) => void;
+  class?: string;
 &#125;
 
-// Link component receives:
+// Link component receives (single or grouped):
 interface LinkComponent &#123;
-  url: string;
+  url: string | string[]; // Single URL or array for grouped links
+  class?: string;
 &#125;
 
-// Media component receives:
+// Media component receives (single or grouped):
 interface MediaComponent &#123;
-  url: string;
+  url: string | string[]; // Single URL or array for grouped media
+  type?: string;
+  class?: string;
 &#125;</code></pre>
   </section>
 
@@ -415,5 +503,40 @@ renderer.addKind([30023], ArticleCard);</code></pre>
   ul li {
     color: var(--muted-foreground);
     line-height: 1.6;
+  }
+
+  .grouping-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .grouping-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--muted);
+  }
+
+  .grouping-card strong {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 0.75rem;
+  }
+
+  .grouping-card p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--muted-foreground);
+  }
+
+  .grouping-card pre {
+    margin-top: 1rem;
+  }
+
+  .grouping-card code {
+    font-size: 0.8125rem;
   }
 </style>

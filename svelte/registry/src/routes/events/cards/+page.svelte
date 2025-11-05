@@ -14,9 +14,10 @@
 	import { eventCardMetadata, eventCardCards, eventCardClassicCard, eventCardMenuCard, eventCardBasicCard, eventCardFullCard } from '$lib/component-registry/event-card';
 	import type { ShowcaseBlock } from '$lib/templates/types';
 
-	import UIBasic from './generic/examples/ui-basic.example.svelte';
-	import UIFull from './generic/examples/ui-full.example.svelte';
-	import ChromeDemo from './generic/examples/chrome-demo.example.svelte';
+	// TODO: These files don't exist yet
+	// import UIBasic from './generic/examples/ui-basic.example.svelte';
+	// import UIFull from './generic/examples/ui-full.example.svelte';
+	// import ChromeDemo from './generic/examples/chrome-demo.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleEvent = $state<NDKEvent | undefined>();
@@ -140,7 +141,8 @@
 {#snippet basicPreview()}
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
-			<UIBasic {ndk} event={sampleEvent} />
+			<!-- TODO: UIBasic component not yet created -->
+			<p>Basic preview placeholder</p>
 		</div>
 	{/if}
 {/snippet}
@@ -148,7 +150,8 @@
 {#snippet fullPreview()}
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
-			<UIFull {ndk} event={sampleEvent} />
+			<!-- TODO: UIFull component not yet created -->
+			<p>Full preview placeholder</p>
 		</div>
 	{/if}
 {/snippet}

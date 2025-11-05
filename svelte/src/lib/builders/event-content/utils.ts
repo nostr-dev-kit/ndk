@@ -10,9 +10,10 @@ export interface ParsedSegment {
         | "media"
         | "emoji"
         | "hashtag"
-        | "image-grid";
+        | "image-grid"
+        | "link-group";
     content: string;
-    data?: string | string[]; // bech32 string or array of image URLs
+    data?: string | string[]; // bech32 string, array of image URLs, or array of link URLs
 }
 
 // ============================================================================
@@ -219,9 +220,14 @@ export function parseContentToSegments(content: string, emojiMap: Map<string, st
 // Image Grouping
 // ============================================================================
 
+function isWhitespaceOnly(text: string): boolean {
+    return /^\s*$/.test(text);
+}
+
 export function groupConsecutiveImages(segments: ParsedSegment[]): ParsedSegment[] {
     const result: ParsedSegment[] = [];
     let imageBuffer: string[] = [];
+    let whitespaceBuffer: ParsedSegment[] = [];
 
     function flushImages() {
         if (imageBuffer.length === 0) return;
@@ -236,17 +242,82 @@ export function groupConsecutiveImages(segments: ParsedSegment[]): ParsedSegment
             });
         }
         imageBuffer = [];
+        whitespaceBuffer = [];
+    }
+
+    function flushWhitespace() {
+        for (const segment of whitespaceBuffer) {
+            result.push(segment);
+        }
+        whitespaceBuffer = [];
     }
 
     for (const segment of segments) {
         if (segment.type === "media" && isImage(segment.content)) {
+            // Continue grouping images
             imageBuffer.push(segment.content);
+        } else if (segment.type === "text" && isWhitespaceOnly(segment.content) && imageBuffer.length > 0) {
+            // Buffer whitespace in case more images follow
+            whitespaceBuffer.push(segment);
         } else {
+            // Non-image, non-whitespace segment breaks the grouping
             flushImages();
+            flushWhitespace();
             result.push(segment);
         }
     }
 
     flushImages();
+    return result;
+}
+
+// ============================================================================
+// Link Grouping
+// ============================================================================
+
+export function groupConsecutiveLinks(segments: ParsedSegment[]): ParsedSegment[] {
+    const result: ParsedSegment[] = [];
+    let linkBuffer: string[] = [];
+    let whitespaceBuffer: ParsedSegment[] = [];
+
+    function flushLinks() {
+        if (linkBuffer.length === 0) return;
+
+        if (linkBuffer.length === 1) {
+            result.push({ type: "link", content: linkBuffer[0] });
+        } else {
+            result.push({
+                type: "link-group",
+                content: "",
+                data: linkBuffer,
+            });
+        }
+        linkBuffer = [];
+        whitespaceBuffer = [];
+    }
+
+    function flushWhitespace() {
+        for (const segment of whitespaceBuffer) {
+            result.push(segment);
+        }
+        whitespaceBuffer = [];
+    }
+
+    for (const segment of segments) {
+        if (segment.type === "link") {
+            // Continue grouping links
+            linkBuffer.push(segment.content);
+        } else if (segment.type === "text" && isWhitespaceOnly(segment.content) && linkBuffer.length > 0) {
+            // Buffer whitespace in case more links follow
+            whitespaceBuffer.push(segment);
+        } else {
+            // Non-link, non-whitespace segment breaks the grouping
+            flushLinks();
+            flushWhitespace();
+            result.push(segment);
+        }
+    }
+
+    flushLinks();
     return result;
 }

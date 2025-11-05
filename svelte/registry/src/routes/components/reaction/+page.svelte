@@ -291,7 +291,8 @@
   <ComponentPageTemplate
     metadata={reactionMetadata}
     {ndk}
-    showcaseBlocks={primitivesBlocks}{customSections}
+    showcaseBlocks={primitivesBlocks}
+    {customSections}
     componentsSection={{
       cards: reactionMetadata.cards,
       previews: {

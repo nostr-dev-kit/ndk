@@ -364,7 +364,8 @@
     metadata={userCardMetadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
-    showcaseBlocks={showcaseBlocks}{customSections}
+    showcaseBlocks={showcaseBlocks}
+    {customSections}
     componentsSection={{
       cards: userCardMetadata.cards,
       previews: {

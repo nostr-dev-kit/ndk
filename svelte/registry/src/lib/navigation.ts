@@ -27,8 +27,8 @@ import {
   CloudUploadIcon,
   AtIcon,
   HighlighterIcon,
-  Tag01Icon,
-  CloudLoadingIcon
+  CloudLoadingIcon,
+  Tag01Icon
 } from '@hugeicons/core-free-icons';
 
 export interface NavItem {
@@ -94,6 +94,8 @@ export const eventCategories: NavCategory[] = [
       { name: 'Overview', path: '/events/embeds', icon: ViewIcon, title: 'ContentRenderer System', description: 'ContentRenderer architecture and embedded event handlers for rich previews.' },
       { name: 'Mention', path: '/events/embeds/mention', icon: AtIcon, title: 'Mention', description: 'Render inline user mentions with automatic profile fetching and customizable styling.' },
       { name: 'Hashtag', path: '/events/embeds/hashtag', icon: Tag01Icon, title: 'Hashtag', description: 'Render inline hashtags with customizable styling and click handlers.' },
+      { name: 'Media', path: '/events/embeds/media', icon: Image02Icon, title: 'Media Components', description: 'Custom media renderers: elegant carousels and bento grids for grouped images and videos.' },
+      { name: 'Links', path: '/events/embeds/links', icon: ViewIcon, title: 'Link Components', description: 'Rich link previews: hover previews and embedded OpenGraph cards for URLs.' },
       { name: 'Notes', path: '/events/embeds/notes', icon: Chat01Icon, title: 'Note Embedded Preview', description: 'Embedded preview handler for short text notes (Kind 1) and generic replies (Kind 1111).', nip: 'Kind:1' },
       { name: 'Articles', path: '/events/embeds/articles', icon: NewsIcon, title: 'Article Embedded Preview', description: 'Embedded preview handler for long-form articles (Kind 30023 / NIP-23).', nip: 'NIP-23' },
       { name: 'Highlights', path: '/events/embeds/highlights', icon: HighlighterIcon, title: 'Highlight Embedded Preview', description: 'Embedded preview handler for text highlights (Kind 9802 / NIP-84).', nip: 'NIP-84' },

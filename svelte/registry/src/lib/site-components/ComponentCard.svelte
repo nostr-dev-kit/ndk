@@ -96,8 +96,10 @@
 					<section class="flex flex-col gap-4">
 						<h3 class="text-xl font-semibold text-foreground m-0">Preview</h3>
 						<div class="flex flex-col w-full border border-border rouded-lg">
-							<div class="p-8 bg-background rounded-lg flex justify-center items-center max-h-[600px] overflow-y-auto">
-								{@render preview()}
+							<div class="rounded-lg max-h-[600px] overflow-y-auto">
+								<div class="p-8 flex justify-center items-center ">
+									{@render preview()}
+								</div>
 							</div>
 							{#if data.code}
 								<CodeSnippet code={data.code} lang="svelte" class="rounded-t-none" />

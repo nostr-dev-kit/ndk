@@ -37,7 +37,7 @@
 	const caption = $derived(image.content);
 </script>
 
-<div class={cn('instagram-card', className)}>
+<div class={cn('instagram-card !bg-card', className)}>
 	<!-- Header -->
 	<div class="instagram-header">
 		<User.Root {ndk} pubkey={image.pubkey}>

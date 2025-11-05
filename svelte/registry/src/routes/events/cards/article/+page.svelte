@@ -143,7 +143,7 @@
 			command: 'npx shadcn@latest add article-card-portrait',
 			preview: portraitPreview,
 			cardData: articleCardCards[0],
-			orientation: 'vertical'
+			orientation: 'horizontal'
 		},
 		{
 			name: 'Hero',

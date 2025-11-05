@@ -66,6 +66,22 @@ export const docs: NavItem[] = [
 
 export const eventCategories: NavCategory[] = [
   {
+    title: 'Introduction',
+    items: [
+      { name: 'Overview', path: '/events', icon: Calendar01Icon, title: 'Event Rendering', description: 'The three-layer model: Chrome, Content, and Embeds' },
+    ]
+  },
+  {
+    title: 'Chromes (Cards)',
+    items: [
+      { name: 'Introduction', path: '/events/cards/introduction', icon: ViewIcon, title: 'Card Components', description: 'Composable card components for displaying different types of Nostr events with flexible layouts.' },
+      { name: 'Generic', path: '/events/cards/generic', icon: Calendar01Icon, title: 'EventCard', description: 'Composable components for displaying any NDKEvent type with flexible layouts and interactions.' },
+      { name: 'Article', path: '/events/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.', nip: 'NIP-23' },
+      { name: 'Highlight', path: '/events/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.', nip: 'NIP-84' },
+      { name: 'Audio', path: '/events/cards/voice-message', icon: VoiceIcon, title: 'VoiceMessageCard', description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.', nip: 'NIP-A0' },
+    ]
+  },
+  {
     title: 'Content',
     items: [
       { name: 'Introduction', path: '/events/content/introduction', icon: ViewIcon, title: 'Content Components', description: 'Render different types of Nostr event content with rich formatting and embedded media.' },
@@ -84,16 +100,6 @@ export const eventCategories: NavCategory[] = [
       { name: 'Articles', path: '/events/embeds/articles', icon: NewsIcon, title: 'Article Embedded Preview', description: 'Embedded preview handler for long-form articles (Kind 30023 / NIP-23).', nip: 'NIP-23' },
       { name: 'Highlights', path: '/events/embeds/highlights', icon: HighlighterIcon, title: 'Highlight Embedded Preview', description: 'Embedded preview handler for text highlights (Kind 9802 / NIP-84).', nip: 'NIP-84' },
       { name: 'Generic', path: '/events/embeds/generic', icon: ViewIcon, title: 'Generic Embedded Preview', description: 'Fallback preview handler for event kinds without specific preview components.' },
-    ]
-  },
-  {
-    title: 'Cards',
-    items: [
-      { name: 'Introduction', path: '/events/cards/introduction', icon: ViewIcon, title: 'Card Components', description: 'Composable card components for displaying different types of Nostr events with flexible layouts.' },
-      { name: 'Generic', path: '/events/cards/generic', icon: Calendar01Icon, title: 'EventCard', description: 'Composable components for displaying any NDKEvent type with flexible layouts and interactions.' },
-      { name: 'Article', path: '/events/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.', nip: 'NIP-23' },
-      { name: 'Highlight', path: '/events/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.', nip: 'NIP-84' },
-      { name: 'Audio', path: '/events/cards/voice-message', icon: VoiceIcon, title: 'VoiceMessageCard', description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.', nip: 'NIP-A0' },
     ]
   },
 ];

@@ -11,8 +11,8 @@
   let { title, subtitle, children }: Props = $props();
 </script>
 
-<div class="mb-12 pt-8">
-  <div class="flex items-start justify-between gap-4 mb-4">
+<div class="border-b border-border -mx-8 p-8">
+  <div class="flex items-start justify-between gap-4">
     <h1 class="text-6xl font-black">{title}</h1>
 
     {#if children}

@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
 	import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
+	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { articleContentMetadata, articleContentCards, articleContentBasicCard, articleContentWithClickCard } from '$lib/component-registry/article-content';
@@ -21,14 +21,16 @@
 			description: 'Render article with highlights',
 			command: 'npx shadcn@latest add article-content',
 			preview: basicPreview,
-			cardData: articleContentBasicCard
+			cardData: articleContentBasicCard,
+			orientation: 'vertical'
 		},
 		{
 			name: 'With Click Handler',
 			description: 'Handle highlight clicks',
 			command: 'npx shadcn@latest add article-content',
 			preview: withClickPreview,
-			cardData: articleContentWithClickCard
+			cardData: articleContentWithClickCard,
+			orientation: 'vertical'
 		}
 	];
 </script>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import Mention from '$lib/registry/components/mention/mention.svelte';
+	import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
 	import { getContext } from 'svelte';
 
 	interface Props {
@@ -19,9 +20,10 @@
 	}>('interactive-demo');
 
 	const isSelected = $derived(interactiveState && interactiveState.selectedEmbed === 'mention');
-	const variant = $derived(interactiveState ? interactiveState.variants.mention : 'inline');
+	const variant = $derived(interactiveState ? interactiveState.variants.mention : 'mention');
 
-	function handleSelect() {
+	function handleSelect(e: MouseEvent | KeyboardEvent) {
+		e.stopPropagation();
 		if (interactiveState) {
 			interactiveState.selectEmbed('mention');
 		}
@@ -38,12 +40,14 @@
 	onkeydown={(e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
-			handleSelect();
+			handleSelect(e);
 		}
 	}}
 >
 	{#if variant === 'raw'}
 		<span class="text-muted-foreground font-mono text-sm">{bech32}</span>
+	{:else if variant === 'mention-modern'}
+		<MentionModern {ndk} {bech32} />
 	{:else}
 		<Mention {ndk} {bech32} />
 	{/if}

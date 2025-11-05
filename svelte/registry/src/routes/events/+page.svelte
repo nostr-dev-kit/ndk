@@ -4,6 +4,7 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import InteractiveDemo from './interactive-demo.svelte';
+	import LayerVisualization from './layer-visualization.svelte';
 	import {
 		eventsIntroductionMetadata,
 		eventsIntroductionCards
@@ -15,18 +16,16 @@
 	let sampleEvent = $state<NDKEvent | undefined>();
 </script>
 
-<div class="px-8">
+<div class="px-8 flex flex-col gap-8">
 	<!-- Header -->
-	<div class="mb-12 pt-8">
-		<PageTitle title={eventsIntroductionMetadata.title} subtitle={eventsIntroductionMetadata.description}>
-			<EditProps.Prop
-				name="Sample Event"
-				type="event"
-				default="nevent1qvzqqqqqqypzq0mgmm0gz4yuczzyltl99rc4wj63uz27wjglg69aj6ylsamehwqaqqst6h0tdve9v0xwwpz4d4ckwfc9ksjtjjjutc4smjzewp85u7a9v0qhd8czh"
-				bind:value={sampleEvent}
-			/>
-		</PageTitle>
-	</div>
+	<PageTitle title={eventsIntroductionMetadata.title} subtitle={eventsIntroductionMetadata.description}>
+		<EditProps.Prop
+			name="Sample Event"
+			type="event"
+			default="nevent1qvzqqqqqqypzq0mgmm0gz4yuczzyltl99rc4wj63uz27wjglg69aj6ylsamehwqaqqst6h0tdve9v0xwwpz4d4ckwfc9ksjtjjjutc4smjzewp85u7a9v0qhd8czh"
+			bind:value={sampleEvent}
+		/>
+	</PageTitle>
 
 	<!-- Introduction -->
 	<section class="prose prose-lg max-w-none mb-12">
@@ -53,47 +52,9 @@
 			{/each}
 		</div>
 
-		<h3 class="text-2xl font-bold mb-4 mt-12">How It Works</h3>
-		<div class="space-y-4 text-muted-foreground">
-			<div class="flex items-start gap-3">
-				<div
-					class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center font-semibold text-sm"
-				>
-					1
-				</div>
-				<div>
-					<strong class="text-foreground">Chrome Layer</strong> wraps the entire event. It provides
-					the metadata frame: avatar, author name, timestamp, and action buttons (reply, repost, zap,
-					like). Different card variants (Standard, Compact, Minimal, Thread) offer different layouts
-					for the same content.
-				</div>
-			</div>
-			<div class="flex items-start gap-3">
-				<div
-					class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center font-semibold text-sm"
-				>
-					2
-				</div>
-				<div>
-					<strong class="text-foreground">Content Layer</strong> renders the event body based on its
-					kind. It parses markdown, processes mentions (@username), hashtags (#topic), and detects embedded
-					event references (note1, nevent1, naddr1). Content components are kind-specific renderers.
-				</div>
-			</div>
-			<div class="flex items-start gap-3">
-				<div
-					class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center font-semibold text-sm"
-				>
-					3
-				</div>
-				<div>
-					<strong class="text-foreground">Embed Layer</strong> provides rich previews of referenced
-					entities. When content includes a bech32 event reference, the embed layer automatically fetches
-					and renders that event with a kind-specific preview component. Variants control how much detail
-					to show (Card, Inline, Compact, or Raw).
-				</div>
-			</div>
-		</div>
+		<h3 class="text-2xl font-bold mb-6 mt-12">How It Works</h3>
+
+		<LayerVisualization />
 	</section>
 
 	<!-- Interactive Demo -->

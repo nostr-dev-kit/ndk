@@ -1,6 +1,5 @@
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
-import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
-import { resolveNDK } from '../resolve-ndk.svelte.js';
+import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import {
     buildEmojiMap,
     parseContentToSegments,
@@ -34,11 +33,7 @@ export interface EventContentConfig {
  *
  * @example
  * ```ts
- * // NDK from context
  * const content = createEventContent(() => ({ event: myEvent }));
- *
- * // Or with explicit NDK
- * const content = createEventContent(() => ({ event: myEvent }), ndk);
  *
  * // Access parsed segments
  * content.segments // Array of parsed segments
@@ -47,8 +42,7 @@ export interface EventContentConfig {
  * ```
  */
 export function createEventContent(
-    config: () => EventContentConfig,
-    ndk?: NDKSvelte
+    config: () => EventContentConfig
 ): EventContentState {
     return {
         get segments() {
@@ -95,10 +89,6 @@ export interface EmbeddedEventConfig {
  *
  * @example
  * ```ts
- * // NDK from context
- * const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }));
- *
- * // Or with explicit NDK
  * const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
  *
  * // Access state
@@ -109,9 +99,8 @@ export interface EmbeddedEventConfig {
  */
 export function createEmbeddedEvent(
     config: () => EmbeddedEventConfig,
-    ndk?: NDKSvelte
+    ndk: NDKSvelte
 ): EmbeddedEventState {
-    const resolvedNDK = resolveNDK(ndk);
     let fetchedEvent = $state<NDKEvent | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);
@@ -123,7 +112,7 @@ export function createEmbeddedEvent(
         loading = true;
         error = null;
 
-        resolvedNDK.fetchEvent(currentBech32)
+        ndk.fetchEvent(currentBech32)
             .then(event => {
                 if (event) {
                     fetchedEvent = event;
@@ -151,6 +140,3 @@ export function createEmbeddedEvent(
         },
     };
 }
-
-// Re-export utilities
-export * from './utils.js';

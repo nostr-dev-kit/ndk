@@ -34,7 +34,7 @@
 		name: string;
 		title: string;
 		description?: string;
-		richDescription: string;
+		richDescription?: string | Snippet;
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];
@@ -84,7 +84,11 @@
 			<Tabs.Content value="about" class="flex flex-col gap-8">
 				{#if data.richDescription}
 					<section class="flex flex-col gap-4">
-						<p class="text-base leading-normal text-foreground m-0">{data.richDescription}</p>
+						{#if typeof data.richDescription === 'function'}
+							{@render data.richDescription()}
+						{:else}
+							<p class="text-base leading-normal text-foreground m-0">{data.richDescription}</p>
+						{/if}
 					</section>
 				{/if}
 

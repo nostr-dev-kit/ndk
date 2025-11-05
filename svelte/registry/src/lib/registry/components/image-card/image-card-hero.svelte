@@ -39,7 +39,7 @@
 	const caption = $derived(image.content);
 </script>
 
-<div class={cn('hero-card', height, className)}>
+<div class={cn('hero-card w-full', height, className)}>
 	<!-- Background Image -->
 	<div class="hero-image-container">
 		{#if imageUrl}

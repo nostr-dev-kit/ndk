@@ -75,7 +75,7 @@ export const imageCardBasicCard: ComponentCardData = {
 };
 
 export const imageCardMetadata: ComponentPageMetadata = {
-	title: 'Image Content',
+	title: 'Image Card',
 	description: 'Display image events with metadata and interactions. ImageContent renders images from NIP-68 events (kind 20) with support for multiple images, dimensions, file size, MIME types, and alt text.',
 	showcaseTitle: 'Showcase',
 	showcaseDescription: 'Image card variants from social feeds to hero displays.'

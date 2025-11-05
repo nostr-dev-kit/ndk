@@ -332,6 +332,7 @@
 
   .article-wrapper {
     position: relative;
+    max-width: calc(100% - 4rem);
   }
 
   .highlight-avatar {

@@ -57,13 +57,36 @@
 		}
 
 		// Add wss:// prefix
-		return `wss://${trimmed}`;
+		const withPrefix = `wss://${trimmed}`;
+		console.log('[RelayInput] Normalized URL:', trimmed, '->', withPrefix);
+		return withPrefix;
 	});
 
-	// Fetch relay info (NIP-11) - reactive to normalizedUrl changes
-	const relayInfo = createRelayInfo(() => ({ relayUrl: normalizedUrl }), ndk);
+	// Fetch relay info (NIP-11) - validates and fetches URL
+	const relayInfo = createRelayInfo(() => {
+		// Validate URL format inside the getter to ensure proper reactivity
+		if (!normalizedUrl) {
+			console.log('[RelayInput] createRelayInfo: empty URL, skipping fetch');
+			return { relayUrl: '' };
+		}
 
-	// Validate URL format
+		try {
+			const url = new URL(normalizedUrl);
+			const isValid = url.protocol === 'wss:' || url.protocol === 'ws:';
+			if (isValid) {
+				console.log('[RelayInput] createRelayInfo: fetching', normalizedUrl);
+				return { relayUrl: normalizedUrl };
+			} else {
+				console.log('[RelayInput] createRelayInfo: invalid protocol', url.protocol);
+				return { relayUrl: '' };
+			}
+		} catch (e) {
+			console.log('[RelayInput] createRelayInfo: invalid URL', normalizedUrl);
+			return { relayUrl: '' };
+		}
+	}, ndk);
+
+	// Validate URL format for UI display
 	const isValidUrl = $derived.by(() => {
 		if (!normalizedUrl) return false;
 		try {

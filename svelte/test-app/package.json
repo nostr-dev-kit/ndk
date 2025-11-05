@@ -1,31 +1,31 @@
 {
-	"name": "test-app",
-	"private": true,
-	"version": "0.0.1",
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.3.3",
-		"@sveltejs/adapter-auto": "^7.0.0",
-		"@sveltejs/kit": "^2.47.1",
-		"@sveltejs/vite-plugin-svelte": "^6.2.1",
-		"@tailwindcss/vite": "^4.1.16",
-		"clsx": "^2.1.1",
-		"svelte": "^5.43.0",
-		"svelte-check": "^4.3.3",
-		"tailwind-merge": "^3.3.1",
-		"typescript": "^5.9.3",
-		"vite": "^7.1.10"
-	},
-	"dependencies": {
-		"@nostr-dev-kit/ndk": "3.0.0-beta.36",
-		"@nostr-dev-kit/svelte": "4.0.0-beta.36"
-	}
+  "name": "test-app",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.3",
+    "@sveltejs/adapter-auto": "^7.0.0",
+    "@sveltejs/kit": "^2.47.1",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tailwindcss/vite": "^4.1.16",
+    "clsx": "^2.1.1",
+    "svelte": "^5.43.0",
+    "svelte-check": "^4.3.3",
+    "tailwind-merge": "^3.3.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.10"
+  },
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.37",
+    "@nostr-dev-kit/svelte": "4.0.0-beta.37"
+  }
 }

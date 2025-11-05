@@ -28,6 +28,7 @@ export interface RelayProgress {
     url: string;
     status: 'pending' | 'syncing' | 'completed' | 'error';
     eventCount: number;
+    expectedEventCount?: number; // Events we expect to receive based on negotiation
     error?: string;
     negotiation?: RelayNegotiationState;
 }
@@ -92,11 +93,26 @@ export function createNegentropySync(
         eventsAtStart: 0
     });
 
-    const progress = $derived(
-        state.totalRelays > 0
-            ? Math.round((state.completedRelays / state.totalRelays) * 100)
-            : 0
-    );
+    const progress = $derived(() => {
+        if (state.totalRelays === 0) return 0;
+
+        // Calculate progress based on both completed relays and event progress
+        let totalProgress = 0;
+        const relaysList = Array.from(state.relayProgress.values());
+
+        for (const relay of relaysList) {
+            if (relay.status === 'completed') {
+                totalProgress += 1;
+            } else if (relay.status === 'syncing' && relay.expectedEventCount && relay.expectedEventCount > 0) {
+                // Partial progress based on events received vs expected
+                const relayProgress = Math.min(relay.eventCount / relay.expectedEventCount, 1);
+                totalProgress += relayProgress;
+            }
+            // 'pending' and 'error' contribute 0
+        }
+
+        return Math.round((totalProgress / state.totalRelays) * 100);
+    });
 
     const relays = $derived.by(() => Array.from(state.relayProgress.values()));
 
@@ -184,6 +200,10 @@ export function createNegentropySync(
                         haveCount: progress.haveCount,
                         lastUpdate: progress.timestamp
                     };
+                    // Track expected event count from negotiation
+                    if (progress.needCount > 0) {
+                        relayProgress.expectedEventCount = progress.needCount;
+                    }
                     state.relayProgress = new Map(state.relayProgress.set(relay.url, relayProgress));
                 }
             },
@@ -192,12 +212,17 @@ export function createNegentropySync(
                 const progress = state.relayProgress.get(relay.url);
                 if (progress) {
                     progress.status = 'completed';
-                    progress.eventCount = eventCount;
+                    // Don't update eventCount here - we're tracking it in real-time via subscription
+                    // Just ensure it matches the final count (in case we missed any)
+                    if (progress.eventCount !== eventCount) {
+                        console.log(`[NegentropySyncBuilder] Adjusting ${relay.url} count from ${progress.eventCount} to ${eventCount}`);
+                        state.totalEvents += (eventCount - progress.eventCount);
+                        progress.eventCount = eventCount;
+                    }
                     progress.negotiation = undefined; // Clear negotiation state
                     state.relayProgress = new Map(state.relayProgress.set(relay.url, progress));
                 }
                 state.completedRelays++;
-                state.totalEvents += eventCount;
             },
             onRelayError: (relay: NDKRelay, error: Error) => {
                 console.log('[NegentropySyncBuilder] onRelayError', relay.url, error);
@@ -217,6 +242,20 @@ export function createNegentropySync(
             }
         });
         console.log('[NegentropySyncBuilder] Sync started, subscription:', subscription);
+
+        // Listen to events as they come in to track progress per relay
+        subscription.on('event', (event) => {
+            // Find which relay this event came from
+            const relay = event.relay;
+            if (relay) {
+                const relayProgress = state.relayProgress.get(relay.url);
+                if (relayProgress) {
+                    relayProgress.eventCount++;
+                    state.totalEvents++;
+                    state.relayProgress = new Map(state.relayProgress.set(relay.url, relayProgress));
+                }
+            }
+        });
 
         state.subscription = subscription;
         return subscription;
@@ -244,7 +283,7 @@ export function createNegentropySync(
             return state.totalEvents;
         },
         get progress() {
-            return progress;
+            return progress();
         },
         get relays() {
             return relays;

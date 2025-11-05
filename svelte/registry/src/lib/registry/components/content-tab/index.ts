@@ -26,10 +26,10 @@
  * </ContentTab>
  * ```
  *
- * @example Using the hook directly:
+ * @example Using the builder directly:
  * ```svelte
  * <script>
- *   import { createContentSampler, byRecency } from '$lib/registry/hooks/content-tab';
+ *   import { createContentSampler, byRecency } from '$lib/registry/builders/content-tab';
  *
  *   const tabSampler = createContentSampler(() => ({
  *     pubkeys: ['hexpubkey'],
@@ -47,6 +47,6 @@
 import ContentTab from './content-tab.svelte';
 
 export { ContentTab };
-export { createContentSampler, byCount, byRecency } from '../../hooks/content-tab';
-export type { ContentTab as ContentTabType } from '../../hooks/content-tab';
+export { createContentSampler, byCount, byRecency } from '../../builders/content-tab';
+export type { ContentTab as ContentTabType } from '../../builders/content-tab';
 export default ContentTab;

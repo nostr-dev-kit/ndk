@@ -19,7 +19,7 @@
 
   // Import the component
   import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
-  import { byCount, byRecency } from '$lib/registry/hooks/content-tab';
+  import { byCount, byRecency } from '$lib/registry/builders/content-tab';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -279,7 +279,7 @@
 
     <div class="bg-muted/50 rounded-lg p-6">
       <h3 class="text-lg font-semibold mb-3">createContentSampler</h3>
-      <pre class="text-sm overflow-x-auto"><code>import &#123; createContentSampler, byCount &#125; from '$lib/registry/hooks/content-tab';
+      <pre class="text-sm overflow-x-auto"><code>import &#123; createContentSampler, byCount &#125; from '$lib/registry/builders/content-tab';
 
 // Create content tab sampler
 const tabSampler = createContentSampler(() => (&#123;
@@ -357,9 +357,9 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
       </div>
 
       <div class="bg-muted/50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold mb-3">Using the Hook Directly</h3>
+        <h3 class="text-lg font-semibold mb-3">Using the Builder Directly</h3>
         <pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
-  import &#123; createContentSampler, byCount &#125; from '$lib/registry/hooks/content-tab';
+  import &#123; createContentSampler, byCount &#125; from '$lib/registry/builders/content-tab';
   import &#123; kindLabel &#125; from '$lib/registry/utils';
 
   const tabSampler = createContentSampler(() => (&#123;

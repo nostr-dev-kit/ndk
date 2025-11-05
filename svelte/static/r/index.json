@@ -1,0 +1,840 @@
+[
+	{
+		"name": "actions",
+		"title": "Actions",
+		"type": "registry:component",
+		"description": "Reusable action components for reactions, zaps, and other event interactions",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "actions.json"
+	},
+	{
+		"name": "avatar-group",
+		"title": "Avatar Group",
+		"type": "registry:component",
+		"description": "Display multiple user avatars in a stacked group with smart ordering",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [
+			"user-profile"
+		],
+		"relativeUrl": "avatar-group.json"
+	},
+	{
+		"name": "article-card",
+		"title": "Article Card",
+		"type": "registry:block",
+		"description": "Composable article card components for NDKArticle - UI Primitives only, blocks sold separately",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-card.json"
+	},
+	{
+		"name": "article-card-hero",
+		"title": "Article Card Hero",
+		"type": "registry:component",
+		"description": "Block component - article card hero",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-card-hero.json"
+	},
+	{
+		"name": "article-card-medium",
+		"title": "Article Card Medium",
+		"type": "registry:component",
+		"description": "Block component - article card medium",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-card-medium.json"
+	},
+	{
+		"name": "article-card-neon",
+		"title": "Article Card Neon",
+		"type": "registry:component",
+		"description": "Block component - article card neon",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-card-neon.json"
+	},
+	{
+		"name": "article-card-portrait",
+		"title": "Article Card Portrait",
+		"type": "registry:component",
+		"description": "Block component - article card portrait",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-card-portrait.json"
+	},
+	{
+		"name": "article-content",
+		"title": "Article Content",
+		"type": "registry:component",
+		"description": "Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte",
+			"marked@^16.4.1"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-content.json"
+	},
+	{
+		"name": "article-preview",
+		"title": "Article Preview",
+		"type": "registry:component",
+		"description": "Preview card for long-form articles",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "article-preview.json"
+	},
+	{
+		"name": "blocks",
+		"title": "Blocks",
+		"type": "registry:lib",
+		"description": "Central export for all preset block components - ArticleCard, HighlightCard, and EventCard blocks",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [
+			"article-card",
+			"highlight-card",
+			"event-card"
+		],
+		"relativeUrl": "blocks.json"
+	},
+	{
+		"name": "edit-props",
+		"title": "Edit Props",
+		"type": "registry:component",
+		"description": "A component to edit props of other components.",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "edit-props.json"
+	},
+	{
+		"name": "embedded-event",
+		"title": "Embedded Event",
+		"type": "registry:component",
+		"description": "Display embedded Nostr events with previews",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "embedded-event.json"
+	},
+	{
+		"name": "emoji-picker",
+		"title": "Emoji Picker",
+		"type": "registry:block",
+		"description": "Flexible emoji selection components with support for user's custom emojis from Nostr (NIP-51 kind:10030) and aggregated emojis from specified pubkeys",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte",
+			"bits-ui@^2.8.3"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "emoji-picker.json"
+	},
+	{
+		"name": "event-card",
+		"title": "Event Card",
+		"type": "registry:component",
+		"description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [
+			"user-profile",
+			"event-content",
+			"actions",
+			"ndk-context"
+		],
+		"relativeUrl": "event-card.json"
+	},
+	{
+		"name": "event-card-classic",
+		"title": "Event Card Classic",
+		"type": "registry:component",
+		"description": "Block component - event card classic",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "event-card-classic.json"
+	},
+	{
+		"name": "event-card-menu",
+		"title": "Event Card Menu",
+		"type": "registry:component",
+		"description": "Block component - event card menu",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "event-card-menu.json"
+	},
+	{
+		"name": "event-content",
+		"title": "Event Content",
+		"type": "registry:component",
+		"description": "Rich event content renderer with automatic parsing of mentions, hashtags, media, and more",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [
+			"mention-preview",
+			"embedded-event",
+			"hashtag-preview"
+		],
+		"relativeUrl": "event-content.json"
+	},
+	{
+		"name": "follow-button",
+		"title": "Follow Button",
+		"type": "registry:component",
+		"description": "Follow button component - follow button variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-button.json"
+	},
+	{
+		"name": "follow-button-card",
+		"title": "Follow Button Card",
+		"type": "registry:component",
+		"description": "Follow button component - follow button card variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-button-card.json"
+	},
+	{
+		"name": "follow-button-pill",
+		"title": "Follow Button Pill",
+		"type": "registry:component",
+		"description": "Follow button component - follow button pill variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-button-pill.json"
+	},
+	{
+		"name": "follow-pack-compact",
+		"title": "Follow Pack Compact",
+		"type": "registry:component",
+		"description": "Follow button component - follow pack compact variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-pack-compact.json"
+	},
+	{
+		"name": "follow-pack-hero",
+		"title": "Follow Pack Hero",
+		"type": "registry:component",
+		"description": "Follow button component - follow pack hero variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-pack-hero.json"
+	},
+	{
+		"name": "follow-pack-list-item",
+		"title": "Follow Pack List Item",
+		"type": "registry:component",
+		"description": "Follow button component - follow pack list item variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-pack-list-item.json"
+	},
+	{
+		"name": "follow-pack-portrait",
+		"title": "Follow Pack Portrait",
+		"type": "registry:component",
+		"description": "Follow button component - follow pack portrait variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "follow-pack-portrait.json"
+	},
+	{
+		"name": "generic-preview",
+		"title": "Generic Preview",
+		"type": "registry:component",
+		"description": "Generic event preview fallback",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "generic-preview.json"
+	},
+	{
+		"name": "hashtag-preview",
+		"title": "Hashtag Preview",
+		"type": "registry:component",
+		"description": "Display hashtags with optional click handler",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "hashtag-preview.json"
+	},
+	{
+		"name": "highlight-card",
+		"title": "Highlight Card",
+		"type": "registry:block",
+		"description": "Display Nostr highlight events (kind 9802) - UI Primitives only, blocks sold separately",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "highlight-card.json"
+	},
+	{
+		"name": "highlight-card-compact",
+		"title": "Highlight Card Compact",
+		"type": "registry:component",
+		"description": "Block component - highlight card compact",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "highlight-card-compact.json"
+	},
+	{
+		"name": "highlight-card-elegant",
+		"title": "Highlight Card Elegant",
+		"type": "registry:component",
+		"description": "Block component - highlight card elegant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "highlight-card-elegant.json"
+	},
+	{
+		"name": "highlight-card-feed",
+		"title": "Highlight Card Feed",
+		"type": "registry:component",
+		"description": "Block component - highlight card feed",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "highlight-card-feed.json"
+	},
+	{
+		"name": "highlight-card-grid",
+		"title": "Highlight Card Grid",
+		"type": "registry:component",
+		"description": "Block component - highlight card grid",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "highlight-card-grid.json"
+	},
+	{
+		"name": "image-card",
+		"title": "Image Card",
+		"type": "registry:component",
+		"description": "Block component - image card",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "image-card.json"
+	},
+	{
+		"name": "image-card-hero",
+		"title": "Image Card Hero",
+		"type": "registry:component",
+		"description": "Block component - image card hero",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "image-card-hero.json"
+	},
+	{
+		"name": "image-card-instagram",
+		"title": "Image Card Instagram",
+		"type": "registry:component",
+		"description": "Block component - image card instagram",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "image-card-instagram.json"
+	},
+	{
+		"name": "login-compact",
+		"title": "Login Compact",
+		"type": "registry:block",
+		"description": "Smart login component with adaptive UI - detects window.nostr extension and supports nsec, ncryptsec (NIP-49), bunker://, NIP-05, and read-only mode",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "login-compact.json"
+	},
+	{
+		"name": "media-upload-carousel",
+		"title": "Media Upload Carousel",
+		"type": "registry:component",
+		"description": "Block component - media upload carousel",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "media-upload-carousel.json"
+	},
+	{
+		"name": "mention-preview",
+		"title": "Mention Preview",
+		"type": "registry:component",
+		"description": "Preview for user mentions",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "mention-preview.json"
+	},
+	{
+		"name": "mute-button",
+		"title": "Mute Button",
+		"type": "registry:component",
+		"description": "Mute button component - mute button variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "mute-button.json"
+	},
+	{
+		"name": "ndk-context",
+		"title": "NDK Context",
+		"type": "registry:component",
+		"description": "Shared NDK context utility for accessing NDK instance from Svelte context",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "ndk-context.json"
+	},
+	{
+		"name": "note-preview",
+		"title": "Note Preview",
+		"type": "registry:component",
+		"description": "Preview card for notes",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "note-preview.json"
+	},
+	{
+		"name": "reaction-button",
+		"title": "Reaction Button",
+		"type": "registry:component",
+		"description": "Reaction component - reaction button variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "reaction-button.json"
+	},
+	{
+		"name": "reaction-slack",
+		"title": "Reaction Slack",
+		"type": "registry:component",
+		"description": "Reaction component - reaction slack variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "reaction-slack.json"
+	},
+	{
+		"name": "reactions",
+		"title": "Reactions",
+		"type": "registry:component",
+		"description": "Reaction component with custom emoji support",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "reactions.json"
+	},
+	{
+		"name": "relay-card",
+		"title": "Relay Card",
+		"type": "registry:component",
+		"description": "Display relay information and status",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-card.json"
+	},
+	{
+		"name": "relay-card-compact",
+		"title": "Relay Card Compact",
+		"type": "registry:component",
+		"description": "Relay card component - relay card compact layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-card-compact.json"
+	},
+	{
+		"name": "relay-card-list",
+		"title": "Relay Card List",
+		"type": "registry:component",
+		"description": "Relay card component - relay card list layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-card-list.json"
+	},
+	{
+		"name": "relay-card-portrait",
+		"title": "Relay Card Portrait",
+		"type": "registry:component",
+		"description": "Relay card component - relay card portrait layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-card-portrait.json"
+	},
+	{
+		"name": "relay-connection-status",
+		"title": "Relay Connection Status",
+		"type": "registry:component",
+		"description": "Show relay connection status indicator",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-connection-status.json"
+	},
+	{
+		"name": "relay-list",
+		"title": "Relay List",
+		"type": "registry:component",
+		"description": "Display a list of relays with status",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-list.json"
+	},
+	{
+		"name": "relay-pool-tabs",
+		"title": "Relay Pool Tabs",
+		"type": "registry:component",
+		"description": "Tabbed interface for relay pool management",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "relay-pool-tabs.json"
+	},
+	{
+		"name": "replies",
+		"title": "Replies",
+		"type": "registry:component",
+		"description": "Reply thread display and composition",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "replies.json"
+	},
+	{
+		"name": "repost-button",
+		"title": "Repost Button",
+		"type": "registry:component",
+		"description": "Repost button component - repost button variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "repost-button.json"
+	},
+	{
+		"name": "repost-button-pill",
+		"title": "Repost Button Pill",
+		"type": "registry:component",
+		"description": "Repost button component - repost button pill variant",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "repost-button-pill.json"
+	},
+	{
+		"name": "simple-event-card",
+		"title": "Simple Event Card",
+		"type": "registry:component",
+		"description": "Simple ready-to-use event card preset block",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [
+			"event-card"
+		],
+		"relativeUrl": "simple-event-card.json"
+	},
+	{
+		"name": "thread-view-twitter",
+		"title": "Thread View Twitter",
+		"type": "registry:component",
+		"description": "Thread view component - thread view twitter layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "thread-view-twitter.json"
+	},
+	{
+		"name": "upload-button",
+		"title": "Upload Button",
+		"type": "registry:component",
+		"description": "Block component - upload button",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "upload-button.json"
+	},
+	{
+		"name": "user-card",
+		"title": "User Card",
+		"type": "registry:block",
+		"description": "Profile display with avatar, bio, and follow button",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-card.json"
+	},
+	{
+		"name": "user-card-classic",
+		"title": "User Card Classic",
+		"type": "registry:component",
+		"description": "User card component - user card classic layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-card-classic.json"
+	},
+	{
+		"name": "user-card-compact",
+		"title": "User Card Compact",
+		"type": "registry:component",
+		"description": "User card component - user card compact layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-card-compact.json"
+	},
+	{
+		"name": "user-card-landscape",
+		"title": "User Card Landscape",
+		"type": "registry:component",
+		"description": "User card component - user card landscape layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-card-landscape.json"
+	},
+	{
+		"name": "user-card-portrait",
+		"title": "User Card Portrait",
+		"type": "registry:component",
+		"description": "User card component - user card portrait layout",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-card-portrait.json"
+	},
+	{
+		"name": "user-input",
+		"title": "User Input",
+		"type": "registry:block",
+		"description": "Composable user search and selection components - search cached profiles, supports NIP-05/npub/nprofile lookups",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-input.json"
+	},
+	{
+		"name": "user-profile",
+		"title": "User Profile",
+		"type": "registry:block",
+		"description": "Composable user profile components with Context API - mix and match Root, Avatar, Name, Bio, Follow, and more",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-profile.json"
+	},
+	{
+		"name": "user-profile-avatar-name",
+		"title": "User Profile Avatar Name",
+		"type": "registry:component",
+		"description": "Horizontal layout with avatar and name, with optional meta field (handle, about, or custom text)",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [
+			"user-profile"
+		],
+		"relativeUrl": "user-profile-avatar-name.json"
+	},
+	{
+		"name": "user-profile-hero",
+		"title": "User Profile Hero",
+		"type": "registry:component",
+		"description": "Block component - user profile hero",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "user-profile-hero.json"
+	},
+	{
+		"name": "voice-message-card-compact",
+		"title": "Voice Message Card Compact",
+		"type": "registry:component",
+		"description": "Block component - voice message card compact",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "voice-message-card-compact.json"
+	},
+	{
+		"name": "voice-message-card-expanded",
+		"title": "Voice Message Card Expanded",
+		"type": "registry:component",
+		"description": "Block component - voice message card expanded",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "voice-message-card-expanded.json"
+	},
+	{
+		"name": "zap-button",
+		"title": "Zap Button",
+		"type": "registry:component",
+		"description": "Lightning payment button with amount selector",
+		"dependencies": [
+			"@nostr-dev-kit/ndk",
+			"@nostr-dev-kit/svelte",
+			"@nostr-dev-kit/wallet"
+		],
+		"registryDependencies": [],
+		"relativeUrl": "zap-button.json"
+	}
+]

@@ -18,7 +18,9 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let blockDemoUrl = $state<string>('');
+  let basicBlockUrl = $state<string>('');
+  let labelBlockUrl = $state<string>('');
+  let errorBlockUrl = $state<string>('');
 
   // Block Presets showcase blocks
   const blockPresetsBlocks: ShowcaseBlock[] = [
@@ -87,13 +89,13 @@
 
 <!-- Block Presets preview snippets -->
 {#snippet basicBlockPreview()}
-  <RelayInputBlock {ndk} bind:value={blockDemoUrl} />
+  <RelayInputBlock {ndk} bind:value={basicBlockUrl} />
 {/snippet}
 
 {#snippet labelBlockPreview()}
   <RelayInputBlock
     {ndk}
-    bind:value={blockDemoUrl}
+    bind:value={labelBlockUrl}
     label="Primary Relay"
     helperText="Enter the WebSocket URL of your preferred relay"
   />
@@ -102,7 +104,7 @@
 {#snippet errorBlockPreview()}
   <RelayInputBlock
     {ndk}
-    bind:value={blockDemoUrl}
+    bind:value={errorBlockUrl}
     label="Relay URL"
     error="Invalid relay URL format"
   />
@@ -152,7 +154,7 @@
   <section class="py-12 space-y-16">
     <ComponentCard data={relayInputMetadata.cards[0]}>
       {#snippet preview()}
-        <RelayInputBlock {ndk} bind:value={blockDemoUrl} />
+        <RelayInputBlock {ndk} bind:value={basicBlockUrl} />
       {/snippet}
     </ComponentCard>
 
@@ -160,7 +162,7 @@
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
-          bind:value={blockDemoUrl}
+          bind:value={labelBlockUrl}
           label="Primary Relay"
           helperText="Enter the WebSocket URL of your preferred relay"
         />
@@ -171,7 +173,7 @@
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
-          bind:value={blockDemoUrl}
+          bind:value={errorBlockUrl}
           label="Relay URL"
           error="Invalid relay URL format"
         />

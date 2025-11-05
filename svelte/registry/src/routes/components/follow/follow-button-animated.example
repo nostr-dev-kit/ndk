@@ -1,3 +1,7 @@
+<script lang="ts">
+  import FollowButtonAnimated from '$lib/registry/components/actions/follow-button-animated.svelte';
+</script>
+
 <FollowButtonAnimated target={user} />
 
 <FollowButtonAnimated target={user} showTarget={true} />

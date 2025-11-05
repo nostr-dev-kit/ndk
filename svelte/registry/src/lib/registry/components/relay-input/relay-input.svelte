@@ -35,7 +35,7 @@
 	let {
 		ndk,
 		value = $bindable(''),
-		placeholder = 'wss://relay.example.com',
+		placeholder = 'relay.example.com',
 		class: className = '',
 		showRelayInfo = true,
 		disabled = false,

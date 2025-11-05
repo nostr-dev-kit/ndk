@@ -48,7 +48,7 @@
     onclick={handleToggle}
     class={cn(
       'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-colors',
-      followAction.isFollowing ? 'text-muted-foreground hover:text-red-500' : 'text-primary',
+      followAction.isFollowing ? 'text-muted-foreground hover:text-foreground' : 'text-primary',
       className
     )}
     aria-label={followAction.isFollowing

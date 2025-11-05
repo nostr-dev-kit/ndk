@@ -47,6 +47,7 @@
   setContext(RELAY_CONTEXT_KEY, context);
 </script>
 
+relay = {relayUrl}
 <div class="relay-root {className}">
   {@render children()}
 </div>

@@ -11,7 +11,6 @@
     userCardPortraitCard,
     userCardLandscapeCard,
     userCardNeonCard,
-    userCardGlassCard,
     userCardAnatomyLayers,
     userCardPrimitiveData
   } from '$lib/component-registry/user-card';
@@ -32,16 +31,15 @@
   import userCardPortraitCode from './user-card-portrait.example?raw';
   import userCardLandscapeCode from './user-card-landscape.example?raw';
   import userCardNeonCode from './user-card-neon.example?raw';
-  import userCardGlassCode from './user-card-glass.example?raw';
 
   // Import blocks
-  import UserCardClassic from '$lib/registry/components/user-card/user-card-classic.svelte';
-  import UserCardPortrait from '$lib/registry/components/user-card/user-card-portrait.svelte';
-  import UserCardLandscape from '$lib/registry/components/user-card/user-card-landscape.svelte';
-  import UserCardCompact from '$lib/registry/components/user-card/user-card-compact.svelte';
-  import UserCardNeon from '$lib/registry/components/user-card/user-card-neon.svelte';
-  import UserCardGlass from '$lib/registry/components/user-card/user-card-glass.svelte';
-  import UserListItem from '$lib/registry/components/user-card/user-list-item.svelte';
+  import UserCardClassic from '$lib/registry/components/user-card-classic/user-card-classic.svelte';
+  import UserCardPortrait from '$lib/registry/components/user-card-portrait/user-card-portrait.svelte';
+  import UserCardLandscape from '$lib/registry/components/user-card-landscape/user-card-landscape.svelte';
+  import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
+  import UserCardNeon from '$lib/registry/components/user-card-neon/user-card-neon.svelte';
+  import UserCardGlass from '$lib/registry/components/user-card-glass/user-card-glass.svelte';
+  import UserListItem from '$lib/registry/components/user-list-item/user-list-item.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -77,7 +75,7 @@
     {
       name: 'Classic',
       description: 'Classic user card with banner, avatar, name, bio, and stats. Perfect for popovers, dialogs, and standalone displays.',
-      command: 'npx shadcn@latest add user-card-classic',
+      command: 'npx jsrepo add user-card-classic',
       preview: classicPreview,
       cardData: userCardClassicCard,
       orientation: 'horizontal'
@@ -85,7 +83,7 @@
     {
       name: 'Compact',
       description: 'Minimal user card for lists, showing avatar, name, and follow button. Ideal for sidebars and compact layouts.',
-      command: 'npx shadcn@latest add user-card-compact',
+      command: 'npx jsrepo add user-card-compact',
       preview: compactPreview,
       cardData: userCardCompactCard,
       orientation: 'vertical'
@@ -93,7 +91,7 @@
     {
       name: 'List Item',
       description: 'Ultra-compact list item showing avatar, name, and follow status badge. Perfect for dense user lists.',
-      command: 'npx shadcn@latest add user-list-item',
+      command: 'npx jsrepo add user-list-item',
       preview: listItemPreview,
       cardData: userCardListItemCard,
       orientation: 'vertical'
@@ -101,7 +99,7 @@
     {
       name: 'Portrait',
       description: 'Vertical card layout showing avatar, name, bio, and stats. Great for grids and profile galleries.',
-      command: 'npx shadcn@latest add user-card-portrait',
+      command: 'npx jsrepo add user-card-portrait',
       preview: portraitPreview,
       cardData: userCardPortraitCard,
       orientation: 'horizontal'
@@ -109,7 +107,7 @@
     {
       name: 'Landscape',
       description: 'Horizontal card layout with avatar on left. Perfect for feed views and detailed lists.',
-      command: 'npx shadcn@latest add user-card-landscape',
+      command: 'npx jsrepo add user-card-landscape',
       preview: landscapePreview,
       cardData: userCardLandscapeCard,
       orientation: 'vertical'
@@ -117,7 +115,7 @@
     {
       name: 'Neon',
       description: 'Neon-style card with full background image and glossy top border. Perfect for modern, visually striking user displays.',
-      command: 'npx shadcn@latest add user-card-neon',
+      command: 'npx jsrepo add user-card-neon',
       preview: neonPreview,
       cardData: userCardNeonCard,
       orientation: 'horizontal'
@@ -125,7 +123,7 @@
     {
       name: 'Glass',
       description: 'Glassmorphic card with frosted glass effect and gradient mesh background. Modern, elegant design with soft glows.',
-      command: 'npx shadcn@latest add user-card-glass',
+      command: 'npx jsrepo add user-card-glass',
       preview: glassPreview,
       cardData: userCardGlassCard,
       orientation: 'horizontal',
@@ -367,62 +365,45 @@
   </ScrollArea>
 {/snippet}
 
-{#if displayUsers.length > 0 && user1}
-  <!-- Use template with custom showcase component -->
-  <ComponentPageTemplate
-    metadata={userCardMetadata}
-    {ndk}
-    showcaseComponent={ComponentsShowcase}
-    showcaseBlocks={showcaseBlocks}
-    {customSections}
-    componentsSection={{
-      cards: [
-        { ...userCardClassicCard, code: userCardClassicCode },
-        { ...userCardCompactCard, code: userCardCompactCode },
-        { ...userCardListItemCard, code: userListItemCode },
-        { ...userCardPortraitCard, code: userCardPortraitCode },
-        { ...userCardLandscapeCard, code: userCardLandscapeCode },
-        { ...userCardNeonCard, code: userCardNeonCode },
-        { ...userCardGlassCard, code: userCardGlassCode }
-      ],
-      previews: {
-        'user-card-classic': classicComponentPreview,
-        'user-card-compact': compactComponentPreview,
-        'user-list-item': listItemComponentPreview,
-        'user-card-portrait': portraitComponentPreview,
-        'user-card-landscape': landscapeComponentPreview,
-        'user-card-neon': neonComponentPreview,
-        'user-card-glass': glassComponentPreview
-      }
-    }}
-    apiDocs={userCardMetadata.apiDocs}
-  >
-    <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
-      <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
-      <EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} default="npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m" />
-      <EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
-      <EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} default="npub1a2cww4kn9wqte4ry70vyfwqyqvpswksna27rtxd8vty6c74era8sdcw83a" />
-      <EditProps.Prop name="User 6" type="user" bind:value={user6} options={users} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
-      <EditProps.Prop name="User 7" type="user" bind:value={user7} options={users} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
-      <EditProps.Prop name="User 8" type="user" bind:value={user8} options={users} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
-      <EditProps.Prop name="User 9" type="user" bind:value={user9} options={users} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
-  </ComponentPageTemplate>
-{:else}
-  <!-- Loading state -->
-  <div class="px-8">
-    <div class="mb-12 pt-8">
-      <div class="flex items-start justify-between gap-4 mb-4">
-        <h1 class="text-4xl font-bold">User Card</h1>
-      </div>
-      <p class="text-lg text-muted-foreground mb-6">
-        Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts for different contexts.
-      </p>
-    </div>
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading users...</div>
-    </div>
-  </div>
-{/if}
+<!-- Use template with custom showcase component -->
+<ComponentPageTemplate
+  metadata={userCardMetadata}
+  {ndk}
+  showcaseComponent={ComponentsShowcase}
+  showcaseBlocks={showcaseBlocks}
+  {customSections}
+  componentsSection={{
+    cards: [
+      { ...userCardClassicCard, code: userCardClassicCode },
+      { ...userCardCompactCard, code: userCardCompactCode },
+      { ...userCardListItemCard, code: userListItemCode },
+      { ...userCardPortraitCard, code: userCardPortraitCode },
+      { ...userCardLandscapeCard, code: userCardLandscapeCode },
+      { ...userCardNeonCard, code: userCardNeonCode },
+      { ...userCardGlassCard, code: userCardGlassCode }
+    ],
+    previews: {
+      'user-card-classic': classicComponentPreview,
+      'user-card-compact': compactComponentPreview,
+      'user-list-item': listItemComponentPreview,
+      'user-card-portrait': portraitComponentPreview,
+      'user-card-landscape': landscapeComponentPreview,
+      'user-card-neon': neonComponentPreview,
+      'user-card-glass': glassComponentPreview
+    }
+  }}
+  apiDocs={userCardMetadata.apiDocs}
+>
+  <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+    <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
+    <EditProps.Prop name="User 3" type="user" bind:value={user3} options={users} default="npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m" />
+    <EditProps.Prop name="User 4" type="user" bind:value={user4} options={users} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />
+    <EditProps.Prop name="User 5" type="user" bind:value={user5} options={users} default="npub1a2cww4kn9wqte4ry70vyfwqyqvpswksna27rtxd8vty6c74era8sdcw83a" />
+    <EditProps.Prop name="User 6" type="user" bind:value={user6} options={users} default="npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" />
+    <EditProps.Prop name="User 7" type="user" bind:value={user7} options={users} default="npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" />
+    <EditProps.Prop name="User 8" type="user" bind:value={user8} options={users} default="npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" />
+    <EditProps.Prop name="User 9" type="user" bind:value={user9} options={users} default="npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" />
+</ComponentPageTemplate>
 
 <!-- API Drawer (Primitives drawer) -->
 {#if focusedPrimitive && userCardPrimitiveData[focusedPrimitive as keyof typeof userCardPrimitiveData]}

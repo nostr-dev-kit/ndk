@@ -1,8 +1,10 @@
 <script lang="ts">
 	import Demo from '$site-components/Demo.svelte';
 	import CodeBlock from '$site-components/CodeBlock.svelte';
+	import PageTitle from '$site-components/PageTitle.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import "../../../lib/styles/docs-page.css";
 
 	// Import demo
 	import ZappedFeed from './examples/zapped-feed.example.svelte';
@@ -11,13 +13,12 @@
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>
 
+<PageTitle
+	title="Meta Subscriptions"
+	subtitle="Reactive meta-subscriptions that automatically track relationships between events"
+/>
+
 <div class="docs-page">
-	<header class="docs-header">
-		<h1>Meta Subscriptions</h1>
-		<p class="subtitle">
-			Reactive meta-subscriptions that automatically track relationships between events
-		</p>
-	</header>
 
 	<section>
 		<h2>What is $metaSubscribe?</h2>

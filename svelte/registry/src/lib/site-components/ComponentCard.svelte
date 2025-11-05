@@ -38,7 +38,7 @@
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];
-		apiDocs: ComponentDoc[];
+		apiDocs: ComponentDoc[]; // REQUIRED: Must not be empty - provide API documentation
 		relatedComponents?: RelatedComponent[];
 		version?: string;
 		updatedAt?: string;
@@ -153,11 +153,19 @@
 					{/if}
 				</section>
 
-				{#if data.apiDocs && data.apiDocs.length > 0}
-					<section class="flex flex-col gap-4">
+				<section class="flex flex-col gap-4">
+					{#if data.apiDocs && data.apiDocs.length > 0}
 						<ComponentAPI components={data.apiDocs} />
-					</section>
-				{/if}
+					{:else}
+						<div class="p-8 border border-destructive rounded-lg bg-destructive/10">
+							<h4 class="text-lg font-semibold text-destructive mb-2">⚠️ Missing API Documentation</h4>
+							<p class="text-sm text-destructive/90">
+								This component is missing API documentation. The <code class="px-1 py-0.5 bg-destructive/20 rounded">apiDocs</code> array must not be empty.
+								Please add component documentation including props, events, and usage information.
+							</p>
+						</div>
+					{/if}
+				</section>
 			</Tabs.Content>
 		</div>
 	</Tabs.Root>

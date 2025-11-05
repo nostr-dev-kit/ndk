@@ -5,7 +5,7 @@ export const eventDropdownCard: ComponentCardData = {
 	title: 'EventDropdown',
 	description: 'Dropdown menu for event actions.',
 	richDescription: 'Fully-styled dropdown menu with event actions including mute, report, copy ID, copy author, view raw event, and relay information. Perfect for event card menus and context actions.',
-	command: 'npx shadcn@latest add event-dropdown',
+	command: 'npx jsrepo add event-dropdown',
 	apiDocs: [
 		{
 			name: 'EventDropdown',

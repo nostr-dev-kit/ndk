@@ -6,8 +6,8 @@ export const emojiPickerListCard: ComponentCardData = {
   title: 'EmojiPicker.List',
   description: 'Basic emoji list primitive',
   richDescription: 'A primitive component that renders a grid of clickable emojis. Perfect for custom layouts when you need full control over the emoji picker behavior.',
-  command: 'npx shadcn@latest add emoji-picker',
-  apiDocs: []
+  command: 'npx jsrepo add emoji-picker',
+  apiDocs: emojiPickerApiDocs.filter(doc => doc.name === 'EmojiPicker.List')
 };
 
 export const emojiPickerContentCard: ComponentCardData = {
@@ -15,8 +15,8 @@ export const emojiPickerContentCard: ComponentCardData = {
   title: 'EmojiPicker.Content',
   description: 'Complete emoji picker with builder integration',
   richDescription: 'An opinionated component that integrates with the createEmojiPicker builder to show user\'s custom emojis and defaults in organized sections.',
-  command: 'npx shadcn@latest add emoji-picker',
-  apiDocs: []
+  command: 'npx jsrepo add emoji-picker',
+  apiDocs: emojiPickerApiDocs.filter(doc => doc.name === 'EmojiPicker.Content' || doc.name === 'createEmojiPicker')
 };
 
 export const emojiPickerPopoverCard: ComponentCardData = {
@@ -24,8 +24,8 @@ export const emojiPickerPopoverCard: ComponentCardData = {
   title: 'EmojiPicker in Popover',
   description: 'Emoji picker in a dropdown popover',
   richDescription: 'Use EmojiPicker.Content with bits-ui Popover for a dropdown picker. This is how ReactionAction uses it internally.',
-  command: 'npx shadcn@latest add emoji-picker',
-  apiDocs: []
+  command: 'npx jsrepo add emoji-picker',
+  apiDocs: emojiPickerApiDocs.filter(doc => doc.name === 'EmojiPicker.Content')
 };
 
 export const emojiPickerAutocompleteCard: ComponentCardData = {
@@ -33,8 +33,8 @@ export const emojiPickerAutocompleteCard: ComponentCardData = {
   title: 'Textarea Autocomplete',
   description: 'Emoji autocomplete in textarea',
   richDescription: 'Type : followed by text to autocomplete with your custom emojis. Supports keyboard navigation (arrows, tab/enter to select, escape to close).',
-  command: 'npx shadcn@latest add emoji-picker',
-  apiDocs: []
+  command: 'npx jsrepo add emoji-picker',
+  apiDocs: emojiPickerApiDocs
 };
 
 // API documentation

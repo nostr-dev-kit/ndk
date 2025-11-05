@@ -1,7 +1,9 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import PageTitle from '$site-components/PageTitle.svelte';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
   import { kindLabel } from '$lib/registry/utils';
+  import "../../../lib/styles/docs-page.css";
 
   // Sample pubkeys to demonstrate different gradients
   const samplePubkeys = [
@@ -25,13 +27,12 @@
   ];
 </script>
 
+<PageTitle
+  title="Utilities"
+  subtitle="Helpful utility functions for working with Nostr data"
+/>
+
 <div class="docs-page">
-  <header class="docs-header">
-    <h1>Utilities</h1>
-    <p class="subtitle">
-      Helpful utility functions for working with Nostr data
-    </p>
-  </header>
 
   <section>
     <h2>deterministicPubkeyGradient</h2>

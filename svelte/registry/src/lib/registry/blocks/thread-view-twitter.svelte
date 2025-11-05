@@ -18,7 +18,7 @@
   import { EventCard } from '../components/event-card/index.js';
   import { ReactionAction } from '../components/reaction/index.js';
   import { User } from '../ui/user/index.js';
-  import RepostButton from '../components/actions/repost-button.svelte';
+  import RepostButton from '../components/repost-button/repost-button.svelte';
 
   interface Props {
     /** NDK instance */

@@ -30,7 +30,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
   import type { Snippet } from 'svelte';
-  import { createContentSampler, type ContentTab as ContentTabType } from '../../hooks/content-tab';
+  import { createContentSampler, type ContentTab as ContentTabType } from '../../builders/content-tab';
   import { cn } from '../../utils/cn.js';
   import { kindLabel } from '../../utils/kind-label.js';
 

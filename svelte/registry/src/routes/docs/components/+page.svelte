@@ -1,14 +1,15 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import PageTitle from '$site-components/PageTitle.svelte';
+  import "../../../lib/styles/docs-page.css";
 </script>
 
+<PageTitle
+  title="Components"
+  subtitle="Understanding and customizing registry components"
+/>
+
 <div class="docs-page">
-  <header class="docs-header">
-    <h1>Components</h1>
-    <p class="subtitle">
-      Understanding and customizing registry components
-    </p>
-  </header>
 
   <section>
     <h2>What Are Registry Components?</h2>

@@ -19,9 +19,9 @@
   import followButtonAnimatedCode from './follow-button-animated.example?raw';
 
   // Import block components
-  import FollowButton from '$lib/registry/components/actions/follow-button.svelte';
-  import FollowButtonPill from '$lib/registry/components/actions/follow-button-pill.svelte';
-  import FollowButtonAnimated from '$lib/registry/components/actions/follow-button-animated.svelte';
+  import FollowButton from '$lib/registry/components/follow-button/follow-button.svelte';
+  import FollowButtonPill from '$lib/registry/components/follow-button-pill/follow-button-pill.svelte';
+  import FollowButtonAnimated from '$lib/registry/components/follow-button-animated/follow-button-animated.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -32,42 +32,42 @@
     {
       name: 'Minimal',
       description: 'Icon-first with target name',
-      command: 'npx shadcn@latest add follow-button',
+      command: 'npx jsrepo add follow-button',
       preview: minimalPreview,
       cardData: followButtonMinimalCard
     },
     {
       name: 'Minimal Icon Only',
       description: 'Just the follow icon',
-      command: 'npx shadcn@latest add follow-button',
+      command: 'npx jsrepo add follow-button',
       preview: minimalIconOnlyPreview,
       cardData: followButtonMinimalCard
     },
     {
       name: 'Pill Solid',
       description: 'Rounded pill with solid background',
-      command: 'npx shadcn@latest add follow-button-pill',
+      command: 'npx jsrepo add follow-button-pill',
       preview: pillSolidPreview,
       cardData: followButtonPillCard
     },
     {
       name: 'Pill Outline',
       description: 'Rounded pill with outline style',
-      command: 'npx shadcn@latest add follow-button-pill',
+      command: 'npx jsrepo add follow-button-pill',
       preview: pillOutlinePreview,
       cardData: followButtonPillCard
     },
     {
       name: 'Pill Compact',
       description: 'Icon-only circular button',
-      command: 'npx shadcn@latest add follow-button-pill',
+      command: 'npx jsrepo add follow-button-pill',
       preview: pillCompactPreview,
       cardData: followButtonPillCard
     },
     {
       name: 'Animated',
       description: 'With smooth transitions and feedback',
-      command: 'npx shadcn@latest add follow-button-animated',
+      command: 'npx jsrepo add follow-button-animated',
       preview: animatedPreview,
       cardData: followButtonAnimatedCard
     }

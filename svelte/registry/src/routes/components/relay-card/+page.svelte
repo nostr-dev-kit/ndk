@@ -9,8 +9,8 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
 
-  import RelayCardPortrait from '$lib/registry/components/relay-card/relay-card-portrait.svelte';
-  import RelayCardCompact from '$lib/registry/components/relay-card/relay-card-compact.svelte';
+  import RelayCardPortrait from '$lib/registry/components/relay-card-portrait/relay-card-portrait.svelte';
+  import RelayCardCompact from '$lib/registry/components/relay-card-compact/relay-card-compact.svelte';
   import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
 
   // Import code examples
@@ -40,7 +40,7 @@
     {
       name: 'Portrait',
       description: 'Vertical card with icon on top',
-      command: 'npx shadcn@latest add relay-card-portrait',
+      command: 'npx jsrepo add relay-card-portrait',
       preview: portraitPreview,
       orientation: 'horizontal',
       cardData: relayCardMetadata.cards[0]
@@ -48,7 +48,7 @@
     {
       name: 'Compact',
       description: 'Small square card',
-      command: 'npx shadcn@latest add relay-card-compact',
+      command: 'npx jsrepo add relay-card-compact',
       orientation: 'horizontal',
       preview: compactPreview,
       cardData: relayCardMetadata.cards[1]
@@ -56,7 +56,7 @@
     {
       name: 'List',
       description: 'Horizontal list layout',
-      command: 'npx shadcn@latest add relay-card-list',
+      command: 'npx jsrepo add relay-card-list',
       orientation: 'vertical',
       preview: listPreview,
       cardData: relayCardMetadata.cards[2]

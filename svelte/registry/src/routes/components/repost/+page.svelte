@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
+  import { getContext, type Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -9,8 +9,8 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
 
   // Import blocks
-  import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
-  import RepostButtonPill from '$lib/registry/components/actions/repost-button-pill.svelte';
+  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
+  import RepostButtonPill from '$lib/registry/components/repost-button-pill/repost-button-pill.svelte';
 
   // Import builder examples
   import BasicExample from './examples/basic-code.example.svelte';
@@ -36,6 +36,52 @@
       }
     })();
   });
+
+  function createShowcaseBlocks(
+    repostButtonPreview: Snippet,
+    pillSolidPreview: Snippet,
+    pillOutlinePreview: Snippet,
+    basicBuilderPreview: Snippet,
+    customBuilderPreview: Snippet
+  ): ShowcaseBlock[] {
+    return [
+      {
+        name: 'RepostButton',
+        description: 'Minimal with icon and count',
+        command: 'npx jsrepo add repost-button',
+        preview: repostButtonPreview,
+        cardData: repostButtonCard
+      },
+      {
+        name: 'Pill Solid',
+        description: 'Rounded with solid background',
+        command: 'npx jsrepo add repost-button-pill',
+        preview: pillSolidPreview,
+        cardData: repostButtonPillCard
+      },
+      {
+        name: 'Pill Outline',
+        description: 'Rounded with border only',
+        command: 'npx jsrepo add repost-button-pill',
+        preview: pillOutlinePreview,
+        cardData: repostButtonPillCard
+      },
+      {
+        name: 'Basic Builder',
+        description: 'Simple repost using builder',
+        command: 'npx jsrepo add repost-button',
+        preview: basicBuilderPreview,
+        cardData: repostBasicBuilderCard
+      },
+      {
+        name: 'Custom Builder',
+        description: 'Advanced features with builder',
+        command: 'npx jsrepo add repost-button',
+        preview: customBuilderPreview,
+        cardData: repostCustomBuilderCard
+      }
+    ];
+  }
 </script>
 
 {#if sampleEvent}
@@ -80,44 +126,6 @@
   {#snippet customBuilderComponentPreview()}
     <BuilderExample {ndk} {event} />
   {/snippet}
-
-  {@const showcaseBlocks = [
-    {
-      name: 'RepostButton',
-      description: 'Minimal with icon and count',
-      command: 'npx shadcn@latest add repost-button',
-      preview: repostButtonPreview,
-      cardData: repostButtonCard
-    },
-    {
-      name: 'Pill Solid',
-      description: 'Rounded with solid background',
-      command: 'npx shadcn@latest add repost-button-pill',
-      preview: repostButtonPillSolidPreview,
-      cardData: repostButtonPillCard
-    },
-    {
-      name: 'Pill Outline',
-      description: 'Rounded with outline style',
-      command: 'npx shadcn@latest add repost-button-pill',
-      preview: repostButtonPillOutlinePreview,
-      cardData: repostButtonPillCard
-    },
-    {
-      name: 'Basic Builder',
-      description: 'Minimal builder example',
-      command: 'npx shadcn@latest add repost-button',
-      preview: basicBuilderPreview,
-      cardData: repostBasicBuilderCard
-    },
-    {
-      name: 'Custom Styled',
-      description: 'Custom styled builder',
-      command: 'npx shadcn@latest add repost-button',
-      preview: customBuilderPreview,
-      cardData: repostCustomBuilderCard
-    }
-  ]}
 
   <!-- Additional section for Builder API -->
   {#snippet afterComponents()}
@@ -166,7 +174,7 @@ await repostState.repost();</code></pre>
   <ComponentPageTemplate
     metadata={repostMetadata}
     {ndk}
-    {showcaseBlocks}
+    showcaseBlocks={createShowcaseBlocks(repostButtonPreview, repostButtonPillSolidPreview, repostButtonPillOutlinePreview, basicBuilderPreview, customBuilderPreview)}
     {afterComponents}
     componentsSection={{
       cards: [

@@ -1,14 +1,15 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import PageTitle from '$site-components/PageTitle.svelte';
+  import "../../lib/styles/docs-page.css";
 </script>
 
+<PageTitle
+  title="NDK-svelte"
+  subtitle="Reactive Nostr components and state management for Svelte 5"
+/>
+
 <div class="docs-page">
-  <header class="docs-header">
-    <h1>NDK-svelte</h1>
-    <p class="subtitle">
-      Reactive Nostr components and state management for Svelte 5
-    </p>
-  </header>
 
   <section>
     <h2>Overview</h2>
@@ -31,24 +32,24 @@
 
     <h3>Using Builders</h3>
     <CodeBlock lang="svelte" code={`<script>
-  import { createEventCard } from '@nostr-dev-kit/svelte';
+  import { createEventContent } from '$lib/registry/builders';
 
-  const card = createEventCard(() => ({ event }), ndk);
+  const content = createEventContent(() => ({ event }), ndk);
 </script>
 
 <article>
-  <img src={card.profile?.picture} alt="" />
-  <h3>{card.profile?.displayName}</h3>
-  <p>{event.content}</p>
-  <footer>
-    <span>{card.replies.count} replies</span>
-    <span>{card.zaps.totalAmount} sats</span>
-  </footer>
+  {#each content.segments as segment}
+    {#if segment.type === 'text'}
+      <span>{segment.text}</span>
+    {:else if segment.type === 'link'}
+      <a href={segment.url}>{segment.text}</a>
+    {/if}
+  {/each}
 </article>`} />
 
     <h3>Using Components</h3>
     <CodeBlock lang="svelte" code={`<script>
-  import { EventCard } from '$lib/components/event-card';
+  import { EventCard } from '$lib/registry/components/event-card';
 </script>
 
 <EventCard.Root {ndk} {event}>

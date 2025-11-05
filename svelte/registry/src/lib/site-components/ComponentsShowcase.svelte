@@ -173,7 +173,6 @@
 		{#each blocks as block, index (block.name)}
 			{@const isNotLast = index < blocks.length - 1}
 			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
-			{@const commandArgs = block.command.replace(/^npx\s+/, '').split(' ')}
 			<div
 				bind:this={blockRefs[index]}
 				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 {borderClass}"
@@ -218,7 +217,11 @@
 								: "overflow-y-auto px-10 lg:px-12"
 						)}
 					>
-						{@render block.preview()}
+						<div class={cn(
+							block.orientation === 'horizontal' ? "px-10" : "py-10"
+						)}>
+							{@render block.preview()}
+						</div>
 					</div>
 					{#if block.orientation === 'horizontal'}
 						<!-- Left gradient -->

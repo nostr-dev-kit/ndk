@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKVoiceMessage, NDKKind } from '@nostr-dev-kit/ndk';
 	import { VoiceMessage } from '$lib/registry/ui/voice-message';
-	import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card/voice-message-card-compact.svelte';
+	import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card-compact/voice-message-card-compact.svelte';
 	import VoiceMessageCardExpanded from '$lib/registry/components/voice-message-card/voice-message-card-expanded.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
@@ -56,7 +56,7 @@
 		{
 			name: 'Compact',
 			description: 'Inline display',
-			command: 'npx shadcn@latest add voice-message-card-compact',
+			command: 'npx jsrepo add voice-message-card-compact',
 			preview: compactPreview,
 			cardData: voiceMessageCardCompactCard,
 			orientation: 'vertical'
@@ -64,7 +64,7 @@
 		{
 			name: 'Expanded',
 			description: 'Detailed with waveform',
-			command: 'npx shadcn@latest add voice-message-card-expanded',
+			command: 'npx jsrepo add voice-message-card-expanded',
 			preview: expandedPreview,
 			cardData: voiceMessageCardExpandedCard,
 			orientation: 'vertical'
@@ -109,14 +109,14 @@
 				{
 					name: 'Basic',
 					description: 'Minimal primitives',
-					command: 'npx shadcn@latest add voice-message-card',
+					command: 'npx jsrepo add voice-message-card',
 					preview: basicPreview,
 					cardData: voiceMessageCardBasicCard
 				},
 				{
 					name: 'Composition',
 					description: 'All primitives together',
-					command: 'npx shadcn@latest add voice-message-card',
+					command: 'npx jsrepo add voice-message-card',
 					preview: compositionPreview,
 					cardData: voiceMessageCardCompositionCard
 				}
@@ -149,7 +149,7 @@
 			{
 				name: 'VoiceMessageCardCompact',
 				description: 'Compact voice message card for inline display in feeds or chat interfaces.',
-				importPath: "import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card/voice-message-card-compact.svelte'",
+				importPath: "import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card-compact/voice-message-card-compact.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 					{ name: 'event', type: 'NDKEvent', description: 'The voice message event to display', required: true },

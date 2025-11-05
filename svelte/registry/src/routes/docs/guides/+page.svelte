@@ -1,13 +1,14 @@
 <script lang="ts">
+  import PageTitle from '$site-components/PageTitle.svelte';
+  import "../../../lib/styles/docs-page.css";
 </script>
 
+<PageTitle
+  title="Practical Guides"
+  subtitle="Step-by-step tutorials for building common Nostr features"
+/>
+
 <div class="docs-page">
-  <header class="docs-header">
-    <h1>Practical Guides</h1>
-    <p class="subtitle">
-      Step-by-step tutorials for building common Nostr features
-    </p>
-  </header>
 
   <section>
     <div class="coming-soon">

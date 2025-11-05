@@ -7,13 +7,13 @@
 	import { getContext } from 'svelte';
 	import NoteEmbeddedCard from '$lib/registry/components/note-embedded/note-embedded-card.svelte';
 	import NoteEmbeddedInline from '$lib/registry/components/note-embedded/note-embedded-inline.svelte';
-	import NoteEmbeddedCompact from '$lib/registry/components/note-embedded/note-embedded-compact.svelte';
+	import NoteEmbeddedCompact from '$lib/registry/components/note-embedded-compact/note-embedded-compact.svelte';
 	import ArticleEmbeddedCard from '$lib/registry/components/article-embedded/article-embedded-card.svelte';
 	import ArticleEmbeddedInline from '$lib/registry/components/article-embedded/article-embedded-inline.svelte';
-	import ArticleEmbeddedCompact from '$lib/registry/components/article-embedded/article-embedded-compact.svelte';
+	import ArticleEmbeddedCompact from '$lib/registry/components/article-embedded-compact/article-embedded-compact.svelte';
 	import HighlightEmbeddedCard from '$lib/registry/components/highlight-embedded/highlight-embedded-card.svelte';
 	import HighlightEmbeddedInline from '$lib/registry/components/highlight-embedded/highlight-embedded-inline.svelte';
-	import HighlightEmbeddedCompact from '$lib/registry/components/highlight-embedded/highlight-embedded-compact.svelte';
+	import HighlightEmbeddedCompact from '$lib/registry/components/highlight-embedded-compact/highlight-embedded-compact.svelte';
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 
 	interface Props {

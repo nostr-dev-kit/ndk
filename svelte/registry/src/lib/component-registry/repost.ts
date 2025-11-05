@@ -5,12 +5,12 @@ export const repostButtonCard: ComponentCardData = {
 	title: 'RepostButton',
 	description: 'Clean, minimal repost button.',
 	richDescription: 'Clean, minimal repost button with icon and count. Perfect for action bars and compact layouts.',
-	command: 'npx shadcn@latest add repost-button',
+	command: 'npx jsrepo add repost-button',
 	apiDocs: [
 		{
 			name: 'RepostButton',
 			description: 'Minimal repost button component',
-			importPath: "import RepostButton from '$lib/registry/components/actions/repost-button.svelte'",
+			importPath: "import RepostButton from '$lib/registry/components/repost-button.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to repost' },
@@ -25,12 +25,12 @@ export const repostButtonPillCard: ComponentCardData = {
 	title: 'RepostButtonPill',
 	description: 'Pill-style repost button.',
 	richDescription: 'Pill-style button with rounded background. Great for standalone repost actions. Available in solid and outline variants.',
-	command: 'npx shadcn@latest add repost-button-pill',
+	command: 'npx jsrepo add repost-button-pill',
 	apiDocs: [
 		{
 			name: 'RepostButtonPill',
 			description: 'Pill-style repost button component',
-			importPath: "import RepostButtonPill from '$lib/registry/components/actions/repost-button-pill.svelte'",
+			importPath: "import RepostButtonPill from '$lib/registry/components/repost-button-pill.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to repost' },
@@ -46,8 +46,28 @@ export const repostBasicBuilderCard: ComponentCardData = {
 	title: 'Minimal Builder Example',
 	description: 'Simplest builder implementation.',
 	richDescription: 'Simplest possible implementation using the createRepostAction builder. Perfect starting point for custom buttons.',
-	command: 'npx shadcn@latest add repost-button',
-	apiDocs: []
+	command: 'npx jsrepo add repost-button',
+	apiDocs: [
+		{
+			name: 'createRepostAction',
+			description: 'Builder function that provides repost state and methods. Returns RepostActionState with count (number), hasReposted (boolean), and repost() function.',
+			importPath: "import { createRepostAction } from '@nostr-dev-kit/svelte'",
+			props: [
+				{
+					name: 'getter',
+					type: '() => { event: NDKEvent }',
+					required: true,
+					description: 'Function that returns the event to repost'
+				},
+				{
+					name: 'ndk',
+					type: 'NDKSvelte',
+					required: true,
+					description: 'NDK instance'
+				}
+			]
+		}
+	]
 };
 
 export const repostCustomBuilderCard: ComponentCardData = {
@@ -55,8 +75,28 @@ export const repostCustomBuilderCard: ComponentCardData = {
 	title: 'Custom Styled Button',
 	description: 'Custom styled repost button.',
 	richDescription: 'Build your own repost button with custom styling and layout using the createRepostAction builder.',
-	command: 'npx shadcn@latest add repost-button',
-	apiDocs: []
+	command: 'npx jsrepo add repost-button',
+	apiDocs: [
+		{
+			name: 'createRepostAction',
+			description: 'Builder function that provides repost state and methods. Returns RepostActionState with count (number), hasReposted (boolean), and repost() function.',
+			importPath: "import { createRepostAction } from '@nostr-dev-kit/svelte'",
+			props: [
+				{
+					name: 'getter',
+					type: '() => { event: NDKEvent }',
+					required: true,
+					description: 'Function that returns the event to repost'
+				},
+				{
+					name: 'ndk',
+					type: 'NDKSvelte',
+					required: true,
+					description: 'NDK instance'
+				}
+			]
+		}
+	]
 };
 
 export const repostMetadata = {

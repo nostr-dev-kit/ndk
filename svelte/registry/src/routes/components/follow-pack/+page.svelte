@@ -19,9 +19,9 @@
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
 
-  import FollowPackPortrait from '$lib/registry/components/follow-pack/follow-pack-portrait.svelte';
-  import FollowPackHero from '$lib/registry/components/follow-pack/follow-pack-hero.svelte';
-  import FollowPackCompact from '$lib/registry/components/follow-pack/follow-pack-compact.svelte';
+  import FollowPackPortrait from '$lib/registry/components/follow-pack-portrait/follow-pack-portrait.svelte';
+  import FollowPackHero from '$lib/registry/components/follow-pack-hero/follow-pack-hero.svelte';
+  import FollowPackCompact from '$lib/registry/components/follow-pack-compact/follow-pack-compact.svelte';
   import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte';
 
   // Import code examples
@@ -65,7 +65,7 @@
     {
       name: 'Hero',
       description: 'Featured display with full-bleed imagery. Perfect for landing pages and hero sections.',
-      command: 'npx shadcn@latest add follow-pack-hero',
+      command: 'npx jsrepo add follow-pack-hero',
       preview: heroPreview,
       cardData: followPackHeroCard,
       orientation: 'horizontal'
@@ -73,7 +73,7 @@
     {
       name: 'Portrait',
       description: 'Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.',
-      command: 'npx shadcn@latest add follow-pack-portrait',
+      command: 'npx jsrepo add follow-pack-portrait',
       preview: portraitPreview,
       cardData: followPackPortraitCard,
       orientation: 'vertical'
@@ -81,7 +81,7 @@
     {
       name: 'Compact',
       description: 'Information-dense for feeds. Optimized for content streams and horizontal layouts.',
-      command: 'npx shadcn@latest add follow-pack-compact',
+      command: 'npx jsrepo add follow-pack-compact',
       preview: compactPreview,
       cardData: followPackCompactCard,
       orientation: 'horizontal'
@@ -89,7 +89,7 @@
     {
       name: 'List Item',
       description: 'Minimal design for sidebars. Maximum impact with minimal footprint.',
-      command: 'npx shadcn@latest add follow-pack-list-item',
+      command: 'npx jsrepo add follow-pack-list-item',
       preview: listItemPreview,
       cardData: followPackListItemCard,
       orientation: 'vertical'
@@ -190,7 +190,7 @@
 {/snippet}
 
 {#snippet listItemComponentPreview()}
-  <div class="space-y-2 max-w-md">
+  <div class="space-y-2 max-w-md h-full">
     {#each displayPacks.slice(0, 4) as pack (pack.id)}
       <FollowPackListItem {ndk} followPack={pack} />
     {/each}

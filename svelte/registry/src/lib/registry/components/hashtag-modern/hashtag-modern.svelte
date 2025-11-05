@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/cn.js';
   import { hashtagGradient, formatHashtag } from '../../utils/hashtag.js';
-  import HashtagCardCompact from '../hashtag-card/hashtag-card-compact.svelte';
+  import HashtagCardCompact from '../hashtag-card-compact/hashtag-card-compact.svelte';
   import { Popover } from 'bits-ui';
 
   interface Props {

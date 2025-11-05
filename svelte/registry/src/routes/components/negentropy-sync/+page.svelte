@@ -26,7 +26,7 @@
   import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-minimal.svelte';
   import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-detailed.svelte';
   import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-animated.svelte';
-  import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-compact.svelte';
+  import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync-progress-compact/negentropy-sync-progress-compact.svelte';
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -60,28 +60,28 @@
     {
       name: 'Minimal',
       description: 'Simple progress bar with basic stats',
-      command: 'npx shadcn@latest add negentropy-sync-progress-minimal',
+      command: 'npx jsrepo add negentropy-sync-progress-minimal',
       preview: minimalPreview,
       cardData: negentropySyncProgressMinimalCard
     },
     {
       name: 'Detailed',
       description: 'Full dashboard with relay status',
-      command: 'npx shadcn@latest add negentropy-sync-progress-detailed',
+      command: 'npx jsrepo add negentropy-sync-progress-detailed',
       preview: detailedPreview,
       cardData: negentropySyncProgressDetailedCard
     },
     {
       name: 'Animated',
       description: 'Eye-catching with smooth transitions',
-      command: 'npx shadcn@latest add negentropy-sync-progress-animated',
+      command: 'npx jsrepo add negentropy-sync-progress-animated',
       preview: animatedPreview,
       cardData: negentropySyncProgressAnimatedCard
     },
     {
       name: 'Compact',
       description: 'Space-efficient expandable badge',
-      command: 'npx shadcn@latest add negentropy-sync-progress-compact',
+      command: 'npx jsrepo add negentropy-sync-progress-compact',
       preview: compactPreview,
       cardData: negentropySyncProgressCompactCard
     }

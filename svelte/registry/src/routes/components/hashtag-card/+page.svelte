@@ -12,8 +12,8 @@
   import hashtagCardCompactCode from './hashtag-card-compact.example?raw';
 
   // Import hashtag card variants
-  import HashtagCardPortrait from '$lib/registry/components/hashtag-card/hashtag-card-portrait.svelte';
-  import HashtagCardCompact from '$lib/registry/components/hashtag-card/hashtag-card-compact.svelte';
+  import HashtagCardPortrait from '$lib/registry/components/hashtag-card-portrait/hashtag-card-portrait.svelte';
+  import HashtagCardCompact from '$lib/registry/components/hashtag-card-compact/hashtag-card-compact.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -31,14 +31,14 @@
       {
         name: 'Portrait',
         description: 'Vertical card with stats, activity chart, recent note, and contributors. Perfect for hashtag galleries.',
-        command: 'npx shadcn@latest add hashtag-card-portrait',
+        command: 'npx jsrepo add hashtag-card-portrait',
         preview: portraitPreview,
         cardData: hashtagCardPortraitCard
       },
       {
         name: 'Compact',
         description: 'Horizontal layout for lists. Shows hashtag, note count, contributors, and follow button.',
-        command: 'npx shadcn@latest add hashtag-card-compact',
+        command: 'npx jsrepo add hashtag-card-compact',
         preview: compactPreview,
         cardData: hashtagCardCompactCard
       }

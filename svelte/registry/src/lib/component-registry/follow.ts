@@ -6,12 +6,12 @@ export const followButtonMinimalCard: ComponentCardData = {
   title: 'FollowButton',
   description: 'Minimal icon-first follow button.',
   richDescription: 'Minimal icon-first design. Best for inline use in feeds or alongside user names. Supports showTarget mode to display avatar/icon and target name.',
-  command: 'npx shadcn@latest add follow-button',
+  command: 'npx jsrepo add follow-button',
   apiDocs: [
     {
       name: 'FollowButton',
       description: 'Minimal follow button component with icon-first design.',
-      importPath: "import { FollowButton } from '$lib/registry/components/actions/follow-button.svelte'",
+      importPath: "import { FollowButton } from '$lib/registry/components/follow-button.svelte'",
       props: [
         {
           name: 'ndk',
@@ -55,12 +55,12 @@ export const followButtonPillCard: ComponentCardData = {
   title: 'FollowButtonPill',
   description: 'Rounded pill-style follow button.',
   richDescription: 'Rounded pill-style button with solid and outline variants. Supports compact mode for icon-only display and showTarget mode for avatar/icon and target name.',
-  command: 'npx shadcn@latest add follow-button-pill',
+  command: 'npx jsrepo add follow-button-pill',
   apiDocs: [
     {
       name: 'FollowButtonPill',
       description: 'Rounded pill-style follow button with multiple variants and display modes.',
-      importPath: "import { FollowButtonPill } from '$lib/registry/components/actions/follow-button-pill.svelte'",
+      importPath: "import { FollowButtonPill } from '$lib/registry/components/follow-button-pill.svelte'",
       props: [
         {
           name: 'ndk',
@@ -118,12 +118,12 @@ export const followButtonAnimatedCard: ComponentCardData = {
   title: 'FollowButtonAnimated',
   description: 'Animated follow button with transitions.',
   richDescription: 'Animated follow button with smooth transitions and visual feedback. Features icon animations and checkmark confirmation on follow.',
-  command: 'npx shadcn@latest add follow-button-animated',
+  command: 'npx jsrepo add follow-button-animated',
   apiDocs: [
     {
       name: 'FollowButtonAnimated',
       description: 'Follow button with smooth animations and visual feedback on state changes.',
-      importPath: "import { FollowButtonAnimated } from '$lib/registry/components/actions/follow-button-animated.svelte'",
+      importPath: "import { FollowButtonAnimated } from '$lib/registry/components/follow-button-animated.svelte'",
       props: [
         {
           name: 'ndk',

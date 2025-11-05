@@ -44,17 +44,10 @@
     {
       name: 'Default Style',
       description: 'Material bottom nav with sorting control',
-      command: 'npx shadcn@latest add content-tab',
+      command: 'npx jsrepo add content-tab',
       preview: defaultPreview,
       cardData: contentTabCard,
       control: sortControl
-    },
-    {
-      name: 'Custom Style',
-      description: 'Card-style tabs with emoji icons',
-      command: 'npx shadcn@latest add content-tab',
-      preview: customTabPreview,
-      cardData: contentTabCard
     }
   ];
 </script>
@@ -93,60 +86,6 @@
     >
       By Recency
     </button>
-  </div>
-{/snippet}
-
-{#snippet customTabPreview()}
-  <div class="flex flex-col gap-8 py-8">
-    {#each [user10, user8].filter((u): u is NonNullable<typeof u> => Boolean(u)) as user (user.pubkey)}
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3">
-          <User.Root {ndk} {user}>
-            <User.Avatar class="w-10 h-10 flex-shrink-0 ring-2 ring-primary/20" />
-          </User.Root>
-          <div class="flex flex-col">
-            <User.Root {ndk} {user}>
-              <User.Name class="font-semibold text-sm" />
-            </User.Root>
-            <span class="text-xs text-muted-foreground">Content Activity</span>
-          </div>
-        </div>
-        <ContentTab
-          {ndk}
-          pubkeys={[user.pubkey]}
-          kinds={[1, 30023, 9802, 6, 7]}
-          since={Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)}
-          sort={byCount}
-          class="!border-0 !shadow-none !bg-transparent"
-        >
-          {#snippet tab({ kind, count })}
-            <div class="flex flex-col items-center gap-2 px-4 py-3 rounded-lg hover:bg-accent/50 transition-all cursor-pointer group min-w-[80px]">
-              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <span class="text-lg">
-                  {#if kind === 1}
-                    📝
-                  {:else if kind === 30023}
-                    📄
-                  {:else if kind === 9802}
-                    ✨
-                  {:else if kind === 6}
-                    🔁
-                  {:else if kind === 7}
-                    ❤️
-                  {:else}
-                    📌
-                  {/if}
-                </span>
-              </div>
-              <div class="flex flex-col items-center gap-0.5">
-                <span class="text-xs font-medium text-foreground">{kindLabel(kind)}</span>
-                <span class="text-xs font-bold text-primary">{count}</span>
-              </div>
-            </div>
-          {/snippet}
-        </ContentTab>
-      </div>
-    {/each}
   </div>
 {/snippet}
 

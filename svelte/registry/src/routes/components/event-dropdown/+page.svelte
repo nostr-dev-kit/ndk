@@ -26,7 +26,7 @@
 		{
 			name: 'Standalone',
 			description: 'EventDropdown as standalone component',
-			command: 'npx shadcn@latest add event-dropdown',
+			command: 'npx jsrepo add event-dropdown',
 			preview: standalonePreview,
 			cardData: eventDropdownCard,
 			control: relayInfoControl

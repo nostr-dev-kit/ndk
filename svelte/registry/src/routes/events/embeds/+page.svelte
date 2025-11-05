@@ -17,7 +17,7 @@
     title: 'Live Preview',
     description: 'Paste and see it render.',
     richDescription: 'Paste a bech32 event reference (note1, nevent1, naddr1) and see it render in real-time.',
-    command: 'npx shadcn@latest add embedded-event',
+    command: 'npx jsrepo add embedded-event',
     apiDocs: []
   };
 
@@ -26,7 +26,7 @@
     title: 'Variant Comparison',
     description: 'Compare display variants.',
     richDescription: 'Compare card, inline, and compact variants side by side.',
-    command: 'npx shadcn@latest add embedded-event',
+    command: 'npx jsrepo add embedded-event',
     apiDocs: []
   };
 </script>
@@ -315,7 +315,7 @@
       {
         name: 'Live Preview',
         description: 'Paste and render',
-        command: 'npx shadcn@latest add embedded-event',
+        command: 'npx jsrepo add embedded-event',
         preview: liveDemoPreview,
         cardData: liveDemoData
       }
@@ -337,7 +337,7 @@
       {
         name: 'Variant Comparison',
         description: 'Compare variants',
-        command: 'npx shadcn@latest add embedded-event',
+        command: 'npx jsrepo add embedded-event',
         preview: variantPreview,
         cardData: variantData
       }

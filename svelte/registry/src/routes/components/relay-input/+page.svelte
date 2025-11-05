@@ -2,9 +2,6 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { relayInputMetadata } from '$lib/component-registry/relay-input';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
@@ -13,18 +10,8 @@
   import relayInputLabelCode from './relay-input-label.example?raw';
   import relayInputErrorCode from './relay-input-error.example?raw';
   import relayInputDisabledCode from './relay-input-disabled.example?raw';
-  import relayInputComponentBasicCode from './relay-input-component-basic.example?raw';
-  import relayInputComponentLabelCode from './relay-input-component-label.example?raw';
-  import relayInputComponentValidationCode from './relay-input-component-validation.example?raw';
-  import relayInputComponentDisabledCode from './relay-input-component-disabled.example?raw';
 
   import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
-
-  // Examples
-  import BasicExample from './examples/basic.example.svelte';
-  import WithLabelExample from './examples/with-label.example.svelte';
-  import ValidationExample from './examples/validation.example.svelte';
-  import DisabledExample from './examples/disabled.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -32,67 +19,35 @@
   let labelBlockUrl = $state<string>('');
   let errorBlockUrl = $state<string>('');
 
-  // Block Presets showcase blocks
-  const blockPresetsBlocks: ShowcaseBlock[] = [
+  // Showcase blocks
+  const showcaseBlocks: ShowcaseBlock[] = [
     {
       name: 'Basic',
       description: 'Simple input with NIP-11',
-      command: 'npx shadcn@latest add relay-input',
+      command: 'npx jsrepo add relay-input',
       preview: basicBlockPreview,
       cardData: relayInputMetadata.cards[0]
     },
     {
       name: 'With Label',
       description: 'Label and helper text',
-      command: 'npx shadcn@latest add relay-input',
+      command: 'npx jsrepo add relay-input',
       preview: labelBlockPreview,
       cardData: relayInputMetadata.cards[1]
     },
     {
       name: 'With Error',
       description: 'Validation error state',
-      command: 'npx shadcn@latest add relay-input',
+      command: 'npx jsrepo add relay-input',
       preview: errorBlockPreview,
       cardData: relayInputMetadata.cards[2]
     },
     {
       name: 'Disabled',
       description: 'Disabled input state',
-      command: 'npx shadcn@latest add relay-input',
+      command: 'npx jsrepo add relay-input',
       preview: disabledBlockPreview,
       cardData: relayInputMetadata.cards[3]
-    }
-  ];
-
-  // Component Usage showcase blocks
-  const componentUsageBlocks: ShowcaseBlock[] = [
-    {
-      name: 'Basic',
-      description: 'Basic component usage',
-      command: 'npx shadcn@latest add relay-input',
-      preview: basicComponentPreview,
-      cardData: relayInputMetadata.cards[4]
-    },
-    {
-      name: 'With Label',
-      description: 'Component with label',
-      command: 'npx shadcn@latest add relay-input',
-      preview: withLabelPreview,
-      cardData: relayInputMetadata.cards[5]
-    },
-    {
-      name: 'With Validation',
-      description: 'Component with validation',
-      command: 'npx shadcn@latest add relay-input',
-      preview: validationPreview,
-      cardData: relayInputMetadata.cards[6]
-    },
-    {
-      name: 'Disabled',
-      description: 'Disabled component',
-      command: 'npx shadcn@latest add relay-input',
-      preview: disabledComponentPreview,
-      cardData: relayInputMetadata.cards[7]
     }
   ];
 </script>
@@ -130,107 +85,8 @@
   />
 {/snippet}
 
-<!-- Component Usage preview snippets -->
-{#snippet basicComponentPreview()}
-  <BasicExample />
-{/snippet}
-
-{#snippet withLabelPreview()}
-  <WithLabelExample />
-{/snippet}
-
-{#snippet validationPreview()}
-  <ValidationExample />
-{/snippet}
-
-{#snippet disabledComponentPreview()}
-  <DisabledExample />
-{/snippet}
-
-<!-- Additional showcases section -->
-{#snippet afterShowcase()}
-  <SectionTitle
-    title="Component Usage"
-    description="Use individual components to build custom relay input experiences."
-  />
-
-  <ComponentsShowcaseGrid blocks={componentUsageBlocks} />
-{/snippet}
-
-<!-- Custom sections for Block Variants, Component Variants, and Features -->
+<!-- Custom sections for Features -->
 {#snippet customSections()}
-  <SectionTitle title="Block Variants" description="Explore each relay input block variant in detail" />
-
-  <section class="py-12 space-y-16">
-    <ComponentCard data={{ ...relayInputMetadata.cards[0], code: relayInputBasicCode }}>
-      {#snippet preview()}
-        <RelayInputBlock {ndk} bind:value={basicBlockUrl} />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...relayInputMetadata.cards[1], code: relayInputLabelCode }}>
-      {#snippet preview()}
-        <RelayInputBlock
-          {ndk}
-          bind:value={labelBlockUrl}
-          label="Primary Relay"
-          helperText="Enter the WebSocket URL of your preferred relay"
-        />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...relayInputMetadata.cards[2], code: relayInputErrorCode }}>
-      {#snippet preview()}
-        <RelayInputBlock
-          {ndk}
-          bind:value={errorBlockUrl}
-          label="Relay URL"
-          error="Invalid relay URL format"
-        />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...relayInputMetadata.cards[3], code: relayInputDisabledCode }}>
-      {#snippet preview()}
-        <RelayInputBlock
-          {ndk}
-          value="wss://relay.damus.io"
-          label="Default Relay"
-          helperText="This relay cannot be changed"
-          disabled
-        />
-      {/snippet}
-    </ComponentCard>
-  </section>
-
-  <SectionTitle title="Component Variants" description="Explore each component variant in detail" />
-
-  <section class="py-12 space-y-16">
-    <ComponentCard data={{ ...relayInputMetadata.cards[4], code: relayInputComponentBasicCode }}>
-      {#snippet preview()}
-        <BasicExample />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...relayInputMetadata.cards[5], code: relayInputComponentLabelCode }}>
-      {#snippet preview()}
-        <WithLabelExample />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...relayInputMetadata.cards[6], code: relayInputComponentValidationCode }}>
-      {#snippet preview()}
-        <ValidationExample />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...relayInputMetadata.cards[7], code: relayInputComponentDisabledCode }}>
-      {#snippet preview()}
-        <DisabledExample />
-      {/snippet}
-    </ComponentCard>
-  </section>
-
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Features</h2>
     <div class="grid gap-4 md:grid-cols-2">
@@ -265,8 +121,21 @@
 <ComponentPageTemplate
   metadata={relayInputMetadata}
   {ndk}
-  showcaseBlocks={blockPresetsBlocks}
-  {afterShowcase}
+  showcaseBlocks={showcaseBlocks}
+  componentsSection={{
+    cards: [
+      { ...relayInputMetadata.cards[0], code: relayInputBasicCode },
+      { ...relayInputMetadata.cards[1], code: relayInputLabelCode },
+      { ...relayInputMetadata.cards[2], code: relayInputErrorCode },
+      { ...relayInputMetadata.cards[3], code: relayInputDisabledCode }
+    ],
+    previews: {
+      'relay-input-basic': basicBlockPreview,
+      'relay-input-label': labelBlockPreview,
+      'relay-input-error': errorBlockPreview,
+      'relay-input-disabled': disabledBlockPreview
+    }
+  }}
   {customSections}
   apiDocs={relayInputMetadata.apiDocs}
 />

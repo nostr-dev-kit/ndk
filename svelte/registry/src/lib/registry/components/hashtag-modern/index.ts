@@ -1,1 +1,1 @@
-export { default as HashtagModern } from './hashtag-modern.svelte';
+export { default as HashtagModern } from '../hashtag-modern/hashtag-modern.svelte';

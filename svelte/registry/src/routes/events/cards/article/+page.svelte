@@ -3,9 +3,9 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import { Article } from '$lib/registry/ui/article';
-	import ArticleCardPortrait from '$lib/registry/components/article-card/article-card-portrait.svelte';
-	import ArticleCardHero from '$lib/registry/components/article-card/article-card-hero.svelte';
-	import ArticleCardNeon from '$lib/registry/components/article-card/article-card-neon.svelte';
+	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
+	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
+	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
@@ -140,7 +140,7 @@
 		{
 			name: 'Portrait',
 			description: 'Portrait-style layout with vertical orientation. Ideal for grid layouts and featured content displays.',
-			command: 'npx shadcn@latest add article-card-portrait',
+			command: 'npx jsrepo add article-card-portrait',
 			preview: portraitPreview,
 			cardData: articleCardCards[0],
 			orientation: 'horizontal'
@@ -148,7 +148,7 @@
 		{
 			name: 'Hero',
 			description: 'Full-width hero card with overlay content. Perfect for featured articles and landing pages.',
-			command: 'npx shadcn@latest add article-card-hero',
+			command: 'npx jsrepo add article-card-hero',
 			preview: heroPreview,
 			cardData: articleCardCards[1],
 			orientation: 'vertical'
@@ -156,7 +156,7 @@
 		{
 			name: 'Medium',
 			description: 'Compact horizontal card with side image. Optimized for article lists and content feeds.',
-			command: 'npx shadcn@latest add article-card-medium',
+			command: 'npx jsrepo add article-card-medium',
 			preview: mediumPreview,
 			cardData: articleCardCards[2],
 			orientation: 'vertical'
@@ -164,7 +164,7 @@
 		{
 			name: 'Neon',
 			description: 'Modern design with vibrant neon accents and gradients. Striking visual impact.',
-			command: 'npx shadcn@latest add article-card-neon',
+			command: 'npx jsrepo add article-card-neon',
 			preview: neonPreview,
 			cardData: articleCardCards[3],
 			orientation: 'vertical'

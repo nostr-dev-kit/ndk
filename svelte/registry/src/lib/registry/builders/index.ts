@@ -4,3 +4,4 @@ export * from './event-content/utils.js';
 export { createContentSampler, byCount, byRecency, type ContentTab } from './content-tab/index.js';
 export { createHashtagStats } from './hashtag/stats.svelte.js';
 export { createUserStats } from './user/stats.svelte.js';
+export { createZapAction, type ZapActionConfig, type ZapStats } from './zap-action/index.js';

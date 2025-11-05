@@ -4,7 +4,7 @@
 	import { EventCard } from '$lib/registry/components/event-card';
 	import { ReactionAction } from '$lib/registry/components/reaction';
 	import { ImageContent } from '$lib/registry/components/image-content';
-	import RepostButton from '$lib/registry/components/actions/repost-button.svelte';
+	import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

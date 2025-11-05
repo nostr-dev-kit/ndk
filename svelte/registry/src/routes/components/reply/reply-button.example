@@ -1,0 +1,26 @@
+<script lang="ts">
+  import { ReplyButton } from '$lib/registry/components/actions';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+
+  const ndk: NDKSvelte = $state();
+  const event: NDKEvent = $state();
+</script>
+
+<!-- Ghost variant (default) -->
+<ReplyButton {ndk} {event} />
+
+<!-- Show icon only, hide count -->
+<ReplyButton {ndk} {event} showCount={false} />
+
+<!-- Outline variant -->
+<ReplyButton {ndk} {event} variant="outline" />
+
+<!-- Pill variant -->
+<ReplyButton {ndk} {event} variant="pill" />
+
+<!-- Solid variant -->
+<ReplyButton {ndk} {event} variant="solid" />
+
+<!-- With click handler -->
+<ReplyButton {ndk} {event} onclick={() => console.log('Reply clicked!')} />

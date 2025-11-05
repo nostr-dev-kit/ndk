@@ -5,7 +5,7 @@ export const mentionModernCard: ComponentCardData = {
 	title: 'MentionModern',
 	description: 'Rich inline mention with avatar and popover.',
 	richDescription: "Use for rich inline mentions. Modern mention with avatar and user card popover on hover. Shows user's avatar alongside their name with an interactive card on hover.",
-	command: 'npx shadcn@latest add mention-modern',
+	command: 'npx jsrepo add mention-modern',
 	apiDocs: [
 		{
 			name: 'MentionModern',
@@ -25,8 +25,19 @@ export const mentionBasicCard: ComponentCardData = {
 	title: 'Basic Mention',
 	description: 'Minimal mention with profile fetching.',
 	richDescription: "Minimal mention with automatic profile fetching. Shows loading state then displays user's name. Perfect for simple inline mentions.",
-	command: 'npx shadcn@latest add mention',
-	apiDocs: []
+	command: 'npx jsrepo add mention',
+	apiDocs: [
+		{
+			name: 'Mention',
+			description: 'Minimal mention component with automatic profile fetching',
+			importPath: "import Mention from '$lib/registry/components/mention/mention.svelte'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const mentionCustomCard: ComponentCardData = {
@@ -34,8 +45,19 @@ export const mentionCustomCard: ComponentCardData = {
 	title: 'Custom Styled Mention',
 	description: 'Mention with custom styling.',
 	richDescription: 'Mention with custom styling applied via class prop. Demonstrates style customization for matching your design system.',
-	command: 'npx shadcn@latest add mention',
-	apiDocs: []
+	command: 'npx jsrepo add mention',
+	apiDocs: [
+		{
+			name: 'Mention',
+			description: 'Minimal mention component with automatic profile fetching',
+			importPath: "import Mention from '$lib/registry/components/mention/mention.svelte'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+				{ name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}
+	]
 };
 
 export const mentionMetadata: ComponentPageMetadata = {

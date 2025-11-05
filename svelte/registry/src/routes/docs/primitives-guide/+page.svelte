@@ -1,6 +1,8 @@
 <script lang="ts">
   import Alert from '$site-components/alert.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import PageTitle from '$site-components/PageTitle.svelte';
+  import "../../../lib/styles/docs-page.css";
 </script>
 
 <svelte:head>
@@ -8,11 +10,14 @@
   <meta name="description" content="Learn how to create truly headless UI primitives following bits-ui patterns with Svelte 5" />
 </svelte:head>
 
-<div class="prose prose-lg max-w-4xl mx-auto p-8">
-  <h1>Primitive Patterns Guide</h1>
+<PageTitle
+  title="Primitive Patterns Guide"
+  subtitle="Learn how to create truly headless UI primitives following bits-ui patterns with Svelte 5. This guide explains when to use different patterns and how to think about component architecture."
+/>
 
-  <p class="lead">
-    Learn how to create truly headless UI primitives following bits-ui patterns with Svelte 5. This guide explains when to use different patterns and how to think about component architecture.
+<div class="docs-page">
+  <section>
+    <p>
   </p>
 
   <Alert>

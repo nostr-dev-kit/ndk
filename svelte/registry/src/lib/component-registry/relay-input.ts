@@ -6,7 +6,7 @@ export const relayInputBasicBlockCard: ComponentCardData = {
   title: 'Basic Input Block',
   description: 'Simple relay input with NIP-11.',
   richDescription: 'Pre-configured relay input block with NIP-11 autocomplete ready for use.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -15,7 +15,7 @@ export const relayInputLabelBlockCard: ComponentCardData = {
   title: 'With Label and Helper',
   description: 'Input with label and helper text.',
   richDescription: 'Relay input block with label and helper text for better UX.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -24,7 +24,7 @@ export const relayInputErrorBlockCard: ComponentCardData = {
   title: 'With Validation Error',
   description: 'Input showing validation error.',
   richDescription: 'Relay input block displaying validation error state.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -33,7 +33,7 @@ export const relayInputDisabledBlockCard: ComponentCardData = {
   title: 'Disabled Input',
   description: 'Disabled relay input state.',
   richDescription: 'Relay input block in disabled state for read-only scenarios.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -43,7 +43,7 @@ export const relayInputBasicCard: ComponentCardData = {
   title: 'Basic Component',
   description: 'Basic relay input component.',
   richDescription: 'Use individual components to build custom relay input experiences.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -52,7 +52,7 @@ export const relayInputWithLabelCard: ComponentCardData = {
   title: 'With Label',
   description: 'Component with label.',
   richDescription: 'Relay input component with custom label implementation.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -61,7 +61,7 @@ export const relayInputValidationCard: ComponentCardData = {
   title: 'With Validation',
   description: 'Component with validation.',
   richDescription: 'Relay input component with custom validation logic.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 
@@ -70,7 +70,7 @@ export const relayInputDisabledComponentCard: ComponentCardData = {
   title: 'Disabled State',
   description: 'Disabled component state.',
   richDescription: 'Relay input component in disabled state.',
-  command: 'npx shadcn@latest add relay-input',
+  command: 'npx jsrepo add relay-input',
   apiDocs: []
 };
 

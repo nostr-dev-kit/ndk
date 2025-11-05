@@ -6,8 +6,43 @@ export const contentTabCard: ComponentCardData = {
   title: 'ContentTab',
   description: 'Display tabs based on user content types.',
   richDescription: 'Automatically samples user content and displays tabs only for content types they actually publish. Useful for conditionally showing UI based on what content a user creates.',
-  command: 'npx shadcn@latest add content-tab',
-  apiDocs: []
+  command: 'npx jsrepo add content-tab',
+  apiDocs: [
+    {
+      name: 'ContentTab',
+      description: 'Component that displays tabs based on user content types with minimal default styling',
+      importPath: "import { ContentTab } from '$lib/registry/components/content-tab'",
+      props: [
+        { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+        { name: 'pubkeys', type: 'string[]', required: true, description: 'User pubkeys to sample content from' },
+        { name: 'kinds', type: 'number[]', required: true, description: 'Event kinds to track' },
+        { name: 'since', type: 'number', description: 'Unix timestamp to start sampling from' },
+        { name: 'subOpts', type: 'NDKSubscriptionOptions', description: 'Additional subscription options' },
+        { name: 'sort', type: '(tabs: ContentTab[]) => ContentTab[]', description: 'Sort function for tabs (use byCount or byRecency)' },
+        { name: 'tab', type: 'Snippet<[ContentTab]>', description: 'Custom tab renderer snippet' },
+        { name: 'onTabClick', type: '(tab: ContentTab) => void', description: 'Tab click handler' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    },
+    {
+      name: 'createContentSampler',
+      description: 'Builder function that samples user content and returns active content types with counts',
+      importPath: "import { createContentSampler } from '$lib/registry/builders/content-tab'",
+      props: [
+        {
+          name: 'config',
+          type: '() => ContentTabConfig',
+          required: true,
+          description: 'Reactive function returning configuration: { pubkeys, kinds, since?, subOpts?, sort? }'
+        },
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance (uses context if not provided)'
+        }
+      ]
+    }
+  ]
 };
 
 // API documentation

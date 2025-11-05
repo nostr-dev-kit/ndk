@@ -1,0 +1,33 @@
+<script lang="ts">
+  import { FollowButtonAvatars } from '$lib/registry/components/actions';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+
+  const ndk: NDKSvelte = $state();
+  const event: NDKEvent = $state();
+</script>
+
+<!-- Ghost variant (default) -->
+<FollowButtonAvatars {ndk} {event} />
+
+<!-- Outline variant -->
+<FollowButtonAvatars {ndk} {event} variant="outline" />
+
+<!-- Pill variant -->
+<FollowButtonAvatars {ndk} {event} variant="pill" />
+
+<!-- Solid variant -->
+<FollowButtonAvatars {ndk} {event} variant="solid" />
+
+<!-- Custom configuration -->
+<FollowButtonAvatars
+  {ndk}
+  {event}
+  max={5}
+  avatarSize={32}
+  spacing="normal"
+  showCount={true}
+/>
+
+<!-- With click handler -->
+<FollowButtonAvatars {ndk} {event} onclick={() => console.log('Avatars clicked!')} />

@@ -6,7 +6,7 @@ export const searchComboboxCard: ComponentCardData = {
   title: 'Search Combobox',
   description: 'Accessible user search with keyboard navigation.',
   richDescription: 'Accessible user search with keyboard navigation using arrow keys, Enter, and Escape. Perfect for forms and user selection interfaces.',
-  command: 'npx shadcn@latest add user-search-combobox',
+  command: 'npx jsrepo add user-search-combobox',
   apiDocs: []
 };
 
@@ -15,7 +15,7 @@ export const customTextareaCard: ComponentCardData = {
   title: 'Custom Textarea Input',
   description: 'Use input snippet for custom textarea.',
   richDescription: 'Use the input snippet to provide a custom textarea instead of the default input. Perfect for multi-line search contexts or custom styling.',
-  command: 'npx shadcn@latest add user-search-combobox',
+  command: 'npx jsrepo add user-search-combobox',
   apiDocs: []
 };
 
@@ -24,7 +24,7 @@ export const composablePartsCard: ComponentCardData = {
   title: 'Basic Usage',
   description: 'Minimal primitives example.',
   richDescription: 'Minimal example with UserInput.Root, Search, Results, and ResultItem primitives.',
-  command: 'npx shadcn@latest add user-input',
+  command: 'npx jsrepo add user-input',
   apiDocs: []
 };
 
@@ -33,7 +33,7 @@ export const builderBasicCard: ComponentCardData = {
   title: 'Basic Usage',
   description: 'Custom interfaces with builder.',
   richDescription: 'Use the builder to create custom user input interfaces with full control over state and rendering.',
-  command: 'npx shadcn@latest add user-input',
+  command: 'npx jsrepo add user-input',
   apiDocs: []
 };
 

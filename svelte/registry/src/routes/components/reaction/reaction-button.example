@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ReactionButton from '$lib/registry/components/actions/reaction-button.svelte';
+  import ReactionButton from '$lib/registry/components/reaction/reaction-button.svelte';
 </script>
 
 <ReactionButton event={event} />

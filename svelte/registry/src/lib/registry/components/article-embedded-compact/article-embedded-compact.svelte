@@ -21,6 +21,7 @@
 
       <div class="article-content">
         <Article.Title class="text-sm font-semibold" />
+        <Article.Summary class="text-xs text-muted-foreground" />
         <div class="article-meta">
           <Article.ReadingTime class="text-xs" />
         </div>

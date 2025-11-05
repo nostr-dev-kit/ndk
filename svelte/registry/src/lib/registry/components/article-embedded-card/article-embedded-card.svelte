@@ -11,14 +11,14 @@
 
   let { ndk, event }: Props = $props();
 
-  const article = event as NDKArticle;
+  const article = event;
 </script>
 
 <div class="article-embedded-card">
   <Article.Root {ndk} {article}>
     <div class="article-layout">
       <Article.Image class="h-40" />
-
+      
       <div class="article-content">
         <Article.Title class="text-sm font-semibold" />
         <Article.Summary class="text-xs text-muted-foreground" maxLength={120} />

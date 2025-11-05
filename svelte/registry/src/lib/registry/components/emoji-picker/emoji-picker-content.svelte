@@ -49,6 +49,11 @@
     from: ndk.$follows
   }), ndk);
 
+  // Helper to create unique key for emoji (matching createEmojiPicker logic)
+  const getEmojiKey = (emoji: EmojiData): string => {
+    return emoji.url ? emoji.url : emoji.emoji;
+  };
+
   // Split emojis into user's and defaults
   const userEmojis = $derived.by((): EmojiData[] => {
     const allEmojis = emojiState.emojis;

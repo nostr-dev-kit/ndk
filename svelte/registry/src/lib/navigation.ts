@@ -74,8 +74,7 @@ export const eventCategories: NavCategory[] = [
   {
     title: 'Chromes (Cards)',
     items: [
-      { name: 'Introduction', path: '/events/cards/introduction', icon: ViewIcon, title: 'Card Components', description: 'Composable card components for displaying different types of Nostr events with flexible layouts.' },
-      { name: 'Generic', path: '/events/cards/generic', icon: Calendar01Icon, title: 'EventCard', description: 'Composable components for displaying any NDKEvent type with flexible layouts and interactions.' },
+      { name: 'EventCard', path: '/events/cards', icon: Calendar01Icon, title: 'EventCard Primitives', description: 'Composable primitives for displaying any NDKEvent type with flexible layouts and interactions.' },
       { name: 'Article', path: '/events/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.', nip: 'NIP-23' },
       { name: 'Highlight', path: '/events/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.', nip: 'NIP-84' },
       { name: 'Audio', path: '/events/cards/voice-message', icon: VoiceIcon, title: 'VoiceMessageCard', description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.', nip: 'NIP-A0' },
@@ -84,7 +83,6 @@ export const eventCategories: NavCategory[] = [
   {
     title: 'Content',
     items: [
-      { name: 'Introduction', path: '/events/content/introduction', icon: ViewIcon, title: 'Content Components', description: 'Render different types of Nostr event content with rich formatting and embedded media.' },
       { name: 'Note', path: '/events/content/note', icon: File01Icon, title: 'Event Content', description: 'Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.', nip: 'Kind:1' },
       { name: 'Article', path: '/events/content/article', icon: NewsIcon, title: 'ArticleContent', description: 'Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars.', nip: 'NIP-23' },
       { name: 'Image', path: '/events/content/image', icon: Image02Icon, title: 'Image Content', description: 'Display image events with metadata and interactions. Renders images from NIP-68 events (kind 20).', nip: 'NIP-68' },
@@ -93,7 +91,7 @@ export const eventCategories: NavCategory[] = [
   {
     title: 'Embeds',
     items: [
-      { name: 'Introduction', path: '/events/embeds/introduction', icon: ViewIcon, title: 'Embedded Components', description: 'Inline components for rendering mentions, hashtags, and embedded Nostr events.' },
+      { name: 'Overview', path: '/events/embeds', icon: ViewIcon, title: 'ContentRenderer System', description: 'ContentRenderer architecture and embedded event handlers for rich previews.' },
       { name: 'Mention', path: '/events/embeds/mention', icon: AtIcon, title: 'Mention', description: 'Render inline user mentions with automatic profile fetching and customizable styling.' },
       { name: 'Hashtag', path: '/events/embeds/hashtag', icon: Tag01Icon, title: 'Hashtag', description: 'Render inline hashtags with customizable styling and click handlers.' },
       { name: 'Notes', path: '/events/embeds/notes', icon: Chat01Icon, title: 'Note Embedded Preview', description: 'Embedded preview handler for short text notes (Kind 1) and generic replies (Kind 1111).', nip: 'Kind:1' },

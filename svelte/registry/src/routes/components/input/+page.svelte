@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import { inputMetadata } from '$lib/component-registry/input';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
@@ -99,14 +99,14 @@
 
 <!-- Additional showcases for UI Primitives and Builder -->
 {#snippet afterShowcase()}
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="UI Primitives"
     description="Primitive components for building custom user input layouts."
   />
 
   <ComponentsShowcaseGrid blocks={primitivesShowcaseBlocks} />
 
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Builder"
     description="Use createUserInput() builder for full control over rendering."
   />

@@ -4,7 +4,7 @@
   import PageTitle from '$site-components/PageTitle.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import type { ComponentPageTemplateProps } from './types';
@@ -45,7 +45,7 @@
 
   <!-- Showcase Section or Empty State -->
   {#if showcaseBlocks.length > 0}
-    <ComponentPageSectionTitle
+    <SectionTitle
       title={metadata.showcaseTitle || 'Showcase'}
       description={metadata.showcaseDescription}
     />
@@ -85,7 +85,7 @@
 
   <!-- Components Section -->
   {#if componentsSection && componentsSection.cards.length > 0}
-    <ComponentPageSectionTitle
+    <SectionTitle
       title={componentsSection.title || 'Components'}
       description={componentsSection.description || 'Explore each variant in detail'}
     />

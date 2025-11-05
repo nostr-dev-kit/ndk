@@ -5,7 +5,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
 
   import ArticleCardExample from './examples/article-card.example.svelte';
   import ArticleInlineExample from './examples/article-inline.example.svelte';
@@ -119,7 +119,7 @@
     {/if}
   {/snippet}
 
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Visual Examples"
     description="Different display variants for embedded articles."
   />
@@ -151,7 +151,7 @@
   />
 
   <!-- Components Section -->
-  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+  <SectionTitle title="Components" description="Explore each variant in detail" />
 
   <section class="py-12 space-y-16">
     <ComponentCard data={cardData}>

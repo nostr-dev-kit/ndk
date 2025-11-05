@@ -174,18 +174,16 @@
 				<div
 					class="p-3 rounded-lg border-2 {selectedEmbed === 'chrome'
 						? 'border-blue-500 bg-blue-500/5'
-						: selectedEmbed === 'mention' || selectedEmbed === 'hashtag'
-							? 'border-purple-500 bg-purple-500/5'
-							: 'border-orange-500 bg-orange-500/5'}"
+						: 'border-orange-500 bg-orange-500/5'}"
 				>
 					<div class="font-semibold capitalize">{selectedEmbed.replace(/-/g, ' ')}</div>
 					<div class="text-xs text-muted-foreground mt-1">
 						{#if selectedEmbed === 'chrome'}
 							Layer 1: Card container with metadata
 						{:else if selectedEmbed === 'mention'}
-							Layer 2: Inline user mention
+							Layer 3: Inline user mention
 						{:else if selectedEmbed === 'hashtag'}
-							Layer 2: Inline hashtag
+							Layer 3: Inline hashtag
 						{:else if selectedEmbed === 'embedded-note'}
 							Layer 3: Embedded note (kind {selectedKind})
 						{:else if selectedEmbed === 'embedded-article'}

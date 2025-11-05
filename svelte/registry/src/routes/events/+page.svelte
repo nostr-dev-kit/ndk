@@ -36,24 +36,6 @@
 			flexibility and reusability.
 		</p>
 
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 not-prose">
-			{#each eventsIntroductionCards as card}
-				<div class="p-6 border border-border rounded-lg bg-card">
-					<h3 class="font-semibold mb-2 text-lg">{card.title}</h3>
-					<p class="text-sm text-muted-foreground mb-4">
-						{card.richDescription}
-					</p>
-					<code
-						class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
-					>
-						{card.command}
-					</code>
-				</div>
-			{/each}
-		</div>
-
-		<h3 class="text-2xl font-bold mb-6 mt-12">How It Works</h3>
-
 		<LayerVisualization />
 	</section>
 
@@ -142,7 +124,7 @@
 
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 			<a
-				href="/components/cards/introduction"
+				href="/events/cards"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
 				<div class="flex items-start justify-between mb-3">
@@ -152,13 +134,13 @@
 					>
 				</div>
 				<p class="text-sm text-muted-foreground mb-4">
-					Learn about different card variants and how to compose chrome components.
+					EventCard primitives and specialized card components for different event kinds.
 				</p>
 				<div class="text-sm text-primary group-hover:underline">View Cards Documentation →</div>
 			</a>
 
 			<a
-				href="/components/content/introduction"
+				href="/events/content/note"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
 				<div class="flex items-start justify-between mb-3">
@@ -168,13 +150,13 @@
 					>
 				</div>
 				<p class="text-sm text-muted-foreground mb-4">
-					Explore kind-specific content renderers for notes, articles, images, and more.
+					Kind-specific content renderers for notes, articles, images, and more.
 				</p>
-				<div class="text-sm text-primary group-hover:underline">View Content Documentation →</div>
+				<div class="text-sm text-primary group-hover:underline">View Content Components →</div>
 			</a>
 
 			<a
-				href="/components/previews/introduction"
+				href="/events/embeds"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
 				<div class="flex items-start justify-between mb-3">
@@ -184,7 +166,7 @@
 					>
 				</div>
 				<p class="text-sm text-muted-foreground mb-4">
-					Understand how embedded event references are detected and rendered.
+					ContentRenderer system and embedded event handlers for rich previews.
 				</p>
 				<div class="text-sm text-primary group-hover:underline">View Embeds Documentation →</div>
 			</a>

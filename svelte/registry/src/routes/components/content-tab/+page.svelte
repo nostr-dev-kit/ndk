@@ -9,7 +9,7 @@
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
   import { kindLabel } from '$lib/registry/utils';
   import { User } from '$lib/registry/ui';
@@ -151,7 +151,7 @@
 <!-- Custom Components section with tabs -->
 {#snippet customComponentsSection()}
   <Tabs.Root value="basic">
-    <ComponentPageSectionTitle title="Components" description="Explore ContentTab variants and usage">
+    <SectionTitle title="Components" description="Explore ContentTab variants and usage">
       {#snippet tabs()}
         <Tabs.List>
           <Tabs.Trigger value="basic">Basic</Tabs.Trigger>
@@ -159,7 +159,7 @@
           <Tabs.Trigger value="custom">Custom</Tabs.Trigger>
         </Tabs.List>
       {/snippet}
-    </ComponentPageSectionTitle>
+    </SectionTitle>
 
     <section class="min-h-[500px] lg:min-h-[60vh] py-12">
       <Tabs.Content value="basic">

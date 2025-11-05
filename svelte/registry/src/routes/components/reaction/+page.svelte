@@ -6,7 +6,7 @@
   import { reactionMetadata, reactionDisplayStandardCard, reactionDisplayCustomCard, reactionButtonCard, reactionSlackCard, reactionEmojiButtonCard, reactionActionBasicCard, reactionSlackStyleCard, reactionBuilderCard, reactionDelayedCard } from '$lib/component-registry/reaction';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
@@ -269,7 +269,7 @@
     {@const customBlocks = getCustomBlocks(basicActionPreview, slackStylePreview, builderPreview, delayedPreview)}
 
     <!-- Blocks Showcase -->
-    <ComponentPageSectionTitle
+    <SectionTitle
       title="Blocks"
       description="Pre-composed reaction button layouts ready to use."
     />
@@ -277,7 +277,7 @@
     <ComponentsShowcaseGrid blocks={blocksBlocks} />
 
     <!-- Custom Implementation Showcase -->
-    <ComponentPageSectionTitle
+    <SectionTitle
       title="Custom Implementation"
       description="Use the createReactionAction builder directly."
     />

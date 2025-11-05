@@ -10,7 +10,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
   // UI component examples
@@ -178,7 +178,7 @@
       </div>
     {/snippet}
 
-    <ComponentPageSectionTitle
+    <SectionTitle
       title="Blocks"
       description="Pre-composed layouts ready to use."
     />
@@ -234,7 +234,7 @@
       <UIComposition {ndk} event={highlight1} />
     {/snippet}
 
-    <ComponentPageSectionTitle
+    <SectionTitle
       title="UI Primitives"
       description="Primitive components for building custom layouts."
     />
@@ -264,7 +264,7 @@
     />
 
     <!-- Components Section -->
-    <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+    <SectionTitle title="Components" description="Explore each variant in detail" />
 
     <section class="py-12 space-y-16">
       <ComponentCard data={feedCardData}>

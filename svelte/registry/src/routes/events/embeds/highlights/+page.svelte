@@ -5,7 +5,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
 
   import HighlightCardExample from './examples/highlight-card.example.svelte';
   import HighlightInlineExample from './examples/highlight-inline.example.svelte';
@@ -118,7 +118,7 @@
     {/if}
   {/snippet}
 
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Visual Examples"
     description="Different display variants for embedded highlights."
   />
@@ -150,7 +150,7 @@
   />
 
   <!-- Components Section -->
-  <ComponentPageSectionTitle title="Components" description="Explore each variant in detail" />
+  <SectionTitle title="Components" description="Explore each variant in detail" />
 
   <section class="py-12 space-y-16">
     <ComponentCard data={cardData}>

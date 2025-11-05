@@ -14,7 +14,7 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseBlock } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentPageSectionTitle from '$site-components/ComponentPageSectionTitle.svelte';
+  import SectionTitle from '$site-components/SectionTitle.svelte';
 
   // Import block components
   import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-minimal.svelte';
@@ -87,7 +87,7 @@
 <!-- EditProps snippet -->
 <!-- Custom Components section -->
 {#snippet customComponentsSection()}
-  <ComponentPageSectionTitle
+  <SectionTitle
     title="Components"
     description="Pre-built negentropy sync progress component variants ready to use in your application"
   />

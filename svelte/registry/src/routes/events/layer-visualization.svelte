@@ -1,12 +1,13 @@
 <script lang="ts">
-	// Wireframe visualization of the three-layer architecture
+	import { eventsIntroductionCards } from '$lib/component-registry/events-introduction';
 </script>
 
 <div class="visualization-container">
 	<!-- Step 1: Chrome Layer -->
 	<div class="layer-step">
 		<div class="step-number bg-blue-500/10 text-blue-500">1</div>
-		<div class="wireframe-box chrome-layer">
+		<div class="step-content">
+			<div class="wireframe-box chrome-layer">
 			<!-- Header Section -->
 			<div class="wireframe-header">
 				<div class="wireframe-avatar"></div>
@@ -33,10 +34,18 @@
 
 			<div class="layer-label chrome-label">Chrome Layer</div>
 		</div>
-		<p class="layer-description">
-			<strong>Chrome Layer</strong> wraps the entire event with metadata frame: avatar, author name,
-			timestamp, and action buttons.
-		</p>
+		<div class="info-card">
+			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[0].title}</h3>
+			<p class="text-sm text-muted-foreground mb-4">
+				{eventsIntroductionCards[0].richDescription}
+			</p>
+			<code
+				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
+			>
+				{eventsIntroductionCards[0].command}
+			</code>
+		</div>
+		</div>
 	</div>
 
 	<!-- Arrow -->
@@ -45,7 +54,8 @@
 	<!-- Step 2: Content Layer -->
 	<div class="layer-step">
 		<div class="step-number bg-purple-500/10 text-purple-500">2</div>
-		<div class="wireframe-box chrome-layer">
+		<div class="step-content">
+			<div class="wireframe-box chrome-layer">
 			<div class="wireframe-header dimmed">
 				<div class="wireframe-avatar"></div>
 				<div class="wireframe-meta">
@@ -77,10 +87,18 @@
 
 			<div class="layer-label content-label">Content Layer</div>
 		</div>
-		<p class="layer-description">
-			<strong>Content Layer</strong> renders the event body, parses mentions (@username), hashtags
-			(#topic), and detects embedded references.
-		</p>
+		<div class="info-card">
+			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[1].title}</h3>
+			<p class="text-sm text-muted-foreground mb-4">
+				{eventsIntroductionCards[1].richDescription}
+			</p>
+			<code
+				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
+			>
+				{eventsIntroductionCards[1].command}
+			</code>
+		</div>
+		</div>
 	</div>
 
 	<!-- Arrow -->
@@ -89,7 +107,8 @@
 	<!-- Step 3: Embed Layer -->
 	<div class="layer-step">
 		<div class="step-number bg-orange-500/10 text-orange-500">3</div>
-		<div class="wireframe-box chrome-layer">
+		<div class="step-content">
+			<div class="wireframe-box chrome-layer">
 			<div class="wireframe-header dimmed">
 				<div class="wireframe-avatar"></div>
 				<div class="wireframe-meta">
@@ -131,10 +150,18 @@
 
 			<div class="layer-label embed-label">Embed Layer</div>
 		</div>
-		<p class="layer-description">
-			<strong>Embed Layer</strong> provides rich previews of referenced entities. When content includes
-			event references, they're automatically fetched and rendered.
-		</p>
+		<div class="info-card">
+			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[2].title}</h3>
+			<p class="text-sm text-muted-foreground mb-4">
+				{eventsIntroductionCards[2].richDescription}
+			</p>
+			<code
+				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
+			>
+				{eventsIntroductionCards[2].command}
+			</code>
+		</div>
+		</div>
 	</div>
 </div>
 
@@ -156,6 +183,21 @@
 		align-items: center;
 	}
 
+	.step-content {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		width: 100%;
+		align-items: start;
+	}
+
+	.info-card {
+		padding: 1.5rem;
+		border: 1px solid var(--border);
+		border-radius: 0.75rem;
+		background: var(--card);
+	}
+
 	.step-number {
 		width: 2.5rem;
 		height: 2.5rem;
@@ -170,7 +212,6 @@
 	.wireframe-box {
 		position: relative;
 		width: 100%;
-		max-width: 500px;
 		padding: 1.25rem;
 		border: 2px dashed var(--border);
 		border-radius: 0.75rem;
@@ -307,13 +348,21 @@
 	}
 
 	.content-mention {
-		color: rgb(59 130 246);
+		color: rgb(249 115 22);
 		font-weight: 600;
+		padding: 0.125rem 0.25rem;
+		border-radius: 0.25rem;
+		background: rgb(249 115 22 / 0.1);
+		border: 1px dashed rgb(249 115 22 / 0.3);
 	}
 
 	.content-hashtag {
-		color: rgb(168 85 247);
+		color: rgb(249 115 22);
 		font-weight: 600;
+		padding: 0.125rem 0.25rem;
+		border-radius: 0.25rem;
+		background: rgb(249 115 22 / 0.1);
+		border: 1px dashed rgb(249 115 22 / 0.3);
 	}
 
 	.content-embed-ref {
@@ -391,13 +440,14 @@
 		color: var(--foreground);
 	}
 
-	@media (max-width: 640px) {
+	@media (max-width: 768px) {
 		.visualization-container {
 			padding: 1rem;
 		}
 
-		.wireframe-box {
-			max-width: 100%;
+		.step-content {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
 		}
 	}
 </style>

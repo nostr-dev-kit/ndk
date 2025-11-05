@@ -6,43 +6,16 @@
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { articleContentMetadata, articleContentCards, articleContentBasicCard, articleContentWithClickCard } from '$lib/component-registry/article-content';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import { articleContentMetadata, articleContentCards } from '$lib/component-registry/article-content';
 
 	import BasicExample from './examples/basic.example.svelte';
-	import WithClickExample from './examples/with-click.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let article = $state<NDKArticle | null | undefined>();
-
-	const showcaseBlocks: ShowcaseBlock[] = [
-		{
-			name: 'Basic',
-			description: 'Render article with highlights',
-			command: 'npx shadcn@latest add article-content',
-			preview: basicPreview,
-			cardData: articleContentBasicCard,
-			orientation: 'vertical'
-		},
-		{
-			name: 'With Click Handler',
-			description: 'Handle highlight clicks',
-			command: 'npx shadcn@latest add article-content',
-			preview: withClickPreview,
-			cardData: articleContentWithClickCard,
-			orientation: 'vertical'
-		}
-	];
 </script>
-{#snippet basicPreview()}
+{#snippet articleContentPreview()}
 	{#if article}
-		<BasicExample {ndk} {article} />
-	{/if}
-{/snippet}
-
-{#snippet withClickPreview()}
-	{#if article}
-		<WithClickExample {ndk} {article} />
+		<BasicExample {article} />
 	{/if}
 {/snippet}
 
@@ -77,11 +50,10 @@
 	<ComponentPageTemplate
 		metadata={articleContentMetadata}
 		{ndk}
-		{showcaseBlocks}componentsSection={{
+		componentsSection={{
 			cards: articleContentCards,
 			previews: {
-				'article-content-basic': basicPreview,
-				'article-content-with-click': withClickPreview
+				'article-content': articleContentPreview
 			}
 		}}
 		{customSections}

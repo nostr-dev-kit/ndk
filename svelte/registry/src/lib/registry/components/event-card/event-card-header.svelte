@@ -23,7 +23,7 @@
     /** Additional CSS classes */
     class?: string;
 
-    /** Custom actions (e.g., EventCardMenu) */
+    /** Custom actions (e.g., EventDropdown) */
     children?: Snippet;
   }
 

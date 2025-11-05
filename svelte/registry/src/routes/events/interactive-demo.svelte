@@ -73,6 +73,33 @@
 		{ key: 'compact', label: 'Compact', description: 'Minimal preview' }
 	];
 
+	// Generate variants with actual component names
+	const currentEmbeddedVariants = $derived.by(() => {
+		if (!selectedEmbed) return embeddedVariants;
+
+		const componentPrefix =
+			selectedEmbed === 'embedded-note'
+				? 'Note'
+				: selectedEmbed === 'embedded-article'
+					? 'Article'
+					: selectedEmbed === 'embedded-highlight'
+						? 'Highlight'
+						: selectedEmbed === 'embedded-generic'
+							? 'Generic'
+							: null;
+
+		if (!componentPrefix) return embeddedVariants;
+
+		return embeddedVariants.map((v) =>
+			v.key === 'raw'
+				? v
+				: {
+						...v,
+						label: `${componentPrefix}Embedded${v.key.charAt(0).toUpperCase() + v.key.slice(1)}`
+					}
+		);
+	});
+
 	function selectEmbed(embedType: EmbedType, kind?: number) {
 		selectedEmbed = embedType;
 		selectedKind = kind;
@@ -240,7 +267,7 @@
 							</button>
 						{/each}
 					{:else if selectedEmbed === 'embedded-note'}
-						{#each embeddedVariants as variant}
+						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
 								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
@@ -255,7 +282,7 @@
 							</button>
 						{/each}
 					{:else if selectedEmbed === 'embedded-article'}
-						{#each embeddedVariants as variant}
+						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
 								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
@@ -270,7 +297,7 @@
 							</button>
 						{/each}
 					{:else if selectedEmbed === 'embedded-highlight'}
-						{#each embeddedVariants as variant}
+						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
 								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
@@ -285,7 +312,7 @@
 							</button>
 						{/each}
 					{:else if selectedEmbed === 'embedded-generic' || selectedEmbed === 'embedded-event'}
-						{#each embeddedVariants as variant}
+						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
 								class="w-full text-left p-3 rounded-lg border transition-colors {variants[

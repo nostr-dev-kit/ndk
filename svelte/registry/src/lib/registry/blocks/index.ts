@@ -13,7 +13,7 @@ export { default as ArticleCardPortrait } from '../components/article-card/artic
 
 // Event Cards
 export { default as EventCardClassic } from '../components/event-card/event-card-classic.svelte';
-export { default as EventCardMenu } from '../components/event-card/event-card-menu.svelte';
+export { default as EventDropdown } from '../components/event-card/event-dropdown.svelte';
 
 // Follow Components
 export { default as FollowButton } from '../components/actions/follow-button.svelte';

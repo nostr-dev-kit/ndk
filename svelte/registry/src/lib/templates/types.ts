@@ -62,6 +62,8 @@ export interface ComponentPageMetadata {
   description: string;
   showcaseTitle?: string;
   showcaseDescription?: string;
+  componentsTitle?: string;
+  componentsDescription?: string;
 }
 
 // Component section configuration

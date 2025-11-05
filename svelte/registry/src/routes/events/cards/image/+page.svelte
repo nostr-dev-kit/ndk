@@ -8,12 +8,11 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { imageCardMetadata, imageCardCards, imageCardInstagramCard, imageCardHeroCard, imageCardCard, imageCardBasicCard, imageCardCustomCard } from '$lib/component-registry/image-card';
+	import { imageCardMetadata, imageCardCards, imageCardInstagramCard, imageCardHeroCard, imageCardCard, imageCardBasicCard } from '$lib/component-registry/image-card';
 	import type { ShowcaseBlock } from '$lib/templates/types';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
-	import UIFull from './examples/ui-full.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleImage = $state<NDKImage | undefined>();
@@ -42,35 +41,32 @@
 			description: 'Social feed style card',
 			command: 'npx shadcn@latest add image-card-instagram',
 			preview: instagramPreview,
-			cardData: imageCardInstagramCard
+			cardData: imageCardInstagramCard,
+			orientation: 'vertical'
 		},
 		{
 			name: 'Hero',
 			description: 'Fullbleed immersive display',
 			command: 'npx shadcn@latest add image-card-hero',
 			preview: heroPreview,
-			cardData: imageCardHeroCard
+			cardData: imageCardHeroCard,
+			orientation: 'vertical'
 		},
 		{
 			name: 'ImageCard',
 			description: 'General purpose card',
 			command: 'npx shadcn@latest add image-card',
 			preview: imageCardPreview,
-			cardData: imageCardCard
+			cardData: imageCardCard,
+			orientation: 'vertical'
 		},
 		{
 			name: 'Basic',
 			description: 'Minimal image primitive',
 			command: 'npx shadcn@latest add image-card',
 			preview: basicPreview,
-			cardData: imageCardBasicCard
-		},
-		{
-			name: 'Custom',
-			description: 'Custom composition',
-			command: 'npx shadcn@latest add image-card',
-			preview: customPreview,
-			cardData: imageCardCustomCard
+			cardData: imageCardBasicCard,
+			orientation: 'vertical'
 		}
 	];
 </script>
@@ -99,12 +95,6 @@
 {#snippet basicPreview()}
 	{#if sampleImage}
 		<UIBasic {ndk} image={sampleImage} />
-	{/if}
-{/snippet}
-
-{#snippet customPreview()}
-	{#if sampleImage}
-		<UIFull {ndk} image={sampleImage} />
 	{/if}
 {/snippet}
 
@@ -161,8 +151,7 @@
 				'image-card-instagram': instagramPreview,
 				'image-card-hero': heroPreview,
 				'image-card': imageCardPreview,
-				'image-basic': basicPreview,
-				'image-custom': customPreview
+				'image-basic': basicPreview
 			}
 		}}
 		{customSections}

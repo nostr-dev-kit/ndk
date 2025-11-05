@@ -86,8 +86,8 @@
   <!-- Components Section -->
   {#if componentsSection && componentsSection.cards.length > 0}
     <SectionTitle
-      title={componentsSection.title || 'Components'}
-      description={componentsSection.description || 'Explore each variant in detail'}
+      title={componentsSection.title || metadata.componentsTitle || 'Components'}
+      description={componentsSection.description || metadata.componentsDescription || 'Explore each variant in detail'}
     />
 
     <section class="py-12 space-y-16">

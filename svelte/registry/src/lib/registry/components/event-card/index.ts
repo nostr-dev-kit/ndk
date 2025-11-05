@@ -16,4 +16,4 @@ export type { EventCardContext } from './event-card.context.js';
 export { EVENT_CARD_CONTEXT_KEY } from './event-card.context.js';
 
 export { default as EventCardClassic } from './event-card-classic.svelte';
-export { default as EventCardMenu } from './event-card-menu.svelte';
+export { default as EventDropdown } from './event-dropdown.svelte';

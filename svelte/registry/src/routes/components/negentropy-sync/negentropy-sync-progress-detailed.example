@@ -1,0 +1,12 @@
+<script lang="ts">
+  import { createNegentropySync } from '$lib/registry/builders/negentropy-sync';
+  import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-detailed.svelte';
+  import type { NDKFilter } from '@nostr-dev-kit/ndk';
+
+  const syncBuilder = createNegentropySync(() => ({
+    filters: [{ kinds: [1], limit: 500 }],
+    relayUrls: ['wss://relay.damus.io']
+  }), ndk);
+</script>
+
+<NegentropySyncProgressDetailed {syncBuilder} />

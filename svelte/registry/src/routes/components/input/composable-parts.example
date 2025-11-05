@@ -1,0 +1,8 @@
+<script lang="ts">
+  import { UserInput } from '$lib/registry/ui/user-input';
+</script>
+
+<UserInput.Root {ndk}>
+  <UserInput.Search placeholder="Search users..." />
+  <UserInput.Results maxResults={5} />
+</UserInput.Root>

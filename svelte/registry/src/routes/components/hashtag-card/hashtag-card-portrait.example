@@ -1,0 +1,9 @@
+<script lang="ts">
+  import HashtagCardPortrait from '$lib/registry/components/hashtag-card/hashtag-card-portrait.svelte';
+</script>
+
+<HashtagCardPortrait {ndk} hashtag="bitcoin" />
+
+<HashtagCardPortrait {ndk} hashtag="nostr" />
+
+<HashtagCardPortrait {ndk} hashtag="freedom" />

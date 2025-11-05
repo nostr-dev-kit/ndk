@@ -52,23 +52,10 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
     // Send filters to worker, let it handle all SQL logic
     const cacheFilters = filterForCache(subscription);
 
-    // Serialize filters to ensure they're cloneable (remove any non-serializable properties)
-    const serializableFilters = cacheFilters.map(filter => {
-        const serialized: any = {};
-        for (const key in filter) {
-            const value = (filter as any)[key];
-            // Only include serializable values
-            if (value !== undefined && typeof value !== 'function' && typeof value !== 'symbol') {
-                serialized[key] = value;
-            }
-        }
-        return serialized;
-    });
-
     const result = await this.postWorkerMessage<any>({
         type: "query",
         payload: {
-            filters: serializableFilters,
+            filters: cacheFilters,
             cacheUnconstrainFilter: subscription.cacheUnconstrainFilter,
             subId: subscription.subId,
         },

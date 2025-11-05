@@ -1,0 +1,12 @@
+<script lang="ts">
+  import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
+
+  let value = $state<string>('');
+</script>
+
+<RelayInputBlock
+  {ndk}
+  bind:value
+  label="Relay URL"
+  error="Invalid relay URL format"
+/>

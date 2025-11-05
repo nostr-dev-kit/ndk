@@ -1,0 +1,5 @@
+<script lang="ts">
+  import FollowPackHero from '$lib/registry/components/follow-pack/follow-pack-hero.svelte';
+</script>
+
+<FollowPackHero followPack={pack} />

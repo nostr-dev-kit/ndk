@@ -1,0 +1,9 @@
+<script lang="ts">
+  import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
+  import { byCount } from '$lib/registry/hooks/content-tab';
+
+  const pubkeys = ['hexpubkey'];
+  const kinds = [1, 30023, 1063]; // notes, articles, images
+</script>
+
+<ContentTab {ndk} {pubkeys} {kinds} sort={byCount} />

@@ -1,0 +1,11 @@
+<script lang="ts">
+  import { Relay } from '$lib/registry/ui/relay';
+
+  let value = $state<string>('');
+</script>
+
+<div class="space-y-2">
+  <label for="relay" class="text-sm font-medium">Relay URL</label>
+  <Relay.Input {ndk} bind:value id="relay" />
+  <p class="text-xs text-muted-foreground">Enter a valid WebSocket URL</p>
+</div>

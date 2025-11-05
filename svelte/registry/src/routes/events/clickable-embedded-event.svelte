@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
+	import { NDKArticle } from '@nostr-dev-kit/ndk';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
@@ -36,6 +37,9 @@
 		if (eventKind === 9802) return 'embedded-highlight';
 		return 'embedded-generic';
 	});
+
+	// Cast to NDKArticle when it's an article
+	const asArticle = $derived(embedded.event ? NDKArticle.from(embedded.event) : undefined);
 
 	// Get interactive state from context
 	const interactiveState = getContext<{
@@ -82,13 +86,13 @@
 			{:else if variant === 'compact'}
 				<NoteEmbeddedCompact {ndk} event={embedded.event} />
 			{/if}
-		{:else if embedType === 'embedded-article'}
+		{:else if embedType === 'embedded-article' && asArticle}
 			{#if variant === 'card'}
-				<ArticleEmbeddedCard {ndk} event={embedded.event} />
+				<ArticleEmbeddedCard {ndk} event={asArticle} />
 			{:else if variant === 'inline'}
-				<ArticleEmbeddedInline {ndk} event={embedded.event} />
+				<ArticleEmbeddedInline {ndk} event={asArticle} />
 			{:else if variant === 'compact'}
-				<ArticleEmbeddedCompact {ndk} event={embedded.event} />
+				<ArticleEmbeddedCompact {ndk} event={asArticle} />
 			{/if}
 		{:else if embedType === 'embedded-highlight'}
 			{#if variant === 'card'}

@@ -1,0 +1,5 @@
+<script lang="ts">
+  import UserCardCompact from '$lib/registry/components/user-card/user-card-compact.svelte';
+</script>
+
+<UserCardCompact {ndk} pubkey={user.pubkey} />

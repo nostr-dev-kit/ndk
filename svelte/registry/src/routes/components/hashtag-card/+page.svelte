@@ -7,6 +7,10 @@
   import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import hashtagCardPortraitCode from './hashtag-card-portrait.example?raw';
+  import hashtagCardCompactCode from './hashtag-card-compact.example?raw';
+
   // Import hashtag card variants
   import HashtagCardPortrait from '$lib/registry/components/hashtag-card/hashtag-card-portrait.svelte';
   import HashtagCardCompact from '$lib/registry/components/hashtag-card/hashtag-card-compact.svelte';
@@ -44,15 +48,15 @@
   // Derive components section based on whether we have hashtags
   const componentsSection = $derived(
     displayHashtags.length > 0 ? {
-      cards: hashtagCardMetadata.cards,
+      cards: [
+        { ...hashtagCardPortraitCard, code: hashtagCardPortraitCode },
+        { ...hashtagCardCompactCard, code: hashtagCardCompactCode }
+      ],
       previews: {
         'hashtag-card-portrait': portraitComponentPreview,
         'hashtag-card-compact': compactComponentPreview
       }
-    } : {
-      cards: [],
-      previews: {}
-    }
+    } : undefined
   );
 </script>
 

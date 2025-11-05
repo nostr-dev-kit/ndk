@@ -1,0 +1,7 @@
+<script lang="ts">
+  import ReactionSlack from '$lib/registry/components/actions/reaction-slack.svelte';
+</script>
+
+<ReactionSlack event={event} />
+
+<ReactionSlack event={event} variant="vertical" />

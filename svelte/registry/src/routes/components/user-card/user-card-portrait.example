@@ -1,0 +1,5 @@
+<script lang="ts">
+  import UserCardPortrait from '$lib/registry/components/user-card/user-card-portrait.svelte';
+</script>
+
+<UserCardPortrait {ndk} pubkey={user.pubkey} />

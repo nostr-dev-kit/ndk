@@ -1,0 +1,36 @@
+<script lang="ts">
+  import { createThreadView } from '@nostr-dev-kit/svelte';
+  import { EventCard } from '$lib/registry/components/event-card';
+
+  const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
+</script>
+
+<div class="space-y-4">
+  <!-- Parent chain -->
+  {#each thread.events as node}
+    {#if node.event}
+      <div class="flex gap-2 {node.threading?.isMainChain ? 'border-l-2 border-primary pl-4' : ''}">
+        <EventCard.Root {ndk} event={node.event}>
+          <EventCard.Header />
+          <EventCard.Content />
+          {#if node.threading?.isContinuation}
+            <div class="text-xs text-muted-foreground">Thread continues...</div>
+          {/if}
+        </EventCard.Root>
+      </div>
+    {/if}
+  {/each}
+
+  <!-- Replies -->
+  {#if thread.replies.length > 0}
+    <div class="border-t pt-4">
+      <h3 class="text-sm font-semibold mb-2">Replies</h3>
+      {#each thread.replies as reply}
+        <EventCard.Root {ndk} event={reply}>
+          <EventCard.Header />
+          <EventCard.Content />
+        </EventCard.Root>
+      {/each}
+    </div>
+  {/if}
+</div>

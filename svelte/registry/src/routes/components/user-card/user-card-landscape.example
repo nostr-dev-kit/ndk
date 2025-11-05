@@ -1,0 +1,5 @@
+<script lang="ts">
+  import UserCardLandscape from '$lib/registry/components/user-card/user-card-landscape.svelte';
+</script>
+
+<UserCardLandscape {ndk} pubkey={user.pubkey} />

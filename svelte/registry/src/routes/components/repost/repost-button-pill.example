@@ -1,0 +1,7 @@
+<script lang="ts">
+  import RepostButtonPill from '$lib/registry/components/actions/repost-button-pill.svelte';
+</script>
+
+<RepostButtonPill event={event} variant="solid" />
+
+<RepostButtonPill event={event} variant="outline" />

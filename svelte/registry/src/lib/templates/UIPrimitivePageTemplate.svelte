@@ -13,8 +13,7 @@
     anatomyPreview,
     beforeAnatomy,
     afterAnatomy,
-    customSections,
-    customContent
+    customSections
   }: UIPrimitivePageTemplateProps = $props();
 
   // Get NDK from context if not provided as prop
@@ -33,13 +32,17 @@
       apiDocs: primitive.apiDocs || []
     }
   })));
+
+  // Transform anatomyLayers array to Record<string, AnatomyLayer>
+  const anatomyLayersRecord = $derived(
+    metadata.anatomyLayers.reduce((acc, layer) => {
+      acc[layer.id] = layer;
+      return acc;
+    }, {} as Record<string, typeof metadata.anatomyLayers[0]>)
+  );
 </script>
 
-<!-- If custom content is provided, use that instead of template -->
-{#if customContent}
-  {@render customContent()}
-{:else}
-  <div class="max-w-[900px] mx-auto px-8">
+<div class="max-w-[900px] mx-auto px-8">
     <!-- Header Section -->
     <header class="mb-12 pt-8">
       <div class="flex gap-2 mb-4">
@@ -109,7 +112,7 @@
         <ComponentAnatomy.Preview>
           {@render anatomyPreview()}
         </ComponentAnatomy.Preview>
-        <ComponentAnatomy.DetailPanel layers={metadata.anatomyLayers} />
+        <ComponentAnatomy.DetailPanel layers={anatomyLayersRecord} />
       </ComponentAnatomy.Root>
     </section>
 
@@ -127,10 +130,11 @@
         />
         <div class="py-12 space-y-16">
           {#each metadata.primitives as primitive (primitive.name)}
-            <ComponentCard inline data={{
+            <ComponentCard data={{
               name: primitive.name,
               title: primitive.title,
               description: primitive.description,
+              command: '',
               apiDocs: primitive.apiDocs || []
             }}>
               {#snippet preview()}
@@ -152,5 +156,4 @@
     {#if customSections}
       {@render customSections()}
     {/if}
-  </div>
-{/if}
+</div>

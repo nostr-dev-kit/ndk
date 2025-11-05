@@ -1,0 +1,15 @@
+<script lang="ts">
+  import { createThreadView } from '@nostr-dev-kit/svelte';
+  import { EventCard } from '$lib/registry/components/event-card';
+
+  const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
+</script>
+
+{#each thread.events as node}
+  {#if node.event}
+    <EventCard.Root {ndk} event={node.event}>
+      <EventCard.Header />
+      <EventCard.Content />
+    </EventCard.Root>
+  {/if}
+{/each}

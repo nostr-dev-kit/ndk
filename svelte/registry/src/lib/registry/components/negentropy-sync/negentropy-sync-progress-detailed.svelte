@@ -1,26 +1,19 @@
 <!-- @ndk-version: negentropy-sync-progress-detailed@0.1.0 -->
 <script lang="ts">
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { NDKFilter } from '@nostr-dev-kit/ndk';
 	import { NegentrogySync } from '../../ui/negentropy-sync';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { createNegentropySync } from '../../builders/negentropy-sync/index.js';
 
 	interface Props {
-		ndk?: NDKSvelte;
-		filters: NDKFilter | NDKFilter[];
-		relayUrls?: string[];
+		syncBuilder: ReturnType<typeof createNegentropySync>;
 		class?: string;
 	}
 
-	let { ndk: providedNdk, filters, relayUrls, class: className = '' }: Props = $props();
-
-	const ndk = getNDKFromContext(providedNdk);
+	let { syncBuilder, class: className = '' }: Props = $props();
 </script>
 
-<NegentrogySync.Root {ndk} {filters} {relayUrls}>
+<NegentrogySync.Root {syncBuilder}>
 	<div class="space-y-4 p-4 bg-card rounded-lg border {className}">
 		<div class="flex items-center justify-between">
-			<h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Negentropy Sync</h3>
 			<NegentrogySync.Stats direction="horizontal" />
 		</div>
 

@@ -1,0 +1,8 @@
+<script lang="ts">
+  import UploadButton from '$lib/registry/components/actions/upload-button.svelte';
+  import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
+
+  let uploads = $state<MediaUploadResult[]>([]);
+</script>
+
+<UploadButton {ndk} bind:uploads />

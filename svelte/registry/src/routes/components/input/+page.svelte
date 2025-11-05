@@ -7,6 +7,12 @@
   import { inputMetadata } from '$lib/component-registry/input';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import userSearchComboboxCode from './user-search-combobox.example?raw';
+  import customTextareaCode from './custom-textarea.example?raw';
+  import composablePartsCode from './composable-parts.example?raw';
+  import builderBasicCode from './builder-basic.example?raw';
+
   import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte';
   import CustomTextarea from './examples/custom-textarea.example.svelte';
   import ComposableParts from './examples/composable-parts.example.svelte';
@@ -157,7 +163,12 @@
   showcaseBlocks={blocksShowcaseBlocks}
   {afterShowcase}
   componentsSection={{
-    cards: inputMetadata.cards,
+    cards: [
+      { ...inputMetadata.cards[0], code: userSearchComboboxCode },
+      { ...inputMetadata.cards[1], code: customTextareaCode },
+      { ...inputMetadata.cards[2], code: composablePartsCode },
+      { ...inputMetadata.cards[3], code: builderBasicCode }
+    ],
     previews: {
       'user-search-combobox': searchComboboxComponentPreview,
       'custom-textarea': customTextareaComponentPreview,

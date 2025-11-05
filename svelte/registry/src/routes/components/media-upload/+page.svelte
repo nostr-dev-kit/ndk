@@ -8,6 +8,12 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
 
+  // Import code examples
+  import uploadButtonCode from './upload-button.example?raw';
+  import mediaUploadCarouselCode from './media-upload-carousel.example?raw';
+  import mediaUploadBasicCode from './media-upload-basic.example?raw';
+  import mediaUploadFullCode from './media-upload-full.example?raw';
+
   import UploadButton from '$lib/registry/components/actions/upload-button.svelte';
   import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
   import UIBasic from './examples/ui-basic.example.svelte';
@@ -234,7 +240,12 @@ mediaUpload.reorderUpload(0, 2);`}</code></pre>
   showcaseBlocks={blocksShowcaseBlocks}
   {afterShowcase}
   componentsSection={{
-    cards: mediaUploadMetadata.cards,
+    cards: [
+      { ...mediaUploadMetadata.cards[0], code: uploadButtonCode },
+      { ...mediaUploadMetadata.cards[1], code: mediaUploadCarouselCode },
+      { ...mediaUploadMetadata.cards[2], code: mediaUploadBasicCode },
+      { ...mediaUploadMetadata.cards[3], code: mediaUploadFullCode }
+    ],
     previews: {
       'upload-button': uploadButtonComponentPreview,
       'media-upload-carousel': carouselComponentPreview,

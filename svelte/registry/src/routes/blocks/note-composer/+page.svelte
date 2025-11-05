@@ -48,7 +48,7 @@
       <div class="max-w-2xl">
         <NoteComposerInline
           {ndk}
-          onPublish={(event) => console.log('Published:', event)}
+          onPublish={(event: any) => console.log('Published:', event)}
         />
       </div>
     </Demo>
@@ -70,7 +70,7 @@
         <NoteComposerCard
           {ndk}
           title="Share your thoughts"
-          onPublish={(event) => console.log('Published:', event)}
+          onPublish={(event: any) => console.log('Published:', event)}
         />
       </div>
     </Demo>
@@ -92,7 +92,7 @@
         <NoteComposerMinimal
           {ndk}
           placeholder="Quick note..."
-          onPublish={(event) => console.log('Published:', event)}
+          onPublish={(event: any) => console.log('Published:', event)}
         />
       </div>
     </Demo>
@@ -126,7 +126,7 @@
       <NoteComposerModal
         {ndk}
         bind:open={showModal}
-        onPublish={(event) => {
+        onPublish={(event: any) => {
           console.log('Published:', event);
           showModal = false;
         }}
@@ -158,7 +158,7 @@
           {ndk}
           replyTo={sampleEvent}
           placeholder="Write your reply..."
-          onPublish={(event) => console.log('Reply published:', event)}
+          onPublish={(event: NDKEvent) => console.log('Reply published:', event)}
         />
       </div>
     </Demo>
@@ -194,7 +194,7 @@
         {ndk}
         replyTo={sampleEvent}
         bind:open={showReplyModal}
-        onPublish={(event) => {
+        onPublish={(event: any) => {
           console.log('Reply published:', event);
           showReplyModal = false;
         }}

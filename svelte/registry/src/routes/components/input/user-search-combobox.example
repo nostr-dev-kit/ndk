@@ -1,0 +1,5 @@
+<script lang="ts">
+  import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte';
+</script>
+
+<UserSearchCombobox {ndk} placeholder="Search for a user..." />

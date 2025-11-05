@@ -10,6 +10,17 @@
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples as raw
+  import reactionDisplayStandardCode from './reaction-display-standard.example?raw';
+  import reactionDisplayCustomCode from './reaction-display-custom.example?raw';
+  import reactionButtonCode from './reaction-button.example?raw';
+  import reactionSlackCode from './reaction-slack.example?raw';
+  import reactionEmojiButtonCode from './reaction-emoji-button.example?raw';
+  import reactionActionBasicCode from './reaction-action-basic.example?raw';
+  import slackStyleCode from './slack-style.example?raw';
+  import builderUsageCode from './builder-usage.example?raw';
+  import delayedReactionsCode from './delayed-reactions.example?raw';
+
   // Import block components
   import { ReactionButton, ReactionSlack, ReactionEmojiButton } from '$lib/registry/components';
 
@@ -142,15 +153,15 @@
     <div class="flex flex-col gap-4">
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">Default:</span>
-        <ReactionButton {ndk} event={sampleEvent} />
+        <ReactionButton {ndk} event={sampleEvent!} />
       </div>
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">Fire emoji:</span>
-        <ReactionButton {ndk} event={sampleEvent} emoji="🔥" />
+        <ReactionButton {ndk} event={sampleEvent!} emoji="🔥" />
       </div>
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">No count:</span>
-        <ReactionButton {ndk} event={sampleEvent} showCount={false} />
+        <ReactionButton {ndk} event={sampleEvent!} showCount={false} />
       </div>
     </div>
   {/snippet}
@@ -159,35 +170,35 @@
     <div class="space-y-8">
       <div>
         <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
-        <ReactionSlack {ndk} event={sampleEvent} />
+        <ReactionSlack {ndk} event={sampleEvent!} />
       </div>
 
       <div>
         <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
-        <ReactionSlack {ndk} event={sampleEvent} variant="vertical" />
+        <ReactionSlack {ndk} event={sampleEvent!} variant="vertical" />
       </div>
     </div>
   {/snippet}
 
   {#snippet emojiButtonPreview()}
-    <ReactionEmojiButtonExample {ndk} event={sampleEvent} />
+    <ReactionEmojiButtonExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   <!-- Custom Implementation Showcase snippets -->
   {#snippet basicActionPreview()}
-    <BasicExample {ndk} event={sampleEvent} />
+    <BasicExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet slackStylePreview()}
-    <SlackLikeExample {ndk} event={sampleEvent} />
+    <SlackLikeExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet builderPreview()}
-    <BuilderExample {ndk} event={sampleEvent} />
+    <BuilderExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet delayedPreview()}
-    <DelayedExample {ndk} event={sampleEvent} />
+    <DelayedExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   <!-- Component preview snippets -->
@@ -205,19 +216,19 @@
     <div class="flex flex-col gap-4">
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">Default:</span>
-        <ReactionButton {ndk} event={sampleEvent} />
+        <ReactionButton {ndk} event={sampleEvent!} />
       </div>
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">Fire emoji:</span>
-        <ReactionButton {ndk} event={sampleEvent} emoji="🔥" />
+        <ReactionButton {ndk} event={sampleEvent!} emoji="🔥" />
       </div>
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">No count:</span>
-        <ReactionButton {ndk} event={sampleEvent} showCount={false} />
+        <ReactionButton {ndk} event={sampleEvent!} showCount={false} />
       </div>
       <div class="flex items-center gap-4">
         <span class="text-sm text-muted-foreground w-24">Delayed (5s):</span>
-        <ReactionButton {ndk} event={sampleEvent} delayed={5} />
+        <ReactionButton {ndk} event={sampleEvent!} delayed={5} />
         <span class="text-xs text-muted-foreground">← Click twice to cancel</span>
       </div>
     </div>
@@ -227,40 +238,40 @@
     <div class="space-y-8">
       <div>
         <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
-        <ReactionSlack {ndk} event={sampleEvent} />
+        <ReactionSlack {ndk} event={sampleEvent!} />
       </div>
 
       <div>
         <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
-        <ReactionSlack {ndk} event={sampleEvent} variant="vertical" />
+        <ReactionSlack {ndk} event={sampleEvent!} variant="vertical" />
       </div>
 
       <div>
         <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">With Delayed Reactions (5s)</h4>
-        <ReactionSlack {ndk} event={sampleEvent} delayed={5} />
+        <ReactionSlack {ndk} event={sampleEvent!} delayed={5} />
         <p class="text-xs text-muted-foreground mt-2">💡 Click any reaction twice within 5 seconds to cancel</p>
       </div>
     </div>
   {/snippet}
 
   {#snippet emojiButtonComponentPreview()}
-    <ReactionEmojiButtonExample {ndk} event={sampleEvent} />
+    <ReactionEmojiButtonExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet basicActionComponentPreview()}
-    <BasicExample {ndk} event={sampleEvent} />
+    <BasicExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet slackStyleComponentPreview()}
-    <SlackLikeExample {ndk} event={sampleEvent} />
+    <SlackLikeExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet builderComponentPreview()}
-    <BuilderExample {ndk} event={sampleEvent} />
+    <BuilderExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   {#snippet delayedComponentPreview()}
-    <DelayedExample {ndk} event={sampleEvent} />
+    <DelayedExample {ndk} event={sampleEvent!} />
   {/snippet}
 
   <!-- Custom sections for additional showcase sections -->
@@ -285,16 +296,25 @@
     <ComponentsShowcaseGrid blocks={customBlocks} />
   {/snippet}
 
-  {@const primitivesBlocks = getPrimitivesBlocks(displayStandardPreview, displayCustomPreview, !!nip30ReactionEvent)}
-
   <!-- Use the template -->
+  {@const primitivesBlocks = getPrimitivesBlocks(displayStandardPreview, displayCustomPreview, !!nip30ReactionEvent)}
   <ComponentPageTemplate
     metadata={reactionMetadata}
     {ndk}
     showcaseBlocks={primitivesBlocks}
     {customSections}
     componentsSection={{
-      cards: reactionMetadata.cards,
+      cards: [
+        { ...reactionDisplayStandardCard, code: reactionDisplayStandardCode },
+        { ...reactionDisplayCustomCard, code: reactionDisplayCustomCode },
+        { ...reactionButtonCard, code: reactionButtonCode },
+        { ...reactionSlackCard, code: reactionSlackCode },
+        { ...reactionEmojiButtonCard, code: reactionEmojiButtonCode },
+        { ...reactionActionBasicCard, code: reactionActionBasicCode },
+        { ...reactionSlackStyleCard, code: slackStyleCode },
+        { ...reactionBuilderCard, code: builderUsageCode },
+        { ...reactionDelayedCard, code: delayedReactionsCode }
+      ],
       previews: {
         'reaction-display-standard': displayStandardComponentPreview,
         ...(nip30ReactionEvent ? { 'reaction-display-custom': displayCustomComponentPreview } : {}),

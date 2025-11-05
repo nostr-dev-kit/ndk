@@ -21,18 +21,18 @@
     <h3>Builders (Data Layer)</h3>
     <p>
       Builders are functions that return reactive state objects. They live in <code>node_modules</code>
-      as part of the <code>@nostr-dev-kit/svelte</code> package. When you call <code>createEventCard()</code>,
-      it sets up subscriptions to Nostr relays and returns an object with reactive getters for engagement metrics.
+      as part of the <code>@nostr-dev-kit/svelte</code> package. When you call <code>createEventContent()</code>,
+      it sets up subscriptions to Nostr relays and returns an object with reactive state for the event content.
     </p>
 
-    <CodeBlock lang="typescript" code={`import { createEventCard } from '@nostr-dev-kit/svelte';
+    <CodeBlock lang="typescript" code={`import { createEventContent } from '@nostr-dev-kit/svelte';
 
-const card = createEventCard(() => ({ event }), ndk);
+const content = createEventContent(() => ({ event }), ndk);
 
 // Access reactive state
-card.replies.count
-card.zaps.totalAmount
-card.reactions.byEmoji`} />
+content.segments
+content.images
+content.videos`} />
 
     <h3>Components (UI Layer)</h3>
     <p>
@@ -44,13 +44,15 @@ card.reactions.byEmoji`} />
 
     <CodeBlock lang="svelte" code={`<!-- Copied to your project -->
 <script>
-  import { createEventCard } from '@nostr-dev-kit/svelte';
-  const state = createEventCard(() => ({ event }), ndk);
+  import { createEventContent } from '@nostr-dev-kit/svelte';
+  const state = createEventContent(() => ({ event }), ndk);
 </script>
 
 <article>
   <!-- Your UI using builder state -->
-  <span>{state.replies.count} replies</span>
+  {#each state.segments as segment}
+    {segment.text}
+  {/each}
 </article>`} />
   </section>
 
@@ -61,7 +63,7 @@ card.reactions.byEmoji`} />
     </p>
 
     <ol>
-      <li>Component calls builder: <code>createEventCard(() => ({"{event}"}), ndk)</code></li>
+      <li>Component calls builder: <code>createEventContent(() => ({"{event}"}), ndk)</code></li>
       <li>Builder creates subscriptions (lazy - only when you access getters)</li>
       <li>New data arrives from Nostr relays over websockets</li>
       <li>Builder updates reactive state automatically</li>
@@ -69,8 +71,8 @@ card.reactions.byEmoji`} />
     </ol>
 
     <p>
-      This happens continuously while your component is mounted. When you access <code>card.replies.count</code>,
-      the builder subscribes to reply events. As new replies arrive, the count updates automatically.
+      This happens continuously while your component is mounted. When you access <code>content.segments</code>,
+      the builder parses the event content. As the event changes, the segments update automatically.
     </p>
   </section>
 
@@ -93,16 +95,17 @@ card.reactions.byEmoji`} />
       reactive data without any UI opinions.
     </p>
 
-    <CodeBlock lang="svelte" code={`import { createEventCard, createProfileFetcher } from '@nostr-dev-kit/svelte';
+    <CodeBlock lang="svelte" code={`import { createEventContent } from '@nostr-dev-kit/svelte';
 
-const card = createEventCard(() => ({ event }), ndk);
-const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
+const content = createEventContent(() => ({ event }), ndk);
 
 // Build your own UI
 <div class="my-design">
-  <img src={profile.profile?.picture} alt="" />
-  <p>{event.content}</p>
-  <span>{card.zaps.totalAmount} sats</span>
+  {#each content.segments as segment}
+    {#if segment.type === 'text'}
+      <span>{segment.text}</span>
+    {/if}
+  {/each}
 </div>`} />
 
     <p>
@@ -121,11 +124,11 @@ const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
     <CodeBlock lang="typescript" code={`let currentEvent = $state(events[0]);
 
 // ✅ Reacts when currentEvent changes
-const card = createEventCard(() => ({ event: currentEvent }), ndk);
+const content = createEventContent(() => ({ event: currentEvent }), ndk);
 
 // When you update currentEvent, builder automatically:
-// 1. Stops old subscriptions
-// 2. Creates new subscriptions
+// 1. Stops old processing
+// 2. Parses new event content
 // 3. Updates all state
 currentEvent = events[1];`} />
   </section>

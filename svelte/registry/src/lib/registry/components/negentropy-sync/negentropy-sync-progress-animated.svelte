@@ -1,27 +1,20 @@
 <!-- @ndk-version: negentropy-sync-progress-animated@0.1.0 -->
 <script lang="ts">
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { NDKFilter } from '@nostr-dev-kit/ndk';
 	import { NegentrogySync } from '../../ui/negentropy-sync';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { createNegentropySync } from '../../builders/negentropy-sync/index.js';
 	import { getContext } from 'svelte';
 	import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from '../../ui/negentropy-sync/negentropy-sync.context.js';
 
 	interface Props {
-		ndk?: NDKSvelte;
-		filters: NDKFilter | NDKFilter[];
-		relayUrls?: string[];
+		syncBuilder: ReturnType<typeof createNegentropySync>;
 		class?: string;
 	}
 
-	let { ndk: providedNdk, filters, relayUrls, class: className = '' }: Props = $props();
-
-	const ndk = getNDKFromContext(providedNdk);
+	let { syncBuilder, class: className = '' }: Props = $props();
 </script>
 
-<NegentrogySync.Root {ndk} {filters} {relayUrls}>
-	{#snippet content()}
-		{@const context = getContext<NegentropySyncContext>(NEGENTROPY_SYNC_CONTEXT_KEY)}
+<NegentrogySync.Root {syncBuilder}>
+	{@const context = getContext<NegentropySyncContext>(NEGENTROPY_SYNC_CONTEXT_KEY)}
 		<div class="relative overflow-hidden space-y-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-blue-200 dark:border-gray-700 shadow-lg {className}">
 			<!-- Animated background when syncing -->
 			{#if context.syncing}
@@ -68,9 +61,6 @@
 				</div>
 			</div>
 		</div>
-	{/snippet}
-
-	{@render content()}
 </NegentrogySync.Root>
 
 <style>

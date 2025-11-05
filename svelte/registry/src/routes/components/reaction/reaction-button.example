@@ -1,0 +1,9 @@
+<script lang="ts">
+  import ReactionButton from '$lib/registry/components/actions/reaction-button.svelte';
+</script>
+
+<ReactionButton event={event} />
+
+<ReactionButton event={event} emoji="🔥" />
+
+<ReactionButton event={event} showCount={false} />

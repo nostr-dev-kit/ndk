@@ -1,0 +1,28 @@
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
+
+  const reactionState = createReactionAction(() => ({ event, delayed: 5 }), ndk);
+</script>
+
+<button
+  onclick={reactionState.react}
+  class={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+    reactionState.hasReacted
+      ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+      : 'bg-muted hover:bg-muted/80'
+  }`}
+>
+  ❤️ {reactionState.count > 0 ? reactionState.count : ''}
+  {#if reactionState.hasReacted}
+    <span class="text-xs">(Click to cancel)</span>
+  {/if}
+</button>

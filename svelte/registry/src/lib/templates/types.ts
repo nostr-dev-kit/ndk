@@ -41,7 +41,7 @@ export interface ShowcaseBlock {
   name: string;
   description: string;
   command: string;
-  preview?: Snippet | any;  // Snippet or any for compatibility
+  preview: Snippet | any;  // Snippet or any for compatibility - required by components
   cardData?: ComponentCardDataBase | any;  // ComponentCardData or any for compatibility
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;
@@ -81,7 +81,7 @@ export interface ComponentPageTemplateProps {
 
   // Showcase configuration
   showcaseBlocks?: ShowcaseBlock[];
-  showcaseComponent?: ComponentType;
+  showcaseComponent?: ComponentType | any;
 
   // Components section
   componentsSection?: ComponentSection;

@@ -17,14 +17,14 @@
       and it handles subscriptions and data fetching automatically. As Nostr data arrives, the getters update and Svelte re-renders your UI.
     </p>
 
-    <CodeBlock lang="typescript" code={`import { createEventCard } from '@nostr-dev-kit/svelte';
+    <CodeBlock lang="typescript" code={`import { createEventContent } from '@nostr-dev-kit/svelte';
 
-const card = createEventCard(() => ({ event }), ndk);
+const content = createEventContent(() => ({ event }), ndk);
 
 // Access reactive state
-card.profile?.displayName  // Auto-fetched
-card.replies.count         // Auto-subscribed
-card.zaps.totalAmount      // Updates live`} />
+content.segments    // Parsed content segments
+content.images      // Image URLs found in content
+content.videos      // Video URLs found in content`} />
   </section>
 
   <section>
@@ -37,11 +37,11 @@ card.zaps.totalAmount      // Updates live`} />
     <CodeBlock lang="typescript" code={`let currentEvent = $state(events[0]);
 
 // The builder tracks changes to currentEvent
-const card = createEventCard(() => ({ event: currentEvent }), ndk);
+const content = createEventContent(() => ({ event: currentEvent }), ndk);
 
 // When currentEvent changes, the builder automatically:
-// 1. Stops old subscriptions
-// 2. Creates new subscriptions for the new event
+// 1. Stops old processing
+// 2. Parses new event content
 // 3. Updates all reactive state
 currentEvent = events[1];`} />
   </section>
@@ -126,9 +126,9 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
     </p>
 
     <CodeBlock lang="svelte" code={`<details>
-  <summary>Show engagement</summary>
-  <!-- Subscription starts when details opens -->
-  <p>{card.replies.count} replies</p>
+  <summary>Show content</summary>
+  <!-- Processing starts when details opens -->
+  <p>{content.images.length} images</p>
 </details>`} />
 
     <h3>Multiple Instances</h3>
@@ -137,14 +137,14 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
     <CodeBlock lang="svelte" code={`const cards = $derived(
   events.map(event => ({
     event,
-    state: createEventCard(() => ({ event }), ndk)
+    state: createEventContent(() => ({ event }), ndk)
   }))
 );
 
 {#each cards as { event, state } (event.id)}
   <article>
-    <p>{state.profile?.displayName}</p>
-    <p>{state.replies.count} replies</p>
+    <p>{event.content}</p>
+    <p>{state.images.length} images</p>
   </article>
 {/each}`} />
   </section>
@@ -154,7 +154,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
     <p>Building a feed from scratch with builders:</p>
 
     <CodeBlock lang="svelte" code={`<script>
-  import { createEventCard } from '@nostr-dev-kit/svelte';
+  import { createEventContent } from '@nostr-dev-kit/svelte';
 
   const feed = ndk.$subscribe(() => ({
     filters: [{ kinds: [1], authors: followedPubkeys, limit: 50 }],
@@ -169,7 +169,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
   const cards = $derived(
     events.map(event => ({
       event,
-      state: createEventCard(() => ({ event }), ndk)
+      state: createEventContent(() => ({ event }), ndk)
     }))
   );
 </script>
@@ -178,13 +178,15 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
   {#each cards as { event, state } (event.id)}
     <article>
       <header>
-        <img src={state.profile?.picture} alt="" />
-        <strong>{state.profile?.displayName}</strong>
+        <strong>{event.author?.profile?.displayName}</strong>
       </header>
-      <p>{event.content}</p>
+      {#each state.segments as segment}
+        {#if segment.type === 'text'}
+          <p>{segment.text}</p>
+        {/if}
+      {/each}
       <footer>
-        <button>💬 {state.replies.count}</button>
-        <button>⚡ {state.zaps.totalAmount}</button>
+        <span>{state.images.length} images</span>
       </footer>
     </article>
   {/each}

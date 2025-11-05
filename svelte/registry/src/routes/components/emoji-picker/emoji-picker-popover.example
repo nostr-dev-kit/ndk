@@ -1,0 +1,37 @@
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { EmojiPicker, type EmojiData } from '$lib/registry/components/emoji-picker';
+  import { Popover } from 'bits-ui';
+
+  interface Props {
+    ndk: NDKSvelte;
+  }
+
+  let { ndk }: Props = $props();
+  let selected = $state<EmojiData | null>(null);
+  let open = $state(false);
+
+  function handleSelect(emoji: EmojiData) {
+    selected = emoji;
+    open = false;
+  }
+</script>
+
+<Popover.Root bind:open>
+  <Popover.Trigger>
+    {#snippet child({ props })}
+      <button
+        {...props}
+        class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+      >
+        Pick Emoji
+      </button>
+    {/snippet}
+  </Popover.Trigger>
+
+  <Popover.Content
+    class="z-50 w-80 max-h-[40vh] overflow-y-auto rounded-lg border bg-card p-4 shadow-md"
+  >
+    <EmojiPicker.Content {ndk} onSelect={handleSelect} />
+  </Popover.Content>
+</Popover.Root>

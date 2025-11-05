@@ -72,9 +72,9 @@
     <span class="text-xs text-gray-500 dark:text-gray-400">Status</span>
     <span class={cn(
       "text-lg font-semibold",
-      context.syncing ? "text-blue-600" : "text-green-600"
+      context.syncing ? "text-blue-600" : context.totalRelays > 0 ? "text-green-600" : "text-gray-500"
     )}>
-      {context.syncing ? 'Syncing...' : 'Complete'}
+      {context.syncing ? 'Syncing...' : context.totalRelays > 0 ? 'Complete' : 'Idle'}
     </span>
   </div>
 </div>

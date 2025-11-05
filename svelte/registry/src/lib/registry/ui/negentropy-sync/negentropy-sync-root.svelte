@@ -1,21 +1,13 @@
 <script lang="ts">
   import { setContext } from 'svelte';
-  import type { NDKFilter } from '@nostr-dev-kit/ndk';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createNegentropySync, type NegentropySyncConfig } from '../../builders/negentropy-sync/index.js';
+  import { createNegentropySync } from '../../builders/negentropy-sync/index.js';
   import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from './negentropy-sync.context.js';
   import type { Snippet } from 'svelte';
   import { cn } from "../../utils/cn.js";
 
   interface Props {
-    /** NDK instance (required) */
-    ndk: NDKSvelte;
-
-    /** Nostr filters to sync */
-    filters: NDKFilter | NDKFilter[];
-
-    /** Optional relay URLs to sync with (defaults to all NDK relays) */
-    relayUrls?: string[];
+    /** Sync builder instance created with createNegentropySync() */
+    syncBuilder: ReturnType<typeof createNegentropySync>;
 
     /** Additional CSS classes */
     class?: string;
@@ -25,22 +17,13 @@
   }
 
   let {
-    ndk,
-    filters,
-    relayUrls,
+    syncBuilder,
     class: className = '',
     children
   }: Props = $props();
 
-  // Create sync builder
-  const syncBuilder = createNegentropySync(() => ({
-    filters,
-    relayUrls
-  }), ndk);
-
   // Create reactive context using getters to preserve reactivity
   const context: NegentropySyncContext = {
-    get ndk() { return ndk; },
     get syncing() { return syncBuilder.syncing; },
     get totalRelays() { return syncBuilder.totalRelays; },
     get completedRelays() { return syncBuilder.completedRelays; },

@@ -1,0 +1,23 @@
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
+
+  const reactionState = createReactionAction(() => ({ event }), ndk);
+</script>
+
+<button
+  onclick={reactionState.react}
+  class={`inline-flex items-center gap-2 p-2 ${
+    reactionState.hasReacted ? 'text-red-500' : ''
+  }`}
+>
+  ❤️ {reactionState.count > 0 ? reactionState.count : ''}
+</button>

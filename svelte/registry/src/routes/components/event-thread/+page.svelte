@@ -9,6 +9,11 @@
   import type { ShowcaseBlock } from '$lib/templates/types';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 
+  // Import code examples
+  import threadViewTwitterCode from './thread-view-twitter.example?raw';
+  import threadViewBasicCode from './thread-view-basic.example?raw';
+  import threadViewFullCode from './thread-view-full.example?raw';
+
   import TwitterCode from './examples/twitter-code.example.svelte';
   import UIBasic from './examples/ui-basic.example.svelte';
   import UIComposition from './examples/ui-composition.example.svelte';
@@ -58,7 +63,7 @@
 
 <!-- Preview snippets -->
 {#snippet twitterPreview()}
-  <TwitterCode {ndk} nevent={neventInput} />
+  <TwitterCode {ndk} {thread} />
 {/snippet}
 
 {#snippet basicPreview()}
@@ -247,7 +252,11 @@ thread.focusOn(event)  // Navigate to different event`}
     {afterShowcase}
     {customSections}
     componentsSection={{
-      cards: threadViewMetadata.cards,
+      cards: [
+        { ...threadViewTwitterCard, code: threadViewTwitterCode },
+        { ...threadViewBasicCard, code: threadViewBasicCode },
+        { ...threadViewFullCard, code: threadViewFullCode }
+      ],
       previews: {
         'thread-view-twitter': twitterPreview,
         'thread-view-basic': basicPreview,

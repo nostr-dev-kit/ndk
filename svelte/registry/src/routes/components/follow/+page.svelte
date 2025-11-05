@@ -90,27 +90,27 @@
 
 <!-- Preview snippets for showcase -->
 {#snippet minimalPreview()}
-  <FollowButton {ndk} target={sampleUser} showTarget={true} />
+  <FollowButton {ndk} target={sampleUser!} showTarget={true} />
 {/snippet}
 
 {#snippet minimalIconOnlyPreview()}
-  <FollowButton {ndk} target={sampleUser} />
+  <FollowButton {ndk} target={sampleUser!} />
 {/snippet}
 
 {#snippet pillSolidPreview()}
-  <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+  <FollowButtonPill {ndk} target={sampleUser!} variant="solid" showTarget={true} />
 {/snippet}
 
 {#snippet pillOutlinePreview()}
-  <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+  <FollowButtonPill {ndk} target={sampleUser!} variant="outline" showTarget={true} />
 {/snippet}
 
 {#snippet pillCompactPreview()}
-  <FollowButtonPill {ndk} target={sampleUser} compact />
+  <FollowButtonPill {ndk} target={sampleUser!} compact />
 {/snippet}
 
 {#snippet animatedPreview()}
-  <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
+  <FollowButtonAnimated {ndk} target={sampleUser!} showTarget={true} />
 {/snippet}
 
 <!-- Component card preview snippets -->
@@ -118,11 +118,11 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">Default:</span>
-      <FollowButton {ndk} target={sampleUser} />
+      <FollowButton {ndk} target={sampleUser!} />
     </div>
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">With User:</span>
-      <FollowButton {ndk} target={sampleUser} showTarget={true} />
+      <FollowButton {ndk} target={sampleUser!} showTarget={true} />
     </div>
     <div class="flex items-center gap-4">
       <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
@@ -136,15 +136,15 @@
     <div class="flex flex-col gap-2 items-center">
       <span class="text-xs text-muted-foreground">Default</span>
       <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-        <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
+        <FollowButtonPill {ndk} target={sampleUser!} variant="solid" />
+        <FollowButtonPill {ndk} target={sampleUser!} variant="outline" />
       </div>
     </div>
     <div class="flex flex-col gap-2 items-center">
       <span class="text-xs text-muted-foreground">With User Target</span>
       <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-        <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+        <FollowButtonPill {ndk} target={sampleUser!} variant="solid" showTarget={true} />
+        <FollowButtonPill {ndk} target={sampleUser!} variant="outline" showTarget={true} />
       </div>
     </div>
     <div class="flex flex-col gap-2 items-center">
@@ -157,15 +157,15 @@
     <div class="flex flex-col gap-2 items-center">
       <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
       <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonPill {ndk} target={sampleUser} compact />
-        <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
+        <FollowButtonPill {ndk} target={sampleUser!} compact />
+        <FollowButtonPill {ndk} target={sampleUser!} compact variant="outline" />
       </div>
     </div>
     <div class="flex flex-col gap-2 items-center">
       <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
       <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
-        <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
+        <FollowButtonPill {ndk} target={sampleUser!} compact showTarget={true} variant="solid" />
+        <FollowButtonPill {ndk} target={sampleUser!} compact showTarget={true} variant="outline" />
       </div>
     </div>
   </div>
@@ -176,13 +176,13 @@
     <div class="flex flex-col gap-2 items-center">
       <span class="text-xs text-muted-foreground">Default</span>
       <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonAnimated {ndk} target={sampleUser} />
+        <FollowButtonAnimated {ndk} target={sampleUser!} />
       </div>
     </div>
     <div class="flex flex-col gap-2 items-center">
       <span class="text-xs text-muted-foreground">With User Target</span>
       <div class="flex flex-wrap gap-4 justify-center">
-        <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
+        <FollowButtonAnimated {ndk} target={sampleUser!} showTarget={true} />
       </div>
     </div>
     <div class="flex flex-col gap-2 items-center">

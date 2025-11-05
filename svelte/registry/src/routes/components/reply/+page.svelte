@@ -13,6 +13,11 @@
   import InlineComposerExample from './examples/inline-composer-code.example.svelte';
   import MinimalButtonExample from './examples/minimal-button-code.example.svelte';
 
+  // Import code examples
+  import replyDialogComposerCode from './reply-dialog-composer.example?raw';
+  import replyInlineComposerCode from './reply-inline-composer.example?raw';
+  import replyMinimalButtonCode from './reply-minimal-button.example?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
@@ -27,8 +32,38 @@
       }
     })();
   });
+</script>
 
-  const showcaseBlocks: ShowcaseBlock[] = [
+{#if sampleEvent}
+  {@const event = sampleEvent}
+
+  <!-- Preview snippets for showcase -->
+  {#snippet dialogComposerPreview()}
+    <DialogComposerExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet inlineComposerPreview()}
+    <InlineComposerExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet minimalButtonPreview()}
+    <MinimalButtonExample {ndk} {event} />
+  {/snippet}
+
+  <!-- Preview snippets for components section -->
+  {#snippet dialogComposerComponentPreview()}
+    <DialogComposerExample {ndk} event={sampleEvent!} />
+  {/snippet}
+
+  {#snippet inlineComposerComponentPreview()}
+    <InlineComposerExample {ndk} {event} />
+  {/snippet}
+
+  {#snippet minimalButtonComponentPreview()}
+    <MinimalButtonExample {ndk} {event} />
+  {/snippet}
+
+  {@const showcaseBlocks = [
     {
       name: 'Dialog Composer',
       description: 'Modal dialog with composer',
@@ -50,36 +85,7 @@
       preview: minimalButtonPreview,
       cardData: replyMinimalButtonCard
     }
-  ];
-</script>
-
-{#if sampleEvent}
-
-  <!-- Preview snippets for showcase -->
-  {#snippet dialogComposerPreview()}
-    <DialogComposerExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet inlineComposerPreview()}
-    <InlineComposerExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet minimalButtonPreview()}
-    <MinimalButtonExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  <!-- Preview snippets for components section -->
-  {#snippet dialogComposerComponentPreview()}
-    <DialogComposerExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet inlineComposerComponentPreview()}
-    <InlineComposerExample {ndk} event={sampleEvent} />
-  {/snippet}
-
-  {#snippet minimalButtonComponentPreview()}
-    <MinimalButtonExample {ndk} event={sampleEvent} />
-  {/snippet}
+  ]}
 
   <!-- Additional section for Builder API -->
   {#snippet afterComponents()}
@@ -146,7 +152,11 @@ const replyEvent = await replyAction.reply('This is my reply!');</code></pre>
     {showcaseBlocks}
     {afterComponents}
     componentsSection={{
-      cards: replyMetadata.cards,
+      cards: [
+        { ...replyDialogComposerCard, code: replyDialogComposerCode },
+        { ...replyInlineComposerCard, code: replyInlineComposerCode },
+        { ...replyMinimalButtonCard, code: replyMinimalButtonCode }
+      ],
       previews: {
         'reply-dialog-composer': dialogComposerComponentPreview,
         'reply-inline-composer': inlineComposerComponentPreview,

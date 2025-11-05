@@ -1,0 +1,7 @@
+<script lang="ts">
+  import UserCardGlass from '$lib/registry/components/user-card/user-card-glass.svelte';
+</script>
+
+<UserCardGlass {ndk} pubkey={user.pubkey} />
+
+<UserCardGlass {ndk} pubkey={user.pubkey} variant="transparent" />

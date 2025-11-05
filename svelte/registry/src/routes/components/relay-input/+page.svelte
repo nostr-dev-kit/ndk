@@ -8,6 +8,16 @@
   import { relayInputMetadata } from '$lib/component-registry/relay-input';
   import type { ShowcaseBlock } from '$lib/templates/types';
 
+  // Import code examples
+  import relayInputBasicCode from './relay-input-basic.example?raw';
+  import relayInputLabelCode from './relay-input-label.example?raw';
+  import relayInputErrorCode from './relay-input-error.example?raw';
+  import relayInputDisabledCode from './relay-input-disabled.example?raw';
+  import relayInputComponentBasicCode from './relay-input-component-basic.example?raw';
+  import relayInputComponentLabelCode from './relay-input-component-label.example?raw';
+  import relayInputComponentValidationCode from './relay-input-component-validation.example?raw';
+  import relayInputComponentDisabledCode from './relay-input-component-disabled.example?raw';
+
   import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
 
   // Examples
@@ -152,13 +162,13 @@
   <SectionTitle title="Block Variants" description="Explore each relay input block variant in detail" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard data={relayInputMetadata.cards[0]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[0], code: relayInputBasicCode }}>
       {#snippet preview()}
         <RelayInputBlock {ndk} bind:value={basicBlockUrl} />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayInputMetadata.cards[1]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[1], code: relayInputLabelCode }}>
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
@@ -169,7 +179,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayInputMetadata.cards[2]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[2], code: relayInputErrorCode }}>
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
@@ -180,7 +190,7 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayInputMetadata.cards[3]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[3], code: relayInputDisabledCode }}>
       {#snippet preview()}
         <RelayInputBlock
           {ndk}
@@ -196,25 +206,25 @@
   <SectionTitle title="Component Variants" description="Explore each component variant in detail" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard data={relayInputMetadata.cards[4]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[4], code: relayInputComponentBasicCode }}>
       {#snippet preview()}
         <BasicExample />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayInputMetadata.cards[5]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[5], code: relayInputComponentLabelCode }}>
       {#snippet preview()}
         <WithLabelExample />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayInputMetadata.cards[6]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[6], code: relayInputComponentValidationCode }}>
       {#snippet preview()}
         <ValidationExample />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayInputMetadata.cards[7]}>
+    <ComponentCard data={{ ...relayInputMetadata.cards[7], code: relayInputComponentDisabledCode }}>
       {#snippet preview()}
         <DisabledExample />
       {/snippet}

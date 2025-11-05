@@ -46,7 +46,7 @@ import ConnectionStatus from './relay-connection-status.svelte';
 import Input from './relay-input.svelte';
 
 // Selector primitives
-import { Selector } from '../../relay-selector/index.js';
+import { Selector } from '../relay-selector/index.js';
 
 // Export as namespace for dot notation
 export const Relay = {
@@ -64,4 +64,4 @@ export const Relay = {
 
 // Export types
 export type { RelayContext } from './relay.context.js';
-export type { RelaySelectorContext } from '../../relay-selector/index.js';
+export type { RelaySelectorContext } from '../relay-selector/index.js';

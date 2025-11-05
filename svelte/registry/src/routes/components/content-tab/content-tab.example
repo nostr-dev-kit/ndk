@@ -1,6 +1,6 @@
 <script lang="ts">
   import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
-  import { byCount } from '$lib/registry/hooks/content-tab';
+  import { byCount } from '$lib/registry/builders/content-tab';
 
   const pubkeys = ['hexpubkey'];
   const kinds = [1, 30023, 1063]; // notes, articles, images

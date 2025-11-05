@@ -15,7 +15,7 @@ export const contentTabApiDocs: ApiDoc[] = [
   {
     name: 'createContentSampler',
     description: 'Builder function that samples user content and returns active content types with counts. Creates a subscription with n+1 filters for efficient sampling. Returns ContentTabState with tabs (ContentTab[] - array of tabs with kind, count, and lastPublished timestamp).',
-    importPath: "import { createContentSampler } from '$lib/registry/hooks/content-tab'",
+    importPath: "import { createContentSampler } from '$lib/registry/builders/content-tab'",
     props: [
       {
         name: 'config',
@@ -90,13 +90,13 @@ export const contentTabApiDocs: ApiDoc[] = [
   {
     name: 'byCount',
     description: 'Sort function that orders tabs by count (most published first)',
-    importPath: "import { byCount } from '$lib/registry/hooks/content-tab'",
+    importPath: "import { byCount } from '$lib/registry/builders/content-tab'",
     props: []
   },
   {
     name: 'byRecency',
     description: 'Sort function that orders tabs by recency (most recently published first)',
-    importPath: "import { byRecency } from '$lib/registry/hooks/content-tab'",
+    importPath: "import { byRecency } from '$lib/registry/builders/content-tab'",
     props: []
   }
 ];

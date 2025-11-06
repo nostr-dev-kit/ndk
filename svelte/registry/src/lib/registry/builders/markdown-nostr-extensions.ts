@@ -127,7 +127,10 @@ export function createEmojiExtension(emojiMap: Map<string, string>) {
         name: 'nostr-emoji',
         level: 'inline' as const,
         start(src: string) {
-            return src.indexOf(':');
+            // Only return a position if it's actually valid emoji syntax :shortcode:
+            const rule = /:([a-zA-Z0-9_]+):/;
+            const match = src.match(rule);
+            return match ? src.indexOf(match[0]) : -1;
         },
         tokenizer(src: string, tokens: Token[]) {
             // Match :shortcode: pattern
@@ -217,10 +220,16 @@ export function createNostrMarkdownExtensions(options: NostrExtensionsOptions = 
         }
     }
 
-    return [
+    const extensions = [
         createNostrMentionExtension(),
         createNostrEventRefExtension(),
-        createEmojiExtension(emojiMap),
         createHashtagExtension()
     ];
+
+    // Only add emoji extension if there are emojis to process
+    if (emojiMap.size > 0) {
+        extensions.push(createEmojiExtension(emojiMap));
+    }
+
+    return extensions;
 }

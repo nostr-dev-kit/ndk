@@ -65,8 +65,6 @@
     return allHighlights.filter(h => highlightFilter(h));
   });
 
-  const content = $derived(article.content);
-
   function handleMouseUp() {
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) {

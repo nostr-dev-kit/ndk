@@ -3,12 +3,21 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Marked } from 'marked';
   import { createNostrMarkdownExtensions } from '../../builders/markdown-nostr-extensions.js';
-  import { Mention } from '../../components/mention/index.js';
   import EmbeddedEvent from '../embedded-event.svelte';
-  import Hashtag from '../../components/hashtag/hashtag.svelte';
-  import type { ContentRenderer } from '../content-renderer.svelte.js';
+  import { defaultContentRenderer, type ContentRenderer } from '../content-renderer.svelte.js';
   import { onMount, mount } from 'svelte';
-  import { getContext } from 'svelte';
+  import { getContext, setContext } from 'svelte';
+  import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer.context.js';
+
+  // Import all handlers to auto-register them
+  // Inline components (mentions, hashtags)
+  import '../../components/mention-modern';
+  import '../../components/hashtag-modern';
+
+  // Embedded kind handlers (articles, notes, highlights)
+  import '../../components/article-embedded-card';
+  import '../../components/note-embedded';
+  import '../../components/highlight-embedded';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -22,9 +31,16 @@
     ndk = getContext<NDKSvelte>('ndk'),
     content,
     emojiTags,
-    renderer,
+    renderer: providedRenderer,
     class: className = ''
   }: Props = $props();
+
+  // Use renderer from prop, or from context, or fallback to default
+  const rendererContext = getContext<any>(CONTENT_RENDERER_CONTEXT_KEY);
+  const renderer = $derived(providedRenderer ?? rendererContext?.renderer ?? defaultContentRenderer);
+
+  // Set renderer in context so nested components can access it
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
 
   let contentElement: HTMLDivElement;
   let mountedComponents: Array<{ target: Element; unmount: () => void }> = [];
@@ -74,15 +90,19 @@
       const bech32 = placeholder.getAttribute('data-bech32');
       if (!bech32) return;
 
-      const MentionComponent = renderer?.mentionComponent || Mention;
-      const mounted = mount(MentionComponent, {
-        target: placeholder,
-        props: { ndk, bech32 }
-      });
-      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      if (renderer.mentionComponent) {
+        const mounted = mount(renderer.mentionComponent, {
+          target: placeholder,
+          props: { ndk, bech32 }
+        });
+        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      } else {
+        // No component registered - render raw bech32
+        placeholder.textContent = `nostr:${bech32}`;
+      }
     });
 
-    // Hydrate event references
+    // Hydrate event references (always use EmbeddedEvent)
     const eventRefs = contentElement.querySelectorAll('.nostr-event-ref');
     eventRefs.forEach(placeholder => {
       const bech32 = placeholder.getAttribute('data-bech32');
@@ -90,7 +110,7 @@
 
       const mounted = mount(EmbeddedEvent, {
         target: placeholder,
-        props: { ndk, bech32 }
+        props: { ndk, bech32, renderer }
       });
       mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
     });
@@ -101,11 +121,16 @@
       const tag = placeholder.getAttribute('data-tag');
       if (!tag) return;
 
-      const mounted = mount(Hashtag, {
-        target: placeholder,
-        props: { ndk, tag }
-      });
-      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      if (renderer.hashtagComponent) {
+        const mounted = mount(renderer.hashtagComponent, {
+          target: placeholder,
+          props: { tag }
+        });
+        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      } else {
+        // No component registered - render raw hashtag
+        placeholder.textContent = `#${tag}`;
+      }
     });
   }
 

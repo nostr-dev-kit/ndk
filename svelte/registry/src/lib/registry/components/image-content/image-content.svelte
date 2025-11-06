@@ -47,36 +47,36 @@
 </script>
 
 {#if hasImages}
-	<div data-image-content="" class="image-content {className}">
+	<div data-image-content="" class="flex flex-col gap-6 {className}">
 		{#each imetas as imeta, index (imeta.url)}
-			<div class="image-item">
+			<div class="flex flex-col gap-3">
 				{#if imeta.url}
-					<div class="image-wrapper">
+					<div class="relative w-full overflow-hidden rounded-lg bg-muted">
 						<img
 							src={imeta.url}
 							alt={imeta.alt || `Image ${index + 1}`}
-							class="image {imageClass}"
+							class="w-full h-auto block object-cover {imageClass}"
 							loading="lazy"
 						/>
 					</div>
 
 					{#if showAlt && imeta.alt}
-						<p class="image-alt">{imeta.alt}</p>
+						<p class="text-sm text-muted-foreground italic m-0 px-1">{imeta.alt}</p>
 					{/if}
 
 					{#if showMeta && (imeta.dim || imeta.m || imeta.size)}
-						<div class="image-meta">
+						<div class="flex gap-2 flex-wrap px-1">
 							{#if imeta.dim}
-								<span class="meta-badge">
+								<span class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-muted text-muted-foreground font-mono">
 									<HugeiconsIcon icon={Image01Icon} size={14} />
 									{imeta.dim}
 								</span>
 							{/if}
 							{#if imeta.m}
-								<span class="meta-badge">{getMimeTypeLabel(imeta.m)}</span>
+								<span class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-muted text-muted-foreground font-mono">{getMimeTypeLabel(imeta.m)}</span>
 							{/if}
 							{#if imeta.size}
-								<span class="meta-badge">{formatFileSize(imeta.size)}</span>
+								<span class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-muted text-muted-foreground font-mono">{formatFileSize(imeta.size)}</span>
 							{/if}
 						</div>
 					{/if}
@@ -85,83 +85,8 @@
 		{/each}
 	</div>
 {:else}
-	<div data-image-content="" data-empty="" class="image-content-empty {className}">
+	<div data-image-content="" data-empty="" class="flex flex-col items-center justify-center gap-3 p-12 rounded-lg bg-muted text-muted-foreground {className}">
 		<HugeiconsIcon icon={Image01Icon} size={48} />
-		<p>No images available</p>
+		<p class="m-0 text-sm">No images available</p>
 	</div>
 {/if}
-
-<style>
-	/* CSS styles for image content component */
-
-	.image-content {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.image-item {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.image-wrapper {
-		position: relative;
-		width: 100%;
-		overflow: hidden;
-		border-radius: 0.5rem;
-		background-color: var(--muted);
-	}
-
-	.image {
-		width: 100%;
-		height: auto;
-		display: block;
-		object-fit: cover;
-	}
-
-	.image-alt {
-		font-size: 0.875rem;
-		color: var(--muted-foreground);
-		font-style: italic;
-		margin: 0;
-		padding: 0 0.25rem;
-	}
-
-	.image-meta {
-		display: flex;
-		gap: 0.5rem;
-		flex-wrap: wrap;
-		padding: 0 0.25rem;
-	}
-
-	.meta-badge {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
-		padding: 0.25rem 0.5rem;
-		font-size: 0.75rem;
-		border-radius: 0.25rem;
-		background-color: var(--muted);
-		color: var(--muted-foreground);
-		font-family: var(--font-mono);
-	}
-
-	.image-content-empty {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.75rem;
-		padding: 3rem;
-		border-radius: 0.5rem;
-		background-color: var(--muted);
-		color: var(--muted-foreground);
-	}
-
-	.image-content-empty p {
-		margin: 0;
-		font-size: 0.875rem;
-	}
-</style>

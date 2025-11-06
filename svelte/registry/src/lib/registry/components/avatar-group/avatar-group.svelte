@@ -69,14 +69,14 @@
 
 <div
   data-avatar-group=""
-  class={cn('avatar-group', 'flex', isVertical ? 'flex-col items-start' : 'items-center', className)}
+  class={cn('relative flex', isVertical ? 'flex-col items-start' : 'items-center', className)}
   role="group"
   aria-label="User avatars"
 >
   {#each visibleUsers as user, index (user.pubkey)}
     <div
-  data-avatar-group=""
-      class="avatar-group-item"
+      data-avatar-group=""
+      class="relative transition-transform duration-200"
       style:margin-left={!isVertical && index !== 0 ? `${marginValue}px` : '0'}
       style:margin-top={isVertical && index !== 0 ? `${marginValue}px` : '0'}
       style:z-index={visibleUsers.length - index}
@@ -86,7 +86,7 @@
           <button
             type="button"
             onclick={() => onAvatarClick?.(user)}
-            class="avatar-group-button"
+            class="block p-0 border-none bg-none cursor-pointer transition-transform duration-200 hover:scale-110 hover:!z-[9999] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:rounded-full"
             style:width="{size}px"
             style:height="{size}px"
           >
@@ -96,7 +96,7 @@
           </button>
         {:else}
           <div
-  data-avatar-group=""
+            data-avatar-group=""
             class="avatar-wrapper"
             style:width="{size}px"
             style:height="{size}px"
@@ -115,8 +115,8 @@
       {@render overflowSnippet(overflowCount)}
     {:else if overflowVariant === 'text'}
       <div
-  data-avatar-group=""
-        class="avatar-group-overflow-text"
+        data-avatar-group=""
+        class="flex items-center font-semibold text-muted-foreground"
         style:margin-left={!isVertical ? '8px' : '0'}
         style:margin-top={isVertical ? '8px' : '0'}
       >
@@ -124,20 +124,20 @@
           <button
             type="button"
             onclick={onOverflowClick}
-            class="avatar-group-overflow-text-button"
+            class="p-0 border-none bg-none cursor-pointer font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:rounded"
           >
             +{overflowCount}
           </button>
         {:else}
-          <span class="avatar-group-overflow-text-content">
+          <span class="inline-block">
             +{overflowCount}
           </span>
         {/if}
       </div>
     {:else}
       <div
-  data-avatar-group=""
-        class="avatar-group-overflow"
+        data-avatar-group=""
+        class="relative rounded-full bg-muted border-2 border-background flex items-center justify-center font-semibold text-muted-foreground flex-shrink-0"
         style:margin-left={!isVertical ? `${marginValue}px` : '0'}
         style:margin-top={isVertical ? `${marginValue}px` : '0'}
         style:width="{size}px"
@@ -149,12 +149,12 @@
           <button
             type="button"
             onclick={onOverflowClick}
-            class="avatar-group-overflow-button"
+            class="w-full h-full rounded-full border-none bg-none cursor-pointer flex items-center justify-center font-semibold text-muted-foreground transition-all duration-200 hover:bg-muted-hover hover:text-foreground hover:scale-110 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
           >
             +{overflowCount}
           </button>
         {:else}
-          <div class="avatar-group-overflow-content">
+          <div class="w-full h-full flex items-center justify-center">
             +{overflowCount}
           </div>
         {/if}
@@ -162,112 +162,3 @@
     {/if}
   {/if}
 </div>
-
-<style>
-  .avatar-group {
-    position: relative;
-  }
-
-  .avatar-group-item {
-    position: relative;
-    transition: transform 0.2s ease;
-  }
-
-  .avatar-group-button {
-    display: block;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-
-  .avatar-group-button:hover {
-    transform: scale(1.1);
-    z-index: 9999 !important;
-  }
-
-  .avatar-group-button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-    border-radius: 50%;
-  }
-
-  .avatar-group-overflow {
-    position: relative;
-    border-radius: 50%;
-    background: var(--muted);
-    border: 2px solid var(--background);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: var(--muted-foreground);
-    flex-shrink: 0;
-  }
-
-  .avatar-group-overflow-button {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: none;
-    background: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: var(--muted-foreground);
-    transition: all 0.2s ease;
-  }
-
-  .avatar-group-overflow-button:hover {
-    background: var(--muted-hover);
-    color: var(--foreground);
-    transform: scale(1.1);
-  }
-
-  .avatar-group-overflow-button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-  }
-
-  .avatar-group-overflow-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .avatar-group-overflow-text {
-    display: flex;
-    align-items: center;
-    font-weight: 600;
-    color: var(--muted-foreground);
-  }
-
-  .avatar-group-overflow-text-content {
-    display: inline-block;
-  }
-
-  .avatar-group-overflow-text-button {
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--muted-foreground);
-    transition: color 0.2s ease;
-  }
-
-  .avatar-group-overflow-text-button:hover {
-    color: var(--foreground);
-  }
-
-  .avatar-group-overflow-text-button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-</style>

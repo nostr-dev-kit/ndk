@@ -70,7 +70,7 @@
   <div
     data-highlight-toolbar=""
     bind:this={toolbarEl}
-    class="fixed z-50 text-foreground rounded-lg shadow-xl border border-border overflow-hidden transition-opacity duration-150"
+    class="bg-card fixed z-50 text-foreground rounded-lg shadow-xl border border-border overflow-hidden transition-opacity duration-150"
     style="top: {position.top}; left: {position.left}; opacity: {position.opacity};"
   >
     {#if error}

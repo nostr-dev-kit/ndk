@@ -1,0 +1,5 @@
+<details>
+  <summary>Show content</summary>
+  <!-- Processing starts when details opens -->
+  <p>{content.segments.length} content segments</p>
+</details>

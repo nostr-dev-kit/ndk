@@ -1,0 +1,6 @@
+npm install -g jsrepo
+# or
+bun add -g jsrepo
+
+# Verify installation
+jsrepo --version

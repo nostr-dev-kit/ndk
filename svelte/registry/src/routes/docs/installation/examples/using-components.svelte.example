@@ -1,0 +1,26 @@
+<script lang="ts">
+  import { ndk } from '$lib/ndk';
+  import { User } from '$lib/components/ui/user';
+
+  const pubkey = 'e33fe65f1fde44c6dc17eeb38fdad0fceaf1cae8722084332ed1e32496291d42';
+  const profile = ndk.$fetchProfile(() => pubkey);
+</script>
+
+<div class="container mx-auto p-8">
+  <h1 class="text-2xl font-bold mb-4">User Profile</h1>
+
+  {#if profile}
+    <User.Root {pubkey}>
+      <div class="flex items-center gap-4">
+        <User.Avatar class="w-16 h-16" />
+        <div>
+          <User.Name class="text-xl font-bold" />
+          <User.Nip05 class="text-sm text-gray-600" />
+          <User.Bio class="mt-2" />
+        </div>
+      </div>
+    </User.Root>
+  {:else}
+    <p>Loading profile...</p>
+  {/if}
+</div>

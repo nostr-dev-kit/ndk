@@ -1,0 +1,9 @@
+<script>
+  import { EventCard } from '$lib/registry/components/event-card';
+</script>
+
+<EventCard.Root {ndk} {event}>
+  <EventCard.Header />
+  <EventCard.Content />
+  <EventCard.Actions />
+</EventCard.Root>

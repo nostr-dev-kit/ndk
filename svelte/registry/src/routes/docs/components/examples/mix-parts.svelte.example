@@ -1,0 +1,10 @@
+<EventCard.Root {ndk} {event}>
+  <EventCard.Header />
+
+  <!-- Custom content -->
+  <div class="my-content">
+    <p>{event.content}</p>
+  </div>
+
+  <EventCard.Actions />
+</EventCard.Root>

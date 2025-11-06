@@ -2,6 +2,14 @@
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
   import "../../../lib/styles/docs-page.css";
+
+  // Import code examples
+  import builderLayer from './examples/builder-layer.example?raw';
+  import componentLayer from './examples/component-layer.svelte.example?raw';
+  import addComponent from './examples/add-component.example?raw';
+  import useComponent from './examples/use-component.svelte.example?raw';
+  import useBuilder from './examples/use-builder.svelte.example?raw';
+  import whyFunctions from './examples/why-functions.example?raw';
 </script>
 
 <PageTitle
@@ -26,14 +34,7 @@
       it sets up subscriptions to Nostr relays and returns an object with reactive state for the event content.
     </p>
 
-    <CodeBlock lang="typescript" code={`import { createEventContent } from '@nostr-dev-kit/svelte';
-
-const content = createEventContent(() => ({ event }), ndk);
-
-// Access reactive state
-content.segments  // ParsedSegment[] - parsed content with mentions, links, media
-content.content   // string - raw content
-content.emojiMap  // Map<string, string> - custom emoji mappings`} />
+    <CodeBlock lang="typescript" code={builderLayer} />
 
     <h3>Components (UI Layer)</h3>
     <p>
@@ -43,18 +44,7 @@ content.emojiMap  // Map<string, string> - custom emoji mappings`} />
       and build your own UI from scratch.
     </p>
 
-    <CodeBlock lang="svelte" code={`<!-- Copied to your project -->
-<script>
-  import { createEventContent } from '@nostr-dev-kit/svelte';
-  const state = createEventContent(() => ({ event }), ndk);
-</script>
-
-<article>
-  <!-- Your UI using builder state -->
-  {#each state.segments as segment}
-    {segment.text}
-  {/each}
-</article>`} />
+    <CodeBlock lang="svelte" code={componentLayer} />
   </section>
 
   <section>
@@ -84,34 +74,16 @@ content.emojiMap  // Map<string, string> - custom emoji mappings`} />
       working UI immediately and you can customize them by editing your copies.
     </p>
 
-    <CodeBlock lang="bash" code={`jsrepo add components/event-card`} />
+    <CodeBlock lang="bash" code={addComponent} />
 
-    <CodeBlock lang="svelte" code={`<script>
-  import { EventCard } from '$lib/registry/components/event-card';
-</script>
-
-<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-  <EventCard.Content />
-</EventCard.Root>`} />
+    <CodeBlock lang="svelte" code={useComponent} />
 
     <p>
       <strong>Start with builders</strong> when you need custom designs or unique interactions. Builders give you
       reactive data without any UI opinions.
     </p>
 
-    <CodeBlock lang="svelte" code={`import { createEventContent } from '@nostr-dev-kit/svelte';
-
-const content = createEventContent(() => ({ event }), ndk);
-
-// Build your own UI
-<div class="my-design">
-  {#each content.segments as segment}
-    {#if segment.type === 'text'}
-      <span>{segment.text}</span>
-    {/if}
-  {/each}
-</div>`} />
+    <CodeBlock lang="svelte" code={useBuilder} />
 
     <p>
       You can always switch approaches. If you start with a component but later need more control,
@@ -126,16 +98,7 @@ const content = createEventContent(() => ({ event }), ndk);
       This enables reactivity - when the input changes, the builder can clean up old subscriptions and create new ones.
     </p>
 
-    <CodeBlock lang="typescript" code={`let currentEvent = $state(events[0]);
-
-// ✅ Reacts when currentEvent changes
-const content = createEventContent(() => ({ event: currentEvent }), ndk);
-
-// When you update currentEvent, builder automatically:
-// 1. Stops old processing
-// 2. Parses new event content
-// 3. Updates all state
-currentEvent = events[1];`} />
+    <CodeBlock lang="typescript" code={whyFunctions} />
   </section>
 
   <section class="next-section">

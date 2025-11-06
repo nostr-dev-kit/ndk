@@ -1,0 +1,15 @@
+<script>
+  import { createEventContent } from '$lib/registry/builders/event-content';
+
+  const content = createEventContent(() => ({ event }), ndk);
+</script>
+
+<article>
+  {#each content.segments as segment}
+    {#if segment.type === 'text'}
+      <span>{segment.text}</span>
+    {:else if segment.type === 'link'}
+      <a href={segment.url}>{segment.text}</a>
+    {/if}
+  {/each}
+</article>

@@ -1,0 +1,5 @@
+const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
+
+embedded.event    // The fetched event
+embedded.loading  // Boolean
+embedded.error    // Error message if failed

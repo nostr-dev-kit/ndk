@@ -2,6 +2,10 @@
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
   import "../../lib/styles/docs-page.css";
+
+  // Import code examples
+  import usingBuilders from './examples/using-builders.svelte.example?raw';
+  import usingComponents from './examples/using-components.svelte.example?raw';
 </script>
 
 <PageTitle
@@ -31,32 +35,10 @@
     <h2>Quick Start</h2>
 
     <h3>Using Builders</h3>
-    <CodeBlock lang="svelte" code={`<script>
-  import { createEventContent } from '$lib/registry/builders/event-content';
-
-  const content = createEventContent(() => ({ event }), ndk);
-</script>
-
-<article>
-  {#each content.segments as segment}
-    {#if segment.type === 'text'}
-      <span>{segment.text}</span>
-    {:else if segment.type === 'link'}
-      <a href={segment.url}>{segment.text}</a>
-    {/if}
-  {/each}
-</article>`} />
+    <CodeBlock lang="svelte" code={usingBuilders} />
 
     <h3>Using Components</h3>
-    <CodeBlock lang="svelte" code={`<script>
-  import { EventCard } from '$lib/registry/components/event-card';
-</script>
-
-<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-  <EventCard.Content />
-  <EventCard.Actions />
-</EventCard.Root>`} />
+    <CodeBlock lang="svelte" code={usingComponents} />
   </section>
 
   <section>

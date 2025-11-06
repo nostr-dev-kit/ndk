@@ -1,0 +1,13 @@
+<!-- event-card-header.svelte -->
+<script>
+  import { getContext } from 'svelte';
+  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
+
+  const { ndk, event } = getContext(EVENT_CARD_CONTEXT_KEY);
+  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
+</script>
+
+<header>
+  <img src={profile.profile?.picture} alt="" />
+  <span>{new Date(event.created_at * 1000).toISOString()}</span>
+</header>

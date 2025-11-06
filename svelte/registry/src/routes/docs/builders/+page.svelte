@@ -2,6 +2,19 @@
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
   import "../../../lib/styles/docs-page.css";
+
+  // Import code examples
+  import whatIsBuilder from './examples/what-is-builder.example?raw';
+  import whyFunctions from './examples/why-functions.example?raw';
+  import threadView from './examples/thread-view.example?raw';
+  import embeddedEvent from './examples/embedded-event.example?raw';
+  import profileFetcher from './examples/profile-fetcher.example?raw';
+  import followAction from './examples/follow-action.example?raw';
+  import relayInfo from './examples/relay-info.example?raw';
+  import bookmarkedRelayList from './examples/bookmarked-relay-list.example?raw';
+  import lazySubscriptions from './examples/lazy-subscriptions.svelte.example?raw';
+  import multipleInstances from './examples/multiple-instances.svelte.example?raw';
+  import customFeed from './examples/custom-feed.svelte.example?raw';
 </script>
 
 <PageTitle
@@ -18,14 +31,7 @@
       and it handles subscriptions and data fetching automatically. As Nostr data arrives, the getters update and Svelte re-renders your UI.
     </p>
 
-    <CodeBlock lang="typescript" code={`import { createEventContent } from '@nostr-dev-kit/svelte';
-
-const content = createEventContent(() => ({ event }), ndk);
-
-// Access reactive state
-content.segments    // ParsedSegment[] - parsed content with mentions, links, media
-content.content     // string - raw content
-content.emojiMap    // Map<string, string> - custom emoji mappings`} />
+    <CodeBlock lang="typescript" code={whatIsBuilder} />
   </section>
 
   <section>
@@ -35,16 +41,7 @@ content.emojiMap    // Map<string, string> - custom emoji mappings`} />
       When reactive values inside the function change, the builder automatically cleans up old subscriptions and creates new ones.
     </p>
 
-    <CodeBlock lang="typescript" code={`let currentEvent = $state(events[0]);
-
-// The builder tracks changes to currentEvent
-const content = createEventContent(() => ({ event: currentEvent }), ndk);
-
-// When currentEvent changes, the builder automatically:
-// 1. Stops old processing
-// 2. Parses new event content
-// 3. Updates all reactive state
-currentEvent = events[1];`} />
+    <CodeBlock lang="typescript" code={whyFunctions} />
   </section>
 
   <section>
@@ -55,24 +52,13 @@ currentEvent = events[1];`} />
     <p><code>createThreadView(() => ({'{ focusedEvent, maxDepth }'}), ndk)</code> - Thread navigation with parent chain and replies.</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const thread = createThreadView(() => ({ focusedEvent: event, maxDepth: 20 }), ndk);
-
-thread.events         // Array<ThreadNode> - complete linear chain
-thread.replies        // Array<NDKEvent> - replies to focused event only
-thread.otherReplies   // Array<NDKEvent> - replies to other thread events
-thread.allReplies     // Array<NDKEvent> - all replies (replies + otherReplies)
-thread.focusedEventId // string | null - ID of focused event
-thread.focusOn(event) // Navigate to different event`} />
+      <CodeBlock lang="typescript" code={threadView} />
     </details>
 
     <p><code>createEmbeddedEvent(() => ({'{ bech32 }'}), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
-
-embedded.event    // The fetched event
-embedded.loading  // Boolean
-embedded.error    // Error message if failed`} />
+      <CodeBlock lang="typescript" code={embeddedEvent} />
     </details>
 
     <h3>Profile & Social</h3>
@@ -80,20 +66,13 @@ embedded.error    // Error message if failed`} />
     <p><code>createProfileFetcher(() => ({'{ user }'}), ndk)</code> - Fetches user profiles with automatic deduplication.</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const profile = createProfileFetcher(() => ({ user }), ndk);
-
-profile.profile?.picture
-profile.profile?.displayName
-profile.loading`} />
+      <CodeBlock lang="typescript" code={profileFetcher} />
     </details>
 
     <p><code>createFollowAction(() => ({'{ target }'}), ndk)</code> - Follow/unfollow state for users or hashtags.</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const followAction = createFollowAction(() => ({ target: user }), ndk);
-
-followAction.isFollowing  // Boolean
-await followAction.follow();`} />
+      <CodeBlock lang="typescript" code={followAction} />
     </details>
 
     <h3>Relays</h3>
@@ -101,19 +80,13 @@ await followAction.follow();`} />
     <p><code>createRelayInfo(() => ({'{ relayUrl }'}), ndk)</code> - Fetches NIP-11 relay information.</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
-
-relay.nip11?.name
-relay.nip11?.description
-relay.nip11?.supported_nips`} />
+      <CodeBlock lang="typescript" code={relayInfo} />
     </details>
 
     <p><code>createBookmarkedRelayList(() => ({'{ }'}), ndk)</code> - User's bookmarked relays with connection stats.</p>
     <details>
       <summary>Show details</summary>
-      <CodeBlock lang="typescript" code={`const relays = createBookmarkedRelayList(() => ({ }), ndk);
-
-relays.relays  // Array<BookmarkedRelayWithStats>`} />
+      <CodeBlock lang="typescript" code={bookmarkedRelayList} />
     </details>
   </section>
 
@@ -126,72 +99,19 @@ relays.relays  // Array<BookmarkedRelayWithStats>`} />
       without performance concerns - data fetching happens only when needed.
     </p>
 
-    <CodeBlock lang="svelte" code={`<details>
-  <summary>Show content</summary>
-  <!-- Processing starts when details opens -->
-  <p>{content.segments.length} content segments</p>
-</details>`} />
+    <CodeBlock lang="svelte" code={lazySubscriptions} />
 
     <h3>Multiple Instances</h3>
     <p>Create a builder for each item in a list. Builders handle deduplication automatically.</p>
 
-    <CodeBlock lang="svelte" code={`const cards = $derived(
-  events.map(event => ({
-    event,
-    state: createEventContent(() => ({ event }), ndk)
-  }))
-);
-
-{#each cards as { event, state } (event.id)}
-  <article>
-    <p>{event.content}</p>
-    <p>{state.segments.length} content segments</p>
-  </article>
-{/each}`} />
+    <CodeBlock lang="svelte" code={multipleInstances} />
   </section>
 
   <section>
     <h2>Example: Custom Feed</h2>
     <p>Building a feed from scratch with builders:</p>
 
-    <CodeBlock lang="svelte" code={`<script>
-  import { createEventContent } from '@nostr-dev-kit/svelte';
-
-  const feed = ndk.$subscribe(() => ({
-    filters: [{ kinds: [1], authors: followedPubkeys, limit: 50 }],
-    opts: { closeOnEose: false }
-  }));
-
-  const events = $derived(
-    Array.from(feed.events || [])
-      .sort((a, b) => b.created_at - a.created_at)
-  );
-
-  const cards = $derived(
-    events.map(event => ({
-      event,
-      state: createEventContent(() => ({ event }), ndk)
-    }))
-  );
-</script>
-
-<div class="feed">
-  {#each cards as { event, state } (event.id)}
-    <article>
-      <header>
-        <strong>{event.author?.profile?.displayName}</strong>
-      </header>
-      {#each state.segments as segment}
-        {#if segment.type === 'text'}
-          <p>{segment.text}</p>
-        {/if}
-      {/each}
-      <footer>
-        <span>{state.segments.length} segments</span>
-      </footer>
-    </article>
-  {/each}
-</div>`} />
+    <CodeBlock lang="svelte" code={customFeed} />
   </section>
 
   <section class="next-section">

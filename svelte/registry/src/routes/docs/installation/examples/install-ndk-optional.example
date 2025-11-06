@@ -1,0 +1,14 @@
+# For caching (recommended for production)
+npm install @nostr-dev-kit/cache-dexie
+
+# For session management
+npm install @nostr-dev-kit/sessions
+
+# For wallet functionality
+npm install @nostr-dev-kit/wallet
+
+# For Web of Trust features
+npm install @nostr-dev-kit/wot
+
+# For relay synchronization
+npm install @nostr-dev-kit/sync

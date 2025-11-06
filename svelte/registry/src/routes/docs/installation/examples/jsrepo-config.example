@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/project-config.json",
+  "repos": ["@nostr/svelte"],
+  "includeTests": false,
+  "includeDocs": false,
+  "watermark": true,
+  "formatter": "biome",
+  "paths": {
+    "*": "$lib/components/nostr",
+    "ui": "$lib/components/ui",
+    "hooks": "$lib/hooks",
+    "utils": "$lib/utils",
+    "icons": "$lib/icons",
+    "blocks": "$lib/blocks"
+  }
+}

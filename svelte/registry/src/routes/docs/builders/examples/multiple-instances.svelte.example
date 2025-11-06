@@ -1,0 +1,13 @@
+const cards = $derived(
+  events.map(event => ({
+    event,
+    state: createEventContent(() => ({ event }), ndk)
+  }))
+);
+
+{#each cards as { event, state } (event.id)}
+  <article>
+    <p>{event.content}</p>
+    <p>{state.segments.length} content segments</p>
+  </article>
+{/each}

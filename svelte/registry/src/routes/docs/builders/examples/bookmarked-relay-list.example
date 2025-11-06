@@ -1,0 +1,3 @@
+const relays = createBookmarkedRelayList(() => ({ }), ndk);
+
+relays.relays  // Array<BookmarkedRelayWithStats>

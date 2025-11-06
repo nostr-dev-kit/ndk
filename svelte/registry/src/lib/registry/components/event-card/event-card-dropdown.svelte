@@ -219,12 +219,12 @@
       </div>
 
       <div class="modal-body">
-        <pre class="raw-event-content">{context.event.rawEvent()}</pre>
+        <pre class="raw-event-content">{context.event.inspect}</pre>
       </div>
 
       <div class="modal-footer">
         <button
-          onclick={() => copyToClipboard(JSON.stringify(context.event.rawEvent(), null, 2), 'raw event')}
+          onclick={() => copyToClipboard(context.event.inspect, 'raw event')}
           class="modal-button modal-button--secondary"
         >
           Copy to Clipboard

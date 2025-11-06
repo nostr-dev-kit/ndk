@@ -275,13 +275,13 @@
 
       <!-- Modal Body -->
       <div class="flex-1 overflow-auto px-6 py-4 bg-muted">
-        <pre class="font-mono text-sm leading-6 whitespace-pre-wrap break-words m-0">{event.rawEvent()}</pre>
+        <pre class="font-mono text-sm leading-6 whitespace-pre-wrap break-words m-0">{event.inspect}</pre>
       </div>
 
       <!-- Modal Footer -->
       <div class="flex justify-end gap-2 px-6 py-4 border-t border-border">
         <button
-          onclick={() => copyToClipboard(JSON.stringify(event.rawEvent(), null, 2), 'raw event')}
+          onclick={() => copyToClipboard(event.inspect, 'raw event')}
           class={cn(
             'px-4 py-2 rounded-md text-sm font-medium cursor-pointer',
             'bg-transparent border border-border text-foreground',

@@ -14,31 +14,22 @@
 	}
 
 	interface Props {
-		/** The code example (optional - hides Code tab if not provided) */
 		code?: string;
 
-		/** Title for the demo */
 		title?: string;
 
-		/** Description of the demo */
 		description?: string;
 
-		/** Component name for install command (e.g., "article-card-portrait") - enables Usage section */
 		component?: string;
 
-		/** Props documentation to display in Usage section */
 		props?: PropDoc[];
 
-		/** One-liner usage example (e.g., "<FollowButtonPill target={user} />") */
 		usageOneLiner?: string;
 
-		/** The preview content */
 		children?: import('svelte').Snippet;
 
-		/** Optional controls to show above preview (for prop toggles/selects) */
 		controls?: import('svelte').Snippet;
 
-		/** Custom usage content (overrides default UsageSection) */
 		usage?: import('svelte').Snippet;
 	}
 

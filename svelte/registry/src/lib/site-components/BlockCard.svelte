@@ -5,7 +5,7 @@
     icon: string;
     href: string;
     variantCount: number;
-    badges?: { label: string; variant?: 'default' | 'nip' }[];
+    badges?: { label: string; variant?: 'default' | 'nip' | 'feature' }[];
     gradient?: string;
     iconGradient?: string;
   }

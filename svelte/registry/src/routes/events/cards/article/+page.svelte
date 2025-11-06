@@ -357,8 +357,8 @@
 {/if}
 
 <!-- API Drawer -->
-{#if focusedPrimitive && primitiveData[focusedPrimitive]}
-	{@const data = primitiveData[focusedPrimitive]}
+{#if focusedPrimitive && primitiveData[focusedPrimitive as keyof typeof primitiveData]}
+	{@const data = primitiveData[focusedPrimitive as keyof typeof primitiveData]}
 	<div
 		class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
 		onclick={closePrimitiveDrawer}

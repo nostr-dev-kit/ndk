@@ -73,7 +73,7 @@
 		<h3>NotificationItem.Root</h3>
 		<p>Context provider that sets up notification data for child primitives.</p>
 		<ApiTable
-			props={[
+			rows={[
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{
 					name: 'notification',
@@ -91,7 +91,7 @@
 			for advanced layouts.
 		</p>
 		<ApiTable
-			props={[
+			rows={[
 				{
 					name: 'max',
 					type: 'number',
@@ -119,7 +119,7 @@
 			custom snippet.
 		</p>
 		<ApiTable
-			props={[
+			rows={[
 				{
 					name: 'snippet',
 					type: 'Snippet<[{ type: string, count: number, icon: Component }]>',
@@ -133,7 +133,7 @@
 			Renders the embedded event being interacted with using ContentRenderer and EmbeddedEvent.
 		</p>
 		<ApiTable
-			props={[
+			rows={[
 				{
 					name: 'renderer',
 					type: 'ContentRenderer',
@@ -153,7 +153,7 @@
 			Shows relative time of most recent interaction using createTimeAgo. Updates every minute.
 		</p>
 		<ApiTable
-			props={[
+			rows={[
 				{
 					name: 'snippet',
 					type: 'Snippet<[{ timestamp: number, formatted: string }]>',

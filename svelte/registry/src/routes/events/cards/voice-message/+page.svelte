@@ -76,7 +76,7 @@
 {#snippet compactPreview()}
 	<div class="space-y-4 max-w-2xl mx-auto">
 		{#each displayVoiceMessages as voiceMessage (voiceMessage.id)}
-			<VoiceMessageCardCompact {ndk} event={voiceMessage} />
+			<VoiceMessageCardCompact {ndk} {voiceMessage} />
 		{/each}
 	</div>
 {/snippet}
@@ -84,20 +84,20 @@
 {#snippet expandedPreview()}
 	{#if voiceMessage1}
 		<div class="max-w-2xl mx-auto">
-			<VoiceMessageCardExpanded {ndk} event={voiceMessage1} />
+			<VoiceMessageCardExpanded {ndk} voiceMessage={voiceMessage1} />
 		</div>
 	{/if}
 {/snippet}
 
 {#snippet basicPreview()}
 	{#if voiceMessage1}
-		<UIBasic {ndk} event={voiceMessage1} />
+		<UIBasic {ndk} voiceMessage={voiceMessage1} />
 	{/if}
 {/snippet}
 
 {#snippet compositionPreview()}
 	{#if voiceMessage1}
-		<UIComposition {ndk} event={voiceMessage1} />
+		<UIComposition {ndk} voiceMessage={voiceMessage1} />
 	{/if}
 {/snippet}
 

@@ -13,11 +13,8 @@
 
 	interface Props {
 		componentName: string;
-		/** Props documentation to display */
 		props?: PropDoc[];
-		/** Optional additional information about what gets installed */
 		note?: string;
-		/** Show the full URL format instead of shorthand */
 		showFullUrl?: boolean;
 	}
 

@@ -1,0 +1,15 @@
+<!-- event-card-root.svelte -->
+<script>
+  import { setContext } from 'svelte';
+
+  let { ndk, event }: Props = $props();
+
+  setContext(EVENT_CARD_CONTEXT_KEY, {
+    get ndk() { return ndk; },
+    get event() { return event; }
+  });
+</script>
+
+<article>
+  {@render children?.()}
+</article>

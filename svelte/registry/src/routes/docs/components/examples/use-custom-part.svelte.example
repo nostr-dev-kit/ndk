@@ -1,0 +1,6 @@
+<!-- Use alongside registry parts -->
+<EventCard.Root {ndk} {event}>
+  <EventCard.Header />
+  <EventCard.Content />
+  <MyCustomTimestamp />
+</EventCard.Root>

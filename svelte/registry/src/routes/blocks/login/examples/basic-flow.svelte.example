@@ -1,0 +1,12 @@
+<script lang="ts">
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
+  import { ndk } from '$lib/ndk.svelte';
+
+  function handleLoginSuccess() {
+    console.log('User logged in:', ndk.$currentPubkey);
+    // Redirect to app
+    goto('/dashboard');
+  }
+</script>
+
+<LoginCompact {ndk} onSuccess={handleLoginSuccess} />

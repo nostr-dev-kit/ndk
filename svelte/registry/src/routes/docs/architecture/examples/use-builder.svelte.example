@@ -1,0 +1,12 @@
+import { createEventContent } from '@nostr-dev-kit/svelte';
+
+const content = createEventContent(() => ({ event }), ndk);
+
+// Build your own UI
+<div class="my-design">
+  {#each content.segments as segment}
+    {#if segment.type === 'text'}
+      <span>{segment.text}</span>
+    {/if}
+  {/each}
+</div>

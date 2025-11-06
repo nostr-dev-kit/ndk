@@ -2,6 +2,26 @@
 	import CodeBlock from '$lib/site-components/CodeBlock.svelte';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import "../../../lib/styles/docs-page.css";
+
+	// Import code examples
+	import createProject from './examples/create-project.example?raw';
+	import installTailwind from './examples/install-tailwind.example?raw';
+	import viteConfig from './examples/vite-config.example?raw';
+	import appCss from './examples/app-css.example?raw';
+	import layout from './examples/layout.svelte.example?raw';
+	import installNdk from './examples/install-ndk.example?raw';
+	import installNdkOptional from './examples/install-ndk-optional.example?raw';
+	import ndkConfig from './examples/ndk-config.example?raw';
+	import installJsrepo from './examples/install-jsrepo.example?raw';
+	import jsrepoInit from './examples/jsrepo-init.example?raw';
+	import jsrepoConfig from './examples/jsrepo-config.example?raw';
+	import installBiome from './examples/install-biome.example?raw';
+	import jsrepoInfo from './examples/jsrepo-info.example?raw';
+	import jsrepoAdd from './examples/jsrepo-add.example?raw';
+	import usingComponents from './examples/using-components.svelte.example?raw';
+	import jsrepoUpdate from './examples/jsrepo-update.example?raw';
+	import jsrepoConfigReference from './examples/jsrepo-config-reference.example?raw';
+	import ndkAdvancedConfig from './examples/ndk-advanced-config.example?raw';
 </script>
 
 <PageTitle
@@ -32,19 +52,7 @@
 
 	<CodeBlock
 		language="bash"
-		code={`# Using npm
-npx sv create my-nostr-app
-
-# Using bun
-bunx sv create my-nostr-app
-
-# Navigate to your project
-cd my-nostr-app
-
-# Install dependencies
-npm install
-# or
-bun install`}
+		code={createProject}
 	/>
 
 	<p>When prompted, select:</p>
@@ -66,9 +74,7 @@ bun install`}
 
 	<CodeBlock
 		language="bash"
-		code={`npm install -D @tailwindcss/vite
-# or
-bun add -D @tailwindcss/vite`}
+		code={installTailwind}
 	/>
 
 	<h3>Configure Vite</h3>
@@ -77,20 +83,14 @@ bun add -D @tailwindcss/vite`}
 
 	<CodeBlock
 		language="typescript"
-		code={`import { sveltekit } from '@sveltejs/kit/vite';
-import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
-
-export default defineConfig({
-  plugins: [sveltekit(), tailwindcss()]
-});`}
+		code={viteConfig}
 	/>
 
 	<h3>Create CSS File</h3>
 
 	<p>Create <code>src/app.css</code> and import Tailwind:</p>
 
-	<CodeBlock language="css" code={`@import "tailwindcss";`} />
+	<CodeBlock language="css" code={appCss} />
 
 	<h3>Import in Layout</h3>
 
@@ -98,12 +98,7 @@ export default defineConfig({
 
 	<CodeBlock
 		language="svelte"
-		code={`<script lang="ts">
-  import '../app.css';
-  const { children } = $props();
-</script>
-
-{@render children()}`}
+		code={layout}
 	/>
 
 	</section>
@@ -115,9 +110,7 @@ export default defineConfig({
 
 	<CodeBlock
 		language="bash"
-		code={`npm install @nostr-dev-kit/ndk @nostr-dev-kit/svelte
-# or
-bun add @nostr-dev-kit/ndk @nostr-dev-kit/svelte`}
+		code={installNdk}
 	/>
 
 	<h3>Optional: Additional NDK Packages</h3>
@@ -126,20 +119,7 @@ bun add @nostr-dev-kit/ndk @nostr-dev-kit/svelte`}
 
 	<CodeBlock
 		language="bash"
-		code={`# For caching (recommended for production)
-npm install @nostr-dev-kit/cache-dexie
-
-# For session management
-npm install @nostr-dev-kit/sessions
-
-# For wallet functionality
-npm install @nostr-dev-kit/wallet
-
-# For Web of Trust features
-npm install @nostr-dev-kit/wot
-
-# For relay synchronization
-npm install @nostr-dev-kit/sync`}
+		code={installNdkOptional}
 	/>
 
 	</section>
@@ -153,22 +133,7 @@ npm install @nostr-dev-kit/sync`}
 
 	<CodeBlock
 		language="typescript"
-		code={`import { NDKSvelte } from '@nostr-dev-kit/svelte';
-import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
-
-export const ndk = new NDKSvelte({
-  explicitRelayUrls: [
-    'wss://relay.damus.io',
-    'wss://relay.nostr.band',
-    'wss://nos.lol',
-    'wss://relay.snort.social'
-  ],
-  // Optional: Add caching for better performance
-  cacheAdapter: new NDKCacheDexie({ dbName: 'my-nostr-app' })
-});
-
-// Connect to relays
-ndk.connect();`}
+		code={ndkConfig}
 	/>
 
 	<div class="bg-blue-900/20 border border-blue-700 rounded-lg p-4 my-6">
@@ -190,12 +155,7 @@ ndk.connect();`}
 
 	<CodeBlock
 		language="bash"
-		code={`npm install -g jsrepo
-# or
-bun add -g jsrepo
-
-# Verify installation
-jsrepo --version`}
+		code={installJsrepo}
 	/>
 
 	</section>
@@ -205,7 +165,7 @@ jsrepo --version`}
 
 	<p>Initialize jsrepo in your project to configure component installation paths:</p>
 
-	<CodeBlock language="bash" code={`jsrepo init @nostr/svelte`} />
+	<CodeBlock language="bash" code={jsrepoInit} />
 
 	<p>This will prompt you to configure:</p>
 	<ul>
@@ -218,22 +178,7 @@ jsrepo --version`}
 
 	<CodeBlock
 		language="json"
-		code={`{
-  "$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/project-config.json",
-  "repos": ["@nostr/svelte"],
-  "includeTests": false,
-  "includeDocs": false,
-  "watermark": true,
-  "formatter": "biome",
-  "paths": {
-    "*": "$lib/components/nostr",
-    "ui": "$lib/components/ui",
-    "hooks": "$lib/hooks",
-    "utils": "$lib/utils",
-    "icons": "$lib/icons",
-    "blocks": "$lib/blocks"
-  }
-}`}
+		code={jsrepoConfig}
 	/>
 
 	<h3>Install Formatter</h3>
@@ -242,9 +187,7 @@ jsrepo --version`}
 
 	<CodeBlock
 		language="bash"
-		code={`npm install -D @biomejs/biome
-# or
-bun add -D @biomejs/biome`}
+		code={installBiome}
 	/>
 
 	</section>
@@ -256,7 +199,7 @@ bun add -D @biomejs/biome`}
 
 	<h3>Browse Available Components</h3>
 
-	<CodeBlock language="bash" code={`jsrepo info @nostr/svelte`} />
+	<CodeBlock language="bash" code={jsrepoInfo} />
 
 	<h3>Add Components</h3>
 
@@ -264,14 +207,7 @@ bun add -D @biomejs/biome`}
 
 	<CodeBlock
 		language="bash"
-		code={`# Add a single component
-jsrepo add components/user-card
-
-# Add multiple components at once
-jsrepo add components/user-card ui/user ui/event
-
-# Add with confirmation prompt
-jsrepo add components/note-composer -y`}
+		code={jsrepoAdd}
 	/>
 
 	<p>When you add a component, jsrepo will:</p>
@@ -291,32 +227,7 @@ jsrepo add components/note-composer -y`}
 
 	<CodeBlock
 		language="svelte"
-		code={`<script lang="ts">
-  import { ndk } from '$lib/ndk';
-  import { User } from '$lib/components/ui/user';
-
-  const pubkey = 'e33fe65f1fde44c6dc17eeb38fdad0fceaf1cae8722084332ed1e32496291d42';
-  const profile = ndk.$fetchProfile(() => pubkey);
-</script>
-
-<div class="container mx-auto p-8">
-  <h1 class="text-2xl font-bold mb-4">User Profile</h1>
-
-  {#if profile}
-    <User.Root {pubkey}>
-      <div class="flex items-center gap-4">
-        <User.Avatar class="w-16 h-16" />
-        <div>
-          <User.Name class="text-xl font-bold" />
-          <User.Nip05 class="text-sm text-gray-600" />
-          <User.Bio class="mt-2" />
-        </div>
-      </div>
-    </User.Root>
-  {:else}
-    <p>Loading profile...</p>
-  {/if}
-</div>`}
+		code={usingComponents}
 	/>
 
 	</section>
@@ -328,14 +239,7 @@ jsrepo add components/note-composer -y`}
 
 	<CodeBlock
 		language="bash"
-		code={`# Update all components
-jsrepo update
-
-# Update specific components
-jsrepo update components/user-card ui/user
-
-# Interactive update with diff preview
-jsrepo update --expand`}
+		code={jsrepoUpdate}
 	/>
 
 	</section>
@@ -349,38 +253,7 @@ jsrepo update --expand`}
 
 	<CodeBlock
 		language="json"
-		code={`{
-  "$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/project-config.json",
-
-  // Registries to use
-  "repos": ["@nostr/svelte"],
-
-  // Include test files with components
-  "includeTests": false,
-
-  // Include documentation files
-  "includeDocs": false,
-
-  // Add watermark comments to files
-  "watermark": true,
-
-  // Code formatter: "prettier" | "biome" | "none"
-  "formatter": "biome",
-
-  // Config file paths (rarely needed)
-  "configFiles": {},
-
-  // Where to install components by category
-  "paths": {
-    "*": "$lib/components/nostr",      // Default path
-    "ui": "$lib/components/ui",         // UI primitives
-    "hooks": "$lib/hooks",              // Svelte hooks
-    "utils": "$lib/utils",              // Utilities
-    "icons": "$lib/icons",              // Icon components
-    "blocks": "$lib/blocks",            // Complete blocks
-    "builders": "$lib/builders"         // Component builders
-  }
-}`}
+		code={jsrepoConfigReference}
 	/>
 
 	</section>
@@ -394,42 +267,7 @@ jsrepo update --expand`}
 
 	<CodeBlock
 		language="typescript"
-		code={`import { NDKSvelte } from '@nostr-dev-kit/svelte';
-import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
-
-export const ndk = new NDKSvelte({
-  // Relay configuration
-  explicitRelayUrls: [
-    'wss://relay.damus.io',
-    'wss://relay.nostr.band',
-    'wss://nos.lol',
-    'wss://relay.snort.social'
-  ],
-
-  // Enable caching for better performance
-  cacheAdapter: new NDKCacheDexie({
-    dbName: 'my-app-cache'
-  }),
-
-  // Optional: Enable debug logging
-  debug: import.meta.env.DEV,
-
-  // Optional: Set default relay policy
-  // outboxRelayUrls: ['wss://purplepag.es'],
-  // enableOutboxModel: true,
-});
-
-// Connect to relays
-ndk.connect();
-
-// Optional: Handle connection events
-ndk.pool.on('relay:connect', (relay) => {
-  console.log('Connected to relay:', relay.url);
-});
-
-ndk.pool.on('relay:disconnect', (relay) => {
-  console.log('Disconnected from relay:', relay.url);
-});`}
+		code={ndkAdvancedConfig}
 	/>
 
 	</section>

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/project-config.json",
+
+  // Registries to use
+  "repos": ["@nostr/svelte"],
+
+  // Include test files with components
+  "includeTests": false,
+
+  // Include documentation files
+  "includeDocs": false,
+
+  // Add watermark comments to files
+  "watermark": true,
+
+  // Code formatter: "prettier" | "biome" | "none"
+  "formatter": "biome",
+
+  // Config file paths (rarely needed)
+  "configFiles": {},
+
+  // Where to install components by category
+  "paths": {
+    "*": "$lib/components/nostr",      // Default path
+    "ui": "$lib/components/ui",         // UI primitives
+    "hooks": "$lib/hooks",              // Svelte hooks
+    "utils": "$lib/utils",              // Utilities
+    "icons": "$lib/icons",              // Icon components
+    "blocks": "$lib/blocks",            // Complete blocks
+    "builders": "$lib/builders"         // Component builders
+  }
+}

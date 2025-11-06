@@ -1,0 +1,36 @@
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
+import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
+
+export const ndk = new NDKSvelte({
+  // Relay configuration
+  explicitRelayUrls: [
+    'wss://relay.damus.io',
+    'wss://relay.nostr.band',
+    'wss://nos.lol',
+    'wss://relay.snort.social'
+  ],
+
+  // Enable caching for better performance
+  cacheAdapter: new NDKCacheDexie({
+    dbName: 'my-app-cache'
+  }),
+
+  // Optional: Enable debug logging
+  debug: import.meta.env.DEV,
+
+  // Optional: Set default relay policy
+  // outboxRelayUrls: ['wss://purplepag.es'],
+  // enableOutboxModel: true,
+});
+
+// Connect to relays
+ndk.connect();
+
+// Optional: Handle connection events
+ndk.pool.on('relay:connect', (relay) => {
+  console.log('Connected to relay:', relay.url);
+});
+
+ndk.pool.on('relay:disconnect', (relay) => {
+  console.log('Disconnected from relay:', relay.url);
+});

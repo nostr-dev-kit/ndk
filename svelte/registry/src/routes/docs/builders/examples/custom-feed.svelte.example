@@ -1,0 +1,38 @@
+<script>
+  import { createEventContent } from '@nostr-dev-kit/svelte';
+
+  const feed = ndk.$subscribe(() => ({
+    filters: [{ kinds: [1], authors: followedPubkeys, limit: 50 }],
+    opts: { closeOnEose: false }
+  }));
+
+  const events = $derived(
+    Array.from(feed.events || [])
+      .sort((a, b) => b.created_at - a.created_at)
+  );
+
+  const cards = $derived(
+    events.map(event => ({
+      event,
+      state: createEventContent(() => ({ event }), ndk)
+    }))
+  );
+</script>
+
+<div class="feed">
+  {#each cards as { event, state } (event.id)}
+    <article>
+      <header>
+        <strong>{event.author?.profile?.displayName}</strong>
+      </header>
+      {#each state.segments as segment}
+        {#if segment.type === 'text'}
+          <p>{segment.text}</p>
+        {/if}
+      {/each}
+      <footer>
+        <span>{state.segments.length} segments</span>
+      </footer>
+    </article>
+  {/each}
+</div>

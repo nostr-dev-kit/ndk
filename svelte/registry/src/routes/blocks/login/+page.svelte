@@ -6,6 +6,13 @@
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
 
+  // Import code examples
+  import withoutExtension from './examples/without-extension.svelte.example?raw';
+  import withExtension from './examples/with-extension.svelte.example?raw';
+  import basicFlow from './examples/basic-flow.svelte.example?raw';
+  import withStyling from './examples/with-styling.svelte.example?raw';
+  import inModal from './examples/in-modal.svelte.example?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
 
@@ -49,21 +56,7 @@
       </div>
 
       <div class="bg-background overflow-x-auto">
-        <CodeBlock lang="svelte" code={`<script lang="ts">
-  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-</script>
-
-<LoginCompact
-  {ndk}
-  onSuccess={() => {
-    console.log('Login successful!');
-    // Handle post-login logic
-  }}
-/>`} />
+        <CodeBlock lang="svelte" code={withoutExtension} />
       </div>
     </div>
 
@@ -83,21 +76,7 @@
       </div>
 
       <div class="bg-background overflow-x-auto">
-        <CodeBlock lang="svelte" code={`<script lang="ts">
-  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-</script>
-
-<LoginCompact
-  {ndk}
-  onSuccess={() => {
-    console.log('Login successful!');
-    // Navigate to dashboard or protected route
-  }}
-/>`} />
+        <CodeBlock lang="svelte" code={withExtension} />
       </div>
     </div>
   </section>
@@ -186,57 +165,17 @@
 
     <div class="mb-10">
       <h3 class="text-lg font-semibold mb-4 text-foreground">Basic Login Flow</h3>
-      <CodeBlock lang="svelte" code={`<script lang="ts">
-  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { ndk } from '$lib/ndk.svelte';
-
-  function handleLoginSuccess() {
-    console.log('User logged in:', ndk.$currentPubkey);
-    // Redirect to app
-    goto('/dashboard');
-  }
-</script>
-
-<LoginCompact {ndk} onSuccess={handleLoginSuccess} />`} />
+      <CodeBlock lang="svelte" code={basicFlow} />
     </div>
 
     <div class="mb-10">
       <h3 class="text-lg font-semibold mb-4 text-foreground">With Custom Styling</h3>
-      <CodeBlock lang="svelte" code={`<script lang="ts">
-  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { ndk } from '$lib/ndk.svelte';
-</script>
-
-<div class="flex items-center justify-center min-h-screen">
-  <LoginCompact
-    {ndk}
-    class="max-w-md shadow-2xl"
-    onSuccess={() => console.log('Logged in!')}
-  />
-</div>`} />
+      <CodeBlock lang="svelte" code={withStyling} />
     </div>
 
     <div class="mb-10">
       <h3 class="text-lg font-semibold mb-4 text-foreground">In a Modal</h3>
-      <CodeBlock lang="svelte" code={`<script lang="ts">
-  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { ndk } from '$lib/ndk.svelte';
-
-  let showLoginModal = $state(false);
-
-  function handleSuccess() {
-    showLoginModal = false;
-    console.log('Login successful!');
-  }
-</script>
-
-{#if showLoginModal}
-  <div class="modal-backdrop" onclick={() => showLoginModal = false}>
-    <div onclick={(e) => e.stopPropagation()}>
-      <LoginCompact {ndk} onSuccess={handleSuccess} />
-    </div>
-  </div>
-{/if}`} />
+      <CodeBlock lang="svelte" code={inModal} />
     </div>
   </section>
 </div>

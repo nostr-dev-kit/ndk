@@ -1,0 +1,3 @@
+npm install @nostr-dev-kit/ndk @nostr-dev-kit/svelte
+# or
+bun add @nostr-dev-kit/ndk @nostr-dev-kit/svelte

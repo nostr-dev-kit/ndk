@@ -1,0 +1,5 @@
+const profile = createProfileFetcher(() => ({ user }), ndk);
+
+profile.profile?.picture
+profile.profile?.displayName
+profile.loading

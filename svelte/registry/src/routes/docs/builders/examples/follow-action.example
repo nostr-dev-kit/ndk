@@ -1,0 +1,4 @@
+const followAction = createFollowAction(() => ({ target: user }), ndk);
+
+followAction.isFollowing  // Boolean
+await followAction.follow();

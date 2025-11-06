@@ -1,0 +1,16 @@
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
+import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
+
+export const ndk = new NDKSvelte({
+  explicitRelayUrls: [
+    'wss://relay.damus.io',
+    'wss://relay.nostr.band',
+    'wss://nos.lol',
+    'wss://relay.snort.social'
+  ],
+  // Optional: Add caching for better performance
+  cacheAdapter: new NDKCacheDexie({ dbName: 'my-nostr-app' })
+});
+
+// Connect to relays
+ndk.connect();

@@ -2,6 +2,17 @@
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
   import "../../../lib/styles/docs-page.css";
+
+  // Import code examples
+  import rootExample from './examples/root-example.svelte.example?raw';
+  import childExample from './examples/child-example.svelte.example?raw';
+  import usageExample from './examples/usage-example.svelte.example?raw';
+  import editDirectly from './examples/edit-directly.svelte.example?raw';
+  import mixParts from './examples/mix-parts.svelte.example?raw';
+  import useBuildersDirectly from './examples/use-builders-directly.svelte.example?raw';
+  import customPart from './examples/custom-part.svelte.example?raw';
+  import useCustomPart from './examples/use-custom-part.svelte.example?raw';
+  import standalone from './examples/standalone.svelte.example?raw';
 </script>
 
 <PageTitle
@@ -32,42 +43,11 @@
       Children get the context and create builders as needed to render UI.
     </p>
 
-    <CodeBlock lang="svelte" code={`<!-- event-card-root.svelte -->
-<script>
-  import { setContext } from 'svelte';
+    <CodeBlock lang="svelte" code={rootExample} />
 
-  let { ndk, event }: Props = $props();
+    <CodeBlock lang="svelte" code={childExample} />
 
-  setContext(EVENT_CARD_CONTEXT_KEY, {
-    get ndk() { return ndk; },
-    get event() { return event; }
-  });
-</script>
-
-<article>
-  {@render children?.()}
-</article>`} />
-
-    <CodeBlock lang="svelte" code={`<!-- event-card-header.svelte -->
-<script>
-  import { getContext } from 'svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-
-  const { ndk, event } = getContext(EVENT_CARD_CONTEXT_KEY);
-  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
-</script>
-
-<header>
-  <img src={profile.profile?.picture} alt="" />
-  <span>{new Date(event.created_at * 1000).toISOString()}</span>
-</header>`} />
-
-    <CodeBlock lang="svelte" code={`<!-- Usage -->
-<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-  <EventCard.Content />
-  <EventCard.Actions />
-</EventCard.Root>`} />
+    <CodeBlock lang="svelte" code={usageExample} />
 
     <p>
       Root provides NDK and data via context. Children create their own builders as needed. Children compose together as needed.
@@ -81,49 +61,17 @@
     <h3>Edit the Files Directly</h3>
     <p>Open your copy and modify it.</p>
 
-    <CodeBlock lang="svelte" code={`<!-- Your copy at src/lib/components/event-card/
-     event-card-header.svelte -->
-<script>
-  import { fade } from 'svelte/transition';
-</script>
-
-<header transition:fade class="my-custom-styles">
-  <div class="badge">Premium</div>
-  <Avatar {ndk} user={event.author} />
-</header>`} />
+    <CodeBlock lang="svelte" code={editDirectly} />
 
     <h3>Mix Component Parts with Custom Parts</h3>
     <p>Use some registry parts, replace others with your own markup.</p>
 
-    <CodeBlock lang="svelte" code={`<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-
-  <!-- Custom content -->
-  <div class="my-content">
-    <p>{event.content}</p>
-  </div>
-
-  <EventCard.Actions />
-</EventCard.Root>`} />
+    <CodeBlock lang="svelte" code={mixParts} />
 
     <h3>Use Builders Directly</h3>
     <p>Skip the component structure entirely and use builders directly for full control.</p>
 
-    <CodeBlock lang="svelte" code={`<script>
-  import { createProfileFetcher, createEventContent } from '@nostr-dev-kit/svelte';
-
-  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
-  const content = createEventContent(() => ({ event }), ndk);
-</script>
-
-<div class="my-design">
-  <h2>{profile.profile?.displayName}</h2>
-  {#each content.segments as segment}
-    {#if segment.type === 'text'}
-      <p>{segment.text}</p>
-    {/if}
-  {/each}
-</div>`} />
+    <CodeBlock lang="svelte" code={useBuildersDirectly} />
   </section>
 
   <section>
@@ -132,26 +80,9 @@
       You can build your own child components that access the same context.
     </p>
 
-    <CodeBlock lang="svelte" code={`<!-- my-custom-timestamp.svelte -->
-<script>
-  import { getContext } from 'svelte';
-  import { EVENT_CARD_CONTEXT_KEY } from './context.svelte';
-  import { createTimeAgo } from '$lib/utils/time-ago.svelte';
+    <CodeBlock lang="svelte" code={customPart} />
 
-  const { event } = getContext(EVENT_CARD_CONTEXT_KEY);
-  const timeAgo = createTimeAgo(event.created_at);
-</script>
-
-<div class="timestamp">
-  {timeAgo}
-</div>`} />
-
-    <CodeBlock lang="svelte" code={`<!-- Use alongside registry parts -->
-<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-  <EventCard.Content />
-  <MyCustomTimestamp />
-</EventCard.Root>`} />
+    <CodeBlock lang="svelte" code={useCustomPart} />
   </section>
 
   <section>
@@ -160,15 +91,7 @@
       Some components work standalone or composed. They accept optional props and fall back to context if not provided.
     </p>
 
-    <CodeBlock lang="svelte" code={`<!-- Composed - gets data from context -->
-<User.Root {ndk} {user}>
-  <User.Avatar />
-  <User.Name />
-</User.Root>
-
-<!-- Standalone - provide data directly -->
-<User.Avatar {ndk} {user} class="w-16 h-16" />
-<User.Name {ndk} {user} field="displayName" />`} />
+    <CodeBlock lang="svelte" code={standalone} />
 
     <p>
       Check the component props - optional props mean it supports standalone usage and will fall back to context.

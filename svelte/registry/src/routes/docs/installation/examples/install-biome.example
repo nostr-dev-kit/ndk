@@ -1,0 +1,3 @@
+npm install -D @biomejs/biome
+# or
+bun add -D @biomejs/biome

@@ -10,7 +10,7 @@
   const ctx = getZapSendContext();
 </script>
 
-<div class={className}>
+<div data-zap-send-splits="" class={className}>
   {#if ctx.splits && ctx.splits.length > 0}
     <div class="text-sm text-gray-600">
       <p class="font-medium">Splits:</p>

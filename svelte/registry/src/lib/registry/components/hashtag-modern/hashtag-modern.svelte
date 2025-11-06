@@ -57,7 +57,8 @@
     onmouseleave={handleMouseLeave}
   >
     <span
-      class={cn(
+      data-hashtag-modern=""
+    class={cn(
         'inline-flex items-center gap-1 text-primary hover:underline cursor-pointer transition-all',
         className
       )}

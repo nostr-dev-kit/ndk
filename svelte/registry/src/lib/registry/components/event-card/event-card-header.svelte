@@ -48,6 +48,8 @@
 </script>
 
 <header
+  data-event-card-header=""
+  data-variant={variant}
   class={cn(
     'flex items-center gap-3',
     className

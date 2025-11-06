@@ -22,6 +22,8 @@
 </script>
 
 <div
+  data-emoji-picker-list=""
+  data-columns={columns}
   class={cn('grid gap-2 max-w-full', className)}
   style="grid-template-columns: repeat({columns}, minmax(0, 1fr));"
 >

@@ -12,7 +12,7 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<div class="highlight-embedded-inline">
+<div data-highlight-embedded-inline="" class="highlight-embedded-inline">
   <Highlight.Root {ndk} {event} variant="feed">
     <div class="highlight-container">
       <Highlight.Content class="text-sm" />

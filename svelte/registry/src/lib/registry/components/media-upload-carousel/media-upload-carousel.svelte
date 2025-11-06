@@ -35,7 +35,7 @@
 	}
 </script>
 
-<MediaUpload.Root {ndk} {fallbackServer} {accept} {maxFiles} bind:uploads>
+<MediaUpload.Root data-media-upload-carousel="" {ndk} {fallbackServer} {accept} {maxFiles} bind:uploads>
 	<MediaUpload.Carousel class={className}>
 		{#each uploads as upload, i (upload.url)}
 			<MediaUpload.Item

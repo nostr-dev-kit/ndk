@@ -24,7 +24,7 @@
 </script>
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
-  <div class="voice-message-compact {className}">
+  <div data-voice-message-card-compact="" class="voice-message-compact {className}">
     {#if showAuthor}
       <div class="author-section">
         <User.Root {ndk} user={voiceMessage.author}>

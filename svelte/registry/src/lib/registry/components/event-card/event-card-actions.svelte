@@ -23,6 +23,8 @@
 </script>
 
 <div
+  data-event-card-actions=""
+  data-variant={variant}
   class={cn(
     'flex items-center gap-12 select-none',
     variant === 'vertical' && 'flex-col gap-4',

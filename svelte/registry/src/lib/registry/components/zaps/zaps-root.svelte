@@ -46,6 +46,10 @@
       stats,
     });
   });
+
+  let rootElement = $state<HTMLDivElement>();
 </script>
 
-{@render children(processedZaps, stats)}
+<div bind:this={rootElement} data-zaps-root="">
+  {@render children(processedZaps, stats)}
+</div>

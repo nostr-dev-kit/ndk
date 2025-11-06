@@ -45,7 +45,7 @@
 </script>
 
 <User.Root {ndk} {pubkey}>
-  <div class={cn(
+  <div data-user-card-classic="" class={cn(
     'w-80 shrink-0 bg-card border border-border rounded-xl shadow-2xl overflow-hidden',
     className
   )}>

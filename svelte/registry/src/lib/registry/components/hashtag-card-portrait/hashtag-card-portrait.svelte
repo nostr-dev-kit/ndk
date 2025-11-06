@@ -39,7 +39,8 @@
   const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 </script>
 
-<div class={cn(
+<div data-hashtag-card-portrait=""
+    class={cn(
   'flex flex-col text-center gap-4 p-6 bg-card border border-border rounded-xl w-80 shrink-0 overflow-hidden',
   className
 )}>

@@ -44,7 +44,7 @@
 {#if child}
   {@render child({ props: mergedProps, ...snippetProps })}
 {:else}
-  <button {...mergedProps}>
+  <button data-emoji-picker-item="" {...mergedProps}>
     {#if children}
       {@render children(snippetProps)}
     {:else}

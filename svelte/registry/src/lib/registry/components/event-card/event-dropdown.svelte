@@ -80,6 +80,8 @@
 
 <Popover.Root bind:open={showMenu}>
   <div
+    data-event-dropdown=""
+    data-menu-open={showMenu ? '' : undefined}
     class={cn('relative flex-shrink-0', className)}
     onclick={stopPropagation}
     onkeydown={(e) => e.stopPropagation()}

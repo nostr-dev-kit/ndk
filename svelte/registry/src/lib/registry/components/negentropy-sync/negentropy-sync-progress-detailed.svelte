@@ -12,16 +12,16 @@
 </script>
 
 <NegentrogySync.Root {syncBuilder}>
-	<div class="space-y-4 p-4 bg-card rounded-lg border {className}">
-		<div class="flex items-center justify-between">
+	<div data-negentropy-sync-progress-detailed="" class="space-y-4 p-4 bg-card rounded-lg border {className}">
+		<div data-negentropy-sync-progress-detailed="" class="flex items-center justify-between">
 			<NegentrogySync.Stats direction="horizontal" />
 		</div>
 
-		<div class="space-y-3">
+		<div data-negentropy-sync-progress-detailed="" class="space-y-3">
 			<NegentrogySync.ProgressBar showPercentage class="h-3" />
 
-			<div class="space-y-2">
-				<div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+			<div data-negentropy-sync-progress-detailed="" class="space-y-2">
+				<div data-negentropy-sync-progress-detailed="" class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
 					<span>Relay Status</span>
 					<span class="text-gray-500">Individual Progress</span>
 				</div>

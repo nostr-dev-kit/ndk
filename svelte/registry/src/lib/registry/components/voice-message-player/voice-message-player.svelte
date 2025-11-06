@@ -68,7 +68,7 @@
 </script>
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
-  <div class="voice-message-player {className}">
+  <div data-voice-message-player="" class="voice-message-player {className}">
     {#if showButton}
       <button
         type="button"

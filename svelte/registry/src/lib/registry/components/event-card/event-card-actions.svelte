@@ -3,13 +3,10 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** Display variant */
     variant?: 'default' | 'compact' | 'vertical';
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Custom action buttons */
     children?: Snippet;
   }
 

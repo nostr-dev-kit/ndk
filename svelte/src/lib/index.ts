@@ -25,22 +25,6 @@ export {
 // ============================================================================
 
 export { NDKSvelte, createNDK, type NDKSvelteWithSession } from "./ndk-svelte.svelte.js";
-// Payment runes
-export {
-    createIsZapped,
-    createPendingPayments,
-    createTargetTransactions,
-    createTransactions,
-    createZapAmount,
-} from "./payments/runes.svelte.js";
-export type {
-    PendingPayment,
-    Transaction,
-    TransactionDirection,
-    TransactionStatus,
-    TransactionType,
-} from "./payments/types.js";
-export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
 // Store types (for typing ndk.* properties)
 export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
@@ -143,6 +127,16 @@ export {
     type AvatarGroupConfig,
     type AvatarGroupState,
 } from "./builders/avatar-group/index.svelte.js";
+
+// ============================================================================
+// Zap Send Builder
+// ============================================================================
+
+export {
+    createZapSendAction,
+    type ZapSendActionConfig,
+    type ZapSendSplit,
+} from "./builders/zap-send/index.svelte.js";
 
 // ============================================================================
 // Action Builders

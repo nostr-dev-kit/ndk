@@ -6,16 +6,12 @@
   import { User } from '../../ui/user';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Highlight event (kind 9802) */
     event: NDKEvent;
 
-    /** Show author info below */
     showAuthor?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -28,7 +24,10 @@
 </script>
 
 <Highlight.Root {ndk} {event} variant="grid" class={cn(className)}>
-  <article class="hover:bg-card/30 transition-colors w-full">
+  <article
+    data-highlight-card-grid=""
+    class="hover:bg-card/30 transition-colors w-full"
+  >
     <!-- Book page style highlight -->
     <div
       class="relative aspect-square rounded-lg overflow-hidden bg-card border border-border shadow-lg w-full"

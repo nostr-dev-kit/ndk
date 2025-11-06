@@ -6,31 +6,22 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		/** NDK instance */
 		ndk?: NDKSvelte;
 
-		/** Selected relay URLs (two-way binding) */
 		selected?: string[];
 
-		/** Allow multiple selection */
 		multiple?: boolean;
 
-		/** Show add relay form */
 		showAddRelay?: boolean;
 
-		/** Custom trigger snippet */
 		trigger?: Snippet;
 
-		/** Button variant for default trigger */
 		variant?: 'default' | 'secondary' | 'outline' | 'ghost';
 
-		/** Button size for default trigger */
 		size?: 'sm' | 'md' | 'lg';
 
-		/** Popover placement */
 		placement?: 'top' | 'bottom' | 'left' | 'right';
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 

@@ -75,10 +75,10 @@ Pretty cool, right? #awesome`);
 
 <!-- Use the template -->
 {#if true}
-  {@const previews: Record<string, Snippet> = {
+  {@const previews = {
     'event-content-basic': basicComponentPreview,
     'event-content-custom-snippets': customSnippetsComponentPreview
-  }}
+  } as any}
   <ComponentPageTemplate
   metadata={contentNoteMetadata}
   {ndk}

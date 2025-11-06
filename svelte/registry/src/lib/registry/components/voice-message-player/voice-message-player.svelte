@@ -6,19 +6,14 @@
   import PauseIcon from '../../icons/pause.svelte';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** The voice message to play */
     voiceMessage: NDKVoiceMessage;
 
-    /** Show play/pause button */
     showButton?: boolean;
 
-    /** Audio element ref (for external control) */
     audioRef?: HTMLAudioElement | undefined;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

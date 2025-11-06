@@ -8,13 +8,10 @@
   import FollowButtonPill from '../follow-button-pill/follow-button-pill.svelte';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Hashtag (with or without # prefix) */
     hashtag: string;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

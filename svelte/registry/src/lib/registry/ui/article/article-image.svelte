@@ -4,7 +4,6 @@
   import { cn } from "$lib/registry/utils/cn.js";
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
   }
 

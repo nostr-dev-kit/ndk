@@ -3,15 +3,12 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** Direct emoji data (Option 1) */
     emoji?: string;
     url?: string;
     shortcode?: string;
 
-    /** NDKEvent kind:7 reaction (Option 2) */
     event?: NDKEvent;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

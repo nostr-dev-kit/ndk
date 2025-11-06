@@ -8,22 +8,16 @@
   import { User } from '../../ui/user';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Callback when user is selected */
     onSelect?: (user: NDKUser) => void;
 
-    /** Placeholder text (only used with default input) */
     placeholder?: string;
 
-    /** Debounce delay in ms */
     debounceMs?: number;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Optional custom input snippet */
     input?: Snippet<[{ value: string; oninput: (e: Event) => void; loading: boolean }]>;
   }
 
@@ -76,7 +70,7 @@
   }
 </script>
 
-<div class={cn('relative w-full', className)}>
+<div data-user-search-combobox="" data-loading={userInputState.loading ? '' : undefined} data-open={open ? '' : undefined} class={cn('relative w-full', className)}>
   <Combobox.Root
     type="multiple"
     bind:open

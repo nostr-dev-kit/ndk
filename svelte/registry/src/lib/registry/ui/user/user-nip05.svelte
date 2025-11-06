@@ -5,13 +5,10 @@
   const NIP05_REGEX = /^(?:([\w.+-]+)@)?([\w.-]+)$/;
 
   interface Props {
-    /** Show NIP-05 identifier */
     showNip05?: boolean;
 
-    /** Show verification checkmark */
     showVerified?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

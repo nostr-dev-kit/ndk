@@ -3,13 +3,10 @@
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './article.context.js';
 
   interface Props {
-    /** Words per minute reading speed (default: 200) */
     wordsPerMinute?: number;
 
-    /** Show "min read" suffix (default: true) */
     showSuffix?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

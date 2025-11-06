@@ -8,19 +8,14 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance (optional, falls back to context) */
     ndk?: NDKSvelte;
 
-    /** Article instance */
     article: NDKArticle;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child components */
     children: Snippet;
   }
 

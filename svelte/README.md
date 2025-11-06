@@ -44,9 +44,8 @@ svelte embraces **Svelte 5's reactive primitives** to create a library that feel
 ### ✅ Implemented Features
 
 - **Core Subscriptions**: Reactive EventSubscription with automatic cleanup
-- **Namespaced Stores**: Sessions, WoT, wallet, payments, and pool
+- **Namespaced Stores**: Sessions, WoT, wallet, and pool
 - **Wallet Integration**: Full support for Cashu, NWC, and WebLN wallets
-- **Payment Tracking**: Reactive payment/transaction tracking with pending state management
 - **Nutzap Monitoring**: Automatic nutzap detection and redemption
 - **Test Coverage**: 119 tests passing across all core functionality
 
@@ -163,9 +162,6 @@ const score = ndk.$wot.getScore(pubkey);
 // Wallet
 ndk.$wallet.set(myWallet);
 const balance = ndk.$wallet.balance;
-
-// Payments
-const amount = ndk.$payments.getZapAmount(event);
 
 // Pool
 const connected = ndk.pool.connectedCount;
@@ -507,42 +503,6 @@ ndk.$wallet.mintBalances // Mint[] - mints with balances (including 0 balance)
 ndk.$wallet.relays       // string[]
 ```
 
-## Payment Tracking
-
-Real-time payment tracking with automatic pending-to-confirmed transitions:
-
-```svelte
-<script lang="ts">
-import { ndk } from '$lib/ndk';
-
-// Reactive payment state
-const history = $derived(ndk.$payments.history);
-const pending = $derived(ndk.$payments.pending);
-const byTarget = $derived(ndk.$payments.byTarget);
-
-// Check zap status
-const amount = ndk.$payments.getZapAmount(event);
-const isZapped = ndk.$payments.isZapped(event);
-</script>
-
-{#if isZapped}
-  <span>⚡ Zapped {amount} sats</span>
-{/if}
-```
-
-### Payments API
-
-```typescript
-// Query payments
-ndk.$payments.getZapAmount(target)  // number
-ndk.$payments.isZapped(target)      // boolean
-
-// State
-ndk.$payments.history     // Transaction[]
-ndk.$payments.pending     // PendingPayment[]
-ndk.$payments.byTarget    // Map<string, Transaction[]>
-```
-
 ## Relay Pool Monitoring
 
 Monitor relay connections:
@@ -798,7 +758,7 @@ const events = ndk.$fetchEvents(() => [
 See the [examples](./examples) directory for complete working examples:
 
 - [Basic Feed](./examples/basic-feed) - Simple note feed with profiles ✅
-- [Nutsack](./examples/nutsack) - NIP-60 Cashu wallet with payment tracking ✅
+- [Nutsack](./examples/nutsack) - NIP-60 Cashu wallet ✅
 - [Fetch Event Demo](./examples/fetch-event-demo.md) - Event fetching patterns ✅
 
 ### Coming Soon
@@ -817,7 +777,6 @@ class NDKSvelte extends NDK {
   $sessions: ReactiveSessionsStore;
   $wot: ReactiveWoTStore;
   $wallet: ReactiveWalletStore;
-  $payments: ReactivePaymentsStore;
   $pool: ReactivePoolStore;
 
   // Reactive subscription

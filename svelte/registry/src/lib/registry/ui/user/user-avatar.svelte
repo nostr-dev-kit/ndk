@@ -6,16 +6,12 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
 
-    /** Fallback image URL */
     fallback?: string;
 
-    /** Alt text for image */
     alt?: string;
 
-    /** Custom fallback snippet to replace the default gradient */
     customFallback?: Snippet;
   }
 

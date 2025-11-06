@@ -8,22 +8,16 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Event to show reactions for */
     event: NDKEvent;
 
-    /** Layout variant */
     variant?: 'horizontal' | 'vertical';
 
-    /** Show user avatars */
     showAvatars?: boolean;
 
-    /** Delay in seconds before publishing (for cancellable reactions) */
     delayed?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

@@ -5,31 +5,22 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk: NDKSvelte;
 
-		/** Event to reply to */
 		replyTo?: NDKEvent;
 
-		/** Callback when note is published */
 		onPublish?: (event: NDKEvent) => void;
 
-		/** Callback when error occurs */
 		onError?: (error: Error) => void;
 
-		/** Textarea placeholder */
 		placeholder?: string;
 
-		/** Show character count */
 		showCount?: boolean;
 
-		/** Button size */
 		buttonSize?: 'sm' | 'md' | 'lg';
 
-		/** Button variant */
 		buttonVariant?: 'default' | 'outline' | 'ghost';
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -47,7 +38,7 @@
 </script>
 
 <NoteComposer.Root {ndk} {replyTo} {onPublish} {onError}>
-	<div class={cn('space-y-2', className)}>
+	<div data-note-composer-minimal="" class={cn('space-y-2', className)}>
 		<NoteComposer.Textarea {placeholder} {showCount} minRows={2} />
 
 		<div class="flex justify-end">

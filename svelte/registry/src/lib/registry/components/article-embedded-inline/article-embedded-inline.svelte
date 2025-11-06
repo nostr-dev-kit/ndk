@@ -14,7 +14,7 @@
   const article = event as NDKArticle;
 </script>
 
-<div class="article-embedded-inline">
+<div data-article-embedded-inline="" class="article-embedded-inline">
   <Article.Root {ndk} {article}>
     <div class="article-layout">
       <Article.Image class="h-32" />

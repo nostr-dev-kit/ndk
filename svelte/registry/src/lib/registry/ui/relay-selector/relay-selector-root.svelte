@@ -6,19 +6,14 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		/** NDK instance (optional, falls back to context) */
 		ndk?: NDKSvelte;
 
-		/** Selected relay URLs (two-way binding) */
 		selected?: string[];
 
-		/** Allow multiple selection */
 		multiple?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 
-		/** Child components with context */
 		children: Snippet<[RelaySelectorContext]>;
 	}
 

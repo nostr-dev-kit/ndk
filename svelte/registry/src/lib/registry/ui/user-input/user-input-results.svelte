@@ -6,16 +6,12 @@
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
 
   interface Props {
-    /** Optional snippet to render each result */
     children?: Snippet<[UserInputResult]>;
 
-    /** Empty state snippet */
     empty?: Snippet;
 
-    /** Maximum number of results to show */
     maxResults?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

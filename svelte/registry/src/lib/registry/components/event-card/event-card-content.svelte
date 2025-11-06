@@ -6,19 +6,14 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** Maximum number of lines to display before truncating (uses CSS line-clamp) */
     truncate?: number;
 
-    /** Whether to show media attachments */
     showMedia?: boolean;
 
-    /** Whether to show link previews */
     showLinkPreview?: boolean;
 
-    /** Whether to highlight mentions */
     highlightMentions?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

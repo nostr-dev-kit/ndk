@@ -4,10 +4,8 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** Which field to display */
     field?: 'displayName' | 'name' | 'both';
 
-    /** Additional CSS classes */
     class?: string;
   }
 

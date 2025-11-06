@@ -91,6 +91,11 @@
       </span>
     {/if}
     <button
+      data-follow-button-pill=""
+      data-following={followAction.isFollowing ? '' : undefined}
+      data-target-type={isHashtag ? 'hashtag' : 'user'}
+      data-variant={variant}
+      data-compact={compact ? '' : undefined}
       type="button"
       onclick={handleToggle}
       class={cn(

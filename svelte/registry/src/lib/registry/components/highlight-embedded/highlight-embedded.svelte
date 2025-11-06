@@ -13,7 +13,7 @@
   let { ndk, event, variant = 'card' }: Props = $props();
 </script>
 
-<div class="highlight-embedded" data-variant={variant}>
+<div data-highlight-embedded="" class="highlight-embedded" data-variant={variant}>
   <Highlight.Root {ndk} {event} variant="feed">
     <div class="highlight-container">
       <Highlight.Content

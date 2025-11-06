@@ -28,6 +28,9 @@
 </script>
 
 <button
+  data-reply-button=""
+  data-replied={replyState.hasReplied ? '' : undefined}
+  data-variant={variant}
   onclick={handleClick}
   class={cn(
     'inline-flex items-center gap-2 cursor-pointer transition-all',

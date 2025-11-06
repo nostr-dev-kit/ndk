@@ -5,8 +5,6 @@ import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
 import * as subscribeGuardrails from "./ai-guardrails/subscribe.js";
 import { createFetchEvents } from "./event.svelte.js";
-import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
-import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
 import { createReactivePool } from "./stores/pool.svelte.js";
 import type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
@@ -132,7 +130,6 @@ export class NDKSvelte extends NDK {
     $sessions?: ReactiveSessionsStore;
     $wot?: ReactiveWoTStore;
     $wallet?: ReactiveWalletStore;
-    $payments!: ReactivePaymentsStore;
     $pool!: ReactivePoolStore;
 
     // Private reactive state for active user
@@ -182,7 +179,6 @@ export class NDKSvelte extends NDK {
         }
 
         // Initialize stores that don't require sessions
-        this.$payments = createReactivePayments();
         this.$pool = createReactivePool(this);
 
         // Sync active user from NDK to reactive state

@@ -4,13 +4,10 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** Text size classes */
     size?: string;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Max number of lines to show (line-clamp) */
     maxLines?: number;
   }
 

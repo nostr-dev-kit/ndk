@@ -4,31 +4,22 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk?: NDKSvelte;
 
-		/** Selected relay URLs (two-way binding) */
 		selected?: string[];
 
-		/** Allow multiple selection */
 		multiple?: boolean;
 
-		/** Show add relay form */
 		showAddForm?: boolean;
 
-		/** Label for the selector */
 		label?: string;
 
-		/** Helper text */
 		helperText?: string;
 
-		/** Show selected chips */
 		showSelectedChips?: boolean;
 
-		/** Compact list variant */
 		compact?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 

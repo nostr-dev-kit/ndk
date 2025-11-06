@@ -72,6 +72,10 @@
   <DropdownMenu.Root bind:open={isOpen}>
     <DropdownMenu.Trigger asChild let:builder>
       <button
+        data-repost-button=""
+        data-reposted={repostState.hasReposted ? '' : undefined}
+        data-variant={variant}
+        data-dropdown=""
         use:builder.action
         {...builder}
         onmouseenter={handleMouseEnter}
@@ -133,6 +137,9 @@
   </DropdownMenu.Root>
 {:else}
   <button
+    data-repost-button=""
+    data-reposted={repostState.hasReposted ? '' : undefined}
+    data-variant={variant}
     onclick={handleClick}
     class={cn(
       'inline-flex items-center gap-2 cursor-pointer transition-all',

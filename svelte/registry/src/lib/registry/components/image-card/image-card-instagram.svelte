@@ -9,16 +9,12 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk?: NDKSvelte;
 
-		/** The image event to display */
 		image: NDKImage;
 
-		/** Show dropdown menu */
 		showDropdown?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -37,7 +33,8 @@
 	const caption = $derived(image.content);
 </script>
 
-<div class={cn('instagram-card !bg-card', className)}>
+<div data-image-card-instagram=""
+    class={cn('instagram-card !bg-card', className)}>
 	<!-- Header -->
 	<div class="instagram-header">
 		<User.Root {ndk} pubkey={image.pubkey}>

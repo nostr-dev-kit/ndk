@@ -8,22 +8,16 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance (optional, falls back to context) */
     ndk?: NDKSvelte;
 
-    /** Voice message instance */
     voiceMessage: NDKVoiceMessage;
 
-    /** Whether clicking the card is interactive */
     interactive?: boolean;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child components */
     children: Snippet;
   }
 

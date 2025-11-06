@@ -6,13 +6,10 @@
   import { cn } from "../../utils/cn.js";
 
   interface Props {
-    /** Sync builder instance created with createNegentropySync() */
     syncBuilder: ReturnType<typeof createNegentropySync>;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child components */
     children: Snippet;
   }
 

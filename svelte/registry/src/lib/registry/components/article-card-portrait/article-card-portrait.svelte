@@ -10,25 +10,18 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Article to display */
     article: NDKArticle;
 
-    /** Card width (default: 280px) */
     width?: string;
 
-    /** Card height (default: 360px) */
     height?: string;
 
-    /** Image height (default: 192px/12rem) */
     imageHeight?: string;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -59,6 +52,7 @@
 
 <Root {ndk} {article}>
   <svelte:element
+    data-article-card-portrait=""
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
     {onclick}

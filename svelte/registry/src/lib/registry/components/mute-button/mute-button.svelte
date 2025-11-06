@@ -42,6 +42,8 @@
 
 {#if !isOwnProfile && ndk?.$currentUser}
   <button
+    data-mute-button=""
+    data-muted={muteAction.isMuted ? '' : undefined}
     type="button"
     onclick={handleToggle}
     class={cn(

@@ -44,6 +44,9 @@
 
 {#if !isOwnProfile && ndk?.$currentUser}
   <button
+    data-follow-button=""
+    data-following={followAction.isFollowing ? '' : undefined}
+    data-target-type={isHashtag ? 'hashtag' : 'user'}
     type="button"
     onclick={handleToggle}
     class={cn(

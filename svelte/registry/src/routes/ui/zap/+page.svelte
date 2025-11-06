@@ -264,7 +264,7 @@ let zaps: ProcessedZap[] = zapFeed.zaps;
     <h2>Display-Only Primitives</h2>
     <p class="mb-4">Note: These are display-only primitives. For sending zaps, use:</p>
     <ul class="ml-6 mb-4 space-y-2">
-      <li><code>createZapSendAction</code> builder from the registry</li>
+      <li><code>createZapAction</code> builder from the registry</li>
       <li>Zap button components (ZapButton, ZapButtonAvatars)</li>
       <li>NDK's <code>NDKZapper</code> directly</li>
     </ul>

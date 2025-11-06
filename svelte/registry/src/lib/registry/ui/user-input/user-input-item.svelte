@@ -6,19 +6,14 @@
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
 
   interface Props {
-    /** Result to display */
     result: UserInputResult;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Custom rendering with access to merged props */
     child?: Snippet<[{ props: Record<string, any>; result: UserInputResult }]>;
 
-    /** Default children rendering */
     children?: Snippet<[{ result: UserInputResult }]>;
 
-    /** Custom click handler (will be merged with selection logic) */
     onclick?: (e: MouseEvent) => void;
 
     [key: string]: any;

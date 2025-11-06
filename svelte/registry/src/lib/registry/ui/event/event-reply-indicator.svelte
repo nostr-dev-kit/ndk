@@ -6,19 +6,14 @@
   import { User } from '../user/index.js';
 
   interface Props {
-    /** NDK instance (optional, falls back to context) */
     ndk?: NDKSvelte;
 
-    /** The event to check for reply relationship */
     event: NDKEvent;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Click handler for the user link (receives the event being replied to) */
     onclick?: (event: NDKEvent) => void;
 
-    /** Custom rendering snippet */
     children?: Snippet<[{ event: NDKEvent | null; loading: boolean }]>;
   }
 

@@ -20,6 +20,7 @@
 
 <FollowPack.Root {ndk} {followPack} {onclick}>
 	<button
+		data-follow-pack-modern-portrait=""
 		type="button"
 		class="group relative w-[320px] h-[460px] rounded-3xl overflow-hidden bg-card transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 {className}"
 	>

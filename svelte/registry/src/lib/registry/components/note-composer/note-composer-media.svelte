@@ -8,22 +8,16 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk?: NDKSvelte;
 
-		/** Fallback blossom server */
 		fallbackServer?: string;
 
-		/** Accepted file types */
 		accept?: string;
 
-		/** Maximum number of files */
 		maxFiles?: number;
 
-		/** Show upload progress */
 		showProgress?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -51,7 +45,7 @@
 </script>
 
 <MediaUpload.Root {ndk} {fallbackServer} {accept} {maxFiles} bind:uploads={composer.uploads}>
-	<div class={cn('note-composer-media', className)}>
+	<div data-note-composer-media="" data-has-uploads={composer.uploads.length > 0 ? '' : undefined} class={cn('note-composer-media', className)}>
 		{#if composer.uploads.length > 0}
 			<MediaUpload.Carousel class="flex gap-3 overflow-x-auto pb-2 mb-2">
 				{#each composer.uploads as upload, i (upload.url)}

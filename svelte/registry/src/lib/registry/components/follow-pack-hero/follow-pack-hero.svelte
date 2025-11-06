@@ -21,6 +21,7 @@
 
 <FollowPack.Root {ndk} {followPack} {onclick}>
 	<button
+		data-follow-pack-hero=""
 		type="button"
 		class="group relative w-full h-[400px] rounded-3xl overflow-hidden bg-card hover:shadow-2xl transition-shadow {className}"
 	>

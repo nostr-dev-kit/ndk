@@ -7,13 +7,10 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Bech32-encoded user identifier (npub or nprofile) */
     bech32: string;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -51,6 +48,7 @@
 {:else if pubkey}
   <Popover.Root bind:open>
     <Popover.Trigger
+      data-mention-modern=""
       class="inline-flex items-center"
       onmouseenter={handleMouseEnter}
       onmouseleave={handleMouseLeave}

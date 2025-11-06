@@ -11,22 +11,16 @@
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../ui/article/article.context.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Article to display */
     article: NDKArticle;
 
-    /** Card width (default: w-[320px]) */
     width?: string;
 
-    /** Card height (default: h-[480px]) */
     height?: string;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -56,6 +50,7 @@
   {@const imageUrl = context.article.image}
 
   <svelte:element
+    data-article-card-neon=""
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
     {onclick}

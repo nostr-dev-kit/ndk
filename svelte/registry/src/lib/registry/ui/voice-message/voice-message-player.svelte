@@ -14,16 +14,12 @@
   }
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
 
-    /** Audio element ref (for external control) */
     audioRef?: HTMLAudioElement | undefined;
 
-    /** Child snippet for custom element rendering */
     child?: Snippet<[{ props: any } & PlayerSnippetProps]>;
 
-    /** Content snippet for custom content */
     children?: Snippet<[PlayerSnippetProps]>;
   }
 

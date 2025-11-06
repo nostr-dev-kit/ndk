@@ -90,7 +90,7 @@
 </script>
 
 <Relay.Root {ndk} relayUrl={relay.url}>
-  <div class="relay-card">
+  <div data-relay-card="" data-expanded={isExpanded ? '' : undefined} class="relay-card">
     <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
       <div class="relay-card-header-left">
         <Relay.ConnectionStatus status={relay.status || 'disconnected'} size="md" />

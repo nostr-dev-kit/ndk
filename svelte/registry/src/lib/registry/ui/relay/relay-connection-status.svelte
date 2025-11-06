@@ -4,7 +4,6 @@
   import { RELAY_CONTEXT_KEY, type RelayContext } from './relay.context.js';
 
   interface Props {
-    /** Relay status (optional, will read from context if not provided) */
     status?: RelayStatus;
     size?: 'sm' | 'md' | 'lg';
     showLabel?: boolean;

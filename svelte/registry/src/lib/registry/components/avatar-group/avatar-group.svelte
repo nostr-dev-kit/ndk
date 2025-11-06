@@ -6,40 +6,28 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Array of user pubkeys */
     pubkeys: string[];
 
-    /** Whether to skip the current user from the list */
     skipCurrentUser?: boolean;
 
-    /** Maximum number of avatars to show before overflow */
     max?: number;
 
-    /** Avatar size in pixels */
     size?: number;
 
-    /** Spacing between avatars */
     spacing?: 'tight' | 'normal' | 'loose';
 
-    /** Overflow display variant */
     overflowVariant?: 'avatar' | 'text' | 'none';
 
-    /** Stack direction */
     direction?: 'horizontal' | 'vertical';
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Click handler for individual avatars */
     onAvatarClick?: (user: NDKUser) => void;
 
-    /** Click handler for overflow count */
     onOverflowClick?: () => void;
 
-    /** Render prop for custom overflow display */
     overflowSnippet?: (count: number) => any;
   }
 

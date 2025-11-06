@@ -7,22 +7,16 @@
   import { EventCard } from '../../components/event-card/index.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Highlight event (kind 9802) */
     event: NDKEvent;
 
-    /** Show author header */
     showHeader?: boolean;
 
-    /** Show actions footer */
     showActions?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Custom actions slot */
     actions?: Snippet;
   }
 
@@ -38,6 +32,7 @@
 
 <Highlight.Root {ndk} {event} variant="feed" class={cn(className)}>
   <article
+    data-highlight-card-feed=""
     class="p-3 sm:p-4 hover:bg-card/30 transition-colors border-b border-border"
   >
     <!-- Author header -->

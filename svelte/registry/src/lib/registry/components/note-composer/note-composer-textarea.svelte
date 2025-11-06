@@ -5,22 +5,16 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** Placeholder text */
 		placeholder?: string;
 
-		/** Show character count */
 		showCount?: boolean;
 
-		/** Minimum rows */
 		minRows?: number;
 
-		/** Maximum rows */
 		maxRows?: number;
 
-		/** Whether to autofocus */
 		autofocus?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -58,6 +52,8 @@
 
 <div class="note-composer-textarea-wrapper">
 	<textarea
+		data-note-composer-textarea=""
+		data-publishing={composer.publishing ? '' : undefined}
 		bind:this={textarea}
 		bind:value={composer.content}
 		oninput={handleInput}

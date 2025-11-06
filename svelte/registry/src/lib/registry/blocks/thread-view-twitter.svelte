@@ -21,13 +21,10 @@
   import RepostButton from '../components/repost-button/repost-button.svelte';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Thread view instance from createThreadView */
     thread: ThreadView;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

@@ -4,13 +4,10 @@
   import { cn } from "../../utils/cn.js";
 
   interface Props {
-    /** Additional CSS classes for container */
     class?: string;
 
-    /** Additional CSS classes for progress bar */
     barClass?: string;
 
-    /** Show percentage text */
     showPercentage?: boolean;
   }
 

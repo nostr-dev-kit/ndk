@@ -9,22 +9,16 @@
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Highlight event (kind 9802) */
     event: NDKEvent;
 
-    /** Show author name */
     showAuthor?: boolean;
 
-    /** Show timestamp */
     showTimestamp?: boolean;
 
-    /** Show source info */
     showSource?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -43,6 +37,7 @@
 
 <Highlight.Root {ndk} {event} variant="compact" class={cn(className)}>
   <div
+    data-highlight-card-compact=""
     class="block p-4 hover:bg-card/30 transition-colors rounded-lg group"
   >
     <div class="relative">

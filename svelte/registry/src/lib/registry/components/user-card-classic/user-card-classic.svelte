@@ -4,13 +4,10 @@
   import { User } from '../../ui/user';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** User's pubkey */
     pubkey: string;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

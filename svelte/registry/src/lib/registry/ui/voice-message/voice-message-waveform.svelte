@@ -4,22 +4,16 @@
   import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './voice-message.context.js';
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
 
-    /** Height of the waveform in pixels */
     height?: number;
 
-    /** Color of the bars */
     barColor?: string;
 
-    /** Color of the progress bars */
     progressColor?: string;
 
-    /** Gap between bars */
     barGap?: number;
 
-    /** Progress percentage (0-100) - for external control */
     progress?: number;
   }
 

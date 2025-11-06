@@ -6,19 +6,14 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** Button text */
 		label?: string;
 
-		/** Show loading state */
 		showLoading?: boolean;
 
-		/** Button variant */
 		variant?: 'default' | 'outline' | 'ghost';
 
-		/** Button size */
 		size?: 'sm' | 'md' | 'lg';
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -47,6 +42,11 @@
 
 <div class="note-composer-submit-wrapper">
 	<button
+		data-note-composer-submit=""
+		data-publishing={composer.publishing ? '' : undefined}
+		data-disabled={isDisabled ? '' : undefined}
+		data-variant={variant}
+		data-size={size}
 		onclick={handleClick}
 		disabled={isDisabled}
 		class={cn(

@@ -7,19 +7,14 @@
   import List from './emoji-picker-list.svelte';
 
   interface Props {
-    /** NDKSvelte instance (optional, falls back to context) */
     ndk?: NDKSvelte;
 
-    /** Callback when emoji is selected */
     onSelect: (emoji: EmojiData) => void;
 
-    /** Default emojis to show (can be overridden by users) */
     defaults?: EmojiData[];
 
-    /** Number of columns in grid (default: 6, mobile: 5) */
     columns?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

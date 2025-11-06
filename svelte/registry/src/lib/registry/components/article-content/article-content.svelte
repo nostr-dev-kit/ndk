@@ -279,7 +279,7 @@
   }
 </script>
 
-<div class="article-wrapper {className}">
+<div data-article-content="" class="article-wrapper {className}">
   {#if hasMarkdown}
     <div
       bind:this={contentElement}

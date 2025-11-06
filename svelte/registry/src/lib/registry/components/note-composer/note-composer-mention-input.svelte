@@ -9,7 +9,6 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -23,7 +22,7 @@
 	}
 </script>
 
-<div class={cn('note-composer-mention-input', className)}>
+<div data-note-composer-mention-input="" class={cn('note-composer-mention-input', className)}>
 	<UserInput.Root onSelect={handleUserSelect}>
 		<UserInput.Search placeholder="Search users to mention..." />
 		<UserInput.Results>

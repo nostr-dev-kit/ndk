@@ -8,22 +8,16 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** Display variant */
     variant?: 'full' | 'compact' | 'minimal';
 
-    /** Show author avatar */
     showAvatar?: boolean;
 
-    /** Show timestamp */
     showTimestamp?: boolean;
 
-    /** Avatar size */
     avatarSize?: 'sm' | 'md' | 'lg';
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Custom actions (e.g., EventDropdown) */
     children?: Snippet;
   }
 

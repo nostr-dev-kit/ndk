@@ -6,10 +6,8 @@
   import Bio from './user-bio.svelte';
 
   interface Props {
-    /** Which profile field to display */
     field: keyof NDKUserProfile;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

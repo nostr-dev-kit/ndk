@@ -29,7 +29,7 @@
 </script>
 
 <MediaUpload.Root {ndk} {fallbackServer} {accept} {maxFiles} bind:uploads>
-	<MediaUpload.Button {multiple} {accept} class={className}>
+	<MediaUpload.Button data-upload-button="" data-multiple={multiple ? '' : undefined} {multiple} {accept} class={className}>
 		{buttonText}
 	</MediaUpload.Button>
 </MediaUpload.Root>

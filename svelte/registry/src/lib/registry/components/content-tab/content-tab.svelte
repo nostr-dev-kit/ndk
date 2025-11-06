@@ -35,31 +35,22 @@
   import { kindLabel } from '../../utils/kind-label.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Array of user pubkeys to sample content from */
     pubkeys: string[];
 
-    /** Array of kinds to track */
     kinds: number[];
 
-    /** Optional timestamp to start sampling from */
     since?: number;
 
-    /** Optional subscription options */
     subOpts?: NDKSubscriptionOptions;
 
-    /** Optional sort function for tabs */
     sort?: (tabs: ContentTabType[]) => ContentTabType[];
 
-    /** Additional CSS classes for the container */
     class?: string;
 
-    /** Custom tab renderer */
     tab?: Snippet<[ContentTabType]>;
 
-    /** Click handler for tabs */
     onTabClick?: (tab: ContentTabType) => void;
   }
 
@@ -85,6 +76,7 @@
 </script>
 
 <div
+  data-content-tab=""
   class={cn('content-tab-container', className)}
   role="tablist"
   aria-label="Content tabs"

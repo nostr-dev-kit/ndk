@@ -4,13 +4,10 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** Text size classes */
     size?: string;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Whether to truncate */
     truncate?: boolean;
   }
 

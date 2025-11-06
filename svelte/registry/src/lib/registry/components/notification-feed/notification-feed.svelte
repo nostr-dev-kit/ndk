@@ -39,7 +39,7 @@
 	}), ndk);
 </script>
 
-<div class={cn('notification-feed', className)}>
+<div data-notification-feed="" data-loading={feed.loading ? '' : undefined} data-empty={feed.all.length === 0 ? '' : undefined} class={cn('notification-feed', className)}>
 	{#if feed.loading && feed.all.length === 0}
 		<div class="p-8 text-center text-muted-foreground">
 			<p>Loading notifications...</p>

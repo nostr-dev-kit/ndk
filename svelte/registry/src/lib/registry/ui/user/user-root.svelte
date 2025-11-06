@@ -8,25 +8,18 @@
   import { cn } from "../../utils/cn.js";
 
   interface Props {
-    /** NDK instance (required) */
     ndk: NDKSvelte;
 
-    /** User instance */
     user?: NDKUser;
 
-    /** User's pubkey (alternative to user) */
     pubkey?: string;
 
-    /** Pre-loaded profile (optional, avoids fetch) */
     profile?: NDKUserProfile;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child components */
     children: Snippet;
   }
 

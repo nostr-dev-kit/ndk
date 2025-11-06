@@ -8,22 +8,16 @@
   import { createUserStats } from '../../builders/user/stats.svelte.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** User's pubkey */
     pubkey: string;
 
-    /** Card width (default: w-[320px]) */
     width?: string;
 
-    /** Card height (default: h-[480px]) */
     height?: string;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -55,6 +49,7 @@
   {@const stats = createUserStats(() => user ? { user, follows: true, recentNotes: true } : undefined, ndk)}
 
   <svelte:element
+    data-user-card-neon=""
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
     {onclick}

@@ -239,12 +239,8 @@
   </div>
 
   {#if error}
-    <div class="mt-4 px-3 py-3 px-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+    <div class="mt-4 py-3 px-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
       {error}
     </div>
   {/if}
-
-  <div class="text-center text-xs text-muted-foreground mt-[0.9375rem]">
-    💡 Tip: The banner gradient is generated from your key. Click shuffle to generate a new key, or upload a custom banner image
-  </div>
 </div>

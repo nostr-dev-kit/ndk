@@ -35,14 +35,14 @@ interface NostrHashtagToken extends Tokens.Generic {
 // Nostr URI Extension (npub, nprofile, nevent, naddr, note)
 // ============================================================================
 
-export function createNostrUriExtension(): MarkedExtension {
+export function createNostrUriExtension() {
     return {
         name: 'nostr-uri',
         level: 'inline',
         start(src: string) {
             return src.indexOf('nostr:');
         },
-        tokenizer(src: string): NostrMentionToken | NostrEventRefToken | undefined {
+        tokenizer(src: string, tokens: Token[]) {
             // Match nostr: prefix followed by bech32 string
             const rule = /^nostr:(npub1[a-z0-9]{58}|nprofile1[a-z0-9]+|note1[a-z0-9]{58}|nevent1[a-z0-9]+|naddr1[a-z0-9]+)/i;
             const match = rule.exec(src);
@@ -98,14 +98,14 @@ export function createNostrUriExtension(): MarkedExtension {
 // Emoji Shortcode Extension (:emoji:)
 // ============================================================================
 
-export function createEmojiExtension(emojiMap: Map<string, string>): MarkedExtension {
+export function createEmojiExtension(emojiMap: Map<string, string>) {
     return {
         name: 'nostr-emoji',
         level: 'inline',
         start(src: string) {
             return src.indexOf(':');
         },
-        tokenizer(src: string): NostrEmojiToken | undefined {
+        tokenizer(src: string, tokens: Token[]) {
             // Match :shortcode: pattern
             const rule = /^:([a-zA-Z0-9_]+):/;
             const match = rule.exec(src);
@@ -143,7 +143,7 @@ export function createEmojiExtension(emojiMap: Map<string, string>): MarkedExten
 // Hashtag Extension (#hashtag)
 // ============================================================================
 
-export function createHashtagExtension(): MarkedExtension {
+export function createHashtagExtension() {
     return {
         name: 'nostr-hashtag',
         level: 'inline',
@@ -152,7 +152,7 @@ export function createHashtagExtension(): MarkedExtension {
             const index = src.search(/(?:^|\s)#/);
             return index === -1 ? -1 : (index === 0 ? 0 : index + 1); // Return position of #
         },
-        tokenizer(src: string): NostrHashtagToken | undefined {
+        tokenizer(src: string, tokens: Token[]) {
             // Match #tag pattern - must be at start or after whitespace
             // Don't match if # is inside a word
             const rule = /^#([a-zA-Z0-9_\u0080-\uFFFF]+)(?=\s|$|[^\w])/;
@@ -187,7 +187,7 @@ export interface NostrExtensionsOptions {
     emojiTags?: string[][];
 }
 
-export function createNostrMarkdownExtensions(options: NostrExtensionsOptions = {}): MarkedExtension[] {
+export function createNostrMarkdownExtensions(options: NostrExtensionsOptions = {}) {
     // Build emoji map from tags
     const emojiMap = new Map<string, string>();
     if (options.emojiTags) {

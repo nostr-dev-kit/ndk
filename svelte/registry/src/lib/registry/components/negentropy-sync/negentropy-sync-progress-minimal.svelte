@@ -12,8 +12,8 @@
 </script>
 
 <NegentrogySync.Root {syncBuilder}>
-	<div class="space-y-2 {className}">
-		<div class="flex items-center justify-between text-sm">
+	<div data-negentropy-sync-progress-minimal="" class="space-y-2 {className}">
+		<div data-negentropy-sync-progress-minimal="" class="flex items-center justify-between text-sm">
 			<span class="text-gray-500 dark:text-gray-400 text-xs font-mono">
 				<NegentrogySync.Stats direction="horizontal" class="gap-2" />
 			</span>

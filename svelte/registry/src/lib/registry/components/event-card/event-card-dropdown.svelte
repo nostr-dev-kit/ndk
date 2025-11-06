@@ -84,7 +84,7 @@
   });
 </script>
 
-<div class={cn('dropdown-container', className)}>
+<div data-event-card-dropdown="" data-menu-open={showMenu ? '' : undefined} class={cn('dropdown-container', className)}>
   <button
     onclick={(e) => { e.stopPropagation(); showMenu = !showMenu; }}
     class="dropdown-trigger"

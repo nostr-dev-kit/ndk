@@ -68,7 +68,7 @@
   };
 </script>
 
-<div class="relative">
+<div data-event-card-content="" class="relative">
   <div
     bind:this={contentElement}
     class={cn(

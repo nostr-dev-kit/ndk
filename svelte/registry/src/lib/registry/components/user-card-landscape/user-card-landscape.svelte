@@ -22,6 +22,7 @@
 </script>
 
 <User.Root {ndk} {pubkey}>
+  <div data-user-card-landscape="" class={cn(
   <div class={cn(
     'flex gap-4 p-6 bg-card border border-border rounded-xl min-w-96',
     className

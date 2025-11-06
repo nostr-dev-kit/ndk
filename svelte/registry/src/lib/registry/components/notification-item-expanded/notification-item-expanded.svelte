@@ -14,7 +14,7 @@
 </script>
 
 <NotificationItem.Root {ndk} {notification}>
-	<div class={cn('border rounded-lg p-6 space-y-4', className)}>
+	<div data-notification-item-expanded="" class={cn('border rounded-lg p-6 space-y-4', className)}>
 		<!-- Header with action and time -->
 		<div class="flex items-center justify-between">
 			<NotificationItem.Action />

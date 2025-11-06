@@ -54,6 +54,8 @@
 
 <Root {ndk} {article}>
   <svelte:element
+    data-article-card-medium=""
+    data-image-size={imageSize}
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
     {onclick}

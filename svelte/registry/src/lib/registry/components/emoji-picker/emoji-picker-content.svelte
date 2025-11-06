@@ -77,7 +77,7 @@
   const effectiveColumns = $derived(isMobile ? 5 : columns);
 </script>
 
-<div class={cn('h-64 sm:h-80 overflow-y-auto emoji-picker-content', className)}>
+<div data-emoji-picker-content="" class={cn('h-64 sm:h-80 overflow-y-auto emoji-picker-content', className)}>
   {#if userEmojis.length > 0}
     <div class="emoji-section">
       <div class="emoji-section-title">Your Emojis</div>

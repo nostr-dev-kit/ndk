@@ -47,6 +47,7 @@
 </script>
 
 {#if hasImages}
+  <div data-image-content="" class="image-content {className}">
 	<div class="image-content {className}">
 		{#each imetas as imeta, index (imeta.url)}
 			<div class="image-item">
@@ -85,6 +86,7 @@
 		{/each}
 	</div>
 {:else}
+  <div data-image-content="" data-empty="" class="image-content-empty {className}">
 	<div class="image-content-empty {className}">
 		<HugeiconsIcon icon={Image01Icon} size={48} />
 		<p>No images available</p>

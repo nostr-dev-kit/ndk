@@ -34,7 +34,8 @@
   const pubkeyArray = $derived([...stats.pubkeys]);
 </script>
 
-<div class={cn(
+<div data-hashtag-card-compact=""
+    class={cn(
   'flex items-center gap-3 p-3 bg-card border border-border rounded-lg hover:bg-accent/50 transition-colors',
   className
 )}>

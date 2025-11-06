@@ -21,6 +21,8 @@
 
   setZapSendContext({ ndk, recipient, splits });
 
+  let rootElement = $state<HTMLDivElement>();
+
   function sendAction(node: HTMLElement, options: SendOptions): ReturnType<Action<HTMLElement, SendOptions>> {
     async function handleClick() {
       if (!ndk.$currentPubkey) {
@@ -50,4 +52,6 @@
   }
 </script>
 
-{@render children({ send: sendAction })}
+<div bind:this={rootElement} data-zap-send-root="">
+  {@render children({ send: sendAction })}
+</div>

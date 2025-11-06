@@ -37,7 +37,7 @@
   }
 </script>
 
-<div class={cn(
+<div data-reaction-slack="" data-variant={variant} class={cn(
   'flex',
   variant === 'vertical' ? 'flex-col gap-1.5' : 'flex-row flex-wrap gap-2',
   className

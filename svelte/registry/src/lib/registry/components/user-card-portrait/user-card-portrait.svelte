@@ -25,6 +25,7 @@
 </script>
 
 <User.Root {ndk} {pubkey}>
+  <div data-user-card-portrait="" class={cn(
   {@const context = getContext<UserContext>(USER_CONTEXT_KEY)}
   {@const ndkUser = context.ndkUser}
   {@const stats = createUserStats(() => ndkUser ? { user: ndkUser, follows: true, recentNotes: true } : undefined, ndk)}

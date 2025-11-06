@@ -13,7 +13,7 @@
   let { ndk, event, variant = 'card' }: Props = $props();
 </script>
 
-<div class="note-embedded" data-variant={variant}>
+<div data-note-embedded="" class="note-embedded" data-variant={variant}>
   <EventCard.Root {ndk} {event}>
     <EventCard.Header
       variant={variant === 'compact' ? 'compact' : 'full'}

@@ -68,12 +68,14 @@
 </script>
 
 <div
+  data-avatar-group=""
   class={cn('avatar-group', 'flex', isVertical ? 'flex-col items-start' : 'items-center', className)}
   role="group"
   aria-label="User avatars"
 >
   {#each visibleUsers as user, index (user.pubkey)}
     <div
+  data-avatar-group=""
       class="avatar-group-item"
       style:margin-left={!isVertical && index !== 0 ? `${marginValue}px` : '0'}
       style:margin-top={isVertical && index !== 0 ? `${marginValue}px` : '0'}
@@ -94,6 +96,7 @@
           </button>
         {:else}
           <div
+  data-avatar-group=""
             class="avatar-wrapper"
             style:width="{size}px"
             style:height="{size}px"
@@ -112,6 +115,7 @@
       {@render overflowSnippet(overflowCount)}
     {:else if overflowVariant === 'text'}
       <div
+  data-avatar-group=""
         class="avatar-group-overflow-text"
         style:margin-left={!isVertical ? '8px' : '0'}
         style:margin-top={isVertical ? '8px' : '0'}
@@ -132,6 +136,7 @@
       </div>
     {:else}
       <div
+  data-avatar-group=""
         class="avatar-group-overflow"
         style:margin-left={!isVertical ? `${marginValue}px` : '0'}
         style:margin-top={isVertical ? `${marginValue}px` : '0'}

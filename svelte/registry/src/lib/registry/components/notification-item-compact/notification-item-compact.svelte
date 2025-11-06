@@ -14,7 +14,7 @@
 </script>
 
 <NotificationItem.Root {ndk} {notification}>
-	<div class={cn('flex flex-col items-start gap-3 p-4 hover:bg-muted/50 transition-colors', className)}>
+	<div data-notification-item-compact="" class={cn('flex flex-col items-start gap-3 p-4 hover:bg-muted/50 transition-colors', className)}>
 		<div class="flex flex-row w-full items-center">
 			<div class="flex flex-row flex-1">
 				<!-- Actors with avatars -->

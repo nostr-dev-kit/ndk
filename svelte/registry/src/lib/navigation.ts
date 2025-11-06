@@ -135,6 +135,7 @@ export const componentCategories: NavCategory[] = [
       { name: 'Repost', path: '/components/repost', icon: RepeatIcon, title: 'Repost', description: 'Repost/quote buttons for events. Choose from pre-built block variants or compose custom layouts using the builder.' },
       { name: 'Mute', path: '/components/mute', icon: VolumeMute01Icon, title: 'Mute', description: 'Mute/unmute buttons for users. Choose from pre-built block variants or compose custom layouts using the builder.' },
       { name: 'Zap', path: '/components/zap', icon: ZapIcon, title: 'Zap', description: 'Lightning tip buttons for users and events. Choose from pre-built block variants or compose custom layouts using the builder.' },
+      { name: 'Zap Send', path: '/components/zap-send-classic', icon: ZapIcon, title: 'ZapSendClassic', description: 'Complete zap dialog with amount selection, recipient splits, and comment support.' },
     ]
   },
   {

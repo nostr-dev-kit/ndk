@@ -50,7 +50,7 @@
 </script>
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
-  <div class="voice-message-expanded {className}">
+  <div data-voice-message-card-expanded="" class="voice-message-expanded {className}">
     <div class="header">
       <User.Root {ndk} user={voiceMessage.author}>
         <User.Avatar class="w-10 h-10" />

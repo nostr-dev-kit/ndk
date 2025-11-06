@@ -43,6 +43,7 @@
 </script>
 
 {#if isClickable}
+  <button data-event-card-root="" data-interactive=""
   <button
     class={cn(
       'relative flex flex-col gap-2 cursor-pointer w-full text-left bg-transparent border-none p-0',
@@ -56,6 +57,7 @@
     {/if}
   </button>
 {:else}
+  <article data-event-card-root=""
   <article
     class={cn(
       'relative flex flex-col gap-2',

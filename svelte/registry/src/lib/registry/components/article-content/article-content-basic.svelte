@@ -37,7 +37,7 @@
   });
 </script>
 
-<div class="article-wrapper {className}">
+<div data-article-content-basic="" class="article-wrapper {className}">
   {#if hasMarkdown}
     <div
       role="article"

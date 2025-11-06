@@ -60,11 +60,11 @@
   <Popover.Trigger>
     {#snippet child({ props })}
       {#if children}
-        <div {...props} onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}>
+        <div data-reaction-emoji-button="" {...props} onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}>
           {@render children()}
         </div>
       {:else}
-        <div {...props} onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}>
+        <div data-reaction-emoji-button="" {...props} onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}>
           <ReactionButton {ndk} {event} {emoji} {showCount} {delayed} class={className} />
         </div>
       {/if}

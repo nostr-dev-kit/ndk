@@ -16,14 +16,14 @@
   const article = event as NDKArticle;
 </script>
 
-<div data-article-embedded="" class="article-embedded" data-variant={variant}>
+<div data-article-embedded="" class="rounded-lg overflow-hidden border border-border bg-card">
   <Article.Root {ndk} {article}>
-    <div class="article-layout">
+    <div class="flex {variant === 'compact' ? 'flex-row gap-3 p-2' : 'flex-col'} {variant === 'inline' ? 'max-w-[400px]' : ''}">
       <Article.Image
         class={variant === 'compact' ? 'h-24' : variant === 'inline' ? 'h-32' : 'h-40'}
       />
 
-      <div class="article-content">
+      <div class="flex flex-col gap-2 {variant === 'compact' ? 'flex-1 p-0' : 'p-3'}">
         <Article.Title
           class="text-sm font-semibold"
         />
@@ -35,57 +35,10 @@
           />
         {/if}
 
-        <div class="article-meta">
+        <div class="mt-auto {variant === 'compact' ? 'pt-0' : 'pt-2 border-t border-border'}">
           <Article.ReadingTime class="text-xs" />
         </div>
       </div>
     </div>
   </Article.Root>
 </div>
-
-<style>
-  .article-embedded {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--card);
-  }
-
-  .article-layout {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .article-content {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .article-meta {
-    margin-top: auto;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  [data-variant='inline'] .article-layout {
-    max-width: 400px;
-  }
-
-  [data-variant='compact'] .article-layout {
-    flex-direction: row;
-    gap: 0.75rem;
-    padding: 0.5rem;
-  }
-
-  [data-variant='compact'] .article-content {
-    flex: 1;
-    padding: 0;
-  }
-
-  [data-variant='compact'] .article-meta {
-    border-top: none;
-    padding-top: 0;
-  }
-</style>

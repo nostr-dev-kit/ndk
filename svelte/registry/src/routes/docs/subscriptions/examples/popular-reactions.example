@@ -1,0 +1,12 @@
+// Show most reacted-to posts from your network
+const popular = ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [7], authors: ndk.$follows }],
+  sort: 'count'
+}));
+
+{#each popular.events as event (event.id)}
+  {@const reactions = popular.eventsTagging(event)}
+  <EventCard {event}>
+    <span>{reactions.length} reactions</span>
+  </EventCard>
+{/each}

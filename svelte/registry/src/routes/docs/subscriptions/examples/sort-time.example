@@ -1,0 +1,4 @@
+ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [6, 16], authors: follows }],
+  sort: 'time'
+}))

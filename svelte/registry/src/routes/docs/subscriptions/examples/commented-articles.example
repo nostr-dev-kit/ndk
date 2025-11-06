@@ -1,0 +1,12 @@
+// Show articles commented on by your follows
+const articles = ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [1111], "#K": ["30023"], authors: ndk.$follows }],
+  sort: 'count'
+}));
+
+{#each articles.events as article (article.id)}
+  {@const comments = articles.eventsTagging(article)}
+  <ArticleCard {article}>
+    <span>{comments.length} comments</span>
+  </ArticleCard>
+{/each}

@@ -8,6 +8,15 @@
   import NoteComposerCard from '$lib/registry/components/note-composer/note-composer-card.svelte';
   import NoteComposerMinimal from '$lib/registry/components/note-composer/note-composer-minimal.svelte';
 
+  // Import code examples
+  import inlineExample from './examples/inline.example?raw';
+  import cardExample from './examples/card.example?raw';
+  import minimalExample from './examples/minimal.example?raw';
+  import modalExample from './examples/modal.example?raw';
+  import replyInlineExample from './examples/reply-inline.example?raw';
+  import replyModalExample from './examples/reply-modal.example?raw';
+  import customExample from './examples/custom.example?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Create a sample event for reply examples
@@ -36,14 +45,7 @@
     <Demo
       title="Inline Composer"
       description="Compact inline composer with all features. Perfect for embedding in pages or feeds."
-      code={`<script>
-  import { NoteComposerInline } from '@nostr-dev-kit/svelte-registry/blocks';
-</script>
-
-<NoteComposerInline
-  {ndk}
-  onPublish={(event) => console.log('Published:', event)}
-/>`}
+      code={inlineExample}
     >
       <div class="max-w-2xl">
         <NoteComposerInline
@@ -56,15 +58,7 @@
     <Demo
       title="Card Composer"
       description="Note composer in a card layout with border and shadow. Great for prominent placement."
-      code={`<script>
-  import { NoteComposerCard } from '@nostr-dev-kit/svelte-registry/blocks';
-</script>
-
-<NoteComposerCard
-  {ndk}
-  title="Share your thoughts"
-  onPublish={(event) => console.log('Published:', event)}
-/>`}
+      code={cardExample}
     >
       <div class="max-w-2xl">
         <NoteComposerCard
@@ -78,15 +72,7 @@
     <Demo
       title="Minimal Composer"
       description="Minimal composer with just textarea and submit button. Perfect for quick notes or replies."
-      code={`<script>
-  import { NoteComposerMinimal } from '@nostr-dev-kit/svelte-registry/blocks';
-</script>
-
-<NoteComposerMinimal
-  {ndk}
-  placeholder="Quick note..."
-  onPublish={(event) => console.log('Published:', event)}
-/>`}
+      code={minimalExample}
     >
       <div class="max-w-2xl">
         <NoteComposerMinimal
@@ -100,20 +86,7 @@
     <Demo
       title="Modal Composer"
       description="Full-featured composer in a modal dialog. Gives users space for longer notes."
-      code={`<script>
-  import { NoteComposerModal } from '@nostr-dev-kit/svelte-registry/blocks';
-  let open = $state(false);
-</script>
-
-<button onclick={() => open = true}>Compose Note</button>
-<NoteComposerModal
-  {ndk}
-  bind:open
-  onPublish={(event) => {
-    console.log('Published:', event);
-    open = false;
-  }}
-/>`}
+      code={modalExample}
     >
       <div class="flex gap-3">
         <button
@@ -138,16 +111,7 @@
     <Demo
       title="Reply to Note"
       description="Use the replyTo prop to create a reply. Automatically sets kind 1111 and adds proper e/p/root tags."
-      code={`<script>
-  import { NoteComposerInline } from '@nostr-dev-kit/svelte-registry/blocks';
-  // event is the note you're replying to
-</script>
-
-<NoteComposerInline
-  {ndk}
-  replyTo={event}
-  onPublish={(reply) => console.log('Reply published:', reply)}
-/>`}
+      code={replyInlineExample}
     >
       <div class="max-w-2xl space-y-4">
         <div class="p-4 border border-border rounded-lg bg-muted/30">
@@ -166,17 +130,7 @@
     <Demo
       title="Reply Modal"
       description="Modal composer for replies gives users more space for detailed responses."
-      code={`<script>
-  import { NoteComposerModal } from '@nostr-dev-kit/svelte-registry/blocks';
-  let open = $state(false);
-</script>
-
-<button onclick={() => open = true}>Reply</button>
-<NoteComposerModal
-  {ndk}
-  replyTo={event}
-  bind:open
-/>`}
+      code={replyModalExample}
     >
       <div class="max-w-2xl space-y-4">
         <div class="p-4 border border-border rounded-lg bg-muted/30">
@@ -206,20 +160,7 @@
     <Demo
       title="Build Your Own"
       description="Use the composable primitives to build custom composers that fit your exact needs."
-      code={`<script>
-  import { NoteComposer } from '@nostr-dev-kit/svelte-registry/components/note-composer';
-</script>
-
-<NoteComposer.Root {ndk}>
-  <div class="space-y-4">
-    <NoteComposer.Textarea placeholder="Custom composer..." />
-    <div class="flex gap-2">
-      <NoteComposer.MentionInput />
-      <NoteComposer.Media />
-    </div>
-    <NoteComposer.Submit variant="outline" />
-  </div>
-</NoteComposer.Root>`}
+      code={customExample}
     >
       <div class="max-w-2xl p-6 border border-border rounded-lg">
         <p class="text-sm text-muted-foreground mb-4">

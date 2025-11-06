@@ -1,0 +1,9 @@
+<script>
+  import { NoteComposerMinimal } from '@nostr-dev-kit/svelte-registry/blocks';
+</script>
+
+<NoteComposerMinimal
+  {ndk}
+  placeholder="Quick note..."
+  onPublish={(event) => console.log('Published:', event)}
+/>

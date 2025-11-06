@@ -12,31 +12,6 @@
   },
   "items": [
     {
-      "name": "avatar-group",
-      "type": "registry:component",
-      "title": "Avatar Group",
-      "description": "Display multiple user avatars in a stacked group with smart ordering",
-      "registryDependencies": [
-        "user-profile"
-      ],
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "files": [
-        {
-          "path": "registry/ndk/avatar-group/avatar-group.svelte",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/ndk/avatar-group/index.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "version": "0.1.0",
-      "updatedAt": "2025-11-02T07:15:56.000Z"
-    },
-    {
       "name": "article-card-medium",
       "type": "registry:component",
       "title": "Article Card Medium",
@@ -52,8 +27,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.5.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:00.174Z"
     },
     {
       "name": "article-content",
@@ -77,6 +52,31 @@
         },
         {
           "path": "registry/ndk/article-content/index.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "version": "0.4.0",
+      "updatedAt": "2025-10-31T07:15:56.000Z"
+    },
+    {
+      "name": "avatar-group",
+      "type": "registry:component",
+      "title": "Avatar Group",
+      "description": "Display multiple user avatars in a stacked group with smart ordering",
+      "registryDependencies": [
+        "user-profile"
+      ],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/avatar-group/avatar-group.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/avatar-group/index.ts",
           "type": "registry:lib"
         }
       ],
@@ -156,8 +156,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.21.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:01.234Z"
     },
     {
       "name": "follow-pack-list-item",
@@ -175,8 +175,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:01.387Z"
     },
     {
       "name": "highlight-card-elegant",
@@ -194,8 +194,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:01.543Z"
     },
     {
       "name": "highlight-card-feed",
@@ -213,8 +213,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:01.695Z"
     },
     {
       "name": "highlight-card-grid",
@@ -232,8 +232,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.4.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:01.851Z"
     },
     {
       "name": "image-card",
@@ -251,8 +251,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:02.009Z"
     },
     {
       "name": "image-card-instagram",
@@ -270,8 +270,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:02.159Z"
     },
     {
       "name": "relay-card",
@@ -328,8 +328,8 @@
           "type": "registry:lib"
         }
       ],
-      "version": "0.7.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:02.690Z"
     },
     {
       "name": "user-profile-hero",
@@ -347,8 +347,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.3.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:02.844Z"
     },
     {
       "name": "voice-message-card-compact",
@@ -366,8 +366,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:02.995Z"
     },
     {
       "name": "voice-message-card-expanded",
@@ -385,8 +385,8 @@
           "type": "registry:ui"
         }
       ],
-      "version": "0.2.0",
-      "updatedAt": "2025-10-31T07:15:56.000Z"
+      "version": "0.0.0",
+      "updatedAt": "2025-11-06T13:43:03.143Z"
     },
     {
       "name": "zap-button",
@@ -406,8 +406,8 @@
         }
       ],
       "version": "0.0.0",
-      "updatedAt": "2025-11-01T10:50:49.505Z"
+      "updatedAt": "2025-11-06T13:43:03.289Z"
     }
   ],
-  "version": "4.0.0-beta.28"
+  "version": "4.0.0-beta.41"
 }

@@ -34,13 +34,13 @@
 	const caption = $derived(image.content);
 </script>
 
-<div data-image-card-hero="" class={cn('hero-card w-full', height, className)}>
+<div data-image-card-hero="" class={cn('relative overflow-hidden bg-black rounded-2xl w-full', height, className)}>
 	<!-- Background Image -->
-	<div class="hero-image-container">
+	<div class="absolute inset-0">
 		{#if imageUrl}
-			<img src={imageUrl} alt={imeta?.alt || 'Image'} class="hero-image" loading="lazy" />
+			<img src={imageUrl} alt={imeta?.alt || 'Image'} class="w-full h-full object-cover" loading="lazy" />
 		{:else}
-			<div class="hero-image-placeholder">
+			<div class="w-full h-full flex items-center justify-center bg-muted">
 				<span class="text-6xl text-muted-foreground">📷</span>
 			</div>
 		{/if}
@@ -49,12 +49,12 @@
 	<!-- Content Overlay -->
 	<div class="hero-content">
 		{#if caption}
-			<p class="hero-caption">{caption}</p>
+			<p class="text-base leading-relaxed mb-4 text-[#ddd]">{caption}</p>
 		{/if}
 
-		<div class="hero-author-bar">
+		<div class="flex items-center justify-between gap-4">
 			<User.Root {ndk} pubkey={image.pubkey}>
-				<div class="hero-author">
+				<div class="flex items-center gap-3">
 					<User.Avatar class="w-12 h-12" />
 					<User.Name class="font-semibold text-lg" />
 				</div>
@@ -68,33 +68,6 @@
 </div>
 
 <style>
-	.hero-card {
-		position: relative;
-		overflow: hidden;
-		background: #000;
-		border-radius: 1rem;
-	}
-
-	.hero-image-container {
-		position: absolute;
-		inset: 0;
-	}
-
-	.hero-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.hero-image-placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: hsl(var(--muted));
-	}
-
 	.hero-content {
 		position: absolute;
 		bottom: 0;
@@ -108,25 +81,5 @@
 			transparent 100%
 		);
 		padding-top: 5rem;
-	}
-
-	.hero-caption {
-		font-size: 1rem;
-		line-height: 1.625;
-		margin-bottom: 1rem;
-		color: #ddd;
-	}
-
-	.hero-author-bar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.hero-author {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
 	}
 </style>

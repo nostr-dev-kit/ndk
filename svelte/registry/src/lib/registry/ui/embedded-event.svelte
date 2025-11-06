@@ -58,8 +58,8 @@
 		<span>Failed to load event</span>
 	</div>
 {:else if KindHandler && wrappedEvent}
-	<!-- Kind-specific handler - pass variant -->
-	<KindHandler {ndk} event={wrappedEvent} {variant} />
+	<!-- Kind-specific handler -->
+	<KindHandler {ndk} event={wrappedEvent} />
 {:else if FallbackHandler && wrappedEvent}
 	<!-- Fallback handler - no variant -->
 	<FallbackHandler {ndk} event={wrappedEvent} class={className} />

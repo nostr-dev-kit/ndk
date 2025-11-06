@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk",
-  "version": "3.0.0-beta.39",
+  "version": "3.0.0-beta.40",
   "description": "NDK - Nostr Development Kit. Includes AI Guardrails to catch common mistakes during development.",
   "homepage": "https://ndk.fyi",
   "documentation": "https://nostr-dev-kit.github.io/ndk",
@@ -69,21 +69,21 @@
   "packageManager": "bun@1.0.0",
   "devDependencies": {
     "@types/debug": "^4.1.12",
-    "@types/node": "^24.9.0",
+    "@types/node": "^24.10.0",
     "@vitest/coverage-v8": "^3.2.4",
-    "esbuild": "^0.25.11",
+    "esbuild": "^0.25.12",
     "esbuild-plugin-alias": "^0.2.1",
     "esm-loader-typescript": "^1.0.6",
-    "nostr-tools": "^2.17.0",
+    "nostr-tools": "^2.17.2",
     "ts-node": "^10.9.2",
-    "tsd": "^0.31.2",
+    "tsd": "^0.33.0",
     "tsup": "^8.4.0",
     "typedoc": "^0.28.14",
     "typedoc-plugin-rename-defaults": "^0.7.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.7"
   },
   "peerDependencies": {
-    "nostr-tools": "^2.17.0"
+    "nostr-tools": "^2.17.2"
   },
   "dependencies": {
     "@codesandbox/sandpack-client": "^2.19.8",

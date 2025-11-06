@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/messages",
-  "version": "2.0.0-beta.39",
+  "version": "2.0.0-beta.40",
   "description": "High-level messaging library for NDK supporting NIP-17 and NIP-EE",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -32,14 +32,14 @@
     "eventemitter3": "^5.0.1"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.39",
-    "nostr-tools": "^2.17.0"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.40",
+    "nostr-tools": "^2.17.2"
   },
   "devDependencies": {
-    "@types/node": "^24.9.0",
+    "@types/node": "^24.10.0",
     "tsup": "^8.4.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.7"
   },
   "author": "Nostr Dev Kit",
   "license": "MIT",

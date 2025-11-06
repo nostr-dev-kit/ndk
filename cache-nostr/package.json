@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/cache-nostr",
-  "version": "0.1.66-beta.39",
+  "version": "0.1.66-beta.40",
   "description": "NDK cache adapter that uses a local nostr relay.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -36,14 +36,14 @@
   },
   "homepage": "https://github.com/nostr-dev-kit/ndk",
   "dependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.39",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.40",
     "debug": "^4.3.7",
     "typescript": "^5.9.3",
     "websocket-polyfill": "^0.0.3"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
-    "@types/node": "^24.9.0",
+    "@types/node": "^24.10.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.4.0"
   }

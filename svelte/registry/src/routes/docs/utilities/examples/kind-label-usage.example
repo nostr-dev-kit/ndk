@@ -1,0 +1,17 @@
+// Singular form (default)
+const label = kindLabel(30023);
+// Returns: "Article"
+
+// With count for pluralization
+const label = kindLabel(30023, 1);
+// Returns: "Article"
+
+const label = kindLabel(30023, 5);
+// Returns: "Articles"
+
+// Notes
+kindLabel(1);     // "Note"
+kindLabel(1, 3);  // "Notes"
+
+// Unknown kinds return the kind number
+kindLabel(99999); // "99999"

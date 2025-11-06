@@ -74,8 +74,11 @@ export function createRepostAction(
         if (!reposts) return { count: 0, hasReposted: false };
 
         let userRepost: NDKEvent | undefined;
+        const uniquePubkeys = new Set<string>();
+
         const hasReposted = resolvedNDK.$currentPubkey
             ? Array.from(reposts).some(r => {
+                uniquePubkeys.add(r.pubkey);
                 if (r.pubkey === resolvedNDK.$currentPubkey) {
                     userRepost = r;
                     return true;
@@ -84,8 +87,15 @@ export function createRepostAction(
             })
             : false;
 
+        // If user is not logged in, still need to count unique pubkeys
+        if (!resolvedNDK.$currentPubkey) {
+            for (const r of reposts) {
+                uniquePubkeys.add(r.pubkey);
+            }
+        }
+
         return {
-            count: reposts.length,
+            count: uniquePubkeys.size,
             hasReposted,
             userRepost
         };

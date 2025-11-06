@@ -31,7 +31,7 @@
   <div class="max-w-[1400px] mx-auto">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-semibold text-foreground">Authentication</h2>
-      <span class="text-muted-foreground text-sm">1 block</span>
+      <span class="text-muted-foreground text-sm">2 blocks</span>
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6 mb-16">
@@ -48,6 +48,19 @@
         ]}
         gradient="linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
         iconGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      />
+
+      <BlockCard
+        title="Session Switcher"
+        description="Dropdown menu for switching between multiple logged-in Nostr accounts with avatar, name, and session management."
+        icon="🔄"
+        href="/blocks/session-switcher"
+        variantCount={2}
+        badges={[
+          { label: 'Multi-account', variant: 'feature' }
+        ]}
+        gradient="linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%)"
+        iconGradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
       />
     </div>
 

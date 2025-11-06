@@ -35,7 +35,10 @@
       </div>
 
       <!-- Preview -->
-      <div class="flex-1 flex items-center justify-center w-full grayscale group-hover:grayscale-0">
+      <div
+        class="flex-1 flex items-center justify-center w-full grayscale group-hover:grayscale-0"
+        onclick={(e) => e.stopPropagation()}
+      >
         {@render block.preview()}
       </div>
     </div>

@@ -1,19 +1,15 @@
-<!-- @ndk-version: article-content@0.3.0 -->
+<!-- @ndk-version: article-content@0.4.0 -->
 <script lang="ts">
-  import { Marked } from 'marked';
   import { NDKHighlight, NDKKind, type NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
-  import { mount, unmount } from 'svelte';
   import { getContext, setContext } from 'svelte';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import { defaultContentRenderer, type ContentRenderer } from '../../ui/content-renderer.svelte.js';
   import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../ui/content-renderer.context.js';
-  import { createNostrMarkdownExtensions } from '../../builders/markdown-nostr-extensions.js';
   import { User } from '../../ui/user';
-  import Mention from '../mention/mention.svelte';
-  import EmbeddedEvent from '../../ui/embedded-event.svelte';
   import HighlightToolbar from './highlight-toolbar.svelte';
+  import { MarkdownEventContent } from '../../ui/markdown-event-content';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -45,9 +41,6 @@
   let contentElement = $state<HTMLDivElement>();
   let avatarData = $state<Array<{ pubkey: string; top: number; right: string }>>([]);
 
-  // Track mounted Svelte components for cleanup
-  let mountedComponents: Array<{ target: HTMLElement; unmount: () => void }> = [];
-
   // Text selection state
   let showHighlightToolbar = $state(false);
   let selectedText = $state('');
@@ -73,37 +66,6 @@
   });
 
   const content = $derived(article.content);
-
-  const hasMarkdown = $derived.by(() => {
-    const markdownPatterns = [
-      /^#{1,6}\s/m,
-      /\*\*[^*]+\*\*/,
-      /\*[^*]+\*/,
-      /\[([^\]]+)\]\([^)]+\)/,
-      /!\[([^\]]*)\]\([^)]+\)/, // Image syntax
-      /^[-*+]\s/m,
-      /^>\s/m,
-      /```[\s\S]*?```/,
-      /^\d+\.\s/m,
-    ];
-    return markdownPatterns.some(pattern => pattern.test(content));
-  });
-
-  const htmlContent = $derived.by(() => {
-    if (hasMarkdown) {
-      // Create a new marked instance with Nostr extensions for this component
-      const nostrExtensions = createNostrMarkdownExtensions({
-        emojiTags: article.tags
-      });
-
-      // Create Marked instance and register extensions using .use()
-      const markedInstance = new Marked();
-      markedInstance.use({ extensions: nostrExtensions });
-
-      return markedInstance.parse(content) as string;
-    }
-    return content;
-  });
 
   function handleMouseUp() {
     const selection = window.getSelection();
@@ -307,99 +269,24 @@
     avatarData = newAvatarData;
   }
 
-  function hydrateNostrComponents() {
-    if (!contentElement) return;
-
-    // Clean up previously mounted components
-    mountedComponents.forEach(({ unmount }) => unmount());
-    mountedComponents = [];
-
-    // Hydrate mentions (npub, nprofile)
-    const mentions = contentElement.querySelectorAll<HTMLElement>('.nostr-mention');
-    mentions.forEach(placeholder => {
-      const bech32 = placeholder.dataset.bech32;
-      if (!bech32) return;
-
-      const MentionComponent = renderer.mentionComponent || Mention;
-      const mounted = mount(MentionComponent, {
-        target: placeholder,
-        props: { ndk, bech32 }
-      });
-
-      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
-    });
-
-    // Hydrate event references (note, nevent, naddr)
-    const eventRefs = contentElement.querySelectorAll<HTMLElement>('.nostr-event-ref');
-    eventRefs.forEach(placeholder => {
-      const bech32 = placeholder.dataset.bech32;
-      if (!bech32) return;
-
-      const mounted = mount(EmbeddedEvent, {
-        target: placeholder,
-        props: { ndk, bech32, renderer, variant: 'inline' }
-      });
-
-      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
-    });
-
-    // Hydrate hashtags
-    const hashtags = contentElement.querySelectorAll<HTMLElement>('.nostr-hashtag');
-    hashtags.forEach(placeholder => {
-      const tag = placeholder.dataset.tag;
-      if (!tag) return;
-
-      if (renderer.hashtagComponent) {
-        const mounted = mount(renderer.hashtagComponent, {
-          target: placeholder,
-          props: { tag }
-        });
-        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
-      } else {
-        // Default rendering
-        placeholder.textContent = `#${tag}`;
-      }
-    });
-  }
-
-  // Hydrate components after content is rendered
-  $effect(() => {
-    if (contentElement && hasMarkdown) {
-      hydrateNostrComponents();
-    }
-  });
-
-  // Cleanup on unmount
-  $effect(() => {
-    return () => {
-      mountedComponents.forEach(({ unmount }) => unmount());
-    };
-  });
 </script>
 
 <div data-article-content="" class="article-wrapper {className}">
-  {#if hasMarkdown}
-    <div
-      bind:this={contentElement}
-      onmouseup={handleMouseUp}
-      role="article"
-      tabindex="0"
-      class="article-content prose prose-lg dark:prose-invert max-w-none select-text"
-    >
-      {@html htmlContent}
-    </div>
-  {:else}
-    <div
-      bind:this={contentElement}
-      onmouseup={handleMouseUp}
-      role="article"
-      tabindex="0"
-      class="article-content text-lg leading-[1.8] whitespace-pre-wrap select-text"
-      style="font-family: var(--font-serif);"
-    >
-      {content}
-    </div>
-  {/if}
+  <div
+    bind:this={contentElement}
+    onmouseup={handleMouseUp}
+    role="article"
+    tabindex="0"
+    class="article-content select-text"
+  >
+    <MarkdownEventContent
+      {ndk}
+      content={article.content}
+      emojiTags={article.tags}
+      {renderer}
+      class="prose prose-lg dark:prose-invert max-w-none"
+    />
+  </div>
 
   <!-- Floating avatars for highlights -->
   {#each avatarData as { pubkey, top, right }, index (pubkey + index)}

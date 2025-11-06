@@ -1,0 +1,20 @@
+<script lang="ts">
+	import SessionSwitcher from '$lib/registry/blocks/session-switcher.svelte';
+	import { ndk } from '$lib/ndk.svelte';
+</script>
+
+<SessionSwitcher
+	{ndk}
+	onaddsession={() => console.log('Add session clicked')}
+	actions={[
+		{
+			label: 'Settings',
+			onclick: () => console.log('Settings clicked')
+		},
+		{
+			label: 'Logout',
+			onclick: () => console.log('Logout clicked'),
+			variant: 'danger'
+		}
+	]}
+/>

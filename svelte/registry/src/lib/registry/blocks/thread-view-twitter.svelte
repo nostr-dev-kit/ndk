@@ -32,8 +32,8 @@
 </script>
 
 {#if thread.focusedEventId}
-  <div class="thread-container {className}">
-    <div class="thread flex flex-col w-full divide-y rounded-xl overflow-hidden">
+  <div class="bg-card border border-border overflow-hidden {className}">
+    <div class="flex flex-col w-full divide-y rounded-xl overflow-hidden">
       {#each thread.events as node, i (node.id)}
         {#if node.event}
           {@const isFocused = node.event.id === thread.focusedEventId}
@@ -72,7 +72,7 @@
         {#each thread.replies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
-              <div class="timeline">
+              <div class="relative flex justify-center items-start z-10">
                 <User.Root {ndk} user={reply.author}>
                   <User.Avatar class="w-10 h-10 avatar" />
                 </User.Root>
@@ -89,16 +89,16 @@
     </div>
 
     {#if thread.otherReplies.length > 0}
-      <div class="section-header">
+      <div class="py-3 px-4 bg-muted border-t border-b border-border text-[0.8125rem] font-bold text-muted-foreground">
         {thread.otherReplies.length}
         {thread.otherReplies.length === 1 ? 'reply' : 'replies'} to other events in thread
       </div>
 
-      <div class="thread">
+      <div class="flex flex-col">
         {#each thread.otherReplies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply}>
             <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
-              <div class="timeline">
+              <div class="relative flex justify-center items-start z-10">
                 <User.Root {ndk} user={reply.author}>
                   <User.Avatar class="w-10 h-10 avatar" />
                 </User.Root>
@@ -115,23 +115,12 @@
     {/if}
   </div>
 {:else}
-  <div class="loading">
-    <div class="loading-text">Loading thread...</div>
+  <div class="flex items-center justify-center p-12">
+    <div class="text-muted-foreground">Loading thread...</div>
   </div>
 {/if}
 
 <style>
-  .thread-container {
-    background: var(--card);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .thread {
-    display: flex;
-    flex-direction: column;
-  }
-
   /* Each tweet is a row with two columns: timeline | content */
   .tweet {
     position: relative;
@@ -163,41 +152,9 @@
     height: 40px;
   }
 
-  /* Timeline column */
-  .timeline {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    z-index: 1;
-  }
-
   .tweet--focused :global(.tweet-text) {
     font-size: 1.0625rem;
     line-height: 1.5rem;
     margin-top: 0.375rem;
-  }
-
-  /* Section Header */
-  .section-header {
-    padding: 12px 16px;
-    background: var(--muted);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: var(--muted-foreground);
-  }
-
-  /* Loading State */
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem;
-  }
-
-  .loading-text {
-    color: var(--muted-foreground);
   }
 </style>

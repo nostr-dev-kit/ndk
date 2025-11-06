@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow 4: The Immersive Carousel - Auth Experience</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    :root {
+      --background: #ffffff;
+      --foreground: #0a0a0a;
+      --card: #ffffff;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a;
+      --border: #e4e4e7;
+      --primary: #18181b;
+      --primary-foreground: #fafafa;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      position: relative;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .title h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .title p {
+      font-size: 1rem;
+      opacity: 0.95;
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      height: 600px;
+      perspective: 2000px;
+    }
+
+    .carousel-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .carousel-slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .carousel-slide.prev {
+      transform: translateX(-100%) scale(0.85);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .carousel-slide.active {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+      z-index: 10;
+    }
+
+    .carousel-slide.next {
+      transform: translateX(100%) scale(0.85);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .slide-card {
+      background: var(--card);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      height: 100%;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-header {
+      margin-bottom: 2rem;
+    }
+
+    .slide-number {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--foreground);
+    }
+
+    .subtitle {
+      color: var(--muted-foreground);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .slide-content {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .slide-footer {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Auth Slide */
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .divider-vertical {
+      background: var(--border);
+      width: 1px;
+    }
+
+    .auth-section h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--foreground);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      background: var(--background);
+      color: var(--foreground);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-secondary {
+      background: var(--background);
+      color: var(--foreground);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: 0.5rem;
+    }
+
+    /* Interest Selection */
+    .interest-masonry {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .interest-pill {
+      padding: 1.25rem;
+      border: 2px solid var(--border);
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+      text-align: center;
+    }
+
+    .interest-pill:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .interest-pill.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 32px rgba(24, 24, 27, 0.15);
+    }
+
+    .interest-emoji {
+      font-size: 2rem;
+    }
+
+    .interest-name {
+      font-weight: 600;
+      font-size: 0.9375rem;
+    }
+
+    .interest-stats {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    .interest-pill.selected .interest-stats {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Communities */
+    .communities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .community-card {
+      padding: 1.5rem;
+      border: 2px solid var(--border);
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .community-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .community-card:hover::before,
+    .community-card.selected::before {
+      transform: scaleX(1);
+    }
+
+    .community-card:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .community-card.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(24, 24, 27, 0.2);
+    }
+
+    .community-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .community-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 0.75rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    .community-card.selected .community-avatar {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .community-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .community-count {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .community-card.selected .community-count {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .community-description {
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: var(--muted-foreground);
+    }
+
+    .community-card.selected .community-description {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Navigation */
+    .carousel-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .nav-dot.active {
+      width: 32px;
+      border-radius: 4px;
+      background: var(--primary);
+    }
+
+    .nav-btn {
+      padding: 0.75rem 1.5rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      background: var(--background);
+      color: var(--foreground);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+    }
+
+    .nav-btn.primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    .nav-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Success State */
+    .success-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      gap: 2rem;
+    }
+
+    .success-icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes scaleIn {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .success-icon svg {
+      width: 64px;
+      height: 64px;
+    }
+
+    @media (max-width: 768px) {
+      .auth-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .divider-vertical {
+        display: none;
+      }
+
+      .interest-masonry,
+      .communities-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .carousel-wrapper {
+        height: auto;
+        min-height: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">
+      <h1>Flow 4: Immersive Carousel</h1>
+      <p>Swipe through your personalized onboarding journey</p>
+    </div>
+
+    <div class="carousel-wrapper">
+      <div class="carousel-track">
+        <!-- Slide 1: Auth -->
+        <div class="carousel-slide active" data-slide="0">
+          <div class="slide-card">
+            <div class="slide-header">
+              <div class="slide-number">Step 1 of 4</div>
+              <h2>Welcome</h2>
+              <p class="subtitle">Sign in to your existing account or create a new one to get started</p>
+            </div>
+
+            <div class="slide-content">
+              <div class="auth-grid">
+                <div class="auth-section">
+                  <h3>Sign In</h3>
+                  <div class="form-group">
+                    <label>Credentials</label>
+                    <input type="text" placeholder="nsec, npub, bunker://...">
+                    <p class="hint">Any Nostr credential format</p>
+                  </div>
+                  <button class="btn btn-primary" onclick="nextSlide()">
+                    Sign In
+                  </button>
+                  <button class="btn btn-secondary" style="margin-top: 0.75rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    Extension
+                  </button>
+                </div>
+
+                <div class="divider-vertical"></div>
+
+                <div class="auth-section">
+                  <h3>Create Account</h3>
+                  <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" placeholder="Your display name">
+                  </div>
+                  <div class="form-group">
+                    <label>Bio (Optional)</label>
+                    <textarea placeholder="About you..."></textarea>
+                  </div>
+                  <button class="btn btn-primary" onclick="nextSlide()">
+                    Create & Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-footer">
+              <div class="carousel-nav">
+                <div style="width: 100px;"></div>
+                <div class="nav-dots">
+                  <div class="nav-dot active" onclick="goToSlide(0)"></div>
+                  <div class="nav-dot" onclick="goToSlide(1)"></div>
+                  <div class="nav-dot" onclick="goToSlide(2)"></div>
+                  <div class="nav-dot" onclick="goToSlide(3)"></div>
+                </div>
+                <div style="width: 100px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Interests -->
+        <div class="carousel-slide next" data-slide="1">
+          <div class="slide-card">
+            <div class="slide-header">
+              <div class="slide-number">Step 2 of 4</div>
+              <h2>Your Interests</h2>
+              <p class="subtitle">Select the topics that fascinate you to personalize your feed</p>
+            </div>
+
+            <div class="slide-content">
+              <div class="interest-masonry">
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">₿</div>
+                  <div class="interest-name">#bitcoin</div>
+                  <div class="interest-stats">12.4k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">🟣</div>
+                  <div class="interest-name">#nostr</div>
+                  <div class="interest-stats">8.2k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">💻</div>
+                  <div class="interest-name">#tech</div>
+                  <div class="interest-stats">15.7k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">🎨</div>
+                  <div class="interest-name">#art</div>
+                  <div class="interest-stats">9.1k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">🎵</div>
+                  <div class="interest-name">#music</div>
+                  <div class="interest-stats">11.3k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">📸</div>
+                  <div class="interest-name">#photography</div>
+                  <div class="interest-stats">6.8k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">⚡</div>
+                  <div class="interest-name">#lightning</div>
+                  <div class="interest-stats">5.2k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">🔒</div>
+                  <div class="interest-name">#privacy</div>
+                  <div class="interest-stats">7.6k notes</div>
+                </div>
+                <div class="interest-pill" onclick="toggleItem(this)">
+                  <div class="interest-emoji">🎮</div>
+                  <div class="interest-name">#gaming</div>
+                  <div class="interest-stats">4.9k notes</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-footer">
+              <div class="carousel-nav">
+                <button class="nav-btn" onclick="prevSlide()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  Back
+                </button>
+                <div class="nav-dots">
+                  <div class="nav-dot" onclick="goToSlide(0)"></div>
+                  <div class="nav-dot active" onclick="goToSlide(1)"></div>
+                  <div class="nav-dot" onclick="goToSlide(2)"></div>
+                  <div class="nav-dot" onclick="goToSlide(3)"></div>
+                </div>
+                <button class="nav-btn primary" onclick="nextSlide()">
+                  Next
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Communities -->
+        <div class="carousel-slide next" data-slide="2">
+          <div class="slide-card">
+            <div class="slide-header">
+              <div class="slide-number">Step 3 of 4</div>
+              <h2>Join Communities</h2>
+              <p class="subtitle">Follow curated groups to discover amazing people and content</p>
+            </div>
+
+            <div class="slide-content">
+              <div class="communities-grid">
+                <div class="community-card" onclick="toggleItem(this)">
+                  <div class="community-header">
+                    <div class="community-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                    <div>
+                      <div class="community-title">Bitcoin Developers</div>
+                      <div class="community-count">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        124 members
+                      </div>
+                    </div>
+                  </div>
+                  <div class="community-description">
+                    Core contributors and protocol developers working on Bitcoin infrastructure
+                  </div>
+                </div>
+
+                <div class="community-card" onclick="toggleItem(this)">
+                  <div class="community-header">
+                    <div class="community-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <div>
+                      <div class="community-title">Nostr Pioneers</div>
+                      <div class="community-count">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        89 members
+                      </div>
+                    </div>
+                  </div>
+                  <div class="community-description">
+                    Early adopters and builders shaping the future of the Nostr protocol
+                  </div>
+                </div>
+
+                <div class="community-card" onclick="toggleItem(this)">
+                  <div class="community-header">
+                    <div class="community-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                    <div>
+                      <div class="community-title">Creative Minds</div>
+                      <div class="community-count">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        156 members
+                      </div>
+                    </div>
+                  </div>
+                  <div class="community-description">
+                    Artists, musicians, and content creators sharing their work and passion
+                  </div>
+                </div>
+
+                <div class="community-card" onclick="toggleItem(this)">
+                  <div class="community-header">
+                    <div class="community-avatar" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                    <div>
+                      <div class="community-title">Tech Enthusiasts</div>
+                      <div class="community-count">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        203 members
+                      </div>
+                    </div>
+                  </div>
+                  <div class="community-description">
+                    Software engineers and technology lovers discussing the latest trends
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slide-footer">
+              <div class="carousel-nav">
+                <button class="nav-btn" onclick="prevSlide()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  Back
+                </button>
+                <div class="nav-dots">
+                  <div class="nav-dot" onclick="goToSlide(0)"></div>
+                  <div class="nav-dot" onclick="goToSlide(1)"></div>
+                  <div class="nav-dot active" onclick="goToSlide(2)"></div>
+                  <div class="nav-dot" onclick="goToSlide(3)"></div>
+                </div>
+                <button class="nav-btn primary" onclick="nextSlide()">
+                  Finish
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Complete -->
+        <div class="carousel-slide next" data-slide="3">
+          <div class="slide-card">
+            <div class="success-content">
+              <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+
+              <div>
+                <h2 style="margin-bottom: 1rem;">You're All Set!</h2>
+                <p class="subtitle" style="max-width: 500px; margin: 0 auto;">
+                  Your Nostr profile is created, your interests are selected, and your communities are ready. Let's start exploring!
+                </p>
+              </div>
+
+              <div style="width: 100%; max-width: 400px;">
+                <button class="btn btn-primary" onclick="launchApp()" style="font-size: 1rem; padding: 1.25rem;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                  Start Exploring
+                </button>
+
+                <button class="btn btn-secondary" onclick="goToSlide(0)" style="margin-top: 1rem;">
+                  Start Over
+                </button>
+              </div>
+            </div>
+
+            <div class="slide-footer">
+              <div class="carousel-nav">
+                <button class="nav-btn" onclick="prevSlide()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  Back
+                </button>
+                <div class="nav-dots">
+                  <div class="nav-dot" onclick="goToSlide(0)"></div>
+                  <div class="nav-dot" onclick="goToSlide(1)"></div>
+                  <div class="nav-dot" onclick="goToSlide(2)"></div>
+                  <div class="nav-dot active" onclick="goToSlide(3)"></div>
+                </div>
+                <div style="width: 100px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const totalSlides = 4;
+
+    function updateSlides() {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('.nav-dot');
+
+      slides.forEach((slide, index) => {
+        slide.classList.remove('prev', 'active', 'next');
+
+        if (index < currentSlide) {
+          slide.classList.add('prev');
+        } else if (index === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.add('next');
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlides();
+    }
+
+    function toggleItem(element) {
+      element.classList.toggle('selected');
+    }
+
+    function launchApp() {
+      alert('Welcome to Nostr! Your personalized experience is ready.');
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication Flow Concepts - Creative Presentation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(247, 148, 29, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(34, 211, 238, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+    }
+
+    .agency-logo {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .date {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 3rem;
+    }
+
+    .scroll-indicator {
+      margin-top: 4rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .flows-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 4rem 2rem 8rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .flows-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .flow-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .flow-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .flow-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .flow-card:hover {
+      transform: translateY(-8px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .flow-number {
+      display: inline-block;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .flow-card:nth-child(1) .flow-number {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+      border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .flow-card:nth-child(2) .flow-number {
+      background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+      border-color: rgba(240, 147, 251, 0.3);
+    }
+
+    .flow-card:nth-child(3) .flow-number {
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.2) 0%, rgba(0, 242, 254, 0.2) 100%);
+      border-color: rgba(79, 172, 254, 0.3);
+    }
+
+    .flow-card:nth-child(4) .flow-number {
+      background: linear-gradient(135deg, rgba(67, 233, 123, 0.2) 0%, rgba(56, 249, 215, 0.2) 100%);
+      border-color: rgba(67, 233, 123, 0.3);
+    }
+
+    .flow-card:nth-child(1)::before {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .flow-card:nth-child(2)::before {
+      background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .flow-card:nth-child(3)::before {
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .flow-card:nth-child(4)::before {
+      background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .flow-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .flow-description {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 1.5rem;
+    }
+
+    .flow-features {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .flow-features li {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 0.5rem;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .flow-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: rgba(102, 126, 234, 0.7);
+      font-weight: 700;
+    }
+
+    .flow-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      padding: 0.75rem 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .flow-card:hover .flow-cta {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .comparison {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    .comparison h3 {
+      font-size: 1.75rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .comparison-item h4 {
+      font-size: 1.125rem;
+      margin-bottom: 0.75rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .comparison-item p {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .footer h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer p {
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .flows-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="agency-logo">Creative Concept Presentation</div>
+      <h1>Authentication Flow<br>Experience Concepts</h1>
+      <p class="tagline">Four distinct approaches to user onboarding</p>
+      <p class="date">Concept Design • November 2025</p>
+      <div class="scroll-indicator">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M19 12l-7 7-7-7"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="flows-section">
+    <div class="section-header">
+      <h2 class="section-title">Four Innovative Approaches</h2>
+      <p class="section-subtitle">
+        Each flow offers a unique user experience while maintaining the same core functionality:
+        authentication, interest selection, and community discovery.
+      </p>
+    </div>
+
+    <div class="flows-grid">
+      <a href="auth-flow-1-split.html" class="flow-card">
+        <div class="flow-number">01</div>
+        <h3 class="flow-title">The Dynamic Split</h3>
+        <p class="flow-description">
+          A seamless side-by-side layout that elegantly transitions from authentication to personalization,
+          providing clear separation between login and signup paths.
+        </p>
+        <ul class="flow-features">
+          <li>Split-screen design with smooth transitions</li>
+          <li>Multi-step onboarding with visual progress</li>
+          <li>Clear choice between login and signup</li>
+          <li>Grid-based interest selection</li>
+        </ul>
+        <div class="flow-cta">
+          View Prototype
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+      <a href="auth-flow-2-progressive.html" class="flow-card">
+        <div class="flow-number">02</div>
+        <h3 class="flow-title">Progressive Reveal</h3>
+        <p class="flow-description">
+          An accordion-style interface that progressively reveals each step, keeping users focused
+          on one task at a time while showing their overall progress.
+        </p>
+        <ul class="flow-features">
+          <li>Accordion-based step progression</li>
+          <li>Unified login/signup in single section</li>
+          <li>Visual step completion indicators</li>
+          <li>Tag-based interest selection</li>
+        </ul>
+        <div class="flow-cta">
+          View Prototype
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+      <a href="auth-flow-3-tabs.html" class="flow-card">
+        <div class="flow-number">03</div>
+        <h3 class="flow-title">Intelligent Tabs</h3>
+        <p class="flow-description">
+          A tab-based navigation system that gives users complete control over their journey,
+          allowing them to move freely between sections while tracking completion.
+        </p>
+        <ul class="flow-features">
+          <li>Tab-based navigation with completion marks</li>
+          <li>Side-by-side login and signup options</li>
+          <li>Icon-based interest cards</li>
+          <li>Rich community previews</li>
+        </ul>
+        <div class="flow-cta">
+          View Prototype
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+      <a href="auth-flow-4-carousel.html" class="flow-card">
+        <div class="flow-number">04</div>
+        <h3 class="flow-title">Immersive Carousel</h3>
+        <p class="flow-description">
+          A full-screen carousel experience with smooth 3D transitions and swipe support,
+          creating an immersive onboarding journey with cinematic polish.
+        </p>
+        <ul class="flow-features">
+          <li>Full-screen carousel with 3D transitions</li>
+          <li>Swipe and keyboard navigation support</li>
+          <li>Rich visual interest cards</li>
+          <li>Cinematic completion experience</li>
+        </ul>
+        <div class="flow-cta">
+          View Prototype
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+
+    <div class="comparison">
+      <h3>Design Philosophy</h3>
+      <div class="comparison-grid">
+        <div class="comparison-item">
+          <h4>User Choice</h4>
+          <p>
+            Each flow balances structure with freedom, guiding users through essential steps
+            while allowing them to explore at their own pace.
+          </p>
+        </div>
+        <div class="comparison-item">
+          <h4>Visual Hierarchy</h4>
+          <p>
+            Clear visual cues help users understand where they are in the process and what
+            actions are available, reducing cognitive load.
+          </p>
+        </div>
+        <div class="comparison-item">
+          <h4>Progressive Disclosure</h4>
+          <p>
+            Information is revealed gradually to prevent overwhelm, showing users only what
+            they need at each step of their journey.
+          </p>
+        </div>
+        <div class="comparison-item">
+          <h4>Neutral Aesthetics</h4>
+          <p>
+            Consistent shadcn-svelte-inspired design language across all flows ensures
+            focus remains on UX patterns rather than visual styling.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <h3>Next Steps</h3>
+      <p>
+        These concepts demonstrate different approaches to the same user journey.
+        Each has unique strengths suited to different use cases and user preferences.
+        The next phase would involve user testing to determine which approach resonates
+        best with your audience.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

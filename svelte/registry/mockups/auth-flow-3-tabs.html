@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow 3: The Intelligent Tabs - Auth Experience</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    :root {
+      --background: #ffffff;
+      --foreground: #0a0a0a;
+      --card: #ffffff;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a;
+      --border: #e4e4e7;
+      --primary: #18181b;
+      --primary-foreground: #fafafa;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .title h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .title p {
+      font-size: 1rem;
+      opacity: 0.95;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+    }
+
+    .tabs-header {
+      display: flex;
+      background: var(--muted);
+      padding: 0.5rem;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab:hover {
+      color: var(--foreground);
+    }
+
+    .tab.active {
+      background: var(--card);
+      color: var(--foreground);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab.completed {
+      color: var(--primary);
+    }
+
+    .tab.completed::after {
+      content: '✓';
+      margin-left: 0.5rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .tab-content {
+      padding: 2.5rem;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--foreground);
+    }
+
+    .subtitle {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    .split-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .column h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--foreground);
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      background: var(--background);
+      color: var(--foreground);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-secondary {
+      background: var(--background);
+      color: var(--foreground);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: 0.5rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.25rem 0;
+      color: var(--muted-foreground);
+      font-size: 0.75rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider span {
+      padding: 0 1rem;
+    }
+
+    /* Interests */
+    .interest-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .interest-tag {
+      padding: 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .interest-tag:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .interest-tag.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .interest-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Packs */
+    .pack-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pack-card {
+      padding: 1.25rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pack-card:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .pack-card.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(24, 24, 27, 0.2);
+    }
+
+    .pack-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pack-image {
+      width: 48px;
+      height: 48px;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    .pack-card.selected .pack-image {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .pack-title {
+      font-weight: 600;
+      font-size: 0.9375rem;
+      margin-bottom: 0.125rem;
+    }
+
+    .pack-count {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    .pack-card.selected .pack-count {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .pack-description {
+      font-size: 0.8125rem;
+      color: var(--muted-foreground);
+      line-height: 1.5;
+    }
+
+    .pack-card.selected .pack-description {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .success-state {
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .success-icon svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    @media (max-width: 768px) {
+      .split-view {
+        grid-template-columns: 1fr;
+      }
+
+      .interest-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pack-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">
+      <h1>Flow 3: Intelligent Tabs</h1>
+      <p>Choose your path, customize your experience</p>
+    </div>
+
+    <div class="card">
+      <div class="tabs-header">
+        <button class="tab active" data-tab="auth" onclick="switchTab('auth')">
+          Sign In / Sign Up
+        </button>
+        <button class="tab" data-tab="interests" onclick="switchTab('interests')">
+          Interests
+        </button>
+        <button class="tab" data-tab="communities" onclick="switchTab('communities')">
+          Communities
+        </button>
+        <button class="tab" data-tab="ready" onclick="switchTab('ready')">
+          Ready
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Auth Tab -->
+        <div class="tab-panel active" data-panel="auth">
+          <h2>Welcome to Nostr</h2>
+          <p class="subtitle">Sign in to your account or create a new one</p>
+
+          <div class="split-view">
+            <div class="column">
+              <h3>Sign In</h3>
+
+              <div class="form-group">
+                <label>Your Credentials</label>
+                <input type="text" placeholder="nsec, npub, bunker://, name@domain.com">
+                <p class="hint">Enter any supported credential format</p>
+              </div>
+
+              <button class="btn btn-primary" onclick="completeTab('auth', 'interests')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                </svg>
+                Sign In
+              </button>
+
+              <div class="divider"><span>Quick Connect</span></div>
+
+              <button class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                Browser Extension
+              </button>
+            </div>
+
+            <div class="column">
+              <h3>Create Account</h3>
+
+              <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" placeholder="What should we call you?">
+              </div>
+
+              <div class="form-group">
+                <label>Bio (Optional)</label>
+                <textarea placeholder="Tell us about yourself..."></textarea>
+              </div>
+
+              <button class="btn btn-primary" onclick="completeTab('auth', 'interests')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Create Account
+              </button>
+
+              <p class="hint" style="margin-top: 1rem;">A new keypair will be generated for you</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interests Tab -->
+        <div class="tab-panel" data-panel="interests">
+          <h2>What Interests You?</h2>
+          <p class="subtitle">Select topics to personalize your feed (choose at least 3)</p>
+
+          <div class="interest-container">
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">₿</div>
+              <div>#bitcoin</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🟣</div>
+              <div>#nostr</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">💻</div>
+              <div>#tech</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🎨</div>
+              <div>#art</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🎵</div>
+              <div>#music</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">📸</div>
+              <div>#photography</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">⚡</div>
+              <div>#lightning</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🔒</div>
+              <div>#privacy</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🎮</div>
+              <div>#gaming</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">📝</div>
+              <div>#writing</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🎬</div>
+              <div>#film</div>
+            </div>
+            <div class="interest-tag" onclick="toggleInterest(this)">
+              <div class="interest-icon">🌍</div>
+              <div>#travel</div>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="switchTab('auth')" style="flex: 0 0 120px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back
+            </button>
+            <button class="btn btn-primary" onclick="completeTab('interests', 'communities')">
+              Next: Communities
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Communities Tab -->
+        <div class="tab-panel" data-panel="communities">
+          <h2>Join Communities</h2>
+          <p class="subtitle">Follow curated groups to discover great content and people</p>
+
+          <div class="pack-container">
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-header">
+                <div class="pack-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                <div>
+                  <div class="pack-title">Bitcoin Developers</div>
+                  <div class="pack-count">124 members</div>
+                </div>
+              </div>
+              <div class="pack-description">
+                Core contributors and protocol developers working on Bitcoin
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-header">
+                <div class="pack-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                <div>
+                  <div class="pack-title">Nostr Pioneers</div>
+                  <div class="pack-count">89 members</div>
+                </div>
+              </div>
+              <div class="pack-description">
+                Early adopters and builders shaping the Nostr ecosystem
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-header">
+                <div class="pack-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                <div>
+                  <div class="pack-title">Creative Minds</div>
+                  <div class="pack-count">156 members</div>
+                </div>
+              </div>
+              <div class="pack-description">
+                Artists, musicians, and content creators sharing their work
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-header">
+                <div class="pack-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                <div>
+                  <div class="pack-title">Tech Enthusiasts</div>
+                  <div class="pack-count">203 members</div>
+                </div>
+              </div>
+              <div class="pack-description">
+                Software engineers and technology lovers discussing trends
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-header">
+                <div class="pack-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                <div>
+                  <div class="pack-title">Privacy Advocates</div>
+                  <div class="pack-count">112 members</div>
+                </div>
+              </div>
+              <div class="pack-description">
+                Champions of digital privacy and freedom
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-header">
+                <div class="pack-image" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"></div>
+                <div>
+                  <div class="pack-title">Lightning Network</div>
+                  <div class="pack-count">98 members</div>
+                </div>
+              </div>
+              <div class="pack-description">
+                Developers and users building on Lightning
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="switchTab('interests')" style="flex: 0 0 120px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back
+            </button>
+            <button class="btn btn-primary" onclick="completeTab('communities', 'ready')">
+              Finish Setup
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ready Tab -->
+        <div class="tab-panel" data-panel="ready">
+          <div class="success-state">
+            <div class="success-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+
+            <h2>You're Ready to Go!</h2>
+            <p class="subtitle">Your personalized Nostr experience is all set up</p>
+
+            <div style="max-width: 400px; margin: 2rem auto;">
+              <button class="btn btn-primary" onclick="launchApp()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Start Exploring
+              </button>
+
+              <button class="btn btn-secondary" onclick="switchTab('auth')" style="margin-top: 0.75rem;">
+                Start Over
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      // Update tab buttons
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        }
+      });
+
+      // Update panels
+      const panels = document.querySelectorAll('.tab-panel');
+      panels.forEach(panel => {
+        panel.classList.remove('active');
+        if (panel.dataset.panel === tabName) {
+          panel.classList.add('active');
+        }
+      });
+    }
+
+    function completeTab(currentTab, nextTab) {
+      // Mark current tab as completed
+      const currentTabBtn = document.querySelector(`.tab[data-tab="${currentTab}"]`);
+      currentTabBtn.classList.add('completed');
+
+      // Switch to next tab
+      switchTab(nextTab);
+    }
+
+    function toggleInterest(element) {
+      element.classList.toggle('selected');
+    }
+
+    function togglePack(element) {
+      element.classList.toggle('selected');
+    }
+
+    function launchApp() {
+      alert('Welcome to Nostr! Your feed is personalized and ready.');
+    }
+  </script>
+</body>
+</html>

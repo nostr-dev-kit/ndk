@@ -1,6 +1,13 @@
 <script lang="ts">
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import Preview from '$site-components/preview.svelte';
+
+  const exampleCode = `<TimelineFeed
+  {ndk}
+  filter={{ kinds: [1] }}
+  limit={50}
+  enableRealtime={true}
+/>`;
 </script>
 
 <BlockPageLayout
@@ -9,33 +16,17 @@
   tags={['Kind 1', 'NIP-01', '5 variants']}
   blockName="timeline-feed"
   installCommand="npx ndk-svelte add timeline-feed"
-/>
+  code={exampleCode}
+>
+  {#snippet topPreview()}
+    <div class="text-center text-muted-foreground">
+      <p>Preview goes here</p>
+      <p class="text-sm mt-2">Replace with actual component preview</p>
+    </div>
+  {/snippet}
+</BlockPageLayout>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
-
-  <!-- Variants Section -->
-  <section class="mb-16">
-    <h2 class="text-[1.75rem] font-bold mb-3">Variants</h2>
-    <p class="text-muted-foreground mb-8 text-[1.05rem]">
-      Choose from pre-built variants or compose your own using the builder API.
-    </p>
-
-    <Preview
-      title="TimelineFeed (Default)"
-      code={`<TimelineFeed
-  {ndk}
-  filter={{ kinds: [1] }}
-  limit={50}
-  enableRealtime={true}
-/>`}
-      previewAreaClass="max-h-none"
-    >
-      <div class="text-center text-muted-foreground">
-        <p>Preview goes here</p>
-        <p class="text-sm mt-2">Replace with actual component preview</p>
-      </div>
-    </Preview>
-  </section>
 
   <!-- Component API Section -->
   <section class="mb-16">

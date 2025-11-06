@@ -21,7 +21,12 @@
 	tags={['$metaSubscription', '2 variants']}
 	blockName="notification-panel"
 	installCommand="npx jsrepo add notification-panel"
-/>
+	code={compactExample}
+>
+	{#snippet topPreview()}
+		<NotificationPanel {ndk} pubkey={demoPubkey} variant="compact" />
+	{/snippet}
+</BlockPageLayout>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
 
@@ -34,10 +39,6 @@
 		</p>
 
 		<div class="space-y-8">
-			<Preview title="Compact Layout" code={compactExample} previewAreaClass="max-h-none">
-				<NotificationPanel {ndk} pubkey={demoPubkey} variant="compact" />
-			</Preview>
-
 			<Preview title="Expanded Layout" code={expandedExample} previewAreaClass="max-h-none">
 				<NotificationPanel {ndk} pubkey={demoPubkey} variant="expanded" />
 			</Preview>

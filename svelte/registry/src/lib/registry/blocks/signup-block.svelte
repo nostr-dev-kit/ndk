@@ -228,7 +228,7 @@
       </div>
 
       <button
-        class="w-full p-4 bg-primary text-primary-foreground border-none rounded-lg text-base font-semibold cursor-pointer transition-all mt-[1.5625rem] hover:bg-primary/90 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full p-4 bg-foreground text-background border-none rounded-lg text-base font-semibold cursor-pointer transition-all mt-[1.5625rem] hover:bg-primary/90 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
         onclick={createProfile}
         disabled={isCreating}
       >

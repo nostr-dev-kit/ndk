@@ -17,7 +17,6 @@ export type HandlerInfo = {
 	component: Component<{
 		ndk: NDKSvelte;
 		event: NDKEvent;
-		variant?: 'inline' | 'card' | 'compact';
 	}>;
 	wrapper: NDKWrapper | null;
 };

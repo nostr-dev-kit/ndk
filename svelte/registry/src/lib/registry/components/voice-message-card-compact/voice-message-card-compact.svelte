@@ -24,9 +24,9 @@
 </script>
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
-  <div data-voice-message-card-compact="" class="voice-message-compact {className}">
+  <div data-voice-message-card-compact="" class="flex flex-col gap-3 p-4 bg-card border border-border rounded-xl w-full max-w-[400px] {className}">
     {#if showAuthor}
-      <div class="author-section">
+      <div class="flex items-center gap-2 pb-2 border-b border-border">
         <User.Root {ndk} user={voiceMessage.author}>
           <User.Avatar class="w-8 h-8" />
           <User.Name />
@@ -34,37 +34,9 @@
       </div>
     {/if}
 
-    <div class="player-section">
+    <div class="flex items-center gap-3">
       <VoiceMessage.Player />
       <VoiceMessage.Duration />
     </div>
   </div>
 </VoiceMessage.Root>
-
-<style>
-  .voice-message-compact {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .author-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .player-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-</style>

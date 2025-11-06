@@ -17,10 +17,8 @@
 	}
 
 	interface Props {
-		/** Array of component documentation */
 		components: ComponentDoc[];
 
-		/** Optional title for the API section */
 		title?: string;
 	}
 

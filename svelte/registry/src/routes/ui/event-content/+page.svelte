@@ -119,7 +119,7 @@
         { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
         { name: 'content', type: 'string', default: 'optional', description: 'Raw content string to parse (alternative to event)' },
         { name: 'emojiTags', type: 'string[][]', default: 'optional', description: 'Custom emoji tags from event (NIP-30)' },
-        { name: 'renderer', type: 'ContentRenderer', default: 'defaultContentRenderer', description: 'Custom content renderer instance' },
+        { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer (prop overrides context)' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />
@@ -222,6 +222,47 @@ renderer.mediaComponent = MyCustomMedia;
 // Register embedded event handlers by kind
 renderer.addKind([1, 1111], MyNoteComponent);
 renderer.addKind([30023], MyArticleComponent);</code></pre>
+  </section>
+
+  <section class="info">
+    <h2>Renderer Propagation</h2>
+    <p class="mb-4">The ContentRenderer uses Svelte context for automatic propagation through nested components. You have two ways to provide a renderer:</p>
+
+    <div class="grouping-info">
+      <div class="grouping-card">
+        <strong>1. Via Context (Recommended for App-Wide)</strong>
+        <p>Set the renderer in context once at your app or page level. All nested EventContent and EmbeddedEvent components automatically inherit it:</p>
+        <pre><code>import &#123; setContext &#125; from 'svelte';
+import &#123; CONTENT_RENDERER_CONTEXT_KEY &#125; from '$lib/registry/ui/content-renderer.context';
+
+// At app/page level
+setContext(CONTENT_RENDERER_CONTEXT_KEY, &#123; renderer: myRenderer &#125;);
+
+// All nested components inherit automatically
+&lt;EventContent &#123;ndk&#125; &#123;event&#125; /&gt;
+&lt;EmbeddedEvent &#123;ndk&#125; bech32="..." /&gt;</code></pre>
+      </div>
+
+      <div class="grouping-card">
+        <strong>2. Via Prop (Override for Specific Use)</strong>
+        <p>Pass the renderer as a prop to override the context for a specific component and its children:</p>
+        <pre><code>// Override for this component only
+&lt;EventContent &#123;ndk&#125; &#123;event&#125; renderer=&#123;specialRenderer&#125; /&gt;
+
+// Great for testing
+test('custom rendering', () => &#123;
+  render(EventContent, &#123;
+    props: &#123; ndk, event, renderer: mockRenderer &#125;
+  &#125;);
+&#125;);</code></pre>
+      </div>
+
+      <div class="grouping-card">
+        <strong>Resolution Order</strong>
+        <p>Components use this priority: <code>prop → context → defaultContentRenderer</code></p>
+        <p>When you pass a renderer via prop, that component automatically sets it in context for its children. This means nested embeds inherit the overridden renderer without you passing it explicitly.</p>
+      </div>
+    </div>
   </section>
 
   <section class="info">

@@ -24,7 +24,7 @@
 			<!-- Custom Twitter-style layout -->
 			<div class="twitter-style">
 				<div class="action-icon">
-					{#snippet actionIcon({ icon })}
+					{#snippet actionIcon({ icon }: { icon: any })}
 						<svelte:component this={icon} size={20} class="text-primary" />
 					{/snippet}
 					<NotificationItem.Action snippet={actionIcon} />
@@ -33,7 +33,7 @@
 				<div class="notification-body">
 					<div class="actors-line">
 						<NotificationItem.Actors max={3} size={24} spacing="tight" />
-						{#snippet actionText({ type })}
+						{#snippet actionText({ type }: { type: string })}
 							<span class="action-text">{type} your post</span>
 						{/snippet}
 						<NotificationItem.Action snippet={actionText} />

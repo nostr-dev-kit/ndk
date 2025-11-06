@@ -117,13 +117,14 @@
         {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
 
         <Preview title="Building from Scratch" code={reactionBuilderCode}>
+          {@const totalCount = reactionState.all.reduce((sum, r) => sum + r.count, 0)}
           <button
             onclick={() => reactionState.react('❤️')}
             class="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
           >
             <span>❤️</span>
-            {#if reactionState.totalCount > 0}
-              <span>{reactionState.totalCount}</span>
+            {#if totalCount > 0}
+              <span>{totalCount}</span>
             {/if}
           </button>
         </Preview>

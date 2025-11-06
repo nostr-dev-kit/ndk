@@ -87,7 +87,7 @@
         { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for fetching the event' },
         { name: 'bech32', type: 'string', default: 'required', description: 'Event reference (nevent, note1, naddr)' },
         { name: 'variant', type: "'card' | 'compact' | 'inline'", default: "'card'", description: 'Display variant' },
-        { name: 'renderer', type: 'ContentRenderer', default: 'defaultContentRenderer', description: 'Content renderer with registered handlers' },
+        { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Content renderer (prop overrides context)' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

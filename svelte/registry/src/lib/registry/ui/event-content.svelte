@@ -1,6 +1,6 @@
 <!-- @ndk-version: event-content@0.8.0 -->
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createEventContent } from '$lib/registry/builders/event-content/event-content.svelte.js';
@@ -30,6 +30,9 @@
 	const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 	const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
 
+	// Set renderer in context so nested components (EmbeddedEvent) can access it
+	setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
+
 	const parsed = createEventContent(
 		() => ({
 			event,
@@ -54,7 +57,7 @@
 			{/if}
 		{:else if segment.type === 'event-ref'}
 			{#if segment.data && typeof segment.data === 'string'}
-				<EmbeddedEvent {ndk} bech32={segment.data} {renderer} />
+				<EmbeddedEvent {ndk} bech32={segment.data} />
 			{/if}
 		{:else if segment.type === 'hashtag'}
 			{#if segment.data && typeof segment.data === 'string'}

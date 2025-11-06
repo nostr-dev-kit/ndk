@@ -42,6 +42,7 @@ export interface ShowcaseBlock {
   description: string;
   command: string;
   preview: Snippet | any;  // Snippet or any for compatibility - required by components
+  code?: string;  // Optional code example
   cardData?: ComponentCardDataBase | any;  // ComponentCardData or any for compatibility
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;

@@ -52,7 +52,9 @@
 	let mouseY = 0;
 
 	function handleMouseMove(event: MouseEvent) {
-		const rect = event.currentTarget.getBoundingClientRect();
+		const target = event.currentTarget;
+		if (!(target instanceof Element)) return;
+		const rect = target.getBoundingClientRect();
 		mouseX = event.clientX - rect.left;
 		mouseY = event.clientY - rect.top;
 	}
@@ -74,7 +76,8 @@
 	function drawConnections() {
 		if (!ctx || !canvas) return;
 
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		const context = ctx;
+		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		// Draw connections between nodes
 		const connections = [
@@ -105,23 +108,23 @@
 				const maxDist = 300;
 				const intensity = Math.max(0, 1 - distToMouse / maxDist);
 
-				ctx.beginPath();
-				ctx.moveTo(fromX, fromY);
+				context.beginPath();
+				context.moveTo(fromX, fromY);
 
 				// Create curved path
 				const cpX = midX + Math.sin(Date.now() * 0.001) * 20;
 				const cpY = midY + Math.cos(Date.now() * 0.001) * 20;
-				ctx.quadraticCurveTo(cpX, cpY, toX, toY);
+				context.quadraticCurveTo(cpX, cpY, toX, toY);
 
 				// Dynamic styling based on mouse proximity
-				const gradient = ctx.createLinearGradient(fromX, fromY, toX, toY);
+				const gradient = context.createLinearGradient(fromX, fromY, toX, toY);
 				gradient.addColorStop(0, `rgba(139, 92, 246, ${0.1 + intensity * 0.4})`);
 				gradient.addColorStop(0.5, `rgba(147, 51, 234, ${0.2 + intensity * 0.5})`);
 				gradient.addColorStop(1, `rgba(139, 92, 246, ${0.1 + intensity * 0.4})`);
 
-				ctx.strokeStyle = gradient;
-				ctx.lineWidth = 1 + intensity * 2;
-				ctx.stroke();
+				context.strokeStyle = gradient;
+				context.lineWidth = 1 + intensity * 2;
+				context.stroke();
 
 				// Draw energy pulses along connections when mouse is near
 				if (intensity > 0.3) {
@@ -129,20 +132,20 @@
 					const pulseX = fromX + (toX - fromX) * t;
 					const pulseY = fromY + (toY - fromY) * t;
 
-					ctx.beginPath();
-					ctx.arc(pulseX, pulseY, 2 + intensity * 3, 0, Math.PI * 2);
-					ctx.fillStyle = `rgba(147, 51, 234, ${intensity * 0.8 * (1 - Math.abs(t - 0.5) * 2)})`;
-					ctx.fill();
+					context.beginPath();
+					context.arc(pulseX, pulseY, 2 + intensity * 3, 0, Math.PI * 2);
+					context.fillStyle = `rgba(147, 51, 234, ${intensity * 0.8 * (1 - Math.abs(t - 0.5) * 2)})`;
+					context.fill();
 				}
 			}
 		});
 
 		// Draw particles
 		particles.forEach(particle => {
-			ctx.beginPath();
-			ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-			ctx.fillStyle = `rgba(139, 92, 246, ${particle.opacity})`;
-			ctx.fill();
+			context.beginPath();
+			context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+			context.fillStyle = `rgba(139, 92, 246, ${particle.opacity})`;
+			context.fill();
 
 			// Update particle position
 			particle.x += particle.vx;

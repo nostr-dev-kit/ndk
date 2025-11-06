@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte';
+	import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer.context';
 	import NoteEmbeddedCompact from '$lib/registry/components/note-embedded-card/note-embedded-card.svelte';
 	import ArticleEmbedded from '$lib/registry/components/article-embedded/article-embedded.svelte';
 	import HighlightEmbedded from '$lib/registry/components/highlight-embedded/highlight-embedded.svelte';
@@ -23,6 +24,7 @@
 
 	const context = getContext<NotificationContext>(NOTIFICATION_CONTEXT_KEY);
 
+	// Create notification-specific renderer with compact variants
 	const defaultRenderer = $derived.by(() => {
 		const r = new ContentRenderer();
 		r.addKind([1, 1111], NoteEmbeddedCompact);
@@ -33,6 +35,10 @@
 	});
 
 	const activeRenderer = $derived(renderer || defaultRenderer);
+
+	// Set renderer in context so nested components inherit it
+	// This is a legitimate use of prop override - notifications need compact rendering
+	setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer: activeRenderer });
 </script>
 
 {#if snippet}
@@ -41,7 +47,6 @@
 	<EmbeddedEvent
 		ndk={context.ndk}
 		bech32={context.targetEvent.encode()}
-		renderer={activeRenderer}
 		class={cn(className, "text-muted-foreground")}
 	/>
 {/if}

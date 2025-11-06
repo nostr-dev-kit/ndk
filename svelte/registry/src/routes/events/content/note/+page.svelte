@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import type { Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -74,15 +75,16 @@ Pretty cool, right? #awesome`);
 
 <!-- Use the template -->
 {#if true}
+  {@const previews: Record<string, Snippet> = {
+    'event-content-basic': basicComponentPreview,
+    'event-content-custom-snippets': customSnippetsComponentPreview
+  }}
   <ComponentPageTemplate
   metadata={contentNoteMetadata}
   {ndk}
   {showcaseBlocks}componentsSection={{
     cards: contentNoteMetadata.cards,
-    previews: {
-      'event-content-basic': basicComponentPreview,
-      'event-content-custom-snippets': customSnippetsComponentPreview
-    }
+    previews
   }}
   apiDocs={contentNoteMetadata.apiDocs}
 >

@@ -86,7 +86,6 @@
       <EventContent
         ndk={context.ndk}
         event={context.event}
-        renderer={rendererContext?.renderer}
       />
     {/key}
   </div>

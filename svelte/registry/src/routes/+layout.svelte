@@ -4,24 +4,12 @@
   import { page } from '$app/stores';
   import { ndk, initializeNDK } from '$lib/ndk.svelte';
   import Navbar from '$site-components/Navbar.svelte';
-  import Sidebar from '$site-components/Sidebar.svelte';
   import LoginModal from '$site-components/LoginModal.svelte';
-  import { sidebar } from '$lib/stores/sidebar.svelte';
   import { nip19 } from 'nostr-tools';
   import type { Snippet } from 'svelte';
-  import Toc from '$site-components/toc.svelte';
 
   let { children }: { children: Snippet } = $props();
 
-  // Pages can use this to show a TOC
-  const showTocForRoute = $derived(
-    $page.url.pathname.startsWith('/components/') ||
-    $page.url.pathname.startsWith('/events/') ||
-    $page.url.pathname.startsWith('/docs/') ||
-    $page.url.pathname.startsWith('/ui/')
-  );
-
-  const showSidebar = $derived($page.url.pathname.startsWith('/docs') || $page.url.pathname.startsWith('/events') || $page.url.pathname.startsWith('/components') || $page.url.pathname.startsWith('/ui'));
 
   let isInitialized = $state(false);
   let showLoginModal = $state(false);
@@ -97,30 +85,9 @@
       onLogoutClick={handleLogout}
     />
 
-    {#if showSidebar}
-      <Sidebar />
-    {/if}
-
-    <main
-      class="flex-1 mt-14 ml-0 mr-0 flex justify-center transition-[margin-left] duration-300 ease-in-out"
-      class:!ml-[280px]={showSidebar && !sidebar.collapsed}
-      class:!ml-16={showSidebar && sidebar.collapsed}
-      class:!mr-[280px]={showTocForRoute}
-      class:max-2xl:!mr-0={showTocForRoute}
-      class:max-md:!ml-0={showSidebar && !sidebar.open}
-      class:max-md:!ml-[280px]={showSidebar && sidebar.open && !sidebar.collapsed}
-      class:max-md:!ml-16={showSidebar && sidebar.open && sidebar.collapsed}
-    >
-      <div class="w-full max-w-[1000px] border-l border-r border-border">
-        {@render children()}
-      </div>
+    <main class="flex-1 mt-14">
+      {@render children()}
     </main>
-
-    {#if showTocForRoute}
-      <aside class="fixed right-0 top-14 w-[280px] h-[calc(100vh-3.5rem)] py-12 px-8 overflow-y-auto bg-background border-l border-border max-2xl:hidden">
-        <Toc />
-      </aside>
-    {/if}
   </div>
 
   <LoginModal

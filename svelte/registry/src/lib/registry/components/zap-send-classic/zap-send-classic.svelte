@@ -9,26 +9,25 @@
 
   interface Props {
     ndk?: NDKSvelte;
-    event?: NDKEvent;
-    user?: NDKUser;
-    open?: boolean;
+    target: NDKEvent | NDKUser;
     class?: string;
+    onsuccess?: () => void;
+    oncancel?: () => void;
   }
 
   let {
     ndk: ndkProp,
-    event,
-    user,
-    open = $bindable(false),
-    class: className = ''
+    target,
+    class: className = '',
+    onsuccess,
+    oncancel
   }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
   const ndk = ndkProp || ndkContext;
-  const target = $derived(event || user);
 
   const zap = $derived(
-    target && open ? createZapSendAction(() => ({ target }), ndk) : null
+    target ? createZapSendAction(() => ({ target }), ndk) : null
   );
 
   const presets = [21, 100, 1000, 5000, 10000];
@@ -38,152 +37,134 @@
 
     try {
       await zap.send();
-      open = false;
       zap.amount = 1000;
       zap.comment = '';
+      onsuccess?.();
     } catch (error) {
       console.error('Failed to send zap:', error);
     }
   }
 
-  function handleClose() {
-    open = false;
+  function handleCancel() {
     if (zap) {
       zap.amount = 1000;
       zap.comment = '';
     }
+    oncancel?.();
   }
 </script>
 
-{#if open && zap}
-  <div class={cn('zap-send-classic-overlay', className)} data-zap-send-classic-overlay="">
-    <div class="zap-send-classic" data-zap-send-classic="">
-      <!-- Header -->
-      <div class="header" data-header="">
-        <h2>Send a Zap</h2>
-        <button
-          class="close-btn"
-          onclick={handleClose}
-          data-close-btn=""
-        >
-          ×
-        </button>
-      </div>
+{#if zap}
+  <div class={cn('zap-send-classic', className)} data-zap-send-classic="">
+    <!-- Header -->
+    <div class="header" data-header="">
+      <h2>Send a Zap</h2>
+    </div>
 
-      <!-- Amount Selection -->
+    <!-- Amount Selection -->
+    <div class="section" data-section="">
+      <label class="label" data-label="">Amount</label>
+      <div class="amount-presets" data-amount-presets="">
+        {#each presets as preset}
+          <button
+            class="preset-btn"
+            class:active={zap.amount === preset}
+            onclick={() => zap.amount = preset}
+            data-preset-btn=""
+            data-active={zap.amount === preset ? '' : undefined}
+          >
+            {#if preset >= 1000}
+              {preset / 1000}K
+            {:else}
+              {preset}
+            {/if}
+          </button>
+        {/each}
+      </div>
+      <input
+        type="number"
+        bind:value={zap.amount}
+        min="1"
+        class="amount-input"
+        data-amount-input=""
+      />
+    </div>
+
+    <!-- Recipients -->
+    {#if zap.splits.length > 0}
       <div class="section" data-section="">
-        <label class="label" data-label="">Amount</label>
-        <div class="amount-presets" data-amount-presets="">
-          {#each presets as preset}
-            <button
-              class="preset-btn"
-              class:active={zap.amount === preset}
-              onclick={() => zap.amount = preset}
-              data-preset-btn=""
-              data-active={zap.amount === preset ? '' : undefined}
-            >
-              {#if preset >= 1000}
-                {preset / 1000}K
-              {:else}
-                {preset}
-              {/if}
-            </button>
-          {/each}
-        </div>
-        <input
-          type="number"
-          bind:value={zap.amount}
-          min="1"
-          class="amount-input"
-          data-amount-input=""
-        />
-      </div>
-
-      <!-- Recipients -->
-      {#if zap.splits.length > 0}
-        <div class="section" data-section="">
-          <label class="label" data-label="">
-            Recipients ({zap.splits.length})
-          </label>
-          <div class="recipients" data-recipients="">
-            {#each zap.splits as split}
-              <div class="recipient" data-recipient="">
-                <User.Root {ndk} pubkey={split.pubkey}>
-                  <User.Avatar class="avatar" />
-                  <div class="recipient-info" data-recipient-info="">
-                    <User.Name class="name" />
-                    <div class="split-amount" data-split-amount="">
-                      <ZapIcon class="zap-icon" />
-                      <span>{split.amount}</span>
+        <label class="label" data-label="">
+          Recipients ({zap.splits.length})
+        </label>
+        <div class="recipients" data-recipients="">
+          {#each zap.splits as split}
+            <div class="recipient" data-recipient="">
+              <User.Root {ndk} pubkey={split.pubkey}>
+                <User.Avatar class="avatar" />
+                <div class="recipient-info" data-recipient-info="">
+                  <User.Name class="name" />
+                  <div class="split-amount" data-split-amount="">
+                    <ZapIcon class="zap-icon" />
+                    <span>{split.amount}</span>
+                    {#if zap.splits.length > 1}
                       <span class="percentage">({split.percentage.toFixed(1)}%)</span>
-                    </div>
+                    {/if}
                   </div>
-                </User.Root>
-              </div>
-            {/each}
+                </div>
+              </User.Root>
+            </div>
+          {/each}
           </div>
         </div>
       {/if}
 
-      <!-- Comment -->
-      <div class="section" data-section="">
-        <label class="label" data-label="">Comment (optional)</label>
-        <textarea
-          bind:value={zap.comment}
-          placeholder="Say something nice..."
-          rows="3"
-          class="comment-input"
-          data-comment-input=""
-        />
-      </div>
+    <!-- Comment -->
+    <div class="section" data-section="">
+      <label class="label" data-label="">Comment (optional)</label>
+      <textarea
+        bind:value={zap.comment}
+        placeholder="Say something nice..."
+        rows="3"
+        class="comment-input"
+        data-comment-input=""
+      />
+    </div>
 
-      <!-- Error -->
-      {#if zap.error}
-        <div class="error" data-error="">
-          {zap.error.message}
-        </div>
-      {/if}
-
-      <!-- Actions -->
-      <div class="actions" data-actions="">
-        <button
-          class="cancel-btn"
-          onclick={handleClose}
-          data-cancel-btn=""
-        >
-          Cancel
-        </button>
-        <button
-          class="send-btn"
-          onclick={handleSend}
-          disabled={zap.sending}
-          data-send-btn=""
-          data-sending={zap.sending ? '' : undefined}
-        >
-          {#if zap.sending}
-            Zapping...
-          {:else}
-            <ZapIcon class="btn-icon" />
-            Zap {zap.amount} sats
-          {/if}
-        </button>
+    <!-- Error -->
+    {#if zap.error}
+      <div class="error" data-error="">
+        {zap.error.message}
       </div>
+    {/if}
+
+    <!-- Actions -->
+    <div class="actions" data-actions="">
+      <button
+        class="cancel-btn"
+        onclick={handleCancel}
+        data-cancel-btn=""
+      >
+        Cancel
+      </button>
+      <button
+        class="send-btn"
+        onclick={handleSend}
+        disabled={zap.sending}
+        data-send-btn=""
+        data-sending={zap.sending ? '' : undefined}
+      >
+        {#if zap.sending}
+          Zapping...
+        {:else}
+          <ZapIcon class="btn-icon" />
+          Zap {zap.amount} sats
+        {/if}
+      </button>
     </div>
   </div>
 {/if}
 
 <style>
-  .zap-send-classic-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-  }
-
   .zap-send-classic {
     background: var(--background);
     border: 1px solid var(--border);
@@ -191,7 +172,6 @@
     max-width: 500px;
     width: 100%;
     padding: 1.5rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   }
 
   .header {
@@ -205,28 +185,6 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0;
-  }
-
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    line-height: 1;
-    cursor: pointer;
-    color: var(--muted-foreground);
-    padding: 0;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.375rem;
-    transition: all 0.2s;
-  }
-
-  .close-btn:hover {
-    background: var(--muted);
-    color: var(--foreground);
   }
 
   .section {

@@ -216,9 +216,12 @@
 								: "overflow-y-auto px-10 lg:px-12"
 						)}
 					>
-						<div class={cn(
-							block.orientation === 'horizontal' ? "px-10" : "py-10"
-						)}>
+						<div
+							class={cn(
+								block.orientation === 'horizontal' ? "px-10" : "py-10"
+							)}
+							onclick={(e) => e.stopPropagation()}
+						>
 							{@render block.preview()}
 						</div>
 					</div>

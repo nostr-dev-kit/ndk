@@ -5,6 +5,7 @@
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer.context.js';
     import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
+	import { GenericEmbedded } from '../components/generic-embedded';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;
@@ -56,26 +57,13 @@
 {:else if Handler && wrappedEvent}
 	<Handler {ndk} event={wrappedEvent} {variant} />
 {:else if wrappedEvent}
-	<!-- NO HANDLER: Render minimal fallback (raw) -->
-	<div class="embedded-fallback {className}" data-variant={variant}>
-		<div class="fallback-header">
-			<span class="kind-badge">Kind {wrappedEvent.kind}</span>
-			<span class="event-id">{bech32.slice(0, 16)}...</span>
-		</div>
-		{#if wrappedEvent.content}
-			<div class="fallback-content">
-				{wrappedEvent.content.slice(0, 200)}{wrappedEvent.content.length > 200 ? '...' : ''}
-			</div>
-		{:else}
-			<div class="fallback-content fallback-empty">(empty)</div>
-		{/if}
-	</div>
+	<!-- NO HANDLER: Use GenericEmbedded fallback component -->
+	<GenericEmbedded {ndk} event={wrappedEvent} {variant} class={className} />
 {/if}
 
 <style>
 	.embedded-loading,
-	.embedded-error,
-	.embedded-fallback {
+	.embedded-error {
 		padding: 0.75rem;
 		border-radius: 0.5rem;
 		border: 1px solid var(--border);
@@ -106,56 +94,5 @@
 
 	.embedded-error {
 		color: var(--destructive);
-	}
-
-	.embedded-fallback {
-		background: var(--card);
-	}
-
-	.fallback-header {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		margin-bottom: 0.5rem;
-		font-size: 0.75rem;
-	}
-
-	.kind-badge {
-		padding: 0.25rem 0.5rem;
-		background: var(--primary);
-		color: var(--primary-foreground);
-		border-radius: 0.25rem;
-		font-weight: 600;
-	}
-
-	.event-id {
-		color: var(--muted-foreground);
-		font-family: monospace;
-	}
-
-	.fallback-content {
-		color: var(--foreground);
-		line-height: 1.5;
-		white-space: pre-wrap;
-		word-break: break-word;
-	}
-
-	.fallback-empty {
-		color: var(--muted-foreground);
-		font-style: italic;
-	}
-
-	.embedded-fallback[data-variant='compact'] {
-		padding: 0.5rem;
-		font-size: 0.8125rem;
-	}
-
-	.embedded-fallback[data-variant='compact'] .fallback-content {
-		font-size: 0.75rem;
-	}
-
-	.embedded-fallback[data-variant='inline'] {
-		padding: 0.5rem;
-		display: inline-block;
 	}
 </style>

@@ -12,10 +12,10 @@ export const zapSendClassicCard: ComponentCardData = {
 			importPath: "import ZapSendClassic from '$lib/registry/components/zap-send-classic.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-				{ name: 'event', type: 'NDKEvent', description: 'Event to zap' },
-				{ name: 'user', type: 'NDKUser', description: 'User to zap' },
-				{ name: 'open', type: 'boolean', default: 'false', description: 'Controls dialog visibility (bindable)' },
-				{ name: 'class', type: 'string', description: 'Custom CSS classes' }
+				{ name: 'target', type: 'NDKEvent | NDKUser', description: 'Event or user to zap' },
+				{ name: 'class', type: 'string', description: 'Custom CSS classes' },
+				{ name: 'onsuccess', type: '() => void', description: 'Callback when zap succeeds' },
+				{ name: 'oncancel', type: '() => void', description: 'Callback when zap is cancelled' }
 			]
 		}
 	]
@@ -28,10 +28,10 @@ export const zapSendClassicApiDocs: ApiDoc[] = [
 		importPath: "import { ZapSendClassic } from '$lib/registry/components/zap-send-classic'",
 		props: [
 			{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-			{ name: 'event', type: 'NDKEvent', description: 'Event to zap' },
-			{ name: 'user', type: 'NDKUser', description: 'User to zap' },
-			{ name: 'open', type: 'boolean', default: 'false', description: 'Controls dialog visibility (bindable)' },
-			{ name: 'class', type: 'string', description: 'Custom CSS classes' }
+			{ name: 'target', type: 'NDKEvent | NDKUser', description: 'Event or user to zap' },
+			{ name: 'class', type: 'string', description: 'Custom CSS classes' },
+			{ name: 'onsuccess', type: '() => void', description: 'Callback when zap succeeds' },
+			{ name: 'oncancel', type: '() => void', description: 'Callback when zap is cancelled' }
 		]
 	}
 ];

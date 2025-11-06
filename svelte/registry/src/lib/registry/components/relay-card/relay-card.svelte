@@ -90,37 +90,37 @@
 </script>
 
 <Relay.Root {ndk} relayUrl={relay.url}>
-  <div data-relay-card="" data-expanded={isExpanded ? '' : undefined} class="relay-card">
-    <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
-      <div class="relay-card-header-left">
+  <div data-relay-card="" data-expanded={isExpanded ? '' : undefined} class="border border-border rounded-xl bg-card overflow-hidden transition-all duration-200 hover:shadow-lg">
+    <div class="flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-accent" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
+      <div class="flex items-center gap-3 flex-1 min-w-0">
         <Relay.ConnectionStatus status={relay.status || 'disconnected'} size="md" />
-        <Relay.Icon class="relay-icon" />
-        <div class="relay-card-title">
-          <div class="relay-card-name">
+        <Relay.Icon class="w-6 h-6 flex-shrink-0" />
+        <div class="flex flex-col gap-1 min-w-0">
+          <div class="text-base font-medium text-foreground">
             <Relay.Name class="font-semibold" />
           </div>
-          <Relay.Url class="relay-card-url" showProtocol={false} />
+          <Relay.Url class="text-sm text-muted-foreground truncate" showProtocol={false} />
         </div>
       </div>
 
-      <div class="relay-card-badges">
+      <div class="flex gap-2 flex-wrap">
         {#if relay.isRead}
-          <span class="badge badge-read">Read</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-primary/10 text-primary">Read</span>
         {/if}
         {#if relay.isWrite}
-          <span class="badge badge-write">Write</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-accent/10 text-accent">Write</span>
         {/if}
         {#if relay.isBoth}
-          <span class="badge badge-both">Both</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-green-500/10 text-green-600">Both</span>
         {/if}
         {#if relay.isBlacklisted}
-          <span class="badge badge-blacklist">Blacklisted</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-destructive/10 text-destructive">Blacklisted</span>
         {/if}
       </div>
 
-      <button class="expand-button" aria-label={isExpanded ? 'Collapse' : 'Expand'}>
+      <button class="bg-transparent border-none cursor-pointer p-1 text-muted-foreground transition-colors hover:text-foreground">
         <svg
-          class="expand-icon {isExpanded ? 'rotate-180' : ''}"
+          class="w-5 h-5 transition-transform duration-200 {isExpanded ? 'rotate-180' : ''}"
           xmlns="http://www.w3.org/2000/svg"
           width="20"
           height="20"
@@ -137,58 +137,58 @@
     </div>
 
     {#if isExpanded}
-      <div class="relay-card-body">
-        <div class="relay-section">
-          <h4>Description</h4>
-          <Relay.Description class="relay-section-text" />
+      <div class="p-4 border-t border-border bg-muted/30">
+        <div class="mb-6">
+          <h4 class="text-sm font-semibold text-foreground mb-3">Description</h4>
+          <Relay.Description class="text-sm text-muted-foreground leading-relaxed" />
         </div>
 
-        <div class="relay-section">
-          <h4>Connection Stats</h4>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-label">Attempts</span>
-              <span class="stat-value">{relay.connectionStats?.attempts ?? 0}</span>
+        <div class="mb-6">
+          <h4 class="text-sm font-semibold text-foreground mb-3">Connection Stats</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-muted-foreground">Attempts</span>
+              <span class="text-base font-semibold text-foreground">{relay.connectionStats?.attempts ?? 0}</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">Success</span>
-              <span class="stat-value">{relay.connectionStats?.success ?? 0}</span>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-muted-foreground">Success</span>
+              <span class="text-base font-semibold text-foreground">{relay.connectionStats?.success ?? 0}</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">Success Rate</span>
-              <span class="stat-value">{successRate}%</span>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-muted-foreground">Success Rate</span>
+              <span class="text-base font-semibold text-foreground">{successRate}%</span>
             </div>
             {#if uptime}
-              <div class="stat-item">
-                <span class="stat-label">Uptime</span>
-                <span class="stat-value">{uptime}</span>
+              <div class="flex flex-col gap-1">
+                <span class="text-xs text-muted-foreground">Uptime</span>
+                <span class="text-base font-semibold text-foreground">{uptime}</span>
               </div>
             {/if}
           </div>
         </div>
 
         {#if relay.nip11}
-          <div class="relay-section">
-            <h4>Relay Information</h4>
-            <div class="info-grid">
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-foreground mb-3">Relay Information</h4>
+            <div class="space-y-3">
               {#if relay.nip11.software}
-                <div class="info-item">
-                  <span class="info-label">Software</span>
-                  <span class="info-value">{relay.nip11.software} {relay.nip11.version || ''}</span>
+                <div class="flex justify-between items-start gap-4">
+                  <span class="text-xs text-muted-foreground min-w-[120px]">Software</span>
+                  <span class="text-sm text-foreground text-right">{relay.nip11.software} {relay.nip11.version || ''}</span>
                 </div>
               {/if}
               {#if relay.nip11.contact}
-                <div class="info-item">
-                  <span class="info-label">Contact</span>
-                  <span class="info-value">{relay.nip11.contact}</span>
+                <div class="flex justify-between items-start gap-4">
+                  <span class="text-xs text-muted-foreground min-w-[120px]">Contact</span>
+                  <span class="text-sm text-foreground text-right break-all">{relay.nip11.contact}</span>
                 </div>
               {/if}
               {#if relay.nip11.supported_nips && relay.nip11.supported_nips.length > 0}
-                <div class="info-item">
-                  <span class="info-label">Supported NIPs</span>
-                  <div class="nips-list">
+                <div class="flex justify-between items-start gap-4">
+                  <span class="text-xs text-muted-foreground min-w-[120px]">Supported NIPs</span>
+                  <div class="flex flex-wrap gap-1.5 justify-end">
                     {#each relay.nip11.supported_nips.sort((a, b) => a - b) as nip (nip)}
-                      <span class="nip-badge">{nip}</span>
+                      <span class="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs font-medium">{nip}</span>
                     {/each}
                   </div>
                 </div>
@@ -197,31 +197,31 @@
           </div>
 
           {#if relay.nip11.limitation}
-            <div class="relay-section">
-              <h4>Limitations</h4>
-              <div class="info-grid">
+            <div class="mb-6">
+              <h4 class="text-sm font-semibold text-foreground mb-3">Limitations</h4>
+              <div class="space-y-3">
                 {#if relay.nip11.limitation.max_message_length !== undefined}
-                  <div class="info-item">
-                    <span class="info-label">Max Message Length</span>
-                    <span class="info-value">{relay.nip11.limitation.max_message_length.toLocaleString()}</span>
+                  <div class="flex justify-between items-start gap-4">
+                    <span class="text-xs text-muted-foreground min-w-[120px]">Max Message Length</span>
+                    <span class="text-sm text-foreground">{relay.nip11.limitation.max_message_length.toLocaleString()}</span>
                   </div>
                 {/if}
                 {#if relay.nip11.limitation.max_subscriptions !== undefined}
-                  <div class="info-item">
-                    <span class="info-label">Max Subscriptions</span>
-                    <span class="info-value">{relay.nip11.limitation.max_subscriptions}</span>
+                  <div class="flex justify-between items-start gap-4">
+                    <span class="text-xs text-muted-foreground min-w-[120px]">Max Subscriptions</span>
+                    <span class="text-sm text-foreground">{relay.nip11.limitation.max_subscriptions}</span>
                   </div>
                 {/if}
                 {#if relay.nip11.limitation.auth_required}
-                  <div class="info-item">
-                    <span class="info-label">Auth Required</span>
-                    <span class="info-value badge badge-warning">Yes</span>
+                  <div class="flex justify-between items-start gap-4">
+                    <span class="text-xs text-muted-foreground min-w-[120px]">Auth Required</span>
+                    <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-600 rounded text-xs">Yes</span>
                   </div>
                 {/if}
                 {#if relay.nip11.limitation.payment_required}
-                  <div class="info-item">
-                    <span class="info-label">Payment Required</span>
-                    <span class="info-value badge badge-warning">Yes</span>
+                  <div class="flex justify-between items-start gap-4">
+                    <span class="text-xs text-muted-foreground min-w-[120px]">Payment Required</span>
+                    <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-600 rounded text-xs">Yes</span>
                   </div>
                 {/if}
               </div>
@@ -230,14 +230,14 @@
         {/if}
 
         {#if relay.error}
-          <div class="relay-section error">
-            <h4>Error</h4>
-            <p>{relay.error}</p>
+          <div class="mb-6 p-3 bg-destructive/10 border border-destructive rounded-lg">
+            <h4 class="text-sm font-semibold text-destructive mb-2">Error</h4>
+            <p class="text-sm text-destructive">{relay.error}</p>
           </div>
         {/if}
 
-        <div class="relay-actions">
-          <button class="action-button copy-button" onclick={handleCopy}>
+        <div class="flex flex-wrap gap-2">
+          <button class="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-colors hover:bg-primary/90" onclick={handleCopy}>
             {#if copied}
               ✓ Copied
             {:else}
@@ -246,19 +246,19 @@
           </button>
 
           {#if !relay.isBlacklisted && onBlacklist}
-            <button class="action-button blacklist-button" onclick={() => onBlacklist?.(relay.url)}>
+            <button class="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg text-sm font-medium transition-colors hover:bg-destructive/90" onclick={() => onBlacklist?.(relay.url)}>
               Blacklist
             </button>
           {/if}
 
           {#if relay.isBlacklisted && onUnblacklist}
-            <button class="action-button unblacklist-button" onclick={() => onUnblacklist?.(relay.url)}>
+            <button class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium transition-colors hover:bg-green-700" onclick={() => onUnblacklist?.(relay.url)}>
               Remove from Blacklist
             </button>
           {/if}
 
           {#if onRemove}
-            <button class="action-button remove-button" onclick={() => onRemove?.(relay.url)}>
+            <button class="px-4 py-2 bg-muted text-foreground rounded-lg text-sm font-medium transition-colors hover:bg-muted/80" onclick={() => onRemove?.(relay.url)}>
               Remove
             </button>
           {/if}
@@ -267,268 +267,3 @@
     {/if}
   </div>
 </Relay.Root>
-
-<style>
-  .relay-card {
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    background: var(--card);
-    overflow: hidden;
-    transition: all 0.2s ease;
-  }
-
-  .relay-card:hover {
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 10%, transparent);
-  }
-
-  .relay-card-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-
-  .relay-card-header:hover {
-    background: var(--accent);
-  }
-
-  .relay-card-header-left {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .relay-card-title {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-
-  .relay-card-name {
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--foreground);
-  }
-
-
-  .relay-card-badges {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 0.25rem 0.625rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .badge-read {
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
-  }
-
-  .badge-write {
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    color: var(--accent);
-  }
-
-  .badge-both {
-    background: color-mix(in srgb, var(--success) 10%, transparent);
-    color: var(--success);
-  }
-
-  .badge-blacklist {
-    background: color-mix(in srgb, var(--destructive) 10%, transparent);
-    color: var(--destructive);
-  }
-
-  .badge-warning {
-    background: color-mix(in srgb, var(--warning) 10%, transparent);
-    color: var(--warning);
-    padding: 0.125rem 0.5rem;
-    font-size: 0.75rem;
-  }
-
-  .expand-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.25rem;
-    color: var(--muted-foreground);
-    transition: color 0.2s ease;
-  }
-
-  .expand-button:hover {
-    color: var(--foreground);
-  }
-
-  .expand-icon {
-    transition: transform 0.2s ease;
-  }
-
-  .expand-icon.rotate-180 {
-    transform: rotate(180deg);
-  }
-
-  .relay-card-body {
-    padding: 0 1rem 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .relay-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .relay-section.error {
-    background: color-mix(in srgb, var(--destructive) 5%, transparent);
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    border: 1px solid color-mix(in srgb, var(--destructive) 20%, transparent);
-  }
-
-  .relay-section h4 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--foreground);
-    margin: 0;
-  }
-
-  .relay-section p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .stats-grid,
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.75rem;
-  }
-
-  .stat-item,
-  .info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .stat-label,
-  .info-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-  }
-
-  .stat-value,
-  .info-value {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .nips-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  .nip-badge {
-    padding: 0.125rem 0.5rem;
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  .relay-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .action-button {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: var(--background);
-  }
-
-  .copy-button {
-    color: var(--foreground);
-  }
-
-  .copy-button:hover {
-    background: var(--accent);
-    border-color: var(--primary);
-  }
-
-  .blacklist-button {
-    color: var(--destructive);
-  }
-
-  .blacklist-button:hover {
-    background: color-mix(in srgb, var(--destructive) 5%, transparent);
-    border-color: var(--destructive);
-  }
-
-  .unblacklist-button {
-    color: var(--success);
-  }
-
-  .unblacklist-button:hover {
-    background: color-mix(in srgb, var(--success) 5%, transparent);
-    border-color: var(--success);
-  }
-
-  .remove-button {
-    color: var(--destructive);
-  }
-
-  .remove-button:hover {
-    background: color-mix(in srgb, var(--destructive) 5%, transparent);
-    border-color: var(--destructive);
-  }
-
-  @media (max-width: 640px) {
-    .relay-card-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .relay-card-header-left {
-      width: 100%;
-    }
-
-    .relay-card-badges {
-      width: 100%;
-    }
-
-    .stats-grid,
-    .info-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-</style>

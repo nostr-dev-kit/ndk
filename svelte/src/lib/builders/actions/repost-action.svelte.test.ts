@@ -124,7 +124,7 @@ describe("createRepostAction", () => {
             expect(action.count).toBe(0);
         });
 
-        it("should return count from subscription events", async () => {
+        it("should return count of unique pubkeys from subscription events", async () => {
             const repost1 = new NDKEvent(ndk);
             repost1.kind = NDKKind.Repost;
             repost1.pubkey = bob.pubkey;
@@ -144,6 +144,31 @@ describe("createRepostAction", () => {
             });
 
             await waitForEffects();
+            // Same user reposted twice, should count as 1
+            expect(action.count).toBe(1);
+        });
+
+        it("should count different users correctly", async () => {
+            const repost1 = new NDKEvent(ndk);
+            repost1.kind = NDKKind.Repost;
+            repost1.pubkey = bob.pubkey;
+
+            const repost2 = new NDKEvent(ndk);
+            repost2.kind = NDKKind.GenericRepost;
+            repost2.pubkey = alice.pubkey;
+
+            const mockSubscription = {
+                events: new Set([repost1, repost2]),
+            };
+            vi.mocked(ndk.$subscribe).mockReturnValue(mockSubscription as any);
+
+            let action: any;
+            cleanup = $effect.root(() => {
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
+            });
+
+            await waitForEffects();
+            // Two different users, should count as 2
             expect(action.count).toBe(2);
         });
     });

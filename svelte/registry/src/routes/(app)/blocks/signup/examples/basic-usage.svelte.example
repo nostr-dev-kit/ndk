@@ -1,0 +1,14 @@
+<script lang="ts">
+  import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
+  import { ndk } from '$lib/ndk.svelte';
+  import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
+
+  function handleSignupSuccess(signer: NDKPrivateKeySigner) {
+    console.log('Profile created!');
+    console.log('nsec:', signer.privateKey);
+    // Redirect to app
+    goto('/dashboard');
+  }
+</script>
+
+<SignupBlock {ndk} onSuccess={handleSignupSuccess} />

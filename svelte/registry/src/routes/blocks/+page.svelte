@@ -31,7 +31,7 @@
   <div class="max-w-[1400px] mx-auto">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-semibold text-foreground">Authentication</h2>
-      <span class="text-muted-foreground text-sm">2 blocks</span>
+      <span class="text-muted-foreground text-sm">3 blocks</span>
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6 mb-16">
@@ -48,6 +48,20 @@
         ]}
         gradient="linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
         iconGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      />
+
+      <BlockCard
+        title="Signup"
+        description="WYSIWYG profile creation with live preview. Generates deterministic banner gradients from private keys and supports Blossom uploads."
+        icon="✨"
+        href="/blocks/signup"
+        variantCount={1}
+        badges={[
+          { label: 'Kind 0', variant: 'kind' },
+          { label: 'Blossom', variant: 'feature' }
+        ]}
+        gradient="linear-gradient(135deg, rgba(250, 172, 70, 0.1) 0%, rgba(255, 140, 90, 0.1) 100%)"
+        iconGradient="linear-gradient(135deg, #faac46 0%, #ff8c5a 100%)"
       />
 
       <BlockCard

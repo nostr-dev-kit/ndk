@@ -5,7 +5,6 @@
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer.context.js';
     import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
-	import { GenericEmbedded } from '../components/generic-embedded';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;
@@ -32,12 +31,16 @@
 
 	const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
 
-	// Lookup handler from registry
+	// Lookup handler from registry for this specific kind
 	let handlerInfo = $derived(renderer.getKindHandler(embedded.event?.kind));
 
-	let Handler = $derived(handlerInfo?.component);
+	// Use kind-specific handler
+	let KindHandler = $derived(handlerInfo?.component);
 
-	// Wrap event using NDK wrapper class if available
+	// Use fallback if no kind-specific handler
+	let FallbackHandler = $derived(renderer.fallbackComponent);
+
+	// Wrap event using NDK wrapper class if available (only for kind-specific handlers)
 	let wrappedEvent = $derived(
 		embedded.event && handlerInfo?.wrapper?.from
 			? handlerInfo.wrapper.from(embedded.event)
@@ -54,16 +57,23 @@
 	<div class="embedded-error {className}">
 		<span>Failed to load event</span>
 	</div>
-{:else if Handler && wrappedEvent}
-	<Handler {ndk} event={wrappedEvent} {variant} />
+{:else if KindHandler && wrappedEvent}
+	<!-- Kind-specific handler - pass variant -->
+	<KindHandler {ndk} event={wrappedEvent} {variant} />
+{:else if FallbackHandler && wrappedEvent}
+	<!-- Fallback handler - no variant -->
+	<FallbackHandler {ndk} event={wrappedEvent} class={className} />
 {:else if wrappedEvent}
-	<!-- NO HANDLER: Use GenericEmbedded fallback component -->
-	<GenericEmbedded {ndk} event={wrappedEvent} {variant} class={className} />
+	<!-- NO HANDLER: Show raw bech32. Users can register generic-embedded if they want it. -->
+	<div class="embedded-raw {className}">
+		<code>{bech32}</code>
+	</div>
 {/if}
 
 <style>
 	.embedded-loading,
-	.embedded-error {
+	.embedded-error,
+	.embedded-raw {
 		padding: 0.75rem;
 		border-radius: 0.5rem;
 		border: 1px solid var(--border);
@@ -94,5 +104,10 @@
 
 	.embedded-error {
 		color: var(--destructive);
+	}
+
+	.embedded-raw code {
+		font-family: monospace;
+		word-break: break-all;
 	}
 </style>

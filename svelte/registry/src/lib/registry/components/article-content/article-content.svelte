@@ -4,13 +4,21 @@
   import { NDKHighlight, NDKKind, type NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
+  import { mount, unmount } from 'svelte';
+  import { getContext, setContext } from 'svelte';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { defaultContentRenderer, type ContentRenderer } from '../../ui/content-renderer.svelte.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../ui/content-renderer.context.js';
+  import { createNostrMarkdownExtensions } from '../../builders/markdown-nostr-extensions.js';
   import { User } from '../../ui/user';
+  import Mention from '../mention/mention.svelte';
+  import EmbeddedEvent from '../../ui/embedded-event.svelte';
   import HighlightToolbar from './highlight-toolbar.svelte';
 
   interface Props {
     ndk?: NDKSvelte;
     article: NDKArticle;
+    renderer?: ContentRenderer;
     highlightFilter?: (highlight: NDKHighlight) => boolean;
     onHighlightClick?: (highlight: NDKHighlight) => void;
     class?: string;
@@ -19,6 +27,7 @@
   let {
     ndk: providedNdk,
     article,
+    renderer: providedRenderer,
     highlightFilter,
     onHighlightClick,
     class: className = ''
@@ -26,8 +35,18 @@
 
   const ndk = getNDKFromContext(providedNdk);
 
+  // Use renderer from prop, or from context, or fallback to default
+  const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
+  const renderer = $derived(providedRenderer ?? rendererContext?.renderer ?? defaultContentRenderer);
+
+  // Set renderer in context so nested components can access it
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
+
   let contentElement = $state<HTMLDivElement>();
   let avatarData = $state<Array<{ pubkey: string; top: number; right: string }>>([]);
+
+  // Track mounted Svelte components for cleanup
+  let mountedComponents: Array<{ target: HTMLElement; unmount: () => void }> = [];
 
   // Text selection state
   let showHighlightToolbar = $state(false);
@@ -71,6 +90,13 @@
 
   const htmlContent = $derived.by(() => {
     if (hasMarkdown) {
+      // Configure marked with Nostr extensions
+      const extensions = createNostrMarkdownExtensions({
+        emojiTags: article.tags
+      });
+
+      marked.use({ extensions });
+
       return marked.parse(content);
     }
     return content;
@@ -277,6 +303,75 @@
 
     avatarData = newAvatarData;
   }
+
+  function hydrateNostrComponents() {
+    if (!contentElement) return;
+
+    // Clean up previously mounted components
+    mountedComponents.forEach(({ unmount }) => unmount());
+    mountedComponents = [];
+
+    // Hydrate mentions (npub, nprofile)
+    const mentions = contentElement.querySelectorAll<HTMLElement>('.nostr-mention');
+    mentions.forEach(placeholder => {
+      const bech32 = placeholder.dataset.bech32;
+      if (!bech32) return;
+
+      const MentionComponent = renderer.mentionComponent || Mention;
+      const mounted = mount(MentionComponent, {
+        target: placeholder,
+        props: { ndk, bech32 }
+      });
+
+      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+    });
+
+    // Hydrate event references (note, nevent, naddr)
+    const eventRefs = contentElement.querySelectorAll<HTMLElement>('.nostr-event-ref');
+    eventRefs.forEach(placeholder => {
+      const bech32 = placeholder.dataset.bech32;
+      if (!bech32) return;
+
+      const mounted = mount(EmbeddedEvent, {
+        target: placeholder,
+        props: { ndk, bech32, renderer, variant: 'inline' }
+      });
+
+      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+    });
+
+    // Hydrate hashtags
+    const hashtags = contentElement.querySelectorAll<HTMLElement>('.nostr-hashtag');
+    hashtags.forEach(placeholder => {
+      const tag = placeholder.dataset.tag;
+      if (!tag) return;
+
+      if (renderer.hashtagComponent) {
+        const mounted = mount(renderer.hashtagComponent, {
+          target: placeholder,
+          props: { tag }
+        });
+        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      } else {
+        // Default rendering
+        placeholder.textContent = `#${tag}`;
+      }
+    });
+  }
+
+  // Hydrate components after content is rendered
+  $effect(() => {
+    if (contentElement && hasMarkdown) {
+      hydrateNostrComponents();
+    }
+  });
+
+  // Cleanup on unmount
+  $effect(() => {
+    return () => {
+      mountedComponents.forEach(({ unmount }) => unmount());
+    };
+  });
 </script>
 
 <div data-article-content="" class="article-wrapper {className}">
@@ -459,5 +554,20 @@
   :global(.article-content mark.nostr-highlight:hover) {
     background-color: color-mix(in srgb, var(--primary) 30%, transparent);
     border-bottom-color: var(--primary);
+  }
+
+  /* Nostr entity styles */
+  :global(.article-content .nostr-emoji) {
+    display: inline-block;
+    height: 1.25em;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 0.1em;
+  }
+
+  :global(.article-content .nostr-mention),
+  :global(.article-content .nostr-event-ref),
+  :global(.article-content .nostr-hashtag) {
+    display: inline;
   }
 </style>

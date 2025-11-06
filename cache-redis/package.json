@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/cache-redis",
-  "version": "0.1.52-beta.39",
+  "version": "0.1.52-beta.40",
   "description": "NDK Redis Cache Adapter",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,12 +15,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.39",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.40",
     "ioredis": "^5.0.0"
   },
   "devDependencies": {
     "@types/ioredis": "^5.0.0",
-    "@types/node": "^24.9.0",
+    "@types/node": "^24.10.0",
     "tsup": "^8.4.0",
     "typescript": "^5.9.3"
   },

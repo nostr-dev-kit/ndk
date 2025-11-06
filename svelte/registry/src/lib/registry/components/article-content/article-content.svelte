@@ -1,6 +1,6 @@
 <!-- @ndk-version: article-content@0.3.0 -->
 <script lang="ts">
-  import { marked } from 'marked';
+  import { Marked } from 'marked';
   import { NDKHighlight, NDKKind, type NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
@@ -90,14 +90,14 @@
 
   const htmlContent = $derived.by(() => {
     if (hasMarkdown) {
-      // Configure marked with Nostr extensions
+      // Create a new marked instance with Nostr extensions for this component
       const extensions = createNostrMarkdownExtensions({
         emojiTags: article.tags
       });
 
-      marked.use({ extensions });
+      const markedInstance = new Marked({ extensions });
 
-      return marked.parse(content);
+      return markedInstance.parse(content) as string;
     }
     return content;
   });

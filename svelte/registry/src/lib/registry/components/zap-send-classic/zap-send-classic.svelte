@@ -55,20 +55,19 @@
 </script>
 
 {#if zap}
-  <div class={cn('zap-send-classic', className)} data-zap-send-classic="">
+  <div class={cn('bg-background border border-border rounded-xl max-w-[500px] w-full p-6', className)} data-zap-send-classic="">
     <!-- Header -->
-    <div class="header" data-header="">
-      <h2>Send a Zap</h2>
+    <div class="flex justify-between items-center mb-6" data-header="">
+      <h2 class="text-xl font-semibold m-0">Send a Zap</h2>
     </div>
 
     <!-- Amount Selection -->
-    <div class="section" data-section="">
-      <label class="label" data-label="">Amount</label>
-      <div class="amount-presets" data-amount-presets="">
+    <div class="mb-6" data-section="">
+      <label class="block font-semibold text-sm mb-2 text-foreground" data-label="">Amount</label>
+      <div class="flex gap-2 mb-3 flex-wrap" data-amount-presets="">
         {#each presets as preset}
           <button
-            class="preset-btn"
-            class:active={zap.amount === preset}
+            class="flex-1 min-w-[60px] px-4 py-2 border border-border rounded-md bg-background cursor-pointer text-sm font-medium transition-all hover:bg-muted hover:border-primary {zap.amount === preset ? 'bg-primary text-white border-primary' : ''}"
             onclick={() => zap.amount = preset}
             data-preset-btn=""
             data-active={zap.amount === preset ? '' : undefined}
@@ -85,29 +84,29 @@
         type="number"
         bind:value={zap.amount}
         min="1"
-        class="amount-input"
+        class="w-full px-2.5 py-2.5 border border-border rounded-md bg-background text-base font-[inherit] focus:outline-none focus:border-primary"
         data-amount-input=""
       />
     </div>
 
     <!-- Recipients -->
     {#if zap.splits.length > 0}
-      <div class="section" data-section="">
-        <label class="label" data-label="">
+      <div class="mb-6" data-section="">
+        <label class="block font-semibold text-sm mb-2 text-foreground" data-label="">
           Recipients ({zap.splits.length})
         </label>
-        <div class="recipients" data-recipients="">
+        <div class="flex flex-col gap-3 max-h-[200px] overflow-y-auto p-2 border border-border rounded-md bg-muted" data-recipients="">
           {#each zap.splits as split}
-            <div class="recipient" data-recipient="">
+            <div class="flex items-center gap-3 p-3 bg-background rounded-md" data-recipient="">
               <User.Root {ndk} pubkey={split.pubkey}>
-                <User.Avatar class="avatar" />
-                <div class="recipient-info" data-recipient-info="">
-                  <User.Name class="name" />
-                  <div class="split-amount" data-split-amount="">
-                    <ZapIcon class="zap-icon" />
+                <User.Avatar class="w-10 h-10 flex-shrink-0" />
+                <div class="flex-1 min-w-0" data-recipient-info="">
+                  <User.Name class="font-semibold text-sm block mb-1" />
+                  <div class="flex items-center gap-1.5 text-sm text-muted-foreground" data-split-amount="">
+                    <ZapIcon class="w-3.5 h-3.5 text-primary" />
                     <span>{split.amount}</span>
                     {#if zap.splits.length > 1}
-                      <span class="percentage">({split.percentage.toFixed(1)}%)</span>
+                      <span class="text-muted-foreground">({split.percentage.toFixed(1)}%)</span>
                     {/if}
                   </div>
                 </div>
@@ -119,35 +118,35 @@
       {/if}
 
     <!-- Comment -->
-    <div class="section" data-section="">
-      <label class="label" data-label="">Comment (optional)</label>
+    <div class="mb-6" data-section="">
+      <label class="block font-semibold text-sm mb-2 text-foreground" data-label="">Comment (optional)</label>
       <textarea
         bind:value={zap.comment}
         placeholder="Say something nice..."
         rows="3"
-        class="comment-input"
+        class="w-full px-2.5 py-2.5 border border-border rounded-md bg-background font-[inherit] text-sm resize-y focus:outline-none focus:border-primary"
         data-comment-input=""
       />
     </div>
 
     <!-- Error -->
     {#if zap.error}
-      <div class="error" data-error="">
+      <div class="p-3 bg-red-500/10 border border-red-500 rounded-md text-red-500 text-sm mb-4" data-error="">
         {zap.error.message}
       </div>
     {/if}
 
     <!-- Actions -->
-    <div class="actions" data-actions="">
+    <div class="flex gap-3 justify-end" data-actions="">
       <button
-        class="cancel-btn"
+        class="px-5 py-2.5 rounded-md font-semibold text-sm cursor-pointer transition-all border-none bg-muted text-foreground hover:bg-border"
         onclick={handleCancel}
         data-cancel-btn=""
       >
         Cancel
       </button>
       <button
-        class="send-btn"
+        class="px-5 py-2.5 rounded-md font-semibold text-sm cursor-pointer transition-all border-none bg-primary text-white flex items-center gap-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         onclick={handleSend}
         disabled={zap.sending}
         data-send-btn=""
@@ -156,223 +155,10 @@
         {#if zap.sending}
           Zapping...
         {:else}
-          <ZapIcon class="btn-icon" />
+          <ZapIcon class="w-4 h-4" />
           Zap {zap.amount} sats
         {/if}
       </button>
     </div>
   </div>
 {/if}
-
-<style>
-  .zap-send-classic {
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    max-width: 500px;
-    width: 100%;
-    padding: 1.5rem;
-  }
-
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .section {
-    margin-bottom: 1.5rem;
-  }
-
-  .label {
-    display: block;
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-    color: var(--foreground);
-  }
-
-  .amount-presets {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .preset-btn {
-    flex: 1;
-    min-width: 60px;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-
-  .preset-btn:hover {
-    background: var(--muted);
-    border-color: var(--primary);
-  }
-
-  .preset-btn.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-  }
-
-  .amount-input {
-    width: 100%;
-    padding: 0.625rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    font-size: 1rem;
-    font-family: inherit;
-  }
-
-  .amount-input:focus {
-    outline: none;
-    border-color: var(--primary);
-  }
-
-  .recipients {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--muted);
-  }
-
-  .recipient {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: var(--background);
-    border-radius: 0.375rem;
-  }
-
-  .recipient :global(.avatar) {
-    width: 2.5rem;
-    height: 2.5rem;
-    flex-shrink: 0;
-  }
-
-  .recipient-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .recipient-info :global(.name) {
-    font-weight: 600;
-    font-size: 0.875rem;
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-
-  .split-amount {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .split-amount :global(.zap-icon) {
-    width: 0.875rem;
-    height: 0.875rem;
-    color: var(--primary);
-  }
-
-  .percentage {
-    color: var(--muted-foreground);
-  }
-
-  .comment-input {
-    width: 100%;
-    padding: 0.625rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    font-family: inherit;
-    font-size: 0.875rem;
-    resize: vertical;
-  }
-
-  .comment-input:focus {
-    outline: none;
-    border-color: var(--primary);
-  }
-
-  .error {
-    padding: 0.75rem;
-    background: color-mix(in srgb, red 10%, transparent);
-    border: 1px solid red;
-    border-radius: 0.375rem;
-    color: red;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-  }
-
-  .actions {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
-  }
-
-  .cancel-btn,
-  .send-btn {
-    padding: 0.625rem 1.25rem;
-    border-radius: 0.375rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-  }
-
-  .cancel-btn {
-    background: var(--muted);
-    color: var(--foreground);
-  }
-
-  .cancel-btn:hover {
-    background: var(--border);
-  }
-
-  .send-btn {
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .send-btn:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-
-  .send-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .send-btn :global(.btn-icon) {
-    width: 1rem;
-    height: 1rem;
-  }
-</style>

@@ -34,18 +34,18 @@
 </script>
 
 <div data-image-card-instagram=""
-    class={cn('instagram-card !bg-card', className)}>
+    class={cn('bg-card border border-border rounded-xl overflow-hidden', className)}>
 	<!-- Header -->
-	<div class="instagram-header">
+	<div class="p-3 flex items-center justify-between border-b border-border">
 		<User.Root {ndk} pubkey={image.pubkey}>
-			<div class="instagram-user-info">
+			<div class="flex items-center gap-3 flex-1">
 				<User.Avatar class="w-10 h-10" />
 				<User.Name class="font-semibold text-sm" />
 			</div>
 		</User.Root>
 
 		{#if showDropdown}
-			<button class="instagram-menu-btn" aria-label="Options">
+			<button class="p-2 rounded-full transition-colors bg-none border-none text-foreground cursor-pointer hover:bg-accent">
 				<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
 					<circle cx="12" cy="12" r="2" ></circle>
 					<circle cx="19" cy="12" r="2" ></circle>
@@ -56,18 +56,18 @@
 	</div>
 
 	<!-- Image -->
-	<div class="instagram-image-container">
+	<div class="relative w-full aspect-square bg-muted">
 		{#if imageUrl}
-			<img src={imageUrl} alt={imeta?.alt || 'Image'} class="instagram-image" loading="lazy" />
+			<img src={imageUrl} alt={imeta?.alt || 'Image'} class="w-full h-full object-cover" loading="lazy" />
 		{:else}
-			<div class="instagram-image-placeholder">
+			<div class="w-full h-full flex items-center justify-center">
 				<span class="text-4xl text-muted-foreground">📷</span>
 			</div>
 		{/if}
 	</div>
 
 	<!-- Actions -->
-	<div class="instagram-actions">
+	<div class="p-3 px-4 flex items-center gap-4">
 		<ReactionButton {ndk} event={image} />
 		<RepostButton {ndk} event={image} />
 		<!-- <ZapButton {ndk} event={image} /> -->
@@ -75,7 +75,7 @@
 
 	<!-- Caption -->
 	{#if caption}
-		<div class="instagram-caption">
+		<div class="px-4 pb-4 text-sm leading-relaxed">
 			<User.Root {ndk} pubkey={image.pubkey}>
 				<User.Name class="font-semibold text-sm inline" />
 			</User.Root>
@@ -83,75 +83,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.instagram-card {
-		background-color: hsl(var(--card));
-		border: 1px solid hsl(var(--border));
-		border-radius: 0.75rem;
-		overflow: hidden;
-	}
-
-	.instagram-header {
-		padding: 0.75rem;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		border-bottom: 1px solid hsl(var(--border));
-	}
-
-	.instagram-user-info {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		flex: 1;
-	}
-
-	.instagram-menu-btn {
-		padding: 0.5rem;
-		border-radius: 9999px;
-		transition: background-color 0.2s;
-		background: none;
-		border: none;
-		color: var(--foreground);
-		cursor: pointer;
-	}
-
-	.instagram-menu-btn:hover {
-		background-color: hsl(var(--accent));
-	}
-
-	.instagram-image-container {
-		position: relative;
-		width: 100%;
-		aspect-ratio: 1;
-		background-color: hsl(var(--muted));
-	}
-
-	.instagram-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.instagram-image-placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.instagram-actions {
-		padding: 0.75rem 1rem;
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	.instagram-caption {
-		padding: 0 1rem 1rem;
-		font-size: 0.875rem;
-		line-height: 1.625;
-	}
-</style>

@@ -84,21 +84,20 @@
   });
 </script>
 
-<div data-event-card-dropdown="" data-menu-open={showMenu ? '' : undefined} class={cn('dropdown-container', className)}>
+<div data-event-card-dropdown="" data-menu-open={showMenu ? '' : undefined} class={cn('relative flex-shrink-0', className)}>
   <button
     onclick={(e) => { e.stopPropagation(); showMenu = !showMenu; }}
-    class="dropdown-trigger"
+    class="p-1 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-foreground"
     type="button"
-    aria-label="More options"
   >
-    <svg class="dropdown-icon" fill="currentColor" viewBox="0 0 24 24">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
       <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
     </svg>
   </button>
 
   {#if showMenu}
     <div
-      class="dropdown-menu"
+      class="absolute right-0 mt-2 w-64 bg-popover border border-border rounded-lg shadow-lg z-50 py-1"
       onclick={(e) => e.stopPropagation()}
       onkeydown={(e) => e.stopPropagation()}
       role="menu"
@@ -107,10 +106,10 @@
       <!-- Mute button -->
       <button
         onclick={toggleMute}
-        class="dropdown-item dropdown-item--danger"
+        class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-accent transition-colors text-destructive"
         type="button"
       >
-        <svg class="dropdown-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           {#if isMuted}
             <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
             <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
@@ -121,29 +120,29 @@
             <line x1="17" y1="9" x2="23" y2="15"></line>
           {/if}
         </svg>
-        {isMuted ? 'Unmute' : 'Mute'}
+        <span class="text-sm">{isMuted ? 'Unmute' : 'Mute'}</span>
       </button>
 
       <!-- Report button -->
       <button
         onclick={handleReport}
-        class="dropdown-item dropdown-item--warning"
+        class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-accent transition-colors text-yellow-600"
         type="button"
       >
-        <svg class="dropdown-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
           <line x1="12" y1="9" x2="12" y2="13"></line>
           <line x1="12" y1="17" x2="12.01" y2="17"></line>
         </svg>
-        Report
+        <span class="text-sm">Report</span>
       </button>
 
-      <div class="dropdown-divider"></div>
+      <div class="my-1 border-t border-border"></div>
 
       <!-- Copy author nprofile -->
       <button
         onclick={copyAuthorNprofile}
-        class="dropdown-item"
+        class="w-full px-3 py-2 text-left text-sm hover:bg-accent transition-colors text-foreground"
         type="button"
       >
         Copy author (nprofile)
@@ -152,7 +151,7 @@
       <!-- Copy event ID -->
       <button
         onclick={copyEventId}
-        class="dropdown-item"
+        class="w-full px-3 py-2 text-left text-sm hover:bg-accent transition-colors text-foreground"
         type="button"
       >
         Copy ID (nevent)
@@ -161,7 +160,7 @@
       <!-- View raw event -->
       <button
         onclick={viewRawEvent}
-        class="dropdown-item"
+        class="w-full px-3 py-2 text-left text-sm hover:bg-accent transition-colors text-foreground"
         type="button"
       >
         View raw event
@@ -170,19 +169,19 @@
       <!-- Relay information -->
       {#if showRelayInfo}
         {#if context.event.relay?.url}
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-relay-info">
+          <div class="my-1 border-t border-border"></div>
+          <div class="px-3 py-2 text-xs text-muted-foreground break-all">
             {context.event.relay.url}
           </div>
         {:else if context.event.onRelays && context.event.onRelays.length > 0}
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-relay-info">
-            <div class="dropdown-relay-count">
+          <div class="my-1 border-t border-border"></div>
+          <div class="px-3 py-2">
+            <div class="text-xs text-muted-foreground mb-2">
               Seen on {context.event.onRelays.length} relay{context.event.onRelays.length === 1 ? '' : 's'}
             </div>
-            <div class="dropdown-relay-list">
+            <div class="flex flex-col gap-1">
               {#each context.event.onRelays as relay (relay.url)}
-                <div class="dropdown-relay-badge">
+                <div class="text-xs bg-muted px-2 py-1 rounded break-all">
                   {relay.url}
                 </div>
               {/each}
@@ -196,40 +195,39 @@
 
 <!-- Raw Event Modal -->
 {#if showRawEventModal}
-  <div class="raw-event-modal" role="dialog" aria-modal="true" aria-label="Raw event viewer">
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4" role="dialog" aria-modal="true">
     <div
-      class="modal-backdrop"
+      class="absolute inset-0 bg-black/50 backdrop-blur-sm"
       onclick={() => showRawEventModal = false}
       onkeydown={(e) => e.key === 'Escape' && (showRawEventModal = false)}
       role="button"
       tabindex="-1"
-      aria-label="Close modal"
     ></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Raw Event</h3>
-        <button onclick={() => showRawEventModal = false} class="modal-close" aria-label="Close modal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="relative bg-card border border-border rounded-lg shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+        <h3 class="text-lg font-semibold text-foreground m-0">Raw Event</h3>
+        <button onclick={() => showRawEventModal = false} class="p-1 hover:bg-accent rounded transition-colors text-muted-foreground hover:text-foreground">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
       </div>
 
-      <div class="modal-body">
-        <pre class="raw-event-content">{context.event.inspect}</pre>
+      <div class="flex-1 overflow-auto px-6 py-4">
+        <pre class="text-sm bg-muted p-4 rounded overflow-x-auto text-foreground font-mono">{context.event.inspect}</pre>
       </div>
 
-      <div class="modal-footer">
+      <div class="flex items-center justify-end gap-2 px-6 py-4 border-t border-border">
         <button
           onclick={() => copyToClipboard(context.event.inspect, 'raw event')}
-          class="modal-button modal-button--secondary"
+          class="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors text-sm font-medium"
         >
           Copy to Clipboard
         </button>
         <button
           onclick={() => showRawEventModal = false}
-          class="modal-button modal-button--primary"
+          class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
         >
           Close
         </button>
@@ -237,231 +235,3 @@
     </div>
   </div>
 {/if}
-
-<style>
-  .dropdown-container {
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .dropdown-trigger {
-    padding: 0.25rem;
-    border-radius: 9999px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .dropdown-trigger:hover {
-    background: var(--accent);
-  }
-
-  .dropdown-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: var(--muted-foreground);
-  }
-
-  .dropdown-menu {
-    position: absolute;
-    right: 0;
-    margin-top: 0.25rem;
-    width: 18rem;
-    background: var(--popover);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent);
-    z-index: 10;
-    max-height: 24rem;
-    overflow-y: auto;
-  }
-
-  .dropdown-item {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    text-align: left;
-    font-size: 0.875rem;
-    color: var(--foreground);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .dropdown-item:first-child {
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-  }
-
-  .dropdown-item:hover {
-    background: var(--accent);
-  }
-
-  .dropdown-item--danger {
-    color: var(--destructive);
-  }
-
-  .dropdown-item--warning {
-    color: var(--warning);
-  }
-
-  .dropdown-item-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    flex-shrink: 0;
-  }
-
-  .dropdown-divider {
-    border-top: 1px solid var(--border);
-    margin: 0.25rem 0;
-  }
-
-  .dropdown-relay-info {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
-  }
-
-  .dropdown-relay-count {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
-
-  .dropdown-relay-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .dropdown-relay-badge {
-    padding: 0.25rem 0.5rem;
-    background: var(--accent);
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Raw Event Modal */
-  .raw-event-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--foreground) 50%, transparent);
-  }
-
-  .modal-content {
-    position: relative;
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    width: 90%;
-    max-width: 56rem;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .modal-header h3 {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .modal-close {
-    padding: 0.5rem;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 0.25rem;
-    color: var(--muted-foreground);
-  }
-
-  .modal-close:hover {
-    background: var(--accent);
-  }
-
-  .modal-close svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  .modal-body {
-    flex: 1;
-    overflow: auto;
-    padding: 1.5rem;
-    background: var(--muted);
-  }
-
-  .raw-event-content {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    white-space: pre-wrap;
-    word-break: break-word;
-    margin: 0;
-  }
-
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .modal-button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .modal-button--secondary {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--foreground);
-  }
-
-  .modal-button--secondary:hover {
-    background: var(--accent);
-  }
-
-  .modal-button--primary {
-    background: var(--primary);
-    border: 1px solid var(--primary);
-    color: var(--primary-foreground);
-  }
-
-  .modal-button--primary:hover {
-    opacity: 0.9;
-  }
-</style>

@@ -111,34 +111,17 @@
 	</section>
 {/snippet}
 
-<!-- Conditional rendering based on data loading -->
-{#if sampleEvent}
-	<ComponentPageTemplate
-		metadata={eventDropdownMetadata}
-		{ndk}
-		showcaseComponent={ComponentsShowcase}
-		{showcaseBlocks}
-		{customSections}
-	>
-		<EditProps.Prop
-			name="Sample Event"
-			type="event"
-			bind:value={sampleEvent}
-			default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-		/>
-	</ComponentPageTemplate>
-{:else}
-	<div class="px-8">
-		<PageTitle title={eventDropdownMetadata.title} subtitle={eventDropdownMetadata.description}>
-			<EditProps.Prop
-				name="Sample Event"
-				type="event"
-				bind:value={sampleEvent}
-				default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-			/>
-		</PageTitle>
-		<div class="flex items-center justify-center py-12">
-			<div class="text-muted-foreground">Loading sample event...</div>
-		</div>
-	</div>
-{/if}
+<ComponentPageTemplate
+	metadata={eventDropdownMetadata}
+	{ndk}
+	showcaseComponent={ComponentsShowcase}
+	{showcaseBlocks}
+	{customSections}
+>
+	<EditProps.Prop
+		name="Sample Event"
+		type="event"
+		bind:value={sampleEvent}
+		default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
+	/>
+</ComponentPageTemplate>

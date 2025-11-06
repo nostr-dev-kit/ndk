@@ -41,39 +41,47 @@
 
 <!-- Preview snippets -->
 {#snippet muteButtonPreview()}
-  <div class="flex flex-col gap-4">
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-muted-foreground w-24">Default:</span>
-      <MuteButton {ndk} target={sampleUser!} />
+  {#if sampleUser}
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-muted-foreground w-24">Default:</span>
+        <MuteButton {ndk} target={sampleUser} />
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-muted-foreground w-24">With User:</span>
+        <MuteButton {ndk} target={sampleUser} showTarget={true} />
+      </div>
     </div>
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-muted-foreground w-24">With User:</span>
-      <MuteButton {ndk} target={sampleUser!} showTarget={true} />
-    </div>
-  </div>
+  {/if}
 {/snippet}
 
 {#snippet customPreview()}
-  <UIComposition {ndk} user={sampleUser!} />
+  {#if sampleUser}
+    <UIComposition {ndk} user={sampleUser} />
+  {/if}
 {/snippet}
 
 <!-- Title section -->
 <!-- Component previews for Components section -->
 {#snippet muteButtonComponentPreview()}
-  <div class="flex flex-col gap-4">
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-muted-foreground w-24">Default:</span>
-      <MuteButton {ndk} target={sampleUser!} />
+  {#if sampleUser}
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-muted-foreground w-24">Default:</span>
+        <MuteButton {ndk} target={sampleUser} />
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-muted-foreground w-24">With User:</span>
+        <MuteButton {ndk} target={sampleUser} showTarget={true} />
+      </div>
     </div>
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-muted-foreground w-24">With User:</span>
-      <MuteButton {ndk} target={sampleUser!} showTarget={true} />
-    </div>
-  </div>
+  {/if}
 {/snippet}
 
 {#snippet customComponentPreview()}
-  <UIComposition {ndk} user={sampleUser!} />
+  {#if sampleUser}
+    <UIComposition {ndk} user={sampleUser} />
+  {/if}
 {/snippet}
 
 <!-- Custom sections for Builder API and ndk.$mutes API -->
@@ -148,56 +156,33 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
   </section>
 {/snippet}
 
-<!-- Conditional rendering based on data loading -->
-{#if sampleUser}
-  <ComponentPageTemplate
-    metadata={muteMetadata}
-    {ndk}
-    {showcaseBlocks}
-    componentsSection={{
-      cards: [
-        { ...muteMetadata.cards[0], code: muteButtonCode },
-        { ...muteMetadata.cards[1], code: muteCustomCode }
-      ],
-      previews: {
-        'mute-button': muteButtonComponentPreview,
-        'mute-custom': customComponentPreview
-      }
-    }}
-    apiDocs={muteMetadata.apiDocs}
-    {customSections}
-  >
-    {#if !ndk.$currentUser}
-      <Alert variant="warning" title="Login required">
-        <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
-      </Alert>
-    {/if}
+<ComponentPageTemplate
+  metadata={muteMetadata}
+  {ndk}
+  {showcaseBlocks}
+  componentsSection={{
+    cards: [
+      { ...muteMetadata.cards[0], code: muteButtonCode },
+      { ...muteMetadata.cards[1], code: muteCustomCode }
+    ],
+    previews: {
+      'mute-button': muteButtonComponentPreview,
+      'mute-custom': customComponentPreview
+    }
+  }}
+  apiDocs={muteMetadata.apiDocs}
+  {customSections}
+>
+  {#if !ndk.$currentUser}
+    <Alert variant="warning" title="Login required">
+      <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
+    </Alert>
+  {/if}
 
-    <EditProps.Prop
-      name="Sample User"
-      type="user"
-      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-      bind:value={sampleUser}
-    />
-  </ComponentPageTemplate>
-{:else}
-  <div class="px-8">
-    <PageTitle title={muteMetadata.title}>
-      {#if !ndk.$currentUser}
-      <Alert variant="warning" title="Login required">
-        <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
-      </Alert>
-    {/if}
-
-    <EditProps.Prop
-      name="Sample User"
-      type="user"
-      default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-      bind:value={sampleUser}
-    />
-    </PageTitle>
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Select a user to see the components...</div>
-    </div>
-  </div>
-{/if}
+  <EditProps.Prop
+    name="Sample User"
+    type="user"
+    default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+    bind:value={sampleUser}
+  />
+</ComponentPageTemplate>

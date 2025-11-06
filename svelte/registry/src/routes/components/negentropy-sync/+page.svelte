@@ -65,11 +65,11 @@
       cardData: negentropySyncProgressMinimalCard
     },
     {
-      name: 'Detailed',
-      description: 'Full dashboard with relay status',
-      command: 'npx jsrepo add negentropy-sync-progress-detailed',
-      preview: detailedPreview,
-      cardData: negentropySyncProgressDetailedCard
+      name: 'Compact',
+      description: 'Space-efficient expandable badge',
+      command: 'npx jsrepo add negentropy-sync-progress-compact',
+      preview: compactPreview,
+      cardData: negentropySyncProgressCompactCard
     },
     {
       name: 'Animated',
@@ -79,12 +79,13 @@
       cardData: negentropySyncProgressAnimatedCard
     },
     {
-      name: 'Compact',
-      description: 'Space-efficient expandable badge',
-      command: 'npx jsrepo add negentropy-sync-progress-compact',
-      preview: compactPreview,
-      cardData: negentropySyncProgressCompactCard
-    }
+      name: 'Detailed',
+      description: 'Full dashboard with relay status',
+      command: 'npx jsrepo add negentropy-sync-progress-detailed',
+      preview: detailedPreview,
+      cardData: negentropySyncProgressDetailedCard,
+      cellClass: 'md:col-span-3'
+    },
   ];
 </script>
 

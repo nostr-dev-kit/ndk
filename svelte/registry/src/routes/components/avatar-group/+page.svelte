@@ -46,7 +46,8 @@
       description: 'Text-based overflow display',
       command: 'npx jsrepo add avatar-group',
       preview: textOverflowPreview,
-      cardData: avatarGroupCard
+      cardData: avatarGroupCard,
+      cellClass: 'md:row-span-2'
     },
     {
       name: 'Vertical Stack',

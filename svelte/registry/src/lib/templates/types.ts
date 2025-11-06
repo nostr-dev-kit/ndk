@@ -45,6 +45,7 @@ export interface ShowcaseBlock {
   cardData?: ComponentCardDataBase | any;  // ComponentCardData or any for compatibility
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;
+  cellClass?: string;  // Custom classes for grid cell
 }
 
 // Alias for BlockVariant (used by ComponentsShowcase)

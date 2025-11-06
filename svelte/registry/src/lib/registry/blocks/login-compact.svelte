@@ -143,30 +143,32 @@
   }
 </script>
 
-<div class={cn('login', className)}>
-  <h2>Connect to Nostr</h2>
+<div class={cn('w-full max-w-[480px] bg-card border border-border rounded-2xl p-8 shadow-md', className)}>
+  <h2 class="text-2xl font-semibold mb-6 text-foreground">Connect to Nostr</h2>
 
   {#if !hasExtension}
     <!-- State 1: No Extension Detected -->
-    <div class="primary-section">
-      <label class="section-label">Enter your credentials</label>
-      <div class="input-row">
+    <div class="mb-6">
+      <label class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider">Enter your credentials</label>
+      <div class="flex gap-2 mb-1.5">
         <input
           type="text"
+          class="flex-1 px-3.5 py-3.5 border-[1.5px] border-border rounded-lg text-sm font-mono bg-background text-foreground transition-all focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(24,24,27,0.05)] disabled:opacity-50 disabled:cursor-not-allowed"
           bind:value={credentialInput}
           disabled={isLoading}
         />
-        <button class="qr-button" title="Scan QR code" disabled={isLoading}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="w-11 h-11 p-0 border-[1.5px] border-border rounded-lg bg-background cursor-pointer transition-all flex items-center justify-center flex-shrink-0 text-foreground hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" title="Scan QR code" disabled={isLoading}>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2"></rect>
           </svg>
         </button>
       </div>
 
       {#if showPasswordField}
-        <div class="password-field">
+        <div class="mt-2 mb-1.5">
           <input
             type="password"
+            class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg text-sm font-mono bg-background text-foreground transition-all focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(24,24,27,0.05)] disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Password for encrypted key"
             bind:value={password}
             disabled={isLoading}
@@ -174,9 +176,9 @@
         </div>
       {/if}
 
-      <p class="hint">Supports nsec, ncryptsec (NIP-49), bunker://, and NIP-05</p>
+      <p class="text-xs text-muted-foreground mt-2 leading-[1.4] mb-0">Supports nsec, ncryptsec (NIP-49), bunker://, and NIP-05</p>
       <button
-        class="primary-button"
+        class="w-full px-3.5 py-3.5 bg-primary text-primary-foreground border-none rounded-lg text-sm font-semibold cursor-pointer transition-all flex items-center justify-center gap-2 mt-3 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
         onclick={handleCredentialLogin}
         disabled={isLoading || !credentialInput.trim() || (showPasswordField && !password)}
       >
@@ -184,32 +186,32 @@
       </button>
     </div>
 
-    <div class="divider-horizontal">
-      <span>Quick connect</span>
+    <div class="flex items-center my-6 text-muted-foreground text-xs before:content-[''] before:flex-1 before:h-px before:bg-border after:content-[''] after:flex-1 after:h-px after:bg-border">
+      <span class="px-4 uppercase tracking-wider">Quick connect</span>
     </div>
 
-    <div class="quick-grid">
-      <button class="secondary-button" onclick={handleExtensionLogin} disabled={isLoading}>
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="grid grid-cols-2 gap-3">
+      <button class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg bg-background text-sm font-medium cursor-pointer transition-all flex items-center justify-center gap-2 text-foreground hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleExtensionLogin} disabled={isLoading}>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2"></rect>
           <line x1="8" y1="21" x2="16" y2="21"></line>
           <line x1="12" y1="17" x2="12" y2="21"></line>
         </svg>
         Extension
       </button>
-      <button class="secondary-button" onclick={handleBunkerSigner} disabled={isLoading}>
+      <button class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg bg-background text-sm font-medium cursor-pointer transition-all flex items-center justify-center gap-2 text-foreground hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleBunkerSigner} disabled={isLoading}>
         <div style="text-align: center; width: 100%;">
           <div>Bunker Signer</div>
-          <div class="button-subtitle">nostrconnect://</div>
+          <div class="text-[0.6875rem] text-muted-foreground font-normal block mt-0.5">nostrconnect://</div>
         </div>
       </button>
     </div>
   {:else}
     <!-- State 2: Extension Detected -->
-    <div class="primary-section">
-      <label class="section-label">Quick connect</label>
-      <button class="primary-button" onclick={handleExtensionLogin} disabled={isLoading}>
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="mb-6">
+      <label class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider">Quick connect</label>
+      <button class="w-full px-3.5 py-3.5 bg-primary text-primary-foreground border-none rounded-lg text-sm font-semibold cursor-pointer transition-all flex items-center justify-center gap-2 mt-3 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleExtensionLogin} disabled={isLoading}>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2"></rect>
           <line x1="8" y1="21" x2="16" y2="21"></line>
           <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -218,29 +220,31 @@
       </button>
     </div>
 
-    <div class="divider-horizontal">
-      <span>Other options</span>
+    <div class="flex items-center my-6 text-muted-foreground text-xs before:content-[''] before:flex-1 before:h-px before:bg-border after:content-[''] after:flex-1 after:h-px after:bg-border">
+      <span class="px-4 uppercase tracking-wider">Other options</span>
     </div>
 
-    <div class="quick-single">
-      <label class="section-label">Enter your credentials</label>
-      <div class="input-row">
+    <div class="flex flex-col gap-0">
+      <label class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider">Enter your credentials</label>
+      <div class="flex gap-2 mb-1.5">
         <input
           type="text"
+          class="flex-1 px-3.5 py-3.5 border-[1.5px] border-border rounded-lg text-sm font-mono bg-background text-foreground transition-all focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(24,24,27,0.05)] disabled:opacity-50 disabled:cursor-not-allowed"
           bind:value={credentialInput}
           disabled={isLoading}
         />
-        <button class="qr-button" title="Scan QR code" disabled={isLoading}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="w-11 h-11 p-0 border-[1.5px] border-border rounded-lg bg-background cursor-pointer transition-all flex items-center justify-center flex-shrink-0 text-foreground hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" title="Scan QR code" disabled={isLoading}>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2"></rect>
           </svg>
         </button>
       </div>
 
       {#if showPasswordField}
-        <div class="password-field">
+        <div class="mt-2 mb-1.5">
           <input
             type="password"
+            class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg text-sm font-mono bg-background text-foreground transition-all focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(24,24,27,0.05)] disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Password for encrypted key"
             bind:value={password}
             disabled={isLoading}
@@ -248,250 +252,27 @@
         </div>
       {/if}
 
-      <p class="hint">Supports nsec, ncryptsec (NIP-49), bunker://, and NIP-05</p>
+      <p class="text-xs text-muted-foreground mt-2 leading-[1.4] mb-0">Supports nsec, ncryptsec (NIP-49), bunker://, and NIP-05</p>
       <button
-        class="secondary-button"
-        style="margin-top: 0.75rem;"
+        class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg bg-background text-sm font-medium cursor-pointer transition-all flex items-center justify-center gap-2 text-foreground mt-3 hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
         onclick={handleCredentialLogin}
         disabled={isLoading || !credentialInput.trim() || (showPasswordField && !password)}
       >
         {isLoading ? 'Signing In...' : 'Sign In'}
       </button>
 
-      <button class="secondary-button" style="margin-top: 0.5rem;" onclick={handleBunkerSigner} disabled={isLoading}>
+      <button class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg bg-background text-sm font-medium cursor-pointer transition-all flex items-center justify-center gap-2 text-foreground mt-2 hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleBunkerSigner} disabled={isLoading}>
         <div style="text-align: center; width: 100%;">
           <div>Bunker Signer</div>
-          <div class="button-subtitle">nostrconnect://</div>
+          <div class="text-[0.6875rem] text-muted-foreground font-normal block mt-0.5">nostrconnect://</div>
         </div>
       </button>
     </div>
   {/if}
 
   {#if error}
-    <div class="error-message">
+    <div class="mt-4 py-3 px-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
       {error}
     </div>
   {/if}
 </div>
-
-<style>
-  .login {
-    width: 100%;
-    max-width: 480px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--foreground);
-  }
-
-  .section-label {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--foreground);
-    margin-bottom: 0.75rem;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .hint {
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
-    margin-top: 0.5rem;
-    line-height: 1.4;
-    margin-bottom: 0;
-  }
-
-  .input-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.375rem;
-  }
-
-  input[type="text"],
-  input[type="password"] {
-    flex: 1;
-    padding: 0.875rem;
-    border: 1.5px solid var(--border);
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-family: 'SF Mono', Monaco, monospace;
-    background: var(--background);
-    color: var(--foreground);
-    transition: all 0.2s;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
-  }
-
-  input:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .password-field {
-    margin-top: 0.5rem;
-    margin-bottom: 0.375rem;
-  }
-
-  .password-field input {
-    width: 100%;
-  }
-
-  .qr-button {
-    width: 2.75rem;
-    height: 2.75rem;
-    padding: 0;
-    border: 1.5px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--background);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--foreground);
-  }
-
-  .qr-button:hover:not(:disabled) {
-    border-color: var(--primary);
-    background: var(--muted);
-  }
-
-  .qr-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .qr-button svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  .primary-button {
-    width: 100%;
-    padding: 0.875rem;
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-  }
-
-  .primary-button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--primary) 90%, transparent);
-  }
-
-  .primary-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .secondary-button {
-    width: 100%;
-    padding: 0.875rem;
-    border: 1.5px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--background);
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: var(--foreground);
-  }
-
-  .secondary-button:hover:not(:disabled) {
-    border-color: var(--primary);
-    background: var(--muted);
-  }
-
-  .secondary-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .button-subtitle {
-    font-size: 0.6875rem;
-    color: var(--muted-foreground);
-    font-weight: 400;
-    display: block;
-    margin-top: 0.125rem;
-  }
-
-  .primary-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .divider-horizontal {
-    display: flex;
-    align-items: center;
-    margin: 1.5rem 0;
-    color: var(--muted-foreground);
-    font-size: 0.75rem;
-  }
-
-  .divider-horizontal::before,
-  .divider-horizontal::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .divider-horizontal span {
-    padding: 0 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .quick-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-
-  .quick-single {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .error-message {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    background: color-mix(in srgb, var(--destructive) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--destructive) 20%, transparent);
-    border-radius: 0.5rem;
-    color: var(--destructive);
-    font-size: 0.875rem;
-  }
-</style>

@@ -393,10 +393,10 @@
   }
 
   .nav-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.75rem;
     border-radius: 0.375rem;
     color: var(--muted-foreground);
     text-decoration: none;

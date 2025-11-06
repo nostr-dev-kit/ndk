@@ -5,14 +5,15 @@
   interface Props {
     title: string;
     subtitle?: string;
+    tags?: string[];
     children?: Snippet;
   }
 
-  let { title, subtitle, children }: Props = $props();
+  let { title, subtitle, tags, children }: Props = $props();
 </script>
 
-<div class="border-b border-border -mx-8 p-8">
-  <div class="flex items-start justify-between gap-4">
+<div class="border-b border-border -mx-8 p-8 flex flex-col gap-6">
+  <div class="flex items-center justify-between gap-4">
     <h1 class="text-6xl font-black">{title}</h1>
 
     {#if children}
@@ -26,5 +27,14 @@
     <p class="text-lg text-muted-foreground">
       {subtitle}
     </p>
+  {/if}
+  {#if tags && tags.length > 0}
+    <div class="flex flex-wrap gap-2 mt-3">
+      {#each tags as tag (tag)}
+        <span class="px-2.5 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full">
+          {tag}
+        </span>
+      {/each}
+    </div>
   {/if}
 </div>

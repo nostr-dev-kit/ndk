@@ -3,8 +3,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
-  import BlockInstallSection from '$site-components/blocks/BlockInstallSection.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import Preview from '$site-components/preview.svelte';
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
 
   // Import code examples
@@ -22,19 +22,12 @@
 <BlockPageLayout
   title="Signup"
   subtitle="WYSIWYG profile creation block with live preview. Users can create their Nostr profile by editing fields directly, uploading banner and avatar images via Blossom, and seeing a deterministic gradient generated from their private key."
+  tags={['Kind 0', 'Blossom', "Registration", 'Media Upload']}
   blockName="signup"
->
-  <div class="flex gap-2 flex-wrap">
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">Kind 0</span>
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">Blossom</span>
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">Media Upload</span>
-  </div>
-</BlockPageLayout>
+  installCommand="npx ndk-svelte add signup-block"
+/>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
-
-  <BlockInstallSection command="npx ndk-svelte add signup-block" />
-
   <!-- Preview Section -->
   <section class="mb-16">
     <h2 class="text-[1.75rem] font-bold mb-3">Preview</h2>
@@ -42,24 +35,9 @@
       Interactive signup form with live key generation and deterministic banner gradients.
     </p>
 
-    <div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
-      <div class="p-6 border-b border-border">
-        <h3 class="text-xl font-semibold mb-2">Signup Block</h3>
-        <p class="text-muted-foreground text-[0.95rem]">Create a new Nostr profile with banner, avatar, name, and bio fields. Banner displays a gradient generated from the private key.</p>
-      </div>
-
-      <div class="py-12 px-8 bg-background border-b border-border min-h-[600px] flex items-center justify-center">
-        <SignupBlock {ndk} onSuccess={handleSuccess} />
-      </div>
-
-      <div class="flex gap-0 bg-muted border-b border-border">
-        <button class="py-3.5 px-6 bg-transparent border-none text-primary text-sm font-medium cursor-pointer border-b-2 border-b-primary transition-all">Code</button>
-      </div>
-
-      <div class="bg-background overflow-x-auto">
-        <CodeBlock lang="svelte" code={basicUsage} />
-      </div>
-    </div>
+    <Preview title="Signup Block" code={basicUsage} previewAreaClass="max-h-none">
+      <SignupBlock {ndk} onSuccess={handleSuccess} />
+    </Preview>
   </section>
 
   <!-- Component API Section -->

@@ -14,47 +14,19 @@
   const article = event as NDKArticle;
 </script>
 
-<div data-article-embedded-inline="" class="article-embedded-inline">
+<div data-article-embedded-inline="" class="rounded-lg overflow-hidden border border-border bg-card max-w-[400px]">
   <Article.Root {ndk} {article}>
-    <div class="article-layout">
+    <div class="flex flex-col">
       <Article.Image class="h-32" />
 
-      <div class="article-content">
+      <div class="p-3 flex flex-col gap-2">
         <Article.Title class="text-sm font-semibold" />
         <Article.Summary class="text-xs text-muted-foreground" maxLength={80} />
 
-        <div class="article-meta">
+        <div class="mt-auto pt-2 border-t border-border">
           <Article.ReadingTime class="text-xs" />
         </div>
       </div>
     </div>
   </Article.Root>
 </div>
-
-<style>
-  .article-embedded-inline {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--card);
-    max-width: 400px;
-  }
-
-  .article-layout {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .article-content {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .article-meta {
-    margin-top: auto;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--border);
-  }
-</style>

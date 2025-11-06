@@ -1,0 +1,14 @@
+// Display event counts
+const count = 5;
+const label = kindLabel(30023, count);
+console.log(`You have ${count} ${label}`);
+// Output: "You have 5 Articles"
+
+// Event feed headings
+<h2>{kindLabel(event.kind, events.length)}</h2>
+// Shows "Note" or "Notes" based on count
+
+// Filter labels
+{#if filterKind === 1}
+  <span>Showing {kindLabel(filterKind, filteredCount)}</span>
+{/if}

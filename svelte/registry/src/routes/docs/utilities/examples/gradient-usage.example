@@ -1,0 +1,5 @@
+const gradient = deterministicPubkeyGradient(user.pubkey);
+// Returns: 'linear-gradient(135deg, #abc123, hsl(210, 50%, 60%))'
+
+// Use in CSS
+<div style="background: {gradient}">...</div>

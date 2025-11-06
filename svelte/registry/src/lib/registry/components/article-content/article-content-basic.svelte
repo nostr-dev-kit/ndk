@@ -1,61 +1,122 @@
 <!-- @ndk-version: article-content-basic@0.1.0 -->
 <script lang="ts">
-  import { marked } from 'marked';
+  import { Marked } from 'marked';
+  import { mount } from 'svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { getContext } from 'svelte';
+  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { createNostrMarkdownExtensions } from '../../builders/markdown-nostr-extensions.js';
+  import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
+  import Mention from '../mention/mention.svelte';
+  import EmbeddedEvent from '../../ui/embedded-event.svelte';
 
   interface Props {
     article: NDKArticle;
+    ndk?: NDKSvelte;
     class?: string;
   }
 
   let {
     article,
+    ndk: providedNdk,
     class: className = ''
   }: Props = $props();
 
-  const content = $derived(article.content);
+  const ndk = getNDKFromContext(providedNdk);
+  const renderer = defaultContentRenderer;
 
-  const hasMarkdown = $derived.by(() => {
-    const markdownPatterns = [
-      /^#{1,6}\s/m,
-      /\*\*[^*]+\*\*/,
-      /\*[^*]+\*/,
-      /\[([^\]]+)\]\([^)]+\)/,
-      /^[-*+]\s/m,
-      /^>\s/m,
-      /```[\s\S]*?```/,
-      /^\d+\.\s/m,
-    ];
-    return markdownPatterns.some(pattern => pattern.test(content));
-  });
+  let contentElement = $state<HTMLDivElement>();
+  let mountedComponents: Array<{ target: HTMLElement; unmount: () => void }> = [];
 
   const htmlContent = $derived.by(() => {
-    if (hasMarkdown) {
-      return marked.parse(content);
+    const extensions = createNostrMarkdownExtensions({
+      emojiTags: article.tags
+    });
+
+    const markedInstance = new Marked({ extensions });
+    return markedInstance.parse(article.content) as string;
+  });
+
+  function hydrateNostrComponents() {
+    if (!contentElement) return;
+
+    // Clean up previously mounted components
+    mountedComponents.forEach(({ unmount }) => unmount());
+    mountedComponents = [];
+
+    // Hydrate mentions (npub, nprofile)
+    const mentions = contentElement.querySelectorAll<HTMLElement>('.nostr-mention');
+    mentions.forEach(placeholder => {
+      const bech32 = placeholder.dataset.bech32;
+      if (!bech32) return;
+
+      const MentionComponent = renderer.mentionComponent || Mention;
+      const mounted = mount(MentionComponent, {
+        target: placeholder,
+        props: { ndk, bech32 }
+      });
+
+      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+    });
+
+    // Hydrate event references (note, nevent, naddr)
+    const eventRefs = contentElement.querySelectorAll<HTMLElement>('.nostr-event-ref');
+    eventRefs.forEach(placeholder => {
+      const bech32 = placeholder.dataset.bech32;
+      if (!bech32) return;
+
+      const mounted = mount(EmbeddedEvent, {
+        target: placeholder,
+        props: { ndk, bech32, renderer, variant: 'inline' }
+      });
+
+      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+    });
+
+    // Hydrate hashtags
+    const hashtags = contentElement.querySelectorAll<HTMLElement>('.nostr-hashtag');
+    hashtags.forEach(placeholder => {
+      const tag = placeholder.dataset.tag;
+      if (!tag) return;
+
+      if (renderer.hashtagComponent) {
+        const mounted = mount(renderer.hashtagComponent, {
+          target: placeholder,
+          props: { tag }
+        });
+        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      } else {
+        // Default rendering
+        placeholder.textContent = `#${tag}`;
+      }
+    });
+  }
+
+  // Hydrate components after content is rendered
+  $effect(() => {
+    if (contentElement) {
+      hydrateNostrComponents();
     }
-    return content;
+  });
+
+  // Cleanup on unmount
+  $effect(() => {
+    return () => {
+      mountedComponents.forEach(({ unmount }) => unmount());
+    };
   });
 </script>
 
 <div data-article-content-basic="" class="article-wrapper {className}">
-  {#if hasMarkdown}
-    <div
-      role="article"
-      tabindex="0"
-      class="article-content prose prose-lg dark:prose-invert max-w-none"
-    >
-      {@html htmlContent}
-    </div>
-  {:else}
-    <div
-      role="article"
-      tabindex="0"
-      class="article-content text-lg leading-[1.8] whitespace-pre-wrap"
-      style="font-family: var(--font-serif);"
-    >
-      {content}
-    </div>
-  {/if}
+  <div
+    bind:this={contentElement}
+    role="article"
+    tabindex="0"
+    class="article-content prose prose-lg dark:prose-invert max-w-none text-xs break-all"
+  >
+    {@html htmlContent}
+  </div>
 </div>
 
 <style>
@@ -162,5 +223,20 @@
 
   :global(.article-content em) {
     @apply italic;
+  }
+
+  /* Nostr entity styles */
+  :global(.article-content .nostr-emoji) {
+    display: inline-block;
+    height: 1.25em;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 0.1em;
+  }
+
+  :global(.article-content .nostr-mention),
+  :global(.article-content .nostr-event-ref),
+  :global(.article-content .nostr-hashtag) {
+    display: inline;
   }
 </style>

@@ -5,6 +5,13 @@
   import { kindLabel } from '$lib/registry/utils/kind-label';
   import "../../../lib/styles/docs-page.css";
 
+  // Import code examples
+  import gradientImport from './examples/gradient-import.example?raw';
+  import gradientUsage from './examples/gradient-usage.example?raw';
+  import kindLabelImport from './examples/kind-label-import.example?raw';
+  import kindLabelUsage from './examples/kind-label-usage.example?raw';
+  import kindLabelPractical from './examples/kind-label-practical.example?raw';
+
   // Sample pubkeys to demonstrate different gradients
   const samplePubkeys = [
     { name: 'Pablo', pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52' },
@@ -44,16 +51,12 @@
 
   <section>
     <h3>Installation</h3>
-    <CodeBlock lang="typescript" code={`import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';`} />
+    <CodeBlock lang="typescript" code={gradientImport} />
   </section>
 
   <section>
     <h3>Usage</h3>
-    <CodeBlock lang="typescript" code={`const gradient = deterministicPubkeyGradient(user.pubkey);
-// Returns: 'linear-gradient(135deg, #abc123, hsl(210, 50%, 60%))'
-
-// Use in CSS
-<div style="background: {gradient}">...</div>`} />
+    <CodeBlock lang="typescript" code={gradientUsage} />
   </section>
 
   <section>
@@ -135,28 +138,12 @@
 
   <section>
     <h3>Installation</h3>
-    <CodeBlock lang="typescript" code={`import { kindLabel } from '$lib/registry/utils/kind-label';`} />
+    <CodeBlock lang="typescript" code={kindLabelImport} />
   </section>
 
   <section>
     <h3>Usage</h3>
-    <CodeBlock lang="typescript" code={`// Singular form (default)
-const label = kindLabel(30023);
-// Returns: "Article"
-
-// With count for pluralization
-const label = kindLabel(30023, 1);
-// Returns: "Article"
-
-const label = kindLabel(30023, 5);
-// Returns: "Articles"
-
-// Notes
-kindLabel(1);     // "Note"
-kindLabel(1, 3);  // "Notes"
-
-// Unknown kinds return the kind number
-kindLabel(99999); // "99999"`} />
+    <CodeBlock lang="typescript" code={kindLabelUsage} />
   </section>
 
   <section>
@@ -212,20 +199,7 @@ kindLabel(99999); // "99999"`} />
 
   <section>
     <h3>Practical Examples</h3>
-    <CodeBlock lang="typescript" code={`// Display event counts
-const count = 5;
-const label = kindLabel(30023, count);
-console.log(\`You have \${count} \${label}\`);
-// Output: "You have 5 Articles"
-
-// Event feed headings
-<h2>{kindLabel(event.kind, events.length)}</h2>
-// Shows "Note" or "Notes" based on count
-
-// Filter labels
-{#if filterKind === 1}
-  <span>Showing {kindLabel(filterKind, filteredCount)}</span>
-{/if}`} />
+    <CodeBlock lang="typescript" code={kindLabelPractical} />
   </section>
 </div>
 

@@ -13,11 +13,11 @@
   let { ndk, event, variant = 'card' }: Props = $props();
 </script>
 
-<div data-highlight-embedded="" class="highlight-embedded" data-variant={variant}>
+<div data-highlight-embedded="" class="rounded-lg overflow-hidden border border-border bg-card">
   <Highlight.Root {ndk} {event} variant="feed">
-    <div class="highlight-container">
+    <div class="relative {variant === 'compact' ? 'p-3 min-h-[60px]' : 'p-4 min-h-[100px]'} {variant === 'inline' ? 'max-w-[500px]' : ''} flex items-center justify-center">
       <Highlight.Content
-        class={variant === 'compact' ? 'text-sm' : 'text-base'}
+        class="{variant === 'compact' ? 'text-sm line-clamp-2' : variant === 'inline' ? 'text-base line-clamp-4' : 'text-base line-clamp-6'}"
       />
 
       <Highlight.Source
@@ -41,51 +41,3 @@
     </div>
   </Highlight.Root>
 </div>
-
-<style>
-  .highlight-embedded {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--card);
-  }
-
-  .highlight-container {
-    position: relative;
-    padding: 1rem;
-    min-height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  [data-variant='compact'] .highlight-container {
-    padding: 0.75rem;
-    min-height: 60px;
-  }
-
-  [data-variant='compact'] :global(.highlight-content) {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  [data-variant='inline'] .highlight-container {
-    max-width: 500px;
-  }
-
-  [data-variant='inline'] :global(.highlight-content) {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  [data-variant='card'] :global(.highlight-content) {
-    display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>

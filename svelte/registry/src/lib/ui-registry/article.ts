@@ -9,7 +9,7 @@ export const articleRootCard: PrimitiveCardData = {
     {
       name: 'Article.Root',
       description: 'Root component that provides context to all child Article primitives. Required wrapper for all other Article components.',
-      importPath: "import { Article } from '$lib/registry/ui'",
+      importPath: "import { Article } from '$lib/registry/ui/article'",
       props: [
         {
           name: 'ndk',
@@ -53,7 +53,7 @@ export const articleImageCard: PrimitiveCardData = {
     {
       name: 'Article.Image',
       description: "Displays the article's cover image from the `image` tag.",
-      importPath: "import { Article } from '$lib/registry/ui'",
+      importPath: "import { Article } from '$lib/registry/ui/article'",
       props: [
         {
           name: 'class',
@@ -85,7 +85,7 @@ export const articleTitleCard: PrimitiveCardData = {
     {
       name: 'Article.Title',
       description: 'Displays the article title from the `title` tag.',
-      importPath: "import { Article } from '$lib/registry/ui'",
+      importPath: "import { Article } from '$lib/registry/ui/article'",
       props: [
         {
           name: 'class',
@@ -106,7 +106,7 @@ export const articleSummaryCard: PrimitiveCardData = {
     {
       name: 'Article.Summary',
       description: 'Displays the article summary from the `summary` tag.',
-      importPath: "import { Article } from '$lib/registry/ui'",
+      importPath: "import { Article } from '$lib/registry/ui/article'",
       props: [
         {
           name: 'class',
@@ -127,7 +127,7 @@ export const articleReadingTimeCard: PrimitiveCardData = {
     {
       name: 'Article.ReadingTime',
       description: 'Calculates and displays estimated reading time based on article content length.',
-      importPath: "import { Article } from '$lib/registry/ui'",
+      importPath: "import { Article } from '$lib/registry/ui/article'",
       props: [
         {
           name: 'class',

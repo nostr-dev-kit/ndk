@@ -49,7 +49,7 @@ export const reactionButtonCard: ComponentCardData = {
 		{
 			name: 'ReactionButton',
 			description: 'Minimal reaction button with icon and count',
-			importPath: "import { ReactionButton } from '$lib/registry/components'",
+			importPath: "import { ReactionButton } from '$lib/registry/components/reaction-button'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to react to' },
@@ -69,7 +69,7 @@ export const reactionButtonAvatarsCard: ComponentCardData = {
 		{
 			name: 'ReactionButtonAvatars',
 			description: 'Component that displays avatars of users who have reacted to an event',
-			importPath: "import { ReactionButtonAvatars } from '$lib/registry/components'",
+			importPath: "import { ReactionButtonAvatars } from '$lib/registry/components/reaction-button-avatars'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, uses context if not provided)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to show reaction authors for' },

@@ -28,7 +28,7 @@ export const repostButtonAvatarsCard: ComponentCardData = {
 		{
 			name: 'RepostButtonAvatars',
 			description: 'Component that displays avatars of users who have reposted an event',
-			importPath: "import { RepostButtonAvatars } from '$lib/registry/components'",
+			importPath: "import { RepostButtonAvatars } from '$lib/registry/components/repost-button-avatars'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, uses context if not provided)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to show repost authors for' },

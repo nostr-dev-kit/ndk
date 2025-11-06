@@ -9,7 +9,7 @@ export const replyButtonCard: ComponentCardData = {
 		{
 			name: 'ReplyButton',
 			description: 'Reply button component showing icon and count',
-			importPath: "import { ReplyButton } from '$lib/registry/components'",
+			importPath: "import { ReplyButton } from '$lib/registry/components/reply-button'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, uses context if not provided)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to reply to' },
@@ -31,7 +31,7 @@ export const followButtonAvatarsCard: ComponentCardData = {
 		{
 			name: 'FollowButtonAvatars',
 			description: 'Component that displays avatars of users who have replied to an event',
-			importPath: "import { FollowButtonAvatars } from '$lib/registry/components'",
+			importPath: "import { FollowButtonAvatars } from '$lib/registry/components/follow-button-avatars'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, uses context if not provided)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to show reply authors for' },
@@ -59,7 +59,7 @@ export const replyMetadata = {
 		{
 			name: 'ReplyButton',
 			description: 'Reply button component showing icon and count. Triggers onclick handler when clicked.',
-			importPath: "import { ReplyButton } from '$lib/registry/components'",
+			importPath: "import { ReplyButton } from '$lib/registry/components/reply-button'",
 			props: [
 				{
 					name: 'ndk',
@@ -118,7 +118,7 @@ export const replyMetadata = {
 		{
 			name: 'FollowButtonAvatars',
 			description: 'Component that displays avatars of users who have replied to an event.',
-			importPath: "import { FollowButtonAvatars } from '$lib/registry/components'",
+			importPath: "import { FollowButtonAvatars } from '$lib/registry/components/follow-button-avatars'",
 			props: [
 				{
 					name: 'ndk',

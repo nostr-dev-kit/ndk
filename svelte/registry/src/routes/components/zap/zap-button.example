@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ZapButton } from '$lib/registry/components';
+  import { ZapButton } from '$lib/registry/components/zap-button';
 </script>
 
 <ZapButton {ndk} {event} variant="ghost" />

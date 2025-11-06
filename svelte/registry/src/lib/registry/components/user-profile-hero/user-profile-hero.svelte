@@ -6,22 +6,16 @@
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 
   interface Props {
-    /** NDK instance */
     ndk?: NDKSvelte;
 
-    /** User pubkey (hex or npub) */
     pubkey: string;
 
-    /** Banner CSS classes (use h-* for height) */
     bannerClass?: string;
 
-    /** Avatar CSS classes (use w-* h-* for sizing) */
     avatarClass?: string;
 
-    /** Show follow button */
     showFollow?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -39,7 +33,7 @@
 </script>
 
 <User.Root {ndk} {pubkey}>
-  <div class={`relative bg-background rounded-lg overflow-hidden border border-border ${className}`}>
+  <div data-user-profile-hero="" class={`relative bg-background rounded-lg overflow-hidden border border-border ${className}`}>
     <!-- Banner -->
     <User.Banner class={`w-full ${bannerClass}`} />
 

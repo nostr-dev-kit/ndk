@@ -12,22 +12,16 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk: NDKSvelte;
 
-		/** Relay WebSocket URL */
 		relayUrl: string;
 
-		/** Card width (default: 360px) */
 		width?: string;
 
-		/** Card height (default: 420px) */
 		height?: string;
 
-		/** Click handler */
 		onclick?: (e: MouseEvent) => void;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -62,6 +56,7 @@
 	{@const hasBanner = banner != null && banner !== ''}
 
 	<button
+		data-relay-card-portrait=""
 		type="button"
 		onclick={handleClick}
 		class={cn(

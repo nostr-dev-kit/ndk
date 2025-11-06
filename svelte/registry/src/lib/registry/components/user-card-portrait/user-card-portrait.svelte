@@ -8,13 +8,10 @@
   import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/user.context.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** User's pubkey */
     pubkey: string;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

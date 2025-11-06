@@ -3,10 +3,8 @@
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './article.context.js';
 
   interface Props {
-    /** Maximum character length */
     maxLength?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

@@ -8,22 +8,16 @@
   import { EmojiPicker, type EmojiData } from '../emoji-picker';
 
   interface Props {
-    /** NDKSvelte instance (optional if used in EventCard) */
     ndk?: NDKSvelte;
 
-    /** Event to react to (optional if used in EventCard) */
     event?: NDKEvent;
 
-    /** Default emoji to show */
     emoji?: string;
 
-    /** Whether to show reaction count */
     showCount?: boolean;
 
-    /** Long press duration in ms */
     longPressDuration?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -112,6 +106,7 @@
   <Popover.Trigger>
     {#snippet child({ props })}
       <button
+  data-reaction=""
         {...props}
         class={cn(
           'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-all duration-200 select-none touch-manipulation',

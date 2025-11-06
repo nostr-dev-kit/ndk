@@ -5,31 +5,22 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk: NDKSvelte;
 
-		/** Event to reply to */
 		replyTo?: NDKEvent;
 
-		/** Callback when note is published */
 		onPublish?: (event: NDKEvent) => void;
 
-		/** Callback when error occurs */
 		onError?: (error: Error) => void;
 
-		/** Card title */
 		title?: string;
 
-		/** Show character count */
 		showCount?: boolean;
 
-		/** Show mention input */
 		showMentions?: boolean;
 
-		/** Textarea placeholder */
 		placeholder?: string;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -49,6 +40,7 @@
 </script>
 
 <div
+	data-note-composer-card=""
 	class={cn(
 		'rounded-lg border bg-card text-card-foreground shadow-sm',
 		className

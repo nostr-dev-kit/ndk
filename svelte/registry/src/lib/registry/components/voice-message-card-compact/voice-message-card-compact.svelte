@@ -6,16 +6,12 @@
   import { User } from '../../ui/user';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Voice message to display */
     voiceMessage: NDKVoiceMessage;
 
-    /** Show author information */
     showAuthor?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

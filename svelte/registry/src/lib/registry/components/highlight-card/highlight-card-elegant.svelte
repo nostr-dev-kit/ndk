@@ -10,13 +10,10 @@
   } from '../../ui/highlight/highlight.context.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Highlight event (kind 9802) */
     event: NDKEvent;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -24,7 +21,10 @@
 </script>
 
 <Highlight.Root {ndk} {event} variant="grid" class={cn(className)}>
-  <article class="w-full">
+  <article
+    data-highlight-card-elegant=""
+    class="w-full"
+  >
     <!-- Square elegant card with gradient -->
     <div
       class="relative aspect-square rounded-lg overflow-hidden border border-border shadow-lg w-full bg-gradient-to-br from-card to-card/70"

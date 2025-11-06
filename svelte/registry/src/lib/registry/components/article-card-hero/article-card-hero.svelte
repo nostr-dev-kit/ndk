@@ -12,22 +12,16 @@
   import { createTimeAgo } from '../../utils/time-ago.svelte.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Article to display */
     article: NDKArticle;
 
-    /** Height of the hero section (default: h-[500px]) */
     height?: string;
 
-    /** Badge text (if provided, badge will be shown) */
     badgeText?: string;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -61,6 +55,7 @@
 
 <Root {ndk} {article}>
   <svelte:element
+    data-article-card-hero=""
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
     {onclick}

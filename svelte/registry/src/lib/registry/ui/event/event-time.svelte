@@ -4,10 +4,8 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** The event to display the time for */
     event: NDKEvent;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

@@ -12,19 +12,14 @@
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 
   interface Props {
-    /** NDK instance (optional, falls back to context) */
     ndk?: NDKSvelte;
 
-    /** Highlight event (kind 9802) */
     event: NDKEvent;
 
-    /** Display variant */
     variant?: 'feed' | 'compact' | 'grid';
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child components */
     children?: Snippet;
   }
 

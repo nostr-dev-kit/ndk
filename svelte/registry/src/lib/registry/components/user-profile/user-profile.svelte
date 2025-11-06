@@ -6,34 +6,24 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance (required) */
     ndk: NDKSvelte;
 
-    /** User instance */
     user?: NDKUser;
 
-    /** User's pubkey (alternative to user) */
     pubkey?: string;
 
-    /** Pre-loaded profile (optional, avoids fetch) */
     profile?: NDKUserProfile;
 
-    /** Layout variant */
     variant?: 'horizontal' | 'stacked' | 'inline' | 'compact';
 
-    /** Size preset */
     size?: 'xs' | 'sm' | 'md' | 'lg';
 
-    /** Show avatar */
     showAvatar?: boolean;
 
-    /** Byline content (string, component, or snippet) */
     byline?: string | Component;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -125,7 +115,7 @@
 </script>
 
 <User.Root {ndk} {user} {pubkey} {profile} {onclick}>
-  <div class={cn(variantClasses.wrapper, sizeClasses.container, className)}>
+  <div data-user-profile="" data-variant={variant} data-size={size} class={cn(variantClasses.wrapper, sizeClasses.container, className)}>
     {#if showAvatar}
       <User.Avatar class={sizeClasses.avatar} />
     {/if}

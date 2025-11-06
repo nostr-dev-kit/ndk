@@ -39,16 +39,12 @@
   }
 
   interface Props {
-    /** Bookmarked relay list state (must include current user) */
     bookmarks: BookmarkedRelayListState;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child snippet for custom element rendering */
     child?: Snippet<[{ props: any } & BookmarkSnippetProps]>;
 
-    /** Content snippet for custom content */
     children?: Snippet<[BookmarkSnippetProps]>;
   }
 

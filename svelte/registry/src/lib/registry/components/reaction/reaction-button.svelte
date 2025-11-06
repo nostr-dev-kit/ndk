@@ -43,6 +43,9 @@
 </script>
 
 <button
+    data-reaction-button=""
+    data-reacted={stats.hasReacted ? '' : undefined}
+    data-variant={variant}
   onclick={handleClick}
   class={cn(
     'inline-flex items-center gap-2 cursor-pointer transition-all',

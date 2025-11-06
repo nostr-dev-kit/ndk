@@ -19,7 +19,7 @@
 	})
 </script>
 
-<span class="mention {className}" role="button" tabindex="0">
+<span data-mention="" class="mention {className}" role="button" tabindex="0">
 	{#if user}
 		<User.Root {ndk} {user}>
 			@<User.Name class="inline" field="name" />

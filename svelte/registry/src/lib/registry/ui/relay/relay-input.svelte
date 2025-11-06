@@ -7,25 +7,18 @@
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	interface Props extends Omit<HTMLInputAttributes, 'type' | 'placeholder'> {
-		/** NDK instance (optional, falls back to context) */
 		ndk?: NDKSvelte;
 
-		/** Relay URL value */
 		value?: string;
 
-		/** Placeholder text */
 		placeholder?: string;
 
-		/** Icon size in pixels */
 		iconSize?: number;
 
-		/** Show relay info on the right side */
 		showRelayInfo?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 
-		/** Debounce delay in milliseconds for fetching relay info */
 		debounceMs?: number;
 	}
 

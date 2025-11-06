@@ -4,31 +4,22 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk?: NDKSvelte;
 
-		/** Relay URL value (two-way binding) */
 		value?: string;
 
-		/** Placeholder text */
 		placeholder?: string;
 
-		/** Additional CSS classes */
 		class?: string;
 
-		/** Show relay info below input */
 		showRelayInfo?: boolean;
 
-		/** Disable input */
 		disabled?: boolean;
 
-		/** Label for the input */
 		label?: string;
 
-		/** Helper text */
 		helperText?: string;
 
-		/** Error message */
 		error?: string;
 	}
 
@@ -45,7 +36,7 @@
 	}: Props = $props();
 </script>
 
-<div class={cn('relay-input-block', className)}>
+<div data-relay-input="" data-error={error ? '' : undefined} data-disabled={disabled ? '' : undefined} class={cn('relay-input-block', className)}>
 	{#if label}
 		<label class="block text-sm font-medium mb-2">
 			{label}

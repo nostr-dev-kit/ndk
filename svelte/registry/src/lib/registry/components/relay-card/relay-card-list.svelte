@@ -11,22 +11,16 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk: NDKSvelte;
 
-		/** Relay WebSocket URL */
 		relayUrl: string;
 
-		/** Show description */
 		showDescription?: boolean;
 
-		/** Compact variant - smaller icon, no URL */
 		compact?: boolean;
 
-		/** Click handler */
 		onclick?: (e: MouseEvent) => void;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -57,6 +51,8 @@
 
 <Root {ndk} {relayUrl}>
 	<button
+		data-relay-card-list=""
+		data-compact={compact ? '' : undefined}
 		type="button"
 		onclick={handleClick}
 		class={cn(

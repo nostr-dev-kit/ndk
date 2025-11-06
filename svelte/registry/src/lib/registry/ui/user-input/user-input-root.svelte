@@ -9,19 +9,14 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance (optional, falls back to context) */
     ndk?: NDKSvelte;
 
-    /** Callback when user is selected */
     onSelect?: (user: NDKUser) => void;
 
-    /** Debounce delay for NIP-05/npub lookups (default: 300ms) */
     debounceMs?: number;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child components */
     children: Snippet;
   }
 

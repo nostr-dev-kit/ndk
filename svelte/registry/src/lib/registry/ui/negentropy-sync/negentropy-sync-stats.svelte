@@ -4,10 +4,8 @@
   import { cn } from "../../utils/cn.js";
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
 
-    /** Layout direction */
     direction?: 'horizontal' | 'vertical';
   }
 

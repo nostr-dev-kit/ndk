@@ -6,28 +6,20 @@
   import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/user.context.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** User's pubkey */
     pubkey: string;
 
-    /** Card width (default: w-[280px]) */
     width?: string;
 
-    /** Card height (default: h-[380px]) */
     height?: string;
 
-    /** Primary color for gradient (default: derived from pubkey) */
     primaryColor?: string;
 
-    /** Background variant: 'gradient' (default) or 'transparent' */
     variant?: 'gradient' | 'transparent';
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -161,6 +153,7 @@
   {@const user = context.ndkUser}
 
   <svelte:element
+    data-user-card-glass=""
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
     {onclick}

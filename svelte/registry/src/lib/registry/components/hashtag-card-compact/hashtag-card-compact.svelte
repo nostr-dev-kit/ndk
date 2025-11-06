@@ -7,13 +7,10 @@
   import FollowButton from '../follow-button/follow-button.svelte';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Hashtag (with or without # prefix) */
     hashtag: string;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

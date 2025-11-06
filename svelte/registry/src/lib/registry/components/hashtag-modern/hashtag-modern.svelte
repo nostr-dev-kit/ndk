@@ -7,16 +7,12 @@
   import { Popover } from 'bits-ui';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Hashtag (with or without # prefix) */
     tag: string;
 
-    /** Optional click handler */
     onclick?: (tag: string) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

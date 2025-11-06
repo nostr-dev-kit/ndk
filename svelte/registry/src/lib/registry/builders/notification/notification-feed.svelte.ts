@@ -62,10 +62,11 @@ export function createNotificationFeed(
 	});
 
 	const grouped = $derived.by(() => {
-		if (!subscription?.events) return [];
+		if (!subscription) return [];
+		const sub = subscription;
 
-		return subscription.events.map((targetEvent) => {
-			const interactions = subscription.eventsTagging(targetEvent);
+		return sub.events.map((targetEvent) => {
+			const interactions = sub.eventsTagging(targetEvent);
 
 			// Group interactions by kind
 			const byType = new Map<number, NDKEvent[]>();

@@ -4,13 +4,10 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		/** Render as child component (user provides the element) */
 		asChild?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 
-		/** Child content with context */
 		children: Snippet<[RelaySelectorContext]>;
 	}
 

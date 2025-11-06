@@ -61,6 +61,8 @@
 </script>
 
 <button
+  data-zap-button-avatars=""
+  data-variant={variant}
   type="button"
   onclick={handleClick}
   class={cn(

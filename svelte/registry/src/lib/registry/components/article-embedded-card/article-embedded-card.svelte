@@ -14,7 +14,7 @@
   const article = event;
 </script>
 
-<div class="article-embedded-card">
+<div data-article-embedded-card="" class="article-embedded-card">
   <Article.Root {ndk} {article}>
     <div class="article-layout">
       <Article.Image class="h-40" />

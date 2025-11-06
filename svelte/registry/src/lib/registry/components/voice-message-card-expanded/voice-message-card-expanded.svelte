@@ -6,19 +6,14 @@
   import { User } from '../../ui/user';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Voice message to display */
     voiceMessage: NDKVoiceMessage;
 
-    /** Show waveform visualization */
     showWaveform?: boolean;
 
-    /** Waveform height */
     waveformHeight?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

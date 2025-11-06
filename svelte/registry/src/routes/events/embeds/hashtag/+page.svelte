@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
@@ -101,18 +102,19 @@
 {/snippet}
 
 {#if true}
+	{@const previews = {
+		'hashtag-modern': modernPreview,
+		'hashtag-basic': basicPreview,
+		'hashtag-custom': customPreview,
+		'hashtag-interactive': interactivePreview
+	} as any}
 	<ComponentPageTemplate
 	metadata={hashtagMetadata}
 	{ndk}
 	{showcaseBlocks}
 	componentsSection={{
 		cards: hashtagCards,
-		previews: {
-			'hashtag-modern': modernPreview,
-			'hashtag-basic': basicPreview,
-			'hashtag-custom': customPreview,
-			'hashtag-interactive': interactivePreview
-		}
+		previews
 	}}
 	{customSections}
 	/>

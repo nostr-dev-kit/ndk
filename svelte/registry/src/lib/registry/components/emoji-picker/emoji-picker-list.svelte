@@ -4,16 +4,12 @@
   import Item from './emoji-picker-item.svelte';
 
   interface Props {
-    /** Array of emojis to display */
     emojis: EmojiData[];
 
-    /** Callback when emoji is clicked */
     onSelect: (emoji: EmojiData) => void;
 
-    /** Number of columns in grid (default: 6) */
     columns?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

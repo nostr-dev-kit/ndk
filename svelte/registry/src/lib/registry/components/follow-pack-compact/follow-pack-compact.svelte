@@ -21,6 +21,7 @@
 
 <FollowPack.Root {ndk} {followPack} {onclick}>
 	<button
+		data-follow-pack-compact=""
 		type="button"
 		class="group flex items-center gap-4 w-full p-4 rounded-xl bg-card hover:bg-muted transition-colors {className}"
 	>

@@ -12,7 +12,7 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<div class="highlight-embedded-compact">
+<div data-highlight-embedded-compact="" class="highlight-embedded-compact">
   <Highlight.Root {ndk} {event} variant="feed">
     <div class="highlight-container">
       <Highlight.Content class="text-xs" />

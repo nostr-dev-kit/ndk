@@ -12,16 +12,12 @@
   }
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Child snippet for custom element rendering */
     child?: Snippet<[{ props: any; source: typeof context.state.source }]>;
 
-    /** Content snippet for custom content */
     children?: Snippet<[SourceSnippetProps]>;
   }
 

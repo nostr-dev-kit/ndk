@@ -6,7 +6,6 @@
   } from './highlight.context.js';
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
   }
 

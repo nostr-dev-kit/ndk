@@ -9,19 +9,14 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** Article to display */
     article: NDKArticle;
 
-    /** Image size variant */
     imageSize?: 'small' | 'medium' | 'large';
 
-    /** Click handler */
     onclick?: (e: MouseEvent) => void;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

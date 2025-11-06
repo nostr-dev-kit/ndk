@@ -16,6 +16,7 @@
 </script>
 
 <span
+	data-hashtag=""
 	class="hashtag {className}"
 	role="button"
 	tabindex="0"

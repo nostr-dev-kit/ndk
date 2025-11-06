@@ -31,28 +31,28 @@ describe("Subscription Validation", () => {
 
         it("should throw TypeError when passed string", () => {
             expect(() => {
-                createSubscription(ndk, () => "not a config");
+                createSubscription(ndk, () => "not a config" as any);
             }).toThrow(TypeError);
             expect(() => {
-                createSubscription(ndk, () => "not a config");
+                createSubscription(ndk, () => "not a config" as any);
             }).toThrow("$subscribe expects config to be a function");
         });
 
         it("should throw TypeError when passed array", () => {
             expect(() => {
-                createSubscription(ndk, () => [{ kinds: [1] }]);
+                createSubscription(ndk, () => [{ kinds: [1] }] as any);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                createSubscription(ndk, () => null);
+                createSubscription(ndk, () => null as any);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed undefined", () => {
             expect(() => {
-                createSubscription(ndk, () => undefined);
+                createSubscription(ndk, () => undefined as any);
             }).toThrow(TypeError);
         });
 

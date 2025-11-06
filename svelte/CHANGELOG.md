@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Breaking Changes
+
+- **REMOVED: Payment tracking infrastructure** - Removed `$payments` store and all payment tracking functionality (`src/lib/payments/`) as it was not fully integrated with the rest of the system. The wallet store (`$wallet`) remains fully functional for Cashu, NWC, and WebLN wallet operations.
+
+  **Removed exports:**
+  - `createIsZapped`, `createPendingPayments`, `createTargetTransactions`, `createTransactions`, `createZapAmount` runes
+  - `PendingPayment`, `Transaction`, `TransactionDirection`, `TransactionStatus`, `TransactionType` types
+  - `ReactivePaymentsStore` type
+  - `ndk.$payments` property
+
+  **Migration:** Remove any references to `ndk.$payments` from your code. Wallet functionality (`ndk.$wallet`) continues to work as before.
+
 ## 4.0.0
 
 ### Patch Changes

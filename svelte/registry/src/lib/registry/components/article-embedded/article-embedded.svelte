@@ -16,7 +16,7 @@
   const article = event as NDKArticle;
 </script>
 
-<div class="article-embedded" data-variant={variant}>
+<div data-article-embedded="" class="article-embedded" data-variant={variant}>
   <Article.Root {ndk} {article}>
     <div class="article-layout">
       <Article.Image

@@ -9,19 +9,14 @@
   }
 
   interface Props {
-    /** Emoji data to display */
     emoji: EmojiData;
 
-    /** Callback when emoji is selected */
     onSelect: (emoji: EmojiData) => void;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Child snippet for custom element rendering */
     child?: Snippet<[{ props: any } & EmojiSnippetProps]>;
 
-    /** Content snippet for custom content */
     children?: Snippet<[EmojiSnippetProps]>;
   }
 

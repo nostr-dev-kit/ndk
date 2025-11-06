@@ -7,25 +7,18 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** The event to display */
     event: NDKEvent;
 
-    /** Make card clickable to navigate */
     interactive?: boolean;
 
-    /** Show action buttons (repost, reaction) */
     showActions?: boolean;
 
-    /** Show dropdown menu */
     showDropdown?: boolean;
 
-    /** Truncate content */
     truncate?: number;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -41,6 +34,7 @@
 </script>
 
 <EventCard.Root
+    data-event-card-classic=""
   {ndk}
   {event}
   class={cn(

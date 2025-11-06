@@ -12,7 +12,7 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<div class="note-embedded-compact">
+<div data-note-embedded-compact="" class="note-embedded-compact">
   <EventCard.Root {ndk} {event}>
     <EventCard.Header variant="compact" avatarSize="sm" showTimestamp={true} />
     <div class="compact-content">

@@ -4,13 +4,10 @@
   import { VOICE_MESSAGE_CONTEXT_KEY, type VoiceMessageContext } from './voice-message.context.js';
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
 
-    /** Show current time instead of total duration */
     showCurrent?: boolean;
 
-    /** Current time in seconds (for external control) */
     currentTime?: number;
   }
 

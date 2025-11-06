@@ -7,19 +7,14 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk?: NDKSvelte;
 
-		/** The image event to display */
 		image: NDKImage;
 
-		/** Custom height class */
 		height?: string;
 
-		/** Show follow button */
 		showFollow?: boolean;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 

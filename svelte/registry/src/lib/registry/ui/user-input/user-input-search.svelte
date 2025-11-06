@@ -10,19 +10,14 @@
   }
 
   interface Props {
-    /** Placeholder text */
     placeholder?: string;
 
-    /** Additional CSS classes */
     class?: string;
 
-    /** Whether to autofocus */
     autofocus?: boolean;
 
-    /** Child snippet for custom element rendering */
     child?: Snippet<[{ props: any } & SearchSnippetProps]>;
 
-    /** Content snippet for custom content */
     children?: Snippet<[SearchSnippetProps]>;
   }
 

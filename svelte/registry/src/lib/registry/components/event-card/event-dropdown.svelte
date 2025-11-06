@@ -5,16 +5,12 @@
   import { cn } from '../../utils/cn.js';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** The event for this menu */
     event: NDKEvent;
 
-    /** Show relay information in dropdown */
     showRelayInfo?: boolean;
 
-    /** Additional CSS classes */
     class?: string;
   }
 

@@ -4,7 +4,6 @@
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
 
   interface Props {
-    /** Additional CSS classes */
     class?: string;
   }
 

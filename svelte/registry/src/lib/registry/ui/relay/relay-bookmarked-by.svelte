@@ -27,10 +27,8 @@
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** Bookmarked relay list state */
     bookmarks: BookmarkedRelayListState;
 
-    /** Child snippet with bookmark data */
     children: Snippet<[{ pubkeys: string[]; count: number }]>;
   }
 

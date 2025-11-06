@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
@@ -85,17 +86,18 @@
 {/snippet}
 
 {#if true}
+	{@const previews = {
+		'mention-modern': mentionModernPreview,
+		'mention-basic': basicPreview,
+		'mention-custom': customPreview
+	} as any}
 	<ComponentPageTemplate
 	metadata={mentionMetadata}
 	{ndk}
 	{showcaseBlocks}
 	componentsSection={{
 		cards: mentionCards,
-		previews: {
-			'mention-modern': mentionModernPreview,
-			'mention-basic': basicPreview,
-			'mention-custom': customPreview
-		}
+		previews
 	}}
 	{customSections}
 	/>

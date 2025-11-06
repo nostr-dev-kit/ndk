@@ -8,31 +8,22 @@
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {
-		/** NDK instance */
 		ndk: NDKSvelte;
 
-		/** The image event to display */
 		image: NDKImage;
 
-		/** Make card clickable to navigate */
 		interactive?: boolean;
 
-		/** Show action buttons (repost, reaction) */
 		showActions?: boolean;
 
-		/** Show dropdown menu */
 		showDropdown?: boolean;
 
-		/** Show image metadata (dimensions, size, type) */
 		showImageMeta?: boolean;
 
-		/** Show image alt text */
 		showAlt?: boolean;
 
-		/** Custom image height class */
 		imageHeight?: string;
 
-		/** Additional CSS classes */
 		class?: string;
 	}
 
@@ -50,6 +41,7 @@
 </script>
 
 <EventCard.Root
+    data-image-card=""
 	{ndk}
 	event={image}
 	class={cn(

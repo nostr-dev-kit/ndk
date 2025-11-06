@@ -5,13 +5,10 @@
   import FollowButton from '../follow-button/follow-button.svelte';
 
   interface Props {
-    /** NDK instance */
     ndk: NDKSvelte;
 
-    /** User's pubkey */
     pubkey: string;
 
-    /** Additional CSS classes */
     class?: string;
   }
 
@@ -25,7 +22,7 @@
 </script>
 
 <User.Root {ndk} {pubkey}>
-  <div class={cn(
+  <div data-user-card-compact="" class={cn(
     'flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-muted w-full',
     className
   )}>

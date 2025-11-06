@@ -67,6 +67,8 @@
 </script>
 
 <button
+  data-repost-button-avatars=""
+  data-variant={variant}
   type="button"
   onclick={handleClick}
   class={cn(

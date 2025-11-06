@@ -55,6 +55,9 @@
       let:motion
     >
       <button
+        data-follow-button-animated=""
+        data-following=""
+        data-target-type={isHashtag ? 'hashtag' : 'user'}
         type="button"
         onclick={handleToggle}
         class={cn(
@@ -108,6 +111,8 @@
       let:motion
     >
       <button
+        data-follow-button-animated=""
+        data-target-type={isHashtag ? 'hashtag' : 'user'}
         type="button"
         onclick={handleToggle}
         class={cn(

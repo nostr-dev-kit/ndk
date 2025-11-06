@@ -4,7 +4,7 @@
   import { createZapSendAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn.js';
-  import User from '../../ui/user';
+  import {User} from '../../ui/user';
   import ZapIcon from '../../icons/zap.svelte';
 
   interface Props {

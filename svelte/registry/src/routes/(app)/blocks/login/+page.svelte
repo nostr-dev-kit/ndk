@@ -2,7 +2,6 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
-  import BlockInstallSection from '$site-components/blocks/BlockInstallSection.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import Preview from '$site-components/preview.svelte';
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
@@ -20,20 +19,17 @@
 <BlockPageLayout
   title="Login"
   subtitle="Smart login component with adaptive UI that detects window.nostr extension. Supports multiple authentication methods including nsec, ncryptsec (NIP-49 encrypted keys), bunker://, NIP-05 addresses, and read-only mode."
+  tags={['NIP-07', 'NIP-46', 'NIP-49', 'NIP-05', '2 variants']}
   blockName="login"
+  installCommand="npx ndk-svelte add login-compact"
+  code={withoutExtension}
 >
-  <div class="flex gap-2 flex-wrap">
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">NIP-07</span>
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">NIP-46</span>
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">NIP-49</span>
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">NIP-05</span>
-    <span class="px-2.5 py-1 bg-secondary text-secondary-foreground rounded-md text-xs font-medium border border-border">2 variants</span>
-  </div>
+  {#snippet topPreview()}
+    <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => console.log('Login successful!')} />
+  {/snippet}
 </BlockPageLayout>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
-
-  <BlockInstallSection command="npx ndk-svelte add login-compact" />
 
   <!-- Variants Section -->
   <section class="mb-16">

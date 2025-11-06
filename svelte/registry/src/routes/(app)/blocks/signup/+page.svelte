@@ -4,7 +4,6 @@
   import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
-  import Preview from '$site-components/preview.svelte';
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
 
   // Import code examples
@@ -25,20 +24,14 @@
   tags={['Kind 0', 'Blossom', "Registration", 'Media Upload']}
   blockName="signup"
   installCommand="npx ndk-svelte add signup-block"
-/>
+  code={basicUsage}
+>
+  {#snippet topPreview()}
+    <SignupBlock {ndk} onSuccess={handleSuccess} />
+  {/snippet}
+</BlockPageLayout>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
-  <!-- Preview Section -->
-  <section class="mb-16">
-    <h2 class="text-[1.75rem] font-bold mb-3">Preview</h2>
-    <p class="text-muted-foreground mb-8 text-[1.05rem]">
-      Interactive signup form with live key generation and deterministic banner gradients.
-    </p>
-
-    <Preview title="Signup Block" code={basicUsage} previewAreaClass="max-h-none">
-      <SignupBlock {ndk} onSuccess={handleSuccess} />
-    </Preview>
-  </section>
 
   <!-- Component API Section -->
   <section class="mb-16">

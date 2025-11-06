@@ -21,7 +21,28 @@
 	tags={['Multi-account', '2 variants']}
 	blockName="session-switcher"
 	installCommand="npx ndk-svelte add session-switcher"
-/>
+	code={basicExample}
+>
+	{#snippet topPreview()}
+		<div class="flex flex-col gap-4 items-start">
+			<SessionSwitcher
+				{ndk}
+				onaddsession={() => alert('Add session clicked')}
+				actions={[
+					{
+						label: 'Settings',
+						onclick: () => alert('Settings clicked')
+					},
+					{
+						label: 'Logout',
+						onclick: () => alert('Logout clicked'),
+						variant: 'danger'
+					}
+				]}
+			/>
+		</div>
+	{/snippet}
+</BlockPageLayout>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
 
@@ -32,26 +53,6 @@
 				Choose between full and compact variants based on your layout requirements.
 			</p>
 		</div>
-
-		<Preview title="Full Variant" code={basicExample}>
-			<div class="flex flex-col gap-4 items-start">
-				<SessionSwitcher
-					{ndk}
-					onaddsession={() => alert('Add session clicked')}
-					actions={[
-						{
-							label: 'Settings',
-							onclick: () => alert('Settings clicked')
-						},
-						{
-							label: 'Logout',
-							onclick: () => alert('Logout clicked'),
-							variant: 'danger'
-						}
-					]}
-				/>
-			</div>
-		</Preview>
 
 		<Preview title="Compact Variant" code={compactExample}>
 			<div class="flex gap-4">

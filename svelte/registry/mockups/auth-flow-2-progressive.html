@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow 2: The Progressive Reveal - Auth Experience</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    :root {
+      --background: #ffffff;
+      --foreground: #0a0a0a;
+      --card: #ffffff;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a;
+      --border: #e4e4e7;
+      --primary: #18181b;
+      --primary-foreground: #fafafa;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .title h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .title p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .accordion-container {
+      background: var(--card);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+    }
+
+    .accordion-section {
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .accordion-section:last-child {
+      border-bottom: none;
+    }
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--card);
+    }
+
+    .accordion-header:hover {
+      background: var(--muted);
+    }
+
+    .accordion-section.active .accordion-header {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .accordion-section.completed .accordion-header {
+      background: var(--muted);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--muted);
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+
+    .accordion-section.active .step-number {
+      background: white;
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .accordion-section.completed .step-number {
+      background: var(--primary);
+      color: white;
+    }
+
+    .header-text h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-text p {
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+
+    .accordion-section.completed .header-text p {
+      color: var(--muted-foreground);
+    }
+
+    .accordion-icon {
+      transition: transform 0.3s ease;
+      width: 20px;
+      height: 20px;
+    }
+
+    .accordion-section.active .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-section.completed .accordion-icon svg {
+      stroke: var(--primary);
+    }
+
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+
+    .accordion-section.active .accordion-body {
+      max-height: 1000px;
+      padding: 0 2rem 2rem 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      background: var(--background);
+      color: var(--foreground);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.05);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-secondary {
+      background: var(--background);
+      color: var(--foreground);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--muted);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: 0.5rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.25rem 0;
+      color: var(--muted-foreground);
+      font-size: 0.75rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider span {
+      padding: 0 1rem;
+    }
+
+    /* Interest Tags */
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .tag-item {
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .tag-item:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .tag-item.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    /* Pack Cards */
+    .pack-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pack-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pack-card:hover {
+      background: var(--muted);
+      border-color: var(--primary);
+    }
+
+    .pack-card.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    .pack-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      flex-shrink: 0;
+    }
+
+    .pack-info h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .pack-info p {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    .pack-card.selected .pack-info p {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .switch-link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+    }
+
+    .switch-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .tag-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">
+      <h1>Flow 2: Progressive Reveal</h1>
+      <p>Step-by-step journey to your personalized feed</p>
+    </div>
+
+    <div class="accordion-container">
+      <!-- Section 1: Login or Signup -->
+      <div class="accordion-section active" data-section="1">
+        <div class="accordion-header" onclick="toggleSection(1)">
+          <div class="header-content">
+            <div class="step-number">1</div>
+            <div class="header-text">
+              <h3>Get Started</h3>
+              <p>Sign in or create your account</p>
+            </div>
+          </div>
+          <div class="accordion-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="form-group">
+            <label>Sign In</label>
+            <input type="text" placeholder="nsec, npub, bunker://, or name@domain.com">
+            <p class="hint">Enter your credentials to access your account</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="completeSection(1, 2)">
+            Sign In
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <div class="divider"><span>or create new account</span></div>
+
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" placeholder="What should we call you?">
+          </div>
+
+          <div class="form-group">
+            <label>About You (Optional)</label>
+            <textarea placeholder="Tell us a bit about yourself..."></textarea>
+          </div>
+
+          <button class="btn btn-primary" onclick="completeSection(1, 2)">
+            Create Account
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 2: Interests -->
+      <div class="accordion-section" data-section="2">
+        <div class="accordion-header" onclick="toggleSection(2)">
+          <div class="header-content">
+            <div class="step-number">2</div>
+            <div class="header-text">
+              <h3>Pick Your Interests</h3>
+              <p>What topics are you passionate about?</p>
+            </div>
+          </div>
+          <div class="accordion-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p class="hint" style="margin-bottom: 1rem;">Select at least 3 interests to personalize your feed</p>
+
+          <div class="tag-grid">
+            <div class="tag-item" onclick="toggleTag(this)">#bitcoin</div>
+            <div class="tag-item" onclick="toggleTag(this)">#nostr</div>
+            <div class="tag-item" onclick="toggleTag(this)">#tech</div>
+            <div class="tag-item" onclick="toggleTag(this)">#art</div>
+            <div class="tag-item" onclick="toggleTag(this)">#music</div>
+            <div class="tag-item" onclick="toggleTag(this)">#photography</div>
+            <div class="tag-item" onclick="toggleTag(this)">#coding</div>
+            <div class="tag-item" onclick="toggleTag(this)">#design</div>
+            <div class="tag-item" onclick="toggleTag(this)">#privacy</div>
+            <div class="tag-item" onclick="toggleTag(this)">#freedom</div>
+            <div class="tag-item" onclick="toggleTag(this)">#gaming</div>
+            <div class="tag-item" onclick="toggleTag(this)">#writing</div>
+          </div>
+
+          <button class="btn btn-primary" onclick="completeSection(2, 3)">
+            Continue
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 3: Follow Packs -->
+      <div class="accordion-section" data-section="3">
+        <div class="accordion-header" onclick="toggleSection(3)">
+          <div class="header-content">
+            <div class="step-number">3</div>
+            <div class="header-text">
+              <h3>Join Communities</h3>
+              <p>Follow curated groups of people</p>
+            </div>
+          </div>
+          <div class="accordion-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p class="hint" style="margin-bottom: 1rem;">Select communities that match your interests</p>
+
+          <div class="pack-grid">
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+              <div class="pack-info">
+                <h4>Bitcoin Developers</h4>
+                <p>124 members • Core protocol contributors</p>
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+              <div class="pack-info">
+                <h4>Nostr Pioneers</h4>
+                <p>89 members • Early adopters and builders</p>
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+              <div class="pack-info">
+                <h4>Creative Minds</h4>
+                <p>156 members • Artists and creators</p>
+              </div>
+            </div>
+
+            <div class="pack-card" onclick="togglePack(this)">
+              <div class="pack-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+              <div class="pack-info">
+                <h4>Tech Enthusiasts</h4>
+                <p>203 members • Software engineers</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="completeSection(3, 4)">
+            Continue
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 4: Complete -->
+      <div class="accordion-section" data-section="4">
+        <div class="accordion-header" onclick="toggleSection(4)">
+          <div class="header-content">
+            <div class="step-number">✓</div>
+            <div class="header-text">
+              <h3>All Done!</h3>
+              <p>Start exploring your personalized feed</p>
+            </div>
+          </div>
+          <div class="accordion-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div style="text-align: center; padding: 1rem 0;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary); margin: 0 auto 1rem;">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <p style="color: var(--muted-foreground); margin-bottom: 1.5rem;">Your account is ready and your feed is personalized!</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="finish()">
+            Start Exploring
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSection = 1;
+
+    function toggleSection(sectionNumber) {
+      const section = document.querySelector(`.accordion-section[data-section="${sectionNumber}"]`);
+      const allSections = document.querySelectorAll('.accordion-section');
+
+      allSections.forEach(s => {
+        if (s !== section) {
+          s.classList.remove('active');
+        }
+      });
+
+      section.classList.toggle('active');
+      currentSection = sectionNumber;
+    }
+
+    function completeSection(currentSec, nextSec) {
+      const current = document.querySelector(`.accordion-section[data-section="${currentSec}"]`);
+      const next = document.querySelector(`.accordion-section[data-section="${nextSec}"]`);
+
+      current.classList.remove('active');
+      current.classList.add('completed');
+
+      setTimeout(() => {
+        next.classList.add('active');
+        currentSection = nextSec;
+      }, 300);
+    }
+
+    function toggleTag(element) {
+      element.classList.toggle('selected');
+    }
+
+    function togglePack(element) {
+      element.classList.toggle('selected');
+    }
+
+    function finish() {
+      alert('Welcome to Nostr! Your personalized feed is ready.');
+    }
+  </script>
+</body>
+</html>

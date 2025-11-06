@@ -40,7 +40,17 @@
   tags={['Kind 1', 'Kind 1111', 'Media Upload', '4 variants']}
   blockName="note-composer"
   installCommand="npx ndk-svelte add note-composer"
-/>
+  code={inlineExample}
+>
+  {#snippet topPreview()}
+    <div class="max-w-2xl">
+      <NoteComposerInline
+        {ndk}
+        onPublish={(event: any) => console.log('Published:', event)}
+      />
+    </div>
+  {/snippet}
+</BlockPageLayout>
 
 <div class="max-w-7xl mx-auto px-8 pb-8">
   <section class="mb-16 space-y-8">
@@ -50,15 +60,6 @@
         Choose from pre-built variants or compose your own using the primitives.
       </p>
     </div>
-
-    <Preview title="Inline Composer" code={inlineExample} previewAreaClass="max-h-none">
-      <div class="max-w-2xl">
-        <NoteComposerInline
-          {ndk}
-          onPublish={(event: any) => console.log('Published:', event)}
-        />
-      </div>
-    </Preview>
 
     <Preview title="Card Composer" code={cardExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl">

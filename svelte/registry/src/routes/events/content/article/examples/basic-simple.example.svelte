@@ -9,4 +9,4 @@
   let { article }: Props = $props();
 </script>
 
-<ArticleContentBasic {article} />
+<ArticleContentBasic {article} class="text-xs" />

@@ -32,31 +32,30 @@ interface NostrHashtagToken extends Tokens.Generic {
 }
 
 // ============================================================================
-// Nostr URI Extension (npub, nprofile, nevent, naddr, note)
+// Nostr Mention Extension (npub, nprofile)
 // ============================================================================
 
-export function createNostrUriExtension() {
+export function createNostrMentionExtension() {
     return {
-        name: 'nostr-uri',
-        level: 'inline',
+        name: 'nostr-mention',
+        level: 'inline' as const,
         start(src: string) {
-            return src.indexOf('nostr:');
+            const index = src.indexOf('nostr:');
+            if (index === -1) return -1;
+            // Check if it's a mention type
+            if (src.substring(index).match(/^nostr:(npub1[a-z0-9]{58}|nprofile1[a-z0-9]+)/i)) {
+                return index;
+            }
+            return -1;
         },
         tokenizer(src: string, tokens: Token[]) {
-            // Match nostr: prefix followed by bech32 string
-            const rule = /^nostr:(npub1[a-z0-9]{58}|nprofile1[a-z0-9]+|note1[a-z0-9]{58}|nevent1[a-z0-9]+|naddr1[a-z0-9]+)/i;
+            const rule = /^nostr:(npub1[a-z0-9]{58}|nprofile1[a-z0-9]+)/i;
             const match = rule.exec(src);
 
             if (match) {
                 const bech32 = match[1];
                 const segment = decodeNostrUri(bech32);
 
-                // If decode failed, return undefined to let it be treated as text
-                if (segment.type === 'text') {
-                    return undefined;
-                }
-
-                // User mention (npub/nprofile)
                 if (segment.type === 'npub' || segment.type === 'nprofile') {
                     return {
                         type: 'nostr-mention',
@@ -65,8 +64,42 @@ export function createNostrUriExtension() {
                         mentionType: segment.type
                     } as NostrMentionToken;
                 }
+            }
 
-                // Event reference (note/nevent/naddr)
+            return undefined;
+        },
+        renderer(token: Token) {
+            const mentionToken = token as NostrMentionToken;
+            return `<span class="nostr-mention" data-bech32="${mentionToken.bech32}" data-type="${mentionToken.mentionType}"></span>`;
+        }
+    };
+}
+
+// ============================================================================
+// Nostr Event Reference Extension (note, nevent, naddr)
+// ============================================================================
+
+export function createNostrEventRefExtension() {
+    return {
+        name: 'nostr-event-ref',
+        level: 'inline' as const,
+        start(src: string) {
+            const index = src.indexOf('nostr:');
+            if (index === -1) return -1;
+            // Check if it's an event ref type
+            if (src.substring(index).match(/^nostr:(note1[a-z0-9]{58}|nevent1[a-z0-9]+|naddr1[a-z0-9]+)/i)) {
+                return index;
+            }
+            return -1;
+        },
+        tokenizer(src: string, tokens: Token[]) {
+            const rule = /^nostr:(note1[a-z0-9]{58}|nevent1[a-z0-9]+|naddr1[a-z0-9]+)/i;
+            const match = rule.exec(src);
+
+            if (match) {
+                const bech32 = match[1];
+                const segment = decodeNostrUri(bech32);
+
                 if (segment.type === 'event-ref') {
                     return {
                         type: 'nostr-event-ref',
@@ -79,17 +112,8 @@ export function createNostrUriExtension() {
             return undefined;
         },
         renderer(token: Token) {
-            if (token.type === 'nostr-mention') {
-                const mentionToken = token as NostrMentionToken;
-                return `<span class="nostr-mention" data-bech32="${mentionToken.bech32}" data-type="${mentionToken.mentionType}"></span>`;
-            }
-
-            if (token.type === 'nostr-event-ref') {
-                const eventToken = token as NostrEventRefToken;
-                return `<span class="nostr-event-ref" data-bech32="${eventToken.bech32}"></span>`;
-            }
-
-            return '';
+            const eventToken = token as NostrEventRefToken;
+            return `<span class="nostr-event-ref" data-bech32="${eventToken.bech32}"></span>`;
         }
     };
 }
@@ -101,7 +125,7 @@ export function createNostrUriExtension() {
 export function createEmojiExtension(emojiMap: Map<string, string>) {
     return {
         name: 'nostr-emoji',
-        level: 'inline',
+        level: 'inline' as const,
         start(src: string) {
             return src.indexOf(':');
         },
@@ -128,11 +152,9 @@ export function createEmojiExtension(emojiMap: Map<string, string>) {
             return undefined;
         },
         renderer(token: Token) {
-            if (token.type === 'nostr-emoji') {
-                const emojiToken = token as NostrEmojiToken;
-                if (emojiToken.url) {
-                    return `<img class="nostr-emoji" src="${emojiToken.url}" alt=":${emojiToken.shortcode}:" data-shortcode="${emojiToken.shortcode}" />`;
-                }
+            const emojiToken = token as NostrEmojiToken;
+            if (emojiToken.url) {
+                return `<img class="nostr-emoji" src="${emojiToken.url}" alt=":${emojiToken.shortcode}:" data-shortcode="${emojiToken.shortcode}" />`;
             }
             return '';
         }
@@ -146,7 +168,7 @@ export function createEmojiExtension(emojiMap: Map<string, string>) {
 export function createHashtagExtension() {
     return {
         name: 'nostr-hashtag',
-        level: 'inline',
+        level: 'inline' as const,
         start(src: string) {
             // Look for # at start or after whitespace
             const index = src.search(/(?:^|\s)#/);
@@ -170,11 +192,8 @@ export function createHashtagExtension() {
             return undefined;
         },
         renderer(token: Token) {
-            if (token.type === 'nostr-hashtag') {
-                const hashtagToken = token as NostrHashtagToken;
-                return `<span class="nostr-hashtag" data-tag="${hashtagToken.tag}"></span>`;
-            }
-            return '';
+            const hashtagToken = token as NostrHashtagToken;
+            return `<span class="nostr-hashtag" data-tag="${hashtagToken.tag}"></span>`;
         }
     };
 }
@@ -199,7 +218,8 @@ export function createNostrMarkdownExtensions(options: NostrExtensionsOptions = 
     }
 
     return [
-        createNostrUriExtension(),
+        createNostrMentionExtension(),
+        createNostrEventRefExtension(),
         createEmojiExtension(emojiMap),
         createHashtagExtension()
     ];

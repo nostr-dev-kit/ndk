@@ -91,11 +91,13 @@
   const htmlContent = $derived.by(() => {
     if (hasMarkdown) {
       // Create a new marked instance with Nostr extensions for this component
-      const extensions = createNostrMarkdownExtensions({
+      const nostrExtensions = createNostrMarkdownExtensions({
         emojiTags: article.tags
       });
 
-      const markedInstance = new Marked({ extensions });
+      // Create Marked instance and register extensions using .use()
+      const markedInstance = new Marked();
+      markedInstance.use({ extensions: nostrExtensions });
 
       return markedInstance.parse(content) as string;
     }

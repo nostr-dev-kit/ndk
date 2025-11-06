@@ -13,6 +13,7 @@
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let article = $state<NDKArticle | null | undefined>();
+	let testArticle = $state<NDKArticle | null | undefined>();
 
 	const articleContentBasicCardWithDescription = {
 		...articleContentBasicCard,
@@ -63,8 +64,8 @@
 {/snippet}
 
 {#snippet articleContentBasicPreview()}
-	{#if article}
-		<BasicSimpleExample {article} />
+	{#if testArticle}
+		<BasicSimpleExample article={testArticle} />
 	{/if}
 {/snippet}
 
@@ -101,38 +102,28 @@
 	/>
 {/snippet}
 
-{#if article}
-	<ComponentPageTemplate
-		metadata={articleContentMetadata}
-		{ndk}
-		componentsSection={{
-			cards: [articleContentBasicCardWithDescription, articleContentCardWithDescription],
-			previews: {
-				'article-content-basic': articleContentBasicPreview,
-				'article-content': articleContentPreview
-			}
-		}}
-		{customSections}
-	>
-    <EditProps.Prop
-			name="Sample Article"
-			type="article"
-			bind:value={article}
-			default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx"
-		/>
-  </ComponentPageTemplate>
-{:else}
-	<div class="px-8">
-		<PageTitle title={articleContentMetadata.title} subtitle={articleContentMetadata.description}>
-      <EditProps.Prop
-			name="Sample Article"
-			type="article"
-			bind:value={article}
-			default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx"
-		/>
-    </PageTitle>
-		<div class="flex items-center justify-center py-12">
-			<div class="text-muted-foreground">Loading article...</div>
-		</div>
-	</div>
-{/if}
+<ComponentPageTemplate
+	metadata={articleContentMetadata}
+	{ndk}
+	componentsSection={{
+		cards: [articleContentBasicCardWithDescription, articleContentCardWithDescription],
+		previews: {
+			'article-content-basic': articleContentBasicPreview,
+			'article-content': articleContentPreview
+		}
+	}}
+	{customSections}
+>
+<EditProps.Prop
+		name="Real Article"
+		type="article"
+		bind:value={article}
+		default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx"
+	/>
+<EditProps.Prop
+		name="Test Article"
+		type="article"
+		bind:value={testArticle}
+		default="naddr1qvzqqqr4gupzqzw53gd9m0sngp98993578tt5u3dgpgng6xawy7gaguv4xmmduk8qythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qghwaehxw309aex2mrp0yh8qunfd4skctnwv46z7qg4waehxw309aex2mrp0yhxgctdw4eju6t09uqqu4r9wd6xjmn894mx7ctkxfuq7lcwyp"
+	/>
+</ComponentPageTemplate>

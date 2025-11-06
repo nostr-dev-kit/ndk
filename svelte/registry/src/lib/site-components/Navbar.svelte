@@ -3,6 +3,7 @@
   import { ndk } from '$lib/ndk.svelte';
   import { themeManager } from '$lib/theme.svelte';
   import { User } from '$lib/registry/ui/user';
+  import { UserProfile } from '$lib/registry/components/user-profile';
   import { sidebar } from '$lib/stores/sidebar.svelte';
   import { mainNav } from '$lib/navigation';
 
@@ -98,13 +99,7 @@
           {#if showUserDropdown}
             <div class="user-dropdown" onclick={(e) => e.stopPropagation()}>
               <div class="user-info">
-                <User.Root {ndk} pubkey={ndk.$currentPubkey}>
-                  <User.Avatar class="w-10 h-10" />
-                  <div>
-                    <User.Name />
-                    <User.Handle class="text-sm text-muted-foreground" />
-                  </div>
-                </User.Root>
+                <UserProfile {ndk} pubkey={ndk.$currentPubkey} variant="horizontal" size="md" byline={User.Handle} />
               </div>
               <div class="dropdown-divider"></div>
               <button

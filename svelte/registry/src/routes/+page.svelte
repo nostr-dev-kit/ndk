@@ -2,29 +2,29 @@
   import { ndk } from '$lib/ndk.svelte';
 </script>
 
-<section class="border-grid">
-  <div class="container-wrapper">
-    <div class="container">
-      <h1 class="heading">
+<section class="border-b border-border">
+  <div class="w-full px-4">
+    <div class="flex flex-col items-center gap-6 py-16 text-center md:py-24 lg:py-32 lg:gap-8">
+      <h1 class="max-w-[42rem] text-[2.5rem] font-semibold leading-tight tracking-tight text-foreground m-0 xl:text-[3.5rem] xl:tracking-tighter" style="text-wrap: balance;">
         NDK Svelte Components
       </h1>
 
-      <p class="description">
+      <p class="max-w-[48rem] text-base leading-relaxed text-muted-foreground m-0 sm:text-lg" style="text-wrap: balance;">
         A collection of production-ready Nostr components built with Svelte 5 and NDK.
         Copy and paste into your apps. Open Source. Free forever.
       </p>
 
-      <div class="badges">
-        <span class="badge">Svelte 5 Runes</span>
-        <span class="badge">TypeScript</span>
-        <span class="badge">Shadcn-style Registry</span>
+      <div class="flex gap-2 flex-wrap justify-center">
+        <span class="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-md text-sm font-medium border border-border">Svelte 5 Runes</span>
+        <span class="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-md text-sm font-medium border border-border">TypeScript</span>
+        <span class="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-md text-sm font-medium border border-border">Shadcn-style Registry</span>
       </div>
 
-      <div class="actions">
-        <a href="/docs" class="button button-primary">
+      <div class="flex w-full items-center justify-center gap-3 pt-2 flex-wrap">
+        <a href="/docs" class="inline-flex flex-shrink-0 items-center justify-center whitespace-nowrap no-underline text-sm font-medium outline-none transition-all duration-150 ease-in-out rounded-md h-10 gap-1.5 px-6 cursor-pointer bg-primary text-primary-foreground shadow-sm hover:bg-[color-mix(in_srgb,var(--primary)_90%,transparent)]">
           Get Started
         </a>
-        <a href="/blocks" class="button button-secondary">
+        <a href="/blocks" class="inline-flex flex-shrink-0 items-center justify-center whitespace-nowrap no-underline text-sm font-medium outline-none transition-all duration-150 ease-in-out rounded-md h-10 gap-1.5 px-6 cursor-pointer bg-transparent border border-border text-foreground hover:bg-accent">
           Browse Blocks
         </a>
       </div>
@@ -32,11 +32,11 @@
   </div>
 </section>
 
-<section class="intro-section">
-  <div class="container-wrapper">
-    <div class="intro-container">
-      <h2 class="section-heading">Built for Nostr Developers</h2>
-      <p class="section-description">
+<section class="py-12 md:py-16">
+  <div class="w-full px-4">
+    <div class="text-center">
+      <h2 class="text-[2rem] font-bold m-0 mb-4 text-foreground tracking-tight">Built for Nostr Developers</h2>
+      <p class="text-base leading-relaxed text-muted-foreground max-w-[48rem] mx-auto m-0">
         All components are built with Svelte 5's new runes API and work seamlessly with NDK.
         Browse the components in the sidebar to see live examples and usage documentation.
       </p>
@@ -44,16 +44,16 @@
   </div>
 </section>
 
-<section class="connection-status-section">
-  <div class="container-wrapper">
-    <div class="status-container">
-      <h3 class="status-heading">Connection Status</h3>
-      <div class="status-grid">
+<section class="py-12 md:py-16 bg-muted">
+  <div class="w-full px-4">
+    <div>
+      <h3 class="m-0 mb-6 text-xl font-semibold text-foreground text-center">Connection Status</h3>
+      <div class="flex flex-col gap-2">
         {#if ndk.pool}
           {#each ndk.pool.relays.values() as relay (relay)}
-            <div class="relay-status">
-              <span class="relay-url">{relay.url}</span>
-              <span class="relay-state" class:connected={relay.status === 1}>
+            <div class="flex justify-between items-center px-4 py-3 bg-background rounded-md border border-border">
+              <span class="font-mono text-sm text-foreground">{relay.url}</span>
+              <span class="text-sm font-medium flex items-center gap-2" class:text-success={relay.status === 1} class:text-muted-foreground={relay.status !== 1}>
                 {relay.status === 1 ? '🟢 Connected' : '🔴 Disconnected'}
               </span>
             </div>
@@ -67,232 +67,7 @@
 </section>
 
 <style>
-  .border-grid {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .container-wrapper {
-    width: 100%;
-    padding: 0 1rem;
-  }
-
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 4rem 0;
-    text-align: center;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  @media (min-width: 768px) {
-    .container {
-      padding: 6rem 0;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .container {
-      padding: 8rem 0;
-      gap: 2rem;
-    }
-  }
-
-  .heading {
-    max-width: 42rem;
-    text-balance: balance;
-    font-size: 2.5rem;
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.025em;
-    color: var(--foreground);
-    margin: 0;
-  }
-
-  @media (min-width: 1024px) {
-    .heading {
-      font-weight: 600;
-      line-height: 1.1;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .heading {
-      font-size: 3.5rem;
-      letter-spacing: -0.05em;
-    }
-  }
-
-  .description {
-    max-width: 48rem;
-    text-balance: balance;
-    font-size: 1rem;
-    color: var(--muted-foreground);
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  @media (min-width: 640px) {
-    .description {
-      font-size: 1.125rem;
-    }
-  }
-
-  .badges {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .badge {
-    padding: 0.375rem 0.75rem;
-    background: var(--secondary);
-    color: var(--secondary-foreground);
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    border: 1px solid var(--border);
-  }
-
-  .actions {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    padding-top: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .button {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    outline: none;
-    transition: all 0.15s ease-in-out;
-    border-radius: 0.375rem;
-    height: 2.5rem;
-    gap: 0.375rem;
-    padding: 0 1.5rem;
-    cursor: pointer;
-  }
-
-  .button-primary {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-
-  .button-primary:hover {
-    background: color-mix(in srgb, var(--primary) 90%, transparent);
-  }
-
-  .button-secondary {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--foreground);
-  }
-
-  .button-secondary:hover {
-    background: var(--accent);
-  }
-
-  .intro-section {
-    padding: 3rem 0;
-  }
-
-  @media (min-width: 768px) {
-    .intro-section {
-      padding: 4rem 0;
-    }
-  }
-
-  .intro-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .section-heading {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--foreground);
-    letter-spacing: -0.025em;
-  }
-
-  .section-description {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    max-width: 48rem;
-    margin: 0 auto;
-  }
-
-  .connection-status-section {
-    padding: 3rem 0;
-    background: var(--muted);
-  }
-
-  @media (min-width: 768px) {
-    .connection-status-section {
-      padding: 4rem 0;
-    }
-  }
-
-  .status-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .status-heading {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--foreground);
-    text-align: center;
-  }
-
-  .status-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .relay-status {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--background);
-    border-radius: 0.375rem;
-    border: 1px solid var(--border);
-  }
-
-  .relay-url {
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-    font-size: 0.875rem;
-    color: var(--foreground);
-  }
-
-  .relay-state {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .relay-state.connected {
+  .text-success {
     color: var(--success);
   }
 </style>

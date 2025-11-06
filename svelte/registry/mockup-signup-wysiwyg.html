@@ -37,21 +37,6 @@
             position: relative;
         }
 
-        .edit-mode-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            z-index: 10;
-            backdrop-filter: blur(10px);
-        }
 
         /* Banner */
         .banner-edit {
@@ -103,25 +88,31 @@
 
         /* Profile Content */
         .profile-content {
-            padding: 0 40px 40px;
+            padding: 0 20px 40px;
             position: relative;
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            margin-top: -75px;
+            margin-bottom: 15px;
+            padding-left: 20px;
         }
 
         /* Avatar */
         .avatar-edit {
-            width: 140px;
-            height: 140px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             background: #ddd;
-            margin: -70px auto 25px;
-            position: relative;
             cursor: pointer;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 5px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .avatar-placeholder {
@@ -153,6 +144,11 @@
 
         .avatar-edit:hover .avatar-overlay {
             opacity: 1;
+        }
+
+        /* Profile Info */
+        .profile-info {
+            padding: 0 20px;
         }
 
         .banner-gradient-indicator {
@@ -196,7 +192,6 @@
         /* Editable Fields */
         .editable-field {
             width: 100%;
-            text-align: center;
             border: 2px solid transparent;
             padding: 8px 12px;
             border-radius: 6px;
@@ -217,9 +212,9 @@
         }
 
         .name-field {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
             color: #333;
         }
 
@@ -229,99 +224,10 @@
             min-height: 80px;
             resize: vertical;
             line-height: 1.5;
-        }
-
-        /* Key Display */
-        .key-display {
-            margin: 25px 0;
-            padding: 20px;
-            background: #f9f9f9;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-        }
-
-        .key-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #999;
-            margin-bottom: 8px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .key-value {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 12px;
-            color: #333;
-            word-break: break-all;
-            line-height: 1.6;
-        }
-
-        .reshuffle-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: none;
-            letter-spacing: 0;
-        }
-
-        .reshuffle-button:hover {
-            background: #333;
-            color: white;
-            border-color: #333;
-        }
-
-        /* Meta Fields */
-        .meta-fields {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .meta-field {
             margin-bottom: 15px;
         }
 
-        .meta-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #999;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
 
-        .meta-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 2px solid transparent;
-            border-radius: 6px;
-            font-size: 14px;
-            background: transparent;
-            transition: all 0.2s;
-        }
-
-        .meta-input:hover {
-            background: #f9f9f9;
-            border-color: #e0e0e0;
-        }
-
-        .meta-input:focus {
-            outline: none;
-            background: white;
-            border-color: #333;
-        }
 
         /* Save Button */
         .save-button {
@@ -348,14 +254,6 @@
             transform: translateY(0);
         }
 
-        /* Helper text */
-        .helper-text {
-            text-align: center;
-            font-size: 13px;
-            color: #999;
-            margin-top: 20px;
-        }
-
         .upload-hint {
             text-align: center;
             font-size: 12px;
@@ -369,8 +267,6 @@
         <h1>Create Your Nostr Profile</h1>
 
         <div class="profile-card-edit">
-            <div class="edit-mode-badge">Edit Mode</div>
-
             <!-- Banner -->
             <div class="banner-edit" id="banner">
                 <div class="banner-gradient-indicator">
@@ -383,62 +279,34 @@
             <!-- Profile Content -->
             <div class="profile-content">
                 <!-- Avatar -->
-                <div class="avatar-edit" id="avatar">
-                    <div class="avatar-placeholder">?</div>
-                    <div class="avatar-overlay">
-                        <span>Upload Avatar</span>
+                <div class="avatar-container">
+                    <div class="avatar-edit" id="avatar">
+                        <div class="avatar-placeholder">?</div>
+                        <div class="avatar-overlay">
+                            <span>Upload</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Name -->
-                <input
-                    type="text"
-                    class="editable-field name-field"
-                    placeholder="Your Name"
-                    id="name"
-                >
+                <!-- Profile Info -->
+                <div class="profile-info">
+                    <!-- Name -->
+                    <input
+                        type="text"
+                        class="editable-field name-field"
+                        placeholder="Your Name"
+                        id="name"
+                    >
 
-                <!-- Bio -->
-                <textarea
-                    class="editable-field bio-field"
-                    placeholder="Tell people about yourself..."
-                    id="bio"
-                ></textarea>
-
-                <!-- Public Key Display -->
-                <div class="key-display">
-                    <div class="key-label">
-                        <span>Your Public Key (npub)</span>
-                        <button class="reshuffle-button" id="reshuffleBtn">
-                            <span>↻</span>
-                            <span>Generate New</span>
-                        </button>
-                    </div>
-                    <div class="key-value" id="pubkey">npub1...</div>
+                    <!-- Bio -->
+                    <textarea
+                        class="editable-field bio-field"
+                        placeholder="Tell people about yourself..."
+                        id="bio"
+                    ></textarea>
                 </div>
 
-                <!-- Meta Fields -->
-                <div class="meta-fields">
-                    <div class="meta-field">
-                        <div class="meta-label">Website</div>
-                        <input type="url" class="meta-input" placeholder="https://your-site.com">
-                    </div>
-                    <div class="meta-field">
-                        <div class="meta-label">Lightning Address</div>
-                        <input type="text" class="meta-input" placeholder="you@getalby.com">
-                    </div>
-                    <div class="meta-field">
-                        <div class="meta-label">NIP-05 Identifier</div>
-                        <input type="text" class="meta-input" placeholder="name@domain.com">
-                    </div>
-                </div>
-
-                <button class="save-button">Create Profile & Save Keys</button>
-
-                <div class="helper-text">
-                    Your private key will be shown after creation.<br>
-                    <strong>Save it securely - you'll need it to access your account.</strong>
-                </div>
+                <button class="save-button">Create Profile</button>
             </div>
         </div>
 
@@ -483,9 +351,6 @@
                 const gradient = hexToGradient(currentPrivateKey);
                 banner.style.background = gradient;
             }
-
-            const pubkey = document.getElementById('pubkey');
-            pubkey.textContent = hexToNpub(currentPrivateKey);
         }
 
         // Initialize with first key
@@ -500,13 +365,6 @@
             }
         });
 
-        // Reshuffle button in key display
-        document.getElementById('reshuffleBtn').addEventListener('click', function() {
-            if (!hasUploadedBanner) {
-                currentPrivateKey = generateRandomKey();
-                updateGradient();
-            }
-        });
 
         // Banner upload
         document.getElementById('banner').addEventListener('click', function(e) {

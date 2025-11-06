@@ -119,6 +119,17 @@ export class ContentRenderer {
 	mediaComponent = $state<MediaComponent | null>(null);
 
 	/**
+	 * Fallback component for rendering embedded events with no registered kind handler
+	 * If null, renders raw bech32 string
+	 * Users can register generic-embedded or any other component as the fallback
+	 */
+	fallbackComponent = $state<Component<{
+		ndk: NDKSvelte;
+		event: NDKEvent;
+		class?: string;
+	}> | null>(null);
+
+	/**
 	 * Registry of embedded event kind handlers
 	 * Maps event kind → { component, wrapper }
 	 */
@@ -207,6 +218,7 @@ export class ContentRenderer {
 		this.hashtagComponent = null;
 		this.linkComponent = null;
 		this.mediaComponent = null;
+		this.fallbackComponent = null;
 	}
 }
 

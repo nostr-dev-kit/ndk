@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { nip19 } from 'nostr-tools';
 	import { EventCard } from '../event-card';
 	import {
 		createAppHandlerRecommendations,

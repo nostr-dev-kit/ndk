@@ -32,7 +32,7 @@
 
     <h3>Using Builders</h3>
     <CodeBlock lang="svelte" code={`<script>
-  import { createEventContent } from '$lib/registry/builders';
+  import { createEventContent } from '$lib/registry/builders/event-content';
 
   const content = createEventContent(() => ({ event }), ndk);
 </script>

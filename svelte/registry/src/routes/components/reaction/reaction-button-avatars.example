@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ReactionButtonAvatars } from '$lib/registry/components';
+  import { ReactionButtonAvatars } from '$lib/registry/components/reaction-button-avatars';
 </script>
 
 <ReactionButtonAvatars {ndk} {event} variant="ghost" />

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import BlockDetailHeader from '$site-components/blocks/BlockDetailHeader.svelte';
-	import BlockInstallSection from '$site-components/blocks/BlockInstallSection.svelte';
-	import CodeBlock from '$site-components/CodeBlock.svelte';
+	import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
+	import Preview from '$site-components/preview.svelte';
 	import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
 
 	// Import code examples
@@ -16,16 +15,15 @@
 	const demoPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';
 </script>
 
-<div class="max-w-7xl mx-auto p-8">
-	<BlockDetailHeader
-		title="Notification Panel"
-		description="Complete notification panel block using $metaSubscription to group interactions by target event. Shows mentions, reactions, zaps, reposts, and replies with avatar groups and embedded content. Includes scrollable body with compact or expanded layouts."
-		icon="🔔"
-		iconGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-		badges={[{ label: '$metaSubscription', variant: 'feature' }, { label: '2 variants' }]}
-	/>
+<BlockPageLayout
+	title="Notification Panel"
+	subtitle="Complete notification panel block using $metaSubscription to group interactions by target event. Shows mentions, reactions, zaps, reposts, and replies with avatar groups and embedded content. Includes scrollable body with compact or expanded layouts."
+	tags={['$metaSubscription', '2 variants']}
+	blockName="notification-panel"
+	installCommand="npx jsrepo add notification-panel"
+/>
 
-	<BlockInstallSection command="npx jsrepo add notification-panel" />
+<div class="max-w-7xl mx-auto px-8 pb-8">
 
 	<!-- Variants Section -->
 	<section class="mb-16">
@@ -35,66 +33,14 @@
 			the left, while expanded shows full content with avatars below.
 		</p>
 
-		<!-- Variant 1: Compact -->
-		<div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
-			<div class="p-6 border-b border-border">
-				<h3 class="text-xl font-semibold mb-2">Compact Layout</h3>
-				<p class="text-muted-foreground text-[0.95rem]">
-					Horizontal layout perfect for sidebars. Shows avatars, action type, and embedded content
-					preview.
-				</p>
-			</div>
-
-			<div
-				class="py-12 px-8 bg-background border-b border-border min-h-[500px] flex items-center justify-center"
-			>
+		<div class="space-y-8">
+			<Preview title="Compact Layout" code={compactExample} previewAreaClass="max-h-none">
 				<NotificationPanel {ndk} pubkey={demoPubkey} variant="compact" />
-			</div>
+			</Preview>
 
-			<div class="flex gap-0 bg-muted border-b border-border">
-				<button
-					class="py-3.5 px-6 bg-transparent border-none text-primary text-sm font-medium cursor-pointer border-b-2 border-b-primary transition-all"
-					>Code</button
-				>
-			</div>
-
-			<div class="bg-background overflow-x-auto">
-				<CodeBlock
-					lang="svelte"
-					code={compactExample}
-				/>
-			</div>
-		</div>
-
-		<!-- Variant 2: Expanded -->
-		<div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
-			<div class="p-6 border-b border-border">
-				<h3 class="text-xl font-semibold mb-2">Expanded Layout</h3>
-				<p class="text-muted-foreground text-[0.95rem]">
-					Vertical layout with full event content. Shows action header, complete embedded event, and
-					actor avatars with count below.
-				</p>
-			</div>
-
-			<div
-				class="py-12 px-8 bg-background border-b border-border min-h-[500px] flex items-center justify-center"
-			>
+			<Preview title="Expanded Layout" code={expandedExample} previewAreaClass="max-h-none">
 				<NotificationPanel {ndk} pubkey={demoPubkey} variant="expanded" />
-			</div>
-
-			<div class="flex gap-0 bg-muted border-b border-border">
-				<button
-					class="py-3.5 px-6 bg-transparent border-none text-primary text-sm font-medium cursor-pointer border-b-2 border-b-primary transition-all"
-					>Code</button
-				>
-			</div>
-
-			<div class="bg-background overflow-x-auto">
-				<CodeBlock
-					lang="svelte"
-					code={expandedExample}
-				/>
-			</div>
+			</Preview>
 		</div>
 	</section>
 

@@ -11,15 +11,16 @@ Used in component documentation pages to show both the visual output and source 
 		code?: string;
 		children: Snippet;
 		class?: string;
+		previewAreaClass?: string;
 	}
 
-	let { title = 'Preview', code, children, class: className = '' }: Props = $props();
+	let { title = 'Preview', code, children, class: className = '', previewAreaClass = '' }: Props = $props();
 </script>
 
 <section class="flex flex-col gap-4 {className}">
 	<div class="flex flex-col w-full border border-border rounded-lg">
 		<h3 class="text-xl font-semibold text-foreground m-0 p-4">{title}</h3>
-		<div class="max-h-[600px] overflow-y-auto border-y border-border">
+		<div class="max-h-[600px] overflow-y-auto border-y border-border {previewAreaClass}">
 			<div class="p-8 flex justify-center items-center">
 				{@render children()}
 			</div>

@@ -4,6 +4,7 @@
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import BlockInstallSection from '$site-components/blocks/BlockInstallSection.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
+  import Preview from '$site-components/preview.svelte';
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
 
   // Import code examples
@@ -41,44 +42,14 @@
       The login component automatically adapts based on whether a browser extension is detected. Both variants are shown below.
     </p>
 
-    <!-- Variant 1: Without Extension -->
-    <div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
-      <div class="p-6 border-b border-border">
-        <h3 class="text-xl font-semibold mb-2">Without Extension Detected</h3>
-        <p class="text-muted-foreground text-[0.95rem]">When window.nostr is not available, credential input is primary and extension/bunker options are secondary.</p>
-      </div>
-
-      <div class="py-12 px-8 bg-background border-b border-border min-h-[400px] flex items-center justify-center">
+    <div class="space-y-8">
+      <Preview title="Without Extension Detected" code={withoutExtension} previewAreaClass="max-h-none">
         <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => console.log('Login successful!')} />
-      </div>
+      </Preview>
 
-      <div class="flex gap-0 bg-muted border-b border-border">
-        <button class="py-3.5 px-6 bg-transparent border-none text-primary text-sm font-medium cursor-pointer border-b-2 border-b-primary transition-all">Code</button>
-      </div>
-
-      <div class="bg-background overflow-x-auto">
-        <CodeBlock lang="svelte" code={withoutExtension} />
-      </div>
-    </div>
-
-    <!-- Variant 2: With Extension -->
-    <div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
-      <div class="p-6 border-b border-border">
-        <h3 class="text-xl font-semibold mb-2">With Extension Detected</h3>
-        <p class="text-muted-foreground text-[0.95rem]">When window.nostr is available, the extension button becomes the primary action with credential input as a secondary option.</p>
-      </div>
-
-      <div class="py-12 px-8 bg-background border-b border-border min-h-[400px] flex items-center justify-center">
+      <Preview title="With Extension Detected" code={withExtension} previewAreaClass="max-h-none">
         <LoginCompact {ndk} forceExtensionState={true} onSuccess={() => console.log('Login successful!')} />
-      </div>
-
-      <div class="flex gap-0 bg-muted border-b border-border">
-        <button class="py-3.5 px-6 bg-transparent border-none text-primary text-sm font-medium cursor-pointer border-b-2 border-b-primary transition-all">Code</button>
-      </div>
-
-      <div class="bg-background overflow-x-auto">
-        <CodeBlock lang="svelte" code={withExtension} />
-      </div>
+      </Preview>
     </div>
   </section>
 

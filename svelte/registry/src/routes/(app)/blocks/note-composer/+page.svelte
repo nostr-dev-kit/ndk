@@ -2,7 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import Demo from '$site-components/Demo.svelte';
+  import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
+  import Preview from '$site-components/preview.svelte';
   import NoteComposerInline from '$lib/registry/components/note-composer/note-composer-inline.svelte';
   import NoteComposerModal from '$lib/registry/components/note-composer/note-composer-modal.svelte';
   import NoteComposerCard from '$lib/registry/components/note-composer/note-composer-card.svelte';
@@ -33,33 +34,33 @@
   let showReplyModal = $state(false);
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>Note Composer</h1>
-    <p>Composable note and reply composer with support for mentions, media uploads, and multiple layout options. Build the perfect composer for your use case.</p>
-  </header>
+<BlockPageLayout
+  title="Note Composer"
+  subtitle="Composable note and reply composer with support for mentions, media uploads, and multiple layout options. Build the perfect composer for your use case."
+  tags={['Kind 1', 'Kind 1111', 'Media Upload', '4 variants']}
+  blockName="note-composer"
+  installCommand="npx ndk-svelte add note-composer"
+/>
 
-  <section class="demo space-y-12">
-    <h2 class="text-2xl font-semibold mb-4">Variants</h2>
+<div class="max-w-7xl mx-auto px-8 pb-8">
+  <section class="mb-16 space-y-8">
+    <div>
+      <h2 class="text-[1.75rem] font-bold mb-3">Variants</h2>
+      <p class="text-muted-foreground mb-8 text-[1.05rem]">
+        Choose from pre-built variants or compose your own using the primitives.
+      </p>
+    </div>
 
-    <Demo
-      title="Inline Composer"
-      description="Compact inline composer with all features. Perfect for embedding in pages or feeds."
-      code={inlineExample}
-    >
+    <Preview title="Inline Composer" code={inlineExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl">
         <NoteComposerInline
           {ndk}
           onPublish={(event: any) => console.log('Published:', event)}
         />
       </div>
-    </Demo>
+    </Preview>
 
-    <Demo
-      title="Card Composer"
-      description="Note composer in a card layout with border and shadow. Great for prominent placement."
-      code={cardExample}
-    >
+    <Preview title="Card Composer" code={cardExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl">
         <NoteComposerCard
           {ndk}
@@ -67,13 +68,9 @@
           onPublish={(event: any) => console.log('Published:', event)}
         />
       </div>
-    </Demo>
+    </Preview>
 
-    <Demo
-      title="Minimal Composer"
-      description="Minimal composer with just textarea and submit button. Perfect for quick notes or replies."
-      code={minimalExample}
-    >
+    <Preview title="Minimal Composer" code={minimalExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl">
         <NoteComposerMinimal
           {ndk}
@@ -81,13 +78,9 @@
           onPublish={(event: any) => console.log('Published:', event)}
         />
       </div>
-    </Demo>
+    </Preview>
 
-    <Demo
-      title="Modal Composer"
-      description="Full-featured composer in a modal dialog. Gives users space for longer notes."
-      code={modalExample}
-    >
+    <Preview title="Modal Composer" code={modalExample} previewAreaClass="max-h-none">
       <div class="flex gap-3">
         <button
           onclick={() => showModal = true}
@@ -104,15 +97,18 @@
           showModal = false;
         }}
       />
-    </Demo>
+    </Preview>
+  </section>
 
-    <h2 class="text-2xl font-semibold mb-4 mt-12">Reply Support</h2>
+  <section class="mb-16 space-y-8">
+    <div>
+      <h2 class="text-[1.75rem] font-bold mb-3">Reply Support</h2>
+      <p class="text-muted-foreground mb-8 text-[1.05rem]">
+        Use the replyTo prop to create a reply. Automatically sets kind 1111 and adds proper e/p/root tags.
+      </p>
+    </div>
 
-    <Demo
-      title="Reply to Note"
-      description="Use the replyTo prop to create a reply. Automatically sets kind 1111 and adds proper e/p/root tags."
-      code={replyInlineExample}
-    >
+    <Preview title="Reply to Note" code={replyInlineExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl space-y-4">
         <div class="p-4 border border-border rounded-lg bg-muted/30">
           <p class="text-sm text-muted-foreground mb-2">Original note:</p>
@@ -125,13 +121,9 @@
           onPublish={(event: NDKEvent) => console.log('Reply published:', event)}
         />
       </div>
-    </Demo>
+    </Preview>
 
-    <Demo
-      title="Reply Modal"
-      description="Modal composer for replies gives users more space for detailed responses."
-      code={replyModalExample}
-    >
+    <Preview title="Reply Modal" code={replyModalExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl space-y-4">
         <div class="p-4 border border-border rounded-lg bg-muted/30">
           <p class="text-sm text-muted-foreground mb-2">Original note:</p>
@@ -153,15 +145,18 @@
           showReplyModal = false;
         }}
       />
-    </Demo>
+    </Preview>
+  </section>
 
-    <h2 class="text-2xl font-semibold mb-4 mt-12">Custom Composition</h2>
+  <section class="mb-16 space-y-8">
+    <div>
+      <h2 class="text-[1.75rem] font-bold mb-3">Custom Composition</h2>
+      <p class="text-muted-foreground mb-8 text-[1.05rem]">
+        Use the composable primitives to build custom composers that fit your exact needs.
+      </p>
+    </div>
 
-    <Demo
-      title="Build Your Own"
-      description="Use the composable primitives to build custom composers that fit your exact needs."
-      code={customExample}
-    >
+    <Preview title="Build Your Own" code={customExample} previewAreaClass="max-h-none">
       <div class="max-w-2xl p-6 border border-border rounded-lg">
         <p class="text-sm text-muted-foreground mb-4">
           Import the <code class="text-xs bg-muted px-1 py-0.5 rounded">NoteComposer</code> primitives and compose them however you like.
@@ -170,6 +165,6 @@
           Available primitives: <code class="text-xs bg-muted px-1 py-0.5 rounded">Root</code>, <code class="text-xs bg-muted px-1 py-0.5 rounded">Textarea</code>, <code class="text-xs bg-muted px-1 py-0.5 rounded">MentionInput</code>, <code class="text-xs bg-muted px-1 py-0.5 rounded">Media</code>, <code class="text-xs bg-muted px-1 py-0.5 rounded">Submit</code>
         </p>
       </div>
-    </Demo>
+    </Preview>
   </section>
 </div>

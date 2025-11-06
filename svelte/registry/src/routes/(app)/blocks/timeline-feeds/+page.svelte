@@ -1,24 +1,17 @@
 <script lang="ts">
-  import BlockDetailHeader from '$site-components/blocks/BlockDetailHeader.svelte';
-  import BlockInstallSection from '$site-components/blocks/BlockInstallSection.svelte';
-  import BlockVariantCard from '$site-components/blocks/BlockVariantCard.svelte';
-  import BlockPropsTable from '$site-components/blocks/BlockPropsTable.svelte';
+  import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
+  import Preview from '$site-components/preview.svelte';
 </script>
 
-<div class="max-w-7xl mx-auto p-8">
-  <BlockDetailHeader
-    title="Timeline Feeds"
-    description="Infinite scroll feeds with real-time updates, filtering, and multiple layout options. Build Twitter-like, Instagram-like, or custom feed experiences in minutes."
-    icon="📰"
-    iconGradient="linear-gradient(135deg, #f55d6c 0%, #ff6482 100%)"
-    badges={[
-      { label: 'Kind 1' },
-      { label: 'NIP-01', variant: 'nip' },
-      { label: '5 variants' }
-    ]}
-  />
+<BlockPageLayout
+  title="Timeline Feeds"
+  subtitle="Infinite scroll feeds with real-time updates, filtering, and multiple layout options. Build Twitter-like, Instagram-like, or custom feed experiences in minutes."
+  tags={['Kind 1', 'NIP-01', '5 variants']}
+  blockName="timeline-feed"
+  installCommand="npx ndk-svelte add timeline-feed"
+/>
 
-  <BlockInstallSection command="npx ndk-svelte add timeline-feed" />
+<div class="max-w-7xl mx-auto px-8 pb-8">
 
   <!-- Variants Section -->
   <section class="mb-16">
@@ -27,36 +20,21 @@
       Choose from pre-built variants or compose your own using the builder API.
     </p>
 
-    <!-- Variant Card Placeholder -->
-    <div class="bg-muted border border-border rounded-2xl overflow-hidden mb-8">
-      <div class="p-6 border-b border-border">
-        <h3 class="text-xl font-semibold mb-2">TimelineFeed (Default)</h3>
-        <p class="text-muted-foreground text-[0.95rem]">Classic Twitter-style feed with avatars, usernames, and action buttons. Best for general-purpose social feeds.</p>
-      </div>
-
-      <div class="py-12 px-8 bg-background border-b border-border min-h-[400px] flex items-center justify-center">
-        <div class="text-center text-muted-foreground">
-          <p>Preview goes here</p>
-          <p class="text-sm mt-2">Replace with actual component preview</p>
-        </div>
-      </div>
-
-      <div class="flex gap-0 bg-muted border-b border-border">
-        <button class="py-3.5 px-6 bg-transparent border-none text-primary text-sm font-medium cursor-pointer border-b-2 border-b-primary transition-all">Code</button>
-        <button class="py-3.5 px-6 bg-transparent border-none text-muted-foreground text-sm font-medium cursor-pointer border-b-2 border-transparent transition-all hover:text-foreground hover:bg-accent">Props</button>
-      </div>
-
-      <div class="bg-background overflow-x-auto">
-        <pre class="font-mono text-sm leading-relaxed text-foreground m-0 p-6"><code>{'<'}TimelineFeed
-  {'{'}ndk{'}'}
+    <Preview
+      title="TimelineFeed (Default)"
+      code={`<TimelineFeed
+  {ndk}
   filter={{ kinds: [1] }}
   limit={50}
   enableRealtime={true}
-/{'>'}</code></pre>
+/>`}
+      previewAreaClass="max-h-none"
+    >
+      <div class="text-center text-muted-foreground">
+        <p>Preview goes here</p>
+        <p class="text-sm mt-2">Replace with actual component preview</p>
       </div>
-    </div>
-
-    <!-- Add more variant cards as needed -->
+    </Preview>
   </section>
 
   <!-- Component API Section -->

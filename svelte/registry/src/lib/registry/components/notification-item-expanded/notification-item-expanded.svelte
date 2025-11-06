@@ -27,13 +27,13 @@
 		<!-- Actors list with count -->
 		<div class="flex items-center gap-3">
 			<NotificationItem.Actors max={10} size={36} spacing="normal" />
-			<NotificationItem.Actors
-				snippet={({ count }) => (
+			<NotificationItem.Actors>
+				{#snippet children({ count })}
 					<span class="text-sm text-muted-foreground">
 						{count} {count === 1 ? 'person' : 'people'}
 					</span>
-				)}
-			/>
+				{/snippet}
+			</NotificationItem.Actors>
 		</div>
 	</div>
 </NotificationItem.Root>

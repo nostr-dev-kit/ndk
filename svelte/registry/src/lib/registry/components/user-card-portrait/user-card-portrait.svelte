@@ -22,12 +22,12 @@
   }: Props = $props();
 
   const user = $derived(ndk.getUser({ pubkey }));
+  const context = getContext<UserContext>(USER_CONTEXT_KEY);
+  const ndkUser = $derived(context.ndkUser);
+  const stats = createUserStats(() => ndkUser ? { user: ndkUser, follows: true, recentNotes: true } : undefined, ndk);
 </script>
 
 <User.Root {ndk} {pubkey}>
-  {@const context = getContext<UserContext>(USER_CONTEXT_KEY)}
-  {@const ndkUser = context.ndkUser}
-  {@const stats = createUserStats(() => ndkUser ? { user: ndkUser, follows: true, recentNotes: true } : undefined, ndk)}
 
   <div data-user-card-portrait="" class={cn(
     'flex flex-col items-center text-center gap-3 p-6 bg-card border border-border rounded-xl w-80 shrink-0',

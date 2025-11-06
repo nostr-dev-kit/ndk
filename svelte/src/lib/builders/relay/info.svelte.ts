@@ -3,7 +3,7 @@ import { normalizeRelayUrl, type NDKRelayInformation } from '@nostr-dev-kit/ndk'
 import { SvelteMap } from 'svelte/reactivity';
 
 export interface RelayInfoState {
-    readonly url: string;
+    readonly url: string | null;
     readonly nip11: NDKRelayInformation | null;
     readonly loading: boolean;
     readonly error: Error | null;
@@ -109,14 +109,32 @@ export function createRelayInfo(
     config: () => RelayInfoConfig,
     ndk?: NDKSvelte
 ): RelayInfoState {
-    const normalizedUrl = $derived(normalizeRelayUrl(config().relayUrl));
+    // Handle falsy URLs gracefully
+    const normalizedUrl = $derived.by(() => {
+        const url = config().relayUrl;
+        if (!url) return null;
+        try {
+            return normalizeRelayUrl(url);
+        } catch {
+            return null;
+        }
+    });
     let nip11 = $state<NDKRelayInformation | null>(null);
-    let loading = $state(true);
+    let loading = $state(false);
     let error = $state<Error | null>(null);
 
     // Fetch NIP-11 info reactively with proper cleanup
     $effect(() => {
         const url = normalizedUrl;
+
+        // No-op when no valid URL
+        if (!url) {
+            nip11 = null;
+            loading = false;
+            error = null;
+            return;
+        }
+
         const controller = new AbortController();
 
         loading = true;

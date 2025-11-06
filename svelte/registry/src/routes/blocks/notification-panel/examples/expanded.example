@@ -1,0 +1,14 @@
+<script lang="ts">
+  import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+  const currentUser = ndk.activeUser;
+</script>
+
+<NotificationPanel
+  {ndk}
+  pubkey={currentUser.pubkey}
+  variant="expanded"
+/>

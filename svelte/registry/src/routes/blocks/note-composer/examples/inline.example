@@ -1,0 +1,8 @@
+<script>
+  import { NoteComposerInline } from '@nostr-dev-kit/svelte-registry/blocks';
+</script>
+
+<NoteComposerInline
+  {ndk}
+  onPublish={(event) => console.log('Published:', event)}
+/>

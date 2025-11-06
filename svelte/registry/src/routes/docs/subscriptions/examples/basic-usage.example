@@ -1,0 +1,10 @@
+const feed = ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [6, 16], authors: ndk.$follows }],
+  sort: 'tag-time'
+}));
+
+// Access the events that were reposted
+feed.events  // Array of events that were reposted
+
+// See who reposted each event
+const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events

@@ -1,0 +1,4 @@
+ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [1111], authors: follows }],
+  sort: 'count'  // Most commented articles first
+}))

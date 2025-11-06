@@ -6,6 +6,10 @@
 	import CodeBlock from '$site-components/CodeBlock.svelte';
 	import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
 
+	// Import code examples
+	import compactExample from './examples/compact.example?raw';
+	import expandedExample from './examples/expanded.example?raw';
+
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	// Gigi's pubkey for demo
@@ -57,20 +61,7 @@
 			<div class="bg-background overflow-x-auto">
 				<CodeBlock
 					lang="svelte"
-					code={`<script lang="ts">
-  import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-  const currentUser = ndk.activeUser;
-</script>
-
-<NotificationPanel
-  {ndk}
-  pubkey={currentUser.pubkey}
-  variant="compact"
-/>`}
+					code={compactExample}
 				/>
 			</div>
 		</div>
@@ -101,20 +92,7 @@
 			<div class="bg-background overflow-x-auto">
 				<CodeBlock
 					lang="svelte"
-					code={`<script lang="ts">
-  import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-  const currentUser = ndk.activeUser;
-</script>
-
-<NotificationPanel
-  {ndk}
-  pubkey={currentUser.pubkey}
-  variant="expanded"
-/>`}
+					code={expandedExample}
 				/>
 			</div>
 		</div>

@@ -1,0 +1,11 @@
+<script>
+  import { NoteComposerModal } from '@nostr-dev-kit/svelte-registry/blocks';
+  let open = $state(false);
+</script>
+
+<button onclick={() => open = true}>Reply</button>
+<NoteComposerModal
+  {ndk}
+  replyTo={event}
+  bind:open
+/>

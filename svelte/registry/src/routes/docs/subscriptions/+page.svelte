@@ -10,6 +10,16 @@
 	import ZappedFeed from './examples/zapped-feed.example.svelte';
 	import ZappedFeedRaw from './examples/zapped-feed.example.svelte?raw';
 
+	// Import code examples
+	import basicUsage from './examples/basic-usage.example?raw';
+	import sortTime from './examples/sort-time.example?raw';
+	import sortCount from './examples/sort-count.example?raw';
+	import sortTagTime from './examples/sort-tag-time.example?raw';
+	import sortUniqueAuthors from './examples/sort-unique-authors.example?raw';
+	import repostedContent from './examples/reposted-content.example?raw';
+	import commentedArticles from './examples/commented-articles.example?raw';
+	import popularReactions from './examples/popular-reactions.example?raw';
+
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>
 
@@ -80,16 +90,7 @@
 
 		<CodeBlock
 			lang="typescript"
-			code={`const feed = ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [6, 16], authors: ndk.$follows }],
-  sort: 'tag-time'
-}));
-
-// Access the events that were reposted
-feed.events  // Array of events that were reposted
-
-// See who reposted each event
-const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`}
+			code={basicUsage}
 		/>
 	</section>
 
@@ -103,10 +104,7 @@ const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`
 				<p>Sort by event creation time (newest first)</p>
 				<CodeBlock
 					lang="typescript"
-					code={`ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [6, 16], authors: follows }],
-  sort: 'time'
-}))`}
+					code={sortTime}
 				/>
 			</div>
 
@@ -115,10 +113,7 @@ const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`
 				<p>Sort by number of interactions (most engaged first)</p>
 				<CodeBlock
 					lang="typescript"
-					code={`ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [1111], authors: follows }],
-  sort: 'count'  // Most commented articles first
-}))`}
+					code={sortCount}
 				/>
 			</div>
 
@@ -127,10 +122,7 @@ const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`
 				<p>Sort by most recently interacted (newest interaction first)</p>
 				<CodeBlock
 					lang="typescript"
-					code={`ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [9735], authors: follows }],
-  sort: 'tag-time'  // Most recently zapped first
-}))`}
+					code={sortTagTime}
 				/>
 			</div>
 
@@ -139,10 +131,7 @@ const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`
 				<p>Sort by author diversity (most diverse engagement first)</p>
 				<CodeBlock
 					lang="typescript"
-					code={`ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [7], authors: follows }],
-  sort: 'unique-authors'  // Most unique reactors first
-}))`}
+					code={sortUniqueAuthors}
 				/>
 			</div>
 		</div>
@@ -156,18 +145,7 @@ const reposts = feed.eventsTagging(event);  // Array of kind 6/16 repost events`
 				<h4>Reposted Content Feed</h4>
 				<CodeBlock
 					lang="typescript"
-					code={`// Show content reposted by people you follow
-const reposts = ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [6, 16], authors: ndk.$follows }],
-  sort: 'tag-time'
-}));
-
-{#each reposts.events as event (event.id)}
-  {@const reposters = reposts.eventsTagging(event)}
-  <EventCard {event}>
-    <span>Reposted by {reposters.length} people</span>
-  </EventCard>
-{/each}`}
+					code={repostedContent}
 				/>
 			</div>
 
@@ -175,18 +153,7 @@ const reposts = ndk.$metaSubscribe(() => ({
 				<h4>Commented Articles</h4>
 				<CodeBlock
 					lang="typescript"
-					code={`// Show articles commented on by your follows
-const articles = ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [1111], "#K": ["30023"], authors: ndk.$follows }],
-  sort: 'count'
-}));
-
-{#each articles.events as article (article.id)}
-  {@const comments = articles.eventsTagging(article)}
-  <ArticleCard {article}>
-    <span>{comments.length} comments</span>
-  </ArticleCard>
-{/each}`}
+					code={commentedArticles}
 				/>
 			</div>
 
@@ -194,18 +161,7 @@ const articles = ndk.$metaSubscribe(() => ({
 				<h4>Popular Reactions</h4>
 				<CodeBlock
 					lang="typescript"
-					code={`// Show most reacted-to posts from your network
-const popular = ndk.$metaSubscribe(() => ({
-  filters: [{ kinds: [7], authors: ndk.$follows }],
-  sort: 'count'
-}));
-
-{#each popular.events as event (event.id)}
-  {@const reactions = popular.eventsTagging(event)}
-  <EventCard {event}>
-    <span>{reactions.length} reactions</span>
-  </EventCard>
-{/each}`}
+					code={popularReactions}
 				/>
 			</div>
 		</div>

@@ -1,0 +1,4 @@
+ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [9735], authors: follows }],
+  sort: 'tag-time'  // Most recently zapped first
+}))

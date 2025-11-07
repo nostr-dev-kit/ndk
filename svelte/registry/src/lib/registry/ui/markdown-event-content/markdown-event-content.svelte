@@ -95,7 +95,7 @@
           target: placeholder,
           props: { ndk, bech32 }
         });
-        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+        mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
       } else {
         // No component registered - render raw bech32
         placeholder.textContent = `nostr:${bech32}`;
@@ -112,7 +112,7 @@
         target: placeholder,
         props: { ndk, bech32, renderer }
       });
-      mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+      mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
     });
 
     // Hydrate hashtags
@@ -124,9 +124,9 @@
       if (renderer.hashtagComponent) {
         const mounted = mount(renderer.hashtagComponent, {
           target: placeholder,
-          props: { tag }
+          props: { ndk, tag }
         });
-        mountedComponents.push({ target: placeholder, unmount: mounted.unmount });
+        mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
       } else {
         // No component registered - render raw hashtag
         placeholder.textContent = `#${tag}`;

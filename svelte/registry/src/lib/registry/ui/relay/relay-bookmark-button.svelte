@@ -61,7 +61,7 @@
     throw new Error('Relay.BookmarkButton must be used within Relay.Root');
   }
 
-  const isBookmarked = $derived(bookmarks.isBookmarked(context.relayInfo.url));
+  const isBookmarked = $derived(bookmarks.isBookmarked(context.relayInfo.url ?? ''));
   const canToggle = $derived(bookmarks.includesCurrentUser);
 
   async function handleToggle(e: MouseEvent) {
@@ -71,6 +71,8 @@
       console.warn('Cannot toggle bookmark: current user not in authors list');
       return;
     }
+
+    if (!context.relayInfo.url) return;
 
     try {
       await bookmarks.toggleBookmark(context.relayInfo.url);

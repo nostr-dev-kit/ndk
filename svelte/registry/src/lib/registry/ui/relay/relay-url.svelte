@@ -27,8 +27,8 @@
 
   const displayUrl = $derived(
     showProtocol
-      ? context.relayInfo.url
-      : context.relayInfo.url.replace('wss://', '').replace('ws://', '')
+      ? context.relayInfo.url ?? ''
+      : context.relayInfo.url?.replace('wss://', '').replace('ws://', '') ?? ''
   );
 </script>
 

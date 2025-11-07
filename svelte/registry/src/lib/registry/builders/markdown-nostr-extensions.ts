@@ -220,7 +220,7 @@ export function createNostrMarkdownExtensions(options: NostrExtensionsOptions = 
         }
     }
 
-    const extensions = [
+    const extensions: any[] = [
         createNostrMentionExtension(),
         createNostrEventRefExtension(),
         createHashtagExtension()

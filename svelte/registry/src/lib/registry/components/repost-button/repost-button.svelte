@@ -70,32 +70,28 @@
 
 {#if hasDropdown}
   <DropdownMenu.Root bind:open={isOpen}>
-    <DropdownMenu.Trigger asChild let:builder>
-      <button
-        data-repost-button=""
-        data-reposted={repostState.hasReposted ? '' : undefined}
-        data-variant={variant}
-        data-dropdown=""
-        use:builder.action
-        {...builder}
-        onmouseenter={handleMouseEnter}
-        onmouseleave={handleMouseLeave}
-        class={cn(
-          'inline-flex items-center gap-2 cursor-pointer transition-all',
-          variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
-          variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
-          variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
-          variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-          repostState.hasReposted && 'text-green-500',
-          className
-        )}
-        aria-label={`Repost (${repostState.count})`}
-      >
-        <RepostIcon size={16} class="flex-shrink-0" />
-        {#if showCount && repostState.count > 0}
-          <span class="text-sm font-medium">{repostState.count}</span>
-        {/if}
-      </button>
+    <DropdownMenu.Trigger
+      data-repost-button=""
+      data-reposted={repostState.hasReposted ? '' : undefined}
+      data-variant={variant}
+      data-dropdown=""
+      onmouseenter={handleMouseEnter}
+      onmouseleave={handleMouseLeave}
+      class={cn(
+        'inline-flex items-center gap-2 cursor-pointer transition-all',
+        variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
+        variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
+        variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
+        variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
+        repostState.hasReposted && 'text-green-500',
+        className
+      )}
+      aria-label={`Repost (${repostState.count})`}
+    >
+      <RepostIcon size={16} class="flex-shrink-0" />
+      {#if showCount && repostState.count > 0}
+        <span class="text-sm font-medium">{repostState.count}</span>
+      {/if}
     </DropdownMenu.Trigger>
     <DropdownMenu.Content
       onmouseenter={() => {

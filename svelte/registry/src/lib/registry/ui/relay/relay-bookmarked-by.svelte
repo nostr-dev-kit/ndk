@@ -39,7 +39,7 @@
     throw new Error('Relay.BookmarkedBy must be used within Relay.Root');
   }
 
-  const stats = $derived(bookmarks.getRelayStats(context.relayInfo.url));
+  const stats = $derived(bookmarks.getRelayStats(context.relayInfo.url ?? ''));
   const pubkeys = $derived(stats?.pubkeys || []);
   const count = $derived(stats?.count || 0);
 </script>

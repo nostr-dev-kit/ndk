@@ -25,9 +25,6 @@
 
   const stats = $derived(reactionState.get(emoji) ?? { count: 0, hasReacted: false, pubkeys: [], emoji });
 
-  // Get total count of all reactions
-  const totalCount = $derived(reactionState.totalCount ?? 0);
-
   async function handleClick() {
     if (onclick) {
       onclick();
@@ -56,7 +53,7 @@
     stats.hasReacted && 'text-red-500',
     className
   )}
-  aria-label={`React with ${emoji} (${totalCount} total reactions)`}
+  aria-label={`React with ${emoji} (${stats.count} reactions)`}
 >
   {#if emoji === '❤️'}
     <svg
@@ -77,8 +74,8 @@
     <span class="text-lg leading-none flex-shrink-0">{emoji}</span>
   {/if}
 
-  {#if showCount && totalCount > 0}
-    <span class="text-sm font-medium">{totalCount}</span>
+  {#if showCount && stats.count > 0}
+    <span class="text-sm font-medium">{stats.count}</span>
   {/if}
 </button>
 

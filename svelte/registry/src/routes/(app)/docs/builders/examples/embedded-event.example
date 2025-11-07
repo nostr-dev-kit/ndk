@@ -1,5 +1,5 @@
-const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
+const fetcher = createFetchEvent(() => ({ bech32: 'note1...' }), ndk);
 
-embedded.event    // The fetched event
-embedded.loading  // Boolean
-embedded.error    // Error message if failed
+fetcher.event    // The fetched event
+fetcher.loading  // Boolean
+fetcher.error    // Error message if failed

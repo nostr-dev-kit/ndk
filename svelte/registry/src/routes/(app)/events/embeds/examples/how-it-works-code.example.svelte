@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type { Component } from 'svelte';
   import { NDKEvent, NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createEmbeddedEvent } from '@nostr-dev-kit/svelte';
+  import { createFetchEvent } from '@nostr-dev-kit/svelte';
   import GenericEmbedded from '$lib/registry/ui/embedded-event.svelte';
 
   // Import kind handlers
@@ -41,24 +40,24 @@
 
   let { ndk, bech32, variant = 'card' }: Props = $props();
 
-  const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
+  const fetcher = createFetchEvent(() => ({ bech32 }), ndk);
 
   let handlerInfo = $derived(
-    embedded.event ? KIND_HANDLERS[embedded.event.kind] : null
+    fetcher.event ? KIND_HANDLERS[fetcher.event.kind] : null
   );
   let Handler = $derived(handlerInfo?.component ?? GenericEmbedded);
 
   // Wrap event using NDK wrapper class
   let wrappedEvent = $derived(
-    embedded.event && handlerInfo?.wrapper?.from
-      ? handlerInfo.wrapper.from(embedded.event)
-      : embedded.event
+    fetcher.event && handlerInfo?.wrapper?.from
+      ? handlerInfo.wrapper.from(fetcher.event)
+      : fetcher.event
   );
 </script>
 
-{#if embedded.loading}
+{#if fetcher.loading}
   <div class="loading">Loading...</div>
-{:else if embedded.error}
+{:else if fetcher.error}
   <div class="error">Failed to load event</div>
 {:else if wrappedEvent && Handler}
   <Handler {ndk} event={wrappedEvent} {variant} />

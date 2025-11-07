@@ -210,17 +210,17 @@ renderer.addKind([1, 1111], NoteCard);
   <section class="info">
     <h2>Builder Access</h2>
     <p class="mb-4">For advanced use cases, access the underlying builder directly:</p>
-    <pre><code>import &#123; createEmbeddedEvent &#125; from '@nostr-dev-kit/svelte';
+    <pre><code>import &#123; createFetchEvent &#125; from '@nostr-dev-kit/svelte';
 
-const embedded = createEmbeddedEvent(
+const fetcher = createFetchEvent(
   () => (&#123; bech32: 'nevent1...' &#125;),
   ndk
 );
 
 // Access reactive properties:
-embedded.loading  // boolean
-embedded.error    // Error | null
-embedded.event    // NDKEvent | null</code></pre>
+fetcher.loading  // boolean
+fetcher.error    // Error | null
+fetcher.event    // NDKEvent | null</code></pre>
   </section>
 
   <section class="info">

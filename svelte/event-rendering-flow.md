@@ -86,7 +86,7 @@
         │ Line 26: setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer })  │
         │          └─> Propagates renderer to nested components            │
         │                                                                   │
-        │ Line 28: embedded = createEmbeddedEvent({ bech32 }, ndk)         │
+        │ Line 28: fetcher = createFetchEvent({ bech32 }, ndk)             │
         │          └─> Fetches event via ndk.fetchEvent(bech32)            │
         │              Returns: { event, loading, error }                  │
         │                                                                   │

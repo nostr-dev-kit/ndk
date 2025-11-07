@@ -19,28 +19,27 @@
 	title="Session Switcher"
 	subtitle="Dropdown menu for switching between multiple logged-in Nostr accounts. Built with bits-ui for full accessibility and keyboard navigation support."
 	tags={['Multi-account', '2 variants']}
-	blockName="session-switcher"
-	installCommand="npx ndk-svelte add session-switcher"
-	code={basicExample}
 >
 	{#snippet topPreview()}
-		<div class="flex flex-col gap-4 items-start">
-			<SessionSwitcher
-				{ndk}
-				onaddsession={() => alert('Add session clicked')}
-				actions={[
-					{
-						label: 'Settings',
-						onclick: () => alert('Settings clicked')
-					},
-					{
-						label: 'Logout',
-						onclick: () => alert('Logout clicked'),
-						variant: 'danger'
-					}
-				]}
-			/>
-		</div>
+		<Preview title="Session Switcher" code={basicExample} previewAreaClass="max-h-none">
+			<div class="flex flex-col gap-4 items-start">
+				<SessionSwitcher
+					{ndk}
+					onaddsession={() => alert('Add session clicked')}
+					actions={[
+						{
+							label: 'Settings',
+							onclick: () => alert('Settings clicked')
+						},
+						{
+							label: 'Logout',
+							onclick: () => alert('Logout clicked'),
+							variant: 'danger'
+						}
+					]}
+				/>
+			</div>
+		</Preview>
 	{/snippet}
 </BlockPageLayout>
 

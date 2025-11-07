@@ -63,6 +63,8 @@
 <div
   bind:this={containerElement}
   class="relative h-full w-full overflow-hidden"
+  role="region"
+  aria-label="Article preview"
   onmouseenter={() => isPaused = true}
   onmouseleave={() => isPaused = false}
 >

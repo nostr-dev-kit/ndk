@@ -14,15 +14,14 @@
   title="Timeline Feeds"
   subtitle="Infinite scroll feeds with real-time updates, filtering, and multiple layout options. Build Twitter-like, Instagram-like, or custom feed experiences in minutes."
   tags={['Kind 1', 'NIP-01', '5 variants']}
-  blockName="timeline-feed"
-  installCommand="npx ndk-svelte add timeline-feed"
-  code={exampleCode}
 >
   {#snippet topPreview()}
-    <div class="text-center text-muted-foreground">
-      <p>Preview goes here</p>
-      <p class="text-sm mt-2">Replace with actual component preview</p>
-    </div>
+    <Preview title="Timeline Feeds" code={exampleCode} previewAreaClass="max-h-none">
+      <div class="text-center text-muted-foreground">
+        <p>Preview goes here</p>
+        <p class="text-sm mt-2">Replace with actual component preview</p>
+      </div>
+    </Preview>
   {/snippet}
 </BlockPageLayout>
 

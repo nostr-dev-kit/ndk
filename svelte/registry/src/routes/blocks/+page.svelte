@@ -31,7 +31,7 @@
   <div class="max-w-[1400px] mx-auto">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-semibold text-foreground">Authentication</h2>
-      <span class="text-muted-foreground text-sm">3 blocks</span>
+      <span class="text-muted-foreground text-sm">4 blocks</span>
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6 mb-16">
@@ -57,7 +57,7 @@
         href="/blocks/signup"
         variantCount={1}
         badges={[
-          { label: 'Kind 0', variant: 'kind' },
+          { label: 'Kind 0' },
           { label: 'Blossom', variant: 'feature' }
         ]}
         gradient="linear-gradient(135deg, rgba(250, 172, 70, 0.1) 0%, rgba(255, 140, 90, 0.1) 100%)"
@@ -75,6 +75,20 @@
         ]}
         gradient="linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%)"
         iconGradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+      />
+
+      <BlockCard
+        title="Progressive Reveal Auth"
+        description="Multi-step authentication and onboarding flow with accordion-based progressive disclosure. Includes login, signup, interest selection, and community discovery."
+        icon="📋"
+        href="/blocks/progressive-reveal-auth"
+        variantCount={1}
+        badges={[
+          { label: 'Onboarding', variant: 'feature' },
+          { label: 'Multi-step', variant: 'feature' }
+        ]}
+        gradient="linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%)"
+        iconGradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
       />
     </div>
 

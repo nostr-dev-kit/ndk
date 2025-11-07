@@ -14,7 +14,7 @@
 
 <div class="border-b border-border -mx-8 p-8 flex flex-col gap-6">
   <div class="flex items-center justify-between gap-4">
-    <h1 class="text-6xl font-black">{title}</h1>
+    <h1 class="text-5xl font-bold">{title}</h1>
 
     {#if children}
     <EditProps.Root>

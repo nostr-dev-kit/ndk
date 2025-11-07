@@ -38,17 +38,16 @@
   title="Note Composer"
   subtitle="Composable note and reply composer with support for mentions, media uploads, and multiple layout options. Build the perfect composer for your use case."
   tags={['Kind 1', 'Kind 1111', 'Media Upload', '4 variants']}
-  blockName="note-composer"
-  installCommand="npx ndk-svelte add note-composer"
-  code={inlineExample}
 >
   {#snippet topPreview()}
-    <div class="max-w-2xl">
-      <NoteComposerInline
-        {ndk}
-        onPublish={(event: any) => console.log('Published:', event)}
-      />
-    </div>
+    <Preview title="Note Composer" code={inlineExample} previewAreaClass="max-h-none">
+      <div class="max-w-2xl">
+        <NoteComposerInline
+          {ndk}
+          onPublish={(event: any) => console.log('Published:', event)}
+        />
+      </div>
+    </Preview>
   {/snippet}
 </BlockPageLayout>
 

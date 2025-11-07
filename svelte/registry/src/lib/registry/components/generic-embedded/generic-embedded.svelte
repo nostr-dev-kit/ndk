@@ -114,7 +114,7 @@
 				{:else if handlers.length > 0}
 					<div class="text-sm font-semibold text-foreground mb-3">Open in compatible app:</div>
 					<div class="flex flex-col gap-3">
-						{#each handlers as handler}
+						{#each handlers as handler (handler.name)}
 							<div class="flex gap-3 p-3 bg-muted rounded-lg border border-border">
 								{#if handler.picture}
 									<img src={handler.picture} alt={handler.name || 'App'} class="w-10 h-10 rounded-md object-cover flex-shrink-0" />
@@ -125,13 +125,14 @@
 										<div class="text-[0.8125rem] text-muted-foreground mb-2 line-clamp-2">{handler.about}</div>
 									{/if}
 									<div class="flex gap-2 flex-wrap">
-										{#each handler.platforms as platform}
+										{#each handler.platforms as platform (platform.platform)}
 											<a
 												href={getHandlerUrl(platform)}
 												target="_blank"
 												rel="noopener noreferrer"
 												class="inline-flex items-center gap-1 px-2 py-1 bg-primary text-primary-foreground rounded text-xs font-medium no-underline transition-opacity hover:opacity-80"
 												title="Open in {platform.platform}"
+												data-external-link
 											>
 												{getPlatformIcon(platform.platform)}
 												{platform.platform}

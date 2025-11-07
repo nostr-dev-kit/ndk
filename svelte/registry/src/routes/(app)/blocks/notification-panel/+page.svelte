@@ -19,12 +19,11 @@
 	title="Notification Panel"
 	subtitle="Complete notification panel block using $metaSubscription to group interactions by target event. Shows mentions, reactions, zaps, reposts, and replies with avatar groups and embedded content. Includes scrollable body with compact or expanded layouts."
 	tags={['$metaSubscription', '2 variants']}
-	blockName="notification-panel"
-	installCommand="npx jsrepo add notification-panel"
-	code={compactExample}
 >
 	{#snippet topPreview()}
-		<NotificationPanel {ndk} pubkey={demoPubkey} variant="compact" />
+		<Preview title="Notification Panel" code={compactExample} previewAreaClass="max-h-none">
+			<NotificationPanel {ndk} pubkey={demoPubkey} variant="compact" />
+		</Preview>
 	{/snippet}
 </BlockPageLayout>
 

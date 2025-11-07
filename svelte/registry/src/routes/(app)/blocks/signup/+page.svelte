@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
+  import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
 
@@ -22,12 +23,11 @@
   title="Signup"
   subtitle="WYSIWYG profile creation block with live preview. Users can create their Nostr profile by editing fields directly, uploading banner and avatar images via Blossom, and seeing a deterministic gradient generated from their private key."
   tags={['Kind 0', 'Blossom', "Registration", 'Media Upload']}
-  blockName="signup"
-  installCommand="npx ndk-svelte add signup-block"
-  code={basicUsage}
 >
   {#snippet topPreview()}
-    <SignupBlock {ndk} onSuccess={handleSuccess} />
+    <Preview title="Signup" code={basicUsage} previewAreaClass="max-h-none">
+      <SignupBlock {ndk} onSuccess={handleSuccess} />
+    </Preview>
   {/snippet}
 </BlockPageLayout>
 

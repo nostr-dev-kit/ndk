@@ -78,9 +78,6 @@
 						"@nostr-dev-kit/svelte@4.0.0-beta.36",
 						"@nostr-dev-kit/ndk@3.0.0-beta.36"
 					],
-					"devDependencies": [
-						"svelte@^5.43.0"
-					],
 					"_imports_": {}
 				},
 				{
@@ -120,9 +117,6 @@
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					],
 					"_imports_": {}
 				},
@@ -175,9 +169,6 @@
 						"@nostr-dev-kit/sync@0.4.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
 					],
-					"devDependencies": [
-						"svelte@^5.43.0"
-					],
 					"_imports_": {}
 				},
 				{
@@ -195,9 +186,6 @@
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					],
 					"_imports_": {}
 				},
@@ -217,9 +205,6 @@
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					],
 					"_imports_": {}
 				}
@@ -545,9 +530,6 @@
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					],
 					"_imports_": {
 						"../../utils/cn.js": "{{utils/cn}}.js",
@@ -2285,9 +2267,6 @@
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
 					],
-					"devDependencies": [
-						"svelte@^5.43.0"
-					],
 					"_imports_": {}
 				},
 				{
@@ -2308,9 +2287,6 @@
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					],
 					"_imports_": {}
 				}
@@ -2597,9 +2573,6 @@
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.36",
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					]
 				},
 				{
@@ -3127,9 +3100,6 @@
 					"_imports_": {},
 					"dependencies": [
 						"@nostr-dev-kit/svelte@4.0.0-beta.36"
-					],
-					"devDependencies": [
-						"svelte@^5.43.0"
 					]
 				},
 				{

@@ -60,6 +60,8 @@
 <div
   bind:this={containerElement}
   class="relative h-full w-full overflow-hidden min-h-[400px]"
+  role="region"
+  aria-label="Article grid preview"
   onmouseenter={() => isPaused = true}
   onmouseleave={() => isPaused = false}
 >

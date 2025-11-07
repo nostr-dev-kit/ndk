@@ -3,6 +3,8 @@ import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
 import { LocalStorage } from '@nostr-dev-kit/sessions';
 import { NDKInterestList, NDKRelayFeedList } from '@nostr-dev-kit/ndk';
 
+import "$lib/registry/components/generic-embedded";
+
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({
   dbName: 'ndk-registry',
   workerUrl: '/worker.js',

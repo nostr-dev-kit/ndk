@@ -1,6 +1,6 @@
 # BlockPreview Component Usage
 
-The `BlockPreview` component displays blocks with a file tree sidebar and code viewer, allowing users to browse and view individual file contents.
+The `BlockPreview` component displays blocks with tabs for Preview and Code views. The Code tab includes a file tree sidebar and code viewer, allowing users to browse and view individual file contents.
 
 ## Props
 
@@ -79,11 +79,12 @@ The `BlockPreview` component displays blocks with a file tree sidebar and code v
 
 ## Features
 
-- **File Tree Navigation**: Click on folders to expand/collapse them
+- **Tabbed Interface**: Switch between Preview and Code views with tabs in the header
+- **File Tree Navigation**: Click on folders to expand/collapse them in the Code tab
 - **Syntax Highlighting**: Automatically detects file types and applies appropriate syntax highlighting
 - **File Selection**: Click on files to view their code
 - **Auto-selection**: The first file in the tree is automatically selected on load
-- **Installation Command**: Shows the installation command with package manager support
+- **Installation Command**: Shows the installation command with package manager support below the tabs
 - **Responsive Layout**: The sidebar and code viewer are arranged in a flexible layout
 
 ## File Tree Structure

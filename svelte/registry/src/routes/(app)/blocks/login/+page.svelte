@@ -20,12 +20,11 @@
   title="Login"
   subtitle="Smart login component with adaptive UI that detects window.nostr extension. Supports multiple authentication methods including nsec, ncryptsec (NIP-49 encrypted keys), bunker://, NIP-05 addresses, and read-only mode."
   tags={['NIP-07', 'NIP-46', 'NIP-49', 'NIP-05', '2 variants']}
-  blockName="login"
-  installCommand="npx ndk-svelte add login-compact"
-  code={withoutExtension}
 >
   {#snippet topPreview()}
-    <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => console.log('Login successful!')} />
+    <Preview title="Login" code={withoutExtension} previewAreaClass="max-h-none">
+      <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => console.log('Login successful!')} />
+    </Preview>
   {/snippet}
 </BlockPageLayout>
 

@@ -1,6 +1,7 @@
 <!--
 BlockPreview component for displaying blocks with a file tree sidebar and code viewer.
 Shows the preview, file structure, and allows browsing/viewing individual file contents.
+Uses tabs to switch between preview and code views.
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
@@ -9,6 +10,8 @@ Shows the preview, file structure, and allows browsing/viewing individual file c
 	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
 	import { cn } from '$lib/registry/utils/cn.js';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { FolderOpenIcon, FoldersIcon, File01Icon } from '@hugeicons/core-free-icons';
+	import * as Tabs from '$lib/components/ui/tabs';
 
 	interface FileNode {
 		name: string;
@@ -152,62 +155,71 @@ Shows the preview, file structure, and allows browsing/viewing individual file c
 </script>
 
 <section class="flex flex-col gap-4 {className}">
-	<!-- Preview Area -->
-	<div class="flex flex-col w-full border border-border rounded-lg">
-		<h3 class="text-xl font-semibold text-foreground m-0 p-4">{title}</h3>
-		<div class="max-h-[600px] overflow-y-auto border-y border-border {previewAreaClass}">
-			<div class="p-8 flex justify-center items-center">
-				{@render children()}
+	<Tabs.Root value="preview">
+		<!-- Header with Title and Tabs -->
+		<div class="flex flex-col w-full border border-border rounded-lg">
+			<div class="flex items-center justify-between px-4 py-2 border-b border-border">
+				<h3 class="text-base font-bold text-foreground m-0">{title}</h3>
+				<Tabs.List>
+					<Tabs.Trigger value="preview">Preview</Tabs.Trigger>
+					<Tabs.Trigger value="code">Code</Tabs.Trigger>
+				</Tabs.List>
 			</div>
+
+			<!-- Preview Tab Content -->
+			<Tabs.Content value="preview">
+				<div class="max-h-[600px] overflow-y-auto {previewAreaClass}">
+					<div class="p-8 flex justify-center items-center">
+						{@render children()}
+					</div>
+				</div>
+			</Tabs.Content>
+
+			<!-- Code Tab Content -->
+			<Tabs.Content value="code" class="m-0">
+				<div class="flex w-full bg-muted/50" style="height: 600px;">
+					<!-- File Tree Sidebar -->
+					<div class="w-64 border-r border-border bg-card overflow-y-auto flex-shrink-0">
+						<div class="p-4">
+							<h4 class="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
+								Files
+							</h4>
+							<div class="space-y-1">
+								{#each fileTree as node (node.path)}
+									{@render fileTreeNode(node, 0)}
+								{/each}
+							</div>
+						</div>
+					</div>
+
+					<!-- Code Display Area -->
+					<div class="flex-1 flex flex-col overflow-hidden">
+						{#if selectedFile}
+							<div class="px-4 py-3 border-b border-border bg-card flex-shrink-0">
+								<div class="text-sm font-medium text-foreground">{selectedFile.name}</div>
+								<div class="text-xs text-muted-foreground">{selectedFile.path}</div>
+							</div>
+							<div class="flex-1 overflow-auto">
+								<CodeSnippet
+									code={selectedFile.content || ''}
+									lang={getFileExtension(selectedFile.name)}
+									class="rounded-none border-none"
+								/>
+							</div>
+						{:else}
+							<div class="flex-1 flex items-center justify-center text-muted-foreground">
+								Select a file to view its contents
+							</div>
+						{/if}
+					</div>
+				</div>
+			</Tabs.Content>
 		</div>
-	</div>
+	</Tabs.Root>
 
 	<!-- Installation Command -->
 	<div class="w-full">
 		<PMCommand command="execute" args={commandArgs} />
-	</div>
-
-	<!-- Code Viewer with Sidebar -->
-	<div class="flex w-full border border-border rounded-lg overflow-hidden bg-muted/50">
-		<!-- File Tree Sidebar -->
-		<div
-			class="w-64 border-r border-border bg-card overflow-y-auto flex-shrink-0"
-			style="max-height: 600px;"
-		>
-			<div class="p-4">
-				<h4 class="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
-					Files
-				</h4>
-				<div class="space-y-1">
-					{#each fileTree as node (node.path)}
-						{@render fileTreeNode(node, 0)}
-					{/each}
-				</div>
-			</div>
-		</div>
-
-		<!-- Code Display Area -->
-		<div class="flex-1 overflow-hidden">
-			{#if selectedFile}
-				<div class="h-full flex flex-col">
-					<div class="px-4 py-3 border-b border-border bg-card">
-						<div class="text-sm font-medium text-foreground">{selectedFile.name}</div>
-						<div class="text-xs text-muted-foreground">{selectedFile.path}</div>
-					</div>
-					<div class="overflow-auto" style="max-height: 540px;">
-						<CodeSnippet
-							code={selectedFile.content || ''}
-							lang={getFileExtension(selectedFile.name)}
-							class="rounded-none border-none"
-						/>
-					</div>
-				</div>
-			{:else}
-				<div class="h-full flex items-center justify-center text-muted-foreground">
-					Select a file to view its contents
-				</div>
-			{/if}
-		</div>
 	</div>
 </section>
 
@@ -222,11 +234,11 @@ Shows the preview, file structure, and allows browsing/viewing individual file c
 				style="padding-left: {depth * 12 + 8}px"
 				onclick={() => toggleDirectory(node.path)}
 			>
-				<HugeiconsIcon
-					icon={expandedDirs.has(node.path) ? 'folder-open-01' : 'folder-01'}
-					size={16}
-					strokeWidth={2}
-				/>
+					{#if expandedDirs.has(node.path)}
+						<HugeiconsIcon icon={FolderOpenIcon} size={12} color="red" />
+					{:else}
+						<HugeiconsIcon icon={FoldersIcon} size={12} />
+					{/if}
 				<span class="font-medium">{node.name}</span>
 			</button>
 			{#if expandedDirs.has(node.path) && node.children}
@@ -238,13 +250,13 @@ Shows the preview, file structure, and allows browsing/viewing individual file c
 	{:else}
 		<button
 			class={cn(
-				'w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm hover:bg-accent transition-colors text-left',
+				'w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm font-light hover:bg-accent transition-colors text-left',
 				selectedFile?.path === node.path && 'bg-accent text-foreground font-medium'
 			)}
 			style="padding-left: {depth * 12 + 8}px"
 			onclick={() => selectFile(node)}
 		>
-			<HugeiconsIcon icon="file-02" size={16} strokeWidth={2} />
+			<HugeiconsIcon icon={File01Icon} size={12} />
 			<span>{node.name}</span>
 		</button>
 	{/if}

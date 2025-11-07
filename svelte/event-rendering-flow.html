@@ -571,7 +571,7 @@
                 <div class="code-line"><strong>Props:</strong> { ndk, bech32, variant, renderer }</div>
                 <div class="code-line"><strong>Line 26:</strong> setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer })</div>
                 <div class="code-line">&nbsp;&nbsp;└─→ <span class="highlight">Propagates renderer to nested components</span></div>
-                <div class="code-line"><strong>Line 28:</strong> embedded = createEmbeddedEvent({ bech32 }, ndk)</div>
+                <div class="code-line"><strong>Line 28:</strong> fetcher = createFetchEvent({ bech32 }, ndk)</div>
                 <div class="code-line">&nbsp;&nbsp;└─→ Fetches event via ndk.fetchEvent(bech32)</div>
                 <div class="code-line"><strong>Line 31:</strong> handlerInfo = renderer.getKindHandler(event.kind)</div>
                 <div class="code-line">&nbsp;&nbsp;└─→ <span class="highlight">Looks up handler in registry</span></div>

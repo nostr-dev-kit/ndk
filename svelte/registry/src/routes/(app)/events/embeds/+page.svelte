@@ -69,7 +69,7 @@
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">2</div>
             <div>
               <strong class="text-foreground">Fetch Event</strong>
-              <p class="text-sm">createEmbeddedEvent builder fetches the event from relays using the bech32 identifier</p>
+              <p class="text-sm">createFetchEvent builder fetches the event from relays using the bech32 identifier</p>
             </div>
           </div>
           <div class="flex items-start gap-3">

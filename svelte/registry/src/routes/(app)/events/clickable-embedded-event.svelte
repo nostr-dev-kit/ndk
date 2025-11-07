@@ -3,7 +3,7 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
-	import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
+	import { createFetchEvent } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
 	import NoteEmbeddedCard from '$lib/registry/components/note-embedded-card/note-embedded-card.svelte';
 	import NoteEmbeddedInline from '$lib/registry/components/note-embedded-inline/note-embedded-inline.svelte';
@@ -25,9 +25,9 @@
 
 	let { ndk, bech32, renderer, class: className = '' }: Props = $props();
 
-	// Fetch the embedded event to determine its kind
-	const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
-	const eventKind = $derived(embedded.event?.kind);
+	// Fetch the event to determine its kind
+	const fetcher = createFetchEvent(() => ({ bech32 }), ndk);
+	const eventKind = $derived(fetcher.event?.kind);
 
 	// Determine the embed type based on kind
 	const embedType = $derived.by(() => {
@@ -39,7 +39,7 @@
 	});
 
 	// Cast to NDKArticle when it's an article
-	const asArticle = $derived(embedded.event ? NDKArticle.from(embedded.event) : undefined);
+	const asArticle = $derived(fetcher.event ? NDKArticle.from(fetcher.event) : undefined);
 
 	// Get interactive state from context
 	const interactiveState = getContext<{
@@ -77,14 +77,14 @@
 		<div class="text-muted-foreground font-mono text-sm break-all p-2 bg-muted rounded">
 			{bech32}
 		</div>
-	{:else if embedded.event}
+	{:else if fetcher.event}
 		{#if embedType === 'embedded-note'}
 			{#if variant === 'card'}
-				<NoteEmbeddedCard {ndk} event={embedded.event} />
+				<NoteEmbeddedCard {ndk} event={fetcher.event} />
 			{:else if variant === 'inline'}
-				<NoteEmbeddedInline {ndk} event={embedded.event} />
+				<NoteEmbeddedInline {ndk} event={fetcher.event} />
 			{:else if variant === 'compact'}
-				<NoteEmbeddedCompact {ndk} event={embedded.event} />
+				<NoteEmbeddedCompact {ndk} event={fetcher.event} />
 			{/if}
 		{:else if embedType === 'embedded-article' && asArticle}
 			{#if variant === 'card'}
@@ -96,11 +96,11 @@
 			{/if}
 		{:else if embedType === 'embedded-highlight'}
 			{#if variant === 'card'}
-				<HighlightEmbeddedCard {ndk} event={embedded.event} />
+				<HighlightEmbeddedCard {ndk} event={fetcher.event} />
 			{:else if variant === 'inline'}
-				<HighlightEmbeddedInline {ndk} event={embedded.event} />
+				<HighlightEmbeddedInline {ndk} event={fetcher.event} />
 			{:else if variant === 'compact'}
-				<HighlightEmbeddedCompact {ndk} event={embedded.event} />
+				<HighlightEmbeddedCompact {ndk} event={fetcher.event} />
 			{/if}
 		{:else}
 			<EmbeddedEvent {ndk} {bech32} variant={variant as any} {renderer} />

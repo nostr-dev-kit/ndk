@@ -57,7 +57,7 @@ export type { ProcessedZap } from "./zaps/types.js";
 export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.svelte.js";
 
 // ============================================================================
-// Thread Builder
+// Event Builders
 // ============================================================================
 
 export {
@@ -67,6 +67,12 @@ export {
     type CreateThreadViewOptions,
     type ThreadingMetadata
 } from "./builders/event/thread/index.svelte.js";
+
+export {
+    createFetchEvent,
+    type FetchEventConfig,
+    type FetchEventState,
+} from "./builders/event/fetch/index.svelte.js";
 
 // ============================================================================
 // Profile Builder

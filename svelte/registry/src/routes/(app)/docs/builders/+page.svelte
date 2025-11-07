@@ -55,7 +55,7 @@
       <CodeBlock lang="typescript" code={threadView} />
     </details>
 
-    <p><code>createEmbeddedEvent(() => ({'{ bech32 }'}), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
+    <p><code>createFetchEvent(() => ({'{ bech32 }'}), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
     <details>
       <summary>Show details</summary>
       <CodeBlock lang="typescript" code={embeddedEvent} />

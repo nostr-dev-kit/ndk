@@ -61,14 +61,6 @@ export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.sv
 // ============================================================================
 
 export {
-    createThreadView,
-    type ThreadView,
-    type ThreadNode,
-    type CreateThreadViewOptions,
-    type ThreadingMetadata
-} from "./builders/event/thread/index.svelte.js";
-
-export {
     createFetchEvent,
     type FetchEventConfig,
     type FetchEventState,
@@ -85,29 +77,6 @@ export {
 } from "./builders/profile/index.svelte.js";
 
 // ============================================================================
-// User Input Builder
-// ============================================================================
-
-export {
-    createUserInput,
-    type UserInputConfig,
-    type UserInputResult,
-} from "./builders/user-input/index.js";
-
-// ============================================================================
-// Highlight Builder
-// ============================================================================
-
-export {
-    createHighlight,
-    type HighlightConfig,
-    type HighlightState,
-    type HighlightPosition,
-    type SourceInfo,
-    type UrlMetadata,
-} from "./builders/highlight/index.svelte.js";
-
-// ============================================================================
 // Relay Builders
 // ============================================================================
 
@@ -117,55 +86,6 @@ export {
 } from "./builders/relay/info.svelte.js";
 
 export type { NDKRelayInformation } from "@nostr-dev-kit/ndk";
-
-export {
-    createBookmarkedRelayList,
-    type BookmarkedRelayListState,
-    type BookmarkedRelayWithStats,
-} from "./builders/relay/bookmarks.svelte.js";
-
-// ============================================================================
-// Avatar Group Builder
-// ============================================================================
-
-export {
-    createAvatarGroup,
-    type AvatarGroupConfig,
-    type AvatarGroupState,
-} from "./builders/avatar-group/index.svelte.js";
-
-// ============================================================================
-// Zap Send Builder
-// ============================================================================
-
-export {
-    createZapSendAction,
-    type ZapSendActionConfig,
-    type ZapSendSplit,
-} from "./builders/zap-send/index.svelte.js";
-
-// ============================================================================
-// Action Builders
-// ============================================================================
-
-export {
-    createFollowAction,
-    createReactionAction,
-    createReplyAction,
-    createRepostAction,
-    createMuteAction,
-    createEmojiPicker,
-    type FollowActionConfig,
-    type ReactionActionConfig,
-    type ReplyActionConfig,
-    type RepostActionConfig,
-    type MuteActionConfig,
-    type EmojiReaction,
-    type EmojiData,
-    type EmojiPickerConfig,
-    type ReplyStats,
-    type RepostStats,
-} from "./builders/actions/index.js";
 
 // Utilities
 export { deterministicPubkeyGradient } from "./utils/deterministic-gradient.js";

@@ -1,4 +1,4 @@
-import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
+import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { resolveNDK } from '../resolve-ndk.svelte.js';
 import { NDKRelayFeedList, normalizeRelayUrl } from '@nostr-dev-kit/ndk';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';

@@ -1,7 +1,7 @@
 import type { NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKInterestList } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
-import { resolveNDK } from "../resolve-ndk.svelte.js";
+import { resolveNDK } from './resolve-ndk.svelte.js';
 
 export interface FollowActionConfig {
     target: NDKUser | string | undefined;

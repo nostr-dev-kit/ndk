@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createMuteAction } from '@nostr-dev-kit/svelte';
+  import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js';
 
   const muteState = createMuteAction(() => ({ target: user }), ndk);
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createReactionAction } from '@nostr-dev-kit/svelte';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
 
   const reactionState = createReactionAction(() => ({ event }), ndk);
 

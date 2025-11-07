@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import { createMuteAction } from '@nostr-dev-kit/svelte';
+  import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js';
 
   interface Props {
     ndk: NDKSvelte;

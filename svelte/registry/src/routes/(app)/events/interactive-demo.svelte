@@ -2,11 +2,11 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { EventCard } from '$lib/registry/components/event-card';
-	// import ClickableEventContent from './clickable-event-content.svelte';
+	import ClickableEventContent from './clickable-event-content.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableMention from './clickable-mention.svelte';
-	// import ClickableHashtag from './clickable-hashtag.svelte';
-	// import GenericEmbedded from '$lib/registry/components/generic-embedded/generic-embedded.svelte';
+	import ClickableHashtag from './clickable-hashtag.svelte';
+	import GenericEmbedded from '$lib/registry/components/generic-embedded/generic-embedded.svelte';
 	import { setContext } from 'svelte';
 
 	interface Props {

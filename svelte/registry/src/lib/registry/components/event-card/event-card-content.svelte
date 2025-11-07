@@ -72,7 +72,7 @@
   <div
     bind:this={contentElement}
     class={cn(
-      'whitespace-pre-wrap break-words',
+      'whitespace-pre-wrap wrap-break-words',
       truncate && !expanded ? `line-clamp-${truncate}` : undefined,
       className
     )}

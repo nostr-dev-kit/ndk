@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createThreadView } from '@nostr-dev-kit/svelte';
+  import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { threadViewMetadata, threadViewTwitterCard, threadViewBasicCard, threadViewFullCard } from '$lib/component-registry/event-thread';
   import { EditProps } from '$lib/site-components/edit-props';
@@ -89,7 +89,7 @@
         <h3 class="text-xl font-semibold mb-3">Basic Usage</h3>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm whitespace-pre">
-{`import { createThreadView } from '@nostr-dev-kit/svelte';
+{`import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
 
 const thread = createThreadView(() => ({
   focusedEvent: 'nevent1...' | event

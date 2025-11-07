@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createReactionAction } from '@nostr-dev-kit/svelte';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
   import { Tooltip } from 'bits-ui';
   import AvatarGroup from '$lib/registry/components/avatar-group/avatar-group.svelte';
 

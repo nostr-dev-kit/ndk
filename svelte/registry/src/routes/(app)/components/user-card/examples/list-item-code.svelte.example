@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createFollowAction } from '@nostr-dev-kit/svelte';
+  import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
 
   const user = $derived(ndk.getUser({ pubkey }));
   const followAction = createFollowAction(() => ({ target: user }), ndk);

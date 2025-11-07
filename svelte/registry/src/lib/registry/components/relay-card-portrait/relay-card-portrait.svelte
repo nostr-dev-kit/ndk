@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
+	import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
 	import { getContext } from 'svelte';
 	import { RELAY_CONTEXT_KEY, type RelayContext } from '../../ui/relay/relay.context.js';
 	import Root from '../../ui/relay/relay-root.svelte';

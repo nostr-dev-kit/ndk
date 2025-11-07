@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createRepostAction } from '@nostr-dev-kit/svelte';
+  import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn.js';
   import RepostIcon from '../../icons/repost.svelte';

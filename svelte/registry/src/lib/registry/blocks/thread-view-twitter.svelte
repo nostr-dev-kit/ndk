@@ -6,7 +6,7 @@
   @example
   ```svelte
 <script>
-    import { createThreadView } from '@nostr-dev-kit/svelte';
+    import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
     const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
   </script>
   <ThreadViewTwitter {ndk} {thread} />

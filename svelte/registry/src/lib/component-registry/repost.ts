@@ -73,7 +73,7 @@ export const repostBasicBuilderCard: ComponentCardData = {
 		{
 			name: 'createRepostAction',
 			description: 'Builder function that provides repost state and methods. Returns RepostActionState with count (number), hasReposted (boolean), and repost() function.',
-			importPath: "import { createRepostAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js'",
 			props: [
 				{
 					name: 'getter',
@@ -101,7 +101,7 @@ export const repostCustomBuilderCard: ComponentCardData = {
 		{
 			name: 'createRepostAction',
 			description: 'Builder function that provides repost state and methods. Returns RepostActionState with count (number), hasReposted (boolean), and repost() function.',
-			importPath: "import { createRepostAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js'",
 			props: [
 				{
 					name: 'getter',
@@ -135,7 +135,7 @@ export const repostMetadata = {
 		{
 			name: 'createRepostAction',
 			description: 'Builder function that provides repost state and methods. Returns RepostActionState with count (number), hasReposted (boolean), and repost() function.',
-			importPath: "import { createRepostAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js'",
 			props: [
 				{
 					name: 'getter',

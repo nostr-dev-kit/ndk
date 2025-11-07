@@ -22,7 +22,7 @@ export const muteButtonCard: ComponentCardData = {
     {
       name: 'createMuteAction',
       description: 'Builder function that provides mute/unmute state and methods',
-      importPath: "import { createMuteAction } from '@nostr-dev-kit/svelte'",
+      importPath: "import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js'",
       props: [
         {
           name: 'config',
@@ -50,7 +50,7 @@ export const muteCustomCard: ComponentCardData = {
     {
       name: 'createMuteAction',
       description: 'Builder function that provides mute/unmute state and methods',
-      importPath: "import { createMuteAction } from '@nostr-dev-kit/svelte'",
+      importPath: "import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js'",
       props: [
         {
           name: 'config',
@@ -74,7 +74,7 @@ export const muteApiDocs: ApiDoc[] = [
   {
     name: 'createMuteAction',
     description: 'Builder function that provides mute/unmute state and methods. Use directly in custom components or with MuteButton blocks. Returns MuteActionState with isMuted (boolean - current mute state) and mute (() => Promise<void> - toggle mute/unmute).',
-    importPath: "import { createMuteAction } from '@nostr-dev-kit/svelte'",
+    importPath: "import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js'",
     props: [
       {
         name: 'config',

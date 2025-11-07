@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
+	import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
 	import Root from '../../ui/relay/relay-root.svelte';
 	import Icon from '../../ui/relay/relay-icon.svelte';
 	import Name from '../../ui/relay/relay-name.svelte';

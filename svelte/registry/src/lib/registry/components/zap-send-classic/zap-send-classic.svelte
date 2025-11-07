@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createZapSendAction } from '@nostr-dev-kit/svelte';
+  import { createZapSendAction } from '$lib/registry/builders/zap-send/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn.js';
   import {User} from '../../ui/user';

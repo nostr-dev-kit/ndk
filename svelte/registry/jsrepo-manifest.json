@@ -190,6 +190,25 @@
 					"_imports_": {}
 				},
 				{
+					"name": "user-input",
+					"directory": "src/lib/registry/builders/user-input",
+					"category": "builders",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"user-input.svelte.ts"
+					],
+					"localDependencies": [],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.36",
+						"@nostr-dev-kit/svelte@4.0.0-beta.36"
+					],
+					"_imports_": {}
+				},
+				{
 					"name": "zap-action",
 					"directory": "src/lib/registry/builders/zap-action",
 					"category": "builders",

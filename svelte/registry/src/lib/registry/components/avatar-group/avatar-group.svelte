@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createAvatarGroup } from '@nostr-dev-kit/svelte';
+  import { createAvatarGroup } from '$lib/registry/builders/avatar-group/index.svelte.js';
   import { User } from '../../ui/user';
   import { cn } from '../../utils/cn.js';
 

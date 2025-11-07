@@ -2,7 +2,7 @@
   import { setContext } from 'svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createHighlight } from '@nostr-dev-kit/svelte';
+  import { createHighlight } from '$lib/registry/builders/highlight/index.svelte.js';
   import type { Snippet } from 'svelte';
   import { cn } from '../../utils/cn.js';
   import {

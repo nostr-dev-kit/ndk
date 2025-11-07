@@ -4,7 +4,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer.context.js';
-    import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
+    // import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;

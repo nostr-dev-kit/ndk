@@ -157,7 +157,7 @@ export const followApiDocs: ApiDoc[] = [
   {
     name: 'createFollowAction',
     description: 'Builder function that provides follow/unfollow state and methods. Use directly in custom components or with FollowButton blocks. Returns FollowActionState with isFollowing (boolean - current follow state) and follow (() => Promise<void> - toggle follow/unfollow).',
-    importPath: "import { createFollowAction } from '@nostr-dev-kit/svelte'",
+    importPath: "import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js'",
     props: [
       {
         name: 'config',

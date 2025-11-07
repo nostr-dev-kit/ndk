@@ -3,7 +3,7 @@
   import { setContext } from 'svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createUserInput } from '@nostr-dev-kit/svelte';
+  import { createUserInput } from '$lib/registry/builders/user-input/index.svelte.js';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import type { Snippet } from 'svelte';

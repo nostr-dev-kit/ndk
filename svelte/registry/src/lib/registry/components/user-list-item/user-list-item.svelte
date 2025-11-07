@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createFollowAction } from '@nostr-dev-kit/svelte';
+  import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
   import { cn } from '../../utils/cn.js';
   import { User } from '../../ui/user';
 

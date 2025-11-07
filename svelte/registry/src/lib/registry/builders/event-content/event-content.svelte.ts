@@ -52,15 +52,14 @@ export function createEventContent(
                 ? event.tags.filter(t => t[0] === 'emoji')
                 : (config().emojiTags ?? []);
 
-            const cleanedContent = actualContent.replace(/\[Image #\d+\]/gi, '').trim();
             const emojiMap = buildEmojiMap(actualEmojiTags);
-            const parsedSegments = parseContentToSegments(cleanedContent, emojiMap);
+            const parsedSegments = parseContentToSegments(actualContent, emojiMap);
             const groupedImages = groupConsecutiveImages(parsedSegments);
             return groupConsecutiveLinks(groupedImages);
         },
         get content() {
             const actualContent = String(config().event?.content ?? config().content ?? '');
-            return actualContent.replace(/\[Image #\d+\]/gi, '').trim();
+            return actualContent.trim();
         },
         get emojiMap() {
             const event = config().event;

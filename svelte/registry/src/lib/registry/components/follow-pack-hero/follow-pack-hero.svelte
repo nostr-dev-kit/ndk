@@ -1,4 +1,3 @@
-<!-- @ndk-version: follow-pack-hero@0.2.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';

@@ -1,4 +1,3 @@
-<!-- @ndk-version: embedded-event@0.9.0 -->
 <script lang="ts">
 	import { setContext, getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';

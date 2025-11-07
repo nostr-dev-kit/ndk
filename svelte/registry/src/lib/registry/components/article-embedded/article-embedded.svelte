@@ -1,4 +1,3 @@
-<!-- @ndk-version: article-embedded@0.1.0 -->
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

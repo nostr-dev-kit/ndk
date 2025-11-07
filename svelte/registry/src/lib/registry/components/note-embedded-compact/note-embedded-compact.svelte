@@ -1,4 +1,3 @@
-<!-- @ndk-version: note-embedded-compact@0.1.0 -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

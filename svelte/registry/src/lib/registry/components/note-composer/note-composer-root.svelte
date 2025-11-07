@@ -1,4 +1,3 @@
-<!-- @ndk-version: note-composer@0.1.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';

@@ -144,16 +144,6 @@ describe('createEventContent', () => {
     });
 
     describe('content cleaning', () => {
-        it('should remove [Image #N] markers', () => {
-            const event = new NDKEvent();
-            event.content = 'Hello [Image #1] World [Image #2]';
-            event.tags = [];
-
-            const content = createEventContent(() => ({ event }));
-
-            expect(content.content).toBe('Hello  World');
-        });
-
         it('should trim whitespace', () => {
             const event = new NDKEvent();
             event.content = '  Hello World  ';

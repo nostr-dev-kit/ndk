@@ -1,4 +1,3 @@
-<!-- @ndk-version: article-content@0.4.0 -->
 <script lang="ts">
   import { NDKHighlight, NDKKind, type NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

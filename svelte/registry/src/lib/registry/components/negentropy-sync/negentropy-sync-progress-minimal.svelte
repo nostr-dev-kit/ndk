@@ -1,4 +1,3 @@
-<!-- @ndk-version: negentropy-sync-progress-minimal@0.1.0 -->
 <script lang="ts">
 	import { NegentrogySync } from '../../ui/negentropy-sync';
 	import { createNegentropySync } from '../../builders/negentropy-sync/index.js';

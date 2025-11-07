@@ -1,4 +1,3 @@
-<!-- @ndk-version: hashtag-preview@0.6.0 -->
 <script lang="ts">
 	interface HashtagProps {
 		tag: string;

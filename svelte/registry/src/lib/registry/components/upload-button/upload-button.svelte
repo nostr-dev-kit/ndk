@@ -1,4 +1,3 @@
-<!-- @ndk-version: upload-button@0.0.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { MediaUploadResult } from '../../ui/media-upload/createMediaUpload.svelte';

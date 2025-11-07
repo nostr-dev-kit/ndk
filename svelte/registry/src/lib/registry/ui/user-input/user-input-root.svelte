@@ -1,4 +1,3 @@
-<!-- @ndk-version: user-input@0.6.0 -->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';

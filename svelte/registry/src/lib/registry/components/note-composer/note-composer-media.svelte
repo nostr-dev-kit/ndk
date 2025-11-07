@@ -1,4 +1,3 @@
-<!-- @ndk-version: note-composer@0.1.0 -->
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';

@@ -1,4 +1,3 @@
-<!-- @ndk-version: article@0.14.0 -->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';

@@ -4,6 +4,7 @@
   import SidebarDrawer from '$site-components/SidebarDrawer.svelte';
   import Toc from '$site-components/toc.svelte';
   import { sidebar } from '$lib/stores/sidebar.svelte';
+  import { docs, componentCategories, eventCategories, type NavCategory } from '$lib/navigation';
 
   let { children }: { children: Snippet } = $props();
 
@@ -13,13 +14,35 @@
     $page.url.pathname.startsWith('/docs/') ||
     $page.url.pathname.startsWith('/ui/')
   );
+
+  const sidebarSections = $derived.by(() => {
+    const pathname = $page.url.pathname;
+
+    if (pathname.startsWith('/docs')) {
+      return [{ title: 'Documentation', items: docs }];
+    }
+
+    if (pathname.startsWith('/events')) {
+      return eventCategories;
+    }
+
+    if (pathname.startsWith('/ui')) {
+      return componentCategories.filter(cat => cat.title === 'UI Primitives');
+    }
+
+    if (pathname.startsWith('/components')) {
+      return componentCategories.filter(cat => cat.title !== 'UI Primitives');
+    }
+
+    return [];
+  });
 </script>
 
-<SidebarDrawer />
+<SidebarDrawer sections={sidebarSections} />
 
 <div class="flex justify-center">
   <div
-    class="w-full max-w-[1000px] border-l border-r border-border transition-[margin-left] duration-300 ease-in-out ml-[280px] md:ml-[280px]"
+    class="w-full max-w-7xl border-l border-r border-border transition-[margin-left] duration-300 ease-in-out ml-[280px] md:ml-[280px]"
     class:!ml-16={sidebar.collapsed}
     class:max-md:!ml-0={!sidebar.open}
     class:max-md:!ml-[280px]={sidebar.open && !sidebar.collapsed}

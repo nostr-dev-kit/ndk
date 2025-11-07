@@ -1,4 +1,3 @@
-<!-- @ndk-version: markdown-event-content@0.1.0 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Marked } from 'marked';

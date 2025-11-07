@@ -1,4 +1,3 @@
-<!-- @ndk-version: follow-pack-modern-portrait@0.1.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';

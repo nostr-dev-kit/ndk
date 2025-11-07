@@ -1,4 +1,3 @@
-<!-- @ndk-version: negentropy-sync-progress-compact@0.1.0 -->
 <script lang="ts">
 	import { NegentrogySync } from '../../ui/negentropy-sync';
 	import { Relay } from '../../ui/relay';

@@ -1,4 +1,3 @@
-<!-- @ndk-version: follow-button-pill@0.2.0 -->
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';

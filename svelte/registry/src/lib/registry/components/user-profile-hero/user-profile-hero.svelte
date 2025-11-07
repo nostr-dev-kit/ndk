@@ -1,4 +1,3 @@
-<!-- @ndk-version: user-profile-hero@0.2.0 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';

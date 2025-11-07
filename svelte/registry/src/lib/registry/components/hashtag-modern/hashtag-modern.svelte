@@ -1,4 +1,3 @@
-<!-- @ndk-version: hashtag-modern@0.1.0 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/cn.js';

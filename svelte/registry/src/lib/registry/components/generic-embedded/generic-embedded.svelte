@@ -1,4 +1,3 @@
-<!-- @ndk-version: generic-embedded@0.1.0 -->
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';

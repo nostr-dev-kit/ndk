@@ -1,4 +1,3 @@
-<!-- @ndk-version: mention-preview@0.7.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../../ui/user';

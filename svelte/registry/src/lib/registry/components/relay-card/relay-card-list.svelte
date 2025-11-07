@@ -1,4 +1,3 @@
-<!-- @ndk-version: relay-card-list@0.1.0 -->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';

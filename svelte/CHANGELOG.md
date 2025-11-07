@@ -4,6 +4,29 @@
 
 ### Breaking Changes
 
+- **REMOVED: UI/Action builders moved to registry-only** - The following builders have been removed from the `@nostr-dev-kit/svelte` package exports and are now only available in the registry as reference implementations:
+
+  **Removed action builder exports:**
+  - `createFollowAction`, `createReactionAction`, `createReplyAction`, `createRepostAction`, `createMuteAction`
+  - `createEmojiPicker`
+  - Related types: `FollowActionConfig`, `ReactionActionConfig`, `ReplyActionConfig`, `RepostActionConfig`, `MuteActionConfig`, `EmojiReaction`, `EmojiData`, `EmojiPickerConfig`, `ReplyStats`, `RepostStats`
+
+  **Removed complex builder exports:**
+  - `createThreadView` and types: `ThreadView`, `ThreadNode`, `CreateThreadViewOptions`, `ThreadingMetadata`
+  - `createHighlight` and types: `HighlightConfig`, `HighlightState`, `HighlightPosition`, `SourceInfo`, `UrlMetadata`
+  - `createZapSendAction` and types: `ZapSendActionConfig`, `ZapSendSplit`
+  - `createBookmarkedRelayList` and types: `BookmarkedRelayListState`, `BookmarkedRelayWithStats`
+  - `createAvatarGroup` and types: `AvatarGroupConfig`, `AvatarGroupState`
+  - `createUserInput` and types: `UserInputConfig`, `UserInputResult`
+
+  **Remaining core exports:**
+  The package now only exports these core primitives:
+  - `createFetchEvent` - Fetch and track individual events
+  - `createProfileFetcher` - Fetch and track user profiles
+  - `createRelayInfo` - Fetch relay information documents
+
+  **Migration:** If you were importing action or UI builders from `@nostr-dev-kit/svelte`, copy the implementation from the registry into your project. These builders are UI-specific and better suited as reference implementations rather than library exports.
+
 - **REMOVED: Payment tracking infrastructure** - Removed `$payments` store and all payment tracking functionality (`src/lib/payments/`) as it was not fully integrated with the rest of the system. The wallet store (`$wallet`) remains fully functional for Cashu, NWC, and WebLN wallet operations.
 
   **Removed exports:**

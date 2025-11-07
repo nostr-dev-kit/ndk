@@ -134,7 +134,7 @@ export const reactionActionBasicCard: ComponentCardData = {
 		{
 			name: 'createReactionAction',
 			description: 'Builder function that provides reactive reaction state and methods. Returns ReactionActionState with: reactions (Map<string, Set<string>> - emoji to pubkeys), hasReacted (boolean), userReaction (string | null - emoji user reacted with), totalCount (number), react(emoji: string), unreact(), and toggle(emoji: string).',
-			importPath: "import { createReactionAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js'",
 			props: [
 				{
 					name: 'config',
@@ -184,7 +184,7 @@ export const reactionBuilderCard: ComponentCardData = {
 		{
 			name: 'createReactionAction',
 			description: 'Builder function that provides reactive reaction state and methods. Returns ReactionActionState with: reactions (Map<string, Set<string>> - emoji to pubkeys), hasReacted (boolean), userReaction (string | null - emoji user reacted with), totalCount (number), react(emoji: string), unreact(), and toggle(emoji: string).',
-			importPath: "import { createReactionAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js'",
 			props: [
 				{
 					name: 'config',
@@ -212,7 +212,7 @@ export const reactionDelayedCard: ComponentCardData = {
 		{
 			name: 'createReactionAction',
 			description: 'Builder function with delayed reaction support',
-			importPath: "import { createReactionAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js'",
 			props: [
 				{
 					name: 'config',
@@ -277,7 +277,7 @@ export const reactionMetadata = {
 		{
 			name: 'createReactionAction',
 			description: 'Builder function that provides reactive reaction state and methods',
-			importPath: "import { createReactionAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js'",
 			props: [
 				{
 					name: 'config',

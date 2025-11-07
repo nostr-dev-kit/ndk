@@ -99,7 +99,7 @@ export const replyMetadata = {
 		{
 			name: 'createReplyAction',
 			description: 'Builder function that provides reactive reply state and methods. Returns ReplyActionState with count (number), hasReplied (boolean), and reply(content) function that publishes a reply.',
-			importPath: "import { createReplyAction } from '@nostr-dev-kit/svelte'",
+			importPath: "import { createReplyAction } from '$lib/registry/builders/reply-action.svelte.js'",
 			props: [
 				{
 					name: 'config',

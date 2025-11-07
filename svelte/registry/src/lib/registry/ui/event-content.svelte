@@ -3,7 +3,7 @@
 	import { getContext, setContext } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createEventContent } from '$lib/registry/builders/event-content/event-content.svelte.js';
+	// import { createEventContent } from '$lib/registry/builders/event-content/event-content.svelte.js';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer.context.js';
 	import EmbeddedEvent from './embedded-event.svelte';

@@ -113,19 +113,6 @@
       />
 
       <BlockCard
-        title="Notification Panel"
-        description="Real-time notifications using $metaSubscription. Groups interactions by event with avatar groups and embedded content."
-        icon="🔔"
-        href="/blocks/notification-panel"
-        variantCount={2}
-        badges={[
-          { label: '$metaSubscription', variant: 'feature' }
-        ]}
-        gradient="linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)"
-        iconGradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-      />
-
-      <BlockCard
         title="Thread Viewers"
         description="Nested conversation threads with reply chains and collapsible branches."
         icon="💬"

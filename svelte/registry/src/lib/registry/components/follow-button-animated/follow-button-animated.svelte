@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createFollowAction } from '@nostr-dev-kit/svelte';
+  import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
   import { getContext } from 'svelte';
   import { Motion } from 'svelte-motion';
   import { cn } from '../../utils/cn.js';

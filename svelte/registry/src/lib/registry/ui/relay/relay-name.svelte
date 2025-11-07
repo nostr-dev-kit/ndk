@@ -24,7 +24,8 @@
 
   const displayName = $derived(
     context.relayInfo.nip11?.name ||
-    context.relayInfo.url.replace('wss://', '').replace('ws://', '')
+    context.relayInfo.url?.replace('wss://', '').replace('ws://', '') ||
+    ''
   );
 </script>
 

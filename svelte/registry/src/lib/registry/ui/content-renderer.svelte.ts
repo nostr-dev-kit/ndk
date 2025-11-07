@@ -34,6 +34,7 @@ export type MentionComponent = Component<{
  * Hashtag component interface
  */
 export type HashtagComponent = Component<{
+	ndk: NDKSvelte;
 	tag: string;
 	onclick?: (tag: string) => void;
 	class?: string;

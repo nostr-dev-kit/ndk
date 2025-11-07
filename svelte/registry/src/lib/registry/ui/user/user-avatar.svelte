@@ -65,7 +65,7 @@
         class="rounded-full flex items-center justify-center w-full h-full absolute inset-0"
         style="background: {avatarGradient};"
       >
-        {context.ndkUser.pubkey.slice(0, 2).toUpperCase()}
+        {context.ndkUser?.pubkey?.slice(0, 2).toUpperCase() ?? '??'}
       </div>
     {/if}
   {/if}

@@ -1,5 +1,5 @@
 import type { NDKUser } from '@nostr-dev-kit/ndk';
-import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
+import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 /**
  * Configuration for avatar group

@@ -5,7 +5,7 @@
 
 import type { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
 import { NDKArticle as NDKArticleClass } from '@nostr-dev-kit/ndk';
-import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
+import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { resolveNDK } from '../resolve-ndk.svelte';
 
 export interface UrlMetadata {
@@ -100,7 +100,7 @@ function calculatePosition(content: string, context: string): HighlightPosition 
  * @example
  * ```svelte
  * <script>
- *   import { createHighlight } from '@nostr-dev-kit/svelte';
+ *   import { createHighlight } from '$lib/registry/builders/highlight/index.svelte.js';
  *
  *   const highlight = createHighlight(() => ({ event: highlightEvent }), ndk);
  * </script>

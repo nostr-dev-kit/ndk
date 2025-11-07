@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Relay } from '$lib/registry/ui/relay';
-	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
+	import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 	interface Props {

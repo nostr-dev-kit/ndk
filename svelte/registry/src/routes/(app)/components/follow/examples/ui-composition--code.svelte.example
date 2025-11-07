@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createFollowAction } from '@nostr-dev-kit/svelte';
+  import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
 
   let { ndk, user } = $props();
 

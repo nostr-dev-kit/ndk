@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { createReactionAction } from '@nostr-dev-kit/svelte';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { reactionMetadata, reactionButtonCard, reactionButtonAvatarsCard, reactionSlackCard } from '$lib/component-registry/reaction';
   import { EditProps } from '$lib/site-components/edit-props';

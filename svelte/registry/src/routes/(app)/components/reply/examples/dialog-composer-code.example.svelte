@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createReplyAction } from '@nostr-dev-kit/svelte';
+  import { createReplyAction } from '$lib/registry/builders/reply-action.svelte.js';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

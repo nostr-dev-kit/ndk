@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createThreadView } from '@nostr-dev-kit/svelte';
+  import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
   import { EventCard } from '$lib/registry/components/event-card';
   import { ReactionAction } from '$lib/registry/components/reaction';
 

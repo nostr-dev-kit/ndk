@@ -94,7 +94,7 @@
 
     <div class="bg-muted/50 rounded-lg p-6">
       <h3 class="text-lg font-semibold mb-3">createMuteAction</h3>
-      <pre class="text-sm overflow-x-auto"><code>import &#123; createMuteAction &#125; from '@nostr-dev-kit/svelte';
+      <pre class="text-sm overflow-x-auto"><code>import import &#123; createMuteAction &#125; from '@nostr-dev-kit/svelte'#123; createMuteAction import &#123; createMuteAction &#125; from '@nostr-dev-kit/svelte'#125; from '$lib/registry/builders/mute-action.svelte.js';
 
 // Create mute action
 const muteAction = createMuteAction(() => (&#123; target: user &#125;), ndk);

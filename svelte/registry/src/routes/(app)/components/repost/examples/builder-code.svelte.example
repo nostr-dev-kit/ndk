@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { createRepostAction } from '@nostr-dev-kit/svelte';
+  import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js';
 
   interface Props {
     ndk: NDKSvelte;

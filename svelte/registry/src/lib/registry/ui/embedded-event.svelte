@@ -65,9 +65,7 @@
 	<FallbackHandler {ndk} event={wrappedEvent} class={className} />
 {:else if wrappedEvent}
 	<!-- NO HANDLER: Show raw bech32. Users can register generic-embedded if they want it. -->
-	<div class="embedded-raw {className}">
-		<code>{bech32}</code>
-	</div>
+	<code>{bech32}</code>
 {/if}
 
 <style>
@@ -104,10 +102,5 @@
 
 	.embedded-error {
 		color: var(--destructive);
-	}
-
-	.embedded-raw code {
-		font-family: monospace;
-		word-break: break-all;
 	}
 </style>

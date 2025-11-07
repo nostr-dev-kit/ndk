@@ -6,6 +6,7 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableMention from './clickable-mention.svelte';
 	import ClickableHashtag from './clickable-hashtag.svelte';
+	import GenericEmbedded from '$lib/registry/components/generic-embedded/generic-embedded.svelte';
 	import { setContext } from 'svelte';
 
 	interface Props {
@@ -113,6 +114,7 @@
 	const customRenderer = new ContentRenderer();
 	customRenderer.mentionComponent = ClickableMention as any;
 	customRenderer.hashtagComponent = ClickableHashtag as any;
+	customRenderer.fallbackComponent = GenericEmbedded;
 
 	// Set context so child components can access the interactive state
 	setContext('interactive-demo', {

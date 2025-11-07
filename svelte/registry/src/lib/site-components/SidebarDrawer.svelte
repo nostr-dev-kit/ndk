@@ -1,15 +1,11 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
-  import { docs, componentCategories, eventCategories } from '$lib/navigation';
+  import type { NavCategory } from '$lib/navigation';
   import { sidebar } from '$lib/stores/sidebar.svelte';
-  import { Tooltip } from 'bits-ui';
   import NipBadge from '$lib/site-components/nip-badge.svelte';
 
-  const isDocsRoute = $derived($page.url.pathname.startsWith('/docs'));
-  const isEventsRoute = $derived($page.url.pathname.startsWith('/events'));
-  const isComponentsRoute = $derived($page.url.pathname.startsWith('/components'));
-  const isUiRoute = $derived($page.url.pathname.startsWith('/ui'));
+  let { sections = [] }: { sections?: NavCategory[] } = $props();
 
   let isHovering = $state(false);
   const showContent = $derived(!sidebar.collapsed || isHovering);
@@ -32,224 +28,36 @@
   onmouseenter={() => isHovering = true}
   onmouseleave={() => isHovering = false}
 >
-  <Tooltip.Provider>
-    <nav class="flex-1 overflow-auto flex flex-col px-4 pt-4 gap-6">
-    {#if isDocsRoute}
+  <nav class="flex-1 overflow-auto flex flex-col px-4 pt-4 gap-6 items-start">
+    {#each sections as section (section.title)}
       <div class="flex flex-col gap-1">
         {#if showContent}
-          <h2 class="nav-text m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Documentation</h2>
+          <h2 class="nav-text m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+            {section.title}
+            {#if section.nip}
+              <NipBadge nip={section.nip} />
+            {/if}
+          </h2>
         {/if}
-        {#each docs as doc (doc.path)}
-          {#if sidebar.collapsed && !isHovering}
-            <Tooltip.Root delayDuration={0}>
-              <Tooltip.Trigger class="nav-link-trigger">
-                <a
-                  href={doc.path}
-                  class="nav-link"
-                  class:active={$page.url.pathname === doc.path}
-                >
-                  <HugeiconsIcon icon={doc.icon} size={16} strokeWidth={2} />
-                </a>
-              </Tooltip.Trigger>
-              <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
-                {#if doc.title || doc.description}
-                  <div class="tooltip-header">{doc.title || doc.name}</div>
-                  {#if doc.description}
-                    <div class="tooltip-description">{doc.description}</div>
-                  {/if}
-                {:else}
-                  <div class="tooltip-title">{doc.name}</div>
-                {/if}
-              </Tooltip.Content>
-            </Tooltip.Root>
-          {:else}
-            <div class="nav-item-wrapper">
-              <a
-                href={doc.path}
-                class="nav-link"
-                class:active={$page.url.pathname === doc.path}
-              >
-                <HugeiconsIcon icon={doc.icon} size={16} strokeWidth={2} />
-                <span class="nav-link-text nav-text">{doc.name}</span>
-              </a>
-              {#if doc.nip}
-                <div class="nav-text">
-                  <NipBadge nip={doc.nip} />
-                </div>
-              {/if}
-            </div>
-          {/if}
+        {#each section.items as item (item.path)}
+          <div class="nav-item-wrapper">
+            <a
+              href={item.path}
+              class="nav-link"
+              class:active={$page.url.pathname === item.path}
+            >
+              <HugeiconsIcon icon={item.icon} size={16} strokeWidth={2} />
+              <span class="nav-link-text nav-text">{item.name}</span>
+            </a>
+            {#if item.nip}
+              <div class="nav-text">
+                <NipBadge nip={item.nip} />
+              </div>
+            {/if}
+          </div>
         {/each}
       </div>
-    {/if}
-
-    {#if isUiRoute}
-      {#each componentCategories.filter(cat => cat.title === 'UI Primitives') as category (category.title)}
-        <div class="flex flex-col gap-1">
-          {#if showContent}
-            <h2 class="nav-text m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              {category.title}
-              {#if category.nip}
-                <NipBadge nip={category.nip} />
-              {/if}
-            </h2>
-          {/if}
-          {#each category.items as component (component.path)}
-            {#if sidebar.collapsed && !isHovering}
-              <Tooltip.Root delayDuration={0}>
-                <Tooltip.Trigger class="nav-link-trigger">
-                  <a
-                    href={component.path}
-                    class="nav-link"
-                    class:active={$page.url.pathname === component.path}
-                  >
-                    <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-                  </a>
-                </Tooltip.Trigger>
-                <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
-                  {#if component.title || component.description}
-                    <div class="tooltip-header">{component.title || component.name}</div>
-                    {#if component.description}
-                      <div class="tooltip-description">{component.description}</div>
-                    {/if}
-                  {:else}
-                    <div class="tooltip-title">{component.name}</div>
-                  {/if}
-                </Tooltip.Content>
-              </Tooltip.Root>
-            {:else}
-              <div class="nav-item-wrapper">
-                <a
-                  href={component.path}
-                  class="nav-link"
-                  class:active={$page.url.pathname === component.path}
-                >
-                  <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-                  <span class="nav-link-text nav-text">{component.name}</span>
-                </a>
-                {#if component.nip}
-                  <div class="nav-text">
-                    <NipBadge nip={component.nip} />
-                  </div>
-                {/if}
-              </div>
-            {/if}
-          {/each}
-        </div>
-      {/each}
-    {/if}
-
-    {#if isEventsRoute}
-      {#each eventCategories as category (category.title)}
-        <div class="flex flex-col gap-1">
-          {#if showContent}
-            <h2 class="nav-text m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              {category.title}
-              {#if category.nip}
-                <NipBadge nip={category.nip} />
-              {/if}
-            </h2>
-          {/if}
-          {#each category.items as component (component.path)}
-            {#if sidebar.collapsed && !isHovering}
-              <Tooltip.Root delayDuration={0}>
-                <Tooltip.Trigger class="nav-link-trigger">
-                  <a
-                    href={component.path}
-                    class="nav-link"
-                    class:active={$page.url.pathname === component.path}
-                  >
-                    <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-                  </a>
-                </Tooltip.Trigger>
-                <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
-                  {#if component.title || component.description}
-                    <div class="tooltip-header">{component.title || component.name}</div>
-                    {#if component.description}
-                      <div class="tooltip-description">{component.description}</div>
-                    {/if}
-                  {:else}
-                    <div class="tooltip-title">{component.name}</div>
-                  {/if}
-                </Tooltip.Content>
-              </Tooltip.Root>
-            {:else}
-              <div class="nav-item-wrapper">
-                <a
-                  href={component.path}
-                  class="nav-link"
-                  class:active={$page.url.pathname === component.path}
-                >
-                  <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-                  <span class="nav-link-text nav-text">{component.name}</span>
-                </a>
-                {#if component.nip}
-                  <div class="nav-text">
-                    <NipBadge nip={component.nip} />
-                  </div>
-                {/if}
-              </div>
-            {/if}
-          {/each}
-        </div>
-      {/each}
-    {/if}
-
-    {#if isComponentsRoute}
-      {#each componentCategories.filter(cat => cat.title !== 'UI Primitives') as category (category.title)}
-        <div class="flex flex-col gap-1">
-          {#if showContent}
-            <h2 class="nav-text m-0 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              {category.title}
-              {#if category.nip}
-                <NipBadge nip={category.nip} />
-              {/if}
-            </h2>
-          {/if}
-          {#each category.items as component (component.path)}
-            {#if sidebar.collapsed && !isHovering}
-              <Tooltip.Root delayDuration={0}>
-                <Tooltip.Trigger class="nav-link-trigger">
-                  <a
-                    href={component.path}
-                    class="nav-link"
-                    class:active={$page.url.pathname === component.path}
-                  >
-                    <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-                  </a>
-                </Tooltip.Trigger>
-                <Tooltip.Content side="right" sideOffset={8} class="tooltip-content">
-                  {#if component.title || component.description}
-                    <div class="tooltip-header">{component.title || component.name}</div>
-                    {#if component.description}
-                      <div class="tooltip-description">{component.description}</div>
-                    {/if}
-                  {:else}
-                    <div class="tooltip-title">{component.name}</div>
-                  {/if}
-                </Tooltip.Content>
-              </Tooltip.Root>
-            {:else}
-              <div class="nav-item-wrapper">
-                <a
-                  href={component.path}
-                  class="nav-link"
-                  class:active={$page.url.pathname === component.path}
-                >
-                  <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
-                  <span class="nav-link-text nav-text">{component.name}</span>
-                </a>
-                {#if component.nip}
-                  <div class="nav-text">
-                    <NipBadge nip={component.nip} />
-                  </div>
-                {/if}
-              </div>
-            {/if}
-          {/each}
-        </div>
-      {/each}
-    {/if}
+    {/each}
   </nav>
 
   <button
@@ -268,7 +76,6 @@
       </svg>
     {/if}
   </button>
-  </Tooltip.Provider>
 </aside>
 
 <style>
@@ -301,13 +108,11 @@
   }
 
   .sidebar.collapsed .nav-text {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
   }
 
   .sidebar.collapsed:hover .nav-text {
-    opacity: 1;
-    pointer-events: auto;
+    display: block;
   }
 
   .sidebar-overlay {
@@ -380,16 +185,15 @@
     }
   }
 
-  :global(.nav-link-trigger) {
-    all: unset;
-    display: block;
-    width: 100%;
-  }
-
   .nav-item-wrapper {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .sidebar.collapsed .nav-item-wrapper {
+    justify-content: center;
   }
 
   .nav-link {
@@ -403,6 +207,7 @@
     transition: all 0.15s ease-in-out;
     font-size: 0.85rem;
     font-weight: 500;
+    flex: 1;
   }
 
   .nav-link-text {
@@ -411,7 +216,8 @@
   }
 
   .sidebar.collapsed .nav-link {
-    width: 100%;
+    flex: 0 0 auto;
+    width: auto;
     justify-content: center;
     padding: 0.5rem;
   }
@@ -425,35 +231,5 @@
     background: var(--muted);
     color: var(--foreground);
     font-weight: 600;
-  }
-
-  :global(.tooltip-content) {
-    background: var(--popover);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    z-index: 1000;
-    min-width: 200px;
-    max-width: 320px;
-  }
-
-  :global(.tooltip-header) {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--foreground);
-    margin-bottom: 0.375rem;
-  }
-
-  :global(.tooltip-description) {
-    font-size: 0.8125rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-  }
-
-  :global(.tooltip-title) {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--foreground);
   }
 </style>

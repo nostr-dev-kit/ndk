@@ -23,7 +23,7 @@ Used in component documentation pages to show both the visual output and source 
 			<h3 class="text-xl font-semibold text-foreground m-0 p-4">{title}</h3>
 		{/if}
 
-		<div class="min-h-[500px] flex flex-col items-center justify-center max-h-[600px] overflow-y-auto border-y border-border {previewAreaClass}">
+		<div class="min-h-[433px] flex flex-col items-center bg-zinc-50 dark:bg-neutral-900/50 justify-center max-h-[600px] overflow-y-auto border-y border-border {previewAreaClass}">
 			<div class="p-8 flex justify-center items-center">
 				{@render children()}
 			</div>

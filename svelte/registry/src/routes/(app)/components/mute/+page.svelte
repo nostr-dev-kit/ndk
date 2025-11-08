@@ -2,36 +2,45 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-  import PageTitle from '$lib/site/components/PageTitle.svelte';
   import Alert from '$site-components/alert.svelte';
 
   // Import code examples
   import muteButtonCode from './examples/basic/index.txt?raw';
   import muteCustomCode from './examples/custom/index.txt?raw';
 
+  // Import example components
   import MuteButton from '$lib/registry/components/mute/buttons/basic/mute-button.svelte';
+  import UIComposition from './examples/custom/index.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import muteButtonCard from '$lib/registry/components/mute/buttons/basic/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Mute',
+    description: 'Mute buttons and components for Nostr users',
+    showcaseTitle: 'Mute Button Variants',
+    showcaseDescription: 'Manage user mutes with reactive state',
+  };
+
+  // Card data for custom mute example
+  const muteCustomCard = {
+    name: 'mute-custom',
+    title: 'Mute Custom',
+    category: 'mute',
+    subcategory: 'buttons',
+    variant: 'custom',
+    description: 'Custom mute button composition',
+    command: 'npx jsrepo add mute/buttons/custom',
+    apiDocs: []
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleUser = $state<NDKUser | undefined>();
-
-  // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: metadata.cards[0],
-      preview: muteButtonPreview
-    },
-    {
-      cardData: metadata.cards[1],
-      preview: customPreview
-    }
-  ];
 </script>
 
 <!-- Preview snippets -->
@@ -56,27 +65,19 @@
   {/if}
 {/snippet}
 
-<!-- Title section -->
-<!-- Component previews for Components section -->
-{#snippet muteButtonComponentPreview()}
-  {#if sampleUser}
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">Default:</span>
-        <MuteButton {ndk} target={sampleUser} />
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-muted-foreground w-24">With User:</span>
-        <MuteButton {ndk} target={sampleUser} showTarget={true} />
-      </div>
-    </div>
-  {/if}
-{/snippet}
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...muteButtonCard, code: muteButtonCode}}>
+    {#snippet preview()}
+      {@render muteButtonPreview()}
+    {/snippet}
+  </ComponentCard>
 
-{#snippet customComponentPreview()}
-  {#if sampleUser}
-    <UIComposition {ndk} user={sampleUser} />
-  {/if}
+  <ComponentCard data={{...muteCustomCard, code: muteCustomCode}}>
+    {#snippet preview()}
+      {@render customPreview()}
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- Custom sections for Builder API and ndk.$mutes API -->
@@ -152,20 +153,20 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
-  {showcaseComponents}
-  componentsSection={{
-    cards: [
-      { ...metadata.cards[0], code: muteButtonCode },
-      { ...metadata.cards[1], code: muteCustomCode }
-    ],
-    previews: {
-      'mute-button': muteButtonComponentPreview,
-      'mute-custom': customComponentPreview
+  showcaseComponents={[
+    {
+      cardData: muteButtonCard,
+      preview: muteButtonPreview
+    },
+    {
+      cardData: muteCustomCard,
+      preview: customPreview
     }
-  }}
-  apiDocs={metadata.apiDocs}
+  ]}
+  {components}
+  apiDocs={muteButtonCard.apiDocs}
   {customSections}
 >
   {#if !ndk.$currentUser}

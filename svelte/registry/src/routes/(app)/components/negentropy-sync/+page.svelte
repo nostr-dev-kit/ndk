@@ -3,8 +3,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Button } from "$lib/site/components/ui/button";
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 
@@ -23,9 +23,13 @@
 
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const metadata = {
+    title: 'Negentropy Sync',
+    description: 'Negentropy sync components with real-time progress tracking',
+    showcaseTitle: 'Sync Progress Components',
+    showcaseDescription: 'Track negentropy sync with detailed progress indicators',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -52,27 +56,6 @@
       };
     }, ndk)
   );
-
-  // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: negentropySyncProgressMinimalCard,
-      preview: minimalPreview
-    },
-    // {
-    //   cardData: negentropySyncProgressCompactCard,
-    //   preview: compactPreview
-    // },
-    {
-      cardData: negentropySyncProgressAnimatedCard,
-      preview: animatedPreview
-    },
-    {
-      cardData: negentropySyncProgressDetailedCard,
-      preview: detailedPreview,
-      cellClass: 'md:col-span-3'
-    }
-  ];
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -92,9 +75,8 @@
   <div>Compact component not available</div>
 {/snippet}
 
-<!-- EditProps snippet -->
-<!-- Custom Components section -->
-{#snippet customComponentsSection()}
+<!-- Components snippet -->
+{#snippet components()}
   <SectionTitle
     title="Components"
     description="Pre-built negentropy sync progress component variants ready to use in your application"
@@ -300,11 +282,26 @@ const syncBuilder = createNegentropySync(() => (&#123;
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
-  {showcaseComponents}{customSections}
-  beforeComponents={customComponentsSection}
-  apiDocs={metadata.apiDocs}
+  showcaseComponents={[
+    {
+      cardData: negentropySyncProgressMinimalCard,
+      preview: minimalPreview
+    },
+    {
+      cardData: negentropySyncProgressAnimatedCard,
+      preview: animatedPreview
+    },
+    {
+      cardData: negentropySyncProgressDetailedCard,
+      preview: detailedPreview,
+      cellClass: 'md:col-span-3'
+    }
+  ]}
+  {components}
+  {customSections}
+  apiDocs={negentropySyncProgressMinimalCard.apiDocs}
 >
     <Button variant="outline" onclick={() => demoSyncBuilder?.startSync()}>
       Start Demo Sync

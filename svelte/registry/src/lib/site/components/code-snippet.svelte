@@ -35,7 +35,7 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 		<div class="text-sm font-semibold text-foreground mb-2">{title}</div>
 	{/if}
 
-	<div class={cn("relative bg-muted/50 border border-border rounded-lg overflow-hidden", className)}>
+	<div class={cn("relative border border-border rounded-lg overflow-hidden", className)}>
 		<button
 			class="absolute top-3 right-3 p-2 bg-card border border-border rounded-md cursor-pointer text-foreground transition-all duration-200 z-10 hover:bg-muted active:scale-95"
 			onclick={copyCode}

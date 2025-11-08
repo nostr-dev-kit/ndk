@@ -2,7 +2,9 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
   import replyButtonCode from './examples/basic/index.txt?raw';
@@ -10,9 +12,16 @@
   // Import components
   import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import replyButtonCard from '$lib/registry/components/reply/buttons/basic/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Reply',
+    description: 'Reply buttons and components for Nostr events',
+    showcaseTitle: 'Reply Button Variants',
+    showcaseDescription: 'Add reply functionality to your Nostr events',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -42,26 +51,28 @@
   {/if}
 {/snippet}
 
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...replyButtonCard, code: replyButtonCode}}>
+    {#snippet preview()}
+      {@render replyButtonsPreview()}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
   showcaseComponents={[
     {
-      cardData: metadata.cards[0],
+      cardData: replyButtonCard,
       preview: replyButtonsPreview,
       orientation: 'horizontal'
     }
   ]}
-  componentsSection={{
-    cards: [
-      { ...metadata.cards[0], code: replyButtonCode }
-    ],
-    previews: {
-      'reply-button': replyButtonsPreview
-    }
-  }}
-  apiDocs={metadata.apiDocs}
+  {components}
+  apiDocs={replyButtonCard.apiDocs}
 >
   <EditProps.Prop
     name="Sample Event"

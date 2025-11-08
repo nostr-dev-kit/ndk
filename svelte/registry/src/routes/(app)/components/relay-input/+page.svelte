@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
 
   // Import code examples
   import relayInputBasicCode from './relay-input-basic.example?raw';
@@ -9,40 +10,33 @@
   import relayInputErrorCode from './relay-input-error.example?raw';
   import relayInputDisabledCode from './relay-input-disabled.example?raw';
 
+  // Import component
   import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import relayInputCard from '$lib/registry/components/relay/inputs/basic/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Relay Input',
+    description: 'Input components for relay URLs',
+    showcaseTitle: 'Relay Input Variants',
+    showcaseDescription: 'Validate and autocomplete relay URLs',
+  };
+
+  // Card data for variants
+  const relayInputLabelCard = { ...relayInputCard, name: 'relay-input-label', title: 'Relay Input with Label', variant: 'label' };
+  const relayInputErrorCard = { ...relayInputCard, name: 'relay-input-error', title: 'Relay Input with Error', variant: 'error' };
+  const relayInputDisabledCard = { ...relayInputCard, name: 'relay-input-disabled', title: 'Relay Input Disabled', variant: 'disabled' };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let basicBlockUrl = $state<string>('');
   let labelBlockUrl = $state<string>('');
   let errorBlockUrl = $state<string>('');
-
-  // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: metadata.cards[0],
-      preview: basicBlockPreview
-    },
-    {
-      cardData: metadata.cards[1],
-      preview: labelBlockPreview
-    },
-    {
-      cardData: metadata.cards[2],
-      preview: errorBlockPreview
-    },
-    {
-      cardData: metadata.cards[3],
-      preview: disabledBlockPreview
-    }
-  ];
 </script>
 
-<!-- Block Presets preview snippets -->
+<!-- Preview snippets -->
 {#snippet basicBlockPreview()}
   <RelayInputBlock {ndk} bind:value={basicBlockUrl} />
 {/snippet}
@@ -73,6 +67,33 @@
     helperText="This relay cannot be changed"
     disabled
   />
+{/snippet}
+
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...relayInputCard, code: relayInputBasicCode}}>
+    {#snippet preview()}
+      {@render basicBlockPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...relayInputLabelCard, code: relayInputLabelCode}}>
+    {#snippet preview()}
+      {@render labelBlockPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...relayInputErrorCard, code: relayInputErrorCode}}>
+    {#snippet preview()}
+      {@render errorBlockPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...relayInputDisabledCard, code: relayInputDisabledCode}}>
+    {#snippet preview()}
+      {@render disabledBlockPreview()}
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- Custom sections for Features -->
@@ -109,23 +130,27 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
-  showcaseComponents={showcaseComponents}
-  componentsSection={{
-    cards: [
-      { ...metadata.cards[0], code: relayInputBasicCode },
-      { ...metadata.cards[1], code: relayInputLabelCode },
-      { ...metadata.cards[2], code: relayInputErrorCode },
-      { ...metadata.cards[3], code: relayInputDisabledCode }
-    ],
-    previews: {
-      'relay-input-basic': basicBlockPreview,
-      'relay-input-label': labelBlockPreview,
-      'relay-input-error': errorBlockPreview,
-      'relay-input-disabled': disabledBlockPreview
+  showcaseComponents={[
+    {
+      cardData: relayInputCard,
+      preview: basicBlockPreview
+    },
+    {
+      cardData: relayInputLabelCard,
+      preview: labelBlockPreview
+    },
+    {
+      cardData: relayInputErrorCard,
+      preview: errorBlockPreview
+    },
+    {
+      cardData: relayInputDisabledCard,
+      preview: disabledBlockPreview
     }
-  }}
+  ]}
+  {components}
   {customSections}
-  apiDocs={metadata.apiDocs}
+  apiDocs={relayInputCard.apiDocs}
 />

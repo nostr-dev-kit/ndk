@@ -6,7 +6,7 @@ export async function highlightCode(code: string, lang: string = 'typescript') {
 			lang,
 			themes: {
 				light: 'github-light',
-				dark: 'github-dark'
+				dark: 'vitesse-black'
 			},
 			defaultColor: false
 		});

@@ -7,8 +7,8 @@
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
-  import zapButtonCode from './zap-button.example?raw';
-  import zapButtonAvatarsCode from './zap-button-avatars.example?raw';
+  import zapButtonCode from './examples/basic/index.txt?raw';
+  import zapButtonAvatarsCode from './examples/avatars/index.txt?raw';
 
   // Import components
   import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';

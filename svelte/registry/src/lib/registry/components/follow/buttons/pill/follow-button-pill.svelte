@@ -4,10 +4,10 @@
   import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import HashtagIcon from '../../icons/hashtag.svelte';
-  import UserAddIcon from '../../icons/user-add.svelte';
-  import UserFollowingIcon from '../../icons/user-following.svelte';
-  import { User } from '../../../ui/user/index.js';
+  import HashtagIcon from '$lib/registry/icons/hashtag.svelte';
+  import UserAddIcon from '$lib/registry/icons/user-add.svelte';
+  import UserFollowingIcon from '$lib/registry/icons/user-following.svelte';
+  import { User } from '$lib/registry/ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

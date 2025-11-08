@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { MediaUploadResult } from '../../../ui/media-upload/createMediaUpload.svelte';
-	import { MediaUpload } from '../../../ui/media-upload/index.js';
+	import type { MediaUploadResult } from '$lib/registry/ui/media-upload/createMediaUpload.svelte';
+	import { MediaUpload } from '$lib/registry/ui/media-upload/index.js';
 	import { getContext } from 'svelte';
 
 	interface Props {

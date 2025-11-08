@@ -2,7 +2,7 @@
   import type { BookmarkedRelayWithStats, NDKRelayInformation, RelayStatus } from '@nostr-dev-kit/svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { Relay } from '../../../ui/relay';
+  import { Relay } from '$lib/registry/ui/relay';
 
   interface ExtendedRelayStats extends BookmarkedRelayWithStats {
     nip11?: NDKRelayInformation | null;

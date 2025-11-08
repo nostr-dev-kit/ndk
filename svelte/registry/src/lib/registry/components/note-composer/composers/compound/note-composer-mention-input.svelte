@@ -3,8 +3,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
-	import { UserInput } from '../../../ui/user-input/index.js';
-	import { User } from '../../../ui/user/index.js';
+	import { UserInput } from '$lib/registry/ui/user-input/index.js';
+	import { User } from '$lib/registry/ui/user/index.js';
 	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {

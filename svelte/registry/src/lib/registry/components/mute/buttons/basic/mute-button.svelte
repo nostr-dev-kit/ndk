@@ -4,7 +4,7 @@
   import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import { User } from '../../../ui/user/index.js';
+  import { User } from '$lib/registry/ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

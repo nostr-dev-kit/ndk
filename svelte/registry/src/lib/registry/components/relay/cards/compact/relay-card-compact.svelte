@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
-	import Root from '../../../ui/relay/relay-root.svelte';
-	import Icon from '../../../ui/relay/relay-icon.svelte';
-	import Name from '../../../ui/relay/relay-name.svelte';
-	import BookmarkButton from '../../../ui/relay/relay-bookmark-button.svelte';
+	import Root from '$lib/registry/ui/relay/relay-root.svelte';
+	import Icon from '$lib/registry/ui/relay/relay-icon.svelte';
+	import Name from '$lib/registry/ui/relay/relay-name.svelte';
+	import BookmarkButton from '$lib/registry/ui/relay/relay-bookmark-button.svelte';
 	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
-	import { FollowPack } from '../../../ui/follow-pack';
+	import { FollowPack } from '$lib/registry/ui/follow-pack';
 	import AvatarGroup from '../avatar-group/avatar-group.svelte';
-	import { User } from '../../../ui/user';
-	import { getNDKFromContext } from '../../../utils/ndk-context.svelte.js';
+	import { User } from '$lib/registry/ui/user';
+	import { getNDKFromContext } from '$lib/registry/utils/ndk-context.svelte.js';
 
 	interface Props {
 		ndk?: NDKSvelte;

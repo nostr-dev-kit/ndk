@@ -5,7 +5,7 @@
   import { SvelteSet } from 'svelte/reactivity';
   import { cn } from '$lib/registry/utils/cn';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
-  import RepostIcon from '../../icons/repost.svelte';
+  import RepostIcon from '$lib/registry/icons/repost.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

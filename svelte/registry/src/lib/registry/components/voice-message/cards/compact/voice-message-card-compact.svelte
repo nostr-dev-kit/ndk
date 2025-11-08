@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { VoiceMessage } from '../../../ui/voice-message/index.js';
-  import { User } from '../../../ui/user';
+  import { VoiceMessage } from '$lib/registry/ui/voice-message/index.js';
+  import { User } from '$lib/registry/ui/user';
 
   interface Props {
     ndk: NDKSvelte;

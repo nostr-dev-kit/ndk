@@ -3,7 +3,7 @@
   import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { createEmojiPicker } from './createEmojiPicker.svelte.js';
   import { cn } from '$lib/registry/utils/cn';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDKFromContext } from '$lib/registry/utils/ndk-context.svelte.js';
   import List from './emoji-picker-list.svelte';
 
   interface Props {

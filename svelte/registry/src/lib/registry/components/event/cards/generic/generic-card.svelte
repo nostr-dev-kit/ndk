@@ -8,7 +8,7 @@
 		createAppHandlerInfo,
 		replaceUrlTemplate,
 		type AppHandlerInfo
-	} from '../../../builders/app-handlers';
+	} from '$lib/registry/builders/app-handlers';
 
 	interface Props {
 		ndk: NDKSvelte;

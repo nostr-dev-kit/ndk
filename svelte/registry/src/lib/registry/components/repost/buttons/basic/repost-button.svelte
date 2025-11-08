@@ -4,7 +4,7 @@
   import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import RepostIcon from '../../icons/repost.svelte';
+  import RepostIcon from '$lib/registry/icons/repost.svelte';
   import { DropdownMenu } from 'bits-ui';
 
   interface Props {

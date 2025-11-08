@@ -3,7 +3,7 @@
   import PageTitle from '$site-components/PageTitle.svelte';
   import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
   import { kindLabel } from '$lib/registry/utils/kind-label';
-  import "$lib/styles/docs-page.css";
+  import "$lib/site/styles/docs-page.css";
 
   // Import code examples
   import gradientImport from './examples/gradient-import.example?raw';

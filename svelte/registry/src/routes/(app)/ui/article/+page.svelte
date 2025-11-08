@@ -3,30 +3,16 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
-  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
-  import * as ComponentAnatomy from '$site-components/component-anatomy/index.js';
-  import { articleMetadata } from '$lib/ui-registry/article';
+  import Demo from '$lib/site/components/Demo.svelte';
+  import ApiTable from '$lib/site/components/api-table.svelte';
 
   // Import examples
   import Basic from './examples/basic.example.svelte';
+  import BasicRaw from './examples/basic.example.svelte?raw';
   import Composition from './examples/composition.example.svelte';
+  import CompositionRaw from './examples/composition.example.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
-
-  // Fetch a sample article for anatomy preview
-  const articleFetcher = $state(ndk.subscribe({
-    kinds: [NDKKind.Article],
-    limit: 1
-  }));
-
-  let sampleArticle = $state<NDKArticle | null>(null);
-
-  $effect(() => {
-    const events = articleFetcher.events as any;
-    if (events && events.length > 0) {
-      sampleArticle = NDKArticle.from(events[0]);
-    }
-  });
 </script>
 
 <svelte:head>

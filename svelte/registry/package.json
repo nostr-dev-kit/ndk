@@ -12,7 +12,6 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json 2>&1 | grep -E -v '(/examples/|[.]example[.]svelte)' || true",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "check:all": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "registry:index": "node scripts/build-registry.js",
     "ndk:check": "bun run scripts/scan-and-upgrade.ts",
     "ndk:upgrade": "bun run scripts/scan-and-upgrade.ts --yes"
   },

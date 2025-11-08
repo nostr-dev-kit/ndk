@@ -4,7 +4,6 @@
 
 <script lang="ts">
 	import { Button } from '$lib/site/components/ui/button';
-	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
 	import { cn } from '$lib/registry/utils/cn.js';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import CopyIcon from '@lucide/svelte/icons/copy';
@@ -31,7 +30,20 @@
 		size = 'default';
 	}
 
-	const clipboard = new UseClipboard();
+	let status = $state<'idle' | 'success' | 'failure'>('idle');
+
+	async function copy(text: string): Promise<'success' | 'failure'> {
+		try {
+			await navigator.clipboard.writeText(text);
+			status = 'success';
+			setTimeout(() => { status = 'idle'; }, animationDuration * 2);
+			return 'success';
+		} catch {
+			status = 'failure';
+			setTimeout(() => { status = 'idle'; }, animationDuration * 2);
+			return 'failure';
+		}
+	}
 </script>
 
 <Button
@@ -44,17 +56,17 @@
 	type="button"
 	name="copy"
 	onclick={async () => {
-		const status = await clipboard.copy(text);
+		const result = await copy(text);
 
-		onCopy?.(status);
+		onCopy?.(result);
 	}}
 >
-	{#if clipboard.status === 'success'}
+	{#if status === 'success'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
 			<CheckIcon tabindex={-1} />
 			<span class="sr-only">Copied</span>
 		</div>
-	{:else if clipboard.status === 'failure'}
+	{:else if status === 'failure'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
 			<XIcon tabindex={-1} />
 			<span class="sr-only">Failed to copy</span>

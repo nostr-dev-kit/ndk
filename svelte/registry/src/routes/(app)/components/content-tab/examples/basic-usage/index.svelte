@@ -17,7 +17,7 @@
 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ContentTab from '$lib/registry/components/misc/content-tab/content-tab.svelte';
+  import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
   import { byCount } from '$lib/registry/builders/content-tab';
 
   interface Props {

@@ -1,11 +1,11 @@
 {
   "name": "content-tab",
   "title": "Content Tab",
-  "category": "misc",
-  "subcategory": "navigation",
+  "category": "navigation",
+  "subcategory": "tabs",
   "variant": "content-tab",
   "description": "Tab component for content categorization and filtering",
-  "command": "npx jsrepo add misc/content-tab",
+  "command": "npx jsrepo add content-tab",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -9,8 +9,12 @@
   import emojiPickerListCode from './examples/list/index.txt?raw';
   import emojiPickerContentCode from './examples/content/index.txt?raw';
 
+  // Import example components
+  import UiBasic from './examples/list/index.svelte';
+  import UiComposition from './examples/content/index.svelte';
+
   // Import registry metadata
-  import emojiPickerBaseCard from '$lib/registry/components/misc/emoji-picker/registry.json';
+  import emojiPickerBaseCard from '$lib/registry/components/emoji-picker/registry.json';
 
   // Page metadata
   const metadata = {

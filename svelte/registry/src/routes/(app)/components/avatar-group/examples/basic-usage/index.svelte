@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
+  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {

@@ -17,7 +17,8 @@
 -->
 <script lang="ts">
   import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
-  import type { NDKUser, NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKUser } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;

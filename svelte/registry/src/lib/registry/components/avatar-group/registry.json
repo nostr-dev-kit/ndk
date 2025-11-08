@@ -1,11 +1,11 @@
 {
   "name": "avatar-group",
   "title": "Avatar Group",
-  "category": "misc",
-  "subcategory": "displays",
+  "category": "displays",
+  "subcategory": "avatars",
   "variant": "avatar-group",
   "description": "Display a group of user avatars with overflow handling",
-  "command": "npx jsrepo add misc/avatar-group",
+  "command": "npx jsrepo add avatar-group",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

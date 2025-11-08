@@ -5,7 +5,7 @@
   import { getContext } from 'svelte';
   import { cn } from '../../../../utils/cn';
   import { createZapAction } from '../../../../builders/zap-action/zap-action.svelte.js';
-  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
   import ZapIcon from '../../../../icons/zap.svelte';
 
   interface Props {

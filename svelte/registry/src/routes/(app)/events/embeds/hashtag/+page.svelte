@@ -90,7 +90,7 @@
 			{
 				name: 'Hashtag (UI Primitive)',
 				description: 'Inline hashtag component with optional click handling',
-				importPath: "import { Hashtag } from '$lib/registry/components/hashtag/displays/basic'",
+				importPath: "import { Hashtag } from '$lib/registry/components/hashtag'",
 				props: [
 					{ name: 'tag', type: 'string', required: true, description: 'Hashtag text (without #)' },
 					{ name: 'onclick', type: '(tag: string) => void', description: 'Optional click handler' },

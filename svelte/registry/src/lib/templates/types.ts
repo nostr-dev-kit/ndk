@@ -38,7 +38,7 @@ export interface ApiEvent {
 
 // Showcase component structure - compatible with both ComponentsShowcase and ComponentsShowcaseGrid
 export interface ShowcaseComponent {
-  cardData: ComponentCardDataBase | any;  // ComponentCardData containing all registry info (name, title, description, command, apiDocs)
+  cardData: ComponentCardDataBase;  // Required: ComponentCardData containing all registry info (name, title, description, command, apiDocs)
   preview: Snippet | any;  // Snippet or any for compatibility - required by components
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;

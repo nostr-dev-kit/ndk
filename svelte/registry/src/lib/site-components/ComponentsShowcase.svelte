@@ -18,6 +18,23 @@
 		class: className = ''
 	}: Props = $props();
 
+	// Validate components have required cardData
+	$effect(() => {
+		if (import.meta.env.DEV) {
+			components.forEach((component, index) => {
+				if (!component.cardData) {
+					console.error(`ShowcaseComponent at index ${index} is missing required cardData`);
+				}
+				if (component.cardData && !component.cardData.name) {
+					console.error(`ShowcaseComponent at index ${index} has cardData without required 'name' field`);
+				}
+				if (component.cardData && !component.cardData.title) {
+					console.error(`ShowcaseComponent at index ${index} has cardData without required 'title' field`);
+				}
+			});
+		}
+	});
+
 	let activeComponentIndex = $state<number | null>(null);
 	let componentRefs: HTMLDivElement[] = [];
 	let previewRefs: HTMLDivElement[] = [];
@@ -29,10 +46,8 @@
 	let selectedComponent = $state<ShowcaseComponent | null>(null);
 
 	function handleComponentClick(component: ShowcaseComponent) {
-		if (component.cardData) {
-			selectedComponent = component;
-			showModal = true;
-		}
+		selectedComponent = component;
+		showModal = true;
 	}
 
 	$effect(() => {
@@ -133,15 +148,14 @@
 			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
 			<div
 				bind:this={componentRefs[index]}
-				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 {borderClass}"
-				class:cursor-pointer={component.cardData}
+				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 cursor-pointer {borderClass}"
 				style:filter={activeComponentIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
 				style:opacity={activeComponentIndex !== index ? '0.6' : '1'}
-				role={component.cardData ? 'button' : undefined}
-				tabindex={component.cardData ? 0 : undefined}
+				role="button"
+				tabindex="0"
 				onclick={() => handleComponentClick(component)}
 				onkeydown={(e) => {
-					if (component.cardData && (e.key === 'Enter' || e.key === ' ')) {
+					if (e.key === 'Enter' || e.key === ' ') {
 						e.preventDefault();
 						handleComponentClick(component);
 					}

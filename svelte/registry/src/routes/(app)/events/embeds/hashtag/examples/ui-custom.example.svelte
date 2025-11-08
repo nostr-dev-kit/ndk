@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Hashtag } from '$lib/registry/components/hashtag/displays/basic';
+  import { Hashtag } from '$lib/registry/components/hashtag';
 </script>
 
 <div class="flex flex-col gap-4">

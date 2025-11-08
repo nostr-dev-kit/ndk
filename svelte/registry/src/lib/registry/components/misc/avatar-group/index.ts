@@ -7,7 +7,7 @@
  * @example Basic usage:
  * ```svelte
  * <script>
- *   import { AvatarGroup } from '../avatar-group';
+ *   import { AvatarGroup } from '/registry/components/misc/avatar-group';
  * </script>
  *
  * <AvatarGroup {ndk} pubkeys={['pubkey1', 'pubkey2', 'pubkey3']} />

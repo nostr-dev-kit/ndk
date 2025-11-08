@@ -47,6 +47,6 @@
 import ContentTab from './content-tab.svelte';
 
 export { ContentTab };
-export { createContentSampler, byCount, byRecency } from '../../builders/content-tab';
-export type { ContentTab as ContentTabType } from '../../builders/content-tab';
+export { createContentSampler, byCount, byRecency } from '$lib/registry/builders/content-tab';
+export type { ContentTab as ContentTabType } from '$lib/registry/builders/content-tab';
 export default ContentTab;

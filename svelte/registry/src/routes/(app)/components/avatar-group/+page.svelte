@@ -9,7 +9,7 @@
   // Import code examples
   import avatarGroupCode from './avatar-group.example?raw';
 
-  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
+  import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

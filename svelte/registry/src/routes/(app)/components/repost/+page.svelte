@@ -11,8 +11,8 @@
   import repostButtonAvatarsCode from './repost-button-avatars.example?raw';
 
   // Import components
-  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
-  import RepostButtonAvatars from '$lib/registry/components/repost-button-avatars/repost-button-avatars.svelte';
+  import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
+  import RepostButtonAvatars from '$lib/registry/components/repost/buttons/avatars/repost-button-avatars.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

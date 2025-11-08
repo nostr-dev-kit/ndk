@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '$lib/registry/ui/follow-pack';
-	import AvatarGroup from '$lib/registry/components/avatar-group/avatar-group.svelte';
+	import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

@@ -4,7 +4,7 @@
   import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { zapSendClassicMetadata, zapSendClassicCard } from '$lib/component-registry/zap-send-classic';
-  import ZapSendClassic from '$lib/registry/components/zap-send-classic/zap-send-classic.svelte';
+  import ZapSendClassic from '$lib/registry/components/zap/send/classic/zap-send-classic.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
 
   const ndk = getContext<NDKSvelte>('ndk');

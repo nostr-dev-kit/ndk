@@ -35,12 +35,12 @@
   import userCardGlassCode from './user-card-glass.example?raw';
 
   // Import blocks
-  import UserCardClassic from '$lib/registry/components/user-card-classic/user-card-classic.svelte';
-  import UserCardPortrait from '$lib/registry/components/user-card-portrait/user-card-portrait.svelte';
-  import UserCardLandscape from '$lib/registry/components/user-card-landscape/user-card-landscape.svelte';
-  import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
-  import UserCardNeon from '$lib/registry/components/user-card-neon/user-card-neon.svelte';
-  import UserCardGlass from '$lib/registry/components/user-card-glass/user-card-glass.svelte';
+  import UserCardClassic from '$lib/registry/components/user/cards/classic/user-card-classic.svelte';
+  import UserCardPortrait from '$lib/registry/components/user/cards/portrait/user-card-portrait.svelte';
+  import UserCardLandscape from '$lib/registry/components/user/cards/landscape/user-card-landscape.svelte';
+  import UserCardCompact from '$lib/registry/components/user/cards/compact/user-card-compact.svelte';
+  import UserCardNeon from '$lib/registry/components/user/cards/neon/user-card-neon.svelte';
+  import UserCardGlass from '$lib/registry/components/user/cards/glass/user-card-glass.svelte';
   import UserListItem from '$lib/registry/components/user-list-item/user-list-item.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -75,59 +75,38 @@
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Classic',
-      description: 'Classic user card with banner, avatar, name, bio, and stats. Perfect for popovers, dialogs, and standalone displays.',
-      command: 'npx jsrepo add user-card-classic',
-      preview: classicPreview,
       cardData: userCardClassicCard,
+      preview: classicPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'Compact',
-      description: 'Minimal user card for lists, showing avatar, name, and follow button. Ideal for sidebars and compact layouts.',
-      command: 'npx jsrepo add user-card-compact',
-      preview: compactPreview,
       cardData: userCardCompactCard,
+      preview: compactPreview,
       orientation: 'vertical'
     },
     {
-      name: 'List Item',
-      description: 'Ultra-compact list item showing avatar, name, and follow status badge. Perfect for dense user lists.',
-      command: 'npx jsrepo add user-list-item',
-      preview: listItemPreview,
       cardData: userCardListItemCard,
+      preview: listItemPreview,
       orientation: 'vertical'
     },
     {
-      name: 'Portrait',
-      description: 'Vertical card layout showing avatar, name, bio, and stats. Great for grids and profile galleries.',
-      command: 'npx jsrepo add user-card-portrait',
-      preview: portraitPreview,
       cardData: userCardPortraitCard,
+      preview: portraitPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'Landscape',
-      description: 'Horizontal card layout with avatar on left. Perfect for feed views and detailed lists.',
-      command: 'npx jsrepo add user-card-landscape',
-      preview: landscapePreview,
       cardData: userCardLandscapeCard,
+      preview: landscapePreview,
       orientation: 'vertical'
     },
     {
-      name: 'Neon',
-      description: 'Neon-style card with full background image and glossy top border. Perfect for modern, visually striking user displays.',
-      command: 'npx jsrepo add user-card-neon',
-      preview: neonPreview,
       cardData: userCardNeonCard,
+      preview: neonPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'Glass',
-      description: 'Glassmorphic card with frosted glass effect and gradient mesh background. Modern, elegant design with soft glows.',
-      command: 'npx jsrepo add user-card-glass',
-      preview: glassPreview,
       cardData: userCardGlassCard,
+      preview: glassPreview,
       orientation: 'horizontal',
       control: glassControlNew
     }

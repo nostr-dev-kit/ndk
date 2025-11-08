@@ -4,10 +4,10 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import Preview from '$site-components/preview.svelte';
-  import NoteComposerInline from '$lib/registry/components/note-composer/note-composer-inline.svelte';
-  import NoteComposerModal from '$lib/registry/components/note-composer/note-composer-modal.svelte';
-  import NoteComposerCard from '$lib/registry/components/note-composer/note-composer-card.svelte';
-  import NoteComposerMinimal from '$lib/registry/components/note-composer/note-composer-minimal.svelte';
+  import NoteComposerInline from '$lib/registry/components/note-composer/composers/compound/note-composer-inline.svelte';
+  import NoteComposerModal from '$lib/registry/components/note-composer/composers/compound/note-composer-modal.svelte';
+  import NoteComposerCard from '$lib/registry/components/note-composer/composers/compound/note-composer-card.svelte';
+  import NoteComposerMinimal from '$lib/registry/components/note-composer/composers/compound/note-composer-minimal.svelte';
 
   // Import code examples
   import inlineExample from './examples/inline.example?raw';

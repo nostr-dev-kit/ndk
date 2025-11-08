@@ -12,8 +12,8 @@
   import hashtagCardCompactCode from './hashtag-card-compact.example?raw';
 
   // Import hashtag card variants
-  import HashtagCardPortrait from '$lib/registry/components/hashtag-card-portrait/hashtag-card-portrait.svelte';
-  import HashtagCardCompact from '$lib/registry/components/hashtag-card-compact/hashtag-card-compact.svelte';
+  import HashtagCardPortrait from '$lib/registry/components/hashtag/cards/portrait/hashtag-card-portrait.svelte';
+  import HashtagCardCompact from '$lib/registry/components/hashtag/cards/compact/hashtag-card-compact.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

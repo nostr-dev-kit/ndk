@@ -18,8 +18,8 @@
 		class: className = ''
 	}: Props = $props();
 
-	let activeBlockIndex = $state<number | null>(null);
-	let blockRefs: HTMLDivElement[] = [];
+	let activeComponentIndex = $state<number | null>(null);
+	let componentRefs: HTMLDivElement[] = [];
 	let previewRefs: HTMLDivElement[] = [];
 	let scrollIntervals: number[] = [];
 	let scrollPositions: number[] = [];
@@ -38,16 +38,16 @@
 	$effect(() => {
 		if (typeof window === 'undefined') return;
 
-		const updateActiveBlock = () => {
+		const updateActiveComponent = () => {
 			const viewportCenter = window.innerHeight / 2;
 			let closestIndex: number | null = null;
 			let minDistance = Infinity;
 
-			blockRefs.forEach((ref, index) => {
+			componentRefs.forEach((ref, index) => {
 				if (!ref) return;
 				const rect = ref.getBoundingClientRect();
-				const blockCenter = rect.top + rect.height / 2;
-				const distance = Math.abs(blockCenter - viewportCenter);
+				const componentCenter = rect.top + rect.height / 2;
+				const distance = Math.abs(componentCenter - viewportCenter);
 
 				if (distance < minDistance) {
 					minDistance = distance;
@@ -55,16 +55,16 @@
 				}
 			});
 
-			activeBlockIndex = closestIndex;
+			activeComponentIndex = closestIndex;
 		};
 
-		updateActiveBlock();
-		window.addEventListener('scroll', updateActiveBlock, { passive: true });
-		window.addEventListener('resize', updateActiveBlock, { passive: true });
+		updateActiveComponent();
+		window.addEventListener('scroll', updateActiveComponent, { passive: true });
+		window.addEventListener('resize', updateActiveComponent, { passive: true });
 
 		return () => {
-			window.removeEventListener('scroll', updateActiveBlock);
-			window.removeEventListener('resize', updateActiveBlock);
+			window.removeEventListener('scroll', updateActiveComponent);
+			window.removeEventListener('resize', updateActiveComponent);
 		};
 	});
 
@@ -80,7 +80,7 @@
 			const component = components[index];
 			if (!container || !component) return;
 
-			const isActive = activeBlockIndex === index;
+			const isActive = activeComponentIndex === index;
 			const isHorizontal = component.orientation === 'horizontal';
 
 			if (!isActive) {
@@ -128,15 +128,15 @@
 </script>
 
 	<div class="space-y-0 pb-0">
-		{#each components as component, index (component.name)}
+		{#each components as component, index (component.cardData.name)}
 			{@const isNotLast = index < components.length - 1}
 			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
 			<div
-				bind:this={blockRefs[index]}
+				bind:this={componentRefs[index]}
 				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 {borderClass}"
 				class:cursor-pointer={component.cardData}
-				style:filter={activeBlockIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
-				style:opacity={activeBlockIndex !== index ? '0.6' : '1'}
+				style:filter={activeComponentIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
+				style:opacity={activeComponentIndex !== index ? '0.6' : '1'}
 				role={component.cardData ? 'button' : undefined}
 				tabindex={component.cardData ? 0 : undefined}
 				onclick={() => handleComponentClick(component)}
@@ -146,7 +146,7 @@
 						handleComponentClick(component);
 					}
 				}}
-				onmouseenter={() => (activeBlockIndex = index)}
+				onmouseenter={() => (activeComponentIndex = index)}
 			>
 				<div
 					class={cn(
@@ -154,9 +154,9 @@
 					)}
 				>
 					<div>
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{component.name}</h3>
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{component.cardData.title}</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
-							{component.description}
+							{component.cardData.richDescription}
 						</p>
 					</div>
 					{#if component.control}

@@ -12,7 +12,7 @@
 
   // Import components
   import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';
-  import ZapButtonAvatars from '$lib/registry/components/zap-button-avatars/zap-button-avatars.svelte';
+  import ZapButtonAvatars from '$lib/registry/components/zap/buttons/avatars/zap-button-avatars.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

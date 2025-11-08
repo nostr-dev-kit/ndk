@@ -19,9 +19,9 @@
   import followButtonAnimatedCode from './follow-button-animated.example?raw';
 
   // Import block components
-  import FollowButton from '$lib/registry/components/follow-button/follow-button.svelte';
-  import FollowButtonPill from '$lib/registry/components/follow-button-pill/follow-button-pill.svelte';
-  import FollowButtonAnimated from '$lib/registry/components/follow-button-animated/follow-button-animated.svelte';
+  import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
+  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
+  import FollowButtonAnimated from '$lib/registry/components/follow/buttons/animated/follow-button-animated.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -30,46 +30,28 @@
   // Showcase blocks
   const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Minimal',
-      description: 'Icon-first with target name',
-      command: 'npx jsrepo add follow-button',
-      preview: minimalPreview,
-      cardData: followButtonMinimalCard
+      cardData: followButtonMinimalCard,
+      preview: minimalPreview
     },
     {
-      name: 'Minimal Icon Only',
-      description: 'Just the follow icon',
-      command: 'npx jsrepo add follow-button',
-      preview: minimalIconOnlyPreview,
-      cardData: followButtonMinimalCard
+      cardData: followButtonMinimalCard,
+      preview: minimalIconOnlyPreview
     },
     {
-      name: 'Pill Solid',
-      description: 'Rounded pill with solid background',
-      command: 'npx jsrepo add follow-button-pill',
-      preview: pillSolidPreview,
-      cardData: followButtonPillCard
+      cardData: followButtonPillCard,
+      preview: pillSolidPreview
     },
     {
-      name: 'Pill Outline',
-      description: 'Rounded pill with outline style',
-      command: 'npx jsrepo add follow-button-pill',
-      preview: pillOutlinePreview,
-      cardData: followButtonPillCard
+      cardData: followButtonPillCard,
+      preview: pillOutlinePreview
     },
     {
-      name: 'Pill Compact',
-      description: 'Icon-only circular button',
-      command: 'npx jsrepo add follow-button-pill',
-      preview: pillCompactPreview,
-      cardData: followButtonPillCard
+      cardData: followButtonPillCard,
+      preview: pillCompactPreview
     },
     {
-      name: 'Animated',
-      description: 'With smooth transitions and feedback',
-      command: 'npx jsrepo add follow-button-animated',
-      preview: animatedPreview,
-      cardData: followButtonAnimatedCard
+      cardData: followButtonAnimatedCard,
+      preview: animatedPreview
     }
   ];
 

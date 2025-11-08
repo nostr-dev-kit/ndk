@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
+  import { AvatarGroup } from '$lib/registry/components/article/cards/basic/index.ts';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {

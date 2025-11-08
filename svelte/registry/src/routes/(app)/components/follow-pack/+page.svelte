@@ -19,10 +19,10 @@
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
 
-  import FollowPackPortrait from '$lib/registry/components/follow-pack-portrait/follow-pack-portrait.svelte';
-  import FollowPackHero from '$lib/registry/components/follow-pack-hero/follow-pack-hero.svelte';
-  import FollowPackCompact from '$lib/registry/components/follow-pack-compact/follow-pack-compact.svelte';
-  import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte';
+  import FollowPackPortrait from '$lib/registry/components/follow/packs/portrait/follow-pack-portrait.svelte';
+  import FollowPackHero from '$lib/registry/components/follow/packs/hero/follow-pack-hero.svelte';
+  import FollowPackCompact from '$lib/registry/components/follow/packs/compact/follow-pack-compact.svelte';
+  import FollowPackListItem from '$lib/registry/components/follow/packs/basic/follow-pack-list-item.svelte';
 
   // Import code examples
   import followPackHeroCode from './follow-pack-hero.example?raw';

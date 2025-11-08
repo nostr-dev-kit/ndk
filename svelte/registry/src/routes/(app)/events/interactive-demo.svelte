@@ -6,7 +6,7 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableMention from './clickable-mention.svelte';
 	import ClickableHashtag from './clickable-hashtag.svelte';
-	import GenericCard from '$lib/registry/components/generic-card/generic-card.svelte';
+	import GenericCard from '$lib/registry/components/event/cards/generic/generic-card.svelte';
 	import { setContext } from 'svelte';
 
 	interface Props {

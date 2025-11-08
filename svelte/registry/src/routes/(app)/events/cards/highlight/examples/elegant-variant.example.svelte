@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import HighlightCardElegant from '$lib/registry/components/highlight-card/highlight-card-elegant.svelte';
+  import HighlightCardElegant from '$lib/registry/components/highlight/cards/basic/highlight-card-elegant.svelte';
 
   interface Props {
     ndk: NDKSvelte;

@@ -8,7 +8,7 @@
   // Import code examples
   import userSearchComboboxCode from './user-search-combobox.example?raw';
 
-  import UserSearchCombobox from '$lib/registry/components/user-search-combobox/user-search-combobox.svelte';
+  import UserSearchCombobox from '$lib/registry/components/user/inputs/search/user-search-combobox.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

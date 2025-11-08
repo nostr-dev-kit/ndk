@@ -23,10 +23,10 @@
   import negentropySyncProgressCompactCode from './negentropy-sync-progress-compact.example?raw';
 
   // Import block components
-  import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-minimal.svelte';
-  import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-detailed.svelte';
-  import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-animated.svelte';
-  import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync-progress-compact/negentropy-sync-progress-compact.svelte';
+  import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/progress/minimal/negentropy-sync-progress-minimal.svelte';
+  import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/progress/detailed/negentropy-sync-progress-detailed.svelte';
+  import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/progress/animated/negentropy-sync-progress-animated.svelte';
+  import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/progress/compact/negentropy-sync-progress-compact.svelte';
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
   const ndk = getContext<NDKSvelte>('ndk');

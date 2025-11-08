@@ -2,9 +2,9 @@
 	import { getContext } from 'svelte';
 	import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import ImageCard from '$lib/registry/components/image-card/image-card.svelte';
-	import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte';
-	import ImageCardHero from '$lib/registry/components/image-card-hero/image-card-hero.svelte';
+	import ImageCard from '$lib/registry/components/image/cards/basic/image-card.svelte';
+	import ImageCardInstagram from '$lib/registry/components/image/cards/basic/image-card-instagram.svelte';
+	import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -88,7 +88,7 @@
 			{
 				name: 'ImageCardInstagram',
 				description: 'Instagram-style image card with user header, square image, caption, and action buttons.',
-				importPath: "import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte'",
+				importPath: "import ImageCardInstagram from '$lib/registry/components/image/cards/basic/image-card-instagram.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
@@ -99,7 +99,7 @@
 			{
 				name: 'ImageCardHero',
 				description: 'Fullbleed immersive display with caption and author info anchored at bottom.',
-				importPath: "import ImageCardHero from '$lib/registry/components/image-card-hero/image-card-hero.svelte'",
+				importPath: "import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
@@ -111,7 +111,7 @@
 			{
 				name: 'ImageCard',
 				description: 'General purpose image card combining EventCard primitives with ImageContent.',
-				importPath: "import ImageCard from '$lib/registry/components/image-card/image-card.svelte'",
+				importPath: "import ImageCard from '$lib/registry/components/image/cards/basic/image-card.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte';
-	import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
+	import HashtagModern from '$lib/registry/components/hashtag/displays/modern/hashtag-modern.svelte';
 	import { getContext } from 'svelte';
 
 	interface Props {

@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
+	import HashtagModern from '$lib/registry/components/hashtag/displays/modern/hashtag-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { hashtagMetadata, hashtagCards, hashtagModernCard, hashtagBasicCard, hashtagCustomCard, hashtagInteractiveCard } from '$lib/component-registry/hashtag';
@@ -79,7 +79,7 @@
 			{
 				name: 'HashtagModern',
 				description: 'Modern inline hashtag with stats card popover on hover',
-				importPath: "import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte'",
+				importPath: "import HashtagModern from '$lib/registry/components/hashtag/displays/modern/hashtag-modern.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'tag', type: 'string', required: true, description: 'Hashtag text (with or without # prefix)' },

@@ -77,7 +77,7 @@
 
 <div
   data-content-tab=""
-  class={cn('content-tab-container', className)}
+  class={cn('flex gap-0 bg-background border-b border-border shadow-sm', className)}
   role="tablist"
   aria-label="Content tabs"
 >
@@ -87,82 +87,13 @@
     {:else}
       <button
         type="button"
-        class="content-tab-item"
+        class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
         role="tab"
         onclick={() => onTabClick?.(tab)}
       >
-        <span class="content-tab-kind">{kindLabel(tab.kind, tab.count)}</span>
-        <span class="content-tab-count">{tab.count}</span>
+        <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{kindLabel(tab.kind, tab.count)}</span>
+        <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{tab.count}</span>
       </button>
     {/if}
   {/each}
 </div>
-
-<style>
-  .content-tab-container {
-    display: flex;
-    gap: 0;
-    background: var(--background, white);
-    border-bottom: 1px solid var(--border, #e5e7eb);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .content-tab-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    flex: 1;
-    min-width: 0;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-  }
-
-  .content-tab-item::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: transparent;
-    transition: background 0.2s ease;
-  }
-
-  .content-tab-item:hover {
-    background: var(--accent, rgba(0, 0, 0, 0.04));
-  }
-
-  .content-tab-item:hover::after {
-    background: var(--primary, #3b82f6);
-    opacity: 0.3;
-  }
-
-  .content-tab-item:focus-visible {
-    outline: 2px solid var(--primary, #3b82f6);
-    outline-offset: -2px;
-  }
-
-  .content-tab-kind {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--foreground, #1f2937);
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .content-tab-count {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground, #6b7280);
-    padding: 0.125rem 0.5rem;
-    border-radius: 0.25rem;
-    background: var(--muted, #f3f4f6);
-  }
-</style>

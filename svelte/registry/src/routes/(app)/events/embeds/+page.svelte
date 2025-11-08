@@ -7,8 +7,8 @@
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
 
-  import InteractiveDemo from './examples/interactive-demo.example.svelte';
-  import VariantComparison from './examples/variant-comparison.example.svelte';
+  import InteractiveDemo from './examples/interactive-demo/index.svelte';
+  import VariantComparison from './examples/variant-comparison/index.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -196,16 +196,16 @@
     </div>
   </section>
 
-  <!-- Inline Embeds Section -->
+  <!-- Inline Content Handlers Section -->
   <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Inline Embeds</h2>
+    <h2 class="text-3xl font-bold mb-2">Inline Content Handlers</h2>
     <p class="text-muted-foreground mb-8">
-      Inline components for mentions and hashtags with automatic detection and rich hover cards.
+      Customize how mentions, hashtags, links, and media are rendered within event content.
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Mention -->
-      <a href="/components/embeds/mention" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/events/embeds/mention" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Mention</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">@npub</span>
@@ -219,13 +219,55 @@
       </a>
 
       <!-- Hashtag -->
-      <a href="/components/embeds/hashtag" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+      <a href="/events/embeds/hashtag" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Hashtag</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">#topic</span>
         </div>
         <p class="text-sm text-muted-foreground mb-4">
           Render hashtags with stats and optional hover cards showing activity.
+        </p>
+        <div class="text-sm text-primary group-hover:underline">
+          View documentation →
+        </div>
+      </a>
+
+      <!-- Media -->
+      <a href="/events/embeds/media" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-lg font-semibold">Media</h3>
+          <span class="text-xs px-2 py-1 bg-muted rounded">Images/Videos</span>
+        </div>
+        <p class="text-sm text-muted-foreground mb-4">
+          Custom media renderers with carousels and bento grids for grouped media.
+        </p>
+        <div class="text-sm text-primary group-hover:underline">
+          View documentation →
+        </div>
+      </a>
+
+      <!-- Links -->
+      <a href="/events/embeds/links" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-lg font-semibold">Links</h3>
+          <span class="text-xs px-2 py-1 bg-muted rounded">URLs</span>
+        </div>
+        <p class="text-sm text-muted-foreground mb-4">
+          Rich link previews with hover cards and embedded OpenGraph metadata.
+        </p>
+        <div class="text-sm text-primary group-hover:underline">
+          View documentation →
+        </div>
+      </a>
+
+      <!-- Generic Fallback -->
+      <a href="/events/embeds/generic" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-lg font-semibold">Generic Fallback</h3>
+          <span class="text-xs px-2 py-1 bg-muted rounded">Unknown Kinds</span>
+        </div>
+        <p class="text-sm text-muted-foreground mb-4">
+          Default handler for event kinds without specific components.
         </p>
         <div class="text-sm text-primary group-hover:underline">
           View documentation →

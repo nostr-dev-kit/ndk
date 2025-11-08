@@ -1,11 +1,10 @@
 <script lang="ts">
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
   import { ndk } from '$lib/ndk.svelte';
-  import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
 
   let showModal = $state(false);
 
-  function handleSignupSuccess(signer: NDKPrivateKeySigner) {
+  function handleSignupSuccess(signer) {
     console.log('Profile created!');
     showModal = false;
     // Login with the new signer
@@ -22,22 +21,3 @@
     </div>
   </div>
 {/if}
-
-<style>
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-  }
-
-  .modal-content {
-    max-width: 90vw;
-    max-height: 90vh;
-    overflow: auto;
-    border-radius: 1rem;
-  }
-</style>

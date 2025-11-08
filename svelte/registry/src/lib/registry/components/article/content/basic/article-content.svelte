@@ -4,8 +4,8 @@
   import { SvelteMap } from 'svelte/reactivity';
   import { getContext, setContext } from 'svelte';
   import { getNDKFromContext } from '../../../../utils/ndk-context.svelte.js';
-  import { defaultContentRenderer, type ContentRenderer } from '../../../../ui/content-renderer.svelte.js';
-  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../../../ui/content-renderer.context.js';
+  import { defaultContentRenderer, type ContentRenderer } from '../../../../ui/content-renderer';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../../../ui/content-renderer/content-renderer.context.js';
   import { User } from '../../../../ui/user';
   import HighlightToolbar from './highlight-toolbar.svelte';
   import { MarkdownEventContent } from '../../../../ui/markdown-event-content';

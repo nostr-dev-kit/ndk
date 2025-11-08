@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import EventContent from '../../../../ui/event-content.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
-  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../../../ui/content-renderer.context.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../../../ui/content-renderer/content-renderer.context.js';
   import { cn } from '../../../../utils/cn';
 
   interface Props {

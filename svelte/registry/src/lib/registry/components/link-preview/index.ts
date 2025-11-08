@@ -1,4 +1,4 @@
-import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
+import { defaultContentRenderer } from '../../ui/content-renderer';
 import LinkPreview from './link-preview.svelte';
 
 if (!defaultContentRenderer.linkComponent) {

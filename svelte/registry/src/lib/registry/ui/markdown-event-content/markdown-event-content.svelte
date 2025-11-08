@@ -3,10 +3,10 @@
   import { Marked } from 'marked';
   import { createNostrMarkdownExtensions } from '../../builders/markdown-nostr-extensions.js';
   import EmbeddedEvent from '../embedded-event.svelte';
-  import { defaultContentRenderer, type ContentRenderer } from '../content-renderer.svelte.js';
+  import { defaultContentRenderer, type ContentRenderer } from '../content-renderer';
   import { onMount, mount } from 'svelte';
   import { getContext, setContext } from 'svelte';
-  import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer.context.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer/content-renderer.context.js';
 
   // Component handlers are registered via ContentRenderer
   // No need to import them here as they're passed via the renderer prop

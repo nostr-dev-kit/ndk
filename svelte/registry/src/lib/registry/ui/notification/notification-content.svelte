@@ -5,8 +5,8 @@
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
 	import EmbeddedEvent from '../embedded-event.svelte';
-	import { ContentRenderer } from '../content-renderer.svelte';
-	import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer.context';
+	import { ContentRenderer } from '../content-renderer';
+	import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer/content-renderer.context';
 	import NoteEmbeddedCompact from '../../components/note/cards/compact/note-card-compact.svelte';
 	import ArticleEmbedded from '../../components/article/cards/basic/article-card-medium.svelte';
 	import HighlightEmbedded from '../../components/highlight/cards/basic/highlight-card-feed.svelte';

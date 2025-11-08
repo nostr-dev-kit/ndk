@@ -93,11 +93,13 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "reactionBasic",
       cardData: reactionBasicCard,
       preview: reactionBasicPreview,
       orientation: 'horizontal'
     },
     {
+      id: "reactionDelayed",
       cardData: reactionDelayedCard,
       preview: reactionDelayedPreview,
       orientation: 'horizontal'

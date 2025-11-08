@@ -1,0 +1,18 @@
+{
+  "name": "user-card-landscape",
+  "title": "User Card Landscape",
+  "category": "user",
+  "subcategory": "cards",
+  "variant": "landscape",
+  "description": "A horizontal user card layout",
+  "command": "npx jsrepo add user/cards/landscape",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user-lists",
+    "comment-sections",
+    "author-bios"
+  ]
+}

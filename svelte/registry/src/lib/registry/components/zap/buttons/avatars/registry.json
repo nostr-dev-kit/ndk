@@ -1,0 +1,18 @@
+{
+  "name": "zap-button-avatars",
+  "title": "Zap Button Avatars",
+  "category": "zap",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "description": "Display zap senders as avatars",
+  "command": "npx jsrepo add zap/buttons/avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "social-proof",
+    "top-zappers",
+    "payment-display"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "follow-compact",
+  "title": "Follow Compact",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "compact",
+  "description": "A compact pack for follow content",
+  "command": "npx jsrepo add follow/packs/compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "compact",
+    "nostr",
+    "social"
+  ]
+}

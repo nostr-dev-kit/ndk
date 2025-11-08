@@ -4,17 +4,15 @@
   "category": "article",
   "subcategory": "cards",
   "variant": "hero",
-  "description": "A large featured article card with prominent imagery and typography for highlighting important content. Use as the main featured article on landing pages, newsletter headers, or editorial picks sections.",
+  "description": "A large hero article card for featured content",
   "command": "npx jsrepo add article/cards/hero",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
   ],
   "useCases": [
-    "featured-article",
-    "landing-pages",
-    "newsletter-headers",
-    "editorial-picks",
-    "hero-sections"
+    "hero-sections",
+    "featured-content",
+    "landing-pages"
   ]
 }

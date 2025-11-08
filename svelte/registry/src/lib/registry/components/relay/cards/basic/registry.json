@@ -1,0 +1,20 @@
+{
+  "name": "relay-basic",
+  "title": "Relay Basic",
+  "category": "relay",
+  "subcategory": "cards",
+  "variant": "basic",
+  "description": "A basic card for relay content",
+  "command": "npx jsrepo add relay/cards/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "cards",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

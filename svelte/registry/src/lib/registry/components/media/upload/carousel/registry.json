@@ -1,0 +1,20 @@
+{
+  "name": "media-carousel",
+  "title": "Media Carousel",
+  "category": "media",
+  "subcategory": "upload",
+  "variant": "carousel",
+  "description": "A carousel uploa for media content",
+  "command": "npx jsrepo add media/upload/carousel",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "media",
+    "upload",
+    "carousel",
+    "nostr",
+    "social"
+  ]
+}

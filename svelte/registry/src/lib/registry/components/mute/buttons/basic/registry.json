@@ -1,0 +1,20 @@
+{
+  "name": "mute-basic",
+  "title": "Mute Basic",
+  "category": "mute",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "description": "A basic button for mute content",
+  "command": "npx jsrepo add mute/buttons/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "mute",
+    "buttons",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

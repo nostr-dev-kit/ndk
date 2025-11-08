@@ -1,0 +1,18 @@
+{
+  "name": "event-card-classic",
+  "title": "Event Card Classic",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "classic",
+  "description": "A classic styled event card",
+  "command": "npx jsrepo add event/cards/classic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "traditional-feeds",
+    "forums",
+    "comment-sections"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "follow-button-pill",
+  "title": "Follow Button Pill",
+  "category": "follow",
+  "subcategory": "buttons",
+  "variant": "pill",
+  "description": "A pill-shaped follow button",
+  "command": "npx jsrepo add follow/buttons/pill",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "compact-ui",
+    "mobile-apps",
+    "inline-actions"
+  ]
+}

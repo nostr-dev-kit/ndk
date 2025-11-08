@@ -1,0 +1,20 @@
+{
+  "name": "follow-portrait",
+  "title": "Follow Portrait",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "portrait",
+  "description": "A portrait pack for follow content",
+  "command": "npx jsrepo add follow/packs/portrait",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "portrait",
+    "nostr",
+    "social"
+  ]
+}

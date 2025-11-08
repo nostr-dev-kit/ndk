@@ -1,0 +1,18 @@
+{
+  "name": "note-card-compact",
+  "title": "Note Card Compact",
+  "category": "note",
+  "subcategory": "cards",
+  "variant": "compact",
+  "description": "A compact note card for dense feeds",
+  "command": "npx jsrepo add note/cards/compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "compact-feeds",
+    "sidebars",
+    "notifications"
+  ]
+}

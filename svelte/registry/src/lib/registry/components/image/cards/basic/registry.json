@@ -1,0 +1,20 @@
+{
+  "name": "image-basic",
+  "title": "Image Basic",
+  "category": "image",
+  "subcategory": "cards",
+  "variant": "basic",
+  "description": "A basic card for image content",
+  "command": "npx jsrepo add image/cards/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "image",
+    "cards",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "reply-basic",
+  "title": "Reply Basic",
+  "category": "reply",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "description": "A basic button for reply content",
+  "command": "npx jsrepo add reply/buttons/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "reply",
+    "buttons",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

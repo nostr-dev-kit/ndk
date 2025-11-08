@@ -1,0 +1,20 @@
+{
+  "name": "media-button",
+  "title": "Media Button",
+  "category": "media",
+  "subcategory": "upload",
+  "variant": "button",
+  "description": "A button uploa for media content",
+  "command": "npx jsrepo add media/upload/button",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "media",
+    "upload",
+    "button",
+    "nostr",
+    "social"
+  ]
+}

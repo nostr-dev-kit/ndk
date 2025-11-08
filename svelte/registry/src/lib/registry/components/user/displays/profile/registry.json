@@ -1,0 +1,20 @@
+{
+  "name": "user-profile",
+  "title": "User Profile",
+  "category": "user",
+  "subcategory": "displays",
+  "variant": "profile",
+  "description": "A profile display for user content",
+  "command": "npx jsrepo add user/displays/profile",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user",
+    "displays",
+    "profile",
+    "nostr",
+    "social"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "zap-list",
+  "title": "Zap List",
+  "category": "zap",
+  "subcategory": "displays",
+  "variant": "list",
+  "description": "A list display for zap content",
+  "command": "npx jsrepo add zap/displays/list",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "zap",
+    "displays",
+    "list",
+    "nostr",
+    "social"
+  ]
+}

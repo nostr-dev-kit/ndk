@@ -1,202 +1,131 @@
 /* Component page shared styles */
 .component-page {
-  max-width: 900px;
+  @apply max-w-[900px];
 }
 
 /* Target only the page header, not component headers */
 .component-page > header {
-  margin-bottom: 2rem;
+  @apply mb-8;
 }
 
 .component-page > header h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin: 0 0 0.5rem 0;
-  color: var(--foreground);
+  @apply text-5xl font-extrabold mb-2 text-foreground;
 }
 
 .component-page > header p {
-  font-size: 1.125rem;
-  color: var(--muted-foreground);
-  margin: 0;
+  @apply text-lg text-muted-foreground m-0;
 }
 
 /* Target only direct section children */
 .component-page > section {
-  margin-bottom: 3rem;
+  @apply mb-12;
 }
 
 /* Target only h2s that are direct children of sections, not nested in components */
 .component-page > section > h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: var(--foreground);
+  @apply text-2xl font-bold mb-2 text-foreground;
 }
 
 .component-page .demo-description {
-  color: var(--muted-foreground);
-  margin: 0 0 1rem 0;
+  @apply text-muted-foreground mb-4;
 }
 
 .component-page .demo {
-  padding: 1.5rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  @apply p-6 bg-card border border-border rounded-lg;
 }
 
 .component-page .demo-container {
-  padding: 1.5rem;
+  @apply p-6 border border-border rounded-lg;
   background: color-mix(in srgb, var(--muted) calc(0.3 * 100%), transparent);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
 }
 
 .component-page .space-y-3 > * + * {
-  margin-top: 0.75rem;
+  @apply mt-3;
 }
 
 .component-page .code-examples {
-  padding: 1.5rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  @apply p-6 bg-card border border-border rounded-lg;
 }
 
 .component-page .code-block {
-  margin-bottom: 2rem;
-}
-
-.component-page .code-block:last-child {
-  margin-bottom: 0;
+  @apply mb-8 last:mb-0;
 }
 
 .component-page .code-block h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  color: var(--foreground);
+  @apply text-base font-semibold mb-2 text-foreground;
 }
 
 .component-page .code-block pre {
-  margin: 0;
-  padding: 1rem;
-  background: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  overflow-x: auto;
+  @apply m-0 p-4 bg-muted border border-border rounded-lg overflow-x-auto;
 }
 
 .component-page .code-block code {
-  font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--foreground);
+  @apply font-mono text-sm leading-normal text-foreground;
 }
 
 /* Card example styles */
 .card-example {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  @apply flex items-center gap-3 p-4 bg-card border border-border rounded-lg;
 }
 
 .card-content {
-  flex: 1;
+  @apply flex-1;
 }
 
 .card-name {
-  font-weight: 600;
-  color: var(--foreground);
+  @apply font-semibold text-foreground;
 }
 
 .card-url {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
+  @apply text-sm text-muted-foreground;
 }
 
 .card-with-description {
-  padding: 1rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  @apply p-4 bg-card border border-border rounded-lg;
 }
 
 .card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  @apply flex items-center gap-3 mb-3;
 }
 
 .card-description {
-  margin-top: 0.75rem;
+  @apply mt-3;
 }
 
 .card-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  @apply flex items-center gap-2;
 }
 
 .percentage-badge {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--primary);
+  @apply text-sm font-medium text-primary;
 }
 
 /* Controls section styles */
 .component-page .controls {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  @apply mb-8 p-6 bg-card border border-border rounded-xl;
 }
 
 .component-page .controls label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  @apply flex flex-col gap-2;
 }
 
 .component-page .label-text {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--foreground);
+  @apply text-sm font-semibold text-foreground;
 }
 
 .component-page .nevent-input,
 .component-page .npub-input,
 .component-page .note-input {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 0.375rem;
-  font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 0.875rem;
-  width: 100%;
-  max-width: 600px;
-  background: var(--background);
-  color: var(--foreground);
+  @apply py-2 px-3 border border-border rounded-md font-mono text-sm w-full max-w-[600px] bg-background text-foreground;
 }
 
 .component-page .nevent-input:focus,
 .component-page .npub-input:focus,
 .component-page .note-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) calc(0.1 * 100%), transparent);
+  @apply outline-none border-primary ring-2 ring-primary/10;
 }
 
 /* Loading and error states */
 .component-page .loading {
-  padding: 2rem;
-  text-align: center;
-  color: var(--muted-foreground);
-  font-size: 1.125rem;
+  @apply p-8 text-center text-muted-foreground text-lg;
 }

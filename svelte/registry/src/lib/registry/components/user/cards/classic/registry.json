@@ -4,68 +4,15 @@
   "category": "user",
   "subcategory": "cards",
   "variant": "classic",
-  "description": "A standard user card with avatar, name, bio, and follow button in a clean layout. Use in user directories, follow suggestions, or profile previews.",
-  "showcaseTitle": "Classic User Card",
-  "showcaseDescription": "Standard user card with clean design and essential information.",
-  "command": "npx jsrepo add user-card-classic",
+  "description": "A classic user profile card with avatar, bio and stats",
+  "command": "npx jsrepo add user/cards/classic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
   ],
-  "registryDependencies": [
-    "ui/user",
-    "components/follow-button"
-  ],
-  "components": [
-    {
-      "name": "UserCardClassic",
-      "description": "Classic user card component",
-      "importPath": "import { UserCardClassic } from '$lib/registry/components/user-card-classic'",
-      "props": [
-        {
-          "name": "ndk",
-          "type": "NDKSvelte",
-          "description": "NDK instance (optional if provided via context)"
-        },
-        {
-          "name": "user",
-          "type": "NDKUser",
-          "required": true,
-          "description": "User to display"
-        },
-        {
-          "name": "showFollowButton",
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to show follow button"
-        },
-        {
-          "name": "showBio",
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to show user bio"
-        },
-        {
-          "name": "class",
-          "type": "string",
-          "description": "Additional CSS classes"
-        }
-      ]
-    }
-  ],
-  "examples": [
-    {
-      "name": "basic",
-      "title": "Basic Usage",
-      "description": "Standard user card",
-      "file": "examples/basic.svelte"
-    }
-  ],
   "useCases": [
-    "user-directories",
-    "follow-suggestions",
-    "profile-previews",
-    "user-lists",
-    "social-media"
+    "user-profiles",
+    "team-pages",
+    "user-lists"
   ]
 }

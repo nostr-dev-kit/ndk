@@ -1,0 +1,20 @@
+{
+  "name": "highlight-inline",
+  "title": "Highlight Inline",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "inline",
+  "description": "A inline card for highlight content",
+  "command": "npx jsrepo add highlight/cards/inline",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "inline",
+    "nostr",
+    "social"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "user-search",
+  "title": "User Search",
+  "category": "user",
+  "subcategory": "inputs",
+  "variant": "search",
+  "description": "A search input for user content",
+  "command": "npx jsrepo add user/inputs/search",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user",
+    "inputs",
+    "search",
+    "nostr",
+    "social"
+  ]
+}

@@ -8,12 +8,15 @@
 
   // Import code examples
   import replyButtonCode from './examples/basic/index.txt?raw';
+  import replyButtonAvatarsCode from './examples/avatars/index.txt?raw';
 
   // Import components
   import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
+  import ReplyButtonAvatars from '$lib/registry/components/reply/buttons/avatars/reply-button-avatars.svelte';
 
   // Import registry metadata
   import replyButtonCard from '$lib/registry/components/reply/buttons/basic/registry.json';
+  import replyButtonAvatarsCard from '$lib/registry/components/reply/buttons/avatars/registry.json';
 
   // Page metadata
   const metadata = {
@@ -49,11 +52,28 @@
   {/if}
 {/snippet}
 
+{#snippet avatarsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <ReplyButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
+      <ReplyButtonAvatars {ndk} event={sampleEvent} variant="outline" />
+      <ReplyButtonAvatars {ndk} event={sampleEvent} variant="pill" />
+      <ReplyButtonAvatars {ndk} event={sampleEvent} variant="solid" />
+    </div>
+  {/if}
+{/snippet}
+
 <!-- Components snippet -->
 {#snippet components()}
   <ComponentCard data={{...replyButtonCard, code: replyButtonCode}}>
     {#snippet preview()}
       {@render replyButtonsPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...replyButtonAvatarsCard, code: replyButtonAvatarsCode}}>
+    {#snippet preview()}
+      {@render avatarsPreview()}
     {/snippet}
   </ComponentCard>
 {/snippet}
@@ -68,10 +88,15 @@
       cardData: replyButtonCard,
       preview: replyButtonsPreview,
       orientation: 'horizontal'
+    },
+    {
+      id: "replyButtonAvatarsCard",
+      cardData: replyButtonAvatarsCard,
+      preview: avatarsPreview,
+      orientation: 'horizontal'
     }
   ]}
   {components}
-  apiDocs={replyButtonCard.apiDocs}
 >
   <EditProps.Prop
     name="Sample Event"

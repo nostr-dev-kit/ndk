@@ -3,35 +3,20 @@
   import type { Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import Preview from '$site-components/preview.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   import BasicExample from './examples/basic.example.svelte';
   import CustomSnippetsExample from './examples/custom-snippets.example.svelte';
 
-  // Page metadata
-  const contentNoteBasicCard = {
-    name: 'content-note-basic',
-    title: 'Plain Text Basic',
-    category: 'event',
-    subcategory: 'content',
-    variant: 'basic',
-    description: 'Basic plain text content display'
-  };
-
-  const contentNoteCustomSnippetsCard = {
-    name: 'content-note-custom',
-    title: 'Plain Text Custom',
-    category: 'event',
-    subcategory: 'content',
-    variant: 'custom',
-    description: 'Custom snippets for plain text content'
-  };
+  // Import code for examples
+  import basicCode from './examples/basic.example.svelte?raw';
+  import customCode from './examples/custom-snippets.example.svelte?raw';
 
   const metadata = {
     title: 'Plain Text Content',
     description: 'Components for rendering plain text event content',
-    cards: [contentNoteBasicCard, contentNoteCustomSnippetsCard],
     apiDocs: []
   };
 
@@ -59,55 +44,42 @@ Pretty cool, right? #awesome`);
       ['emoji', 'custom_emoji', 'https://example.com/emoji.png']
     ]
   } as any));
-
-  const showcaseComponents: ShowcaseComponent[] = [
-    {
-      id: 'content-note-basic',
-      cardData: contentNoteBasicCard,
-      preview: basicPreview
-    },
-    {
-      id: 'content-note-custom',
-      cardData: contentNoteCustomSnippetsCard,
-      preview: customSnippetsPreview
-    }
-  ];
 </script>
 
-<!-- EditProps snippet -->
-<!-- Preview snippets for showcase -->
-{#snippet basicPreview()}
-  <BasicExample {ndk} event={exampleEvent} />
-{/snippet}
+<!-- Composition examples -->
+{#snippet customSections()}
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Composition Examples</h2>
+    <p class="text-muted-foreground mb-6">
+      These examples show how to render plain text event content with different approaches.
+      These are teaching examples, not installable components.
+    </p>
 
-{#snippet customSnippetsPreview()}
-  <CustomSnippetsExample {ndk} event={exampleEvent} />
-{/snippet}
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-xl font-semibold mb-3">Basic Rendering</h3>
+        <p class="text-muted-foreground mb-4">Simple plain text rendering with automatic parsing of mentions, links, and hashtags.</p>
+        <Preview code={basicCode}>
+          <BasicExample {ndk} event={exampleEvent} />
+        </Preview>
+      </div>
 
-<!-- Preview snippets for components section -->
-{#snippet basicComponentPreview()}
-  <BasicExample {ndk} event={exampleEvent} />
-{/snippet}
-
-{#snippet customSnippetsComponentPreview()}
-  <CustomSnippetsExample {ndk} event={exampleEvent} />
+      <div>
+        <h3 class="text-xl font-semibold mb-3">Custom Snippets</h3>
+        <p class="text-muted-foreground mb-4">Customize how mentions, links, and other elements are rendered using snippet overrides.</p>
+        <Preview code={customCode}>
+          <CustomSnippetsExample {ndk} event={exampleEvent} />
+        </Preview>
+      </div>
+    </div>
+  </section>
 {/snippet}
 
 <!-- Use the template -->
-{#if true}
-  {@const previews = {
-    'event-rendering-basic': basicComponentPreview,
-    'event-rendering-custom-snippets': customSnippetsComponentPreview
-  } as any}
-  <ComponentPageTemplate
-  metadata={metadata}
+<ComponentPageTemplate
+  {metadata}
   {ndk}
-  {showcaseComponents}componentsSection={{
-    cards: metadata.cards,
-    previews
-  }}
-  apiDocs={metadata.apiDocs}
+  {customSections}
 >
-    <EditProps.Prop name="Event content" type="text" bind:value={eventContent} />
-  </ComponentPageTemplate>
-{/if}
+  <EditProps.Prop name="Event content" type="text" bind:value={eventContent} />
+</ComponentPageTemplate>

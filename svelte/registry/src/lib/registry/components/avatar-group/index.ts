@@ -28,7 +28,7 @@
  * @example Using the builder directly:
  * ```svelte
  * <script>
- *   import { createAvatarGroup } from '../../../builders/avatar-group/index.svelte.js';
+ *   import { createAvatarGroup } from '../../builders/avatar-group/index.svelte.js';
  *
  *   const avatarGroup = createAvatarGroup(() => ({
  *     pubkeys: ['pubkey1', 'pubkey2', 'pubkey3'],

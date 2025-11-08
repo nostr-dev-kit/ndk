@@ -1,0 +1,21 @@
+{
+  "name": "reply-avatars",
+  "title": "Reply Avatars",
+  "category": "reply",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "description": "An avatars button showing who replied to content",
+  "command": "npx jsrepo add reply/buttons/avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "reply",
+    "buttons",
+    "avatars",
+    "nostr",
+    "social"
+  ],
+  "apiDocs": []
+}

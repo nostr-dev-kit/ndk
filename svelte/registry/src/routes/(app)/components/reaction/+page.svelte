@@ -4,21 +4,18 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { reactionMetadata, reactionButtonCard, reactionButtonAvatarsCard, reactionSlackCard } from '$lib/component-registry/reaction';
+  import { reactionMetadata } from '$lib/component-registry/reaction';
   import { EditProps } from '$lib/site-components/edit-props';
   import SectionTitle from '$lib/site-components/SectionTitle.svelte';
   import Preview from '$lib/site-components/preview.svelte';
 
   // Import code examples
-  import reactionButtonCode from './reaction-button.example?raw';
-  import reactionButtonAvatarsCode from './reaction-button-avatars.example?raw';
-  import reactionSlackCode from './reaction-slack.example?raw';
+  import reactionBasicCode from './reaction-basic.example?raw';
+  import reactionDelayedCode from './reaction-delayed.example?raw';
   import reactionBuilderCode from './reaction-builder.example?raw';
 
   // Import components
-  import ReactionButton from '$lib/registry/components/reaction/reaction-button.svelte';
-  import ReactionButtonAvatars from '$lib/registry/components/reaction-button-avatars/reaction-button-avatars.svelte';
-  import ReactionSlack from '$lib/registry/components/reaction/reaction-slack.svelte';
+  import { Reaction } from '$lib/registry/components/reaction';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -26,39 +23,19 @@
 </script>
 
 <!-- Preview snippets for showcase -->
-{#snippet reactionButtonsPreview()}
+{#snippet reactionBasicPreview()}
   {#if sampleEvent}
     <div class="flex gap-4 items-center flex-wrap">
-      <ReactionButton {ndk} event={sampleEvent} variant="ghost" />
-      <ReactionButton {ndk} event={sampleEvent} variant="outline" />
-      <ReactionButton {ndk} event={sampleEvent} variant="pill" />
-      <ReactionButton {ndk} event={sampleEvent} variant="solid" />
+      <Reaction.Button {ndk} event={sampleEvent} />
     </div>
   {/if}
 {/snippet}
 
-{#snippet avatarsPreview()}
+{#snippet reactionDelayedPreview()}
   {#if sampleEvent}
     <div class="flex gap-4 items-center flex-wrap">
-      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
-      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="outline" />
-      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="pill" />
-      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="solid" />
-    </div>
-  {/if}
-{/snippet}
-
-{#snippet slackPreview()}
-  {#if sampleEvent}
-    <div class="space-y-6">
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Horizontal</h4>
-        <ReactionSlack {ndk} event={sampleEvent} variant="horizontal" />
-      </div>
-      <div>
-        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Vertical</h4>
-        <ReactionSlack {ndk} event={sampleEvent} variant="vertical" />
-      </div>
+      <Reaction.Button {ndk} event={sampleEvent} delayed={5} />
+      <p class="text-sm text-muted-foreground mt-2">Reactions are delayed 5 seconds. Click again to cancel.</p>
     </div>
   {/if}
 {/snippet}
@@ -69,39 +46,30 @@
   {ndk}
   showcaseBlocks={[
     {
-      name: 'ReactionButton',
-      description: 'Basic reaction button with count',
-      command: 'npx jsrepo add reaction-button',
-      preview: reactionButtonsPreview,
+      name: 'Reaction with Long-Press',
+      description: 'Click to react, long-press for emoji picker',
+      command: 'npx jsrepo add reaction',
+      preview: reactionBasicPreview,
       cardData: reactionMetadata.cards[0],
       orientation: 'horizontal'
     },
     {
-      name: 'Reaction Authors Avatars',
-      description: 'Show avatars of people who reacted',
-      command: 'npx jsrepo add reaction-button-avatars',
-      preview: avatarsPreview,
+      name: 'Delayed Reactions',
+      description: 'Cancellable reactions with delayed publishing',
+      command: 'npx jsrepo add reaction',
+      preview: reactionDelayedPreview,
+      cardData: reactionMetadata.cards[1],
       orientation: 'horizontal'
-    },
-    {
-      name: 'ReactionSlack',
-      description: 'Slack-style reactions display',
-      command: 'npx jsrepo add reaction-slack',
-      preview: slackPreview,
-      cardData: reactionMetadata.cards[2],
-      orientation: 'vertical'
     }
   ]}
   componentsSection={{
-    cards: [
-      { ...reactionButtonCard, code: reactionButtonCode },
-      { ...reactionButtonAvatarsCard, code: reactionButtonAvatarsCode },
-      { ...reactionSlackCard, code: reactionSlackCode }
-    ],
+    cards: reactionMetadata.cards.map((card, i) => ({
+      ...card,
+      code: i === 0 ? reactionBasicCode : i === 1 ? reactionDelayedCode : reactionBuilderCode
+    })),
     previews: {
-      'reaction-button': reactionButtonsPreview,
-      'reaction-button-avatars': avatarsPreview,
-      'reaction-slack': slackPreview
+      'reaction-basic': reactionBasicPreview,
+      'reaction-delayed': reactionDelayedPreview
     }
   }}
   apiDocs={reactionMetadata.apiDocs}
@@ -109,7 +77,7 @@
   {#snippet customSections()}
     <SectionTitle
       title="Builder Pattern"
-      description="All reaction components use the createReactionAction builder from @nostr-dev-kit/svelte. This builder provides reactive state management for reactions, making it easy to build custom reaction interfaces."
+      description="The reaction component uses the createReactionAction builder from @nostr-dev-kit/svelte. This builder provides reactive state management for reactions, making it easy to build custom reaction interfaces."
     />
 
     <div class="py-12 space-y-8">

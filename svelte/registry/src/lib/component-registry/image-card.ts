@@ -29,7 +29,7 @@ export const imageCardHeroCard: ComponentCardData = {
 		{
 			name: 'ImageCardHero',
 			description: 'Hero-style fullbleed image card component',
-			importPath: "import { ImageCardHero } from '$lib/registry/components/image-card-hero'",
+			importPath: "import { ImageCardHero } from '$lib/registry/components/image/cards/hero'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },

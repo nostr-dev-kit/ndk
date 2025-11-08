@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
-  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventCard } from '$lib/registry/components/event/cards/compound';
   import { ReactionAction } from '$lib/registry/components/reaction';
   import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
 

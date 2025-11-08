@@ -10,7 +10,7 @@ export const contentTabCard: ComponentCardData = {
     {
       name: 'ContentTab',
       description: 'Component that displays tabs based on user content types with minimal default styling',
-      importPath: "import { ContentTab } from '$lib/registry/components/content-tab'",
+      importPath: "import { ContentTab } from '$lib/registry/components/misc/content-tab'",
       props: [
         { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
         { name: 'pubkeys', type: 'string[]', required: true, description: 'User pubkeys to sample content from' },
@@ -68,7 +68,7 @@ export const contentTabApiDocs: ApiDoc[] = [
   {
     name: 'ContentTab',
     description: 'Component that displays tabs based on user content types with minimal default styling.',
-    importPath: "import { ContentTab } from '$lib/registry/components/content-tab'",
+    importPath: "import { ContentTab } from '$lib/registry/components/misc/content-tab'",
     props: [
       {
         name: 'ndk',

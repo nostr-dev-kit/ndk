@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
-  import { VoiceMessageCard } from '$lib/registry/components/voice-message-card';
+  import { VoiceMessageCard } from '$lib/registry/components/voice-message/cards/basic';
   import { User } from '$lib/registry/ui/user';
 
   interface Props {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { ImageContent } from '$lib/registry/components/image-content';
+	import { ImageContent } from '$lib/registry/components/image/content/basic';
 
 	interface Props {
 		ndk: NDKSvelte;

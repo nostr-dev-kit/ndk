@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { EventCard } from '$lib/registry/components/event-card';
+	import { EventCard } from '$lib/registry/components/event/cards/compound';
 	import { User } from '$lib/registry/ui/user';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 

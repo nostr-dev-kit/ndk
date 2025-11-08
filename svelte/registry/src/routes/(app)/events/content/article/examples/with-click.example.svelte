@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
-  import { ArticleContent } from '$lib/registry/components/article-content';
+  import { ArticleContent } from '$lib/registry/components/article/content/basic';
   import HighlightCardCompact from '$lib/registry/components/highlight-card/highlight-card-compact.svelte';
   import { Dialog } from 'bits-ui';
 

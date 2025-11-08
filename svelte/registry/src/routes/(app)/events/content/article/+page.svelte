@@ -81,7 +81,7 @@
 			{
 				name: 'ArticleContent',
 				description: 'Renders NIP-23 article content with markdown, inline highlights, and text selection.',
-				importPath: "import { ArticleContent } from '$lib/registry/components/article-content'",
+				importPath: "import { ArticleContent } from '$lib/registry/components/article/content/basic'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'article', type: 'NDKArticle', required: true, description: 'The article to display' },

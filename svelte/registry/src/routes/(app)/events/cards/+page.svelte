@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte';
-	import { EventCard } from '$lib/registry/components/event-card';
+	import { EventCard } from '$lib/registry/components/event/cards/compound';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
@@ -284,7 +284,7 @@
 				name: 'EventCard.Root',
 				description:
 					'Root container that provides event context to all child components. Handles interactive states and threading metadata.',
-				importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
@@ -299,7 +299,7 @@
 			{
 				name: 'EventCard.Header',
 				description: 'Displays event author information with avatar, name, and timestamp. Supports custom actions slot.',
-				importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 				props: [
 					{ name: 'variant', type: "'full' | 'compact' | 'minimal'", default: "'full'", description: 'Display variant' },
 					{ name: 'showAvatar', type: 'boolean', default: 'true', description: 'Show author avatar' },
@@ -314,7 +314,7 @@
 			{
 				name: 'EventCard.Content',
 				description: 'Displays event content with optional truncation and media preview support.',
-				importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 				props: [
 					{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -323,7 +323,7 @@
 			{
 				name: 'EventCard.Actions',
 				description: 'Container for action buttons (reactions, reposts, etc.).',
-				importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 				props: [
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 				],

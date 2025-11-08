@@ -9,7 +9,7 @@ export const voiceMessageCardCompactCard: ComponentCardData = {
 		{
 			name: 'VoiceMessageCardCompact',
 			description: 'Compact voice message card for inline display',
-			importPath: "import { VoiceMessageCardCompact } from '$lib/registry/components/voice-message-card'",
+			importPath: "import { VoiceMessageCardCompact } from '$lib/registry/components/voice-message/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Voice message event (NIP-A0)' },
@@ -28,7 +28,7 @@ export const voiceMessageCardExpandedCard: ComponentCardData = {
 		{
 			name: 'VoiceMessageCardExpanded',
 			description: 'Expanded voice message card with waveform visualization',
-			importPath: "import { VoiceMessageCardExpanded } from '$lib/registry/components/voice-message-card'",
+			importPath: "import { VoiceMessageCardExpanded } from '$lib/registry/components/voice-message/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Voice message event (NIP-A0)' },

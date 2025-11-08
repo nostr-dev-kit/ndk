@@ -10,7 +10,7 @@ export const avatarGroupCard: ComponentCardData = {
     {
       name: 'AvatarGroup',
       description: 'Display multiple user avatars in a stacked group with smart ordering and flexible overflow options',
-      importPath: "import { AvatarGroup } from '$lib/registry/components/avatar-group'",
+      importPath: "import { AvatarGroup } from '$lib/registry/components/misc/avatar-group'",
       props: [
         { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
         { name: 'pubkeys', type: 'string[]', required: true, description: 'Array of user pubkeys to display' },
@@ -71,7 +71,7 @@ export const avatarGroupApiDocs: ApiDoc[] = [
   {
     name: 'AvatarGroup',
     description: 'Display multiple user avatars in a stacked group with smart ordering and flexible overflow options.',
-    importPath: "import { AvatarGroup } from '$lib/registry/components/avatar-group'",
+    importPath: "import { AvatarGroup } from '$lib/registry/components/misc/avatar-group'",
     props: [
       {
         name: 'ndk',

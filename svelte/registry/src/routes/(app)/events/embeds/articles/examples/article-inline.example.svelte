@@ -4,7 +4,7 @@
   import { NDKArticle } from '@nostr-dev-kit/ndk';
   import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
   import ArticleCardInline from '$lib/registry/components/article-card-inline/article-card-inline.svelte';
-  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventCard } from '$lib/registry/components/event/cards/compound';
 
   interface Props {
     ndk: NDKSvelte;

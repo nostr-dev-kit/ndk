@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SessionSwitcher } from '$lib/registry/components/session-switcher';
+	import { SessionSwitcher } from '$lib/registry/components/session/switchers/compound';
 	import type { NDKSvelteWithSession } from '@nostr-dev-kit/svelte';
 	import type { NDKSession } from '@nostr-dev-kit/sessions';
 

@@ -12,7 +12,8 @@
   let {
     metadata,
     ndk: propNdk,
-    showcaseBlocks = [],
+    showcaseComponents,
+    showcaseBlocks, // Legacy prop for backwards compatibility
     showcaseComponent,
     componentsSection,
     apiDocs = [],
@@ -25,6 +26,9 @@
     emptyState,
     children
   }: ComponentPageTemplateProps = $props();
+
+  // Use showcaseComponents if provided, otherwise fall back to showcaseBlocks for backwards compatibility
+  const components = $derived(showcaseComponents || showcaseBlocks || []);
 
   // Get NDK from context if not provided as prop
   const ndk = propNdk || getContext<NDKSvelte>('ndk');
@@ -44,7 +48,7 @@
   {/if}
 
   <!-- Showcase Section or Empty State -->
-  {#if showcaseBlocks.length > 0}
+  {#if components.length > 0}
     <SectionTitle
       title={metadata.showcaseTitle || 'Showcase'}
       description={metadata.showcaseDescription}
@@ -52,16 +56,16 @@
 
     {#if showcaseComponent}
       {@const Component = showcaseComponent}
-      <Component blocks={showcaseBlocks} />
-    {:else if showcaseBlocks.some(b => b.orientation === 'vertical' || b.orientation === 'horizontal')}
+      <Component components={components} />
+    {:else if components.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
       <!-- Use ComponentsShowcase if orientations are specified -->
       <ComponentsShowcase
         class="-mx-8 px-8"
-        blocks={showcaseBlocks}
+        components={components}
       />
     {:else}
       <!-- Default to ComponentsShowcaseGrid -->
-      <ComponentsShowcaseGrid blocks={showcaseBlocks} />
+      <ComponentsShowcaseGrid components={components} />
     {/if}
   {:else if emptyState}
     {@render emptyState()}

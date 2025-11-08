@@ -139,7 +139,7 @@ export const notificationItemCompactCard: ComponentCardData = {
 			name: 'NotificationItemCompact',
 			description: 'Compact notification item with horizontal layout',
 			importPath:
-				"import NotificationItemCompact from '$lib/registry/components/notification-item-compact'",
+				"import NotificationItemCompact from '$lib/registry/components/notification/items/compact'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{
@@ -165,7 +165,7 @@ export const notificationItemExpandedCard: ComponentCardData = {
 			name: 'NotificationItemExpanded',
 			description: 'Expanded notification item with full content display',
 			importPath:
-				"import NotificationItemExpanded from '$lib/registry/components/notification-item-expanded'",
+				"import NotificationItemExpanded from '$lib/registry/components/notification/items/expanded'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{
@@ -190,7 +190,7 @@ export const notificationFeedCard: ComponentCardData = {
 		{
 			name: 'NotificationFeed',
 			description: 'Complete notification feed with builder integration',
-			importPath: "import NotificationFeed from '$lib/registry/components/notification-feed'",
+			importPath: "import NotificationFeed from '$lib/registry/components/notification/feeds/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{
@@ -313,7 +313,7 @@ export const notificationMetadata = {
 		{
 			name: 'NotificationFeed',
 			description: 'Complete notification feed component',
-			importPath: "import NotificationFeed from '$lib/registry/components/notification-feed'",
+			importPath: "import NotificationFeed from '$lib/registry/components/notification/feeds/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{

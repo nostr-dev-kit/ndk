@@ -53,7 +53,7 @@ export const eventCardBasicCard: ComponentCardData = {
 		{
 			name: 'EventCard.Root',
 			description: 'Root component providing event context to all child primitives',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, falls back to context)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'The event to display (any kind)' },
@@ -64,7 +64,7 @@ export const eventCardBasicCard: ComponentCardData = {
 		{
 			name: 'EventCard.Header',
 			description: 'Displays event author information with avatar, name, and timestamp',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{ name: 'variant', type: "'full' | 'compact'", default: "'full'", description: 'Header layout variant' },
 				{ name: 'avatarSize', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Avatar size' },
@@ -75,7 +75,7 @@ export const eventCardBasicCard: ComponentCardData = {
 		{
 			name: 'EventCard.Content',
 			description: 'Renders event content with automatic parsing of mentions, hashtags, and media',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
 				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -93,7 +93,7 @@ export const eventCardFullCard: ComponentCardData = {
 		{
 			name: 'EventCard.Actions',
 			description: 'Container for event action buttons (repost, reaction, etc.)',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 			]
@@ -101,7 +101,7 @@ export const eventCardFullCard: ComponentCardData = {
 		{
 			name: 'EventCard.Dropdown',
 			description: 'Dropdown menu for event actions (mute, report, copy, etc.)',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{ name: 'showRelayInfo', type: 'boolean', default: 'true', description: 'Show relay information in dropdown' },
 				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -119,7 +119,7 @@ export const eventCardChromeCard: ComponentCardData = {
 		{
 			name: 'EventCard.Root',
 			description: 'Root component providing event context to all child primitives',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, falls back to context)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'The event to display (any kind)' },

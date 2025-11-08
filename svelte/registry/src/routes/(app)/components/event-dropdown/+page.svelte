@@ -10,7 +10,7 @@
 	import type { ShowcaseBlock } from '$lib/templates/types';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
-	import { EventCard } from '$lib/registry/components/event-card';
+	import { EventCard } from '$lib/registry/components/event/cards/compound';
 	import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
 
 	// Import code example
@@ -78,7 +78,7 @@
 			<div class="bg-muted/50 rounded-lg p-6">
 				<h3 class="text-lg font-semibold mb-3">In Event Card Header</h3>
 				<pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
-  import &#123; EventCard &#125; from '$lib/registry/components/event-card';
+  import &#123; EventCard &#125; from '$lib/registry/components/event/cards/compound';
   import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
 &lt;/script&gt;
 

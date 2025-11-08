@@ -9,7 +9,7 @@ export const replyButtonCard: ComponentCardData = {
 		{
 			name: 'ReplyButton',
 			description: 'Reply button component showing icon and count',
-			importPath: "import { ReplyButton } from '$lib/registry/components/reply-button'",
+			importPath: "import { ReplyButton } from '$lib/registry/components/reply/buttons/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional, uses context if not provided)' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Event to reply to' },
@@ -33,7 +33,7 @@ export const replyMetadata = {
 		{
 			name: 'ReplyButton',
 			description: 'Reply button component showing icon and count. Triggers onclick handler when clicked.',
-			importPath: "import { ReplyButton } from '$lib/registry/components/reply-button'",
+			importPath: "import { ReplyButton } from '$lib/registry/components/reply/buttons/basic'",
 			props: [
 				{
 					name: 'ndk',

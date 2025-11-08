@@ -18,7 +18,7 @@ export const eventsIntroductionCards: ComponentCardData[] = [
 			{
 				name: 'EventCard',
 				description: 'Composable card primitives for displaying Nostr events with header, content, and actions.',
-				importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 				props: [
 					{
 						name: 'Root',

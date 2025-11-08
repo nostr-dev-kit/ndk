@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
   import NoteEmbedded from '$lib/registry/components/note-card/note-card.svelte';
-  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventCard } from '$lib/registry/components/event/cards/compound';
 
   interface Props {
     ndk: NDKSvelte;

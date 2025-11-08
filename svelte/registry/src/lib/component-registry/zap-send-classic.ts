@@ -25,7 +25,7 @@ export const zapSendClassicApiDocs: ApiDoc[] = [
 	{
 		name: 'ZapSendClassic',
 		description: 'Complete modal dialog for sending zaps with automatic split calculations, amount presets, and comment support.',
-		importPath: "import { ZapSendClassic } from '$lib/registry/components/zap-send-classic'",
+		importPath: "import { ZapSendClassic } from '$lib/registry/components/zap/send/classic'",
 		props: [
 			{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 			{ name: 'target', type: 'NDKEvent | NDKUser', description: 'Event or user to zap' },

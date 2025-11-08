@@ -9,7 +9,7 @@ export const fullCardData: ComponentCardData = {
 		{
 			name: 'EventCard.Root',
 			description: 'Root container that provides context to child components. Renders as a button if onclick is provided, otherwise as an article element.',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'ndk',
@@ -37,7 +37,7 @@ export const fullCardData: ComponentCardData = {
 		{
 			name: 'EventCard.Header',
 			description: 'Displays event author info with avatar, name, and timestamp.',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'variant',
@@ -73,7 +73,7 @@ export const fullCardData: ComponentCardData = {
 		{
 			name: 'EventCard.Content',
 			description: 'Renders event content with support for truncation and expansion.',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'truncate',
@@ -108,7 +108,7 @@ export const fullCardData: ComponentCardData = {
 		{
 			name: 'EventCard.Actions',
 			description: 'Container for action buttons (reply, repost, reaction, zap, etc.).',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'variant',
@@ -182,7 +182,7 @@ export const customChromeData: ComponentCardData = {
 		{
 			name: 'EventCard.Root',
 			description: 'Root container that provides context to child components. Renders as a button if onclick is provided, otherwise as an article element.',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'ndk',
@@ -210,7 +210,7 @@ export const customChromeData: ComponentCardData = {
 		{
 			name: 'EventCard.Header',
 			description: 'Displays event author info with avatar, name, and timestamp.',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'variant',
@@ -246,7 +246,7 @@ export const customChromeData: ComponentCardData = {
 		{
 			name: 'EventCard.Content',
 			description: 'Renders event content with support for truncation and expansion.',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'truncate',
@@ -281,7 +281,7 @@ export const customChromeData: ComponentCardData = {
 		{
 			name: 'EventCard.Actions',
 			description: 'Container for action buttons (reply, repost, reaction, zap, etc.).',
-			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
 			props: [
 				{
 					name: 'variant',

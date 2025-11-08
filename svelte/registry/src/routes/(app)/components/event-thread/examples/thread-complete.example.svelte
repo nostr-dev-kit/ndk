@@ -3,7 +3,7 @@
   import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
   import { EventCard } from '$lib/registry/components/event/cards/compound';
   import { ReactionAction } from '$lib/registry/components/reaction';
-  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
+  import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;

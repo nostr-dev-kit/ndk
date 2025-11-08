@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte';
+	import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte';
 	import { EventCard } from '$lib/registry/components/event/cards/compound';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
@@ -334,7 +334,7 @@
 			{
 				name: 'EventCardClassic',
 				description: 'Pre-composed event card with complete functionality including background, dropdown menu, and all action buttons.',
-				importPath: "import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte'",
+				importPath: "import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 					{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },

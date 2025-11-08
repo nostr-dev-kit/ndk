@@ -10,8 +10,8 @@
   import Preview from '$lib/site-components/preview.svelte';
 
   // Import code examples
-  import reactionBasicCode from './reaction-basic.example?raw';
-  import reactionDelayedCode from './reaction-delayed.example?raw';
+  import reactionBasicCode from './reaction-button.example?raw';
+  import reactionDelayedCode from './delayed-reactions.example?raw';
   import reactionBuilderCode from './reaction-builder.example?raw';
 
   // Import components

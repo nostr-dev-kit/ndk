@@ -38,15 +38,12 @@ export interface ApiEvent {
 
 // Showcase component structure - compatible with both ComponentsShowcase and ComponentsShowcaseGrid
 export interface ShowcaseComponent {
-  name: string;
-  description: string;
-  command: string;
+  cardData: ComponentCardDataBase | any;  // ComponentCardData containing all registry info (name, title, description, command, apiDocs)
   preview: Snippet | any;  // Snippet or any for compatibility - required by components
-  code?: string;  // Optional code example
-  cardData?: ComponentCardDataBase | any;  // ComponentCardData or any for compatibility
   orientation?: 'horizontal' | 'vertical';
   control?: Snippet;
   cellClass?: string;  // Custom classes for grid cell
+  code?: string;  // Optional code example - can override cardData.code if needed
 }
 
 // Import PropType from edit-props

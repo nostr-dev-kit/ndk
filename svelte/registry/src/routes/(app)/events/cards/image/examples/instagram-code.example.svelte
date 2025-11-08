@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '$lib/registry/ui/user';
-	import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
+	import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
 	import { ReactionButton } from '$lib/registry/components/reaction';
 import ZapButton from '$lib/registry/blocks/zap-button.svelte';
 	import { DotsHorizontalIcon } from '@hugeicons/core-free-icons';

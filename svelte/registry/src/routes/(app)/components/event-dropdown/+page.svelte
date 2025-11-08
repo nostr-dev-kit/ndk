@@ -11,7 +11,7 @@
 	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import { EventCard } from '$lib/registry/components/event/cards/compound';
-	import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
+	import EventDropdown from '$lib/registry/components/event/cards/compound/event-dropdown.svelte';
 
 	// Import code example
 	import eventDropdownCode from './event-dropdown.example?raw';
@@ -69,7 +69,7 @@
 			<div class="bg-muted/50 rounded-lg p-6">
 				<h3 class="text-lg font-semibold mb-3">Standalone Dropdown</h3>
 				<pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
-  import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
+  import EventDropdown from '$lib/registry/components/event/cards/compound/event-dropdown.svelte';
 &lt;/script&gt;
 
 &lt;EventDropdown &#123;ndk&#125; &#123;event&#125; /&gt;</code></pre>
@@ -79,7 +79,7 @@
 				<h3 class="text-lg font-semibold mb-3">In Event Card Header</h3>
 				<pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
   import &#123; EventCard &#125; from '$lib/registry/components/event/cards/compound';
-  import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
+  import EventDropdown from '$lib/registry/components/event/cards/compound/event-dropdown.svelte';
 &lt;/script&gt;
 
 &lt;EventCard.Root &#123;ndk&#125; &#123;event&#125;&gt;

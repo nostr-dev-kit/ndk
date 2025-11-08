@@ -1,9 +1,8 @@
 <script lang="ts">
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
   import { ndk } from '$lib/ndk.svelte';
-  import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
 
-  function handleSignupSuccess(signer: NDKPrivateKeySigner) {
+  function handleSignupSuccess(signer) {
     console.log('Profile created with custom styling');
   }
 </script>
@@ -11,10 +10,3 @@
 <div class="max-w-2xl mx-auto p-8">
   <SignupBlock {ndk} onSuccess={handleSignupSuccess} class="custom-signup" />
 </div>
-
-<style>
-  :global(.custom-signup) {
-    --primary: #667eea;
-    --primary-foreground: white;
-  }
-</style>

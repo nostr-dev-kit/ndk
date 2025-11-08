@@ -8,9 +8,9 @@
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
 
   // Import code examples
-  import basicUsage from './examples/basic-usage.svelte.example?raw';
-  import withStyling from './examples/with-styling.svelte.example?raw';
-  import inModal from './examples/in-modal.svelte.example?raw';
+  import basicUsage from './examples/basic-usage/index.txt?raw';
+  import withStyling from './examples/with-styling/index.txt?raw';
+  import inModal from './examples/in-modal/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

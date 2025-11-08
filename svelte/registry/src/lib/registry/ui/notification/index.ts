@@ -8,3 +8,4 @@ export { Root, Actors, Action, Content, Timestamp };
 
 export type { NotificationContext } from './notification.context';
 export { NOTIFICATION_CONTEXT_KEY } from './notification.context';
+export type { ActionInfo } from './notification-action.svelte';

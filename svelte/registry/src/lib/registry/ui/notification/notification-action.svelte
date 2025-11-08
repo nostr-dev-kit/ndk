@@ -1,19 +1,22 @@
+<script lang="ts" module>
+	import type { Component } from 'svelte';
+
+	export interface ActionInfo {
+		type: string;
+		count: number;
+		icon: Component;
+	}
+</script>
+
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { Snippet } from 'svelte';
-	import type { Component } from 'svelte';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
 	import Heart from '$lib/registry/icons/heart.svelte';
 	import Zap from '$lib/registry/icons/zap.svelte';
 	import Repeat from '$lib/registry/icons/repost.svelte';
 	import MessageCircle from '$lib/registry/icons/reply.svelte';
-
-	interface ActionInfo {
-		type: string;
-		count: number;
-		icon: Component;
-	}
 
 	interface Props {
 		snippet?: Snippet<[ActionInfo]>;

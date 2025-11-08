@@ -33,7 +33,7 @@
 		mention: 'mention',
 		hashtag: 'hashtag',
 		'embedded-note': 'card',
-		'embedded-article': 'card',
+		'embedded-article': 'medium',
 		'embedded-highlight': 'card',
 		'embedded-generic': 'card',
 		'embedded-event': 'card'

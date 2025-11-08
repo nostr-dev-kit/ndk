@@ -273,7 +273,6 @@
     bind:this={contentElement}
     onmouseup={handleMouseUp}
     role="article"
-    tabindex="0"
     class="article-content select-text"
   >
     <MarkdownEventContent

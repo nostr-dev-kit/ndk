@@ -118,7 +118,7 @@ export function createNotificationFeed(
         };
     });
 
-    const loading = $derived(metaSub?.loading ?? false);
+    const loading = $derived(false);
 
     // Group interactions by target event
     const groupedNotifications = $derived.by(() => {

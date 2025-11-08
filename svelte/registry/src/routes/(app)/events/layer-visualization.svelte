@@ -1,23 +1,30 @@
 <script lang="ts">
-	// Import event card registry data
-	import eventCardClassic from '$lib/registry/components/event/cards/classic/registry.json';
-	import eventCardCompound from '$lib/registry/components/event/cards/compound/registry.json';
-	import eventCardGeneric from '$lib/registry/components/event/cards/generic/registry.json';
-
-	const eventsIntroductionCards = [
-		eventCardCompound,  // Chrome layer
-		eventCardClassic,   // Content layer
-		eventCardGeneric    // Embeds layer
+	const layers = [
+		{
+			title: "Chrome",
+			description: "The card container with metadata, including header with user info, content area, and action buttons.",
+			color: "blue"
+		},
+		{
+			title: "Content",
+			description: "Event body parsing and text rendering, including plain text, markdown, mentions, and hashtags.",
+			color: "purple"
+		},
+		{
+			title: "Embeds",
+			description: "Rich preview rendering for references like mention cards, hashtag previews, and embedded event previews.",
+			color: "orange"
+		}
 	];
 </script>
 
 <div class="visualization-container">
-	<!-- Step 1: Chrome Layer -->
-	<div class="layer-step">
-		<div class="step-number bg-blue-500/10 text-blue-500">1</div>
-		<div class="step-content">
+	<div class="main-layout">
+		<!-- Unified Wireframe showing all three layers nested -->
+		<div class="unified-wireframe">
+			<!-- Blue dashed outer border (Chrome layer) -->
 			<div class="wireframe-box chrome-layer">
-				<!-- Header Section -->
+				<!-- Header Section (Blue highlighted) -->
 				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20">
 					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
 					<div class="flex flex-col gap-1.5 flex-1">
@@ -26,113 +33,29 @@
 					</div>
 				</div>
 
-				<!-- Content placeholder -->
-				<div class="flex flex-col gap-2 p-3">
-					<div class="h-2 bg-muted rounded"></div>
-					<div class="h-2 bg-muted rounded"></div>
-					<div class="h-2 bg-muted rounded w-3/5"></div>
-				</div>
-
-				<!-- Actions -->
-				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20">
-					<div class="w-8 h-6 bg-muted rounded"></div>
-					<div class="w-8 h-6 bg-muted rounded"></div>
-					<div class="w-8 h-6 bg-muted rounded"></div>
-					<div class="w-8 h-6 bg-muted rounded"></div>
-				</div>
-			</div>
-		<div class="info-card chrome-card">
-			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[0].title}</h3>
-			<p class="text-sm text-muted-foreground mb-4">
-				{eventsIntroductionCards[0].description}
-			</p>
-			<code
-				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
-			>
-				{eventsIntroductionCards[0].command}
-			</code>
-		</div>
-		</div>
-	</div>
-
-	<!-- Arrow -->
-	<div class="text-center text-2xl text-muted-foreground opacity-50">↓</div>
-
-	<!-- Step 2: Content Layer -->
-	<div class="layer-step">
-		<div class="step-number bg-purple-500/10 text-purple-500">2</div>
-		<div class="step-content">
-			<div class="wireframe-box chrome-layer chrome-layer-dimmed">
-				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
-					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
-					<div class="flex flex-col gap-1.5 flex-1">
-						<div class="h-2 bg-muted rounded w-2/5"></div>
-						<div class="h-2 bg-muted rounded w-1/4"></div>
-					</div>
-				</div>
-
-				<!-- Content with highlights -->
+				<!-- Content Area (Purple border + purple text) -->
 				<div class="p-3 rounded-lg bg-purple-500/5 border-2 border-purple-500 flex flex-col gap-3">
-				<div class="text-sm leading-relaxed">
-					Check out this article about nostr:nprofile1... and #nostr!
-				</div>
-				<div class="text-sm leading-relaxed">
-					nostr:nevent1...
-				</div>
-				</div>
-
-				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
-					<div class="w-8 h-6 bg-muted rounded"></div>
-					<div class="w-8 h-6 bg-muted rounded"></div>
-					<div class="w-8 h-6 bg-muted rounded"></div>
-					<div class="w-8 h-6 bg-muted rounded"></div>
-				</div>
-			</div>
-		<div class="info-card content-card">
-			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[1].title}</h3>
-			<p class="text-sm text-muted-foreground mb-4">
-				{eventsIntroductionCards[1].description}
-			</p>
-			<code
-				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
-			>
-				{eventsIntroductionCards[1].command}
-			</code>
-		</div>
-		</div>
-	</div>
-
-	<!-- Arrow -->
-	<div class="text-center text-2xl text-muted-foreground opacity-50">↓</div>
-
-	<!-- Step 3: Embed Layer -->
-	<div class="layer-step">
-		<div class="step-number bg-orange-500/10 text-orange-500">3</div>
-		<div class="step-content">
-			<div class="wireframe-box chrome-layer chrome-layer-dimmed">
-				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
-					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
-					<div class="flex flex-col gap-1.5 flex-1">
-						<div class="h-2 bg-muted rounded w-2/5"></div>
-						<div class="h-2 bg-muted rounded w-1/4"></div>
-					</div>
-				</div>
-
-				<div class="p-3 rounded-lg flex flex-col gap-3">
-					<div class="text-sm leading-relaxed">
-						<span class="text-foreground opacity-30">Check out this article about </span>
-						<span class="text-orange-500 font-semibold px-1 py-0.5 rounded bg-orange-500/10 border border-dashed border-orange-500">@alice</span>
-						<span class="text-foreground opacity-30"> and </span>
-						<span class="text-orange-500 font-semibold px-1 py-0.5 rounded bg-orange-500/10 border border-dashed border-orange-500">#nostr</span>
-						<span class="text-foreground opacity-30">!</span>
+					<!-- Purple skeleton text with inline mentions -->
+					<div class="flex flex-col gap-2">
+						<div class="flex items-center gap-1.5">
+							<div class="h-2 bg-purple-500/30 rounded flex-1"></div>
+							<span class="text-orange-500 font-semibold px-2 py-1 rounded bg-orange-500/10 border border-dashed border-orange-500 text-xs whitespace-nowrap">@alice</span>
+							<div class="h-2 bg-purple-500/30 rounded w-1/4"></div>
+						</div>
+						<div class="flex items-center gap-1.5">
+							<div class="h-2 bg-purple-500/30 rounded w-1/3"></div>
+							<span class="text-orange-500 font-semibold px-2 py-1 rounded bg-orange-500/10 border border-dashed border-orange-500 text-xs whitespace-nowrap">#nostr</span>
+							<div class="h-2 bg-purple-500/30 rounded flex-1"></div>
+						</div>
+						<div class="h-2 bg-purple-500/30 rounded w-3/5"></div>
 					</div>
 
-					<!-- Embedded Preview -->
+					<!-- Orange embedded card -->
 					<div class="p-3 bg-orange-500/10 rounded-lg border-2 border-dashed border-orange-500 flex flex-col gap-2">
 						<div class="flex gap-2 items-center">
 							<div class="w-6 h-6 rounded-full bg-muted shrink-0"></div>
 							<div class="flex-1">
-								<div class="h-2 bg-muted rounded w-3/10"></div>
+								<div class="h-2 bg-muted rounded w-1/3"></div>
 							</div>
 						</div>
 						<div class="flex flex-col gap-1.5">
@@ -142,52 +65,91 @@
 					</div>
 				</div>
 
-				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20 opacity-30">
+				<!-- Footer Actions (Blue highlighted) -->
+				<div class="flex gap-3 p-2 rounded-lg bg-blue-500/5 border border-blue-500/20">
 					<div class="w-8 h-6 bg-muted rounded"></div>
 					<div class="w-8 h-6 bg-muted rounded"></div>
 					<div class="w-8 h-6 bg-muted rounded"></div>
 					<div class="w-8 h-6 bg-muted rounded"></div>
 				</div>
 			</div>
-		<div class="info-card embed-card">
-			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[2].title}</h3>
-			<p class="text-sm text-muted-foreground mb-4">
-				{eventsIntroductionCards[2].description}
+		</div>
+
+		<!-- Info cards for all three layers -->
+		<div class="info-cards-grid">
+		<div class="info-card chrome-card">
+			<div class="flex items-center gap-2 mb-2">
+				<div class="w-6 h-6 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xs font-semibold">1</div>
+				<h3 class="font-semibold text-lg">{layers[0].title}</h3>
+			</div>
+			<p class="text-sm text-muted-foreground">
+				{layers[0].description}
 			</p>
-			<code
-				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
-			>
-				{eventsIntroductionCards[2].command}
-			</code>
 		</div>
+
+		<div class="info-card content-card">
+			<div class="flex items-center gap-2 mb-2">
+				<div class="w-6 h-6 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center text-xs font-semibold">2</div>
+				<h3 class="font-semibold text-lg">{layers[1].title}</h3>
+			</div>
+			<p class="text-sm text-muted-foreground">
+				{layers[1].description}
+			</p>
 		</div>
+
+		<div class="info-card embed-card">
+			<div class="flex items-center gap-2 mb-2">
+				<div class="w-6 h-6 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xs font-semibold">3</div>
+				<h3 class="font-semibold text-lg">{layers[2].title}</h3>
+			</div>
+			<p class="text-sm text-muted-foreground">
+				{layers[2].description}
+			</p>
+		</div>
+	</div>
 	</div>
 </div>
 
 <style>
 	.visualization-container {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
 		padding: 2rem;
 		background: var(--muted/50);
 		border-radius: 0.75rem;
 		border: 1px solid var(--border);
 	}
 
-	.layer-step {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		align-items: center;
-	}
-
-	.step-content {
+	.main-layout {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 2rem;
-		width: 100%;
 		align-items: start;
+	}
+
+	.unified-wireframe {
+		width: 100%;
+	}
+
+	.wireframe-box {
+		position: relative;
+		width: 100%;
+		padding: 1.25rem;
+		border: 2px dashed var(--border);
+		border-radius: 0.75rem;
+		background: var(--background);
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.chrome-layer {
+		border-color: rgb(59 130 246);
+	}
+
+	.info-cards-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		width: 100%;
 	}
 
 	.info-card {
@@ -212,45 +174,15 @@
 		background: rgb(249 115 22 / 0.02);
 	}
 
-	.step-number {
-		width: 2.5rem;
-		height: 2.5rem;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-weight: 600;
-		font-size: 1.125rem;
-	}
-
-	.wireframe-box {
-		position: relative;
-		width: 100%;
-		padding: 1.25rem;
-		border: 2px dashed var(--border);
-		border-radius: 0.75rem;
-		background: var(--background);
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.chrome-layer {
-		border-color: rgb(59 130 246);
-	}
-
-	.chrome-layer-dimmed {
-		border-color: rgb(59 130 246 / 0.3);
+	@media (max-width: 1024px) {
+		.main-layout {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	@media (max-width: 768px) {
 		.visualization-container {
 			padding: 1rem;
-		}
-
-		.step-content {
-			grid-template-columns: 1fr;
-			gap: 1.5rem;
 		}
 	}
 </style>

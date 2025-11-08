@@ -30,7 +30,7 @@
   }: Props = $props();
 </script>
 
-<Highlight.Root {ndk} {event} variant="feed" class={cn(className)}>
+<Highlight.Root {ndk} {event} class={cn(className)}>
   <article
     data-highlight-card-feed=""
     class="p-3 sm:p-4 hover:bg-card/30 transition-colors border-b border-border"

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { NotificationGroup } from '$lib/registry/builders/notification';
+	import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte.js';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import { cn } from '$lib/registry/utils/cn';
 
@@ -28,7 +28,7 @@
 		<div class="flex items-center gap-3">
 			<NotificationItem.Actors max={10} size={36} spacing="normal" />
 			<NotificationItem.Actors>
-				{#snippet children({ count })}
+				{#snippet snippet({ count })}
 					<span class="text-sm text-muted-foreground">
 						{count} {count === 1 ? 'person' : 'people'}
 					</span>

@@ -90,9 +90,7 @@
 				<NoteCardCompact {ndk} event={fetcher.event} />
 			{/if}
 		{:else if embedType === 'embedded-article' && asArticle}
-			{#if variant === 'card'}
-				<ArticleCardMedium {ndk} article={asArticle} />
-			{:else if variant === 'inline'}
+			{#if variant === 'inline'}
 				<ArticleCardInline {ndk} article={asArticle} />
 			{:else if variant === 'compact'}
 				<ArticleCardCompact {ndk} article={asArticle} />

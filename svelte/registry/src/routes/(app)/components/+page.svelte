@@ -111,7 +111,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1rem;
-    auto-rows: minmax(120px, auto);
+    grid-auto-rows: minmax(120px, auto);
   }
 
   .component-card {
@@ -204,6 +204,7 @@
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

@@ -35,24 +35,3 @@
     <div class="text-sm text-gray-500">Minimal wrapper for context</div>
   </div>
 </User.Root>
-
-<style>
-  .flex {
-    display: flex;
-  }
-  .items-center {
-    align-items: center;
-  }
-  .gap-3 {
-    gap: 0.75rem;
-  }
-  .font-medium {
-    font-weight: 500;
-  }
-  .text-sm {
-    font-size: 0.875rem;
-  }
-  .text-gray-500 {
-    color: #6b7280;
-  }
-</style>

@@ -1,5 +1,0 @@
-<script lang="ts">
-  import { ReplyButton } from '$lib/registry/components/reply-button';
-</script>
-
-<ReplyButton {ndk} {event} />

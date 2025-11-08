@@ -5,7 +5,7 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
-  import replyButtonCode from './reply-button.example?raw';
+  import replyButtonCode from './examples/basic/index.txt?raw';
 
   // Import components
   import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
@@ -55,7 +55,7 @@
   ]}
   componentsSection={{
     cards: [
-      { ...replyButtonCard, code: replyButtonCode }
+      { ...metadata.cards[0], code: replyButtonCode }
     ],
     previews: {
       'reply-button': replyButtonsPreview

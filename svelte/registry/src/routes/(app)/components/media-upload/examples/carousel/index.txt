@@ -1,0 +1,9 @@
+<script lang="ts">
+  import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
+
+  let { ndk } = $props();
+
+  let uploads = $state([]);
+</script>
+
+<MediaUploadCarousel {ndk} bind:uploads accept="image/*,video/*" />

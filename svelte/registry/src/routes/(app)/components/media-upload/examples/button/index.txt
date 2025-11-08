@@ -1,0 +1,9 @@
+<script lang="ts">
+  import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
+
+  let { ndk } = $props();
+
+  let uploads = $state([]);
+</script>
+
+<UploadButton {ndk} bind:uploads />

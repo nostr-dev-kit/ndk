@@ -3,13 +3,14 @@
   import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
   import PageTitle from '$lib/site/components/PageTitle.svelte';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
 
+  // Import components
   import FollowPackPortrait from '$lib/registry/components/follow/packs/portrait/follow-pack-portrait.svelte';
   import FollowPackHero from '$lib/registry/components/follow/packs/hero/follow-pack-hero.svelte';
   import FollowPackCompact from '$lib/registry/components/follow/packs/compact/follow-pack-compact.svelte';
@@ -21,9 +22,19 @@
   import followPackCompactCode from './follow-pack-compact.example?raw';
   import followPackListItemCode from './follow-pack-list-item.example?raw';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import followPackHeroCard from '$lib/registry/components/follow/packs/hero/registry.json';
+  import followPackPortraitCard from '$lib/registry/components/follow/packs/portrait/registry.json';
+  import followPackCompactCard from '$lib/registry/components/follow/packs/compact/registry.json';
+  import followPackListItemCard from '$lib/registry/components/follow/packs/basic/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Follow Packs',
+    description: 'Follow pack components for curated user collections',
+    showcaseTitle: 'Follow Pack Variants',
+    showcaseDescription: 'Display and manage follow pack collections',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 

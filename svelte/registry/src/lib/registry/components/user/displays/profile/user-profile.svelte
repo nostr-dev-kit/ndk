@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Component } from 'svelte';
   import { User } from '../../../ui/user';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
 
   interface Props {
     ndk: NDKSvelte;

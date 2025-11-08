@@ -6,7 +6,7 @@
   import Title from '../../../ui/article/article-title.svelte';
   import Summary from '../../../ui/article/article-summary.svelte';
   import ReadingTime from '../../../ui/article/article-reading-time.svelte';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
 
   interface Props {
     ndk: NDKSvelte;

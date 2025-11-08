@@ -20,13 +20,13 @@
   import negentropySyncProgressMinimalCode from './negentropy-sync-progress-minimal.example?raw';
   import negentropySyncProgressDetailedCode from './negentropy-sync-progress-detailed.example?raw';
   import negentropySyncProgressAnimatedCode from './negentropy-sync-progress-animated.example?raw';
-  import negentropySyncProgressCompactCode from './negentropy-sync-progress-compact.example?raw';
+  // import negentropySyncProgressCompactCode from './negentropy-sync-progress-compact.example?raw';
 
   // Import block components
   import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/progress/minimal/negentropy-sync-progress-minimal.svelte';
   import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/progress/detailed/negentropy-sync-progress-detailed.svelte';
   import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/progress/animated/negentropy-sync-progress-animated.svelte';
-  import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/progress/compact/negentropy-sync-progress-compact.svelte';
+  // import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/progress/compact/negentropy-sync-progress-compact.svelte';
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -56,36 +56,24 @@
   );
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Minimal',
-      description: 'Simple progress bar with basic stats',
-      command: 'npx jsrepo add negentropy-sync-progress-minimal',
-      preview: minimalPreview,
-      cardData: negentropySyncProgressMinimalCard
+      cardData: negentropySyncProgressMinimalCard,
+      preview: minimalPreview
+    },
+    // {
+    //   cardData: negentropySyncProgressCompactCard,
+    //   preview: compactPreview
+    // },
+    {
+      cardData: negentropySyncProgressAnimatedCard,
+      preview: animatedPreview
     },
     {
-      name: 'Compact',
-      description: 'Space-efficient expandable badge',
-      command: 'npx jsrepo add negentropy-sync-progress-compact',
-      preview: compactPreview,
-      cardData: negentropySyncProgressCompactCard
-    },
-    {
-      name: 'Animated',
-      description: 'Eye-catching with smooth transitions',
-      command: 'npx jsrepo add negentropy-sync-progress-animated',
-      preview: animatedPreview,
-      cardData: negentropySyncProgressAnimatedCard
-    },
-    {
-      name: 'Detailed',
-      description: 'Full dashboard with relay status',
-      command: 'npx jsrepo add negentropy-sync-progress-detailed',
-      preview: detailedPreview,
       cardData: negentropySyncProgressDetailedCard,
+      preview: detailedPreview,
       cellClass: 'md:col-span-3'
-    },
+    }
   ];
 </script>
 
@@ -103,7 +91,8 @@
 {/snippet}
 
 {#snippet compactPreview()}
-  <NegentropySyncProgressCompact syncBuilder={demoSyncBuilder} />
+  <!-- <NegentropySyncProgressCompact syncBuilder={demoSyncBuilder} /> -->
+  <div>Compact component not available</div>
 {/snippet}
 
 <!-- EditProps snippet -->
@@ -142,6 +131,7 @@
       {/snippet}
     </ComponentCard>
 
+    <!-- Commented out ComponentCard - can be uncommented if needed
     <ComponentCard data={{ ...negentropySyncProgressCompactCard, code: negentropySyncProgressCompactCode }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 items-center">
@@ -151,7 +141,7 @@
           </div>
         </div>
       {/snippet}
-    </ComponentCard>
+    </ComponentCard> -->
   </section>
 {/snippet}
 

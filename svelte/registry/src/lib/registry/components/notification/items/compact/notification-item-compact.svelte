@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NotificationGroup } from '$lib/registry/builders/notification';
 	import * as NotificationItem from '$lib/registry/ui/notification';
-	import { cn } from '$lib/registry/utils/cn.js';
+	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

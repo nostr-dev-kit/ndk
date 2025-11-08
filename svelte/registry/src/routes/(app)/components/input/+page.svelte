@@ -13,13 +13,10 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Search Combobox',
-      description: 'Accessible keyboard nav',
-      command: 'npx jsrepo add user-search-combobox',
-      preview: searchComboboxPreview,
-      cardData: inputMetadata.cards[0]
+      cardData: inputMetadata.cards[0],
+      preview: searchComboboxPreview
     }
   ];
 </script>

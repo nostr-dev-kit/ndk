@@ -28,7 +28,7 @@
   let sampleUser = $state<NDKUser | undefined>();
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
       cardData: followButtonMinimalCard,
       preview: minimalPreview

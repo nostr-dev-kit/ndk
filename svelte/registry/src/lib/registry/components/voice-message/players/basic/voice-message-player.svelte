@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKVoiceMessage } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { VoiceMessage } from '../../../../ui/voice-message';
+  import { VoiceMessage } from '../../../ui/voice-message';
   import PlayIcon from '../../icons/play.svelte';
   import PauseIcon from '../../icons/pause.svelte';
 

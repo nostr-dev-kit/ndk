@@ -4,7 +4,7 @@
   import type { Snippet } from 'svelte';
   import { createUserInput } from '$lib/registry/builders/user-input/index.svelte.js';
   import { Combobox } from 'bits-ui';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
   import { User } from '../../../ui/user';
 
   interface Props {

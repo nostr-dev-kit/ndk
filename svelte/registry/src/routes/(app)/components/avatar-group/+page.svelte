@@ -26,42 +26,27 @@
   ];
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Default',
-      description: 'Basic stacked avatars with smart ordering',
-      command: 'npx jsrepo add avatar-group',
-      preview: defaultPreview,
-      cardData: avatarGroupCard
-    },
-    {
-      name: 'With Overflow',
-      description: 'Circular badge for overflow count',
-      command: 'npx jsrepo add avatar-group',
-      preview: withOverflowPreview,
-      cardData: avatarGroupCard
-    },
-    {
-      name: 'Text Overflow',
-      description: 'Text-based overflow display',
-      command: 'npx jsrepo add avatar-group',
-      preview: textOverflowPreview,
       cardData: avatarGroupCard,
+      preview: defaultPreview
+    },
+    {
+      cardData: avatarGroupCard,
+      preview: withOverflowPreview
+    },
+    {
+      cardData: avatarGroupCard,
+      preview: textOverflowPreview,
       cellClass: 'md:row-span-2'
     },
     {
-      name: 'Vertical Stack',
-      description: 'Vertically stacked avatars',
-      command: 'npx jsrepo add avatar-group',
-      preview: verticalPreview,
-      cardData: avatarGroupCard
+      cardData: avatarGroupCard,
+      preview: verticalPreview
     },
     {
-      name: 'Custom Snippet',
-      description: 'Fully customizable overflow rendering',
-      command: 'npx jsrepo add avatar-group',
-      preview: snippetPreview,
-      cardData: avatarGroupCard
+      cardData: avatarGroupCard,
+      preview: snippetPreview
     }
   ];
 

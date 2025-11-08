@@ -21,20 +21,14 @@
   let sampleUser = $state<NDKUser | undefined>();
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'MuteButton',
-      description: 'Minimal icon-first design',
-      command: 'npx jsrepo add mute-button',
-      preview: muteButtonPreview,
-      cardData: muteMetadata.cards[0]
+      cardData: muteMetadata.cards[0],
+      preview: muteButtonPreview
     },
     {
-      name: 'Custom',
-      description: 'Custom implementation with builder',
-      command: 'npx jsrepo add mute-button',
-      preview: customPreview,
-      cardData: muteMetadata.cards[1]
+      cardData: muteMetadata.cards[1],
+      preview: customPreview
     }
   ];
 </script>

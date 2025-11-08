@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
   import { createHashtagStats } from '../../../builders/hashtag/stats.svelte.js';
   import { hashtagGradient, formatHashtag } from '../../../utils/hashtag.js';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';

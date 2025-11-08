@@ -38,12 +38,6 @@
   setContext(ARTICLE_CONTEXT_KEY, context);
 </script>
 
-<div class="article-root {className}">
+<div class="contents {className}">
   {@render children()}
 </div>
-
-<style>
-  .article-root {
-    display: contents;
-  }
-</style>

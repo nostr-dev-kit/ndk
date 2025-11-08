@@ -14,7 +14,7 @@
   } from '$lib/component-registry/follow-pack';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
@@ -61,7 +61,7 @@
   const displayPacks = $derived([pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]);
 
   // Showcase blocks using ComponentsShowcase with orientation
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Hero',
       description: 'Featured display with full-bleed imagery. Perfect for landing pages and hero sections.',
@@ -203,7 +203,7 @@
     metadata={followPackMetadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
-    {showcaseBlocks}{customSections}
+    {showcaseComponents}{customSections}
     componentsSection={{
       cards: [
         { ...followPackHeroCard, code: followPackHeroCode },

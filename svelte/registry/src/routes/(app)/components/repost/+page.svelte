@@ -82,7 +82,7 @@
 <ComponentPageTemplate
   metadata={repostMetadata}
   {ndk}
-  showcaseBlocks={[
+  showcaseComponents={[
     {
       name: 'RepostButton',
       description: 'Basic repost button with count',

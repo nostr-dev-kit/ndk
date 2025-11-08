@@ -6,7 +6,7 @@
   import { threadViewMetadata, threadViewTwitterCard, threadViewBasicCard, threadViewFullCard } from '$lib/component-registry/event-thread';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 
   // Import code examples
@@ -32,7 +32,7 @@
   );
 
   // Showcase blocks for Blocks section
-  const blocksShowcaseBlocks: ShowcaseBlock[] = [
+  const blocksShowcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Twitter Style',
       description: 'Vertical with connectors',
@@ -43,7 +43,7 @@
   ];
 
   // Showcase blocks for UI Primitives section
-  const primitivesShowcaseBlocks: ShowcaseBlock[] = [
+  const primitivesShowcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Basic Usage',
       description: 'Minimal primitives',
@@ -127,7 +127,7 @@ thread.focusOn(event)  // Navigate to different event`}
     description="Primitive components for building custom thread layouts."
   />
 
-  <ComponentsShowcaseGrid blocks={primitivesShowcaseBlocks} />
+  <ComponentsShowcaseGrid blocks={primitivesShowcaseComponents} />
 {/snippet}
 
 <!-- Custom Builder API section -->
@@ -248,7 +248,7 @@ thread.focusOn(event)  // Navigate to different event`}
     metadata={threadViewMetadata}
     {ndk}
     {beforeShowcase}
-    showcaseBlocks={blocksShowcaseBlocks}
+    showcaseComponents={blocksShowcaseComponents}
     {afterShowcase}
     {customSections}
     componentsSection={{

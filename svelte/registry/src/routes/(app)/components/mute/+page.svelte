@@ -4,7 +4,7 @@
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { muteMetadata } from '$lib/component-registry/mute';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import Alert from '$site-components/alert.svelte';
@@ -21,7 +21,7 @@
   let sampleUser = $state<NDKUser | undefined>();
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'MuteButton',
       description: 'Minimal icon-first design',
@@ -159,7 +159,7 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 <ComponentPageTemplate
   metadata={muteMetadata}
   {ndk}
-  {showcaseBlocks}
+  {showcaseComponents}
   componentsSection={{
     cards: [
       { ...muteMetadata.cards[0], code: muteButtonCode },

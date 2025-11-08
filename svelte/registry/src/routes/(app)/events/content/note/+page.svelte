@@ -6,7 +6,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { contentNoteMetadata, contentNoteBasicCard, contentNoteCustomSnippetsCard } from '$lib/component-registry/content-note';
   import { EditProps } from '$lib/site-components/edit-props';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   import BasicExample from './examples/basic.example.svelte';
   import CustomSnippetsExample from './examples/custom-snippets.example.svelte';
@@ -36,7 +36,7 @@ Pretty cool, right? #awesome`);
     ]
   } as any));
 
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Basic Rendering',
       description: 'Auto-detects content',
@@ -82,7 +82,7 @@ Pretty cool, right? #awesome`);
   <ComponentPageTemplate
   metadata={contentNoteMetadata}
   {ndk}
-  {showcaseBlocks}componentsSection={{
+  {showcaseComponents}componentsSection={{
     cards: contentNoteMetadata.cards,
     previews
   }}

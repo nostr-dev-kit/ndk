@@ -23,7 +23,7 @@
   import { Select } from 'bits-ui';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import userCardClassicCode from './user-card-classic.example?raw';
@@ -73,7 +73,7 @@
     focusedPrimitive = null;
   }
 
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Classic',
       description: 'Classic user card with banner, avatar, name, bio, and stats. Perfect for popovers, dialogs, and standalone displays.',
@@ -372,7 +372,7 @@
   metadata={userCardMetadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
-  showcaseBlocks={showcaseBlocks}
+  showcaseComponents={showcaseComponents}
   {customSections}
   componentsSection={{
     cards: [

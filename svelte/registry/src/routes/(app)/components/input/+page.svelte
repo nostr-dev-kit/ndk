@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { inputMetadata } from '$lib/component-registry/input';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import userSearchComboboxCode from './user-search-combobox.example?raw';
@@ -13,7 +13,7 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Search Combobox',
       description: 'Accessible keyboard nav',
@@ -34,7 +34,7 @@
 <ComponentPageTemplate
   metadata={inputMetadata}
   {ndk}
-  showcaseBlocks={showcaseBlocks}
+  showcaseComponents={showcaseComponents}
   componentsSection={{
     cards: [
       { ...inputMetadata.cards[0], code: userSearchComboboxCode }

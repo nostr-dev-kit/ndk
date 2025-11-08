@@ -57,7 +57,7 @@
 <ComponentPageTemplate
   metadata={zapMetadata}
   {ndk}
-  showcaseBlocks={[
+  showcaseComponents={[
     {
       name: 'ZapButton',
       description: 'Basic zap button with sat count',

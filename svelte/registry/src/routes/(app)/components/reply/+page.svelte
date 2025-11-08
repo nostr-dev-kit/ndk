@@ -44,7 +44,7 @@
 <ComponentPageTemplate
   metadata={replyMetadata}
   {ndk}
-  showcaseBlocks={[
+  showcaseComponents={[
     {
       name: 'ReplyButton',
       description: 'Basic reply button with count',

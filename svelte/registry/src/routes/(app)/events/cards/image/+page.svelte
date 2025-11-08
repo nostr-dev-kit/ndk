@@ -9,7 +9,7 @@
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { imageCardMetadata, imageCardCards, imageCardInstagramCard, imageCardHeroCard, imageCardCard } from '$lib/component-registry/image-card';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
@@ -33,7 +33,7 @@
 		})();
 	});
 
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Instagram',
 			description: 'Social feed style card',
@@ -128,7 +128,7 @@
 	<ComponentPageTemplate
 		metadata={imageCardMetadata}
 		{ndk}
-		{showcaseBlocks}
+		{showcaseComponents}
 		componentsSection={{
 			cards: imageCardCards,
 			previews: {

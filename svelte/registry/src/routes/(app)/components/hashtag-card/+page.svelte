@@ -5,7 +5,7 @@
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import { hashtagCardMetadata, hashtagCardPortraitCard, hashtagCardCompactCard } from '$lib/component-registry/hashtag-card';
   import { EditProps } from '$lib/site-components/edit-props';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import hashtagCardPortraitCode from './hashtag-card-portrait.example?raw';
@@ -26,7 +26,7 @@
   const displayHashtags = $derived([hashtag1, hashtag2, hashtag3, hashtag4, hashtag5].filter(Boolean));
 
   // Derive showcase blocks based on whether we have hashtags
-  const showcaseBlocks = $derived<ShowcaseBlock[]>(
+  const showcaseComponents = $derived<ShowcaseComponent[]>(
     displayHashtags.length > 0 ? [
       {
         name: 'Portrait',
@@ -106,7 +106,7 @@
   metadata={hashtagCardMetadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
-  {showcaseBlocks}{componentsSection}
+  {showcaseComponents}{componentsSection}
   {emptyState}
   apiDocs={hashtagCardMetadata.apiDocs}
 >

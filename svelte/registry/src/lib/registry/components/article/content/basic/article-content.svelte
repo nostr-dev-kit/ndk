@@ -310,7 +310,7 @@
 {/if}
 
 <style>
-  @reference "../../../../../app.css";
+  @reference "../../../../../../app.css";
 
   .article-wrapper {
     position: relative;

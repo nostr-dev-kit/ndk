@@ -44,7 +44,7 @@
 <ComponentPageTemplate
   metadata={reactionMetadata}
   {ndk}
-  showcaseBlocks={[
+  showcaseComponents={[
     {
       name: 'Reaction with Long-Press',
       description: 'Click to react, long-press for emoji picker',

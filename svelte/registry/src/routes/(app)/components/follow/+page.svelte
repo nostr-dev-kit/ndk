@@ -11,7 +11,7 @@
   } from '$lib/component-registry/follow';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import followButtonCode from './follow-button.example?raw';
@@ -28,7 +28,7 @@
   let sampleUser = $state<NDKUser | undefined>();
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Minimal',
       description: 'Icon-first with target name',
@@ -259,7 +259,7 @@ await followAction.follow();</code></pre>
 <ComponentPageTemplate
   metadata={followMetadata}
   {ndk}
-  {showcaseBlocks}
+  {showcaseComponents}
   {componentsSection}
   {customSections}
   apiDocs={followMetadata.apiDocs}

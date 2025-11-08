@@ -5,7 +5,7 @@
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import { mediaUploadMetadata } from '$lib/component-registry/media-upload';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
 
   // Import code examples
@@ -21,7 +21,7 @@
   let carouselUploads = $state<MediaUploadResult[]>([]);
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Upload Button',
       description: 'Simple file uploads',
@@ -140,7 +140,7 @@
 <ComponentPageTemplate
   metadata={mediaUploadMetadata}
   {ndk}
-  showcaseBlocks={showcaseBlocks}
+  showcaseComponents={showcaseComponents}
   componentsSection={{
     cards: [
       { ...mediaUploadMetadata.cards[0], code: uploadButtonCode },

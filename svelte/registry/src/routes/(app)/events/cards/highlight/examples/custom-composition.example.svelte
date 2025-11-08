@@ -11,7 +11,7 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<Highlight.Root {ndk} {event} variant="feed">
+<Highlight.Root {ndk} {event}>
   <div class="p-4 border border-border rounded-lg">
     <div class="bg-card p-6 rounded-lg relative">
       <Highlight.Content class="text-lg" />

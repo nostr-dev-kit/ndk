@@ -18,7 +18,4 @@ export interface HighlightContext {
 
     /** Highlight state from builder */
     state: HighlightState;
-
-    /** Display variant */
-    variant: 'feed' | 'compact' | 'grid';
 }

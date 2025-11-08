@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/registry/utils/cn';
   import { User } from '$lib/registry/ui/user';
-  import FollowButtonPill from '../follow-button-pill/follow-button-pill.svelte';
+  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
   import { createUserStats } from '$lib/registry/builders/user/stats.svelte.js';
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '$lib/registry/ui/user/user.context.js';

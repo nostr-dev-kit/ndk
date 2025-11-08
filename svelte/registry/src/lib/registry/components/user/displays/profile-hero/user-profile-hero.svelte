@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '$lib/registry/ui/user';
-  import FollowButtonPill from '../follow-button-pill/follow-button-pill.svelte';
+  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
   import { getNDKFromContext } from '$lib/registry/utils/ndk-context.svelte.js';
 
   interface Props {

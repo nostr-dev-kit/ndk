@@ -5,7 +5,7 @@
   import { getContext } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
   import { Popover } from 'bits-ui';
-  import { EmojiPicker, type EmojiData } from '../emoji-picker';
+  import { EmojiPicker, type EmojiData } from '$lib/registry/components/misc/emoji-picker';
 
   interface Props {
     ndk?: NDKSvelte;

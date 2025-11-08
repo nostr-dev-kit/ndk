@@ -3,8 +3,8 @@
   import { cn } from '$lib/registry/utils/cn';
   import { createHashtagStats } from '$lib/registry/builders/hashtag/stats.svelte.js';
   import { hashtagGradient, formatHashtag } from '$lib/registry/utils/hashtag.js';
-  import AvatarGroup from '../avatar-group/avatar-group.svelte';
-  import FollowButton from '../follow-button/follow-button.svelte';
+  import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
+  import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;

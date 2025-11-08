@@ -4,7 +4,7 @@
   import { cn } from '$lib/registry/utils/cn';
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '$lib/registry/ui/user/user.context.js';
-  import FollowButtonAnimated from '../follow-button-animated/follow-button-animated.svelte';
+  import FollowButtonAnimated from '$lib/registry/components/follow/buttons/animated/follow-button-animated.svelte';
   import { createUserStats } from '$lib/registry/builders/user/stats.svelte.js';
 
   interface Props {

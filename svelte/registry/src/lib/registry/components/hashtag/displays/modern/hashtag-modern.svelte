@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/registry/utils/cn';
   import { hashtagGradient, formatHashtag } from '$lib/registry/utils/hashtag.js';
-  import HashtagCardCompact from '../hashtag-card-compact/hashtag-card-compact.svelte';
+  import HashtagCardCompact from '$lib/registry/components/hashtag/cards/compact/hashtag-card-compact.svelte';
   import { Popover } from 'bits-ui';
 
   interface Props {

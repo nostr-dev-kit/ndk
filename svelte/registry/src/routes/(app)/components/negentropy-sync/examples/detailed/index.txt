@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync';
-  import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/negentropy-sync-progress-animated.svelte';
-  import type { NDKFilter } from '@nostr-dev-kit/ndk';
+  import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/progress/detailed/negentropy-sync-progress-detailed.svelte';
+
+  let { ndk } = $props();
 
   const syncBuilder = createNegentropySync(() => ({
     filters: [{ kinds: [1], limit: 500 }],
@@ -9,4 +10,4 @@
   }), ndk);
 </script>
 
-<NegentropySyncProgressAnimated {syncBuilder} />
+<NegentropySyncProgressDetailed {syncBuilder} />

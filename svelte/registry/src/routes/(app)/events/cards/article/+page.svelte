@@ -140,21 +140,25 @@
 
 	const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'article-card-portrait',
       cardData: articleCardCards[0],
       preview: portraitPreview,
       orientation: 'horizontal'
     },
     {
+      id: 'article-card-hero',
       cardData: articleCardCards[1],
       preview: heroPreview,
       orientation: 'vertical'
     },
     {
+      id: 'article-card-medium',
       cardData: articleCardCards[2],
       preview: mediumPreview,
       orientation: 'vertical'
     },
     {
+      id: 'article-card-neon',
       cardData: articleCardCards[3],
       preview: neonPreview,
       orientation: 'vertical'

@@ -85,21 +85,25 @@
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'highlight-card-feed',
       cardData: highlightCardFeedCard,
       preview: feedPreview,
       orientation: 'vertical'
     },
     {
+      id: 'highlight-card-elegant',
       cardData: highlightCardElegantCard,
       preview: elegantPreview,
       orientation: 'horizontal'
     },
     {
+      id: 'highlight-card-compact',
       cardData: highlightCardCompactCard,
       preview: compactPreview,
       orientation: 'vertical'
     },
     {
+      id: 'highlight-card-grid',
       cardData: highlightCardGridCard,
       preview: gridPreview,
       orientation: 'horizontal'

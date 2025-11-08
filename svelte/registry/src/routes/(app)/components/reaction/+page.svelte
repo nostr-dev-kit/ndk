@@ -90,8 +90,6 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Reaction Variants"
-  showcaseDescription="Add emoji reactions to events"
   {ndk}
   showcaseComponents={[
     {

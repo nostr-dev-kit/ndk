@@ -61,8 +61,6 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Reply Button Variants"
-  showcaseDescription="Add reply functionality to your Nostr events"
   {ndk}
   showcaseComponents={[
     {

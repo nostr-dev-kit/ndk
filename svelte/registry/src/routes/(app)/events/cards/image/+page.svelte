@@ -37,16 +37,19 @@
 
 	const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'image-card-instagram',
       cardData: imageCardInstagramCard,
       preview: instagramPreview,
       orientation: 'vertical'
     },
     {
+      id: 'image-card-hero',
       cardData: imageCardHeroCard,
       preview: heroPreview,
       orientation: 'vertical'
     },
     {
+      id: 'image-card-basic',
       cardData: imageCardCard,
       preview: imageCardPreview,
       orientation: 'vertical'

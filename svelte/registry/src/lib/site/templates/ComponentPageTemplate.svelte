@@ -13,7 +13,6 @@
     metadata,
     ndk: propNdk,
     showcaseComponents = [],
-    showcaseComponent,
     components,
     componentsTitle,
     componentsDescription,
@@ -47,10 +46,7 @@
 
 <!-- Showcase Section or Empty State -->
 {#if showcaseComponents.length > 0}
-  {#if showcaseComponent}
-    {@const Component = showcaseComponent}
-    <Component components={showcaseComponents} />
-  {:else if showcaseComponents.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
+  {#if showcaseComponents.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
     <!-- Use ComponentsShowcase if orientations are specified -->
     <ComponentsShowcase
       class="-mx-8 px-8"

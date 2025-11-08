@@ -38,10 +38,12 @@
   // Showcase blocks
     const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'emoji-picker-list',
       cardData: emojiPickerListCard,
       preview: basicPreview
     },
     {
+      id: 'emoji-picker-content',
       cardData: emojiPickerContentCard,
       preview: contentPreview
     }
@@ -95,8 +97,6 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Emoji Picker Variants"
-  showcaseDescription="Explore different emoji picker layouts and compositions"
   {ndk}
   {showcaseComponents}
   {components}

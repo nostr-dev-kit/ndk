@@ -132,8 +132,6 @@
 <!-- Use the template -->
 <ComponentPageTemplate
 	{metadata}
-	showcaseTitle="Notification Components"
-	showcaseDescription="Track reactions, zaps, reposts, and replies"
 	{ndk}
 	showcaseComponents={[
 		{

@@ -76,7 +76,6 @@
 
 	const articleCardVariants = [
 		{ key: 'raw', label: 'Raw', description: 'Unprocessed nostr: reference' },
-		{ key: 'card', label: 'ArticleCardMedium', description: 'Horizontal layout with image' },
 		{ key: 'inline', label: 'ArticleCardInline', description: 'Compact inline preview' },
 		{ key: 'compact', label: 'ArticleCardCompact', description: 'Minimal preview' },
 		{ key: 'medium', label: 'ArticleCardMedium', description: 'Horizontal layout with image' },
@@ -243,13 +242,25 @@
 						{#each chromeVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants.chrome ===
-								variant.key
-									? 'border-blue-500 bg-blue-500/10'
-									: 'border-border hover:border-blue-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants.chrome === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants.chrome === variant.key
+										? 'border-blue-500 bg-blue-500/10'
+										: 'border-border hover:border-blue-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant('chrome', variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}
@@ -257,13 +268,25 @@
 						{#each mentionVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants.mention ===
-								variant.key
-									? 'border-purple-500 bg-purple-500/10'
-									: 'border-border hover:border-purple-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants.mention === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants.mention === variant.key
+										? 'border-purple-500 bg-purple-500/10'
+										: 'border-border hover:border-purple-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant('mention', variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}
@@ -271,13 +294,25 @@
 						{#each hashtagVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants.hashtag ===
-								variant.key
-									? 'border-purple-500 bg-purple-500/10'
-									: 'border-border hover:border-purple-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants.hashtag === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants.hashtag === variant.key
+										? 'border-purple-500 bg-purple-500/10'
+										: 'border-border hover:border-purple-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant('hashtag', variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}
@@ -285,14 +320,25 @@
 						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
-									'embedded-note'
-								] === variant.key
-									? 'border-orange-500 bg-orange-500/10'
-									: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants['embedded-note'] === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants['embedded-note'] === variant.key
+										? 'border-orange-500 bg-orange-500/10'
+										: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant('embedded-note', variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}
@@ -300,14 +346,25 @@
 						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
-									'embedded-article'
-								] === variant.key
-									? 'border-orange-500 bg-orange-500/10'
-									: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants['embedded-article'] === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants['embedded-article'] === variant.key
+										? 'border-orange-500 bg-orange-500/10'
+										: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant('embedded-article', variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}
@@ -315,14 +372,25 @@
 						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
-									'embedded-highlight'
-								] === variant.key
-									? 'border-orange-500 bg-orange-500/10'
-									: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants['embedded-highlight'] === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants['embedded-highlight'] === variant.key
+										? 'border-orange-500 bg-orange-500/10'
+										: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant('embedded-highlight', variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}
@@ -330,14 +398,25 @@
 						{#each currentEmbeddedVariants as variant}
 							<button
 								type="button"
-								class="w-full text-left p-3 rounded-lg border transition-colors {variants[
-									selectedEmbed
-								] === variant.key
-									? 'border-orange-500 bg-orange-500/10'
-									: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
+								class="w-full text-left p-3 rounded-lg border transition-colors {variant.key ===
+								'raw'
+									? variants[selectedEmbed] === variant.key
+										? 'border-dashed border-muted-foreground/50 bg-muted/30'
+										: 'border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/20'
+									: variants[selectedEmbed] === variant.key
+										? 'border-orange-500 bg-orange-500/10'
+										: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
 								onclick={() => selectVariant(selectedEmbed, variant.key)}
 							>
-								<div class="font-medium text-sm">{variant.label}</div>
+								<div class="font-medium text-sm flex items-center gap-2">
+									{variant.label}
+									{#if variant.key === 'raw'}
+										<span
+											class="text-[10px] px-1.5 py-0.5 rounded bg-muted-foreground/20 text-muted-foreground uppercase tracking-wider"
+											>No Component</span
+										>
+									{/if}
+								</div>
 								<div class="text-xs text-muted-foreground mt-1">{variant.description}</div>
 							</button>
 						{/each}

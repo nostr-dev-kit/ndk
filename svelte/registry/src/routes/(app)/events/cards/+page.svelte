@@ -25,6 +25,7 @@
 
 	const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'event-card-classic',
       cardData: eventCardClassicCard,
       preview: classicPreview,
       orientation: 'horizontal',

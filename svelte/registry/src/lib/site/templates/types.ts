@@ -70,10 +70,7 @@ export interface ComponentPageTemplateProps {
   ndk?: NDKSvelte;
 
   // Showcase configuration
-  showcaseTitle?: string;
-  showcaseDescription?: string;
   showcaseComponents?: ShowcaseComponent[];
-  showcaseComponent?: ComponentType | any;
 
   // Components section (new simplified pattern)
   components?: Snippet;

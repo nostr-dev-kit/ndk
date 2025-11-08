@@ -106,8 +106,6 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Repost Button Variants"
-  showcaseDescription="Explore different repost button designs for your Nostr application"
   {ndk}
   showcaseComponents={[
     {

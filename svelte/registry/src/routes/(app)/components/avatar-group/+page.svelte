@@ -150,8 +150,6 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Avatar Group Variants"
-  showcaseDescription="Explore different avatar group layouts and overflow styles"
   {ndk}
   {components}
   {customSections}

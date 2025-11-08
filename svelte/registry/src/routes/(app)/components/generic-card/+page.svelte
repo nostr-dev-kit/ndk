@@ -64,8 +64,6 @@
 <!-- Use template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Generic Card"
-  showcaseDescription="Universal fallback for displaying any event type without a specific handler"
   {ndk}
   {showcaseComponents}
   {components}

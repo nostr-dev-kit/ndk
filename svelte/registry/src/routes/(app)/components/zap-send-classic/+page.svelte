@@ -60,8 +60,6 @@
 
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Zap Send Variants"
-  showcaseDescription="Send Bitcoin tips via Lightning Network"
   {ndk}
   showcaseComponents={[
     {

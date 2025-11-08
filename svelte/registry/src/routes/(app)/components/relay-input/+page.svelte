@@ -129,8 +129,6 @@
 
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Relay Input Variants"
-  showcaseDescription="Validate and autocomplete relay URLs"
   {ndk}
   showcaseComponents={[
     {

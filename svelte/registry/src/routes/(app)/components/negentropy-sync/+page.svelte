@@ -281,8 +281,6 @@ const syncBuilder = createNegentropySync(() => (&#123;
 
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Sync Progress Components"
-  showcaseDescription="Track negentropy sync with detailed progress indicators"
   {ndk}
   showcaseComponents={[
     {

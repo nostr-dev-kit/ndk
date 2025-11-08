@@ -1,9 +1,7 @@
-import { getComponentMetadata } from '$lib/registry-loader';
+import metadata from '$lib/registry/components/follow/packs/basic/registry.json';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async () => {
-  const metadata = await getComponentMetadata('follow-pack');
-
+export const load: PageLoad = () => {
   return {
     metadata
   };

@@ -1,5 +1,0 @@
-<script lang="ts">
-  import EventDropdown from '$lib/registry/components/event-card/event-dropdown.svelte';
-</script>
-
-<EventDropdown {ndk} {event} />

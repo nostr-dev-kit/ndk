@@ -1,9 +1,7 @@
-import { getComponentMetadata } from '$lib/registry-loader';
+import metadata from '$lib/registry/components/article/content/basic/registry.json';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async () => {
-  const metadata = await getComponentMetadata('article-content');
-
+export const load: PageLoad = () => {
   return {
     metadata
   };

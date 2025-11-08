@@ -3,7 +3,6 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { threadViewMetadata, threadViewTwitterCard, threadViewBasicCard, threadViewFullCard } from '$lib/component-registry/event-thread';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseComponent } from '$lib/templates/types';
@@ -21,6 +20,10 @@
   // Get page data
   let { data } = $props();
   const { metadata } = data;
+  const threadViewMetadata = metadata;
+  const threadViewTwitterCard = metadata?.cards?.[0];
+  const threadViewBasicCard = metadata?.cards?.[1];
+  const threadViewFullCard = metadata?.cards?.[2];
 
   const ndk = getContext<NDKSvelte>('ndk');
 

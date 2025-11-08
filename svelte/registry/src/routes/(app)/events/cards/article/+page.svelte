@@ -11,7 +11,14 @@
 	import { ScrollArea } from '$lib/site/components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
-	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import type { ShowcaseComponent } from '$lib/site/templates/types';
+
+	// Import registry metadata
+	import articleCardPortraitCard from '$lib/registry/components/article/cards/portrait/registry.json';
+	import articleCardHeroCard from '$lib/registry/components/article/cards/hero/registry.json';
+	import articleCardMediumCard from '$lib/registry/components/article/cards/basic/registry.json';
+	import articleCardNeonCard from '$lib/registry/components/article/cards/neon/registry.json';
 
   // Get page data
   let { data } = $props();
@@ -141,25 +148,25 @@
 	const showcaseComponents: ShowcaseComponent[] = [
     {
       id: 'article-card-portrait',
-      cardData: articleCardCards[0],
+      cardData: articleCardPortraitCard,
       preview: portraitPreview,
       orientation: 'horizontal'
     },
     {
       id: 'article-card-hero',
-      cardData: articleCardCards[1],
+      cardData: articleCardHeroCard,
       preview: heroPreview,
       orientation: 'vertical'
     },
     {
       id: 'article-card-medium',
-      cardData: articleCardCards[2],
+      cardData: articleCardMediumCard,
       preview: mediumPreview,
       orientation: 'vertical'
     },
     {
       id: 'article-card-neon',
-      cardData: articleCardCards[3],
+      cardData: articleCardNeonCard,
       preview: neonPreview,
       orientation: 'vertical'
     }

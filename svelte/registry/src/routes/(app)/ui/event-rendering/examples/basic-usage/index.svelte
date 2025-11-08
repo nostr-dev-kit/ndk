@@ -29,7 +29,7 @@
 
 <div class="embedded-demo">
   <p class="mb-2">Card variant (default):</p>
-  <EmbeddedEvent {ndk} bech32={eventBech32} variant="card" />
+  <EmbeddedEvent {ndk} bech32={eventBech32} />
 </div>
 
 <style>

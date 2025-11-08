@@ -284,14 +284,17 @@ const syncBuilder = createNegentropySync(() => (&#123;
   {ndk}
   showcaseComponents={[
     {
+      id: "negentropySyncProgressMinimalCard",
       cardData: negentropySyncProgressMinimalCard,
       preview: minimalPreview
     },
     {
+      id: "negentropySyncProgressAnimatedCard",
       cardData: negentropySyncProgressAnimatedCard,
       preview: animatedPreview
     },
     {
+      id: "negentropySyncProgressDetailedCard",
       cardData: negentropySyncProgressDetailedCard,
       preview: detailedPreview,
       cellClass: 'md:col-span-3'

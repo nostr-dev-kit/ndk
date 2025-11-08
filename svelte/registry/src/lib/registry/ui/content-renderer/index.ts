@@ -1,2 +1,2 @@
 export * from './index.svelte.js';
-export * from './content-renderer/content-renderer.context.js';
+export * from './content-renderer.context.js';

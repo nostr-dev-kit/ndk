@@ -84,11 +84,13 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "zapButtonCard",
       cardData: zapButtonCard,
       preview: zapButtonsPreview,
       orientation: 'horizontal'
     },
     {
+      id: "zapButtonAvatarsCard",
       cardData: zapButtonAvatarsCard,
       preview: avatarsPreview,
       orientation: 'horizontal'

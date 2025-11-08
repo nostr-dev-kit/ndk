@@ -121,7 +121,7 @@
 			<Tabs.Content value="usage" class="flex flex-col gap-8">
 				<section class="flex flex-col gap-4">
 					<h3 class="text-xl font-semibold text-foreground m-0">Installation</h3>
-					<PMCommand command="execute" args={['shadcn@latest', 'add', data.name]} />
+					<PMCommand command="execute" args={['jsrepo', 'add', data.name]} />
 				</section>
 
 				<section class="flex flex-col gap-4">

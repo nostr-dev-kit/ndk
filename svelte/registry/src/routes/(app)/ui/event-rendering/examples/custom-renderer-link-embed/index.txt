@@ -1,5 +1,5 @@
 <script>
-	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
+	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import LinkEmbed from './link-embed.example.svelte';
 
 	let { ndk } = $props();

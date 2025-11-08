@@ -147,10 +147,12 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "uploadButtonCard",
       cardData: uploadButtonCard,
       preview: uploadButtonPreview
     },
     {
+      id: "mediaUploadCarouselCard",
       cardData: mediaUploadCarouselCard,
       preview: carouselPreview
     }

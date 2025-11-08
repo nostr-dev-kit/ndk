@@ -97,7 +97,7 @@
       {
         name: 'User.Nip05',
         title: 'User.Nip05',
-        description: 'Displays profile.nip05—a DNS-based identifier (like email@domain.com) that verifies a user owns that domain. The component uses formatNip05() from @nostr-dev-kit/ndk-svelte to format the identifier, automatically hiding the underscore prefix for default usernames (e.g., _@domain.com becomes domain.com). The component actively performs NIP-05 verification by fetching /.well-known/nostr.json from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. You can customize the verification status display by providing a verificationSnippet with custom icons or styling. Most users don\'t have NIP-05 set, so this only renders when the field exists.',
+        description: 'Displays profile.nip05—a DNS-based identifier (like email@domain.com) that verifies a user owns that domain. The component uses formatNip05() from @nostr-dev-kit/svelte to format the identifier, automatically hiding the underscore prefix for default usernames (e.g., _@domain.com becomes domain.com). The component actively performs NIP-05 verification by fetching /.well-known/nostr.json from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. You can customize the verification status display by providing a verificationSnippet with custom icons or styling. Most users don\'t have NIP-05 set, so this only renders when the field exists.',
         apiDocs: [
           { name: 'showNip05', type: 'boolean', default: 'true', description: 'Whether to show the NIP-05 identifier' },
           { name: 'showVerified', type: 'boolean', default: 'true', description: 'Whether to verify and show verification status (✓/✗)' },

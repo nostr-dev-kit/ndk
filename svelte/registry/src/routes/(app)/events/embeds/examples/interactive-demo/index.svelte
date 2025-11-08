@@ -87,7 +87,7 @@
   {#if bech32Input}
     <div class="p-6 border border-border rounded-lg bg-muted/30">
       <div class="text-sm font-medium mb-4 text-muted-foreground">Preview:</div>
-      <EmbeddedEvent {ndk} bech32={bech32Input} variant={selectedVariant} />
+      <EmbeddedEvent {ndk} bech32={bech32Input} />
     </div>
   {:else}
     <div class="p-12 border border-dashed border-border rounded-lg bg-muted/20 text-center">

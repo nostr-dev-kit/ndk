@@ -53,7 +53,7 @@ nostr:nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k`;
       Full-width display with maximum detail. Best for feeds and standalone views.
     </p>
     <div class="p-4 border border-border rounded-lg bg-card">
-      <EmbeddedEvent {ndk} bech32={sampleBech32} variant="card" />
+      <EmbeddedEvent {ndk} bech32={sampleBech32} />
     </div>
   </div>
 
@@ -66,7 +66,7 @@ nostr:nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k`;
       Constrained width for inline display. Best for embedded within paragraphs or flowing content.
     </p>
     <div class="p-4 border border-border rounded-lg bg-card">
-      <EmbeddedEvent {ndk} bech32={sampleBech32} variant="inline" />
+      <EmbeddedEvent {ndk} bech32={sampleBech32} />
     </div>
   </div>
 
@@ -79,7 +79,7 @@ nostr:nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k`;
       Minimal display with truncated content. Best for dense layouts like sidebars or lists.
     </p>
     <div class="p-4 border border-border rounded-lg bg-card">
-      <EmbeddedEvent {ndk} bech32={sampleBech32} variant="compact" />
+      <EmbeddedEvent {ndk} bech32={sampleBech32} />
     </div>
   </div>
 </div>

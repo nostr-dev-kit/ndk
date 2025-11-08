@@ -122,12 +122,6 @@
 	setContext(RELAY_SELECTOR_CONTEXT_KEY, context);
 </script>
 
-<div class="relay-selector-root {className}">
+<div class="contents {className}">
 	{@render children(context)}
 </div>
-
-<style>
-	.relay-selector-root {
-		display: contents;
-	}
-</style>

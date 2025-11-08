@@ -11,19 +11,9 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<div data-note-card-inline="" class="note-card-inline">
+<div data-note-card-inline="" class="border border-border rounded-lg bg-card p-3 max-w-[500px]">
   <EventCard.Root {ndk} {event}>
     <EventCard.Header variant="full" avatarSize="md" showTimestamp={true} />
     <EventCard.Content truncate={150} />
   </EventCard.Root>
 </div>
-
-<style>
-  .note-card-inline {
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--card);
-    padding: 0.75rem;
-    max-width: 500px;
-  }
-</style>

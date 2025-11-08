@@ -14,5 +14,6 @@
     "social-feeds",
     "timelines",
     "event-lists"
-  ]
+  ],
+  "apiDocs": []
 }

@@ -14,5 +14,6 @@
     "unknown-events",
     "fallback-display",
     "debugging"
-  ]
+  ],
+  "apiDocs": []
 }

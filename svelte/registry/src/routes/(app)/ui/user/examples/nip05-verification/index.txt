@@ -1,0 +1,25 @@
+<script lang="ts">
+  import { User } from '$lib/registry/ui/user';
+
+  let { ndk, userPubkey } = $props();
+</script>
+
+<User.Root {ndk} pubkey={userPubkey} class="flex flex-col gap-4">
+  <div class="flex items-center gap-3">
+    <User.Avatar size={48} class="rounded-full" />
+    <div class="flex flex-col">
+      <User.Name class="font-semibold" />
+      <User.Nip05 class="text-sm text-muted-foreground">
+        {#snippet verificationSnippet({ status, isVerifying })}
+          {#if isVerifying}
+            <span class="ml-1 text-xs text-blue-500">VERIFYING...</span>
+          {:else if status === true}
+            <span class="ml-1 text-xs text-green-500">VERIFIED</span>
+          {:else if status === false}
+            <span class="ml-1 text-xs text-red-500">NOT VERIFIED</span>
+          {/if}
+        {/snippet}
+      </User.Nip05>
+    </div>
+  </div>
+</User.Root>

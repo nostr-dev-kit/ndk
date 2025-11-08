@@ -89,6 +89,7 @@ export type { NDKRelayInformation } from "@nostr-dev-kit/ndk";
 
 // Utilities
 export { deterministicPubkeyGradient } from "./utils/deterministic-gradient.js";
+export { formatNip05 } from "./utils.js";
 
 // Note: UI components are now available via the registry (shadcn-style)
 // Users should copy components from registry/ndk/* into their projects

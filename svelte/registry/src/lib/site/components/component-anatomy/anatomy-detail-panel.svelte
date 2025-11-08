@@ -9,12 +9,12 @@
 
 	let { layers, emptyMessage = 'Hover and click on a layer to see its details' }: Props = $props();
 
-	const { selectedLayer } = getContext<{
+	const anatomyContext = getContext<{
 		selectedLayer: string | null;
 		selectLayer: (id: string | null) => void;
 	}>('anatomy');
 
-	const currentLayer = $derived(selectedLayer ? layers[selectedLayer] : null);
+	const currentLayer = $derived(anatomyContext.selectedLayer ? layers[anatomyContext.selectedLayer] : null);
 </script>
 
 <div class="flex flex-col justify-start">

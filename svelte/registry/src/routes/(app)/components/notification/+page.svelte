@@ -1,19 +1,17 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import {
-		notificationMetadata,
-		notificationBuilderCard,
-		notificationPrimitivesCard
-	} from '$lib/component-registry/notification';
-	import { EditProps } from '$lib/site-components/edit-props';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import { EditProps } from '$lib/site-components/edit-props';
 	import * as NotificationItem from '$lib/registry/ui/notification';
-	import { createNotificationFeed } from '@nostr-dev-kit/svelte';
+	import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 
 	// Import code examples
 	import notificationBuilderCode from './notification-builder.example?raw';
 	import notificationPrimitivesCode from './notification-primitives.example?raw';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -111,7 +109,7 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-	metadata={notificationMetadata}
+	metadata={metadata}
 	{ndk}
 	showcaseComponents={[
 		{

@@ -3,13 +3,15 @@
   import type { Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { contentNoteMetadata, contentNoteBasicCard, contentNoteCustomSnippetsCard } from '$lib/component-registry/content-note';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseComponent } from '$lib/templates/types';
 
   import BasicExample from './examples/basic.example.svelte';
   import CustomSnippetsExample from './examples/custom-snippets.example.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -74,13 +76,13 @@ Pretty cool, right? #awesome`);
     'event-rendering-custom-snippets': customSnippetsComponentPreview
   } as any}
   <ComponentPageTemplate
-  metadata={contentNoteMetadata}
+  metadata={metadata}
   {ndk}
   {showcaseComponents}componentsSection={{
-    cards: contentNoteMetadata.cards,
+    cards: metadata.cards,
     previews
   }}
-  apiDocs={contentNoteMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
     <EditProps.Prop name="Event content" type="text" bind:value={eventContent} />
   </ComponentPageTemplate>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createEventContent } from '@nostr-dev-kit/svelte';
+	import { createEventContent } from '$lib/registry/builders/event-content/event-content.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableEmbeddedEvent from './clickable-embedded-event.svelte';
 

@@ -3,15 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Button } from "$lib/components/ui/button";
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import {
-    negentropySyncMetadata,
-    negentropySyncProgressMinimalCard,
-    negentropySyncProgressDetailedCard,
-    negentropySyncProgressAnimatedCard,
-    negentropySyncProgressCompactCard
-  } from '$lib/component-registry/negentropy-sync';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseComponent } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
@@ -28,6 +20,10 @@
   import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/progress/animated/negentropy-sync-progress-animated.svelte';
   // import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/progress/compact/negentropy-sync-progress-compact.svelte';
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -315,11 +311,11 @@ const syncBuilder = createNegentropySync(() => (&#123;
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={negentropySyncMetadata}
+  metadata={metadata}
   {ndk}
   {showcaseComponents}{customSections}
   beforeComponents={customComponentsSection}
-  apiDocs={negentropySyncMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
     <Button variant="outline" onclick={() => demoSyncBuilder?.startSync()}>
       Start Demo Sync

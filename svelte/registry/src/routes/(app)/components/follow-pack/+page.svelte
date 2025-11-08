@@ -3,16 +3,7 @@
   import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import {
-    followPackMetadata,
-    followPackHeroCard,
-    followPackPortraitCard,
-    followPackCompactCard,
-    followPackListItemCard,
-    followPackAnatomyLayers
-  } from '$lib/component-registry/follow-pack';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseComponent } from '$lib/templates/types';
   import SectionTitle from '$site-components/SectionTitle.svelte';
@@ -29,6 +20,10 @@
   import followPackPortraitCode from './follow-pack-portrait.example?raw';
   import followPackCompactCode from './follow-pack-compact.example?raw';
   import followPackListItemCode from './follow-pack-list-item.example?raw';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -188,7 +183,7 @@
 <!-- Conditional rendering -->
 {#if displayPacks.length > 0}
   <ComponentPageTemplate
-    metadata={followPackMetadata}
+    metadata={metadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
     {showcaseComponents}{customSections}
@@ -206,7 +201,7 @@
         'follow-pack-list-item': listItemComponentPreview
       }
     }}
-    apiDocs={followPackMetadata.apiDocs}
+    apiDocs={metadata.apiDocs}
   >
     <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
       <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
@@ -216,7 +211,7 @@
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <PageTitle title={followPackMetadata.title}>
+    <PageTitle title={metadata.title}>
       <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
       <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
       <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />

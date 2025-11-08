@@ -9,9 +9,11 @@
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { eventCardMetadata, eventCardCards, eventCardClassicCard, eventCardBasicCard, eventCardFullCard } from '$lib/component-registry/event-card';
-	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleEvent = $state<NDKEvent | undefined>();
@@ -349,7 +351,7 @@
 
 {#if sampleEvent}
 	<ComponentPageTemplate
-		metadata={eventCardMetadata}
+		metadata={metadata}
 		{ndk}
 		{showcaseComponents}
 		{beforeShowcase}
@@ -370,7 +372,7 @@
 	</ComponentPageTemplate>
 {:else}
 	<div class="px-8">
-		<PageTitle title={eventCardMetadata.title} subtitle={eventCardMetadata.description}>
+		<PageTitle title={metadata.title} subtitle={metadata.description}>
 			<EditProps.Prop
 				name="Sample Event"
 				type="event"

@@ -2,9 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import { hashtagCardMetadata, hashtagCardPortraitCard, hashtagCardCompactCard } from '$lib/component-registry/hashtag-card';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
@@ -14,6 +12,10 @@
   // Import hashtag card variants
   import HashtagCardPortrait from '$lib/registry/components/hashtag/cards/portrait/hashtag-card-portrait.svelte';
   import HashtagCardCompact from '$lib/registry/components/hashtag/cards/compact/hashtag-card-compact.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -97,12 +99,12 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={hashtagCardMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
   {showcaseComponents}{componentsSection}
   {emptyState}
-  apiDocs={hashtagCardMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
     {#key displayHashtags}
       <EditProps.Prop name="Hashtag 1" type="text" bind:value={hashtag1} default="bitcoin" />

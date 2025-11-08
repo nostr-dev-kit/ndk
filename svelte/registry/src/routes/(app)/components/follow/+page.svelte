@@ -2,14 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import {
-    followMetadata,
-    followButtonMinimalCard,
-    followButtonPillCard,
-    followButtonAnimatedCard
-  } from '$lib/component-registry/follow';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseComponent } from '$lib/templates/types';
 
@@ -22,6 +15,10 @@
   import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
   import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
   import FollowButtonAnimated from '$lib/registry/components/follow/buttons/animated/follow-button-animated.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -239,12 +236,12 @@ await followAction.follow();</code></pre>
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={followMetadata}
+  metadata={metadata}
   {ndk}
   {showcaseComponents}
   {componentsSection}
   {customSections}
-  apiDocs={followMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop
     name="Sample User"

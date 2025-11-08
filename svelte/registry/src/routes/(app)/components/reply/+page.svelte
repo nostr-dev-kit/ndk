@@ -2,15 +2,17 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { replyMetadata, replyButtonCard } from '$lib/component-registry/reply';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
 
   // Import code examples
   import replyButtonCode from './reply-button.example?raw';
 
   // Import components
   import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -42,11 +44,11 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={replyMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={[
     {
-      cardData: replyMetadata.cards[0],
+      cardData: metadata.cards[0],
       preview: replyButtonsPreview,
       orientation: 'horizontal'
     }
@@ -59,7 +61,7 @@
       'reply-button': replyButtonsPreview
     }
   }}
-  apiDocs={replyMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop
     name="Sample Event"

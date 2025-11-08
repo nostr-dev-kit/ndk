@@ -28,12 +28,6 @@
   const displayTime = $derived(showCurrent ? formatTime(currentTime) : formatTime(duration));
 </script>
 
-<span class="voice-message-duration {className}">
+<span class="tabular-nums {className}">
   {displayTime}
 </span>
-
-<style>
-  .voice-message-duration {
-    font-variant-numeric: tabular-nums;
-  }
-</style>

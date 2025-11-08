@@ -18,6 +18,10 @@
   import UIBasic from './examples/ui-basic.example.svelte';
   import UIComposition from './examples/ui-composition.example.svelte';
 
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   let neventInput = $state<string>(

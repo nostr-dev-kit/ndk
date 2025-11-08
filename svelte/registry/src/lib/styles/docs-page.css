@@ -1,84 +1,159 @@
 /* Documentation page shared styles */
+
 .docs-page {
-  @apply max-w-[900px];
+  max-width: 900px;
 }
 
 .docs-header {
-  @apply mb-12;
+  margin-bottom: 3rem;
 }
 
 .docs-header h1 {
-  @apply text-5xl font-bold mb-4 text-foreground tracking-tight;
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--foreground);
+  letter-spacing: -0.025em;
 }
 
 .subtitle {
-  @apply text-xl text-muted-foreground m-0;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--muted-foreground);
+  margin: 0;
 }
 
 .docs-page section {
-  @apply mb-12;
+  margin-bottom: 3rem;
 }
 
 .docs-page h2 {
-  @apply text-3xl font-bold mb-4 text-foreground;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--foreground);
 }
 
 .docs-page h3 {
-  @apply text-xl font-semibold mt-8 mb-4 text-foreground;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--foreground);
 }
 
 .docs-page p {
-  @apply text-base leading-relaxed text-muted-foreground mb-4;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
 }
 
 .docs-page ul {
-  @apply my-4 pl-6 text-muted-foreground leading-relaxed;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  color: var(--muted-foreground);
+  line-height: 1.75rem;
 }
 
 .docs-page ol {
-  @apply my-4 pl-6 text-muted-foreground leading-relaxed;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  color: var(--muted-foreground);
+  line-height: 1.75rem;
 }
 
 .docs-page li {
-  @apply mb-2;
+  margin-bottom: 0.5rem;
 }
 
 .docs-page code {
-  @apply font-mono text-sm bg-muted px-1.5 py-0.5 rounded text-foreground;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.875rem;
+  background-color: var(--muted);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  color: var(--foreground);
 }
 
 .docs-page pre {
-  @apply my-4 p-6 bg-card border border-border rounded-lg overflow-x-auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  overflow-x: auto;
 }
 
 .docs-page pre code {
-  @apply bg-transparent p-0 leading-relaxed block;
+  background-color: transparent;
+  padding: 0;
+  line-height: 1.75rem;
+  display: block;
 }
 
 .docs-page .next-section {
-  @apply border-t border-border pt-12;
+  border-top: 1px solid var(--border);
+  padding-top: 3rem;
 }
 
 .docs-page .next-grid {
-  @apply grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 mt-6;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .docs-page .next-card {
-  @apply p-6 bg-card border border-border rounded-lg no-underline transition-colors hover:border-primary;
+  padding: 1.5rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.docs-page .next-card:hover {
+  border-color: var(--primary);
 }
 
 .docs-page .next-card h3 {
-  @apply mb-2 text-primary text-lg;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .docs-page .next-card p {
-  @apply m-0 text-[0.9375rem];
+  margin: 0;
+  font-size: 0.9375rem;
 }
 
 .docs-page details {
-  @apply my-4 p-4 bg-card border border-border rounded-lg;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
 }
 
 .docs-page summary {
-  @apply cursor-pointer text-sm font-medium text-primary py-2 select-none hover:underline;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  user-select: none;
+}
+
+.docs-page summary:hover {
+  text-decoration: underline;
 }

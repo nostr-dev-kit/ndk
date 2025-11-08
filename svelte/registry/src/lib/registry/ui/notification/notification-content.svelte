@@ -7,11 +7,11 @@
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte';
 	import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer.context';
-	import NoteEmbeddedCompact from '$lib/registry/components/note-card/note-card.svelte';
-	import ArticleEmbedded from '$lib/registry/components/article-card/article-card-medium.svelte';
-	import HighlightEmbedded from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
+	import NoteEmbeddedCompact from '$lib/registry/components/note/cards/compact/note-card-compact.svelte';
+	import ArticleEmbedded from '$lib/registry/components/article/cards/basic/article-card-medium.svelte';
+	import HighlightEmbedded from '$lib/registry/components/highlight/cards/basic/highlight-card-feed.svelte';
 	import { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
-    import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
+    import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
     import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {

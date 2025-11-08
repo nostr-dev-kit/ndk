@@ -1,21 +1,23 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { inputMetadata } from '$lib/component-registry/input';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import userSearchComboboxCode from './user-search-combobox.example?raw';
 
   import UserSearchCombobox from '$lib/registry/components/user/inputs/search/user-search-combobox.svelte';
 
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
     const showcaseComponents: ShowcaseComponent[] = [
     {
-      cardData: inputMetadata.cards[0],
+      cardData: metadata.cards[0],
       preview: searchComboboxPreview
     }
   ];
@@ -29,16 +31,16 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={inputMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={showcaseComponents}
   componentsSection={{
     cards: [
-      { ...inputMetadata.cards[0], code: userSearchComboboxCode }
+      { ...metadata.cards[0], code: userSearchComboboxCode }
     ],
     previews: {
       'user-search-combobox': searchComboboxPreview
     }
   }}
-  apiDocs={inputMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 />

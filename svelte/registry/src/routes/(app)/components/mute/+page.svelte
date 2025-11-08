@@ -2,9 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { muteMetadata } from '$lib/component-registry/mute';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import Alert from '$site-components/alert.svelte';
@@ -16,6 +14,10 @@
   import MuteButton from '$lib/registry/components/mute/buttons/basic/mute-button.svelte';
   import UIComposition from './examples/mute-action-builder.example.svelte';
 
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleUser = $state<NDKUser | undefined>();
@@ -23,11 +25,11 @@
   // Showcase blocks
     const showcaseComponents: ShowcaseComponent[] = [
     {
-      cardData: muteMetadata.cards[0],
+      cardData: metadata.cards[0],
       preview: muteButtonPreview
     },
     {
-      cardData: muteMetadata.cards[1],
+      cardData: metadata.cards[1],
       preview: customPreview
     }
   ];
@@ -151,20 +153,20 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={muteMetadata}
+  metadata={metadata}
   {ndk}
   {showcaseComponents}
   componentsSection={{
     cards: [
-      { ...muteMetadata.cards[0], code: muteButtonCode },
-      { ...muteMetadata.cards[1], code: muteCustomCode }
+      { ...metadata.cards[0], code: muteButtonCode },
+      { ...metadata.cards[1], code: muteCustomCode }
     ],
     previews: {
       'mute-button': muteButtonComponentPreview,
       'mute-custom': customComponentPreview
     }
   }}
-  apiDocs={muteMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
   {customSections}
 >
   {#if !ndk.$currentUser}

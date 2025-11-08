@@ -3,9 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
-  import { mediaUploadMetadata } from '$lib/component-registry/media-upload';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import SectionTitle from '$site-components/SectionTitle.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
 
   // Import code examples
@@ -15,6 +13,10 @@
   import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
   import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
 
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   let buttonUploads = $state<MediaUploadResult[]>([]);
@@ -23,11 +25,11 @@
   // Showcase blocks
     const showcaseComponents: ShowcaseComponent[] = [
     {
-      cardData: mediaUploadMetadata.cards[0],
+      cardData: metadata.cards[0],
       preview: uploadButtonPreview
     },
     {
-      cardData: mediaUploadMetadata.cards[1],
+      cardData: metadata.cards[1],
       preview: carouselPreview
     }
   ];
@@ -132,19 +134,19 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={mediaUploadMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={showcaseComponents}
   componentsSection={{
     cards: [
-      { ...mediaUploadMetadata.cards[0], code: uploadButtonCode },
-      { ...mediaUploadMetadata.cards[1], code: mediaUploadCarouselCode }
+      { ...metadata.cards[0], code: uploadButtonCode },
+      { ...metadata.cards[1], code: mediaUploadCarouselCode }
     ],
     previews: {
       'upload-button': uploadButtonPreview,
       'media-upload-carousel': carouselPreview
     }
   }}
-  apiDocs={mediaUploadMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
   {customSections}
 />

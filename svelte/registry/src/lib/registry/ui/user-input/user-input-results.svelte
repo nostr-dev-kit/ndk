@@ -34,7 +34,7 @@
   const hasQuery = $derived(context.query.trim().length > 0);
 </script>
 
-<div class="user-input-results {className}" role="listbox">
+<div class="absolute top-full left-0 right-0 z-50 empty:hidden {className}" role="listbox">
   {#if hasResults && children}
     {#each displayedResults as result (result.user.pubkey)}
       {@render children(result)}
@@ -42,22 +42,8 @@
   {:else if hasQuery && !context.loading && empty}
     {@render empty()}
   {:else if hasQuery && !context.loading}
-    <div class="user-input-results-empty">
+    <div>
       No users found
     </div>
   {/if}
 </div>
-
-<style>
-  .user-input-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 50;
-  }
-
-  .user-input-results:empty {
-    display: none;
-  }
-</style>

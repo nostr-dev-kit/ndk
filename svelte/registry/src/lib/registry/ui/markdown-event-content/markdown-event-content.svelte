@@ -8,15 +8,8 @@
   import { getContext, setContext } from 'svelte';
   import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer.context.js';
 
-  // Import all handlers to auto-register them
-  // Inline components (mentions, hashtags)
-  import '../../components/mention-modern';
-  import '../../components/hashtag-modern';
-
-  // Embedded kind handlers (articles, notes, highlights)
-  import '../../components/article-card';
-  import '../../components/note-card';
-  import '../../components/highlight-card';
+  // Component handlers are registered via ContentRenderer
+  // No need to import them here as they're passed via the renderer prop
 
   interface Props {
     ndk?: NDKSvelte;

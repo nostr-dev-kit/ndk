@@ -4,9 +4,11 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import InteractiveDemo from './interactive-demo.svelte';
-	import LayerVisualization from './layer-visualization.svelte';
-	import { eventsIntroductionMetadata } from '$lib/component-registry/events-introduction';
-	import { EditProps } from '$lib/site-components/edit-props';
+	import LayerVisualization from './layer-visualization.svelte';	import { EditProps } from '$lib/site-components/edit-props';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -15,7 +17,7 @@
 
 <div class="px-8 flex flex-col gap-8">
 	<!-- Header -->
-	<PageTitle title={eventsIntroductionMetadata.title} subtitle={eventsIntroductionMetadata.description}>
+	<PageTitle title={metadata.title} subtitle={metadata.description}>
 		<EditProps.Prop
 			name="Sample Event"
 			type="event"

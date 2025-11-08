@@ -20,34 +20,22 @@
   let errorBlockUrl = $state<string>('');
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Basic',
-      description: 'Simple input with NIP-11',
-      command: 'npx jsrepo add relay-input',
-      preview: basicBlockPreview,
-      cardData: relayInputMetadata.cards[0]
+      cardData: relayInputMetadata.cards[0],
+      preview: basicBlockPreview
     },
     {
-      name: 'With Label',
-      description: 'Label and helper text',
-      command: 'npx jsrepo add relay-input',
-      preview: labelBlockPreview,
-      cardData: relayInputMetadata.cards[1]
+      cardData: relayInputMetadata.cards[1],
+      preview: labelBlockPreview
     },
     {
-      name: 'With Error',
-      description: 'Validation error state',
-      command: 'npx jsrepo add relay-input',
-      preview: errorBlockPreview,
-      cardData: relayInputMetadata.cards[2]
+      cardData: relayInputMetadata.cards[2],
+      preview: errorBlockPreview
     },
     {
-      name: 'Disabled',
-      description: 'Disabled input state',
-      command: 'npx jsrepo add relay-input',
-      preview: disabledBlockPreview,
-      cardData: relayInputMetadata.cards[3]
+      cardData: relayInputMetadata.cards[3],
+      preview: disabledBlockPreview
     }
   ];
 </script>

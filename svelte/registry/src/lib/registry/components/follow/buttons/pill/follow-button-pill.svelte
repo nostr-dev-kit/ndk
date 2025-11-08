@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
   import HashtagIcon from '../../icons/hashtag.svelte';
   import UserAddIcon from '../../icons/user-add.svelte';
   import UserFollowingIcon from '../../icons/user-following.svelte';

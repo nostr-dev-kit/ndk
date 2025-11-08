@@ -4,7 +4,7 @@
   import { User } from '../../../ui/user';
   import UserCardClassic from '../user-card-classic/user-card-classic.svelte';
   import { Popover } from 'bits-ui';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
 
   interface Props {
     ndk: NDKSvelte;

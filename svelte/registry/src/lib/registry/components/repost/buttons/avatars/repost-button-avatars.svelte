@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
   import RepostIcon from '../../icons/repost.svelte';
 

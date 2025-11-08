@@ -36,30 +36,21 @@
   const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
 
   // Blocks showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Portrait',
-      description: 'Vertical card with icon on top',
-      command: 'npx jsrepo add relay-card-portrait',
+      cardData: relayCardMetadata.cards[0],
       preview: portraitPreview,
-      orientation: 'horizontal',
-      cardData: relayCardMetadata.cards[0]
+      orientation: 'horizontal'
     },
     {
-      name: 'Compact',
-      description: 'Small square card',
-      command: 'npx jsrepo add relay-card-compact',
-      orientation: 'horizontal',
+      cardData: relayCardMetadata.cards[1],
       preview: compactPreview,
-      cardData: relayCardMetadata.cards[1]
+      orientation: 'horizontal'
     },
     {
-      name: 'List',
-      description: 'Horizontal list layout',
-      command: 'npx jsrepo add relay-card-list',
-      orientation: 'vertical',
+      cardData: relayCardMetadata.cards[2],
       preview: listPreview,
-      cardData: relayCardMetadata.cards[2]
+      orientation: 'vertical'
     }
   ];
 </script>

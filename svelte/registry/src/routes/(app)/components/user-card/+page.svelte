@@ -73,7 +73,7 @@
     focusedPrimitive = null;
   }
 
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
       cardData: userCardClassicCard,
       preview: classicPreview,

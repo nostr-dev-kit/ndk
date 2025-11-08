@@ -34,29 +34,20 @@
   // Showcase blocks for Blocks section
   const blocksShowcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Twitter Style',
-      description: 'Vertical with connectors',
-      command: 'npx jsrepo add thread-view-twitter',
-      preview: twitterPreview,
-      cardData: threadViewTwitterCard
+      cardData: threadViewTwitterCard,
+      preview: twitterPreview
     }
   ];
 
   // Showcase blocks for UI Primitives section
   const primitivesShowcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Basic Usage',
-      description: 'Minimal primitives',
-      command: 'npx jsrepo add thread-view',
-      preview: basicPreview,
-      cardData: threadViewBasicCard
+      cardData: threadViewBasicCard,
+      preview: basicPreview
     },
     {
-      name: 'Full Composition',
-      description: 'All primitives together',
-      command: 'npx jsrepo add thread-view',
-      preview: compositionPreview,
-      cardData: threadViewFullCard
+      cardData: threadViewFullCard,
+      preview: compositionPreview
     }
   ];
 </script>

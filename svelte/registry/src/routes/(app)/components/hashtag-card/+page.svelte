@@ -29,18 +29,12 @@
   const showcaseComponents = $derived<ShowcaseComponent[]>(
     displayHashtags.length > 0 ? [
       {
-        name: 'Portrait',
-        description: 'Vertical card with stats, activity chart, recent note, and contributors. Perfect for hashtag galleries.',
-        command: 'npx jsrepo add hashtag-card-portrait',
-        preview: portraitPreview,
-        cardData: hashtagCardPortraitCard
+        cardData: hashtagCardPortraitCard,
+        preview: portraitPreview
       },
       {
-        name: 'Compact',
-        description: 'Horizontal layout for lists. Shows hashtag, note count, contributors, and follow button.',
-        command: 'npx jsrepo add hashtag-card-compact',
-        preview: compactPreview,
-        cardData: hashtagCardCompactCard
+        cardData: hashtagCardCompactCard,
+        preview: compactPreview
       }
     ] : []
   );

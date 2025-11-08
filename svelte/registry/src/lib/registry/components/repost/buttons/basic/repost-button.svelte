@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createRepostAction } from '$lib/registry/builders/repost-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
   import RepostIcon from '../../icons/repost.svelte';
   import { DropdownMenu } from 'bits-ui';
 

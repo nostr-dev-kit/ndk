@@ -22,16 +22,13 @@
 	let showRelayInfo = $state(true);
 
 	// Showcase blocks
-	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Standalone',
-			description: 'EventDropdown as standalone component',
-			command: 'npx jsrepo add event-dropdown',
-			preview: standalonePreview,
-			cardData: eventDropdownCard,
-			control: relayInfoControl
-		}
-	];
+	  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      cardData: eventDropdownCard,
+      preview: standalonePreview,
+      control: relayInfoControl
+    }
+  ];
 </script>
 
 <!-- Preview snippets for showcase -->

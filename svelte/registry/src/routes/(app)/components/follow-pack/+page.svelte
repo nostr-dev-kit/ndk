@@ -61,37 +61,25 @@
   const displayPacks = $derived([pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]);
 
   // Showcase blocks using ComponentsShowcase with orientation
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Hero',
-      description: 'Featured display with full-bleed imagery. Perfect for landing pages and hero sections.',
-      command: 'npx jsrepo add follow-pack-hero',
-      preview: heroPreview,
       cardData: followPackHeroCard,
+      preview: heroPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'Portrait',
-      description: 'Vertical elegance for grid displays. Ideal for galleries and multi-column layouts.',
-      command: 'npx jsrepo add follow-pack-portrait',
-      preview: portraitPreview,
       cardData: followPackPortraitCard,
+      preview: portraitPreview,
       orientation: 'vertical'
     },
     {
-      name: 'Compact',
-      description: 'Information-dense for feeds. Optimized for content streams and horizontal layouts.',
-      command: 'npx jsrepo add follow-pack-compact',
-      preview: compactPreview,
       cardData: followPackCompactCard,
+      preview: compactPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'List Item',
-      description: 'Minimal design for sidebars. Maximum impact with minimal footprint.',
-      command: 'npx jsrepo add follow-pack-list-item',
-      preview: listItemPreview,
       cardData: followPackListItemCard,
+      preview: listItemPreview,
       orientation: 'vertical'
     }
   ];

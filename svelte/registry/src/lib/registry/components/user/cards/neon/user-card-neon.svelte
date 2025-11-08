@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../../../ui/user/index.js';
-  import { cn } from '../../../utils/cn.js';
+  import { cn } from '../../../utils/cn';
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '../../../ui/user/user.context.js';
   import FollowButtonAnimated from '../follow-button-animated/follow-button-animated.svelte';

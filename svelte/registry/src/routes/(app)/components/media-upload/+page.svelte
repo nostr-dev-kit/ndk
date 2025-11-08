@@ -21,20 +21,14 @@
   let carouselUploads = $state<MediaUploadResult[]>([]);
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Upload Button',
-      description: 'Simple file uploads',
-      command: 'npx jsrepo add upload-button',
-      preview: uploadButtonPreview,
-      cardData: mediaUploadMetadata.cards[0]
+      cardData: mediaUploadMetadata.cards[0],
+      preview: uploadButtonPreview
     },
     {
-      name: 'Media Upload Carousel',
-      description: 'With visual previews',
-      command: 'npx jsrepo add media-upload-carousel',
-      preview: carouselPreview,
-      cardData: mediaUploadMetadata.cards[1]
+      cardData: mediaUploadMetadata.cards[1],
+      preview: carouselPreview
     }
   ];
 </script>

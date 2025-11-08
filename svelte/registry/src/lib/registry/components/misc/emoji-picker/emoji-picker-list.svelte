@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { EmojiData } from './createEmojiPicker.svelte.js';
-  import { cn } from '../../utils/cn.js';
+  import { cn } from '../../utils/cn';
   import Item from './emoji-picker-item.svelte';
 
   interface Props {

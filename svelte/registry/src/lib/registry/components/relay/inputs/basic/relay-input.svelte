@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { Relay } from '../../../ui/relay/index.js';
-	import { cn } from '../../../utils/cn.js';
+	import { cn } from '../../../utils/cn';
 
 	interface Props {
 		ndk?: NDKSvelte;

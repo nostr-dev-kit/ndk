@@ -20,20 +20,14 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'List',
-      description: 'Grid of clickable emojis',
-      command: 'npx jsrepo add emoji-picker',
-      preview: basicPreview,
-      cardData: emojiPickerListCard
+      cardData: emojiPickerListCard,
+      preview: basicPreview
     },
     {
-      name: 'Content',
-      description: 'Complete picker with builder',
-      command: 'npx jsrepo add emoji-picker',
-      preview: contentPreview,
-      cardData: emojiPickerContentCard
+      cardData: emojiPickerContentCard,
+      preview: contentPreview
     }
   ];
 </script>

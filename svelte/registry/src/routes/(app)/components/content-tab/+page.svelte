@@ -40,13 +40,10 @@
   let sortMethod = $state<'count' | 'recency'>('count');
 
   // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
+    const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Default Style',
-      description: 'Material bottom nav with sorting control',
-      command: 'npx jsrepo add content-tab',
-      preview: defaultPreview,
       cardData: contentTabCard,
+      preview: defaultPreview,
       control: sortControl
     }
   ];

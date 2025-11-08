@@ -1,5 +1,7 @@
 <script lang="ts">
-  import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
+  import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
+
+  let { ndk } = $props();
 </script>
 
 <RelayInputBlock

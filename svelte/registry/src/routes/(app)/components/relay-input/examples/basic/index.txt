@@ -1,0 +1,9 @@
+<script lang="ts">
+  import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
+
+  let { ndk } = $props();
+
+  let value = $state('');
+</script>
+
+<RelayInputBlock {ndk} bind:value />

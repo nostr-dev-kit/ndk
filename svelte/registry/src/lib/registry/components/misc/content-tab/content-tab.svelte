@@ -3,25 +3,32 @@
   Displays tabs based on the types of content a user actually publishes.
 
   Uses createContentTab hook to sample user content and conditionally show tabs.
-  Minimal styling - users should provide their own styles.
+  Requires a snippet for rendering each tab.
 
   @example Basic
   ```svelte
 <script>
     import { ContentTab, byCount } from '$lib/registry/components/misc/content-tab';
+    import { kindLabel } from '$lib/registry/utils/kind-label.js';
 
     const pubkeys = ['hexpubkey'];
     const kinds = [1, 30023, 1063];
   </script>
 
-  <ContentTab {ndk} {pubkeys} {kinds} sort={byCount} />
+  <ContentTab {ndk} {pubkeys} {kinds} sort={byCount}>
+    {#snippet tab({ kind, name, count })}
+      <button>{name} ({count})</button>
+    {/snippet}
+  </ContentTab>
   ```
 
-  @example With custom tab renderer
+  @example With custom styling
   ```svelte
   <ContentTab {ndk} {pubkeys} {kinds}>
-    {#snippet tab({ kind, count })}
-      <button>Kind {kind} ({count} posts)</button>
+    {#snippet tab({ kind, name, count })}
+      <button class="px-4 py-2 bg-primary text-primary-foreground rounded-md">
+        {name} - {count} posts
+      </button>
     {/snippet}
   </ContentTab>
   ```
@@ -49,7 +56,7 @@
 
     class?: string;
 
-    tab?: Snippet<[ContentTabType]>;
+    tab: Snippet<[ContentTabType & { name: string }]>;
 
     onTabClick?: (tab: ContentTabType) => void;
   }

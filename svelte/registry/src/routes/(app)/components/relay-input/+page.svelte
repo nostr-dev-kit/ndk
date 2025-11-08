@@ -5,10 +5,10 @@
   import ComponentCard from '$site-components/ComponentCard.svelte';
 
   // Import code examples
-  import relayInputBasicCode from './relay-input-basic.example?raw';
-  import relayInputLabelCode from './relay-input-label.example?raw';
-  import relayInputErrorCode from './relay-input-error.example?raw';
-  import relayInputDisabledCode from './relay-input-disabled.example?raw';
+  import relayInputBasicCode from './examples/basic/index.txt?raw';
+  import relayInputLabelCode from './examples/label/index.txt?raw';
+  import relayInputErrorCode from './examples/error/index.txt?raw';
+  import relayInputDisabledCode from './examples/disabled/index.txt?raw';
 
   // Import component
   import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';

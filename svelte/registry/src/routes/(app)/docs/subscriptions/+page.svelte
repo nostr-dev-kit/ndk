@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Demo from '$site-components/Demo.svelte';
+	import Preview from '$site-components/preview.svelte';
 	import CodeBlock from '$site-components/CodeBlock.svelte';
 	import PageTitle from '$site-components/PageTitle.svelte';
 	import { getContext } from 'svelte';
@@ -64,7 +64,7 @@
 			the sort buttons to see how the feed instantly reorganizes:
 		</p>
 
-		<Demo
+		<Preview
 			title="Reposted Content Feed"
 			description="Real-time feed of content reposted by your follows. Try the sort options to see the feed reorganize instantly. The feed automatically updates as new reposts arrive."
 			code={ZappedFeedRaw}
@@ -72,7 +72,7 @@
 			<div class="max-w-3xl w-full">
 				<ZappedFeed {ndk} />
 			</div>
-		</Demo>
+		</Preview>
 
 		<div class="callout-box">
 			<p class="callout-title">Why This is Powerful</p>

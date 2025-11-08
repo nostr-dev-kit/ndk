@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
-  import Preview from '$site-components/Demo.svelte';
+  import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import * as NotificationItem from '$lib/registry/ui/notification';

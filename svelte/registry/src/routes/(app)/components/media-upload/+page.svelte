@@ -2,40 +2,36 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
 
   // Import code examples
   import uploadButtonCode from './upload-button.example?raw';
   import mediaUploadCarouselCode from './media-upload-carousel.example?raw';
 
+  // Import components
   import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
   import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import uploadButtonCard from '$lib/registry/components/media/upload/button/registry.json';
+  import mediaUploadCarouselCard from '$lib/registry/components/media/upload/carousel/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Media Upload',
+    description: 'Media upload components for Nostr applications',
+    showcaseTitle: 'Media Upload Components',
+    showcaseDescription: 'Upload and manage media files with Blossom',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let buttonUploads = $state<MediaUploadResult[]>([]);
   let carouselUploads = $state<MediaUploadResult[]>([]);
-
-  // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: metadata.cards[0],
-      preview: uploadButtonPreview
-    },
-    {
-      cardData: metadata.cards[1],
-      preview: carouselPreview
-    }
-  ];
 </script>
 
-<!-- Preview snippets for Blocks -->
+<!-- Preview snippets -->
 {#snippet uploadButtonPreview()}
   <div class="flex flex-col gap-4">
     <UploadButton {ndk} bind:uploads={buttonUploads} />
@@ -49,6 +45,21 @@
 
 {#snippet carouselPreview()}
   <MediaUploadCarousel {ndk} bind:uploads={carouselUploads} accept="image/*,video/*" />
+{/snippet}
+
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...uploadButtonCard, code: uploadButtonCode}}>
+    {#snippet preview()}
+      {@render uploadButtonPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...mediaUploadCarouselCard, code: mediaUploadCarouselCode}}>
+    {#snippet preview()}
+      {@render carouselPreview()}
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- Custom Builder API section -->
@@ -134,19 +145,19 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
-  showcaseComponents={showcaseComponents}
-  componentsSection={{
-    cards: [
-      { ...metadata.cards[0], code: uploadButtonCode },
-      { ...metadata.cards[1], code: mediaUploadCarouselCode }
-    ],
-    previews: {
-      'upload-button': uploadButtonPreview,
-      'media-upload-carousel': carouselPreview
+  showcaseComponents={[
+    {
+      cardData: uploadButtonCard,
+      preview: uploadButtonPreview
+    },
+    {
+      cardData: mediaUploadCarouselCard,
+      preview: carouselPreview
     }
-  }}
-  apiDocs={metadata.apiDocs}
+  ]}
+  {components}
+  apiDocs={uploadButtonCard.apiDocs}
   {customSections}
 />

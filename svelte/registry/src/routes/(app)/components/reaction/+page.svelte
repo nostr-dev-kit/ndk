@@ -4,6 +4,7 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import SectionTitle from '$lib/site/components/SectionTitle.svelte';
   import Preview from '$lib/site/components/preview.svelte';
@@ -16,9 +17,21 @@
   // Import components
   import { ReactionAction, ReactionLongpress } from '$lib/registry/components/reaction';
 
-  // Get page data
-  let { data } = $props();
-  const { reactionMetadata } = data;
+  // Import registry metadata
+  import reactionLongpressCard from '$lib/registry/components/reaction/buttons/longpress/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Reaction Buttons',
+    description: 'Interactive reaction buttons with emoji picker and delayed reactions',
+    showcaseTitle: 'Reaction Variants',
+    showcaseDescription: 'Add emoji reactions to events',
+  };
+
+  // Extract cards from registry
+  const reactionBasicCard = reactionLongpressCard.cards[0];
+  const reactionDelayedCard = reactionLongpressCard.cards[1];
+  const reactionBuilderCard = reactionLongpressCard.cards[2];
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -43,33 +56,57 @@
   {/if}
 {/snippet}
 
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...reactionBasicCard, code: reactionBasicCode}}>
+    {#snippet preview()}
+      {@render reactionBasicPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...reactionDelayedCard, code: reactionDelayedCode}}>
+    {#snippet preview()}
+      {@render reactionDelayedPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...reactionBuilderCard, code: reactionBuilderCode}}>
+    {#snippet preview()}
+      {#if sampleEvent}
+        {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
+        {@const totalCount = reactionState.all.reduce((sum, r) => sum + r.count, 0)}
+        <button
+          onclick={() => reactionState.react('❤️')}
+          class="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+        >
+          <span>❤️</span>
+          {#if totalCount > 0}
+            <span>{totalCount}</span>
+          {/if}
+        </button>
+      {/if}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={reactionMetadata}
+  {metadata}
   {ndk}
   showcaseComponents={[
     {
-      cardData: reactionMetadata.cards[0],
+      cardData: reactionBasicCard,
       preview: reactionBasicPreview,
       orientation: 'horizontal'
     },
     {
-      cardData: reactionMetadata.cards[1],
+      cardData: reactionDelayedCard,
       preview: reactionDelayedPreview,
       orientation: 'horizontal'
     }
   ]}
-  componentsSection={{
-    cards: reactionMetadata.cards.map((card, i) => ({
-      ...card,
-      code: i === 0 ? reactionBasicCode : i === 1 ? reactionDelayedCode : reactionBuilderCode
-    })),
-    previews: {
-      'reaction-basic': reactionBasicPreview,
-      'reaction-delayed': reactionDelayedPreview
-    }
-  }}
-  apiDocs={reactionMetadata.apiDocs}
+  {components}
+  apiDocs={reactionLongpressCard.apiDocs}
 >
   {#snippet customSections()}
     <SectionTitle

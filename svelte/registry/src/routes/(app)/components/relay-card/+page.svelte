@@ -2,11 +2,11 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
+  // Import components
   import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
   import RelayCardCompact from '$lib/registry/components/relay/cards/compact/relay-card-compact.svelte';
   import RelayCardList from '$lib/registry/components/relay/cards/basic/relay-card-list.svelte';
@@ -20,9 +20,18 @@
   import BasicExample from './examples/primitives-basic/index.svelte';
   import BuilderUsageExample from './examples/builder-usage/index.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import relayCardPortraitCard from '$lib/registry/components/relay/cards/portrait/registry.json';
+  import relayCardCompactCard from '$lib/registry/components/relay/cards/compact/registry.json';
+  import relayCardListCard from '$lib/registry/components/relay/cards/basic/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Relay Cards',
+    description: 'Relay card components for displaying relay information',
+    showcaseTitle: 'Relay Card Variants',
+    showcaseDescription: 'Display relay information with NIP-11 support',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -36,28 +45,9 @@
   let relay5 = $state<string>('wss://nostr.wine');
 
   const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
-
-  // Blocks showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: metadata.cards[0],
-      preview: portraitPreview,
-      orientation: 'horizontal'
-    },
-    {
-      cardData: metadata.cards[1],
-      preview: compactPreview,
-      orientation: 'horizontal'
-    },
-    {
-      cardData: metadata.cards[2],
-      preview: listPreview,
-      orientation: 'vertical'
-    }
-  ];
 </script>
 
-<!-- Preview snippets for blocks -->
+<!-- Preview snippets -->
 {#snippet portraitPreview()}
   <div class="flex gap-6 pb-4 w-full">
     {#each displayRelays as relayUrl (relayUrl)}
@@ -95,43 +85,25 @@
   </div>
 {/snippet}
 
-<!-- EditProps snippet -->
-<!-- Component previews for blocks -->
-{#snippet portraitComponentPreview()}
-  <div class="flex gap-6 overflow-x-auto pb-4">
-    {#each displayRelays as relayUrl (relayUrl)}
-      <RelayCardPortrait {ndk} {relayUrl} class="flex-none" />
-    {/each}
-  </div>
-{/snippet}
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...relayCardPortraitCard, code: PortraitExampleRaw}}>
+    {#snippet preview()}
+      {@render portraitPreview()}
+    {/snippet}
+  </ComponentCard>
 
-{#snippet compactComponentPreview()}
-  <div class="flex gap-4 overflow-x-auto pb-4">
-    {#each displayRelays as relayUrl (relayUrl)}
-      <RelayCardCompact {ndk} {relayUrl} />
-    {/each}
-  </div>
-{/snippet}
+  <ComponentCard data={{...relayCardCompactCard, code: CompactExampleRaw}}>
+    {#snippet preview()}
+      {@render compactPreview()}
+    {/snippet}
+  </ComponentCard>
 
-{#snippet listComponentPreview()}
-  <div class="space-y-4">
-    <div>
-      <h3 class="text-sm font-semibold mb-2">Default</h3>
-      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#each displayRelays.slice(0, 4) as relayUrl (relayUrl)}
-          <RelayCardList {ndk} {relayUrl} />
-        {/each}
-      </div>
-    </div>
-    <div>
-      <h3 class="text-sm font-semibold mb-2">Compact</h3>
-      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#each displayRelays.slice(0, 4) as relayUrl (relayUrl)}
-          <RelayCardList {ndk} {relayUrl} compact />
-        {/each}
-      </div>
-    </div>
-  </div>
+  <ComponentCard data={{...relayCardListCard, code: ListExampleRaw}}>
+    {#snippet preview()}
+      {@render listPreview()}
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- UI Primitives section -->
@@ -243,24 +215,28 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
-  showcaseComponent={ComponentsShowcase}
-  {showcaseComponents}
-  componentsSection={{
-    cards: [
-      { ...metadata.cards[0], code: PortraitExampleRaw },
-      { ...metadata.cards[1], code: CompactExampleRaw },
-      { ...metadata.cards[2], code: ListExampleRaw }
-    ],
-    previews: {
-      'relay-card-portrait': portraitComponentPreview,
-      'relay-card-compact': compactComponentPreview,
-      'relay-card-list': listComponentPreview
+  showcaseComponents={[
+    {
+      cardData: relayCardPortraitCard,
+      preview: portraitPreview,
+      orientation: 'horizontal'
+    },
+    {
+      cardData: relayCardCompactCard,
+      preview: compactPreview,
+      orientation: 'horizontal'
+    },
+    {
+      cardData: relayCardListCard,
+      preview: listPreview,
+      orientation: 'vertical'
     }
-  }}
+  ]}
+  {components}
   {afterComponents}
-  apiDocs={metadata.apiDocs}
+  apiDocs={relayCardPortraitCard.apiDocs}
   {customSections}
 >
     <EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />

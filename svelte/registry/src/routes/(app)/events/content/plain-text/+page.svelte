@@ -9,9 +9,31 @@
   import BasicExample from './examples/basic.example.svelte';
   import CustomSnippetsExample from './examples/custom-snippets.example.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const contentNoteBasicCard = {
+    name: 'content-note-basic',
+    title: 'Plain Text Basic',
+    category: 'event',
+    subcategory: 'content',
+    variant: 'basic',
+    description: 'Basic plain text content display'
+  };
+
+  const contentNoteCustomSnippetsCard = {
+    name: 'content-note-custom',
+    title: 'Plain Text Custom',
+    category: 'event',
+    subcategory: 'content',
+    variant: 'custom',
+    description: 'Custom snippets for plain text content'
+  };
+
+  const metadata = {
+    title: 'Plain Text Content',
+    description: 'Components for rendering plain text event content',
+    cards: [contentNoteBasicCard, contentNoteCustomSnippetsCard],
+    apiDocs: []
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 

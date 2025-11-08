@@ -16,35 +16,23 @@
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Modern',
-			description: 'Rich hashtag with hover card',
-			command: 'npx jsrepo add hashtag-modern',
-			preview: modernPreview,
-			cardData: hashtagModernCard
-		},
-		{
-			name: 'Basic',
-			description: 'Minimal hashtag',
-			command: 'npx jsrepo add hashtag',
-			preview: basicPreview,
-			cardData: hashtagBasicCard
-		},
-		{
-			name: 'Custom',
-			description: 'Custom styled',
-			command: 'npx jsrepo add hashtag',
-			preview: customPreview,
-			cardData: hashtagCustomCard
-		},
-		{
-			name: 'Interactive',
-			description: 'With click handler',
-			command: 'npx jsrepo add hashtag',
-			preview: interactivePreview,
-			cardData: hashtagInteractiveCard
-		}
-	];
+    {
+      cardData: hashtagModernCard,
+      preview: modernPreview
+    },
+    {
+      cardData: hashtagBasicCard,
+      preview: basicPreview
+    },
+    {
+      cardData: hashtagCustomCard,
+      preview: customPreview
+    },
+    {
+      cardData: hashtagInteractiveCard,
+      preview: interactivePreview
+    }
+  ];
 </script>
 
 {#snippet modernPreview()}

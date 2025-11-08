@@ -465,7 +465,7 @@ interface LinkMediaProps &#123;
         <strong>Event Card Component</strong>
         <span>Complete event display with header and content</span>
       </a>
-      <a href="/builders/event-content" class="related-card">
+      <a href="/builders/event-rendering" class="related-card">
         <strong>Event Content Builder</strong>
         <span>Low-level parsing utilities</span>
       </a>

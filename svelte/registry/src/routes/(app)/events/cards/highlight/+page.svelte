@@ -83,35 +83,23 @@
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Feed',
-      description: 'Full-width card for feeds',
-      command: 'npx jsrepo add highlight-card-feed',
-      preview: feedPreview,
       cardData: highlightCardFeedCard,
+      preview: feedPreview,
       orientation: 'vertical'
     },
     {
-      name: 'Elegant',
-      description: 'Square with gradient',
-      command: 'npx jsrepo add highlight-card-elegant',
-      preview: elegantPreview,
       cardData: highlightCardElegantCard,
+      preview: elegantPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'Compact',
-      description: 'Horizontal list layout',
-      command: 'npx jsrepo add highlight-card-compact',
-      preview: compactPreview,
       cardData: highlightCardCompactCard,
+      preview: compactPreview,
       orientation: 'vertical'
     },
     {
-      name: 'Grid',
-      description: 'Square for grids',
-      command: 'npx jsrepo add highlight-card-grid',
-      preview: gridPreview,
       cardData: highlightCardGridCard,
+      preview: gridPreview,
       orientation: 'horizontal'
     }
   ];

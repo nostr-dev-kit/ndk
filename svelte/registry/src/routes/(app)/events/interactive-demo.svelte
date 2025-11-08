@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { EventCard } from '$lib/registry/components/event/cards/compound';
-	import ClickableEventContent from './clickable-event-content.svelte';
+	import ClickableEventContent from './clickable-event-rendering.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableMention from './clickable-mention.svelte';
 	import ClickableHashtag from './clickable-hashtag.svelte';

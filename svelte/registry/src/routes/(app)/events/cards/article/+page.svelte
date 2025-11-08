@@ -137,39 +137,27 @@
 	};
 
 	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Portrait',
-			description: 'Portrait-style layout with vertical orientation. Ideal for grid layouts and featured content displays.',
-			command: 'npx jsrepo add article-card-portrait',
-			preview: portraitPreview,
-			cardData: articleCardCards[0],
-			orientation: 'horizontal'
-		},
-		{
-			name: 'Hero',
-			description: 'Full-width hero card with overlay content. Perfect for featured articles and landing pages.',
-			command: 'npx jsrepo add article-card-hero',
-			preview: heroPreview,
-			cardData: articleCardCards[1],
-			orientation: 'vertical'
-		},
-		{
-			name: 'Medium',
-			description: 'Compact horizontal card with side image. Optimized for article lists and content feeds.',
-			command: 'npx jsrepo add article-card-medium',
-			preview: mediumPreview,
-			cardData: articleCardCards[2],
-			orientation: 'vertical'
-		},
-		{
-			name: 'Neon',
-			description: 'Modern design with vibrant neon accents and gradients. Striking visual impact.',
-			command: 'npx jsrepo add article-card-neon',
-			preview: neonPreview,
-			cardData: articleCardCards[3],
-			orientation: 'vertical'
-		}
-	];
+    {
+      cardData: articleCardCards[0],
+      preview: portraitPreview,
+      orientation: 'horizontal'
+    },
+    {
+      cardData: articleCardCards[1],
+      preview: heroPreview,
+      orientation: 'vertical'
+    },
+    {
+      cardData: articleCardCards[2],
+      preview: mediumPreview,
+      orientation: 'vertical'
+    },
+    {
+      cardData: articleCardCards[3],
+      preview: neonPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 {#snippet portraitPreview()}
 	<ScrollArea orientation="horizontal" class="w-full">

@@ -4,10 +4,10 @@
 	import Demo from '$site-components/Demo.svelte';
 	import ApiTable from '$site-components/api-table.svelte';
 
-	import CustomRendererCarousel from '../../../ui/event-content/examples/custom-renderer-carousel.example.svelte';
-	import CustomRendererCarouselRaw from '../../../ui/event-content/examples/custom-renderer-carousel.example.svelte?raw';
-	import CustomRendererBento from '../../../ui/event-content/examples/custom-renderer-bento.example.svelte';
-	import CustomRendererBentoRaw from '../../../ui/event-content/examples/custom-renderer-bento.example.svelte?raw';
+	import CustomRendererCarousel from '../../../ui/event-rendering/examples/custom-renderer-carousel.example.svelte';
+	import CustomRendererCarouselRaw from '../../../ui/event-rendering/examples/custom-renderer-carousel.example.svelte?raw';
+	import CustomRendererBento from '../../../ui/event-rendering/examples/custom-renderer-bento.example.svelte';
+	import CustomRendererBentoRaw from '../../../ui/event-rendering/examples/custom-renderer-bento.example.svelte?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -184,7 +184,7 @@ renderer.mediaComponent = MediaCarousel;
 	<section class="info">
 		<h2>Related</h2>
 		<div class="related-grid">
-			<a href="/ui/event-content" class="related-card">
+			<a href="/ui/event-rendering" class="related-card">
 				<strong>Event Content Primitive</strong>
 				<span>Core content parsing and rendering system</span>
 			</a>

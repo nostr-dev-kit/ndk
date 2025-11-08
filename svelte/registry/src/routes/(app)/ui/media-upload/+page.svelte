@@ -272,7 +272,7 @@ console.log(mediaUpload.uploads);</code></pre>
         <strong>Media Upload Component</strong>
         <span>Styled media upload with dropzone</span>
       </a>
-      <a href="/ui/event-content" class="related-card">
+      <a href="/ui/event-rendering" class="related-card">
         <strong>Event Content Primitives</strong>
         <span>For displaying uploaded media in events</span>
       </a>

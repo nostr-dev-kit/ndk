@@ -38,18 +38,12 @@ Pretty cool, right? #awesome`);
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
-      name: 'Basic Rendering',
-      description: 'Auto-detects content',
-      command: 'npx jsrepo add event-content',
-      preview: basicPreview,
-      cardData: contentNoteBasicCard
+      cardData: contentNoteBasicCard,
+      preview: basicPreview
     },
     {
-      name: 'Custom Snippets',
-      description: 'Override rendering',
-      command: 'npx jsrepo add event-content',
-      preview: customSnippetsPreview,
-      cardData: contentNoteCustomSnippetsCard
+      cardData: contentNoteCustomSnippetsCard,
+      preview: customSnippetsPreview
     }
   ];
 </script>
@@ -76,8 +70,8 @@ Pretty cool, right? #awesome`);
 <!-- Use the template -->
 {#if true}
   {@const previews = {
-    'event-content-basic': basicComponentPreview,
-    'event-content-custom-snippets': customSnippetsComponentPreview
+    'event-rendering-basic': basicComponentPreview,
+    'event-rendering-custom-snippets': customSnippetsComponentPreview
   } as any}
   <ComponentPageTemplate
   metadata={contentNoteMetadata}

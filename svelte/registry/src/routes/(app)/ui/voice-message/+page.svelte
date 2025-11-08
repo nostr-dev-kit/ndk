@@ -276,7 +276,7 @@ sub.on('event', (event) => &#123;
         <strong>Voice Message Cards</strong>
         <span>Pre-styled voice message displays</span>
       </a>
-      <a href="/ui/event-content" class="related-card">
+      <a href="/ui/event-rendering" class="related-card">
         <strong>Event Content Primitives</strong>
         <span>For displaying event content with media</span>
       </a>

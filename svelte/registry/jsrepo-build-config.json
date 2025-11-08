@@ -7,7 +7,7 @@
 	"dirs": [
 		"./src/lib/registry"
 	],
-	"doNotListBlocks": [],
+	"doNotListBlocks": ["ui/content-renderer", "utils/time-ago", "ui/notification", "ui/content-renderer.context", "ui/content-renderer.svelte", "utils/time-ago.svelte", "ui/embedded-event", "ui/event-content", "ui/user-input", "ui/media-upload", "ui/zap", "ui/follow-pack", "ui/user", "ui/relay", "ui/article", "ui/event", "ui/voice-message", "ui/negentropy-sync", "ui/markdown-event-content", "ui/highlight", "ui/portal", "ui/reaction", "ui/relay-selector", "utils/cn", "utils/ndk-context.svelte", "utils/kind-label", "utils/merge-props", "utils/hashtag"],
 	"doNotListCategories": [],
 	"listBlocks": [],
 	"listCategories": [],

@@ -17,7 +17,8 @@
 -->
 <script lang="ts">
   import { ReactionLongpress } from '$lib/registry/components/reaction';
-  import type { NDKEvent, NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;

@@ -1,0 +1,87 @@
+{
+  "name": "zap-button",
+  "title": "Zap Button",
+  "category": "zap",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "description": "A simple zap (Lightning payment) button with optional amount display. Use in post actions, profile tips, or anywhere users can send payments.",
+  "showcaseTitle": "Zap Button",
+  "showcaseDescription": "Simple Lightning payment button for sending zaps.",
+  "command": "npx jsrepo add zap-button",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk",
+    "@getalby/sdk"
+  ],
+  "registryDependencies": [
+    "builders/zap-action"
+  ],
+  "components": [
+    {
+      "name": "ZapButton",
+      "description": "Lightning payment button",
+      "importPath": "import { ZapButton } from '$lib/registry/components/zap-button'",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "description": "NDK instance (optional if provided via context)"
+        },
+        {
+          "name": "event",
+          "type": "NDKEvent",
+          "required": true,
+          "description": "Event to zap"
+        },
+        {
+          "name": "user",
+          "type": "NDKUser",
+          "description": "User to zap (if not zapping an event)"
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "description": "Default zap amount in sats"
+        },
+        {
+          "name": "showAmount",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show zap amount"
+        },
+        {
+          "name": "variant",
+          "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+          "default": "ghost",
+          "description": "Button style variant"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "name": "basic",
+      "title": "Basic Usage",
+      "description": "Simple zap button",
+      "file": "examples/basic.svelte"
+    },
+    {
+      "name": "with-amount",
+      "title": "With Amount",
+      "description": "Shows zap amounts",
+      "file": "examples/with-amount.svelte"
+    }
+  ],
+  "useCases": [
+    "lightning-payments",
+    "tipping",
+    "monetization",
+    "social-media",
+    "content-support"
+  ]
+}

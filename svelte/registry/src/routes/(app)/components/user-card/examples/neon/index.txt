@@ -1,0 +1,7 @@
+<script lang="ts">
+  import UserCardNeon from '$lib/registry/components/user/cards/neon/user-card-neon.svelte';
+
+  let { ndk, user } = $props();
+</script>
+
+<UserCardNeon {ndk} pubkey={user.pubkey} />

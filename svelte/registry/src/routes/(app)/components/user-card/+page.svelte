@@ -14,13 +14,13 @@
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
-  import userCardClassicCode from './user-card-classic.example?raw';
-  import userCardCompactCode from './user-card-compact.example?raw';
-  import userListItemCode from './user-list-item.example?raw';
-  import userCardPortraitCode from './user-card-portrait.example?raw';
-  import userCardLandscapeCode from './user-card-landscape.example?raw';
-  import userCardNeonCode from './user-card-neon.example?raw';
-  import userCardGlassCode from './user-card-glass.example?raw';
+  import userCardClassicCode from './examples/classic/index.txt?raw';
+  import userCardCompactCode from './examples/compact/index.txt?raw';
+  import userListItemCode from './examples/list-item/index.txt?raw';
+  import userCardPortraitCode from './examples/portrait/index.txt?raw';
+  import userCardLandscapeCode from './examples/landscape/index.txt?raw';
+  import userCardNeonCode from './examples/neon/index.txt?raw';
+  import userCardGlassCode from './examples/glass/index.txt?raw';
 
   // Import blocks
   import UserCardClassic from '$lib/registry/components/user/cards/classic/user-card-classic.svelte';

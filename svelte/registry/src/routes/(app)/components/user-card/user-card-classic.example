@@ -1,5 +1,0 @@
-<script lang="ts">
-  import UserCardClassic from '$lib/registry/components/user-card/user-card-classic.svelte';
-</script>
-
-<UserCardClassic {ndk} pubkey={user.pubkey} />

@@ -1,0 +1,7 @@
+<script lang="ts">
+  import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
+
+  let { ndk, user } = $props();
+</script>
+
+<UserListItem {ndk} pubkey={user.pubkey} />

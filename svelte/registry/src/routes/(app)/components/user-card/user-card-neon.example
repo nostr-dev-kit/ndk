@@ -1,5 +1,0 @@
-<script lang="ts">
-  import UserCardNeon from '$lib/registry/components/user-card/user-card-neon.svelte';
-</script>
-
-<UserCardNeon {ndk} pubkey={user.pubkey} />

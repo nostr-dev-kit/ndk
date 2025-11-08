@@ -33,9 +33,3 @@
     </div>
   </div>
 </Relay.Root>
-
-<style>
-  .flex { display: flex; }
-  .items-center { align-items: center; }
-  .gap-3 { gap: 0.75rem; }
-</style>

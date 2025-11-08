@@ -84,17 +84,12 @@
   {ndk}
   showcaseComponents={[
     {
-      name: 'RepostButton',
-      description: 'Basic repost button with count',
-      command: 'npx jsrepo add repost-button',
+      cardData: repostButtonCard,
       preview: repostButtonsPreview,
-      cardData: repostMetadata.cards[0],
       orientation: 'horizontal'
     },
     {
-      name: 'Repost Authors Avatars',
-      description: 'Show avatars of people who reposted',
-      command: 'npx jsrepo add repost-button-avatars',
+      cardData: repostButtonAvatarsCard,
       preview: avatarsPreview,
       orientation: 'horizontal'
     }

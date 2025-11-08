@@ -1,4 +1,4 @@
-import { defaultContentRenderer } from '../ui/content-renderer.svelte.js';
+import { defaultContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 import Hashtag from './hashtag.svelte';
 
 // Self-register when this file is imported

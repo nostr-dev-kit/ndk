@@ -59,17 +59,12 @@
   {ndk}
   showcaseComponents={[
     {
-      name: 'ZapButton',
-      description: 'Basic zap button with sat count',
-      command: 'npx jsrepo add zap-button',
+      cardData: zapButtonCard,
       preview: zapButtonsPreview,
-      cardData: zapMetadata.cards[0],
       orientation: 'horizontal'
     },
     {
-      name: 'Zapper Avatars',
-      description: 'Show avatars of people who zapped',
-      command: 'npx jsrepo add zap-button-avatars',
+      cardData: zapButtonAvatarsCard,
       preview: avatarsPreview,
       orientation: 'horizontal'
     }

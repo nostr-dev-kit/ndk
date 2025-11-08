@@ -155,10 +155,12 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
   {ndk}
   showcaseComponents={[
     {
+      id: "muteButtonCard",
       cardData: muteButtonCard,
       preview: muteButtonPreview
     },
     {
+      id: "muteCustomCard",
       cardData: muteCustomCard,
       preview: customPreview
     }

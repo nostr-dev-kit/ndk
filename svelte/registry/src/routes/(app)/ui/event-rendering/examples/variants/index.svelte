@@ -30,19 +30,19 @@
 <div class="variants-demo">
   <div class="variant-section">
     <h3>Card (default)</h3>
-    <EmbeddedEvent {ndk} bech32={eventBech32} variant="card" />
+    <EmbeddedEvent {ndk} bech32={eventBech32} />
   </div>
 
   <div class="variant-section">
     <h3>Compact</h3>
-    <EmbeddedEvent {ndk} bech32={eventBech32} variant="compact" />
+    <EmbeddedEvent {ndk} bech32={eventBech32} />
   </div>
 
   <div class="variant-section">
     <h3>Inline</h3>
     <p>
       Check out this event:
-      <EmbeddedEvent {ndk} bech32={eventBech32} variant="inline" />
+      <EmbeddedEvent {ndk} bech32={eventBech32} />
       in the middle of text.
     </p>
   </div>

@@ -2,7 +2,7 @@
   import { mergeProps } from '../../utils/merge-props.js';
   import { getContext } from 'svelte';
   import type { Snippet } from 'svelte';
-  import type { UserInputResult } from '@nostr-dev-kit/svelte';
+  import type { UserInputResult } from '../../builders/user-input/index.svelte';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
 
   interface Props {

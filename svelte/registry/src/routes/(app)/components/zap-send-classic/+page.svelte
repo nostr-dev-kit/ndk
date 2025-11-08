@@ -63,6 +63,7 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "zapSendClassicCard",
       cardData: zapSendClassicCard,
       preview,
       orientation: 'horizontal'

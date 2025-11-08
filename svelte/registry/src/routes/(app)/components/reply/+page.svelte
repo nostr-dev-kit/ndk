@@ -64,6 +64,7 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "replyButtonCard",
       cardData: replyButtonCard,
       preview: replyButtonsPreview,
       orientation: 'horizontal'

@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
-	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
+	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import { createFetchEvents } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
 	import NoteCard from '$lib/registry/components/note/cards/basic/note-card.svelte';

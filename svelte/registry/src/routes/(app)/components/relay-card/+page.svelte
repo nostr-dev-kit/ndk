@@ -217,16 +217,19 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "relayCardPortraitCard",
       cardData: relayCardPortraitCard,
       preview: portraitPreview,
       orientation: 'horizontal'
     },
     {
+      id: "relayCardCompactCard",
       cardData: relayCardCompactCard,
       preview: compactPreview,
       orientation: 'horizontal'
     },
     {
+      id: "relayCardListCard",
       cardData: relayCardListCard,
       preview: listPreview,
       orientation: 'vertical'

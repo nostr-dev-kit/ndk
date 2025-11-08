@@ -1,4 +1,4 @@
-import type { ContentRenderer } from './content-renderer';
+import type { ContentRenderer } from './index.svelte';
 
 export const CONTENT_RENDERER_CONTEXT_KEY = Symbol('content-renderer');
 

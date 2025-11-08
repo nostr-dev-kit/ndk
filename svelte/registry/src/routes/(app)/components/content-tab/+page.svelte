@@ -381,6 +381,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
     {ndk}
     showcaseComponents={[
       {
+        id: "contentTabCard",
         cardData: contentTabCard,
         preview: defaultPreview,
         control: sortControl,

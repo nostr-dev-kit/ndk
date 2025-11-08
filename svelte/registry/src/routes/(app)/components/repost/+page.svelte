@@ -109,11 +109,13 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "repostButtonCard",
       cardData: repostButtonCard,
       preview: repostButtonsPreview,
       orientation: 'horizontal'
     },
     {
+      id: "repostButtonAvatarsCard",
       cardData: repostButtonAvatarsCard,
       preview: avatarsPreview,
       orientation: 'horizontal'

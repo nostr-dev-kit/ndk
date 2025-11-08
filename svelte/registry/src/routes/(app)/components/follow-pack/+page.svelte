@@ -165,21 +165,25 @@
     {ndk}
     showcaseComponents={[
       {
+        id: "followPackHeroCard",
         cardData: followPackHeroCard,
         preview: heroPreview,
         orientation: 'horizontal'
       },
       {
+        id: "followPackPortraitCard",
         cardData: followPackPortraitCard,
         preview: portraitPreview,
         orientation: 'vertical'
       },
       {
+        id: "followPackCompactCard",
         cardData: followPackCompactCard,
         preview: compactPreview,
         orientation: 'horizontal'
       },
       {
+        id: "followPackListItemCard",
         cardData: followPackListItemCard,
         preview: listItemPreview,
         orientation: 'vertical'

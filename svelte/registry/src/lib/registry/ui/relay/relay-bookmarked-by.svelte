@@ -23,7 +23,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './relay.context.js';
-  import type { BookmarkedRelayListState } from '@nostr-dev-kit/svelte';
+  import type { BookmarkedRelayListState } from '../../builders/relay/bookmarks.svelte';
   import type { Snippet } from 'svelte';
 
   interface Props {

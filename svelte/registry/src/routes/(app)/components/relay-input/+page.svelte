@@ -132,18 +132,22 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "relayInputCard",
       cardData: relayInputCard,
       preview: basicBlockPreview
     },
     {
+      id: "relayInputLabelCard",
       cardData: relayInputLabelCard,
       preview: labelBlockPreview
     },
     {
+      id: "relayInputErrorCard",
       cardData: relayInputErrorCard,
       preview: errorBlockPreview
     },
     {
+      id: "relayInputDisabledCard",
       cardData: relayInputDisabledCard,
       preview: disabledBlockPreview
     }

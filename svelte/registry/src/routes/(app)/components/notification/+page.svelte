@@ -135,12 +135,14 @@
 	{ndk}
 	showcaseComponents={[
 		{
+   id: "notificationBuilderCard",
 			cardData: notificationBuilderCard,
 			preview: builderPreview,
 			code: notificationBuilderCode,
 			orientation: 'vertical'
 		},
 		{
+   id: "notificationPrimitivesCard",
 			cardData: notificationPrimitivesCard,
 			preview: primitivesPreview,
 			code: notificationPrimitivesCode,

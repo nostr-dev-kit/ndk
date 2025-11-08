@@ -18,7 +18,7 @@
 <script lang="ts">
   import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
-  import type { NDKSvelte } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;

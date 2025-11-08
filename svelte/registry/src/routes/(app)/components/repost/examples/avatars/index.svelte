@@ -17,7 +17,7 @@
 -->
 <script lang="ts">
   import RepostButtonAvatars from '$lib/registry/components/repost/buttons/avatars/repost-button-avatars.svelte';
-  import type { NDKEvent, NDKSvelte } from '@nostr-dev-kit/ndk';
+  import type { NDKEvent, NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;

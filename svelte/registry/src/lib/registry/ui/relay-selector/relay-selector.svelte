@@ -42,7 +42,7 @@
 
 <Relay.Selector.Root {ndk} bind:selected {multiple}>
 	{#snippet children(context)}
-		<div class={cn('relay-selector-inline', className)}>
+		<div class={cn('w-full', className)}>
 			{#if label}
 				<label class="block text-sm font-medium mb-2">
 					{label}
@@ -148,9 +148,3 @@
 		</div>
 	{/snippet}
 </Relay.Selector.Root>
-
-<style>
-	.relay-selector-inline {
-		width: 100%;
-	}
-</style>

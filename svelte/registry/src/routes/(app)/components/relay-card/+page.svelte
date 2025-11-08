@@ -11,14 +11,14 @@
   import RelayCardCompact from '$lib/registry/components/relay/cards/compact/relay-card-compact.svelte';
   import RelayCardList from '$lib/registry/components/relay/cards/basic/relay-card-list.svelte';
 
-  // Import code examples
-  import relayCardPortraitCode from './relay-card-portrait.example?raw';
-  import relayCardCompactCode from './relay-card-compact.example?raw';
-  import relayCardListCode from './relay-card-list.example?raw';
+  // Import example components
+  import PortraitExampleRaw from './examples/portrait/index.txt?raw';
+  import CompactExampleRaw from './examples/compact/index.txt?raw';
+  import ListExampleRaw from './examples/list/index.txt?raw';
 
-  // UI component examples
-  import BasicExample from './examples/basic.example.svelte';
-  import BuilderUsageExample from './examples/builder-usage.example.svelte';
+  // UI primitive examples
+  import BasicExample from './examples/primitives-basic/index.svelte';
+  import BuilderUsageExample from './examples/builder-usage/index.svelte';
 
   // Get page data
   let { data } = $props();
@@ -246,11 +246,12 @@
   metadata={metadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
-  {showcaseComponents}componentsSection={{
+  {showcaseComponents}
+  componentsSection={{
     cards: [
-      { ...metadata.cards[0], code: relayCardPortraitCode },
-      { ...metadata.cards[1], code: relayCardCompactCode },
-      { ...metadata.cards[2], code: relayCardListCode }
+      { ...metadata.cards[0], code: PortraitExampleRaw },
+      { ...metadata.cards[1], code: CompactExampleRaw },
+      { ...metadata.cards[2], code: ListExampleRaw }
     ],
     previews: {
       'relay-card-portrait': portraitComponentPreview,

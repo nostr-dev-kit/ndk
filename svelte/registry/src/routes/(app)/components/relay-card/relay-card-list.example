@@ -1,7 +1,0 @@
-<script lang="ts">
-  import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
-</script>
-
-<RelayCardList relayUrl="wss://relay.damus.io" />
-
-<RelayCardList relayUrl="wss://relay.damus.io" compact />

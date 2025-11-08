@@ -1,8 +1,7 @@
 <script>
-  import { getContext } from 'svelte';
-      import { UserInput } from '$lib/registry/ui/user-input';
+  import { UserInput } from '$lib/registry/ui/user-input';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  let { ndk } = $props();
 
   let selectedUser = $state<NDKUser | null>(null);
 

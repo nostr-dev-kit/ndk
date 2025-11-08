@@ -1,7 +1,0 @@
-<script lang="ts">
-  import RelayCardPortrait from '$lib/registry/components/relay-card/relay-card-portrait.svelte';
-</script>
-
-<RelayCardPortrait relayUrl="wss://relay.damus.io" />
-
-<RelayCardPortrait relayUrl="wss://f7z.io" />

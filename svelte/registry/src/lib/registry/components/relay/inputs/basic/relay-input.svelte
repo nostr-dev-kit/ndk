@@ -36,7 +36,7 @@
 	}: Props = $props();
 </script>
 
-<div data-relay-input="" data-error={error ? '' : undefined} data-disabled={disabled ? '' : undefined} class={cn('relay-input-block', className)}>
+<div data-relay-input="" data-error={error ? '' : undefined} data-disabled={disabled ? '' : undefined} class={cn('w-full', className)}>
 	{#if label}
 		<label class="block text-sm font-medium mb-2">
 			{label}
@@ -62,9 +62,3 @@
 		</p>
 	{/if}
 </div>
-
-<style>
-	.relay-input-block {
-		width: 100%;
-	}
-</style>

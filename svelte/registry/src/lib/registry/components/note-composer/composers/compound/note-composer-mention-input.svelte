@@ -5,7 +5,7 @@
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
 	import { UserInput } from '../../../ui/user-input/index.js';
 	import { User } from '../../../ui/user/index.js';
-	import { cn } from '../../../utils/cn';
+	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {
 		class?: string;

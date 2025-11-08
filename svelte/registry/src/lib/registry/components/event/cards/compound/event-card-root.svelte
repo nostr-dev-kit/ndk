@@ -4,7 +4,7 @@
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
   import { getNDKFromContext } from '../../../utils/ndk-context.svelte.js';
-  import { cn } from '../../../utils/cn';
+  import { cn } from '$lib/registry/utils/cn';
   import type { Snippet } from 'svelte';
 
   interface Props {

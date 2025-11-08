@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn } from '../../../utils/cn';
+  import { cn } from '$lib/registry/utils/cn';
   import type { Snippet } from 'svelte';
 
   interface Props {

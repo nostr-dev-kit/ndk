@@ -1,9 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  const ndk = getContext('ndk');
 
   // Gigi's pubkey for demo
   const targetPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';

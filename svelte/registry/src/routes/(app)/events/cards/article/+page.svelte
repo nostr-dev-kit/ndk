@@ -7,11 +7,11 @@
 	import ArticleCardHero from '$lib/registry/components/article/cards/hero/article-card-hero.svelte';
 	import ArticleCardNeon from '$lib/registry/components/article/cards/neon/article-card-neon.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article/cards/basic/article-card-medium.svelte';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
+	import { EditProps } from '$lib/site/components/edit-props';
+	import { ScrollArea } from '$lib/site/components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Get page data
   let { data } = $props();

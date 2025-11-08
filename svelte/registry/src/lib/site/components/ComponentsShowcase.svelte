@@ -2,11 +2,11 @@
 	import type { Snippet } from 'svelte';
 	import { Dialog } from 'bits-ui';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
-	import { PMCommand } from '$lib/components/ui/pm-command';
+	import { PMCommand } from '$lib/site/components/ui/pm-command';
     import { cn } from '$lib/registry/utils/cn.js';
 
-	import type { ShowcaseComponent } from '$lib/templates/types';
-	import type { ComponentCardData } from '$lib/site-components/ComponentCard.svelte';
+	import type { ShowcaseComponent } from '$lib/site/templates/types';
+	import type { ComponentCardData } from '$lib/site/components/ComponentCard.svelte';
 
 	interface Props {
 		components: ShowcaseComponent[];

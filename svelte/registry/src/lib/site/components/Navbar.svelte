@@ -1,11 +1,11 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import { ndk } from '$lib/ndk.svelte';
-  import { themeManager } from '$lib/theme.svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
+  import { themeManager } from '$lib/site/theme.svelte';
   import { User } from '$lib/registry/ui/user';
   import { UserProfile } from '$lib/registry/components/user/displays/profile';
-  import { sidebar } from '$lib/stores/sidebar.svelte';
-  import { mainNav } from '$lib/navigation';
+  import { sidebar } from '$lib/site/stores/sidebar.svelte';
+  import { mainNav } from '$lib/site/navigation';
 
   interface Props {
     onLoginClick: () => void;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { NDKEvent } from '@nostr-dev-kit/ndk';
-	import { ndk } from '$lib/ndk.svelte.js';
+	import { ndk } from '$lib/site/ndk.svelte.js';
 	import UserCard from '$lib/registry/components/user/cards/compact/user-card-compact.svelte';
 	import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte';
 	import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';

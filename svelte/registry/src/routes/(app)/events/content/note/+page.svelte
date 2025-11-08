@@ -3,8 +3,8 @@
   import type { Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   import BasicExample from './examples/basic.example.svelte';
   import CustomSnippetsExample from './examples/custom-snippets.example.svelte';

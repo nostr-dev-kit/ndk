@@ -6,13 +6,13 @@ import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 export type {
 	ComponentCardData,
 	ComponentDoc
-} from '$lib/site-components/ComponentCard.svelte';
+} from '$lib/site/components/ComponentCard.svelte';
 
 // Import for local use
 import type {
 	ComponentDoc as ComponentDocBase,
 	ComponentCardData as ComponentCardDataBase
-} from '$lib/site-components/ComponentCard.svelte';
+} from '$lib/site/components/ComponentCard.svelte';
 
 // Alias ComponentDoc as ApiDoc for clarity
 export type ApiDoc = ComponentDocBase;
@@ -47,7 +47,7 @@ export interface ShowcaseComponent {
 }
 
 // Import PropType from edit-props
-import type { PropType } from '$lib/site-components/edit-props';
+import type { PropType } from '$lib/site/components/edit-props';
 
 // Page metadata structure
 export interface ComponentPageMetadata {

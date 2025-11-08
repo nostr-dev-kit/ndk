@@ -4,7 +4,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import HashtagModern from '$lib/registry/components/hashtag/displays/modern/hashtag-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	import UIModern from './examples/ui-modern.example.svelte';
 	import UIBasic from './examples/ui-basic.example.svelte';

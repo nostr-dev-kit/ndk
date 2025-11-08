@@ -2,10 +2,10 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import PageTitle from '$lib/site-components/PageTitle.svelte';
+	import { EditProps } from '$lib/site/components/edit-props';
+	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
 	import BasicSimpleExample from './examples/basic-simple.example.svelte';
 	import BasicExample from './examples/basic.example.svelte';
 

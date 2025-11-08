@@ -2,9 +2,9 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import PageTitle from '$lib/site-components/PageTitle.svelte';
+	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import InteractiveDemo from './interactive-demo.svelte';
-	import LayerVisualization from './layer-visualization.svelte';	import { EditProps } from '$lib/site-components/edit-props';
+	import LayerVisualization from './layer-visualization.svelte';	import { EditProps } from '$lib/site/components/edit-props';
 
   // Get page data
   let { data } = $props();

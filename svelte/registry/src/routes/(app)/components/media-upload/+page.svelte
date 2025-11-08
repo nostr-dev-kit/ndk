@@ -1,9 +1,9 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
+  import SectionTitle from '$site-components/SectionTitle.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
 
   // Import code examples

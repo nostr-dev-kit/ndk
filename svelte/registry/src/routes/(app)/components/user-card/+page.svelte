@@ -2,15 +2,15 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { User } from '$lib/registry/ui/user';
-  import { ScrollArea } from '$lib/site-components/ui/scroll-area';
+  import { ScrollArea } from '$lib/site/components/ui/scroll-area';
   import { Select } from 'bits-ui';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import userCardClassicCode from './user-card-classic.example?raw';

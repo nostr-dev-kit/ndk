@@ -7,7 +7,8 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			'$site-components': './src/lib/site-components'
+			'$site': './src/lib/site',
+			'$site-components': './src/lib/site/components'
 		}
 	},
 	onwarn: (warning, handler) => {

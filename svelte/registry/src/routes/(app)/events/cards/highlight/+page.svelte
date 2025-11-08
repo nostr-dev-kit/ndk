@@ -7,11 +7,11 @@
   import HighlightCardElegant from '$lib/registry/components/highlight/cards/basic/highlight-card-elegant.svelte';
   import HighlightCardCompact from '$lib/registry/components/highlight/cards/compact/highlight-card-compact.svelte';
   import HighlightCardGrid from '$lib/registry/components/highlight/cards/basic/highlight-card-grid.svelte';
-  import { EditProps } from '$lib/site-components/edit-props';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import * as ComponentAnatomy from '$site-components/component-anatomy';  import type { ShowcaseComponent } from '$lib/templates/types';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Get page data
   let { data } = $props();

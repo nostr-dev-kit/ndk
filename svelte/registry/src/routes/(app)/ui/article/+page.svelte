@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
-  import UIPrimitivePageTemplate from '$lib/templates/UIPrimitivePageTemplate.svelte';
+  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy/index.js';
   import { articleMetadata } from '$lib/ui-registry/article';
 

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentCard from '$site-components/ComponentCard.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
   import RelayCardCompact from '$lib/registry/components/relay/cards/compact/relay-card-compact.svelte';

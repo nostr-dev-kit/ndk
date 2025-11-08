@@ -4,8 +4,8 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+	import { EditProps } from '$lib/site/components/edit-props';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIFull from './examples/ui-full.example.svelte';

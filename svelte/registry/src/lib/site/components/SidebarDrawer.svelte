@@ -1,9 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
-  import type { NavCategory } from '$lib/navigation';
-  import { sidebar } from '$lib/stores/sidebar.svelte';
-  import NipBadge from '$lib/site-components/nip-badge.svelte';
+  import type { NavCategory } from '$lib/site/navigation';
+  import { sidebar } from '$lib/site/stores/sidebar.svelte';
+  import NipBadge from '$lib/site/components/nip-badge.svelte';
 
   let { sections = [] }: { sections?: NavCategory[] } = $props();
 

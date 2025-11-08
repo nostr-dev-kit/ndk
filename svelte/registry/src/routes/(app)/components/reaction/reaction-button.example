@@ -1,5 +1,0 @@
-<script lang="ts">
-  import { ReactionButton } from '$lib/registry/components/reaction-button';
-</script>
-
-<ReactionButton {ndk} {event} variant="ghost" />

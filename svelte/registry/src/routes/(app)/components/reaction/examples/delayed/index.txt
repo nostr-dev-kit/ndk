@@ -1,6 +1,8 @@
 <script lang="ts">
   import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
 
+  let { ndk, event } = $props();
+
   const reactionState = createReactionAction(() => ({ event, delayed: 5 }), ndk);
 </script>
 

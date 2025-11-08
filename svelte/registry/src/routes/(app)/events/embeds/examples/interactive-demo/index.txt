@@ -1,15 +1,10 @@
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 
-  interface Props {
-    ndk: NDKSvelte;
-  }
-
-  let { ndk }: Props = $props();
+  let { ndk } = $props();
 
   let bech32Input = $state('');
-  let selectedVariant = $state<'inline' | 'card' | 'compact'>('card');
+  let selectedVariant = $state('card');
 
   // Example bech32 strings for quick testing
   const examples = [
@@ -56,7 +51,7 @@
         {#each ['card', 'inline', 'compact'] as variant (variant)}
           <button
             type="button"
-            onclick={() => selectedVariant = variant as any}
+            onclick={() => selectedVariant = variant}
             class="px-4 py-2 rounded-lg border transition-colors {selectedVariant === variant ? 'border-primary bg-primary/10 text-primary' : 'border-border hover:bg-accent'}"
           >
             {variant}

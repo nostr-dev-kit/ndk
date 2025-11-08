@@ -1,13 +1,8 @@
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 
-  interface Props {
-    ndk: NDKSvelte;
-  }
-
-  let { ndk }: Props = $props();
+  let { ndk } = $props();
 
   // Create example event with embedded reference
   const exampleContent = `Check out this embedded note:
@@ -20,7 +15,7 @@ nostr:nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k`;
     pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
     created_at: Math.floor(Date.now() / 1000),
     tags: []
-  } as any);
+  });
 
   const sampleBech32 = 'nevent1qqstnye37cpucx6zcjqfj25c2htufvhw5suqj3542dxgguzt9l3dppcujac6k';
 </script>

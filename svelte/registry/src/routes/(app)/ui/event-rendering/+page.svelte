@@ -5,7 +5,8 @@
   import Preview from '$site-components/Demo.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
-  import { EventContent, EmbeddedEvent } from '$lib/registry/ui/event-rendering';
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+  import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';

@@ -1,8 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/Demo.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import { ZapAmount, ZapContent } from '$lib/registry/ui/zap';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';
@@ -10,6 +13,55 @@
   import StyledRaw from './examples/styled/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  // Mock zap for anatomy visualization
+  const mockZap = {
+    amount: 1000,
+    comment: 'Great post!',
+    sender: { pubkey: 'mock' }
+  };
+
+  // Page metadata
+  const metadata = {
+    title: 'Zap',
+    description: 'Headless primitives for displaying Lightning zap information. Simple components for showing zap amounts in satoshis and optional zap comments/messages with full styling control.',
+    importPath: 'ui/zap',
+    nips: ['57'],
+    primitives: [
+      {
+        name: 'ZapAmount',
+        title: 'ZapAmount',
+        description: 'Displays the zap amount in satoshis. This is a simple display primitive that shows the raw satoshi value from a ProcessedZap object. Add your own formatting and styling as needed.',
+        apiDocs: [
+          { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing amount and metadata' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'ZapContent',
+        title: 'ZapContent',
+        description: 'Displays the zap comment/message if present. Automatically handles conditional rendering—renders nothing if the comment is empty. This allows you to always include the component without manual conditional checks.',
+        apiDocs: [
+          { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing comment and metadata' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      }
+    ],
+    anatomyLayers: [
+      {
+        id: 'amount',
+        label: 'ZapAmount',
+        description: 'Displays the zap amount in satoshis. Shows raw numerical value for flexible formatting.',
+        props: ['zap', 'class']
+      },
+      {
+        id: 'content',
+        label: 'ZapContent',
+        description: 'Displays optional zap comment. Only renders when comment exists.',
+        props: ['zap', 'class']
+      }
+    ]
+  };
 </script>
 
 <svelte:head>
@@ -17,42 +69,8 @@
   <meta name="description" content="Headless primitives for displaying Lightning zap information including amount and comment content." />
 </svelte:head>
 
-<div class="component-page">
-  <header>
-    <div class="header-badge">
-      <span class="badge">UI Primitive</span>
-      <span class="badge badge-nip">NIP-57</span>
-    </div>
-    <div class="header-title">
-      <h1>Zap</h1>
-    </div>
-    <p class="header-description">
-      Headless primitives for displaying Lightning zap information. Simple components for showing zap amounts in satoshis and optional zap comments/messages with full styling control.
-    </p>
-    <div class="header-info">
-      <div class="info-card">
-        <strong>Headless</strong>
-        <span>Completely unstyled</span>
-      </div>
-      <div class="info-card">
-        <strong>NIP-57 Zaps</strong>
-        <span>Lightning payment display</span>
-      </div>
-      <div class="info-card">
-        <strong>Simple API</strong>
-        <span>Just amount and content</span>
-      </div>
-    </div>
-  </header>
-
-  <section class="installation">
-    <h2>Installation</h2>
-    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui/zap';</code></pre>
-  </section>
-
-  <section class="demo space-y-8">
-    <h2>Examples</h2>
-
+<UIPrimitivePageTemplate {metadata} {ndk}>
+  {#snippet topExample()}
     <Preview
       title="Basic Display"
       description="Display zap amounts and comments using the primitive components."
@@ -60,412 +78,197 @@
     >
       <Basic />
     </Preview>
+  {/snippet}
 
-    <Preview
-      title="Styled Cards"
-      description="Build custom zap cards with your own styling."
-      code={StyledRaw}
-    >
-      <Styled />
-    </Preview>
-  </section>
+  {#snippet overview()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+      <p class="text-lg leading-relaxed text-muted-foreground mb-8">
+        Zap primitives provide simple, headless components for displaying Lightning zap information from NIP-57 zap receipt events.
+        They handle zap amounts and optional comments, giving you complete control over styling and layout.
+      </p>
 
-  <section class="info">
-    <h2>Available Components</h2>
-    <div class="components-grid">
-      <div class="component-item">
-        <code>ZapAmount</code>
-        <p>Display zap amount in satoshis.</p>
-      </div>
-      <div class="component-item">
-        <code>ZapContent</code>
-        <p>Display optional zap comment/message.</p>
-      </div>
+      <h3 class="text-xl font-semibold mt-8 mb-4">When You Need These</h3>
+      <p class="leading-relaxed mb-4">
+        Use Zap primitives when you need to:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2">
+        <li class="leading-relaxed">Display Lightning zap amounts on posts or content</li>
+        <li class="leading-relaxed">Show zap comments/messages alongside amounts</li>
+        <li class="leading-relaxed">Build custom zap lists or feeds with your own styling</li>
+        <li class="leading-relaxed">Create zap leaderboards or statistics displays</li>
+        <li class="leading-relaxed">Integrate zap information with user profiles or other primitives</li>
+      </ul>
+      <p class="leading-relaxed mt-4 text-muted-foreground">
+        Note: These are display-only primitives. For sending zaps, use <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">createZapAction</code> builder,
+        Zap button components, or NDK's <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">NDKZapper</code> directly.
+      </p>
+    </section>
+  {/snippet}
+
+  {#snippet anatomyPreview()}
+    <div class="flex items-center gap-6 p-6 border border-border rounded-lg bg-card">
+      <ComponentAnatomy.Layer id="amount" label="ZapAmount">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <ZapAmount zap={mockZap} class="text-2xl font-bold text-yellow-600" />
+          <span class="text-sm text-muted-foreground">sats</span>
+        </div>
+      </ComponentAnatomy.Layer>
+      <ComponentAnatomy.Layer id="content" label="ZapContent">
+        <ZapContent zap={mockZap} class="text-sm text-muted-foreground italic" />
+      </ComponentAnatomy.Layer>
     </div>
-  </section>
+  {/snippet}
 
-  <section class="info">
-    <h2>ZapAmount</h2>
-    <p class="mb-4">Displays the zap amount in satoshis.</p>
-    <ApiTable
-      rows={[
-        { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing amount and metadata' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
+  {#snippet examples()}
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Styled Zap Cards</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Build custom zap cards with your own styling. Combine amount and content primitives with
+        layout elements to create rich zap displays.
+      </p>
+      <Preview
+        title="Styled Cards"
+        description="Build custom zap cards with your own styling."
+        code={StyledRaw}
+      >
+        <Styled />
+      </Preview>
+    </div>
 
-  <section class="info">
-    <h2>ZapContent</h2>
-    <p class="mb-4">Displays the zap comment/message if present. Renders nothing if comment is empty.</p>
-    <ApiTable
-      rows={[
-        { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing comment and metadata' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>ProcessedZap</h2>
-    <p class="mb-4">Zaps are represented by the ProcessedZap type from NDK Svelte:</p>
-    <pre><code>import type &#123; ProcessedZap &#125; from '@nostr-dev-kit/svelte';
-
-interface ProcessedZap &#123;
-  amount: number;          // Amount in satoshis
-  comment?: string;        // Optional zap comment/message
-  sender: &#123;
-    pubkey: string;
-    profile?: NDKUserProfile;
-  &#125;;
-  // ... other metadata
-&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Basic Usage</h2>
-    <p class="mb-4">Display zap amount and content:</p>
-    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui/zap';
-import type &#123; ProcessedZap &#125; from '@nostr-dev-kit/svelte';
-
-let zap: ProcessedZap = &#123;
-  amount: 1000,
-  comment: 'Great post!',
-  sender: &#123; pubkey: '...' &#125;
-&#125;;
-
-&lt;div&gt;
-  &lt;ZapAmount &#123;zap&#125; /&gt; sats
-  &lt;ZapContent &#123;zap&#125; /&gt;
-&lt;/div&gt;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Styling Examples</h2>
-    <p class="mb-4">Apply custom styles to create different zap displays:</p>
-    <pre><code>&lt;!-- Simple inline --&gt;
-&lt;div&gt;
-  ⚡ &lt;ZapAmount &#123;zap&#125; class="font-bold text-yellow-600" /&gt; sats
-&lt;/div&gt;
-
-&lt;!-- Card layout --&gt;
-&lt;div class="zap-card"&gt;
-  &lt;div class="zap-header"&gt;
-    &lt;ZapAmount &#123;zap&#125; class="text-2xl font-bold" /&gt;
-    &lt;span&gt;sats&lt;/span&gt;
-  &lt;/div&gt;
-  &lt;ZapContent &#123;zap&#125; class="text-gray-600 mt-2" /&gt;
-&lt;/div&gt;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Loading Zaps</h2>
-    <p class="mb-4">Get processed zaps using NDK Svelte builders:</p>
-    <pre><code>import &#123; createZapFeed &#125; from '@nostr-dev-kit/svelte';
-
-// Create zap feed for an event
-const zapFeed = createZapFeed(() => (&#123;
-  eventId: event.id
-&#125;), ndk);
-
-// Access processed zaps
-$effect(() => &#123;
-  const zaps = zapFeed.zaps; // ProcessedZap[]
-
-  zaps.forEach(zap => &#123;
-    console.log(`&#123;zap.amount&#125; sats: &#123;zap.comment&#125;`);
-  &#125;);
-&#125;);</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Zap Lists</h2>
-    <p class="mb-4">Display lists of zaps:</p>
-    <pre><code>import &#123; ZapAmount, ZapContent &#125; from '$lib/registry/ui/zap';
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Zap Lists</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Common pattern for displaying lists of zaps with conditional comment rendering.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`import { ZapAmount, ZapContent } from '$lib/registry/ui/zap';
 
 let zaps: ProcessedZap[] = zapFeed.zaps;
 
-&#123;#each zaps as zap&#125;
-  &lt;div class="zap-item"&gt;
-    &lt;div class="zap-amount"&gt;
-      ⚡ &lt;ZapAmount &#123;zap&#125; /&gt; sats
-    &lt;/div&gt;
-    &#123;#if zap.comment&#125;
-      &lt;ZapContent &#123;zap&#125; class="zap-comment" /&gt;
-    &#123;/if&#125;
-  &lt;/div&gt;
-&#123;/each&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Conditional Rendering</h2>
-    <p class="mb-4">ZapContent only renders if a comment exists:</p>
-    <pre><code>&lt;!-- This renders nothing if zap.comment is empty --&gt;
-&lt;ZapContent &#123;zap&#125; /&gt;
-
-&lt;!-- Manual check if needed --&gt;
-&#123;#if zap.comment&#125;
-  &lt;div class="comment-wrapper"&gt;
-    &lt;ZapContent &#123;zap&#125; /&gt;
-  &lt;/div&gt;
-&#123;/if&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Amount Formatting</h2>
-    <p class="mb-4">ZapAmount displays raw satoshi amounts. Add your own formatting:</p>
-    <pre><code>&lt;!-- Simple --&gt;
-&lt;ZapAmount &#123;zap&#125; /&gt; sats
-
-&lt;!-- With formatting --&gt;
-&lt;span&gt;
-  &lt;ZapAmount &#123;zap&#125; class="font-mono" /&gt;
-  &lt;span class="text-xs text-gray-500"&gt;sats&lt;/span&gt;
-&lt;/span&gt;
-
-&lt;!-- Custom wrapper --&gt;
-&#123;@const formattedAmount = zap.amount.toLocaleString()&#125;
-&lt;span&gt;&#123;formattedAmount&#125; sats&lt;/span&gt;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Integration with User Primitives</h2>
-    <p class="mb-4">Combine with User primitives to show zap senders:</p>
-    <pre><code>import &#123; ZapAmount, ZapContent, User &#125; from '$lib/registry/ui/zap';
-
-&#123;#each zaps as zap&#125;
-  &lt;div class="zap-with-sender"&gt;
-    &lt;User.Root &#123;ndk&#125; pubkey=&#123;zap.sender.pubkey&#125;&gt;
-      &lt;User.Avatar class="w-8 h-8" /&gt;
-      &lt;User.Name /&gt;
-    &lt;/User.Root&gt;
-
-    &lt;div class="zap-details"&gt;
-      &lt;ZapAmount &#123;zap&#125; /&gt; sats
-      &lt;ZapContent &#123;zap&#125; /&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&#123;/each&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>NIP-57 Zaps</h2>
-    <p class="mb-4">These primitives display zap data from NIP-57 (Lightning Zaps) events:</p>
-    <ul class="ml-6 mb-4 space-y-2">
-      <li>Kind 9735 zap receipt events</li>
-      <li>Amount extracted from bolt11 invoice</li>
-      <li>Optional comment from zap request</li>
-      <li>Sender information from zap request</li>
-    </ul>
-    <p class="mb-4">The ProcessedZap type is created by NDK Svelte's zap builders, which handle all the parsing and validation.</p>
-  </section>
-
-  <section class="info">
-    <h2>Display-Only Primitives</h2>
-    <p class="mb-4">Note: These are display-only primitives. For sending zaps, use:</p>
-    <ul class="ml-6 mb-4 space-y-2">
-      <li><code>createZapAction</code> builder from the registry</li>
-      <li>Zap button components (ZapButton, ZapButtonAvatars)</li>
-      <li>NDK's <code>NDKZapper</code> directly</li>
-    </ul>
-  </section>
-
-  <section class="info">
-    <h2>Related</h2>
-    <div class="related-grid">
-      <a href="/components/zap" class="related-card">
-        <strong>Zap Components</strong>
-        <span>Pre-built zap action buttons</span>
-      </a>
-      <a href="/ui/user" class="related-card">
-        <strong>User Primitives</strong>
-        <span>For displaying zap senders</span>
-      </a>
+{#each zaps as zap}
+  <div class="zap-item">
+    <div class="zap-amount">
+      ⚡ <ZapAmount {zap} /> sats
     </div>
-  </section>
-</div>
+    {#if zap.comment}
+      <ZapContent {zap} class="zap-comment" />
+    {/if}
+  </div>
+{/each}`}
+        />
+      </div>
+    </div>
 
-<style>
-  .component-page {
-    max-width: 900px;
-  }
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Loading Zaps from NDK</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Get processed zaps using NDK Svelte's zap builders, which handle all parsing and validation.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { createZapFeed } from '@nostr-dev-kit/svelte';
 
-  header {
-    margin-bottom: 3rem;
-  }
+// Create zap feed for an event
+const zapFeed = createZapFeed(() => ({
+  eventId: event.id
+}), ndk);
 
-  .header-badge {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
+// Access processed zaps
+$effect(() => {
+  const zaps = zapFeed.zaps; // ProcessedZap[]
 
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground);
-  }
+  zaps.forEach(zap => {
+    console.log(\`\${zap.amount} sats: \${zap.comment}\`);
+  });
+});`}
+        />
+      </div>
+    </div>
 
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Integration with User Primitives</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Combine with User primitives to show zap senders alongside zap information.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`import { ZapAmount, ZapContent } from '$lib/registry/ui/zap';
+import { User } from '$lib/registry/ui/user';
 
-  .header-title h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0;
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+{#each zaps as zap}
+  <div class="zap-with-sender">
+    <User.Root {ndk} pubkey={zap.sender.pubkey}>
+      <User.Avatar class="w-8 h-8" />
+      <User.Name />
+    </User.Root>
 
-  .header-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 1rem 0 1.5rem 0;
-  }
+    <div class="zap-details">
+      <ZapAmount {zap} /> sats
+      <ZapContent {zap} />
+    </div>
+  </div>
+{/each}`}
+        />
+      </div>
+    </div>
+  {/snippet}
 
-  .header-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
+  {#snippet contextSection()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">ProcessedZap Type</h2>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Zaps are represented by the ProcessedZap type from NDK Svelte. This type is created by NDK's zap builders,
+        which handle parsing kind 9735 zap receipt events, extracting amounts from bolt11 invoices, and validating
+        sender information.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import type { ProcessedZap } from '@nostr-dev-kit/svelte';
 
-  .info-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
+interface ProcessedZap {
+  amount: number;          // Amount in satoshis
+  comment?: string;        // Optional zap comment/message
+  sender: {
+    pubkey: string;
+    profile?: NDKUserProfile;
+  };
+  // ... other metadata
+}`}
+        />
+      </div>
+      <h3 class="text-xl font-semibold mt-8 mb-4">NIP-57 Zaps</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        These primitives display zap data from NIP-57 (Lightning Zaps) events:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2">
+        <li class="leading-relaxed">Kind 9735 zap receipt events</li>
+        <li class="leading-relaxed">Amount extracted from bolt11 invoice</li>
+        <li class="leading-relaxed">Optional comment from zap request</li>
+        <li class="leading-relaxed">Sender information from zap request</li>
+      </ul>
+    </section>
+  {/snippet}
 
-  .info-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .info-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .installation h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .installation pre {
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .components-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-
-  .component-item {
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .component-item code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--primary);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .component-item p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .related-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .related-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
-
-  .related-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .related-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  pre {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  pre code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-
-  ul {
-    list-style: disc;
-  }
-
-  ul li {
-    color: var(--muted-foreground);
-    line-height: 1.6;
-  }
-
-  code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    background: var(--muted);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875em;
-  }
-</style>
+  {#snippet relatedComponents()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Related</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <a href="/components/zap" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Zap Components</strong>
+          <span class="text-sm text-muted-foreground">Pre-built zap action buttons</span>
+        </a>
+        <a href="/ui/user" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">User Primitives</strong>
+          <span class="text-sm text-muted-foreground">For displaying zap senders</span>
+        </a>
+      </div>
+    </section>
+  {/snippet}
+</UIPrimitivePageTemplate>

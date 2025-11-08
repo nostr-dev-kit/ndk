@@ -3,7 +3,7 @@
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../../../utils/cn';
-  import { createTimeAgo } from '../../../../utils/time-ago.svelte.js';
+  import { createTimeAgo } from '../../../../utils/time-ago';
   import { User } from '../../../../ui/user';
   import type { Snippet } from 'svelte';
 

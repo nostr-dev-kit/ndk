@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
-	import { createTimeAgo } from '../../utils/time-ago.svelte';
+	import { createTimeAgo } from '../../utils/time-ago';
 	import { cn } from '../../utils/cn.js';
 
 	interface Props {

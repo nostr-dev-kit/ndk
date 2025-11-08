@@ -9,7 +9,7 @@
   import { cn } from '../../../../utils/cn';
   import { getContext } from 'svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../../../ui/article/article.context.js';
-  import { createTimeAgo } from '../../../../utils/time-ago.svelte.js';
+  import { createTimeAgo } from '../../../../utils/time-ago';
 
   interface Props {
     ndk: NDKSvelte;

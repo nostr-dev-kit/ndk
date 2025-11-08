@@ -1,4 +1,4 @@
-import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
+import { defaultContentRenderer } from '../../ui/content-renderer';
 import Mention from './mention.svelte';
 
 // Self-register when this file is imported

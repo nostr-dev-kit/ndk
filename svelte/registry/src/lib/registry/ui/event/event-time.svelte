@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { createTimeAgo } from '../../utils/time-ago.svelte.js';
+  import { createTimeAgo } from '../../utils/time-ago';
   import { cn } from '../../utils/cn.js';
 
   interface Props {

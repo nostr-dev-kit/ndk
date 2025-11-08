@@ -9,9 +9,9 @@
   import Preview from '$lib/site/components/preview.svelte';
 
   // Import code examples
-  import reactionBasicCode from './reaction-button.example?raw';
-  import reactionDelayedCode from './delayed-reactions.example?raw';
-  import reactionBuilderCode from './reaction-builder.example?raw';
+  import reactionBasicCode from './examples/basic/index.txt?raw';
+  import reactionDelayedCode from './examples/delayed/index.txt?raw';
+  import reactionBuilderCode from './examples/builder/index.txt?raw';
 
   // Import components
   import { ReactionAction, ReactionLongpress } from '$lib/registry/components/reaction';

@@ -16,7 +16,7 @@
 
 <span
 	data-hashtag=""
-	class="hashtag {className}"
+	class="text-primary cursor-pointer hover:underline {className}"
 	role="button"
 	tabindex="0"
 	onclick={handleClick}
@@ -24,14 +24,3 @@
 >
 	#{tag}
 </span>
-
-<style>
-	.hashtag {
-		color: var(--primary);
-		cursor: pointer;
-	}
-
-	.hashtag:hover {
-		text-decoration: underline;
-	}
-</style>

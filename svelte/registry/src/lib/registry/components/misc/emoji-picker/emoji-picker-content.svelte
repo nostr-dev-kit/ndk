@@ -77,40 +77,16 @@
   const effectiveColumns = $derived(isMobile ? 5 : columns);
 </script>
 
-<div data-emoji-picker-content="" class={cn('h-64 sm:h-80 overflow-y-auto emoji-picker-content', className)}>
+<div data-emoji-picker-content="" class={cn('h-64 sm:h-80 overflow-y-auto w-full max-w-full', className)}>
   {#if userEmojis.length > 0}
-    <div class="emoji-section">
-      <div class="emoji-section-title">Your Emojis</div>
+    <div class="mb-6 last:mb-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Your Emojis</div>
       <List emojis={userEmojis} {onSelect} columns={effectiveColumns} />
     </div>
   {/if}
 
-  <div class="emoji-section">
-    <div class="emoji-section-title">Standard</div>
+  <div class="mb-6 last:mb-0">
+    <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Standard</div>
     <List emojis={defaultEmojis} {onSelect} columns={effectiveColumns} />
   </div>
 </div>
-
-<style>
-  .emoji-picker-content {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .emoji-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .emoji-section:last-child {
-    margin-bottom: 0;
-  }
-
-  .emoji-section-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted-foreground);
-    margin-bottom: 0.75rem;
-  }
-</style>

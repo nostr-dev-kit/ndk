@@ -37,12 +37,12 @@
 </script>
 
 {#if hasWaveform}
-  <div class="voice-message-waveform {className}" style="height: {height}px;">
+  <div class="flex items-center w-full {className}" style="height: {height}px;">
     {#each waveform as value, i (i)}
       {@const barHeight = getBarHeight(value)}
       {@const isPlayed = (i / waveform.length) * 100 < progress}
       <div
-        class="waveform-bar"
+        class="flex-1"
         style="
           height: {barHeight}px;
           background: {isPlayed ? progressColor : barColor};
@@ -52,33 +52,9 @@
     {/each}
   </div>
 {:else}
-  <div class="voice-message-waveform placeholder {className}" style="height: {height}px;">
-    <div class="placeholder-bar" style="background: {barColor};"></div>
-    <div class="placeholder-bar" style="background: {barColor};"></div>
-    <div class="placeholder-bar" style="background: {barColor};"></div>
+  <div class="flex items-center w-full justify-center {className}" style="height: {height}px;">
+    <div class="h-[60%]" style="background: {barColor};"></div>
+    <div class="h-[80%]" style="background: {barColor};"></div>
+    <div class="h-[60%]" style="background: {barColor};"></div>
   </div>
 {/if}
-
-<style>
-  .voice-message-waveform {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-
-  .waveform-bar {
-    flex: 1;
-  }
-
-  .placeholder {
-    justify-content: center;
-  }
-
-  .placeholder-bar {
-    height: 60%;
-  }
-
-  .placeholder-bar:nth-child(2) {
-    height: 80%;
-  }
-</style>

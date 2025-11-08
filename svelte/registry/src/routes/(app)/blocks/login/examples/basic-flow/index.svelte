@@ -17,7 +17,8 @@
 -->
 <script lang="ts">
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { ndk } from '$lib/ndk.svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
+  import { goto } from '$app/navigation';
 
   function handleLoginSuccess() {
     console.log('User logged in:', ndk.$currentPubkey);

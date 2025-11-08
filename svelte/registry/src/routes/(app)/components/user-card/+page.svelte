@@ -7,7 +7,6 @@
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { User } from '$lib/registry/ui/user';
   import { ScrollArea } from '$lib/site/components/ui/scroll-area';
-  import { Select } from 'bits-ui';
   import * as Tabs from '$lib/site/components/ui/tabs';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import type { ShowcaseComponent } from '$lib/site/templates/types';

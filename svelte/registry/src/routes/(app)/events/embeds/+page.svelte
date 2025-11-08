@@ -394,9 +394,9 @@
         ]
       },
       {
-        name: 'Kind Handlers',
-        description: 'Individual components for each supported kind. Typically not used directly - the EmbeddedEvent orchestrator selects the appropriate handler.',
-        importPath: "import { ArticleEmbedded } from '$lib/registry/components/article-embedded'; import { NoteEmbedded } from '$lib/registry/components/note-embedded'; import { HighlightEmbedded } from '$lib/registry/components/highlight-embedded'",
+        name: 'Card Components',
+        description: 'Card components for each event kind. These auto-register with defaultContentRenderer and are used automatically when rendering embedded references. Can also be imported directly for standalone use. See /components for full documentation.',
+        importPath: "import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte'; import NoteCard from '$lib/registry/components/note-card/note-card.svelte'; import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte'",
         props: [
           {
             name: 'ndk',
@@ -406,15 +406,9 @@
           },
           {
             name: 'event',
-            type: 'NDKEvent | NDKArticle',
+            type: 'NDKEvent | NDKArticle | NDKHighlight',
             required: true,
             description: 'The event to render'
-          },
-          {
-            name: 'variant',
-            type: "'inline' | 'card' | 'compact'",
-            default: "'card'",
-            description: 'Display variant'
           }
         ]
       }

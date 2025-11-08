@@ -244,8 +244,7 @@ export const notificationMetadata = {
 		notificationPrimitivesCard,
 		notificationItemCompactCard,
 		notificationItemExpandedCard,
-		notificationFeedCard,
-		notificationPanelCard
+		notificationFeedCard
 	],
 	apiDocs: [
 		{

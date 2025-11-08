@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
-  import { MarkdownEventContent } from '$lib/registry/ui/markdown-event-rendering';
+  import { MarkdownEventContent } from '$lib/registry/ui/markdown-event-content';
 
   interface Props {
     article: NDKArticle;

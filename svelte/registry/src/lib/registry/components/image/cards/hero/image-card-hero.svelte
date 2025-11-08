@@ -4,7 +4,7 @@
 	import { User } from '../../../ui/user';
 	import FollowButton from '../follow-button/follow-button.svelte';
 	import { getNDKFromContext } from '../../../utils/ndk-context.svelte.js';
-	import { cn } from '../../../utils/cn';
+	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {
 		ndk?: NDKSvelte;

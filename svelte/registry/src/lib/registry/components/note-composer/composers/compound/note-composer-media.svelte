@@ -4,7 +4,7 @@
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
 	import { MediaUpload } from '../../../ui/media-upload';
 	import ImageAddIcon from '../../icons/image-add.svelte';
-	import { cn } from '../../../utils/cn';
+	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {
 		ndk?: NDKSvelte;

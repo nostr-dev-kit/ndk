@@ -9,7 +9,7 @@
 	import Url from '../../../ui/relay/relay-url.svelte';
 	import Description from '../../../ui/relay/relay-description.svelte';
 	import BookmarkButton from '../../../ui/relay/relay-bookmark-button.svelte';
-	import { cn } from '../../../utils/cn';
+	import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

@@ -69,7 +69,7 @@
     subOpts,
     sort,
     class: className = '',
-    tab: tabSnippet,
+    tab,
     onTabClick
   }: Props = $props();
 
@@ -88,19 +88,7 @@
   role="tablist"
   aria-label="Content tabs"
 >
-  {#each tabSampler.tabs as tab (tab.kind)}
-    {#if tabSnippet}
-      {@render tabSnippet(tab)}
-    {:else}
-      <button
-        type="button"
-        class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
-        role="tab"
-        onclick={() => onTabClick?.(tab)}
-      >
-        <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{kindLabel(tab.kind, tab.count)}</span>
-        <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{tab.count}</span>
-      </button>
-    {/if}
+  {#each tabSampler.tabs as tabItem (tabItem.kind)}
+    {@render tab({ ...tabItem, name: kindLabel(tabItem.kind, tabItem.count) })}
   {/each}
 </div>

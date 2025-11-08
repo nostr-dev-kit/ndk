@@ -53,10 +53,6 @@ import type { PropType } from '$lib/site/components/edit-props';
 export interface ComponentPageMetadata {
   title: string;
   description?: string;
-  showcaseTitle?: string;
-  showcaseDescription?: string;
-  componentsTitle?: string;
-  componentsDescription?: string;
 }
 
 // Component section configuration
@@ -73,6 +69,8 @@ export interface ComponentPageTemplateProps {
   ndk?: NDKSvelte;
 
   // Showcase configuration
+  showcaseTitle?: string;
+  showcaseDescription?: string;
   showcaseComponents?: ShowcaseComponent[];
   showcaseComponent?: ComponentType | any;
 

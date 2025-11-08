@@ -310,63 +310,79 @@
   {/if}
 {/snippet}
 
-<!-- Components section previews -->
-{#snippet classicComponentPreview()}
-  <UserCardClassic {ndk} pubkey={user1?.pubkey || ''} />
-{/snippet}
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...userCardClassicCard, code: userCardClassicCode}}>
+    {#snippet preview()}
+      <UserCardClassic {ndk} pubkey={user1?.pubkey || ''} />
+    {/snippet}
+  </ComponentCard>
 
-{#snippet compactComponentPreview()}
-  <div class="space-y-2 max-w-sm">
-    {#each displayUsers as user (user.pubkey)}
-      <UserCardCompact {ndk} pubkey={user.pubkey} />
-    {/each}
-  </div>
-{/snippet}
+  <ComponentCard data={{...userCardCompactCard, code: userCardCompactCode}}>
+    {#snippet preview()}
+      <div class="space-y-2 max-w-sm">
+        {#each displayUsers as user (user.pubkey)}
+          <UserCardCompact {ndk} pubkey={user.pubkey} />
+        {/each}
+      </div>
+    {/snippet}
+  </ComponentCard>
 
-{#snippet listItemComponentPreview()}
-  <div class="max-w-sm border border-border rounded-lg overflow-hidden">
-    {#each displayUsers as user (user.pubkey)}
-      <UserListItem {ndk} pubkey={user.pubkey} />
-    {/each}
-  </div>
-{/snippet}
+  <ComponentCard data={{...userCardListItemCard, code: userListItemCode}}>
+    {#snippet preview()}
+      <div class="max-w-sm border border-border rounded-lg overflow-hidden">
+        {#each displayUsers as user (user.pubkey)}
+          <UserListItem {ndk} pubkey={user.pubkey} />
+        {/each}
+      </div>
+    {/snippet}
+  </ComponentCard>
 
-{#snippet portraitComponentPreview()}
-  <ScrollArea orientation="horizontal" class="w-full">
-    <div class="flex gap-4 pb-4">
-      {#each displayUsers as user (user.pubkey)}
-        <UserCardPortrait {ndk} pubkey={user.pubkey} />
-      {/each}
-    </div>
-  </ScrollArea>
-{/snippet}
+  <ComponentCard data={{...userCardPortraitCard, code: userCardPortraitCode}}>
+    {#snippet preview()}
+      <ScrollArea orientation="horizontal" class="w-full">
+        <div class="flex gap-4 pb-4">
+          {#each displayUsers as user (user.pubkey)}
+            <UserCardPortrait {ndk} pubkey={user.pubkey} />
+          {/each}
+        </div>
+      </ScrollArea>
+    {/snippet}
+  </ComponentCard>
 
-{#snippet landscapeComponentPreview()}
-  <div class="space-y-4 max-w-2xl">
-    {#each displayUsers as user (user.pubkey)}
-      <UserCardLandscape {ndk} pubkey={user.pubkey} />
-    {/each}
-  </div>
-{/snippet}
+  <ComponentCard data={{...userCardLandscapeCard, code: userCardLandscapeCode}}>
+    {#snippet preview()}
+      <div class="space-y-4 max-w-2xl">
+        {#each displayUsers as user (user.pubkey)}
+          <UserCardLandscape {ndk} pubkey={user.pubkey} />
+        {/each}
+      </div>
+    {/snippet}
+  </ComponentCard>
 
-{#snippet neonComponentPreview()}
-  <ScrollArea orientation="horizontal" class="w-full">
-    <div class="flex gap-4 pb-4">
-      {#each displayUsers as user (user.pubkey)}
-        <UserCardNeon {ndk} pubkey={user.pubkey} />
-      {/each}
-    </div>
-  </ScrollArea>
-{/snippet}
+  <ComponentCard data={{...userCardNeonCard, code: userCardNeonCode}}>
+    {#snippet preview()}
+      <ScrollArea orientation="horizontal" class="w-full">
+        <div class="flex gap-4 pb-4">
+          {#each displayUsers as user (user.pubkey)}
+            <UserCardNeon {ndk} pubkey={user.pubkey} />
+          {/each}
+        </div>
+      </ScrollArea>
+    {/snippet}
+  </ComponentCard>
 
-{#snippet glassComponentPreview()}
-  <ScrollArea orientation="horizontal" class="w-full">
-    <div class="flex gap-4 pb-4">
-      {#each displayUsers.slice(0, 5) as user (user.pubkey)}
-        <UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
-      {/each}
-    </div>
-  </ScrollArea>
+  <ComponentCard data={{...userCardGlassCard, code: userCardGlassCode}}>
+    {#snippet preview()}
+      <ScrollArea orientation="horizontal" class="w-full">
+        <div class="flex gap-4 pb-4">
+          {#each displayUsers.slice(0, 5) as user (user.pubkey)}
+            <UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+          {/each}
+        </div>
+      </ScrollArea>
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- Use template with custom showcase component -->
@@ -376,26 +392,7 @@
   showcaseComponent={ComponentsShowcase}
   showcaseComponents={showcaseComponents}
   {customSections}
-  componentsSection={{
-    cards: [
-      { ...userCardClassicCard, code: userCardClassicCode },
-      { ...userCardCompactCard, code: userCardCompactCode },
-      { ...userCardListItemCard, code: userListItemCode },
-      { ...userCardPortraitCard, code: userCardPortraitCode },
-      { ...userCardLandscapeCard, code: userCardLandscapeCode },
-      { ...userCardNeonCard, code: userCardNeonCode },
-      { ...userCardGlassCard, code: userCardGlassCode }
-    ],
-    previews: {
-      'user-card-classic': classicComponentPreview,
-      'user-card-compact': compactComponentPreview,
-      'user-list-item': listItemComponentPreview,
-      'user-card-portrait': portraitComponentPreview,
-      'user-card-landscape': landscapeComponentPreview,
-      'user-card-neon': neonComponentPreview,
-      'user-card-glass': glassComponentPreview
-    }
-  }}
+  {components}
 >
   <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />

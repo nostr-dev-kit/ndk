@@ -24,9 +24,7 @@
   // Page metadata
   const metadata = {
     title: 'Content Tab',
-    description: 'Smart content type selector with automatic kind detection',
-    showcaseTitle: 'Content Tab Variants',
-    showcaseDescription: 'Display content types with reactive sampling',
+    description: 'Smart content type selector with automatic kind detection'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -62,7 +60,18 @@
           kinds={[1, 30023, 9802, 6, 7, 20, 21, 22, 1111, 1337, 1984, 30818]}
           since={Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60)}
           sort={sortMethod === 'count' ? byCount : byRecency}
-        />
+        >
+          {#snippet tab({ kind, name, count })}
+            <button
+              type="button"
+              class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
+              role="tab"
+            >
+              <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{name}</span>
+              <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{count}</span>
+            </button>
+          {/snippet}
+        </ContentTab>
       </div>
     {/each}
   </div>
@@ -88,17 +97,15 @@
 <!-- Components snippet -->
 {#snippet components()}
   <Tabs.Root value="basic">
-    <SectionTitle title="Components" description="Explore ContentTab variants and usage">
-      {#snippet tabs()}
-        <Tabs.List>
-          <Tabs.Trigger value="basic">Basic</Tabs.Trigger>
-          <Tabs.Trigger value="sorting">Sorting</Tabs.Trigger>
-          <Tabs.Trigger value="custom">Custom</Tabs.Trigger>
-        </Tabs.List>
-      {/snippet}
-    </SectionTitle>
+    <div class="flex items-center justify-between mb-8">
+      <Tabs.List>
+        <Tabs.Trigger value="basic">Basic</Tabs.Trigger>
+        <Tabs.Trigger value="sorting">Sorting</Tabs.Trigger>
+        <Tabs.Trigger value="custom">Custom</Tabs.Trigger>
+      </Tabs.List>
+    </div>
 
-    <section class="min-h-[500px] lg:min-h-[60vh] py-12">
+    <section class="min-h-[500px] lg:min-h-[60vh]">
       <Tabs.Content value="basic">
         <ComponentCard data={{ ...contentTabCard, code: BasicUsageRaw }}>
           {#snippet preview()}
@@ -109,7 +116,18 @@
                   {ndk}
                   pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
-                />
+                >
+                  {#snippet tab({ kind, name, count })}
+                    <button
+                      type="button"
+                      class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
+                      role="tab"
+                    >
+                      <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{name}</span>
+                      <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{count}</span>
+                    </button>
+                  {/snippet}
+                </ContentTab>
               </div>
               <div class="flex flex-col gap-2">
                 <span class="text-sm text-muted-foreground">With click handler:</span>
@@ -118,7 +136,18 @@
                   pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063]}
                   onTabClick={(tab) => console.log('Clicked:', tab)}
-                />
+                >
+                  {#snippet tab({ kind, name, count })}
+                    <button
+                      type="button"
+                      class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
+                      role="tab"
+                    >
+                      <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{name}</span>
+                      <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{count}</span>
+                    </button>
+                  {/snippet}
+                </ContentTab>
               </div>
             </div>
           {/snippet}
@@ -136,7 +165,18 @@
                   pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byCount}
-                />
+                >
+                  {#snippet tab({ kind, name, count })}
+                    <button
+                      type="button"
+                      class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
+                      role="tab"
+                    >
+                      <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{name}</span>
+                      <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{count}</span>
+                    </button>
+                  {/snippet}
+                </ContentTab>
               </div>
               <div class="flex flex-col gap-2">
                 <span class="text-sm text-muted-foreground">Sorted by recency (most recent):</span>
@@ -145,7 +185,18 @@
                   pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byRecency}
-                />
+                >
+                  {#snippet tab({ kind, name, count })}
+                    <button
+                      type="button"
+                      class="flex items-center justify-center gap-2 px-4 py-3 flex-1 min-w-0 border-none bg-transparent cursor-pointer transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent after:transition-colors hover:bg-accent hover:after:bg-primary hover:after:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
+                      role="tab"
+                    >
+                      <span class="text-sm font-medium text-foreground text-center whitespace-nowrap overflow-hidden text-ellipsis">{name}</span>
+                      <span class="text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-muted">{count}</span>
+                    </button>
+                  {/snippet}
+                </ContentTab>
               </div>
             </div>
           {/snippet}
@@ -157,16 +208,16 @@
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
-                <span class="text-sm text-muted-foreground">Custom tab rendering with kindLabel:</span>
+                <span class="text-sm text-muted-foreground">Custom tab rendering:</span>
                 <ContentTab
                   {ndk}
                   pubkeys={[user1!.pubkey]}
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byCount}
                 >
-                  {#snippet tab({ kind, count })}
+                  {#snippet tab({ kind, name, count })}
                     <button class="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors flex items-center gap-2">
-                      {kindLabel(kind)}
+                      {name}
                       <span class="px-2 py-0.5 bg-background/50 rounded-full text-xs">
                         {count}
                       </span>
@@ -183,10 +234,10 @@
                   kinds={[1, 30023, 1063, 9802]}
                   sort={byRecency}
                 >
-                  {#snippet tab({ kind, count })}
+                  {#snippet tab({ kind, name, count })}
                     <div class="flex flex-col items-center gap-1">
                       <button class="px-6 py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all hover:scale-105">
-                        {kindLabel(kind, count)}
+                        {name}
                       </button>
                       <span class="text-xs text-muted-foreground">{count} items</span>
                     </div>
@@ -272,19 +323,19 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
   const kinds = [1, 30023, 1063]; // notes, articles, images
 &lt;/script&gt;
 
-&lt;ContentTab &#123;ndk&#125; &#123;pubkeys&#125; &#123;kinds&#125; sort=&#123;byCount&#125; /&gt;</code></pre>
+&lt;ContentTab &#123;ndk&#125; &#123;pubkeys&#125; &#123;kinds&#125; sort=&#123;byCount&#125;&gt;
+  &#123;#snippet tab(&#123; kind, name, count &#125;)&#125;
+    &lt;button&gt;&#123;name&#125; (&#123;count&#125;)&lt;/button&gt;
+  &#123;/snippet&#125;
+&lt;/ContentTab&gt;</code></pre>
       </div>
 
       <div class="bg-muted/50 rounded-lg p-6">
-        <h3 class="text-lg font-semibold mb-3">Custom Tab Rendering with kindLabel</h3>
-        <pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
-  import &#123; kindLabel &#125; from '$lib/registry/utils/kind-label.js';
-&lt;/script&gt;
-
-&lt;ContentTab &#123;ndk&#125; &#123;pubkeys&#125; &#123;kinds&#125; sort=&#123;byRecency&#125;&gt;
-  &#123;#snippet tab(&#123; kind, count &#125;)&#125;
-    &lt;button&gt;
-      &#123;kindLabel(kind, count)&#125; (&#123;count&#125;)
+        <h3 class="text-lg font-semibold mb-3">Custom Tab Rendering</h3>
+        <pre class="text-sm overflow-x-auto"><code>&lt;ContentTab &#123;ndk&#125; &#123;pubkeys&#125; &#123;kinds&#125; sort=&#123;byRecency&#125;&gt;
+  &#123;#snippet tab(&#123; kind, name, count &#125;)&#125;
+    &lt;button class="px-4 py-2 bg-primary text-primary-foreground rounded-md"&gt;
+      &#123;name&#125; - &#123;count&#125; posts
     &lt;/button&gt;
   &#123;/snippet&#125;
 &lt;/ContentTab&gt;</code></pre>
@@ -328,14 +379,19 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
   <ComponentPageTemplate
     {metadata}
     {ndk}
+    showcaseTitle="Content Tab Variants"
+    showcaseDescription="Display content types with reactive sampling"
     showcaseComponents={[
       {
         cardData: contentTabCard,
         preview: defaultPreview,
-        control: sortControl
+        control: sortControl,
+        orientation: 'vertical'
       }
     ]}
     {components}
+    componentsTitle="Components"
+    componentsDescription="Explore ContentTab variants and usage"
     {customSections}
     apiDocs={contentTabCard.apiDocs}
   >

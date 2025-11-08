@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { EventCard } from '../event-card';
+	import { EventCard } from '$lib/registry/components/event/cards/compound';
 	import {
 		createAppHandlerRecommendations,
 		createAppHandlerInfo,

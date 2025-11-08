@@ -70,7 +70,7 @@
   });
 </script>
 
-<div class="relay-status inline-flex items-center gap-2 {className}">
+<div class="inline-flex items-center gap-2 {className}">
   <div class="relative {sizeClasses[size]}">
     <div class="absolute inset-0 rounded-full {statusConfig.color}"></div>
     {#if statusConfig.pulse}
@@ -81,17 +81,3 @@
     <span class="text-sm font-medium">{statusConfig.label}</span>
   {/if}
 </div>
-
-<style>
-  @keyframes ping {
-    75%,
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-
-  .animate-ping {
-    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-</style>

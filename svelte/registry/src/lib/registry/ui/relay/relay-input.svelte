@@ -129,7 +129,7 @@
 	});
 </script>
 
-<div class="relay-input-container">
+<div class="w-full">
 	<div class="relative">
 		{#if showRelayInfo}
 			<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -144,18 +144,18 @@
 					<img
 						src={icon}
 						alt={name || normalizedUrl}
-						class="relay-input-icon rounded-md object-cover"
+						class="shrink-0 rounded-md object-cover"
 						style="width: {iconSize}px; height: {iconSize}px;">
 				{:else}
 					<!-- Fallback icon -->
 					<div
-						class="relay-input-icon relay-input-icon-fallback rounded-md flex items-center justify-center bg-muted"
+						class="shrink-0 rounded-md flex items-center justify-center bg-muted"
 						style="width: {iconSize}px; height: {iconSize}px;"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
-							class="relay-input-svg"
+							class="text-muted-foreground"
 							fill="none"
 							stroke="currentColor"
 							stroke-width="1.5"
@@ -196,26 +196,3 @@
 		</p>
 	{/if}
 </div>
-
-<style>
-	.relay-input-container {
-		width: 100%;
-	}
-
-	.relay-input-icon {
-		flex-shrink: 0;
-	}
-
-	.relay-input-svg {
-		color: var(--muted-foreground);
-	}
-
-	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
-	}
-
-	.animate-spin {
-		animation: spin 1s linear infinite;
-	}
-</style>

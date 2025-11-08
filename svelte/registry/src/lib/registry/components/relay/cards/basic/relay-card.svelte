@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKRelayInformation, RelayStatus } from '@nostr-dev-kit/svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { BookmarkedRelayWithStats } from '../../../builders/relay/bookmarks.svelte.ts';
+  import type { BookmarkedRelayWithStats } from '../../../builders/relay/bookmarks';
   import { getContext } from 'svelte';
   import { Relay } from '../../../../ui/relay';
 

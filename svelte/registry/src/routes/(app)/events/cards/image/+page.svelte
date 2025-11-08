@@ -20,6 +20,8 @@
 	const imageCardInstagramCard = { ...imageCardBasicCard, name: 'image-card-instagram', title: 'Image Card Instagram', variant: 'instagram' };
 	const imageCardHeroCard = { ...imageCardHeroCardBase, name: 'image-card-hero', title: 'Image Card Hero' };
 
+	const imageCardCards = [imageCardCard, imageCardInstagramCard, imageCardHeroCard];
+
   // Get page data
   let { data } = $props();
   const { metadata } = data;

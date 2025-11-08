@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/Demo.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -15,12 +16,13 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Mock notification for anatomy visualization
-  const mockNotification = {
-    type: 'reaction',
-    count: 3,
+  const mockNotification: NotificationGroup = {
+    targetEvent: { id: 'event123', content: 'Sample post content', kind: 1 } as any,
+    interactions: [],
     actors: ['pubkey1', 'pubkey2', 'pubkey3'],
-    targetEvent: { id: 'event123', content: 'Sample post content' },
-    timestamp: Date.now() - 3600000 // 1 hour ago
+    totalCount: 3,
+    types: new Map([[7, []]]), // Mock reaction type
+    mostRecentAt: Math.floor(Date.now() / 1000) - 3600 // 1 hour ago in seconds
   };
 
   // Page metadata

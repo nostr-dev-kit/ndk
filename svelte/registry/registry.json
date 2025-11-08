@@ -43,15 +43,15 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/article-content/article-content.svelte",
+          "path": "registry/ndk/components/article/content/basic/article-content.svelte",
           "type": "registry:ui"
         },
         {
-          "path": "registry/ndk/article-content/highlight-toolbar.svelte",
+          "path": "registry/ndk/components/article/content/basic/highlight-toolbar.svelte",
           "type": "registry:ui"
         },
         {
-          "path": "registry/ndk/article-content/index.ts",
+          "path": "registry/ndk/components/article/content/basic/index.ts",
           "type": "registry:lib"
         }
       ],
@@ -72,11 +72,11 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/avatar-group/avatar-group.svelte",
+          "path": "registry/ndk/components/misc/avatar-group/avatar-group.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/avatar-group/index.ts",
+          "path": "registry/ndk/components/misc/avatar-group/index.ts",
           "type": "registry:lib"
         }
       ],
@@ -96,15 +96,15 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/emoji-picker/emoji-picker-list.svelte",
+          "path": "registry/ndk/components/misc/emoji-picker/emoji-picker-list.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/emoji-picker/emoji-picker-content.svelte",
+          "path": "registry/ndk/components/misc/emoji-picker/emoji-picker-content.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/emoji-picker/index.ts",
+          "path": "registry/ndk/components/misc/emoji-picker/index.ts",
           "type": "registry:lib"
         }
       ],
@@ -200,31 +200,31 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/components/event-card/event-card.context.ts",
+          "path": "registry/ndk/components/event/cards/compound/event-card.context.ts",
           "type": "registry:lib"
         },
         {
-          "path": "registry/ndk/components/event-card/event-card-root.svelte",
+          "path": "registry/ndk/components/event/cards/compound/event-card-root.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/components/event-card/event-card-header.svelte",
+          "path": "registry/ndk/components/event/cards/compound/event-card-header.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/components/event-card/event-card-content.svelte",
+          "path": "registry/ndk/components/event/cards/compound/event-card-content.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/components/event-card/event-card-actions.svelte",
+          "path": "registry/ndk/components/event/cards/compound/event-card-actions.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/components/event-card/event-card-dropdown.svelte",
+          "path": "registry/ndk/components/event/cards/compound/event-card-dropdown.svelte",
           "type": "registry:component"
         },
         {
-          "path": "registry/ndk/components/event-card/index.ts",
+          "path": "registry/ndk/components/event/cards/compound/index.ts",
           "type": "registry:lib"
         }
       ],
@@ -415,7 +415,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/components/user-profile-hero/user-profile-hero.svelte",
+          "path": "registry/ndk/components/user/displays/profile-hero/user-profile-hero.svelte",
           "type": "registry:ui"
         }
       ],
@@ -473,7 +473,7 @@
       ],
       "files": [
         {
-          "path": "registry/ndk/zap-button/zap-button.svelte",
+          "path": "registry/ndk/components/zap/buttons/basic/zap-button.svelte",
           "type": "registry:ui"
         }
       ],

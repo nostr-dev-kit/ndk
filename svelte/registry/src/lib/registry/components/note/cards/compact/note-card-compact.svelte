@@ -11,45 +11,11 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<div data-note-card-compact="" class="note-card-compact">
+<div data-note-card-compact="" class="border border-border rounded-md bg-card p-2 text-sm leading-snug [&_header]:mb-1.5 [&_.font-semibold]:text-[0.8125rem] [&_.text-xs]:text-xs [&_.text-sm]:text-xs">
   <EventCard.Root {ndk} {event}>
     <EventCard.Header variant="compact" avatarSize="sm" showTimestamp={true} />
-    <div class="compact-content">
+    <div class="text-[0.8125rem] leading-snug text-muted-foreground [&_p]:m-0">
       <EventCard.Content truncate={2} showMedia={false} showLinkPreview={false} />
     </div>
   </EventCard.Root>
 </div>
-
-<style>
-  .note-card-compact {
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--card);
-    padding: 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
-
-  .note-card-compact :global(header) {
-    margin-bottom: 0.375rem;
-  }
-
-  .note-card-compact :global(.font-semibold) {
-    font-size: 0.8125rem;
-  }
-
-  .note-card-compact :global(.text-xs),
-  .note-card-compact :global(.text-sm) {
-    font-size: 0.75rem;
-  }
-
-  .compact-content {
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    color: var(--muted-foreground);
-  }
-
-  .compact-content :global(p) {
-    margin: 0;
-  }
-</style>

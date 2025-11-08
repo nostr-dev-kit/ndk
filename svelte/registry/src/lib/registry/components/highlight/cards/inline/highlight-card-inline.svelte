@@ -11,9 +11,9 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<div data-highlight-card-inline="" class="highlight-card-inline">
+<div data-highlight-card-inline="" class="rounded-lg overflow-hidden border border-border bg-card max-w-[500px]">
   <Highlight.Root {ndk} {event} variant="feed">
-    <div class="highlight-container">
+    <div class="relative p-3.5 min-h-[80px] flex items-center justify-center">
       <Highlight.Content class="text-sm" />
       <Highlight.Source class="flex items-center gap-1.5 px-2 py-1 text-[10px] bg-background/80 backdrop-blur-sm border border-border rounded text-muted-foreground hover:bg-background transition-colors absolute bottom-2 right-2">
         {#snippet children({ source })}
@@ -34,22 +34,3 @@
     </div>
   </Highlight.Root>
 </div>
-
-<style>
-  .highlight-card-inline {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--card);
-    max-width: 500px;
-  }
-
-  .highlight-container {
-    position: relative;
-    padding: 0.875rem;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-</style>

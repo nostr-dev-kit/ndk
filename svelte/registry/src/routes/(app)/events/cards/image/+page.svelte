@@ -7,8 +7,18 @@
 	import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte';
 	import { EditProps } from '$lib/site/components/edit-props';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
-	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import type { ShowcaseComponent } from '$lib/site/templates/types';
 	import ComponentAPI from '$site-components/component-api.svelte';
+
+	// Import registry metadata
+	import imageCardBasicCard from '$lib/registry/components/image/cards/basic/registry.json';
+	import imageCardHeroCardBase from '$lib/registry/components/image/cards/hero/registry.json';
+
+	// Create variant cards
+	const imageCardCard = { ...imageCardBasicCard, name: 'image-card', title: 'Image Card' };
+	const imageCardInstagramCard = { ...imageCardBasicCard, name: 'image-card-instagram', title: 'Image Card Instagram', variant: 'instagram' };
+	const imageCardHeroCard = { ...imageCardHeroCardBase, name: 'image-card-hero', title: 'Image Card Hero' };
 
   // Get page data
   let { data } = $props();

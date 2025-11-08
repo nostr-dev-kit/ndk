@@ -2,10 +2,10 @@
 	import { setContext } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte.js';
+	import type { NotificationGroup } from '../../builders/notification/index.svelte.js';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
-	import { cn } from '$lib/registry/utils/cn.js';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		ndk: NDKSvelte;

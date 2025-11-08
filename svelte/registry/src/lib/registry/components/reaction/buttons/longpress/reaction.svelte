@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
+  import { createReactionAction } from '../../../../builders/reaction-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn';
+  import { cn } from '../../../../utils/cn';
   import { Popover } from 'bits-ui';
-  import { EmojiPicker, type EmojiData } from '$lib/registry/components/misc/emoji-picker';
+  import { EmojiPicker, type EmojiData } from '../../../misc/emoji-picker';
 
   interface Props {
     ndk?: NDKSvelte;

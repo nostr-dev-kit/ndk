@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { User } from '$lib/registry/ui/user';
-	import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
-	import { getNDKFromContext } from '$lib/registry/utils/ndk-context.svelte.js';
-	import { cn } from '$lib/registry/utils/cn';
+	import { User } from '../../../../ui/user';
+	import FollowButton from '../../../follow/buttons/basic/follow-button.svelte';
+	import { getNDKFromContext } from '../../../../utils/ndk-context.svelte.js';
+	import { cn } from '../../../../utils/cn';
 
 	interface Props {
 		ndk?: NDKSvelte;

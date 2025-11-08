@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte.js';
-	import * as NotificationItem from '$lib/registry/ui/notification';
-	import { cn } from '$lib/registry/utils/cn';
+	import type { NotificationGroup } from '../../../../builders/notification/index.svelte.js';
+	import * as NotificationItem from '../../../../ui/notification';
+	import { cn } from '../../../../utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

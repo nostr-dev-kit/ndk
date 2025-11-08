@@ -2,13 +2,13 @@
 	import { onMount } from 'svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { EventCard } from '$lib/registry/components/event/cards/compound';
+	import { EventCard } from '../compound';
 	import {
 		createAppHandlerRecommendations,
 		createAppHandlerInfo,
 		replaceUrlTemplate,
 		type AppHandlerInfo
-	} from '$lib/registry/builders/app-handlers';
+	} from '../../../../builders/app-handlers';
 
 	interface Props {
 		ndk: NDKSvelte;

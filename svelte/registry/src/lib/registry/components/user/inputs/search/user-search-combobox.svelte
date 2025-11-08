@@ -2,10 +2,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { Snippet } from 'svelte';
-  import { createUserInput } from '$lib/registry/builders/user-input/index.svelte.js';
+  import { createUserInput } from '../../../../builders/user-input/index.svelte.js';
   import { Combobox } from 'bits-ui';
-  import { cn } from '$lib/registry/utils/cn';
-  import { User } from '$lib/registry/ui/user';
+  import { cn } from '../../../../utils/cn';
+  import { User } from '../../../../ui/user';
 
   interface Props {
     ndk: NDKSvelte;

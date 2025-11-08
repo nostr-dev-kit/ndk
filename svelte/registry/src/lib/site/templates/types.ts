@@ -47,9 +47,6 @@ export interface ShowcaseComponent {
   code?: string;  // Optional code example - can override cardData.code if needed
 }
 
-// Import PropType from edit-props
-import type { PropType } from '$lib/site/components/edit-props';
-
 // Page metadata structure
 export interface ComponentPageMetadata {
   title: string;

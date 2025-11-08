@@ -3,10 +3,10 @@
   import { zapInvoiceFromEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import { createZapAction } from '$lib/registry/builders/zap-action/zap-action.svelte.js';
-  import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
-  import ZapIcon from '$lib/registry/icons/zap.svelte';
+  import { cn } from '../../../../utils/cn';
+  import { createZapAction } from '../../../../builders/zap-action/zap-action.svelte.js';
+  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import ZapIcon from '../../../../icons/zap.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

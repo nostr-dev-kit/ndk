@@ -100,7 +100,7 @@ function calculatePosition(content: string, context: string): HighlightPosition 
  * @example
  * ```svelte
  * <script>
- *   import { createHighlight } from '$lib/registry/builders/highlight/index.svelte.js';
+ *   import { createHighlight } from './index.svelte.js';
  *
  *   const highlight = createHighlight(() => ({ event: highlightEvent }), ndk);
  * </script>

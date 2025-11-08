@@ -4,15 +4,15 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
-	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
-	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte';
-	import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer.context';
-	import NoteEmbeddedCompact from '$lib/registry/components/note/cards/compact/note-card-compact.svelte';
-	import ArticleEmbedded from '$lib/registry/components/article/cards/basic/article-card-medium.svelte';
-	import HighlightEmbedded from '$lib/registry/components/highlight/cards/basic/highlight-card-feed.svelte';
+	import EmbeddedEvent from '../embedded-event.svelte';
+	import { ContentRenderer } from '../content-renderer.svelte';
+	import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer.context';
+	import NoteEmbeddedCompact from '../../components/note/cards/compact/note-card-compact.svelte';
+	import ArticleEmbedded from '../../components/article/cards/basic/article-card-medium.svelte';
+	import HighlightEmbedded from '../../components/highlight/cards/basic/highlight-card-feed.svelte';
 	import { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
-    import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
-    import { cn } from '$lib/registry/utils/cn';
+    import MentionModern from '../../components/mention/displays/modern/mention-modern.svelte';
+    import { cn } from '../../utils/cn';
 
 	interface Props {
 		renderer?: ContentRenderer;

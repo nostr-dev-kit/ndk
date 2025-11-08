@@ -8,8 +8,8 @@
   @example Basic
   ```svelte
 <script>
-    import { ContentTab, byCount } from '$lib/registry/components/misc/content-tab';
-    import { kindLabel } from '$lib/registry/utils/kind-label.js';
+    import { ContentTab, byCount } from './';
+    import { kindLabel } from '../../../utils/kind-label.js';
 
     const pubkeys = ['hexpubkey'];
     const kinds = [1, 30023, 1063];
@@ -37,9 +37,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
   import type { Snippet } from 'svelte';
-  import { createContentSampler, type ContentTab as ContentTabType } from '$lib/registry/builders/content-tab';
-  import { cn } from '$lib/registry/utils/cn';
-  import { kindLabel } from '$lib/registry/utils/kind-label.js';
+  import { createContentSampler, type ContentTab as ContentTabType } from '../../../builders/content-tab';
+  import { cn } from '../../../utils/cn';
+  import { kindLabel } from '../../../utils/kind-label.js';
 
   interface Props {
     ndk: NDKSvelte;

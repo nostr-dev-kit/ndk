@@ -35,8 +35,8 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { Dialog } from 'bits-ui';
 	import { NoteComposer } from './index';
-	import CancelIcon from '$lib/registry/icons/cancel.svelte';
-	import { cn } from '$lib/registry/utils/cn';
+	import CancelIcon from '../../../../icons/cancel.svelte';
+	import { cn } from '../../../../utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

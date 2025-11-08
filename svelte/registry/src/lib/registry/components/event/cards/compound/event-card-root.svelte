@@ -3,8 +3,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
-  import { getNDKFromContext } from '$lib/registry/utils/ndk-context.svelte.js';
-  import { cn } from '$lib/registry/utils/cn';
+  import { getNDKFromContext } from '../../../../utils/ndk-context.svelte.js';
+  import { cn } from '../../../../utils/cn';
   import type { Snippet } from 'svelte';
 
   interface Props {

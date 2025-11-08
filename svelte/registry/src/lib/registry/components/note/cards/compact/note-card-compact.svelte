@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventCard } from '$lib/registry/components/event/cards/compound';
+  import { EventCard } from '../../../event/cards/compound';
 
   interface Props {
     ndk: NDKSvelte;

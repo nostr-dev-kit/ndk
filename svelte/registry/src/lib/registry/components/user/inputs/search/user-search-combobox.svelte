@@ -5,7 +5,7 @@
   import { createUserInput } from '$lib/registry/builders/user-input/index.svelte.js';
   import { Combobox } from 'bits-ui';
   import { cn } from '$lib/registry/utils/cn';
-  import { User } from '../../../ui/user';
+  import { User } from '$lib/registry/ui/user';
 
   interface Props {
     ndk: NDKSvelte;

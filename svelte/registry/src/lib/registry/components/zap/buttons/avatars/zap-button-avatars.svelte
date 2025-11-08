@@ -6,7 +6,7 @@
   import { cn } from '$lib/registry/utils/cn';
   import { createZapAction } from '$lib/registry/builders/zap-action/zap-action.svelte.js';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
-  import ZapIcon from '../../icons/zap.svelte';
+  import ZapIcon from '$lib/registry/icons/zap.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

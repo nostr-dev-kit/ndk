@@ -4,8 +4,8 @@
   import { createZapSendAction } from '$lib/registry/builders/zap-send/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import {User} from '../../../ui/user';
-  import ZapIcon from '../../icons/zap.svelte';
+  import {User} from '$lib/registry/ui/user';
+  import ZapIcon from '$lib/registry/icons/zap.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

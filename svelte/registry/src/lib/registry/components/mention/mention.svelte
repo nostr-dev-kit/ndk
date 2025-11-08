@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { User } from '../ui/user';
+	import { User } from '$lib/registry/ui/user';
     import { NDKUser } from '@nostr-dev-kit/ndk';
 
 	interface MentionProps {

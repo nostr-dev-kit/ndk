@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import { Highlight } from '../../../ui/highlight/index.js';
+  import { Highlight } from '$lib/registry/ui/highlight/index.js';
   import { EventCard } from '../event-card/index.js';
 
   interface Props {

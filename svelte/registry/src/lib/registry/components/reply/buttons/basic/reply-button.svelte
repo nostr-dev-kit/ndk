@@ -4,7 +4,7 @@
   import { createReplyAction } from '$lib/registry/builders/reply-action.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import ReplyIcon from '../../icons/reply.svelte';
+  import ReplyIcon from '$lib/registry/icons/reply.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

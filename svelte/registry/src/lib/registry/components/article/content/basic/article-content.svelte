@@ -3,12 +3,12 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import { getContext, setContext } from 'svelte';
-  import { getNDKFromContext } from '../../../utils/ndk-context.svelte.js';
-  import { defaultContentRenderer, type ContentRenderer } from '../../../ui/content-renderer.svelte.js';
-  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../../ui/content-renderer.context.js';
-  import { User } from '../../../ui/user';
+  import { getNDKFromContext } from '$lib/registry/utils/ndk-context.svelte.js';
+  import { defaultContentRenderer, type ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '$lib/registry/ui/content-renderer.context.js';
+  import { User } from '$lib/registry/ui/user';
   import HighlightToolbar from './highlight-toolbar.svelte';
-  import { MarkdownEventContent } from '../../../ui/markdown-event-content';
+  import { MarkdownEventContent } from '$lib/registry/ui/markdown-event-content';
 
   interface Props {
     ndk?: NDKSvelte;

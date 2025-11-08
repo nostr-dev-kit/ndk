@@ -2,7 +2,7 @@
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Component } from 'svelte';
-  import { User } from '../../../ui/user';
+  import { User } from '$lib/registry/ui/user';
   import { cn } from '$lib/registry/utils/cn';
 
   interface Props {

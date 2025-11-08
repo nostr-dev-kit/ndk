@@ -2,12 +2,12 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/registry/utils/cn';
-  import { Highlight } from '../../../ui/highlight/index.js';
+  import { Highlight } from '$lib/registry/ui/highlight/index.js';
   import { getContext } from 'svelte';
   import {
     HIGHLIGHT_CONTEXT_KEY,
     type HighlightContext,
-  } from '../../../ui/highlight/highlight.context.js';
+  } from '$lib/registry/ui/highlight/highlight.context.js';
 
   interface Props {
     ndk: NDKSvelte;

@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
 	import { cn } from '$lib/registry/utils/cn.js';
-	import NotificationFeed from '$lib/registry/components/notification-feed/notification-feed.svelte';
+	// import NotificationFeed from '$lib/registry/components/notification-feed/notification-feed.svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import type { NotificationGroup } from '$lib/registry/builders/notification';
 
@@ -72,10 +72,12 @@
 	</div>
 
 	<div class="max-h-[600px] overflow-y-auto">
-		<NotificationFeed
+		<!-- NotificationFeed component is missing -->
+		<!-- <NotificationFeed
 			{ndk}
 			{pubkey}
 			itemSnippet={variant === 'expanded' ? expandedItem : compactItem}
-		/>
+		/> -->
+		<div>NotificationFeed component not available</div>
 	</div>
 </div>

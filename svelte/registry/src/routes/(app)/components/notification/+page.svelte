@@ -2,7 +2,12 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { notificationMetadata } from '$lib/component-registry/notification';
+	import {
+		notificationMetadata,
+		notificationBuilderCard,
+		notificationPrimitivesCard,
+		notificationPanelCard
+	} from '$lib/component-registry/notification';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
@@ -132,25 +137,19 @@
 	{ndk}
 	showcaseComponents={[
 		{
-			name: 'Builder',
-			description: 'Headless notification feed builder using $metaSubscription',
-			command: 'npx jsrepo add notification',
+			cardData: notificationBuilderCard,
 			preview: builderPreview,
 			code: notificationBuilderCode,
 			orientation: 'vertical'
 		},
 		{
-			name: 'Primitives',
-			description: 'Composable primitives for custom layouts',
-			command: 'npx jsrepo add notification',
+			cardData: notificationPrimitivesCard,
 			preview: primitivesPreview,
 			code: notificationPrimitivesCode,
 			orientation: 'vertical'
 		},
 		{
-			name: 'Panel',
-			description: 'Full notification panel block',
-			command: 'npx jsrepo add notification-panel',
+			cardData: notificationPanelCard,
 			preview: panelPreview,
 			code: notificationPanelCode,
 			orientation: 'vertical'

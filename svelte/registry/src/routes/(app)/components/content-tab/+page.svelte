@@ -379,8 +379,6 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
   <ComponentPageTemplate
     {metadata}
     {ndk}
-    showcaseTitle="Content Tab Variants"
-    showcaseDescription="Display content types with reactive sampling"
     showcaseComponents={[
       {
         cardData: contentTabCard,

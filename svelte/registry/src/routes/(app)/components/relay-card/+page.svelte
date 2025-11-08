@@ -214,8 +214,6 @@
 
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Relay Card Variants"
-  showcaseDescription="Display relay information with NIP-11 support"
   {ndk}
   showcaseComponents={[
     {

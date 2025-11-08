@@ -62,10 +62,12 @@ Pretty cool, right? #awesome`);
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'content-note-basic',
       cardData: contentNoteBasicCard,
       preview: basicPreview
     },
     {
+      id: 'content-note-custom',
       cardData: contentNoteCustomSnippetsCard,
       preview: customSnippetsPreview
     }

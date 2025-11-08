@@ -162,8 +162,6 @@
 {#if displayPacks.length > 0}
   <ComponentPageTemplate
     {metadata}
-    showcaseTitle="Follow Pack Variants"
-    showcaseDescription="Display and manage follow pack collections"
     {ndk}
     showcaseComponents={[
       {

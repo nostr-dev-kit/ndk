@@ -81,8 +81,6 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Zap Button Variants"
-  showcaseDescription="Explore different zap button designs for your Nostr application"
   {ndk}
   showcaseComponents={[
     {

@@ -10,7 +10,6 @@
   import { Select } from 'bits-ui';
   import * as Tabs from '$lib/site/components/ui/tabs';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
@@ -100,36 +99,43 @@
 
     const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'user-card-classic',
       cardData: userCardClassicCard,
       preview: classicPreview,
       orientation: 'horizontal'
     },
     {
+      id: 'user-card-compact',
       cardData: userCardCompactCard,
       preview: compactPreview,
       orientation: 'vertical'
     },
     {
+      id: 'user-card-list-item',
       cardData: userCardListItemCard,
       preview: listItemPreview,
       orientation: 'vertical'
     },
     {
+      id: 'user-card-portrait',
       cardData: userCardPortraitCard,
       preview: portraitPreview,
       orientation: 'horizontal'
     },
     {
+      id: 'user-card-landscape',
       cardData: userCardLandscapeCard,
       preview: landscapePreview,
       orientation: 'vertical'
     },
     {
+      id: 'user-card-neon',
       cardData: userCardNeonCard,
       preview: neonPreview,
       orientation: 'horizontal'
     },
     {
+      id: 'user-card-glass',
       cardData: userCardGlassCard,
       preview: glassPreview,
       orientation: 'horizontal',
@@ -383,14 +389,11 @@
   </ComponentCard>
 {/snippet}
 
-<!-- Use template with custom showcase component -->
+<!-- Use template -->
 <ComponentPageTemplate
-  metadata={metadata}
-  showcaseTitle="User Card Variants"
-  showcaseDescription="Explore different user card designs for your Nostr application"
+  {metadata}
   {ndk}
-  showcaseComponent={ComponentsShowcase}
-  showcaseComponents={showcaseComponents}
+  {showcaseComponents}
   {customSections}
   {components}
 >

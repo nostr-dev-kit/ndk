@@ -247,8 +247,6 @@ await followAction.follow();</code></pre>
 
 <ComponentPageTemplate
   {metadata}
-  showcaseTitle="Follow Button Variants"
-  showcaseDescription="Explore different follow button designs for your Nostr application"
   {ndk}
   {showcaseComponents}
   {components}

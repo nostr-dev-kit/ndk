@@ -41,11 +41,13 @@
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'mention-basic',
       cardData: mentionBasicCard,
       preview: basicPreview,
       orientation: 'vertical'
     },
     {
+      id: 'mention-modern',
       cardData: mentionModernCard,
       preview: modernPreview,
       orientation: 'vertical'
@@ -112,8 +114,6 @@
     title: 'Mention Embeds',
     description: 'Display inline user mentions in Nostr events with different styles'
   }}
-  showcaseTitle="Mention Display Variants"
-  showcaseDescription="Explore different ways to display user mentions in your Nostr application"
   {ndk}
   {showcaseComponents}
   componentsSection={{

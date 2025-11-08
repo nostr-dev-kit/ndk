@@ -56,11 +56,13 @@
 
 	const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'voice-message-card-compact',
       cardData: voiceMessageCardCompactCard,
       preview: compactPreview,
       orientation: 'vertical'
     },
     {
+      id: 'voice-message-card-expanded',
       cardData: voiceMessageCardExpandedCard,
       preview: expandedPreview,
       orientation: 'vertical'

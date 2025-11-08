@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
+  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
 
   let { ndk, pubkeys } = $props();
 </script>

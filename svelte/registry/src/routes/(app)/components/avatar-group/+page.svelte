@@ -9,9 +9,9 @@
   import avatarGroupCode from './examples/basic-usage/index.txt?raw';
 
   // Import registry metadata
-  import avatarGroupCard from '$lib/registry/components/misc/avatar-group/registry.json';
+  import avatarGroupCard from '$lib/registry/components/avatar-group/registry.json';
 
-  import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
+  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
 
   // Page metadata
   const metadata = {

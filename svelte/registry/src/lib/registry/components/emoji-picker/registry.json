@@ -1,11 +1,11 @@
 {
   "name": "emoji-picker",
   "title": "Emoji Picker",
-  "category": "misc",
-  "subcategory": "inputs",
+  "category": "inputs",
+  "subcategory": "pickers",
   "variant": "emoji-picker",
   "description": "Emoji selection component with search and categories",
-  "command": "npx jsrepo add misc/emoji-picker",
+  "command": "npx jsrepo add emoji-picker",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

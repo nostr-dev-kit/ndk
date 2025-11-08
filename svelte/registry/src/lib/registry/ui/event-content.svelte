@@ -41,7 +41,7 @@
 	);
 </script>
 
-<div class="whitespace-pre-wrap break-words leading-relaxed {className}">
+<div class="whitespace-pre-wrap wrap-break-words leading-relaxed {className}">
 	{#each parsed.segments as segment, i (i)}
 		{#if segment.type === 'text'}
 			{segment.content}

@@ -4,7 +4,7 @@
   import { getContext } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { cn } from '../../../../utils/cn';
-  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
   import RepostIcon from '../../../../icons/repost.svelte';
 
   interface Props {

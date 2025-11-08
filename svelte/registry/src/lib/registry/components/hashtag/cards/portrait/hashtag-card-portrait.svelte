@@ -3,7 +3,7 @@
   import { cn } from '../../../../utils/cn';
   import { createHashtagStats } from '../../../../builders/hashtag/stats.svelte.js';
   import { hashtagGradient, formatHashtag } from '../../../../utils/hashtag.js';
-  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
   import { User } from '../../../../ui/user/index.js';
   import FollowButtonPill from '../../../follow/buttons/pill/follow-button-pill.svelte';
 

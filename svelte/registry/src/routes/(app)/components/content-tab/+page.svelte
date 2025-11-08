@@ -15,10 +15,10 @@
   import BasicUsageRaw from './examples/basic-usage/index.txt?raw';
 
   // Import registry metadata
-  import contentTabCard from '$lib/registry/components/misc/content-tab/registry.json';
+  import contentTabCard from '$lib/registry/components/content-tab/registry.json';
 
   // Import the component
-  import ContentTab from '$lib/registry/components/misc/content-tab/content-tab.svelte';
+  import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
   import { byCount, byRecency } from '$lib/registry/builders/content-tab';
 
   // Page metadata
@@ -317,7 +317,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
       <div class="bg-muted/50 rounded-lg p-6">
         <h3 class="text-lg font-semibold mb-3">Basic Usage</h3>
         <pre class="text-sm overflow-x-auto"><code>&lt;script&gt;
-  import &#123; ContentTab, byCount &#125; from '$lib/registry/components/misc/content-tab';
+  import &#123; ContentTab, byCount &#125; from '$lib/registry/components/content-tab';
 
   const pubkeys = ['hexpubkey'];
   const kinds = [1, 30023, 1063]; // notes, articles, images

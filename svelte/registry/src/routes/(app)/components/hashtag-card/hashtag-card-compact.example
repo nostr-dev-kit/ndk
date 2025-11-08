@@ -1,9 +1,0 @@
-<script lang="ts">
-  import HashtagCardCompact from '$lib/registry/components/hashtag-card/hashtag-card-compact.svelte';
-</script>
-
-<HashtagCardCompact {ndk} hashtag="bitcoin" />
-
-<HashtagCardCompact {ndk} hashtag="nostr" />
-
-<HashtagCardCompact {ndk} hashtag="freedom" />

@@ -1,10 +1,8 @@
-import { getReactionMetadata } from '$lib/registry-loader';
+import metadata from '$lib/registry/components/reaction/buttons/longpress/registry.json';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async () => {
-  const metadata = await getReactionMetadata();
-
+export const load: PageLoad = () => {
   return {
-    reactionMetadata: metadata
+    metadata
   };
 };

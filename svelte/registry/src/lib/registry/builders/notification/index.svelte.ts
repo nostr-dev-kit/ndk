@@ -96,10 +96,8 @@ export function createNotificationFeed(
 ): NotificationFeedState {
     const ndk = resolveNDK(ndkParam);
 
-    // Manage subscription with proper side effect handling
-    let metaSub = $state<ReturnType<NDKSvelte['$metaSubscribe']> | null>(null);
-
-    $effect(() => {
+    // $metaSubscribe already handles reactivity internally
+    const metaSub = $derived(ndk?.$metaSubscribe?.(() => {
         const {
             pubkey,
             kinds = [7, 9735, 6, 16, 1, 1111], // reactions, zaps, reposts, boost, replies, generic replies
@@ -108,22 +106,16 @@ export function createNotificationFeed(
             limit
         } = config();
 
-        if (ndk?.$metaSubscribe) {
-            metaSub = ndk.$metaSubscribe(() => ({
-                filters: [{
-                    kinds,
-                    '#p': [pubkey],
-                    since
-                }],
-                sort,
-                limit
-            }));
-
-            return () => {
-                metaSub?.stop();
-            };
-        }
-    });
+        return {
+            filters: [{
+                kinds,
+                '#p': [pubkey],
+                since
+            }],
+            sort,
+            limit
+        };
+    }));
 
     const loading = $derived(metaSub?.loading ?? false);
 

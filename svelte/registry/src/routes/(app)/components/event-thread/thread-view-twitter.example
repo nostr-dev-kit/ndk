@@ -1,8 +1,0 @@
-<script lang="ts">
-  import { createThreadView } from '$lib/registry/builders/event/thread/index.svelte.js';
-  import ThreadViewTwitter from '$lib/registry/components/event-thread/thread-view-twitter.svelte';
-
-  const thread = createThreadView(() => ({ focusedEvent: nevent }), ndk);
-</script>
-
-<ThreadViewTwitter {ndk} {thread} />

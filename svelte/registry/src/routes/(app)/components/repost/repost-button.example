@@ -1,5 +1,0 @@
-<script lang="ts">
-  import { RepostButton } from '$lib/registry/components/repost-button';
-</script>
-
-<RepostButton {ndk} {event} variant="ghost" />

@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import example components
@@ -12,9 +13,13 @@
   // Import registry metadata
   import zapSendClassicCard from '$lib/registry/components/zap/send/classic/registry.json';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const metadata = {
+    title: 'Zap Send Classic',
+    description: 'Classic zap sending interface for Lightning payments',
+    showcaseTitle: 'Zap Send Variants',
+    showcaseDescription: 'Send Bitcoin tips via Lightning Network',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -47,8 +52,16 @@
   <BasicUsage {ndk} {target} />
 {/snippet}
 
+{#snippet components()}
+  <ComponentCard data={{...zapSendClassicCard, code: BasicUsageRaw}}>
+    {#snippet preview()}
+      <BasicUsage {ndk} {target} />
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
   showcaseComponents={[
     {
@@ -57,18 +70,7 @@
       orientation: 'horizontal'
     }
   ]}
-  componentsSection={{
-    cards: [
-      {
-        ...zapSendClassicCard,
-        code: BasicUsageRaw
-      }
-    ],
-    previews: {
-      'zap-send-classic': preview
-    }
-  }}
-  apiDocs={metadata.apiDocs}
+  {components}
 >
   <EditProps.Prop name="Target" type="text" bind:value={targetInput} placeholder="npub, nevent, or note1" default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
 </ComponentPageTemplate>

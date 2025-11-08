@@ -5,8 +5,8 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
-  import repostButtonCode from './repost-button.example?raw';
-  import repostButtonAvatarsCode from './repost-button-avatars.example?raw';
+  import repostButtonCode from './examples/basic/index.txt?raw';
+  import repostButtonAvatarsCode from './examples/avatars/index.txt?raw';
 
   // Import components
   import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
@@ -86,20 +86,20 @@
   {ndk}
   showcaseComponents={[
     {
-      cardData: repostButtonCard,
+      cardData: metadata.cards[0],
       preview: repostButtonsPreview,
       orientation: 'horizontal'
     },
     {
-      cardData: repostButtonAvatarsCard,
+      cardData: metadata.cards[1],
       preview: avatarsPreview,
       orientation: 'horizontal'
     }
   ]}
   componentsSection={{
     cards: [
-      { ...repostButtonCard, code: repostButtonCode },
-      { ...repostButtonAvatarsCard, code: repostButtonAvatarsCode }
+      { ...metadata.cards[0], code: repostButtonCode },
+      { ...metadata.cards[1], code: repostButtonAvatarsCode }
     ],
     previews: {
       'repost-button': repostButtonsPreview,

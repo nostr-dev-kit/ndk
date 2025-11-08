@@ -2,8 +2,7 @@
  * ContentTab - Display tabs based on user's published content
  *
  * Automatically samples user content and displays tabs only for content types
- * they actually publish. Useful for conditionally showing UI based on what
- * content a user creates.
+ * they actually publish. Requires a snippet for rendering each tab.
  *
  * @example Basic usage:
  * ```svelte
@@ -14,14 +13,20 @@
  *   const kinds = [1, 30023, 1063]; // notes, long-form, images
  * </script>
  *
- * <ContentTab {ndk} {pubkeys} {kinds} sort={byCount} />
+ * <ContentTab {ndk} {pubkeys} {kinds} sort={byCount}>
+ *   {#snippet tab({ kind, name, count })}
+ *     <button>{name} ({count})</button>
+ *   {/snippet}
+ * </ContentTab>
  * ```
  *
- * @example With custom tab renderer:
+ * @example With custom styling:
  * ```svelte
  * <ContentTab {ndk} {pubkeys} {kinds}>
- *   {#snippet tab({ kind, count })}
- *     <button>Kind {kind} ({count} posts)</button>
+ *   {#snippet tab({ kind, name, count })}
+ *     <button class="px-4 py-2 bg-primary text-primary-foreground rounded-md">
+ *       {name} - {count} posts
+ *     </button>
  *   {/snippet}
  * </ContentTab>
  * ```
@@ -30,6 +35,7 @@
  * ```svelte
  * <script>
  *   import { createContentSampler, byRecency } from '$lib/registry/builders/content-tab';
+ *   import { kindLabel } from '$lib/registry/utils/kind-label.js';
  *
  *   const tabSampler = createContentSampler(() => ({
  *     pubkeys: ['hexpubkey'],
@@ -39,7 +45,7 @@
  * </script>
  *
  * {#each tabSampler.tabs as tab}
- *   <button>Kind {tab.kind} - {tab.count} items</button>
+ *   <button>{kindLabel(tab.kind, tab.count)} - {tab.count} items</button>
  * {/each}
  * ```
  */

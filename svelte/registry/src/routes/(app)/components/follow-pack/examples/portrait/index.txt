@@ -1,0 +1,7 @@
+<script lang="ts">
+  import FollowPackPortrait from '$lib/registry/components/follow/packs/portrait/follow-pack-portrait.svelte';
+
+  let { pack } = $props();
+</script>
+
+<FollowPackPortrait followPack={pack} />

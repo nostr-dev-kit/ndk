@@ -1,5 +1,0 @@
-<script lang="ts">
-  import FollowPackPortrait from '$lib/registry/components/follow-pack/follow-pack-portrait.svelte';
-</script>
-
-<FollowPackPortrait followPack={pack} />

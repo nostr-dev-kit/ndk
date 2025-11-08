@@ -38,7 +38,7 @@
     tags: altTag ? [['alt', altTag]] : []
   } as any));
 
-  const showcaseComponents: ShowcaseComponent[] = [
+  const showcaseComponents = [
     {
       cardData: genericCardMetadata,
       preview: genericPreview,
@@ -54,11 +54,13 @@
   </div>
 {/snippet}
 
-<!-- Components section preview -->
-{#snippet genericComponentPreview()}
-  <div class="max-w-lg">
-    <GenericCard {ndk} event={sampleEvent} />
-  </div>
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...genericCardMetadata, code: genericCardCode}}>
+    {#snippet preview()}
+      {@render genericPreview()}
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- Use template -->
@@ -66,12 +68,7 @@
   {metadata}
   {ndk}
   {showcaseComponents}
-  componentsSection={{
-    cards: [{ ...genericCardMetadata, code: genericCardCode }],
-    previews: {
-      'generic-card': genericComponentPreview
-    }
-  }}
+  {components}
 >
   <EditProps.Prop
     name="Event Kind"

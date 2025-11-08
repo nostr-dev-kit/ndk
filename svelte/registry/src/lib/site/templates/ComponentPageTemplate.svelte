@@ -12,6 +12,8 @@
   let {
     metadata,
     ndk: propNdk,
+    showcaseTitle,
+    showcaseDescription,
     showcaseComponents = [],
     showcaseComponent,
     components,
@@ -48,8 +50,8 @@
 <!-- Showcase Section or Empty State -->
 {#if showcaseComponents.length > 0}
   <SectionTitle
-    title={metadata.showcaseTitle || 'Showcase'}
-    description={metadata.showcaseDescription}
+    title={showcaseTitle || 'Showcase'}
+    description={showcaseDescription}
   />
 
   {#if showcaseComponent}
@@ -82,8 +84,8 @@
 <!-- Components Section (new simplified pattern) -->
 {#if components}
   <SectionTitle
-    title={componentsTitle || metadata.componentsTitle || 'Components'}
-    description={componentsDescription || metadata.componentsDescription || 'Explore each variant in detail'}
+    title={componentsTitle || 'Components'}
+    description={componentsDescription || 'Explore each variant in detail'}
   />
 
   <section class="py-12 space-y-16">
@@ -92,8 +94,8 @@
 {:else if componentsSection && componentsSection.cards.length > 0}
   <!-- Components Section (old pattern - backward compatibility) -->
   <SectionTitle
-    title={componentsSection.title || metadata.componentsTitle || 'Components'}
-    description={componentsSection.description || metadata.componentsDescription || 'Explore each variant in detail'}
+    title={componentsSection.title || 'Components'}
+    description={componentsSection.description || 'Explore each variant in detail'}
   />
 
   <section class="py-12 space-y-16">

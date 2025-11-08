@@ -17,10 +17,10 @@
   import FollowPackListItem from '$lib/registry/components/follow/packs/basic/follow-pack-list-item.svelte';
 
   // Import code examples
-  import followPackHeroCode from './follow-pack-hero.example?raw';
-  import followPackPortraitCode from './follow-pack-portrait.example?raw';
-  import followPackCompactCode from './follow-pack-compact.example?raw';
-  import followPackListItemCode from './follow-pack-list-item.example?raw';
+  import followPackHeroCode from './examples/hero/index.txt?raw';
+  import followPackPortraitCode from './examples/portrait/index.txt?raw';
+  import followPackCompactCode from './examples/compact/index.txt?raw';
+  import followPackListItemCode from './examples/list-item/index.txt?raw';
 
   // Import registry metadata
   import followPackHeroCard from '$lib/registry/components/follow/packs/hero/registry.json';

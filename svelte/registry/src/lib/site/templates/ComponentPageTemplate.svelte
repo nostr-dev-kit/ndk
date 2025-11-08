@@ -12,8 +12,6 @@
   let {
     metadata,
     ndk: propNdk,
-    showcaseTitle,
-    showcaseDescription,
     showcaseComponents = [],
     showcaseComponent,
     components,
@@ -49,11 +47,6 @@
 
 <!-- Showcase Section or Empty State -->
 {#if showcaseComponents.length > 0}
-  <SectionTitle
-    title={showcaseTitle || 'Showcase'}
-    description={showcaseDescription}
-  />
-
   {#if showcaseComponent}
     {@const Component = showcaseComponent}
     <Component components={showcaseComponents} />

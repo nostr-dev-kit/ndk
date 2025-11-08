@@ -1,10 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { EditProps } from '$lib/site/components/edit-props';
-  import Preview from '$site-components/Preview.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
+  import Preview from '$site-components/Demo.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import { EventContent, EmbeddedEvent } from '$lib/registry/ui/event-rendering';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';
@@ -23,253 +24,260 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let event = $state<NDKEvent | undefined>();
-  const eventBech32 = $derived(event?.encode() || 'nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
+  // Mock event for anatomy visualization
+  const mockEvent = {
+    content: 'Check out nostr:npub1... and #nostr https://example.com/image.jpg',
+    tags: [['emoji', 'party', 'https://example.com/party.gif']],
+    kind: 1
+  };
+
+  // Page metadata
+  const metadata = {
+    title: 'Event Rendering',
+    description: 'Complete event rendering system combining content parsing, embedded event loading, and markdown support. Parse and display Nostr event content with automatic detection of mentions, hashtags, links, media, custom emojis (NIP-30), and embedded events. Fully customizable with pluggable renderers.',
+    importPath: 'ui/event-rendering',
+    nips: ['30'],
+    primitives: [
+      {
+        name: 'EventContent',
+        title: 'EventContent',
+        description: 'Parses and renders event content with support for various Nostr content types. Automatically detects mentions, hashtags, links, media, and custom emojis.',
+        apiDocs: [
+          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
+          { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
+          { name: 'content', type: 'string', default: 'optional', description: 'Raw content string to parse (alternative to event)' },
+          { name: 'emojiTags', type: 'string[][]', default: 'optional', description: 'Custom emoji tags from event (NIP-30)' },
+          { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer (prop overrides context)' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'EmbeddedEvent',
+        title: 'EmbeddedEvent',
+        description: 'Loads an event from a bech32 reference and renders it using registered handlers from ContentRenderer.',
+        apiDocs: [
+          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for fetching the event' },
+          { name: 'bech32', type: 'string', default: 'required', description: 'Event reference (nevent, note1, naddr)' },
+          { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Content renderer (prop overrides context)' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'MarkdownEventContent',
+        title: 'MarkdownEventContent',
+        description: 'Renders markdown content with Nostr-specific extensions for mentions, event references, and custom emojis.',
+        apiDocs: [
+          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
+          { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
+          { name: 'content', type: 'string', default: 'optional', description: 'Raw markdown string to parse' },
+          { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'ContentRenderer',
+        title: 'ContentRenderer Class',
+        description: 'Pluggable registry system for customizing all rendering behavior. Allows registration of custom components for inline elements (mentions, hashtags, links, media) and event kinds.',
+        apiDocs: [
+          { name: 'mentionComponent', type: 'Component', default: 'default mention', description: 'Component for rendering user mentions (npub, nprofile)' },
+          { name: 'hashtagComponent', type: 'Component', default: 'default hashtag', description: 'Component for rendering hashtags' },
+          { name: 'linkComponent', type: 'Component', default: 'default link', description: 'Component for rendering links and link groups' },
+          { name: 'mediaComponent', type: 'Component', default: 'default media', description: 'Component for rendering media and image grids' },
+          { name: 'fallbackComponent', type: 'Component', default: 'default card', description: 'Fallback component for unknown event kinds' },
+          { name: 'addKind', type: '(kinds: number[] | NDKClass, component: Component) => void', default: 'method', description: 'Register component for specific event kinds' }
+        ]
+      }
+    ],
+    anatomyLayers: [
+      {
+        id: 'event-content',
+        label: 'EventContent',
+        description: 'Main content parser rendering inline elements',
+        props: ['ndk', 'event', 'content', 'emojiTags', 'renderer', 'class']
+      },
+      {
+        id: 'embedded-event',
+        label: 'EmbeddedEvent',
+        description: 'Loads and renders embedded event references',
+        props: ['ndk', 'bech32', 'renderer', 'class']
+      }
+    ]
+  };
 </script>
 
 <svelte:head>
-  <title>Event Rendering - NDK Svelte</title>
-  <meta name="description" content="Complete event rendering system with content parsing, embedded event display, markdown support, and customizable content handlers." />
+  <title>Event Rendering Primitives - NDK Svelte</title>
+  <meta name="description" content="Complete event rendering system with content parsing, embedded events, and markdown support." />
 </svelte:head>
 
-<div class="component-page">
-  <header>
-    <EditProps.Root>
-      <EditProps.Prop name="Event" type="event" bind:value={event} default="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j" />
-      <EditProps.Button>Change Sample Event</EditProps.Button>
-    </EditProps.Root>
-    <div class="header-badge">
-      <span class="badge">UI Primitive</span>
-      <span class="badge badge-nip">NIP-30</span>
-    </div>
-    <div class="header-title">
-      <h1>Event Rendering</h1>
-    </div>
-    <p class="header-description">
-      Complete event rendering system combining content parsing, embedded event loading, and markdown support. Parse and display Nostr event content with automatic detection of mentions, hashtags, links, media, custom emojis (NIP-30), and embedded events. Fully customizable with pluggable renderers.
-    </p>
-    <div class="header-info">
-      <div class="info-card">
-        <strong>Smart Parsing</strong>
-        <span>Auto-detects mentions, links, media, events</span>
-      </div>
-      <div class="info-card">
-        <strong>Embedded Events</strong>
-        <span>Automatic loading and kind-based rendering</span>
-      </div>
-      <div class="info-card">
-        <strong>Custom Renderers</strong>
-        <span>Override any element's display</span>
-      </div>
-      <div class="info-card">
-        <strong>Markdown Support</strong>
-        <span>Full markdown parsing with extensions</span>
-      </div>
-    </div>
-  </header>
-
-  <section class="installation">
-    <h2>Installation</h2>
-    <pre><code>npx jsrepo add event-rendering</code></pre>
-    <p class="mt-4 text-sm text-muted-foreground">This installs all event rendering components and their dependencies.</p>
-  </section>
-
-  <section class="components-overview">
-    <h2>Components Included</h2>
-    <div class="components-grid">
-      <div class="component-card">
-        <strong>EventContent</strong>
-        <p>Parses and renders event content with inline elements (mentions, hashtags, links, media, emojis)</p>
-      </div>
-      <div class="component-card">
-        <strong>EmbeddedEvent</strong>
-        <p>Loads and renders embedded event references (nevent, note1) with kind-specific handlers</p>
-      </div>
-      <div class="component-card">
-        <strong>MarkdownEventContent</strong>
-        <p>Full markdown parsing with Nostr extensions for long-form content</p>
-      </div>
-      <div class="component-card">
-        <strong>ContentRenderer</strong>
-        <p>Pluggable registry system for customizing all rendering behavior</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="usage">
-    <h2>Basic Usage</h2>
-    <pre><code>import &#123; EventContent, EmbeddedEvent, MarkdownEventContent, ContentRenderer &#125; from '$lib/ui/event-rendering';
-
-// Parse event content
-&lt;EventContent &#123;ndk&#125; &#123;event&#125; /&gt;
-
-// Load embedded event
-&lt;EmbeddedEvent &#123;ndk&#125; bech32="nevent1..." /&gt;
-
-// Render markdown
-&lt;MarkdownEventContent &#123;ndk&#125; &#123;event&#125; /&gt;</code></pre>
-  </section>
-
-  <section class="demo space-y-8">
-    <h2>Examples</h2>
-
-    <h3 class="text-xl font-semibold mt-8 mb-4">EventContent Examples</h3>
-
-    <Preview
-      title="Basic Content Parsing"
-      description="EventContent automatically parses and renders content with links, hashtags, and custom emojis."
-      code={BasicRaw}
-    >
+<UIPrimitivePageTemplate {metadata} {ndk}>
+  {#snippet topExample()}
+    <Preview code={BasicRaw}>
       <Basic />
     </Preview>
+  {/snippet}
 
-    <Preview
-      title="Custom Renderer"
-      description="Use the ContentRenderer class to customize how mentions, hashtags, links, and media are displayed."
-      code={CustomRendererRaw}
-    >
-      <CustomRenderer />
-    </Preview>
+  {#snippet overview()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+      <p class="text-lg leading-relaxed text-muted-foreground mb-8">
+        Event Rendering primitives provide a complete system for parsing and displaying Nostr event content.
+        Automatically detect mentions, hashtags, links, media, custom emojis (NIP-30), and embedded events with
+        full customization through pluggable renderers.
+      </p>
 
-    <Preview
-      title="Carousel Media Component"
-      description="Display grouped media in an elegant carousel with navigation controls. Media separated only by whitespace are automatically grouped together."
-      code={CustomRendererCarouselRaw}
-    >
-      <CustomRendererCarousel />
-    </Preview>
+      <h3 class="text-xl font-semibold mt-8 mb-4">When You Need These</h3>
+      <p class="leading-relaxed mb-4">
+        Use Event Rendering primitives when you need to:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2">
+        <li class="leading-relaxed">Parse and display Nostr event content with rich formatting</li>
+        <li class="leading-relaxed">Render mentions, hashtags, and links with custom components</li>
+        <li class="leading-relaxed">Display embedded media (images, videos, YouTube)</li>
+        <li class="leading-relaxed">Load and render embedded event references (nevent, note1)</li>
+        <li class="leading-relaxed">Support custom emojis (NIP-30)</li>
+        <li class="leading-relaxed">Render markdown content with Nostr extensions</li>
+        <li class="leading-relaxed">Customize how different event kinds are displayed</li>
+      </ul>
 
-    <Preview
-      title="Bento Grid Media Component"
-      description="Display grouped media in a dynamic bento/masonry grid layout that adapts based on the number of items."
-      code={CustomRendererBentoRaw}
-    >
-      <CustomRendererBento />
-    </Preview>
-
-    <Preview
-      title="Link Preview Component"
-      description="Show rich link previews on hover using bits-ui LinkPreview. Grouped links (separated by whitespace) are handled together."
-      code={CustomRendererLinkPreviewRaw}
-    >
-      <CustomRendererLinkPreview />
-    </Preview>
-
-    <Preview
-      title="Embedded Link Preview Component"
-      description="Auto-fetch and display rich link previews inline with OpenGraph metadata. Handles grouped links elegantly."
-      code={CustomRendererLinkEmbedRaw}
-    >
-      <CustomRendererLinkEmbed />
-    </Preview>
-
-    <h3 class="text-xl font-semibold mt-8 mb-4">EmbeddedEvent Examples</h3>
-
-    <Preview
-      title="Display Variants"
-      description="EmbeddedEvent supports three display variants: card (default), compact, and inline."
-      code={VariantsRaw}
-    >
-      <Variants {ndk} {eventBech32} />
-    </Preview>
-  </section>
-
-  <section class="info">
-    <h2>EventContent Component</h2>
-    <p class="mb-4">Parses event content and renders it with support for various Nostr content types. Automatically uses EmbeddedEvent for event references.</p>
-    <ApiTable
-      rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
-        { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
-        { name: 'content', type: 'string', default: 'optional', description: 'Raw content string to parse (alternative to event)' },
-        { name: 'emojiTags', type: 'string[][]', default: 'optional', description: 'Custom emoji tags from event (NIP-30)' },
-        { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer (prop overrides context)' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>EmbeddedEvent Component</h2>
-    <p class="mb-4">Loads an event from a bech32 reference and renders it using registered handlers from ContentRenderer.</p>
-    <ApiTable
-      rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for fetching the event' },
-        { name: 'bech32', type: 'string', default: 'required', description: 'Event reference (nevent, note1, naddr)' },
-        { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Content renderer (prop overrides context)' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>MarkdownEventContent Component</h2>
-    <p class="mb-4">Renders markdown content with Nostr-specific extensions for mentions, event references, and custom emojis.</p>
-    <ApiTable
-      rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
-        { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
-        { name: 'content', type: 'string', default: 'optional', description: 'Raw markdown string to parse' },
-        { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>Content Types</h2>
-    <p class="mb-4">EventContent and MarkdownEventContent automatically detect and render these content types:</p>
-    <div class="content-types-grid">
-      <div class="content-type-item">
-        <strong>Text</strong>
-        <p>Plain text segments</p>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Components Included</h3>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <div class="flex flex-col gap-1 p-4 border border-border rounded-lg bg-card">
+          <strong class="font-semibold text-foreground">EventContent</strong>
+          <span class="text-sm text-muted-foreground">Parses and renders event content with inline elements</span>
+        </div>
+        <div class="flex flex-col gap-1 p-4 border border-border rounded-lg bg-card">
+          <strong class="font-semibold text-foreground">EmbeddedEvent</strong>
+          <span class="text-sm text-muted-foreground">Loads and renders embedded event references</span>
+        </div>
+        <div class="flex flex-col gap-1 p-4 border border-border rounded-lg bg-card">
+          <strong class="font-semibold text-foreground">MarkdownEventContent</strong>
+          <span class="text-sm text-muted-foreground">Full markdown parsing with Nostr extensions</span>
+        </div>
+        <div class="flex flex-col gap-1 p-4 border border-border rounded-lg bg-card">
+          <strong class="font-semibold text-foreground">ContentRenderer</strong>
+          <span class="text-sm text-muted-foreground">Pluggable registry system for customization</span>
+        </div>
       </div>
-      <div class="content-type-item">
-        <strong>Mentions</strong>
-        <p>npub, nprofile references</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Event References</strong>
-        <p>Embedded nevent, note1 references</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Hashtags</strong>
-        <p>#hashtag detection</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Links</strong>
-        <p>HTTP/HTTPS URLs</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Media</strong>
-        <p>Images, videos, YouTube</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Custom Emojis</strong>
-        <p>:shortcode: from NIP-30</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Image Grids</strong>
-        <p>Multiple images grouped together</p>
-      </div>
-      <div class="content-type-item">
-        <strong>Link Groups</strong>
-        <p>Multiple links grouped together</p>
-      </div>
+    </section>
+  {/snippet}
+
+  {#snippet anatomyPreview()}
+    <div class="space-y-4">
+      <ComponentAnatomy.Layer id="event-content" label="EventContent">
+        <div class="border border-border rounded-lg p-4 bg-card max-w-2xl">
+          <EventContent {ndk} event={mockEvent} class="text-sm" />
+        </div>
+      </ComponentAnatomy.Layer>
+      <ComponentAnatomy.Layer id="embedded-event" label="EmbeddedEvent">
+        <div class="border border-border rounded-lg p-4 bg-card max-w-2xl">
+          <EmbeddedEvent {ndk} bech32="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j" class="text-sm" />
+        </div>
+      </ComponentAnatomy.Layer>
     </div>
-  </section>
+  {/snippet}
 
-  <section class="info">
-    <h2>ContentRenderer System</h2>
-    <p class="mb-4">The ContentRenderer class is the heart of the customization system. It provides:</p>
-    <ul class="ml-6 mb-4 space-y-2">
-      <li><strong>Inline element handlers:</strong> Customize mentions, hashtags, links, and media</li>
-      <li><strong>Embedded event registry:</strong> Register components by event kind</li>
-      <li><strong>Context propagation:</strong> Automatic inheritance through nested components</li>
-      <li><strong>Fallback rendering:</strong> Graceful degradation for unknown kinds</li>
-    </ul>
+  {#snippet examples()}
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Custom Renderer</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Use the ContentRenderer class to customize how mentions, hashtags, links, and media are displayed.
+      </p>
+      <Preview
+        title="Custom Renderer"
+        description="Customize inline element rendering."
+        code={CustomRendererRaw}
+      >
+        <CustomRenderer />
+      </Preview>
+    </div>
 
-    <pre><code>import &#123; ContentRenderer &#125; from '$lib/ui/event-rendering';
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Carousel Media Component</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Display grouped media in an elegant carousel with navigation controls. Media separated only by whitespace
+        are automatically grouped together.
+      </p>
+      <Preview
+        title="Carousel Media"
+        description="Display media in a carousel layout."
+        code={CustomRendererCarouselRaw}
+      >
+        <CustomRendererCarousel />
+      </Preview>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Bento Grid Media Component</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Display grouped media in a dynamic bento/masonry grid layout that adapts based on the number of items.
+      </p>
+      <Preview
+        title="Bento Grid"
+        description="Display media in a dynamic grid layout."
+        code={CustomRendererBentoRaw}
+      >
+        <CustomRendererBento />
+      </Preview>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Link Preview Component</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Show rich link previews on hover using bits-ui LinkPreview. Grouped links (separated by whitespace)
+        are handled together.
+      </p>
+      <Preview
+        title="Link Preview"
+        description="Show previews on hover."
+        code={CustomRendererLinkPreviewRaw}
+      >
+        <CustomRendererLinkPreview />
+      </Preview>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Embedded Link Preview Component</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Auto-fetch and display rich link previews inline with OpenGraph metadata. Handles grouped links elegantly.
+      </p>
+      <Preview
+        title="Embedded Link Preview"
+        description="Auto-fetch and display link metadata."
+        code={CustomRendererLinkEmbedRaw}
+      >
+        <CustomRendererLinkEmbed />
+      </Preview>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">EmbeddedEvent Display Variants</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        EmbeddedEvent supports three display variants: card (default), compact, and inline.
+      </p>
+      <Preview
+        title="Display Variants"
+        description="Different ways to display embedded events."
+        code={VariantsRaw}
+      >
+        <Variants {ndk} eventBech32="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j" />
+      </Preview>
+    </div>
+  {/snippet}
+
+  {#snippet contextSection()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">ContentRenderer System</h2>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        The ContentRenderer class is the heart of the customization system. It provides a pluggable registry
+        for customizing how all content types are rendered.
+      </p>
+
+      <h3 class="text-xl font-semibold mt-8 mb-4">Creating a Custom Renderer</h3>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { ContentRenderer } from '$lib/registry/ui/event-rendering';
 
 const renderer = new ContentRenderer();
 
@@ -282,86 +290,171 @@ renderer.fallbackComponent = MyGenericCard;
 
 // Register embedded event handlers by kind
 renderer.addKind([1, 1111], MyNoteComponent);
-renderer.addKind([30023], MyArticleComponent);</code></pre>
-  </section>
+renderer.addKind([30023], MyArticleComponent);`}
+        />
+      </div>
 
-  <section class="info">
-    <h2>Renderer Propagation</h2>
-    <p class="mb-4">ContentRenderer uses Svelte context for automatic propagation. You have two ways to provide a renderer:</p>
-
-    <div class="grouping-info">
-      <div class="grouping-card">
-        <strong>1. Via Context (Recommended for App-Wide)</strong>
-        <p>Set the renderer in context once at your app or page level. All nested components automatically inherit it:</p>
-        <pre><code>import &#123; setContext &#125; from 'svelte';
-import &#123; CONTENT_RENDERER_CONTEXT_KEY &#125; from '$lib/ui/event-rendering';
+      <h3 class="text-xl font-semibold mt-8 mb-4">Renderer Propagation</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        ContentRenderer uses Svelte context for automatic propagation. You have two ways to provide a renderer:
+      </p>
+      <div class="space-y-4">
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">1. Via Context (Recommended for App-Wide)</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Set the renderer in context once at your app or page level. All nested components automatically inherit it.
+          </p>
+          <div class="bg-muted rounded-lg overflow-hidden">
+            <CodeBlock
+              lang="svelte"
+              code={`import { setContext } from 'svelte';
+import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/event-rendering';
 
 // At app/page level
-setContext(CONTENT_RENDERER_CONTEXT_KEY, &#123; renderer: myRenderer &#125;);
+setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer: myRenderer });
 
 // All nested components inherit automatically
-&lt;EventContent &#123;ndk&#125; &#123;event&#125; /&gt;
-&lt;EmbeddedEvent &#123;ndk&#125; bech32="..." /&gt;</code></pre>
-      </div>
+<EventContent {ndk} {event} />
+<EmbeddedEvent {ndk} bech32="..." />`}
+            />
+          </div>
+        </div>
 
-      <div class="grouping-card">
-        <strong>2. Via Prop (Override for Specific Use)</strong>
-        <p>Pass the renderer as a prop to override the context for a specific component and its children:</p>
-        <pre><code>// Override for this component only
-&lt;EventContent &#123;ndk&#125; &#123;event&#125; renderer=&#123;specialRenderer&#125; /&gt;
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">2. Via Prop (Override for Specific Use)</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Pass the renderer as a prop to override the context for a specific component and its children.
+          </p>
+          <div class="bg-muted rounded-lg overflow-hidden">
+            <CodeBlock
+              lang="svelte"
+              code={`// Override for this component only
+<EventContent {ndk} {event} renderer={specialRenderer} />
 
 // Great for testing
-test('custom rendering', () => &#123;
-  render(EventContent, &#123;
-    props: &#123; ndk, event, renderer: mockRenderer &#125;
-  &#125;);
-&#125;);</code></pre>
+test('custom rendering', () => {
+  render(EventContent, {
+    props: { ndk, event, renderer: mockRenderer }
+  });
+});`}
+            />
+          </div>
+        </div>
+
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">Resolution Order</h4>
+          <p class="text-sm text-muted-foreground">
+            Components use this priority: <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">prop → context → defaultContentRenderer</code>
+          </p>
+          <p class="text-sm text-muted-foreground mt-2">
+            When you pass a renderer via prop, that component automatically sets it in context for its children.
+            This means nested embeds inherit the overridden renderer without you passing it explicitly.
+          </p>
+        </div>
       </div>
 
-      <div class="grouping-card">
-        <strong>Resolution Order</strong>
-        <p>Components use this priority: <code>prop → context → defaultContentRenderer</code></p>
-        <p>When you pass a renderer via prop, that component automatically sets it in context for its children. This means nested embeds inherit the overridden renderer without you passing it explicitly.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="info">
-    <h2>Content Grouping Behavior</h2>
-    <p class="mb-4">EventContent automatically groups consecutive media and links for better presentation:</p>
-    <div class="grouping-info">
-      <div class="grouping-card">
-        <strong>Image Grouping</strong>
-        <p>Consecutive images separated only by whitespace (spaces, newlines) are automatically grouped into an <code>image-grid</code>. Single images remain as individual <code>media</code> segments.</p>
-        <pre><code>// These images will be grouped:
+      <h3 class="text-xl font-semibold mt-8 mb-4">Content Grouping Behavior</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        EventContent automatically groups consecutive media and links for better presentation:
+      </p>
+      <div class="space-y-4">
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">Image Grouping</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Consecutive images separated only by whitespace (spaces, newlines) are automatically grouped into an
+            <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">image-grid</code>.
+            Single images remain as individual <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">media</code> segments.
+          </p>
+          <div class="bg-muted rounded-lg overflow-hidden">
+            <CodeBlock
+              lang="text"
+              code={`// These images will be grouped:
 https://example.com/1.jpg
 https://example.com/2.jpg
 
 https://example.com/3.jpg
 
-// Result: One image-grid with 3 images</code></pre>
-      </div>
-      <div class="grouping-card">
-        <strong>Link Grouping</strong>
-        <p>Consecutive links separated only by whitespace are automatically grouped into a <code>link-group</code>. Single links remain as individual <code>link</code> segments.</p>
-        <pre><code>// These links will be grouped:
+// Result: One image-grid with 3 images`}
+            />
+          </div>
+        </div>
+
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">Link Grouping</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Consecutive links separated only by whitespace are automatically grouped into a
+            <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">link-group</code>.
+            Single links remain as individual <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">link</code> segments.
+          </p>
+          <div class="bg-muted rounded-lg overflow-hidden">
+            <CodeBlock
+              lang="text"
+              code={`// These links will be grouped:
 https://github.com/nostr
 https://nostr.com
 
 https://njump.me
 
-// Result: One link-group with 3 URLs</code></pre>
+// Result: One link-group with 3 URLs`}
+            />
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <section class="info">
-    <h2>Registering Event Handlers</h2>
-    <p class="mb-4">Register custom components for specific event kinds to control how embedded events are displayed:</p>
-    <pre><code>import &#123; ContentRenderer &#125; from '$lib/ui/event-rendering';
+      <h3 class="text-xl font-semibold mt-8 mb-4">Content Types Detected</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        EventContent and MarkdownEventContent automatically detect and render these content types:
+      </p>
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Text</strong>
+          <p class="text-xs text-muted-foreground mt-1">Plain text segments</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Mentions</strong>
+          <p class="text-xs text-muted-foreground mt-1">npub, nprofile references</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Event References</strong>
+          <p class="text-xs text-muted-foreground mt-1">Embedded nevent, note1</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Hashtags</strong>
+          <p class="text-xs text-muted-foreground mt-1">#hashtag detection</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Links</strong>
+          <p class="text-xs text-muted-foreground mt-1">HTTP/HTTPS URLs</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Media</strong>
+          <p class="text-xs text-muted-foreground mt-1">Images, videos, YouTube</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Custom Emojis</strong>
+          <p class="text-xs text-muted-foreground mt-1">:shortcode: from NIP-30</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Image Grids</strong>
+          <p class="text-xs text-muted-foreground mt-1">Multiple images grouped</p>
+        </div>
+        <div class="p-3 border border-border rounded bg-card">
+          <strong class="text-sm font-semibold">Link Groups</strong>
+          <p class="text-xs text-muted-foreground mt-1">Multiple links grouped</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold mt-8 mb-4">Registering Event Handlers</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Register custom components for specific event kinds to control how embedded events are displayed:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { ContentRenderer } from '$lib/registry/ui/event-rendering';
 import NoteCard from './NoteCard.svelte';
 import ArticleCard from './ArticleCard.svelte';
-import &#123; NDKArticle &#125; from '@nostr-dev-kit/ndk';
+import { NDKArticle } from '@nostr-dev-kit/ndk';
 
 const renderer = new ContentRenderer();
 
@@ -369,391 +462,123 @@ const renderer = new ContentRenderer();
 renderer.addKind([1, 1111], NoteCard);      // Notes and comments
 
 // Register with NDK wrapper class (automatic wrapping)
-renderer.addKind(NDKArticle, ArticleCard);  // Uses NDKArticle.kinds and .from()</code></pre>
-  </section>
+renderer.addKind(NDKArticle, ArticleCard);  // Uses NDKArticle.kinds and .from()`}
+        />
+      </div>
 
-  <section class="info">
-    <h2>Handler Component Interface</h2>
-    <p class="mb-4">Components registered as kind handlers receive these props:</p>
-    <pre><code>interface KindHandlerProps &#123;
+      <h3 class="text-xl font-semibold mt-8 mb-4">Handler Component Interface</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Components registered as kind handlers receive these props:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`interface KindHandlerProps {
   ndk: NDKSvelte;
   event: NDKEvent;  // Wrapped with NDK class if registered
-&#125;
+}
 
 // Inline element handlers receive different props:
 
 // Mention component
-interface MentionProps &#123;
+interface MentionProps {
   ndk: NDKSvelte;
   bech32: string;
   class?: string;
-&#125;
+}
 
 // Hashtag component
-interface HashtagProps &#123;
+interface HashtagProps {
   ndk: NDKSvelte;
   tag: string;
   onclick?: (tag: string) => void;
   class?: string;
-&#125;
+}
 
 // Link/Media component (single or grouped)
-interface LinkMediaProps &#123;
+interface LinkMediaProps {
   url: string | string[];  // Array for grouped content
   class?: string;
   type?: string;  // Media only
-&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Loading States</h2>
-    <p class="mb-4">EmbeddedEvent automatically handles loading, error, and loaded states with built-in UI:</p>
-    <div class="states-grid">
-      <div class="state-item">
-        <strong>Loading</strong>
-        <p>Shows spinner and "Loading event..." message while fetching from relays.</p>
+}`}
+        />
       </div>
-      <div class="state-item">
-        <strong>Error</strong>
-        <p>Displays "Failed to load event" if the event cannot be fetched.</p>
-      </div>
-      <div class="state-item">
-        <strong>Loaded</strong>
-        <p>Renders using registered handler or shows fallback for unknown kinds.</p>
-      </div>
-    </div>
-  </section>
 
-  <section class="info">
-    <h2>Media Detection</h2>
-    <p class="mb-4">EventContent automatically detects and renders:</p>
-    <ul class="ml-6 mb-4 space-y-2">
-      <li><strong>Images:</strong> .jpg, .jpeg, .png, .gif, .webp, .svg</li>
-      <li><strong>Videos:</strong> .mp4, .webm, .mov</li>
-      <li><strong>YouTube:</strong> youtube.com/watch?v=, youtu.be/, youtube.com/embed/</li>
-    </ul>
-    <p class="mb-4">Override media rendering with a custom mediaComponent in your ContentRenderer.</p>
-  </section>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Media Detection</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        EventContent automatically detects and renders:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2 text-muted-foreground">
+        <li><strong>Images:</strong> .jpg, .jpeg, .png, .gif, .webp, .svg</li>
+        <li><strong>Videos:</strong> .mp4, .webm, .mov</li>
+        <li><strong>YouTube:</strong> youtube.com/watch?v=, youtu.be/, youtube.com/embed/</li>
+      </ul>
+      <p class="text-sm text-muted-foreground">
+        Override media rendering with a custom mediaComponent in your ContentRenderer.
+      </p>
 
-  <section class="info">
-    <h2>Custom Emojis (NIP-30)</h2>
-    <p class="mb-4">All components automatically render custom emojis from event tags:</p>
-    <pre><code>// Event tags format:
+      <h3 class="text-xl font-semibold mt-8 mb-4">Custom Emojis (NIP-30)</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        All components automatically render custom emojis from event tags:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="javascript"
+          code={`// Event tags format:
 ["emoji", "party", "https://example.com/party.gif"]
 
 // In content:
 "Let's party! :party:"
 
 // Renders as:
-&lt;img src="https://example.com/party.gif" alt=":party:" /&gt;</code></pre>
-  </section>
+<img src="https://example.com/party.gif" alt=":party:" />`}
+        />
+      </div>
 
-  <section class="info">
-    <h2>Bech32 Reference Types</h2>
-    <p class="mb-4">EmbeddedEvent supports the following Nostr bech32 reference formats:</p>
-    <ul class="ml-6 mb-4 space-y-2">
-      <li><strong>nevent:</strong> Event reference with relay hints</li>
-      <li><strong>note1:</strong> Event ID reference</li>
-      <li><strong>naddr:</strong> Replaceable event address reference</li>
-    </ul>
-  </section>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Loading States</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        EmbeddedEvent automatically handles loading, error, and loaded states with built-in UI:
+      </p>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <div class="p-4 border border-border rounded bg-card">
+          <strong class="font-semibold">Loading</strong>
+          <p class="text-sm text-muted-foreground mt-2">Shows spinner and "Loading event..." message while fetching from relays.</p>
+        </div>
+        <div class="p-4 border border-border rounded bg-card">
+          <strong class="font-semibold">Error</strong>
+          <p class="text-sm text-muted-foreground mt-2">Displays "Failed to load event" if the event cannot be fetched.</p>
+        </div>
+        <div class="p-4 border border-border rounded bg-card">
+          <strong class="font-semibold">Loaded</strong>
+          <p class="text-sm text-muted-foreground mt-2">Renders using registered handler or shows fallback for unknown kinds.</p>
+        </div>
+      </div>
 
-  <section class="info">
-    <h2>Related</h2>
-    <div class="related-grid">
-      <a href="/components/event-card" class="related-card">
-        <strong>Event Card Component</strong>
-        <span>Complete event display with header and content</span>
-      </a>
-      <a href="/builders/event-rendering" class="related-card">
-        <strong>Event Content Builder</strong>
-        <span>Low-level parsing utilities</span>
-      </a>
-    </div>
-  </section>
-</div>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Bech32 Reference Types</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        EmbeddedEvent supports the following Nostr bech32 reference formats:
+      </p>
+      <ul class="ml-6 list-disc space-y-2 text-muted-foreground">
+        <li><strong>nevent:</strong> Event reference with relay hints</li>
+        <li><strong>note1:</strong> Event ID reference</li>
+        <li><strong>naddr:</strong> Replaceable event address reference</li>
+      </ul>
+    </section>
+  {/snippet}
 
-<style>
-  .component-page {
-    max-width: 900px;
-  }
-
-  header {
-    margin-bottom: 3rem;
-  }
-
-  .header-badge {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground);
-  }
-
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
-
-  .header-title h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0;
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .header-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 1rem 0 1.5rem 0;
-  }
-
-  .header-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-
-  .info-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .info-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .info-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .installation h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .installation pre {
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  section h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    color: var(--primary);
-  }
-
-  .components-overview {
-    background: var(--muted);
-    padding: 2rem;
-    border-radius: 1rem;
-    margin: 2rem 0;
-  }
-
-  .components-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .component-card {
-    padding: 1.5rem;
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .component-card strong {
-    display: block;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-  }
-
-  .component-card p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .content-types-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .content-type-item {
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .content-type-item strong {
-    font-weight: 600;
-    color: var(--primary);
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-
-  .content-type-item p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .states-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .state-item {
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .state-item strong {
-    font-weight: 600;
-    color: var(--primary);
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-
-  .state-item p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .related-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .related-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
-
-  .related-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .related-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  pre {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  pre code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-
-  ul {
-    list-style: disc;
-  }
-
-  ul li {
-    color: var(--muted-foreground);
-    line-height: 1.6;
-  }
-
-  .grouping-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .grouping-card {
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    background: var(--muted);
-  }
-
-  .grouping-card strong {
-    display: block;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--foreground);
-    margin-bottom: 0.75rem;
-  }
-
-  .grouping-card p {
-    margin-bottom: 1rem;
-    line-height: 1.6;
-    color: var(--muted-foreground);
-  }
-
-  .grouping-card pre {
-    margin-top: 1rem;
-  }
-
-  .grouping-card code {
-    font-size: 0.8125rem;
-  }
-
-  .usage pre {
-    background: var(--muted);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-  }
-</style>
+  {#snippet relatedComponents()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Related</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <a href="/components/event-card" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Event Card Component</strong>
+          <span class="text-sm text-muted-foreground">Complete event display with header and content</span>
+        </a>
+        <a href="/builders/event-rendering" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Event Content Builder</strong>
+          <span class="text-sm text-muted-foreground">Low-level parsing utilities</span>
+        </a>
+      </div>
+    </section>
+  {/snippet}
+</UIPrimitivePageTemplate>

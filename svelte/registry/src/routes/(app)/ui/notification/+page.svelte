@@ -5,7 +5,7 @@
   import Preview from '$site-components/Demo.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
-  import { NotificationItem } from '$lib/registry/ui/notification';
+  import * as NotificationItem from '$lib/registry/ui/notification';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';

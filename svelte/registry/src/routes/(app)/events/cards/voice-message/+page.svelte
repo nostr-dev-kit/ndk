@@ -16,6 +16,27 @@
 	import voiceMessageCardCompactCard from '$lib/registry/components/voice-message/cards/compact/registry.json';
 	import voiceMessageCardExpandedCard from '$lib/registry/components/voice-message/cards/expanded/registry.json';
 
+	const voiceMessageCardCards = [voiceMessageCardCompactCard, voiceMessageCardExpandedCard];
+
+	// Create UI primitive cards
+	const voiceMessageCardBasicCard = {
+		name: 'voice-message-basic',
+		title: 'Voice Message Basic',
+		category: 'event',
+		subcategory: 'cards',
+		variant: 'basic',
+		description: 'Basic voice message primitives'
+	};
+
+	const voiceMessageCardCompositionCard = {
+		name: 'voice-message-composition',
+		title: 'Voice Message Composition',
+		category: 'event',
+		subcategory: 'cards',
+		variant: 'composition',
+		description: 'Composed voice message card with all primitives'
+	};
+
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIComposition from './examples/ui-composition.example.svelte';
 

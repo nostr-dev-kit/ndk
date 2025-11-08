@@ -1,0 +1,9 @@
+<script lang="ts">
+  import { ZapSendClassic } from '$lib/registry/components/zap/send/classic';
+
+  let { ndk, target } = $props();
+</script>
+
+{#if target}
+  <ZapSendClassic {ndk} {target} />
+{/if}

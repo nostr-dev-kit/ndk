@@ -2,8 +2,15 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import ZapSendClassic from '$lib/registry/components/zap/send/classic/zap-send-classic.svelte';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
+
+  // Import example components
+  import BasicUsage from './examples/basic-usage/index.svelte';
+  import BasicUsageRaw from './examples/basic-usage/index.txt?raw';
+
+  // Import registry metadata
+  import zapSendClassicCard from '$lib/registry/components/zap/send/classic/registry.json';
 
   // Get page data
   let { data } = $props();
@@ -37,9 +44,7 @@
 </script>
 
 {#snippet preview()}
-  {#if target}
-    <ZapSendClassic {ndk} {target} />
-  {/if}
+  <BasicUsage {ndk} {target} />
 {/snippet}
 
 <ComponentPageTemplate
@@ -56,11 +61,7 @@
     cards: [
       {
         ...zapSendClassicCard,
-        code: `<script>
-  import { ZapSendClassic } from '$lib/registry/components/zap/send/classic';
-</script>
-
-<ZapSendClassic {ndk} {target} />`
+        code: BasicUsageRaw
       }
     ],
     previews: {

@@ -141,8 +141,13 @@ export interface UIPrimitivePageTemplateProps {
   // Anatomy is always present for UI primitives
   anatomyPreview: Snippet;
 
-  // Extension points via snippets
-  beforeAnatomy?: Snippet;
-  afterAnatomy?: Snippet;
-  customSections?: Snippet;
+  // Content sections via snippets (predictable structure)
+  topExample?: Snippet;
+  overview?: Snippet;
+  examples?: Snippet;
+  contextSection?: Snippet;
+  relatedComponents?: Snippet;
+
+  // Children (for EditProps in PageTitle)
+  children?: Snippet;
 }

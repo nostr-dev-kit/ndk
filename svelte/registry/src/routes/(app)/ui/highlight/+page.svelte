@@ -1,8 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
+  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import { Highlight } from '$lib/registry/ui/highlight';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';
@@ -10,6 +13,77 @@
   import CompositionRaw from './examples/styled-card/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  // Fetch a highlight for examples and anatomy
+  const highlightFetcher = ndk.$subscribe(() => ({
+    filters: [{ kinds: [NDKKind.Highlight], limit: 1 }]
+  }));
+
+  let highlight = $state<NDKHighlight | null>(null);
+
+  $effect(() => {
+    if (highlightFetcher.events.length > 0) {
+      highlight = NDKHighlight.from(highlightFetcher.events[0]);
+    }
+  });
+
+  // Page metadata
+  const metadata = {
+    title: 'Highlight',
+    description: 'Headless, composable primitives for displaying text highlights (NIP-84).',
+    importPath: 'ui/highlight',
+    nips: ['84'],
+    primitives: [
+      {
+        name: 'Highlight.Root',
+        title: 'Highlight.Root',
+        description: 'Context provider for highlight primitives. Required wrapper for all Highlight components.',
+        apiDocs: [
+          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+          { name: 'event', type: 'NDKHighlight', default: 'required', description: 'The highlight event to display' },
+          { name: 'onclick', type: '(event: MouseEvent) => void', default: 'undefined', description: 'Click handler for the root element' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+        ]
+      },
+      {
+        name: 'Highlight.Content',
+        title: 'Highlight.Content',
+        description: 'Displays the highlighted text from the event content.',
+        apiDocs: [
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'Highlight.Source',
+        title: 'Highlight.Source',
+        description: 'Displays a link to the source article or context tag.',
+        apiDocs: [
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      }
+    ],
+    anatomyLayers: [
+      {
+        id: 'root',
+        label: 'Highlight.Root',
+        description: 'Container that provides highlight context to all child primitives. Handles event data and click handling.',
+        props: ['ndk', 'event', 'onclick', 'class']
+      },
+      {
+        id: 'content',
+        label: 'Highlight.Content',
+        description: 'Displays the highlighted text content from the event.',
+        props: ['class']
+      },
+      {
+        id: 'source',
+        label: 'Highlight.Source',
+        description: 'Shows a link to the source article or context where the highlight was made.',
+        props: ['class']
+      }
+    ]
+  };
 </script>
 
 <svelte:head>
@@ -17,300 +91,100 @@
   <meta name="description" content="Headless, composable primitives for displaying text highlights (NIP-84)." />
 </svelte:head>
 
-<div class="component-page">
-  <header>
-    <div class="header-badge">
-      <span class="badge">UI Primitive</span>
-      <span class="badge badge-nip">NIP-84</span>
-    </div>
-    <div class="header-title">
-      <h1>Highlight</h1>
-    </div>
-    <p class="header-description">
-      Headless, composable primitives for displaying text highlights (NIP-84). Perfect for building custom highlight displays.
-    </p>
-    <div class="header-info">
-      <div class="info-card">
-        <strong>Headless</strong>
-        <span>No styling - full design control</span>
-      </div>
-      <div class="info-card">
-        <strong>Composable</strong>
-        <span>Mix primitives to build your UI</span>
-      </div>
-      <div class="info-card">
-        <strong>NIP-84</strong>
-        <span>Text highlight events</span>
-      </div>
-    </div>
-  </header>
-
-  <section class="installation">
-    <h2>Installation</h2>
-    <pre><code>import &#123; Highlight &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
-  </section>
-
-  <section class="demo space-y-8">
-    <h2>Examples</h2>
-
-    <Preview
-      title="Basic Usage"
-      code={BasicRaw}
-    >
+<UIPrimitivePageTemplate {metadata} {ndk}>
+  {#snippet topExample()}
+    <Preview code={BasicRaw}>
       <Basic />
     </Preview>
+  {/snippet}
 
-    <Preview
-      title="Styled Highlight Card"
-      code={CompositionRaw}
-    >
-      <Composition />
-    </Preview>
-  </section>
+  {#snippet overview()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+      <p class="text-lg leading-relaxed text-muted-foreground mb-8">
+        Highlight primitives expose individual fields from Nostr highlight events (NIP-84) as composable
+        components, making it easy to build custom highlight displays.
+      </p>
 
-  <section class="info">
-    <h2>Available Components</h2>
-    <div class="components-grid">
-      <div class="component-item">
-        <code>Highlight.Root</code>
-        <p>Context provider for highlight primitives.</p>
+      <h3 class="text-xl font-semibold mt-8 mb-4">When You Need These</h3>
+      <p class="leading-relaxed mb-4">
+        Use Highlight primitives when building custom layouts for displaying text highlights. Use these when you're:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2">
+        <li class="leading-relaxed">Building custom highlight cards with specific styling (quotes, callouts, cards)</li>
+        <li class="leading-relaxed">Displaying user-created highlights in reading interfaces</li>
+        <li class="leading-relaxed">Creating highlight collections or galleries</li>
+        <li class="leading-relaxed">Embedding highlights in articles or blog posts</li>
+      </ul>
+    </section>
+  {/snippet}
+
+  {#snippet anatomyPreview()}
+    {#if highlight}
+      <Highlight.Root {ndk} event={highlight}>
+        <ComponentAnatomy.Layer id="root" label="Highlight.Root">
+          <div class="border border-border rounded-lg p-4 bg-card max-w-md">
+            <ComponentAnatomy.Layer id="content" label="Highlight.Content">
+              <Highlight.Content class="text-lg italic leading-relaxed mb-2" />
+            </ComponentAnatomy.Layer>
+            <ComponentAnatomy.Layer id="source" label="Highlight.Source">
+              <Highlight.Source class="text-sm text-muted-foreground" />
+            </ComponentAnatomy.Layer>
+          </div>
+        </ComponentAnatomy.Layer>
+      </Highlight.Root>
+    {:else}
+      <div class="border border-border rounded-lg p-8 bg-card max-w-md text-center text-muted-foreground">
+        Loading highlight...
       </div>
-      <div class="component-item">
-        <code>Highlight.Content</code>
-        <p>The highlighted text content.</p>
-      </div>
-      <div class="component-item">
-        <code>Highlight.Source</code>
-        <p>Link to the source of the highlight.</p>
-      </div>
+    {/if}
+  {/snippet}
+
+  {#snippet examples()}
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Styled Highlight Card</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Combines Content and Source primitives with custom styling to create a visually distinctive
+        highlight card with gradient background and accent border.
+      </p>
+      <Preview
+        title="Styled Highlight Card"
+        code={CompositionRaw}
+      >
+        <Composition />
+      </Preview>
     </div>
-  </section>
+  {/snippet}
 
-  <section class="info">
-    <h2>Highlight.Root</h2>
-    <ApiTable
-      rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-        { name: 'highlight', type: 'NDKHighlight', default: 'required', description: 'The highlight event to display' },
-        { name: 'onclick', type: '(event: MouseEvent) => void', default: 'undefined', description: 'Click handler' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-        { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>Highlight.Content</h2>
-    <p class="mb-4">Displays the highlighted text from the event content.</p>
-    <ApiTable
-      rows={[
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>Highlight.Source</h2>
-    <p class="mb-4">Displays a link to the source article or context tag.</p>
-    <ApiTable
-      rows={[
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>Context</h2>
-    <p class="mb-4">Access highlight context in custom components:</p>
-    <pre><code>import &#123; getContext &#125; from 'svelte';
+  {#snippet contextSection()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Context</h2>
+      <p class="leading-relaxed text-muted-foreground mb-4">Access highlight context in custom components:</p>
+      <pre class="my-4 p-4 bg-muted rounded-lg overflow-x-auto"><code class="font-mono text-sm leading-normal">import &#123; getContext &#125; from 'svelte';
 import &#123; HIGHLIGHT_CONTEXT_KEY, type HighlightContext &#125; from '$lib/registry/ui/highlight';
 
 const context = getContext&lt;HighlightContext&gt;(HIGHLIGHT_CONTEXT_KEY);
 // Access: context.highlight, context.ndk, context.onclick</code></pre>
-  </section>
+    </section>
+  {/snippet}
 
-  <section class="info">
-    <h2>Related</h2>
-    <div class="related-grid">
-      <a href="/components/cards/highlight" class="related-card">
-        <strong>Highlight Blocks</strong>
-        <span>Pre-styled highlight card layouts</span>
-      </a>
-      <a href="/components/previews/highlights" class="related-card">
-        <strong>Highlight Embedded</strong>
-        <span>For embedding highlights in content</span>
-      </a>
-      <a href="/ui/article" class="related-card">
-        <strong>Article Primitives</strong>
-        <span>For source articles</span>
-      </a>
-    </div>
-  </section>
-</div>
-
-<style>
-  .component-page {
-    max-width: 900px;
-  }
-
-  header {
-    margin-bottom: 3rem;
-  }
-
-  .header-badge {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground);
-  }
-
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
-
-  .header-title h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0;
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .header-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 1rem 0 1.5rem 0;
-  }
-
-  .header-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-
-  .info-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .info-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .info-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .installation h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .installation pre {
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .components-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-
-  .component-item {
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .component-item code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--primary);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .component-item p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .related-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .related-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
-
-  .related-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .related-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  pre {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  pre code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-</style>
+  {#snippet relatedComponents()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Related</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <a href="/components/cards/highlight" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Highlight Blocks</strong>
+          <span class="text-sm text-muted-foreground">Pre-styled highlight card layouts</span>
+        </a>
+        <a href="/components/previews/highlights" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Highlight Embedded</strong>
+          <span class="text-sm text-muted-foreground">For embedding highlights in content</span>
+        </a>
+        <a href="/ui/article" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Article Primitives</strong>
+          <span class="text-sm text-muted-foreground">For source articles</span>
+        </a>
+      </div>
+    </section>
+  {/snippet}
+</UIPrimitivePageTemplate>

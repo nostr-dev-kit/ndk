@@ -2,10 +2,12 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import avatarGroupCode from './avatar-group.example?raw';
+
+  // Import registry metadata
+  import avatarGroupCard from '$lib/registry/components/misc/avatar-group/registry.json';
 
   import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
 
@@ -27,31 +29,6 @@
     '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
   ];
 
-  // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: avatarGroupCard,
-      preview: defaultPreview
-    },
-    {
-      cardData: avatarGroupCard,
-      preview: withOverflowPreview
-    },
-    {
-      cardData: avatarGroupCard,
-      preview: textOverflowPreview,
-      cellClass: 'md:row-span-2'
-    },
-    {
-      cardData: avatarGroupCard,
-      preview: verticalPreview
-    },
-    {
-      cardData: avatarGroupCard,
-      preview: snippetPreview
-    }
-  ];
-
   // Components section
   const componentsSection = $derived({
     cards: [
@@ -62,34 +39,6 @@
     }
   });
 </script>
-
-<!-- Preview snippets for showcase -->
-{#snippet defaultPreview()}
-  <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
-{/snippet}
-
-{#snippet withOverflowPreview()}
-  <AvatarGroup {ndk} pubkeys={examplePubkeys} max={parseInt(maxAvatars) || 5} />
-{/snippet}
-
-{#snippet textOverflowPreview()}
-  <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
-{/snippet}
-
-{#snippet snippetPreview()}
-  <AvatarGroup {ndk} pubkeys={examplePubkeys} max={4}>
-    {#snippet overflowSnippet(count)}
-      <div class="flex items-center gap-1 ml-2">
-        <span class="font-bold text-primary">+{count}</span>
-        <span class="text-sm text-muted-foreground">more</span>
-      </div>
-    {/snippet}
-  </AvatarGroup>
-{/snippet}
-
-{#snippet verticalPreview()}
-  <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
-{/snippet}
 
 <!-- Component card preview snippet -->
 {#snippet avatarGroupCardPreview()}
@@ -203,7 +152,6 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 <ComponentPageTemplate
   metadata={metadata}
   {ndk}
-  {showcaseComponents}
   {componentsSection}
   {customSections}
   apiDocs={metadata.apiDocs}

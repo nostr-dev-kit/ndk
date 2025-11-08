@@ -49,8 +49,8 @@
 </script>
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
-  <div data-voice-message-card-expanded="" class="voice-message-expanded {className}">
-    <div class="header">
+  <div data-voice-message-card-expanded="" class="flex flex-col gap-4 p-5 bg-card border border-border rounded-2xl w-full max-w-[500px] {className}">
+    <div class="flex items-center justify-between gap-3">
       <User.Root {ndk} user={voiceMessage.author}>
         <User.Avatar class="w-10 h-10" />
         <User.Name />
@@ -59,44 +59,13 @@
     </div>
 
     {#if showWaveform}
-      <div class="waveform-section">
+      <div class="py-2">
         <VoiceMessage.Waveform height={waveformHeight} {progress} />
       </div>
     {/if}
 
-    <div class="controls">
+    <div class="flex items-center gap-3">
       <VoiceMessage.Player bind:audioRef />
     </div>
   </div>
 </VoiceMessage.Root>
-
-<style>
-  .voice-message-expanded {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    width: 100%;
-    max-width: 500px;
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .waveform-section {
-    padding: 8px 0;
-  }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-</style>

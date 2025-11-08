@@ -46,11 +46,8 @@
   {ndk}
   showcaseComponents={[
     {
-      name: 'ReplyButton',
-      description: 'Basic reply button with count',
-      command: 'npx jsrepo add reply-button',
-      preview: replyButtonsPreview,
       cardData: replyMetadata.cards[0],
+      preview: replyButtonsPreview,
       orientation: 'horizontal'
     }
   ]}

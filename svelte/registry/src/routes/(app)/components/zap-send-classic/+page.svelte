@@ -45,11 +45,8 @@
   {ndk}
   showcaseComponents={[
     {
-      name: 'ZapSendClassic',
-      description: 'Complete zap dialog with amount selection, split display, and comment',
-      command: 'npx jsrepo add zap-send-classic',
-      preview,
       cardData: zapSendClassicCard,
+      preview,
       orientation: 'horizontal'
     }
   ]}

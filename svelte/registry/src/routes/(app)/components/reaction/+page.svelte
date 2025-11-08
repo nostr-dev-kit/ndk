@@ -46,19 +46,13 @@
   {ndk}
   showcaseComponents={[
     {
-      name: 'Reaction with Long-Press',
-      description: 'Click to react, long-press for emoji picker',
-      command: 'npx jsrepo add reaction',
-      preview: reactionBasicPreview,
       cardData: reactionMetadata.cards[0],
+      preview: reactionBasicPreview,
       orientation: 'horizontal'
     },
     {
-      name: 'Delayed Reactions',
-      description: 'Cancellable reactions with delayed publishing',
-      command: 'npx jsrepo add reaction',
-      preview: reactionDelayedPreview,
       cardData: reactionMetadata.cards[1],
+      preview: reactionDelayedPreview,
       orientation: 'horizontal'
     }
   ]}

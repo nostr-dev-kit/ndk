@@ -3,14 +3,14 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
-  import Demo from '$lib/site/components/Demo.svelte';
-  import ApiTable from '$lib/site/components/api-table.svelte';
+  import Preview from '$site-components/preview.svelte';
+  import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import Composition from './examples/composition.example.svelte';
-  import CompositionRaw from './examples/composition.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import Composition from './examples/full-card/index.svelte';
+  import CompositionRaw from './examples/full-card/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -47,21 +47,19 @@
       <section class="mt-16">
         <h2 class="text-3xl font-bold mb-4">Examples</h2>
         <div class="space-y-8">
-          <div class="border border-border rounded-lg p-6">
-            <h3 class="text-xl font-semibold mb-3">Basic Usage</h3>
-            <p class="text-muted-foreground mb-4">
-              Minimal example showing how to compose Article primitives. Each primitive can be styled independently.
-            </p>
+          <Preview
+            title="Basic Usage"
+            code={BasicRaw}
+          >
             <Basic />
-          </div>
+          </Preview>
 
-          <div class="border border-border rounded-lg p-6">
-            <h3 class="text-xl font-semibold mb-3">Composed Layout</h3>
-            <p class="text-muted-foreground mb-4">
-              Build a complete article card by composing primitives with custom styling. This example shows a hero image layout with metadata.
-            </p>
+          <Preview
+            title="Composed Layout"
+            code={CompositionRaw}
+          >
             <Composition />
-          </div>
+          </Preview>
         </div>
       </section>
 

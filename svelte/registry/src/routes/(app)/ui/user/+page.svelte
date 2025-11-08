@@ -27,6 +27,7 @@
   <meta name="description" content="Headless, composable primitives for displaying user profiles and metadata." />
 </svelte:head>
 
+<div class="flex flex-col gap">
   <PageTitle
     title="User"
     subtitle="Headless, composable primitives for displaying user profiles and metadata."
@@ -36,10 +37,7 @@
   </PageTitle>
 
   <section class="mb-12">
-    <Preview
-      title="Basic Usage"
-      code={BasicRaw}
-    >
+    <Preview code={BasicRaw}>
       <Basic {ndk} {userPubkey} />
     </Preview>
   </section>
@@ -290,3 +288,5 @@ const context = getContext&lt;UserContext&gt;(USER_CONTEXT_KEY);
         <span class="text-sm text-muted-foreground">For displaying user-authored content</span>
       </a>
     </div>
+  </section>
+</div>

@@ -18,6 +18,7 @@
     "registry:manifest": "bun run scripts/generate-version-manifest.ts",
     "registry:headers": "bun run scripts/add-version-headers.ts",
     "registry:update": "bun run registry:generate && bun run registry:versions && bun run registry:manifest && bun run registry:headers",
+    "registry:build": "node scripts/build-registry.js",
     "ndk:check": "bun run scripts/scan-and-upgrade.ts",
     "ndk:upgrade": "bun run scripts/scan-and-upgrade.ts --yes"
   },

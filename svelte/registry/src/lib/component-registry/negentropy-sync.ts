@@ -10,7 +10,7 @@ export const negentropySyncProgressMinimalCard: ComponentCardData = {
     {
       name: 'NegentropySyncProgressMinimal',
       description: 'Minimal progress bar block with basic sync stats',
-      importPath: "import { NegentropySyncProgressMinimal } from '$lib/registry/components/negentropy-sync'",
+      importPath: "import { NegentropySyncProgressMinimal } from '$lib/registry/components/negentropy-sync/displays/basic'",
       props: [
         { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
         { name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -46,7 +46,7 @@ export const negentropySyncProgressDetailedCard: ComponentCardData = {
     {
       name: 'NegentropySyncProgressDetailed',
       description: 'Detailed progress block showing overall stats, progress bar, and individual relay status',
-      importPath: "import { NegentropySyncProgressDetailed } from '$lib/registry/components/negentropy-sync'",
+      importPath: "import { NegentropySyncProgressDetailed } from '$lib/registry/components/negentropy-sync/displays/basic'",
       props: [
         { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
         { name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -82,7 +82,7 @@ export const negentropySyncProgressAnimatedCard: ComponentCardData = {
     {
       name: 'NegentropySyncProgressAnimated',
       description: 'Animated progress block with shimmer effects and smooth transitions',
-      importPath: "import { NegentropySyncProgressAnimated } from '$lib/registry/components/negentropy-sync'",
+      importPath: "import { NegentropySyncProgressAnimated } from '$lib/registry/components/negentropy-sync/displays/basic'",
       props: [
         { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
         { name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -118,7 +118,7 @@ export const negentropySyncProgressCompactCard: ComponentCardData = {
     {
       name: 'NegentropySyncProgressCompact',
       description: 'Compact badge block showing sync status with expandable details on hover',
-      importPath: "import { NegentropySyncProgressCompact } from '$lib/registry/components/negentropy-sync-progress-compact'",
+      importPath: "import { NegentropySyncProgressCompact } from '$lib/registry/components/negentropy-sync/progress/compact'",
       props: [
         { name: 'syncBuilder', type: 'ReturnType<typeof createNegentropySync>', required: true, description: 'Negentropy sync builder instance' },
         { name: 'class', type: 'string', description: 'Additional CSS classes' }

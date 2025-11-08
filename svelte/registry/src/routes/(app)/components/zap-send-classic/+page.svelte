@@ -58,7 +58,7 @@
       {
         ...zapSendClassicCard,
         code: `<script>
-  import { ZapSendClassic } from '$lib/registry/components/zap-send-classic';
+  import { ZapSendClassic } from '$lib/registry/components/zap/send/classic';
 </script>
 
 <ZapSendClassic {ndk} {target} />`

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Hashtag } from '$lib/registry/components/hashtag';
+  import { Hashtag } from '$lib/registry/components/hashtag/displays/basic';
 
   let lastClicked = $state<string>('');
 

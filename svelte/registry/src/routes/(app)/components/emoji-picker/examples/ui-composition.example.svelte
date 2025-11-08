@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EmojiPicker, type EmojiData } from '$lib/registry/components/emoji-picker';
+  import { EmojiPicker, type EmojiData } from '$lib/registry/components/misc/emoji-picker';
 
   interface Props {
     ndk: NDKSvelte;

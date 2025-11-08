@@ -9,7 +9,7 @@ export const articleCardPortraitCard: ComponentCardData = {
 		{
 			name: 'ArticleCardPortrait',
 			description: 'Portrait-style article card component',
-			importPath: "import { ArticleCardPortrait } from '$lib/registry/components/article-card-portrait'",
+			importPath: "import { ArticleCardPortrait } from '$lib/registry/components/article/cards/portrait'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
@@ -28,7 +28,7 @@ export const articleCardHeroCard: ComponentCardData = {
 		{
 			name: 'ArticleCardHero',
 			description: 'Hero-style article card component',
-			importPath: "import { ArticleCardHero } from '$lib/registry/components/article-card-hero'",
+			importPath: "import { ArticleCardHero } from '$lib/registry/components/article/cards/hero'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
@@ -47,7 +47,7 @@ export const articleCardMediumCard: ComponentCardData = {
 		{
 			name: 'ArticleCardMedium',
 			description: 'Medium horizontal article card component',
-			importPath: "import { ArticleCardMedium } from '$lib/registry/components/article-card'",
+			importPath: "import { ArticleCardMedium } from '$lib/registry/components/article/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },
@@ -66,7 +66,7 @@ export const articleCardNeonCard: ComponentCardData = {
 		{
 			name: 'ArticleCardNeon',
 			description: 'Neon-style article card component with vibrant accents',
-			importPath: "import { ArticleCardNeon } from '$lib/registry/components/article-card-neon'",
+			importPath: "import { ArticleCardNeon } from '$lib/registry/components/article/cards/neon'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'article', type: 'NDKArticle', description: 'Article instance to display', required: true },

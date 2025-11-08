@@ -4,7 +4,7 @@
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
   import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
   import HighlightCardInline from '$lib/registry/components/highlight-card-inline/highlight-card-inline.svelte';
-  import { EventCard } from '$lib/registry/components/event-card';
+  import { EventCard } from '$lib/registry/components/event/cards/compound';
 
   interface Props {
     ndk: NDKSvelte;

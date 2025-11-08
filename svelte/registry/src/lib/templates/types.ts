@@ -36,8 +36,8 @@ export interface ApiEvent {
   description: string;
 }
 
-// Showcase block structure - compatible with both ComponentsShowcase and ComponentsShowcaseGrid
-export interface ShowcaseBlock {
+// Showcase component structure - compatible with both ComponentsShowcase and ComponentsShowcaseGrid
+export interface ShowcaseComponent {
   name: string;
   description: string;
   command: string;
@@ -49,11 +49,10 @@ export interface ShowcaseBlock {
   cellClass?: string;  // Custom classes for grid cell
 }
 
-// Alias for BlockVariant (used by ComponentsShowcase)
-export type BlockVariant = ShowcaseBlock;
-
-// Alias for GridBlock (used by ComponentsShowcaseGrid)
-export type GridBlock = ShowcaseBlock;
+// Legacy aliases - for backwards compatibility during migration
+export type ShowcaseBlock = ShowcaseComponent;
+export type BlockVariant = ShowcaseComponent;
+export type GridBlock = ShowcaseComponent;
 
 // Import PropType from edit-props
 import type { PropType } from '$lib/site-components/edit-props';
@@ -82,7 +81,8 @@ export interface ComponentPageTemplateProps {
   ndk?: NDKSvelte;
 
   // Showcase configuration
-  showcaseBlocks?: ShowcaseBlock[];
+  showcaseComponents?: ShowcaseComponent[];
+  showcaseBlocks?: ShowcaseComponent[]; // Legacy alias for backwards compatibility
   showcaseComponent?: ComponentType | any;
 
   // Components section
@@ -99,9 +99,9 @@ export interface ComponentPageTemplateProps {
   customSections?: Snippet;
 
   // Controls for showcase items
-  showcaseControls?: Snippet<[block: ShowcaseBlock]>;
+  showcaseControls?: Snippet<[component: ShowcaseComponent]>;
 
-  // Empty state snippet (shown when no showcase blocks)
+  // Empty state snippet (shown when no showcase components)
   emptyState?: Snippet;
 
   // Children (EditProps.Prop components)

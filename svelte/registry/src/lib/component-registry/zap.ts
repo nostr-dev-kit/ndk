@@ -54,7 +54,7 @@ export const zapApiDocs: ApiDoc[] = [
 	{
 		name: 'ZapButton',
 		description: 'Pre-built zap button component with automatic amount tracking and variant support.',
-		importPath: "import { ZapButton } from '$lib/registry/components/zap-button'",
+		importPath: "import { ZapButton } from '$lib/registry/components/zap/buttons/basic'",
 		props: [
 			{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 			{ name: 'event', type: 'NDKEvent', description: 'Event to zap' },
@@ -68,7 +68,7 @@ export const zapApiDocs: ApiDoc[] = [
 	{
 		name: 'ZapButtonAvatars',
 		description: 'Zap button showing avatars of zappers with total sat count.',
-		importPath: "import { ZapButtonAvatars } from '$lib/registry/components/zap-button-avatars'",
+		importPath: "import { ZapButtonAvatars } from '$lib/registry/components/zap/buttons/avatars'",
 		props: [
 			{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 			{ name: 'event', type: 'NDKEvent', description: 'Event to zap' },

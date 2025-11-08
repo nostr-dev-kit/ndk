@@ -8,7 +8,7 @@
   @example Basic
   ```svelte
 <script>
-    import { ContentTab, byCount } from '$lib/registry/components/content-tab';
+    import { ContentTab, byCount } from '$lib/registry/components/misc/content-tab';
 
     const pubkeys = ['hexpubkey'];
     const kinds = [1, 30023, 1063];

@@ -9,7 +9,7 @@ export const highlightCardFeedCard: ComponentCardData = {
 		{
 			name: 'HighlightCardFeed',
 			description: 'Full-width highlight card optimized for feed displays with header, content, and actions.',
-			importPath: "import { HighlightCardFeed } from '$lib/registry/components/highlight-card'",
+			importPath: "import { HighlightCardFeed } from '$lib/registry/components/highlight/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Highlight event (kind 9802)' },
@@ -31,7 +31,7 @@ export const highlightCardElegantCard: ComponentCardData = {
 		{
 			name: 'HighlightCardElegant',
 			description: 'Square elegant card with gradient background for grid displays.',
-			importPath: "import { HighlightCardElegant } from '$lib/registry/components/highlight-card'",
+			importPath: "import { HighlightCardElegant } from '$lib/registry/components/highlight/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Highlight event (kind 9802)' },
@@ -50,7 +50,7 @@ export const highlightCardCompactCard: ComponentCardData = {
 		{
 			name: 'HighlightCardCompact',
 			description: 'Compact horizontal highlight card for lists and sidebars.',
-			importPath: "import { HighlightCardCompact } from '$lib/registry/components/highlight-card'",
+			importPath: "import { HighlightCardCompact } from '$lib/registry/components/highlight/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Highlight event (kind 9802)' },
@@ -69,7 +69,7 @@ export const highlightCardGridCard: ComponentCardData = {
 		{
 			name: 'HighlightCardGrid',
 			description: 'Square highlight card optimized for grid layouts.',
-			importPath: "import { HighlightCardGrid } from '$lib/registry/components/highlight-card'",
+			importPath: "import { HighlightCardGrid } from '$lib/registry/components/highlight/cards/basic'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'event', type: 'NDKEvent', required: true, description: 'Highlight event (kind 9802)' },

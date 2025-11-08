@@ -9,7 +9,7 @@ export const hashtagCardPortraitCard: ComponentCardData = {
 		{
 			name: 'HashtagCardPortrait',
 			description: 'Portrait hashtag card component',
-			importPath: "import { HashtagCardPortrait } from '$lib/registry/components/hashtag-card-portrait'",
+			importPath: "import { HashtagCardPortrait } from '$lib/registry/components/hashtag/cards/portrait'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'hashtag', type: 'string', description: 'Hashtag (with or without # prefix)', required: true },
@@ -28,7 +28,7 @@ export const hashtagCardCompactCard: ComponentCardData = {
 		{
 			name: 'HashtagCardCompact',
 			description: 'Compact hashtag card component',
-			importPath: "import { HashtagCardCompact } from '$lib/registry/components/hashtag-card-compact'",
+			importPath: "import { HashtagCardCompact } from '$lib/registry/components/hashtag/cards/compact'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'hashtag', type: 'string', description: 'Hashtag (with or without # prefix)', required: true },
@@ -50,7 +50,7 @@ export const hashtagCardMetadata = {
 		{
 			name: 'HashtagCardPortrait',
 			description: 'Portrait hashtag card component showing stats, activity chart, and contributors',
-			importPath: "import { HashtagCardPortrait } from '$lib/registry/components/hashtag-card-portrait'",
+			importPath: "import { HashtagCardPortrait } from '$lib/registry/components/hashtag/cards/portrait'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'hashtag', type: 'string', required: true, description: 'Hashtag (with or without # prefix)' },
@@ -60,7 +60,7 @@ export const hashtagCardMetadata = {
 		{
 			name: 'HashtagCardCompact',
 			description: 'Compact horizontal hashtag card for lists and sidebars',
-			importPath: "import { HashtagCardCompact } from '$lib/registry/components/hashtag-card-compact'",
+			importPath: "import { HashtagCardCompact } from '$lib/registry/components/hashtag/cards/compact'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
 				{ name: 'hashtag', type: 'string', required: true, description: 'Hashtag (with or without # prefix)' },

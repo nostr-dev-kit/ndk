@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EmojiPicker, type EmojiData } from '$lib/registry/components/emoji-picker';
+  import { EmojiPicker, type EmojiData } from '$lib/registry/components/misc/emoji-picker';
 
   const emojis: EmojiData[] = [
     { emoji: '❤️' },

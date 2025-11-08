@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind, type LnPaymentInfo } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind, type LnPaymentInfo, type NDKRelaySet } from "@nostr-dev-kit/ndk";
 import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
 import {
     type NDKCashuDeposit,
@@ -270,7 +270,7 @@ export class ReactiveWalletStore {
     /**
      * Get the wallet's relay set
      */
-    get relaySet() {
+    get relaySet(): NDKRelaySet | undefined {
         const wallet = this.#wallet;
         if (!(wallet instanceof NDKCashuWallet)) return undefined;
         return wallet.relaySet;

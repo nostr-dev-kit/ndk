@@ -4,7 +4,7 @@
 	import { NDKVoiceMessage, NDKKind } from '@nostr-dev-kit/ndk';
 	import { VoiceMessage } from '$lib/registry/ui/voice-message';
 	import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card-compact/voice-message-card-compact.svelte';
-	import VoiceMessageCardExpanded from '$lib/registry/components/voice-message-card-expanded';
+	import VoiceMessageCardExpanded from '$lib/registry/components/voice-message/cards/expanded';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
@@ -159,7 +159,7 @@
 			{
 				name: 'VoiceMessageCardExpanded',
 				description: 'Expanded voice message card with waveform visualization.',
-				importPath: "import VoiceMessageCardExpanded from '$lib/registry/components/voice-message-card-expanded'",
+				importPath: "import VoiceMessageCardExpanded from '$lib/registry/components/voice-message/cards/expanded'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 					{ name: 'event', type: 'NDKEvent', description: 'The voice message event to display', required: true },

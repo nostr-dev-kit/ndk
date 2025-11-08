@@ -223,7 +223,7 @@ renderer.linkComponent = LinkPreview;
 	<section class="info">
 		<h2>Related</h2>
 		<div class="related-grid">
-			<a href="/ui/event-content" class="related-card">
+			<a href="/ui/event-rendering" class="related-card">
 				<strong>Event Content Primitive</strong>
 				<span>Core content parsing and rendering system</span>
 			</a>

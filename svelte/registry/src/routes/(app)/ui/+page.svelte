@@ -243,7 +243,7 @@
         </div>
       </a>
 
-      <a href="/ui/event-content" class="primitive-card">
+      <a href="/ui/event-rendering" class="primitive-card">
         <h3>Event Content</h3>
         <p>Render event content with rich formatting</p>
         <div class="primitive-components">

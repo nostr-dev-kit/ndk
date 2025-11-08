@@ -34,31 +34,22 @@
 	});
 
 	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Instagram',
-			description: 'Social feed style card',
-			command: 'npx jsrepo add image-card-instagram',
-			preview: instagramPreview,
-			cardData: imageCardInstagramCard,
-			orientation: 'vertical'
-		},
-		{
-			name: 'Hero',
-			description: 'Fullbleed immersive display',
-			command: 'npx jsrepo add image-card-hero',
-			preview: heroPreview,
-			cardData: imageCardHeroCard,
-			orientation: 'vertical'
-		},
-		{
-			name: 'ImageCard',
-			description: 'General purpose card',
-			command: 'npx jsrepo add image-card',
-			preview: imageCardPreview,
-			cardData: imageCardCard,
-			orientation: 'vertical'
-		}
-	];
+    {
+      cardData: imageCardInstagramCard,
+      preview: instagramPreview,
+      orientation: 'vertical'
+    },
+    {
+      cardData: imageCardHeroCard,
+      preview: heroPreview,
+      orientation: 'vertical'
+    },
+    {
+      cardData: imageCardCard,
+      preview: imageCardPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 
 

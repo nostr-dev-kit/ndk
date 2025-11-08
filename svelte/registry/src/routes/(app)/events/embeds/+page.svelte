@@ -100,15 +100,15 @@
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">NDKArticle → ArticleEmbedded</div>
+            <div class="text-sm font-mono mb-2">NDKArticle → ArticleCardMedium</div>
             <p class="text-xs text-muted-foreground">Automatically registers kind 30023 and wraps with NDKArticle.from()</p>
           </div>
           <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">[1, 1111] → NoteEmbedded</div>
+            <div class="text-sm font-mono mb-2">[1, 1111] → NoteCard</div>
             <p class="text-xs text-muted-foreground">Manual kinds (no NDK wrapper class exists)</p>
           </div>
           <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">NDKHighlight → HighlightEmbedded</div>
+            <div class="text-sm font-mono mb-2">NDKHighlight → HighlightCardFeed</div>
             <p class="text-xs text-muted-foreground">Automatically registers kind 9802 and wraps with NDKHighlight.from()</p>
           </div>
           <div class="p-4 bg-card rounded border border-border">
@@ -382,10 +382,9 @@
             description: 'Bech32-encoded event reference (note1, nevent1, naddr1)'
           },
           {
-            name: 'variant',
-            type: "'inline' | 'card' | 'compact'",
-            default: "'card'",
-            description: 'Display variant - card (default), inline (max-width), or compact (minimal)'
+            name: 'renderer',
+            type: 'ContentRenderer',
+            description: 'Optional custom ContentRenderer instance. Defaults to defaultContentRenderer'
           },
           {
             name: 'class',

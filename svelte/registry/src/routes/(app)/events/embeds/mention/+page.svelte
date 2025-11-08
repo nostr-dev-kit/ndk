@@ -15,28 +15,19 @@
 	const ndk = getContext<NDKSvelte>('ndk');
 
 	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Modern',
-			description: 'Rich mention with avatar',
-			command: 'npx jsrepo add mention-modern',
-			preview: mentionModernPreview,
-			cardData: mentionModernCard
-		},
-		{
-			name: 'Basic',
-			description: 'Minimal mention',
-			command: 'npx jsrepo add mention',
-			preview: basicPreview,
-			cardData: mentionBasicCard
-		},
-		{
-			name: 'Custom',
-			description: 'Custom styled',
-			command: 'npx jsrepo add mention',
-			preview: customPreview,
-			cardData: mentionCustomCard
-		}
-	];
+    {
+      cardData: mentionModernCard,
+      preview: mentionModernPreview
+    },
+    {
+      cardData: mentionBasicCard,
+      preview: basicPreview
+    },
+    {
+      cardData: mentionCustomCard,
+      preview: customPreview
+    }
+  ];
 </script>
 
 {#snippet mentionModernPreview()}

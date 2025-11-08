@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createEventContent } from '$lib/registry/builders/event-content';
+	import { createEventContent } from '$lib/registry/builders/event-rendering';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableEmbeddedEvent from './clickable-embedded-event.svelte';
 
@@ -33,7 +33,7 @@
 	);
 </script>
 
-<div class="event-content {className}">
+<div class="event-rendering {className}">
 	{#each parsed.segments as segment, i (i)}
 		{#if segment.type === 'text'}
 			{segment.content}
@@ -112,7 +112,7 @@
 </div>
 
 <style>
-	.event-content {
+	.event-rendering {
 		white-space: pre-wrap;
 		word-break: break-word;
 		line-height: 1.6;

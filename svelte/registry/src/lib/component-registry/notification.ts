@@ -234,41 +234,6 @@ export const notificationFeedCard: ComponentCardData = {
 	]
 };
 
-export const notificationPanelCard: ComponentCardData = {
-	name: 'notification-panel',
-	title: 'NotificationPanel Block',
-	richDescription:
-		'Complete opinionated notification panel block. Includes header, scrollable body, and supports both compact and expanded variants.',
-	command: 'npx jsrepo add notification-panel',
-	apiDocs: [
-		{
-			name: 'NotificationPanel',
-			description: 'Full-featured notification panel block',
-			importPath: "import NotificationPanel from '$lib/registry/blocks/notification-panel'",
-			props: [
-				{
-					name: 'ndk',
-					type: 'NDKSvelte',
-					description: 'NDK instance (optional if provided via context)'
-				},
-				{
-					name: 'pubkey',
-					type: 'string',
-					required: true,
-					description: 'Target user pubkey to show notifications for'
-				},
-				{
-					name: 'variant',
-					type: "'compact' | 'expanded'",
-					default: "'compact'",
-					description: 'Layout variant'
-				},
-				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-			]
-		}
-	]
-};
-
 export const notificationMetadata = {
 	title: 'Notification',
 	showcaseTitle: 'Notification System',

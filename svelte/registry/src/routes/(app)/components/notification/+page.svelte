@@ -5,18 +5,15 @@
 	import {
 		notificationMetadata,
 		notificationBuilderCard,
-		notificationPrimitivesCard,
-		notificationPanelCard
+		notificationPrimitivesCard
 	} from '$lib/component-registry/notification';
 	import { EditProps } from '$lib/site-components/edit-props';
-	import NotificationPanel from '$lib/registry/blocks/notification-panel.svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import { createNotificationFeed } from '$lib/registry/builders/notification';
 
 	// Import code examples
 	import notificationBuilderCode from './notification-builder.example?raw';
 	import notificationPrimitivesCode from './notification-primitives.example?raw';
-	import notificationPanelCode from './notification-panel.example?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -112,25 +109,6 @@
 	</div>
 {/snippet}
 
-{#snippet panelPreview()}
-	<div class="space-y-4">
-		<EditProps.Root>
-			<EditProps.Prop
-				name="Target User"
-				type="user"
-				default={targetPubkey}
-				bind:value={targetPubkey}
-			/>
-		</EditProps.Root>
-
-		{#if targetPubkey}
-			<div class="flex gap-4 flex-wrap">
-				<NotificationPanel {ndk} pubkey={targetPubkey} variant="compact" />
-			</div>
-		{/if}
-	</div>
-{/snippet}
-
 <!-- Use the template -->
 <ComponentPageTemplate
 	metadata={notificationMetadata}
@@ -146,12 +124,6 @@
 			cardData: notificationPrimitivesCard,
 			preview: primitivesPreview,
 			code: notificationPrimitivesCode,
-			orientation: 'vertical'
-		},
-		{
-			cardData: notificationPanelCard,
-			preview: panelPreview,
-			code: notificationPanelCode,
 			orientation: 'vertical'
 		}
 	]}

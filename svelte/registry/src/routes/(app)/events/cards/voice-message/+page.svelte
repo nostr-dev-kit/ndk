@@ -53,23 +53,17 @@
 	);
 
 	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Compact',
-			description: 'Inline display',
-			command: 'npx jsrepo add voice-message-card-compact',
-			preview: compactPreview,
-			cardData: voiceMessageCardCompactCard,
-			orientation: 'vertical'
-		},
-		{
-			name: 'Expanded',
-			description: 'Detailed with waveform',
-			command: 'npx jsrepo add voice-message-card-expanded',
-			preview: expandedPreview,
-			cardData: voiceMessageCardExpandedCard,
-			orientation: 'vertical'
-		}
-	];
+    {
+      cardData: voiceMessageCardCompactCard,
+      preview: compactPreview,
+      orientation: 'vertical'
+    },
+    {
+      cardData: voiceMessageCardExpandedCard,
+      preview: expandedPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 
 

@@ -22,16 +22,13 @@
 	let showFullContent = $state(false);
 
 	const showcaseComponents: ShowcaseComponent[] = [
-		{
-			name: 'Classic',
-			description: 'Standard event display for feeds',
-			command: 'npx jsrepo add event-card-classic',
-			preview: classicPreview,
-			cardData: eventCardClassicCard,
-			orientation: 'horizontal',
-			control: classicControl
-		}
-	];
+    {
+      cardData: eventCardClassicCard,
+      preview: classicPreview,
+      orientation: 'horizontal',
+      control: classicControl
+    }
+  ];
 </script>
 
 {#snippet beforeShowcase()}

@@ -5,64 +5,18 @@
 	import { PMCommand } from '$lib/components/ui/pm-command';
     import { cn } from '$lib/registry/utils/cn.js';
 
-	interface ComponentDoc {
-		name: string;
-		description: string;
-		props?: Array<{
-			name: string;
-			type: string;
-			default?: string;
-			description: string;
-			required?: boolean;
-		}>;
-		events?: Array<{ name: string; description: string }>;
-		slots?: Array<{ name: string; description: string }>;
-		importPath?: string;
-	}
-
-	interface RelatedComponent {
-		name: string;
-		title: string;
-		path: string;
-	}
-
-	interface ComponentCardData {
-		name: string;
-		title: string;
-		richDescription?: string;
-		command: string;
-		dependencies?: string[];
-		registryDependencies?: string[];
-		apiDocs: ComponentDoc[];
-		relatedComponents?: RelatedComponent[];
-		version?: string;
-		updatedAt?: string;
-	}
-
-	interface BlockVariant {
-		name: string;
-		description: string;
-		command: string;
-		preview: Snippet;
-		cardData?: ComponentCardData;
-		orientation?: 'horizontal' | 'vertical';
-		control?: Snippet;
-	}
+	import type { ShowcaseComponent } from '$lib/templates/types';
+	import type { ComponentCardData } from '$lib/site-components/ComponentCard.svelte';
 
 	interface Props {
-		components?: BlockVariant[];
-		blocks?: BlockVariant[]; // Legacy prop for backwards compatibility
+		components: ShowcaseComponent[];
 		class?: string;
 	}
 
 	let {
 		components,
-		blocks, // Legacy prop for backwards compatibility
 		class: className = ''
 	}: Props = $props();
-
-	// Use components if provided, otherwise fall back to blocks for backwards compatibility
-	const componentList = $derived(components || blocks || []);
 
 	let activeBlockIndex = $state<number | null>(null);
 	let blockRefs: HTMLDivElement[] = [];
@@ -72,11 +26,11 @@
 
 	// Modal state
 	let showModal = $state(false);
-	let selectedBlock = $state<BlockVariant | null>(null);
+	let selectedComponent = $state<ShowcaseComponent | null>(null);
 
-	function handleBlockClick(block: BlockVariant) {
-		if (block.cardData) {
-			selectedBlock = block;
+	function handleComponentClick(component: ShowcaseComponent) {
+		if (component.cardData) {
+			selectedComponent = component;
 			showModal = true;
 		}
 	}
@@ -119,11 +73,11 @@
 		if (typeof window === 'undefined') return;
 
 		// Initialize scroll positions
-		scrollPositions = componentList.map(() => 0);
+		scrollPositions = components.map(() => 0);
 
 		const animateScroll = (index: number) => {
 			const container = previewRefs[index];
-			const component = componentList[index];
+			const component = components[index];
 			if (!container || !component) return;
 
 			const isActive = activeBlockIndex === index;
@@ -158,7 +112,7 @@
 		};
 
 		// Start animation for each component
-		componentList.forEach((_, index) => {
+		components.forEach((_, index) => {
 			animateScroll(index);
 		});
 
@@ -174,8 +128,8 @@
 </script>
 
 	<div class="space-y-0 pb-0">
-		{#each componentList as component, index (component.name)}
-			{@const isNotLast = index < componentList.length - 1}
+		{#each components as component, index (component.name)}
+			{@const isNotLast = index < components.length - 1}
 			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
 			<div
 				bind:this={blockRefs[index]}
@@ -185,11 +139,11 @@
 				style:opacity={activeBlockIndex !== index ? '0.6' : '1'}
 				role={component.cardData ? 'button' : undefined}
 				tabindex={component.cardData ? 0 : undefined}
-				onclick={() => handleBlockClick(component)}
+				onclick={() => handleComponentClick(component)}
 				onkeydown={(e) => {
 					if (component.cardData && (e.key === 'Enter' || e.key === ' ')) {
 						e.preventDefault();
-						handleBlockClick(component);
+						handleComponentClick(component);
 					}
 				}}
 				onmouseenter={() => (activeBlockIndex = index)}
@@ -264,8 +218,8 @@
 
 				<div class="p-12">
 					<ComponentCard
-						data={selectedBlock?.cardData ?? null}
-						preview={selectedBlock?.preview}
+						data={selectedComponent?.cardData ?? null}
+						preview={selectedComponent?.preview}
 					/>
 				</div>
 			</Dialog.Content>

@@ -6,7 +6,7 @@
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import { relayCardMetadata } from '$lib/component-registry/relay-card';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
 
   import RelayCardPortrait from '$lib/registry/components/relay-card-portrait/relay-card-portrait.svelte';
@@ -36,7 +36,7 @@
   const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
 
   // Blocks showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Portrait',
       description: 'Vertical card with icon on top',
@@ -253,7 +253,7 @@
   metadata={relayCardMetadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
-  {showcaseBlocks}componentsSection={{
+  {showcaseComponents}componentsSection={{
     cards: [
       { ...relayCardMetadata.cards[0], code: relayCardPortraitCode },
       { ...relayCardMetadata.cards[1], code: relayCardCompactCode },

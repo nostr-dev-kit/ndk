@@ -7,7 +7,7 @@
   import { contentTabMetadata, contentTabCard } from '$lib/component-registry/content-tab';
   import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
@@ -40,7 +40,7 @@
   let sortMethod = $state<'count' | 'recency'>('count');
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Default Style',
       description: 'Material bottom nav with sorting control',
@@ -334,7 +334,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
     metadata={contentTabMetadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
-    {showcaseBlocks}{customSections}
+    {showcaseComponents}{customSections}
     beforeComponents={customComponentsSection}
     apiDocs={contentTabMetadata.apiDocs}
   >

@@ -7,14 +7,14 @@
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { mentionMetadata, mentionCards, mentionModernCard, mentionBasicCard, mentionCustomCard } from '$lib/component-registry/mention';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIFull from './examples/ui-full.example.svelte';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Modern',
 			description: 'Rich mention with avatar',
@@ -94,7 +94,7 @@
 	<ComponentPageTemplate
 	metadata={mentionMetadata}
 	{ndk}
-	{showcaseBlocks}
+	{showcaseComponents}
 	componentsSection={{
 		cards: mentionCards,
 		previews

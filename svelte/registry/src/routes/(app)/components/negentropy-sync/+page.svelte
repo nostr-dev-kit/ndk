@@ -12,7 +12,7 @@
     negentropySyncProgressCompactCard
   } from '$lib/component-registry/negentropy-sync';
   import { EditProps } from '$lib/site-components/edit-props';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 
@@ -56,7 +56,7 @@
   );
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Minimal',
       description: 'Simple progress bar with basic stats',
@@ -327,7 +327,7 @@ const syncBuilder = createNegentropySync(() => (&#123;
 <ComponentPageTemplate
   metadata={negentropySyncMetadata}
   {ndk}
-  {showcaseBlocks}{customSections}
+  {showcaseComponents}{customSections}
   beforeComponents={customComponentsSection}
   apiDocs={negentropySyncMetadata.apiDocs}
 >

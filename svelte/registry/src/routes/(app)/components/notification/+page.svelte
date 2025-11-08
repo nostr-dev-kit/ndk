@@ -130,7 +130,7 @@
 <ComponentPageTemplate
 	metadata={notificationMetadata}
 	{ndk}
-	showcaseBlocks={[
+	showcaseComponents={[
 		{
 			name: 'Builder',
 			description: 'Headless notification feed builder using $metaSubscription',

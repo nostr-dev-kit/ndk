@@ -11,7 +11,7 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { eventCardMetadata, eventCardCards, eventCardClassicCard, eventCardBasicCard, eventCardFullCard } from '$lib/component-registry/event-card';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleEvent = $state<NDKEvent | undefined>();
@@ -21,7 +21,7 @@
 	let showBasicContent = $state(false);
 	let showFullContent = $state(false);
 
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Classic',
 			description: 'Standard event display for feeds',
@@ -354,7 +354,7 @@
 	<ComponentPageTemplate
 		metadata={eventCardMetadata}
 		{ndk}
-		{showcaseBlocks}
+		{showcaseComponents}
 		{beforeShowcase}
 		componentsSection={{
 			cards: eventCardCards,

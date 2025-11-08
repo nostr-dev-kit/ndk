@@ -43,7 +43,7 @@
 <ComponentPageTemplate
   metadata={zapSendClassicMetadata}
   {ndk}
-  showcaseBlocks={[
+  showcaseComponents={[
     {
       name: 'ZapSendClassic',
       description: 'Complete zap dialog with amount selection, split display, and comment',

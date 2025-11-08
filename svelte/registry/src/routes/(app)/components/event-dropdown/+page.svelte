@@ -7,7 +7,7 @@
 	import { eventDropdownMetadata, eventDropdownCard } from '$lib/component-registry/event-dropdown';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import { EventCard } from '$lib/registry/components/event/cards/compound';
@@ -22,7 +22,7 @@
 	let showRelayInfo = $state(true);
 
 	// Showcase blocks
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Standalone',
 			description: 'EventDropdown as standalone component',
@@ -115,7 +115,7 @@
 	metadata={eventDropdownMetadata}
 	{ndk}
 	showcaseComponent={ComponentsShowcase}
-	{showcaseBlocks}
+	{showcaseComponents}
 	{customSections}
 >
 	<EditProps.Prop

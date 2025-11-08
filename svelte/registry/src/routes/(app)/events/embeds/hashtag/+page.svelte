@@ -6,7 +6,7 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { hashtagMetadata, hashtagCards, hashtagModernCard, hashtagBasicCard, hashtagCustomCard, hashtagInteractiveCard } from '$lib/component-registry/hashtag';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	import UIModern from './examples/ui-modern.example.svelte';
 	import UIBasic from './examples/ui-basic.example.svelte';
@@ -15,7 +15,7 @@
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Modern',
 			description: 'Rich hashtag with hover card',
@@ -111,7 +111,7 @@
 	<ComponentPageTemplate
 	metadata={hashtagMetadata}
 	{ndk}
-	{showcaseBlocks}
+	{showcaseComponents}
 	componentsSection={{
 		cards: hashtagCards,
 		previews

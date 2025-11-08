@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { relayInputMetadata } from '$lib/component-registry/relay-input';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import relayInputBasicCode from './relay-input-basic.example?raw';
@@ -20,7 +20,7 @@
   let errorBlockUrl = $state<string>('');
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Basic',
       description: 'Simple input with NIP-11',
@@ -121,7 +121,7 @@
 <ComponentPageTemplate
   metadata={relayInputMetadata}
   {ndk}
-  showcaseBlocks={showcaseBlocks}
+  showcaseComponents={showcaseComponents}
   componentsSection={{
     cards: [
       { ...relayInputMetadata.cards[0], code: relayInputBasicCode },

@@ -49,11 +49,6 @@ export interface ShowcaseComponent {
   cellClass?: string;  // Custom classes for grid cell
 }
 
-// Legacy aliases - for backwards compatibility during migration
-export type ShowcaseBlock = ShowcaseComponent;
-export type BlockVariant = ShowcaseComponent;
-export type GridBlock = ShowcaseComponent;
-
 // Import PropType from edit-props
 import type { PropType } from '$lib/site-components/edit-props';
 
@@ -82,7 +77,6 @@ export interface ComponentPageTemplateProps {
 
   // Showcase configuration
   showcaseComponents?: ShowcaseComponent[];
-  showcaseBlocks?: ShowcaseComponent[]; // Legacy alias for backwards compatibility
   showcaseComponent?: ComponentType | any;
 
   // Components section

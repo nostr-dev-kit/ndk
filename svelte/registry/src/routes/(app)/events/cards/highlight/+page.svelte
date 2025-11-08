@@ -13,7 +13,7 @@
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { highlightCardMetadata, highlightCardCards, highlightCardFeedCard, highlightCardElegantCard, highlightCardCompactCard, highlightCardGridCard } from '$lib/component-registry/highlight-card';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -81,7 +81,7 @@
     }
   };
 
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Feed',
       description: 'Full-width card for feeds',
@@ -391,7 +391,7 @@
   <ComponentPageTemplate
     metadata={highlightCardMetadata}
     {ndk}
-    {showcaseBlocks}
+    {showcaseComponents}
     componentsSection={{
       cards: highlightCardCards,
       previews: {

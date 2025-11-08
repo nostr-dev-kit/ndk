@@ -13,7 +13,7 @@
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { articleCardMetadata, articleCardCards } from '$lib/component-registry/article-card';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -136,7 +136,7 @@
 		}
 	};
 
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Portrait',
 			description: 'Portrait-style layout with vertical orientation. Ideal for grid layouts and featured content displays.',
@@ -331,7 +331,7 @@
 	<ComponentPageTemplate
 		metadata={articleCardMetadata}
 		{ndk}
-		{showcaseBlocks}componentsSection={{
+		{showcaseComponents}componentsSection={{
 			cards: articleCardCards,
 			previews: {
 				'article-card-portrait': portraitComponentPreview,

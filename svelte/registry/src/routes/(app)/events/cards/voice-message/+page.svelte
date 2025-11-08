@@ -11,7 +11,7 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
 	import { voiceMessageCardMetadata, voiceMessageCardCards, voiceMessageCardCompactCard, voiceMessageCardExpandedCard, voiceMessageCardBasicCard, voiceMessageCardCompositionCard } from '$lib/component-registry/voice-message-card';
-	import type { ShowcaseBlock } from '$lib/templates/types';
+	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIComposition from './examples/ui-composition.example.svelte';
@@ -52,7 +52,7 @@
 		[voiceMessage1, voiceMessage2, voiceMessage3].filter(Boolean) as NDKVoiceMessage[]
 	);
 
-	const showcaseBlocks: ShowcaseBlock[] = [
+	const showcaseComponents: ShowcaseComponent[] = [
 		{
 			name: 'Compact',
 			description: 'Inline display',
@@ -230,7 +230,7 @@
 	<ComponentPageTemplate
 		metadata={voiceMessageCardMetadata}
 		{ndk}
-		{showcaseBlocks}
+		{showcaseComponents}
 		{afterShowcase}
 		componentsSection={{
 			cards: voiceMessageCardCards,

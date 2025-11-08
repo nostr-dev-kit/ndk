@@ -7,7 +7,7 @@
     emojiPickerListCard,
     emojiPickerContentCard
   } from '$lib/component-registry/emoji-picker';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import examples
   import UiBasic from './examples/ui-basic.example.svelte';
@@ -20,7 +20,7 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'List',
       description: 'Grid of clickable emojis',
@@ -71,7 +71,7 @@
 <ComponentPageTemplate
   metadata={emojiPickerMetadata}
   {ndk}
-  {showcaseBlocks}
+  {showcaseComponents}
   {customSections}
   componentsSection={{
     cards: [

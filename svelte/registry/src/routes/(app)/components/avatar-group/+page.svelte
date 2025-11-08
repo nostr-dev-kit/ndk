@@ -4,7 +4,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import { avatarGroupMetadata, avatarGroupCard } from '$lib/component-registry/avatar-group';
   import { EditProps } from '$lib/site-components/edit-props';
-  import type { ShowcaseBlock } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import avatarGroupCode from './avatar-group.example?raw';
@@ -26,7 +26,7 @@
   ];
 
   // Showcase blocks
-  const showcaseBlocks: ShowcaseBlock[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       name: 'Default',
       description: 'Basic stacked avatars with smart ordering',
@@ -216,7 +216,7 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 <ComponentPageTemplate
   metadata={avatarGroupMetadata}
   {ndk}
-  {showcaseBlocks}
+  {showcaseComponents}
   {componentsSection}
   {customSections}
   apiDocs={avatarGroupMetadata.apiDocs}

@@ -51,16 +51,7 @@
 {#if child}
   {@render child({ props: mergedProps, result })}
 {:else}
-  <button {...mergedProps}>
+  <button class="block w-full cursor-pointer" {...mergedProps}>
     {@render children?.({ result })}
   </button>
 {/if}
-
-<style>
-  button {
-    all: unset;
-    display: block;
-    width: 100%;
-    cursor: pointer;
-  }
-</style>

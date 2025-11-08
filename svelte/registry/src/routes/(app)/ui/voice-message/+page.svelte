@@ -5,7 +5,7 @@
   import Preview from '$site-components/Demo.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
-  import { VoiceMessage } from '$lib/registry/ui/embedded-event';
+  import { VoiceMessage } from '$lib/registry/ui/voice-message';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';

@@ -8,17 +8,19 @@
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 
-  // Import code examples
-  import negentropySyncProgressMinimalCode from './negentropy-sync-progress-minimal.example?raw';
-  import negentropySyncProgressDetailedCode from './negentropy-sync-progress-detailed.example?raw';
-  import negentropySyncProgressAnimatedCode from './negentropy-sync-progress-animated.example?raw';
-  // import negentropySyncProgressCompactCode from './negentropy-sync-progress-compact.example?raw';
+  // Import example components
+  import MinimalExample from './examples/minimal/index.svelte';
+  import MinimalExampleRaw from './examples/minimal/index.txt?raw';
+  import AnimatedExample from './examples/animated/index.svelte';
+  import AnimatedExampleRaw from './examples/animated/index.txt?raw';
+  import DetailedExample from './examples/detailed/index.svelte';
+  import DetailedExampleRaw from './examples/detailed/index.txt?raw';
 
-  // Import block components
-  import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/progress/minimal/negentropy-sync-progress-minimal.svelte';
-  import NegentropySyncProgressDetailed from '$lib/registry/components/negentropy-sync/progress/detailed/negentropy-sync-progress-detailed.svelte';
-  import NegentropySyncProgressAnimated from '$lib/registry/components/negentropy-sync/progress/animated/negentropy-sync-progress-animated.svelte';
-  // import NegentropySyncProgressCompact from '$lib/registry/components/negentropy-sync/progress/compact/negentropy-sync-progress-compact.svelte';
+  // Import registry metadata
+  import negentropySyncProgressMinimalCard from '$lib/registry/components/negentropy-sync/progress/minimal/registry.json';
+  import negentropySyncProgressDetailedCard from '$lib/registry/components/negentropy-sync/progress/detailed/registry.json';
+  import negentropySyncProgressAnimatedCard from '$lib/registry/components/negentropy-sync/progress/animated/registry.json';
+
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
   // Get page data
@@ -75,19 +77,18 @@
 
 <!-- Preview snippets for showcase -->
 {#snippet minimalPreview()}
-  <NegentropySyncProgressMinimal syncBuilder={demoSyncBuilder} />
+  <MinimalExample {ndk} />
 {/snippet}
 
 {#snippet detailedPreview()}
-  <NegentropySyncProgressDetailed syncBuilder={demoSyncBuilder} />
+  <DetailedExample {ndk} />
 {/snippet}
 
 {#snippet animatedPreview()}
-  <NegentropySyncProgressAnimated syncBuilder={demoSyncBuilder} />
+  <AnimatedExample {ndk} />
 {/snippet}
 
 {#snippet compactPreview()}
-  <!-- <NegentropySyncProgressCompact syncBuilder={demoSyncBuilder} /> -->
   <div>Compact component not available</div>
 {/snippet}
 
@@ -100,10 +101,10 @@
   />
 
   <section class="py-12 space-y-16">
-    <ComponentCard data={{ ...negentropySyncProgressMinimalCard, code: negentropySyncProgressMinimalCode }}>
+    <ComponentCard data={{ ...negentropySyncProgressMinimalCard, code: MinimalExampleRaw }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-md mx-auto">
-          <NegentropySyncProgressMinimal syncBuilder={demoSyncBuilder} />
+          <MinimalExample {ndk} />
           <div class="text-xs text-muted-foreground text-center">
             Click "Start Demo Sync" above to see progress
           </div>
@@ -111,33 +112,21 @@
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={{ ...negentropySyncProgressDetailedCard, code: negentropySyncProgressDetailedCode }}>
+    <ComponentCard data={{ ...negentropySyncProgressDetailedCard, code: DetailedExampleRaw }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-          <NegentropySyncProgressDetailed syncBuilder={demoSyncBuilder} />
+          <DetailedExample {ndk} />
         </div>
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={{ ...negentropySyncProgressAnimatedCard, code: negentropySyncProgressAnimatedCode }}>
+    <ComponentCard data={{ ...negentropySyncProgressAnimatedCard, code: AnimatedExampleRaw }}>
       {#snippet preview()}
         <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-          <NegentropySyncProgressAnimated syncBuilder={demoSyncBuilder} />
+          <AnimatedExample {ndk} />
         </div>
       {/snippet}
     </ComponentCard>
-
-    <!-- Commented out ComponentCard - can be uncommented if needed
-    <ComponentCard data={{ ...negentropySyncProgressCompactCard, code: negentropySyncProgressCompactCode }}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-6 items-center">
-          <div class="flex items-center gap-4">
-            <NegentropySyncProgressCompact syncBuilder={demoSyncBuilder} />
-            <span class="text-xs text-muted-foreground">Hover to expand</span>
-          </div>
-        </div>
-      {/snippet}
-    </ComponentCard> -->
   </section>
 {/snippet}
 

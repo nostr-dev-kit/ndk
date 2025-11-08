@@ -1,17 +1,41 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import { EditProps } from '$lib/site/components/edit-props';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import { EditProps } from '$lib/site/components/edit-props';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 
 	// Import code examples
-	import notificationBuilderCode from './notification-builder.example?raw';
-	import notificationPrimitivesCode from './notification-primitives.example?raw';
+	import notificationBuilderCode from './examples/builder/index.txt?raw';
+	import notificationPrimitivesCode from './examples/primitives/index.txt?raw';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+	// Page metadata
+	const metadata = {
+		title: 'Notification System',
+		description: 'Real-time notification feed with builders and UI primitives',
+		showcaseTitle: 'Notification Components',
+		showcaseDescription: 'Track reactions, zaps, reposts, and replies',
+	};
+
+	// Card data for showcase components
+	const notificationBuilderCard = {
+		name: 'notification-builder',
+		title: 'Notification Feed Builder',
+		description: 'Create notification feeds with createNotificationFeed()',
+		command: 'npx jsrepo add notification/builder',
+		dependencies: ['@nostr-dev-kit/svelte', '@nostr-dev-kit/ndk'],
+		apiDocs: []
+	};
+
+	const notificationPrimitivesCard = {
+		name: 'notification-primitives',
+		title: 'Notification UI Primitives',
+		description: 'Composable notification display components',
+		command: 'npx jsrepo add notification/ui',
+		dependencies: ['@nostr-dev-kit/svelte', '@nostr-dev-kit/ndk'],
+		apiDocs: []
+	};
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -109,7 +133,7 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-	metadata={metadata}
+	{metadata}
 	{ndk}
 	showcaseComponents={[
 		{

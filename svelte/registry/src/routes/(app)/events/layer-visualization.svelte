@@ -1,6 +1,14 @@
 <script lang="ts">
-	// Events introduction cards are now loaded via parent page
-	const eventsIntroductionCards = [];
+	// Import event card registry data
+	import eventCardClassic from '$lib/registry/components/event/cards/classic/registry.json';
+	import eventCardCompound from '$lib/registry/components/event/cards/compound/registry.json';
+	import eventCardGeneric from '$lib/registry/components/event/cards/generic/registry.json';
+
+	const eventsIntroductionCards = [
+		eventCardCompound,  // Chrome layer
+		eventCardClassic,   // Content layer
+		eventCardGeneric    // Embeds layer
+	];
 </script>
 
 <div class="visualization-container">
@@ -36,7 +44,7 @@
 		<div class="info-card chrome-card">
 			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[0].title}</h3>
 			<p class="text-sm text-muted-foreground mb-4">
-				{eventsIntroductionCards[0].richDescription}
+				{eventsIntroductionCards[0].description}
 			</p>
 			<code
 				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
@@ -83,7 +91,7 @@
 		<div class="info-card content-card">
 			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[1].title}</h3>
 			<p class="text-sm text-muted-foreground mb-4">
-				{eventsIntroductionCards[1].richDescription}
+				{eventsIntroductionCards[1].description}
 			</p>
 			<code
 				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"
@@ -144,7 +152,7 @@
 		<div class="info-card embed-card">
 			<h3 class="font-semibold mb-2 text-lg">{eventsIntroductionCards[2].title}</h3>
 			<p class="text-sm text-muted-foreground mb-4">
-				{eventsIntroductionCards[2].richDescription}
+				{eventsIntroductionCards[2].description}
 			</p>
 			<code
 				class="text-xs bg-muted px-2 py-1 rounded font-mono block overflow-x-auto text-muted-foreground"

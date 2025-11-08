@@ -96,8 +96,9 @@ export function createNotificationFeed(
 ): NotificationFeedState {
     const ndk = resolveNDK(ndkParam);
 
-    // $metaSubscribe already handles reactivity internally
-    const metaSub = $derived(ndk?.$metaSubscribe?.(() => {
+    // $metaSubscribe handles its own reactivity - the function we pass
+    // will be re-evaluated when config() changes
+    const metaSub = ndk?.$metaSubscribe?.(() => {
         const {
             pubkey,
             kinds = [7, 9735, 6, 16, 1, 1111], // reactions, zaps, reposts, boost, replies, generic replies
@@ -115,7 +116,7 @@ export function createNotificationFeed(
             sort,
             limit
         };
-    }));
+    });
 
     const loading = $derived(metaSub?.loading ?? false);
 

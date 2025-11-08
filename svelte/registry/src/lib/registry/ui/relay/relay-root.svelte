@@ -42,12 +42,6 @@
   setContext(RELAY_CONTEXT_KEY, context);
 </script>
 
-<div class="relay-root {className}">
+<div class="contents {className}">
   {@render children()}
 </div>
-
-<style>
-  .relay-root {
-    display: contents;
-  }
-</style>

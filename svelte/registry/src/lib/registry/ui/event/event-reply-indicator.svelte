@@ -85,61 +85,25 @@
   {#if children}
     {@render children({ event: replyToEvent, loading })}
   {:else if replyToEvent}
-    <div class="reply-indicator {className}">
-      <span class="reply-indicator__text">Replying to</span>
+    <div class="flex items-center gap-1 text-sm text-muted-foreground {className}">
+      <span>Replying to</span>
       <User.Root {ndk} user={replyToEvent.author}>
         {#if onclick}
           <button
             type="button"
             onclick={() => {replyToEvent && onclick(replyToEvent)}}
-            class="reply-indicator__link reply-indicator__button"
+            class="font-medium no-underline bg-transparent border-none p-0 cursor-pointer hover:underline"
           >
             @<User.Name class="inline" field="name" />
           </button>
         {:else}
-          <span class="reply-indicator__name">@<User.Name class="inline" field="name" /></span>
+          <span class="font-medium">@<User.Name class="inline" field="name" /></span>
         {/if}
       </User.Root>
     </div>
   {:else if !loading}
-    <div class="reply-indicator {className}">
-      <span class="reply-indicator__text">Replying to event</span>
+    <div class="flex items-center gap-1 text-sm text-muted-foreground {className}">
+      <span>Replying to event</span>
     </div>
   {/if}
 {/if}
-
-<style>
-  .reply-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .reply-indicator__text {
-    color: inherit;
-  }
-
-  .reply-indicator__link {
-    font-weight: 500;
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .reply-indicator__button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .reply-indicator__link:hover {
-    text-decoration: underline;
-  }
-
-  .reply-indicator__name {
-    font-weight: 500;
-    color: inherit;
-  }
-</style>

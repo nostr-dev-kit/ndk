@@ -5,7 +5,7 @@
   import Preview from '$site-components/Demo.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
-  import { ZapAmount, ZapContent } from '$lib/registry/ui/zap';
+  import { Amount as ZapAmount, Content as ZapContent } from '$lib/registry/ui/zap';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';

@@ -10,14 +10,16 @@
   import Preview from '$lib/site/components/preview.svelte';
 
   // Import code examples
+  import reactionButtonCode from './examples/button-variants/index.txt?raw';
   import reactionBasicCode from './examples/basic/index.txt?raw';
   import reactionDelayedCode from './examples/delayed/index.txt?raw';
   import reactionBuilderCode from './examples/builder/index.txt?raw';
 
   // Import components
-  import { ReactionAction, ReactionLongpress } from '$lib/registry/components/reaction';
+  import { ReactionButton, ReactionAction, ReactionLongpress } from '$lib/registry/components/reaction';
 
   // Import registry metadata
+  import reactionButtonCard from '$lib/registry/components/reaction/buttons/basic/registry.json';
   import reactionLongpressCard from '$lib/registry/components/reaction/buttons/longpress/registry.json';
 
   // Page metadata
@@ -37,6 +39,17 @@
 </script>
 
 <!-- Preview snippets for showcase -->
+{#snippet reactionButtonsPreview()}
+  {#if sampleEvent}
+    <div class="flex gap-4 items-center flex-wrap">
+      <ReactionButton {ndk} event={sampleEvent} variant="ghost" />
+      <ReactionButton {ndk} event={sampleEvent} variant="outline" />
+      <ReactionButton {ndk} event={sampleEvent} variant="pill" />
+      <ReactionButton {ndk} event={sampleEvent} variant="solid" />
+    </div>
+  {/if}
+{/snippet}
+
 {#snippet reactionBasicPreview()}
   {#if sampleEvent}
     <div class="flex gap-4 items-center flex-wrap">
@@ -56,6 +69,12 @@
 
 <!-- Components snippet -->
 {#snippet components()}
+  <ComponentCard data={{...reactionButtonCard, code: reactionButtonCode}}>
+    {#snippet preview()}
+      {@render reactionButtonsPreview()}
+    {/snippet}
+  </ComponentCard>
+
   <ComponentCard data={{...reactionBasicCard, code: reactionBasicCode}}>
     {#snippet preview()}
       {@render reactionBasicPreview()}
@@ -93,6 +112,12 @@
   {ndk}
   showcaseComponents={[
     {
+      id: "reactionButton",
+      cardData: reactionButtonCard,
+      preview: reactionButtonsPreview,
+      orientation: 'horizontal'
+    },
+    {
       id: "reactionBasic",
       cardData: reactionBasicCard,
       preview: reactionBasicPreview,
@@ -106,7 +131,7 @@
     }
   ]}
   {components}
-  apiDocs={reactionLongpressCard.apiDocs}
+  apiDocs={reactionButtonCard.apiDocs}
 >
   {#snippet customSections()}
     <SectionTitle

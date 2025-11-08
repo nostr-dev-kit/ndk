@@ -135,5 +135,23 @@ html {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  @keyframes heartbeat {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 

@@ -11,6 +11,7 @@ Use for: login requirements, deprecation notices, important information.
 		CancelCircleIcon,
 		CheckmarkCircle02Icon
 	} from '@hugeicons/core-free-icons';
+	import { cn } from '$lib/registry/utils/cn.js';
 
 	interface Props {
 		variant?: 'warning' | 'info' | 'error' | 'success';
@@ -29,104 +30,25 @@ Use for: login requirements, deprecation notices, important information.
 	};
 
 	const icon = icons[variant];
+
+	const variantClasses = {
+		warning: 'bg-[hsl(40_100%_50%_/_0.1)] border-[hsl(40_100%_50%_/_0.3)] text-foreground [&_.alert-icon]:text-[hsl(40_100%_40%)]',
+		info: 'bg-primary/10 border-primary/30 text-foreground [&_.alert-icon]:text-primary',
+		error: 'bg-destructive/10 border-destructive/30 text-foreground [&_.alert-icon]:text-destructive',
+		success: 'bg-success/10 border-success/30 text-foreground [&_.alert-icon]:text-success'
+	};
 </script>
 
-<div class="alert alert-{variant} {className}">
-	<div class="alert-icon">
+<div class={cn("flex gap-3 p-4 rounded-lg border my-4", variantClasses[variant], className)}>
+	<div class="alert-icon shrink-0 flex items-start mt-0.5">
 		<HugeiconsIcon {icon} size={20} strokeWidth={2} />
 	</div>
-	<div class="alert-content">
+	<div class="flex-1 min-w-0">
 		{#if title}
-			<strong class="alert-title">{title}</strong>
+			<strong class="block font-semibold mb-1">{title}</strong>
 		{/if}
-		<div class="alert-body">
+		<div class="text-[0.9375rem] leading-relaxed [&_p]:m-0 [&_p+p]:mt-2">
 			{@render children()}
 		</div>
 	</div>
 </div>
-
-<style>
-	.alert {
-		display: flex;
-		gap: 0.75rem;
-		padding: 1rem;
-		border-radius: 0.5rem;
-		border: 1px solid;
-		margin: 1rem 0;
-	}
-
-	.alert-icon {
-		flex-shrink: 0;
-		display: flex;
-		align-items: flex-start;
-		margin-top: 0.125rem;
-	}
-
-	.alert-content {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.alert-title {
-		display: block;
-		font-weight: 600;
-		margin-bottom: 0.25rem;
-	}
-
-	.alert-body {
-		font-size: 0.9375rem;
-		line-height: 1.5;
-	}
-
-	.alert-body :global(p) {
-		margin: 0;
-	}
-
-	.alert-body :global(p + p) {
-		margin-top: 0.5rem;
-	}
-
-	/* Warning variant (yellow/amber) */
-	.alert-warning {
-		background: hsl(40 100% 50% / 0.1);
-		border-color: hsl(40 100% 50% / 0.3);
-		color: var(--foreground);
-	}
-
-	.alert-warning .alert-icon {
-		color: hsl(40 100% 40%);
-	}
-
-	/* Info variant (blue/primary) */
-	.alert-info {
-		background: color-mix(in srgb, var(--primary) calc(0.1 * 100%), transparent);
-		border-color: color-mix(in srgb, var(--primary) calc(0.3 * 100%), transparent);
-		color: var(--foreground);
-	}
-
-	.alert-info .alert-icon {
-		color: var(--primary);
-	}
-
-	/* Error variant (red/destructive) */
-	.alert-error {
-		background: color-mix(in srgb, var(--destructive) calc(0.1 * 100%), transparent);
-		border-color: color-mix(in srgb, var(--destructive) calc(0.3 * 100%), transparent);
-		color: var(--foreground);
-	}
-
-	.alert-error .alert-icon {
-		color: var(--destructive);
-	}
-
-	/* Success variant (green) */
-	.alert-success {
-		background: color-mix(in srgb, var(--success) calc(0.1 * 100%), transparent);
-		border-color: color-mix(in srgb, var(--success) calc(0.3 * 100%), transparent);
-		color: var(--foreground);
-	}
-
-	.alert-success .alert-icon {
-		color: var(--success);
-	}
-</style>

@@ -2,6 +2,7 @@
 	import { LinkPreview } from 'bits-ui';
 	import { Link03Icon, Loading03Icon } from '@hugeicons/core-free-icons';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		url: string | string[];
@@ -79,7 +80,7 @@
 	};
 </script>
 
-<div class="link-preview-container {className}">
+<div class={cn("flex flex-col gap-2 my-2", className)}>
 	{#each urls as linkUrl, i (i)}
 		<LinkPreview.Root openDelay={200} closeDelay={100}>
 			<LinkPreview.Trigger
@@ -90,33 +91,33 @@
 				onmouseenter={() => handleHover(linkUrl)}
 			>
 				<HugeiconsIcon icon={Link03Icon} size={14} />
-				<span class="link-text">{linkUrl}</span>
+				<span class="text-sm">{linkUrl}</span>
 			</LinkPreview.Trigger>
 
 			<LinkPreview.Content class="bg-background border border-border rounded-lg shadow-lg overflow-hidden max-w-[360px] z-50">
 				{#if loadingStates.get(linkUrl)}
-					<div class="preview-loading">
+					<div class="flex items-center gap-3 p-4 text-muted-foreground">
 						<div class="animate-spin">
 							<HugeiconsIcon icon={Loading03Icon} size={20} />
 						</div>
 						<span>Loading preview...</span>
 					</div>
 				{:else if hoveredUrl === linkUrl && previewData}
-					<div class="preview-card">
+					<div class="flex flex-col">
 						{#if previewData.image}
-							<div class="preview-image">
-								<img src={previewData.image} alt={previewData.title || 'Link preview'} />
+							<div class="w-full h-[180px] overflow-hidden bg-muted">
+								<img src={previewData.image} alt={previewData.title || 'Link preview'} class="w-full h-full object-cover" />
 							</div>
 						{/if}
-						<div class="preview-body">
+						<div class="p-4 flex flex-col gap-2">
 							{#if previewData.title}
-								<h4 class="preview-title">{previewData.title}</h4>
+								<h4 class="text-base font-semibold text-foreground m-0 leading-normal line-clamp-2">{previewData.title}</h4>
 							{/if}
 							{#if previewData.description}
-								<p class="preview-description">{previewData.description}</p>
+								<p class="text-sm text-muted-foreground m-0 leading-relaxed line-clamp-3">{previewData.description}</p>
 							{/if}
 							{#if previewData.domain}
-								<div class="preview-domain">
+								<div class="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
 									<HugeiconsIcon icon={Link03Icon} size={12} />
 									<span>{previewData.domain}</span>
 								</div>
@@ -124,9 +125,9 @@
 						</div>
 					</div>
 				{:else}
-					<div class="preview-card">
-						<div class="preview-body">
-							<div class="preview-domain">
+					<div class="flex flex-col">
+						<div class="p-4 flex flex-col gap-2">
+							<div class="flex items-center gap-1.5 text-xs text-muted-foreground">
 								<HugeiconsIcon icon={Link03Icon} size={12} />
 								<span>{getDomain(linkUrl)}</span>
 							</div>
@@ -137,83 +138,3 @@
 		</LinkPreview.Root>
 	{/each}
 </div>
-
-<style>
-	.link-preview-container {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		margin: 0.5rem 0;
-	}
-
-	.link-text {
-		font-size: 0.875rem;
-	}
-
-	.preview-loading {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 1rem;
-		color: var(--muted-foreground);
-	}
-
-	.preview-card {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.preview-image {
-		width: 100%;
-		height: 180px;
-		overflow: hidden;
-		background: var(--muted);
-	}
-
-	.preview-image img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.preview-body {
-		padding: 1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.preview-title {
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--foreground);
-		margin: 0;
-		line-height: 1.4;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.preview-description {
-		font-size: 0.875rem;
-		color: var(--muted-foreground);
-		margin: 0;
-		line-height: 1.5;
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.preview-domain {
-		display: flex;
-		align-items: center;
-		gap: 0.375rem;
-		font-size: 0.75rem;
-		color: var(--muted-foreground);
-		margin-top: 0.25rem;
-	}
-</style>

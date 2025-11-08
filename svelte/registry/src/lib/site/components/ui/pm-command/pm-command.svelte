@@ -82,16 +82,9 @@
 			</Tooltip.Root>
 		</Tooltip.Provider>
 	</div>
-	<div class="no-scrollbar overflow-x-auto p-3">
+	<div class="scrollbar-hide overflow-x-auto p-3">
 		<span class="text-muted-foreground font-mono text-sm leading-none font-light text-nowrap">
 			{commandText}
 		</span>
 	</div>
 </div>
-
-<style>
-	.no-scrollbar {
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
-	}
-</style>

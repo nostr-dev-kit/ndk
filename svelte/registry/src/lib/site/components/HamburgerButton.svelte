@@ -6,7 +6,7 @@
 
 <button
 	onclick={() => sidebar.toggleOpen()}
-	class="hamburger-button"
+	class="fixed top-4 left-4 z-[1000] hidden md:flex w-10 h-10 items-center justify-center rounded-lg bg-background border border-border text-foreground cursor-pointer transition-all duration-150 hover:bg-muted active:scale-95"
 	aria-label={sidebar.open ? 'Close sidebar' : 'Open sidebar'}
 >
 	{#if sidebar.open}
@@ -15,37 +15,3 @@
 		<HugeiconsIcon icon={Menu01Icon} size={24} strokeWidth={2} />
 	{/if}
 </button>
-
-<style>
-	.hamburger-button {
-		position: fixed;
-		top: 1rem;
-		left: 1rem;
-		z-index: 1000;
-		display: none;
-		width: 2.5rem;
-		height: 2.5rem;
-		align-items: center;
-		justify-content: center;
-		border-radius: 0.5rem;
-		background-color: hsl(var(--background));
-		border: 1px solid hsl(var(--border));
-		color: hsl(var(--foreground));
-		cursor: pointer;
-		transition: all 150ms ease;
-	}
-
-	.hamburger-button:hover {
-		background-color: hsl(var(--muted));
-	}
-
-	.hamburger-button:active {
-		transform: scale(0.95);
-	}
-
-	@media (max-width: 768px) {
-		.hamburger-button {
-			display: flex;
-		}
-	}
-</style>

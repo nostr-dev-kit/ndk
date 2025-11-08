@@ -6,6 +6,7 @@
   import { UserProfile } from '$lib/registry/components/user/displays/profile';
   import { sidebar } from '$lib/site/stores/sidebar.svelte';
   import { mainNav } from '$lib/site/navigation';
+  import { cn } from '$lib/registry/utils/cn.js';
 
   interface Props {
     onLoginClick: () => void;
@@ -30,12 +31,12 @@
   });
 </script>
 
-<nav class="navbar">
-  <div class="navbar-content">
+<nav class="fixed top-0 left-0 right-0 h-14 bg-background border-b border-border z-[1000]">
+  <div class="flex items-center justify-between h-full max-w-full px-6">
     <!-- Left section: Logo + Navigation Links -->
-    <div class="navbar-left">
-      <a href="/" class="logo-link">
-        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="flex items-center gap-8">
+      <a href="/" class="flex items-center no-underline text-primary">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
           <path d="M2 17l10 5 10-5"></path>
           <path d="M2 12l10 5 10-5"></path>
@@ -43,12 +44,11 @@
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="nav-links">
+      <div class="flex items-center gap-1 md:hidden">
         {#each mainNav as navItem (navItem.path)}
           <a
             href={navItem.path}
-            class="nav-link"
-            class:active={navItem.path === '/' ? $page.url.pathname === '/' : $page.url.pathname.startsWith(navItem.path)}
+            class={cn("px-3 py-2 rounded-md text-muted-foreground no-underline text-sm font-medium transition-all duration-150", (navItem.path === '/' ? $page.url.pathname === '/' : $page.url.pathname.startsWith(navItem.path)) ? "text-foreground bg-muted" : "hover:text-foreground hover:bg-accent")}
           >
             {navItem.name}
           </a>
@@ -57,15 +57,15 @@
     </div>
 
     <!-- Right section: Theme Toggle + User -->
-    <div class="navbar-right">
+    <div class="flex items-center gap-2">
       <!-- Theme Toggle -->
       <button
-        class="icon-button"
+        class="flex items-center justify-center w-8 h-8 p-0 border-0 bg-transparent text-muted-foreground rounded-md cursor-pointer transition-all duration-150 hover:bg-accent hover:text-foreground md:hidden"
         onclick={() => themeManager.toggle()}
         aria-label="Toggle theme"
       >
         {#if themeManager.isDark}
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-[1.125rem] h-[1.125rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -77,7 +77,7 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         {:else}
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-[1.125rem] h-[1.125rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         {/if}
@@ -85,9 +85,9 @@
 
       <!-- User Menu -->
       {#if ndk.$currentPubkey}
-        <div class="user-menu">
+        <div class="relative">
           <button
-            class="user-trigger"
+            class="flex items-center justify-center p-0 border-2 border-transparent bg-transparent rounded-full cursor-pointer transition-[border-color] duration-150 hover:border-primary"
             onclick={(e) => { e.stopPropagation(); showUserDropdown = !showUserDropdown; }}
             aria-label="User menu"
           >
@@ -97,16 +97,16 @@
           </button>
 
           {#if showUserDropdown}
-            <div class="user-dropdown" onclick={(e) => e.stopPropagation()}>
-              <div class="user-info">
+            <div class="absolute right-0 top-[calc(100%_+_0.5rem)] min-w-64 bg-popover border border-border rounded-lg shadow-[0_10px_15px_-3px_rgba(var(--foreground)_/_0.1)] overflow-hidden" onclick={(e) => e.stopPropagation()}>
+              <div class="p-3 px-4">
                 <UserProfile {ndk} pubkey={ndk.$currentPubkey} variant="horizontal" size="md" byline={User.Handle} />
               </div>
-              <div class="dropdown-divider"></div>
+              <div class="border-t border-border"></div>
               <button
-                class="dropdown-item"
+                class="w-full flex items-center gap-3 px-4 py-2.5 border-0 bg-transparent text-foreground text-sm font-medium text-left cursor-pointer transition-colors duration-150 hover:bg-accent"
                 onclick={onLogoutClick}
               >
-                <svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" ></path>
                 </svg>
                 Logout
@@ -116,7 +116,7 @@
         </div>
       {:else}
         <button
-          class="login-button"
+          class="px-4 py-2 border-0 bg-primary text-primary-foreground text-sm font-medium rounded-md cursor-pointer transition-opacity duration-150 hover:opacity-90"
           onclick={onLoginClick}
         >
           Login
@@ -126,11 +126,11 @@
       <!-- Mobile Menu Toggle (only on docs/components pages) -->
       {#if showMobileMenu}
         <button
-          class="mobile-menu-button"
+          class="hidden md:flex items-center justify-center w-8 h-8 p-0 border-0 bg-transparent text-muted-foreground rounded-md cursor-pointer hover:bg-accent hover:text-foreground"
           onclick={() => sidebar.toggleOpen()}
           aria-label="Toggle menu"
         >
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-[1.125rem] h-[1.125rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -140,216 +140,3 @@
     </div>
   </div>
 </nav>
-
-<style>
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3.5rem;
-    background: var(--background);
-    border-bottom: 1px solid var(--border);
-    z-index: 1000;
-  }
-
-  .navbar-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-    max-width: 100%;
-    padding: 0 1.5rem;
-  }
-
-  .navbar-left {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .logo-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--primary);
-  }
-
-  .logo-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  @media (max-width: 768px) {
-    .nav-links {
-      display: none;
-    }
-  }
-
-  .nav-link {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-    color: var(--muted-foreground);
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.15s ease-in-out;
-  }
-
-  .nav-link:hover {
-    color: var(--foreground);
-    background: var(--accent);
-  }
-
-  .nav-link.active {
-    color: var(--foreground);
-    background: var(--muted);
-  }
-
-  .navbar-right {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .icon-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: var(--muted-foreground);
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.15s ease-in-out;
-  }
-
-  .icon-button:hover {
-    background: var(--accent);
-    color: var(--foreground);
-  }
-
-  .icon {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  .user-menu {
-    position: relative;
-  }
-
-  .user-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 2px solid transparent;
-    background: transparent;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: border-color 0.15s ease-in-out;
-  }
-
-  .user-trigger:hover {
-    border-color: var(--primary);
-  }
-
-  .user-dropdown {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 0.5rem);
-    min-width: 16rem;
-    background: var(--popover);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--foreground) 10%, transparent);
-    overflow: hidden;
-  }
-
-  .user-info {
-    padding: 0.75rem 1rem;
-  }
-
-  .dropdown-divider {
-    border-top: 1px solid var(--border);
-  }
-
-  .dropdown-item {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.625rem 1rem;
-    border: none;
-    background: transparent;
-    color: var(--foreground);
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color 0.15s ease-in-out;
-  }
-
-  .dropdown-item:hover {
-    background: var(--accent);
-  }
-
-  .dropdown-icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .login-button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: var(--primary);
-    color: var(--primary-foreground);
-    font-size: 0.875rem;
-    font-weight: 500;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: opacity 0.15s ease-in-out;
-  }
-
-  .login-button:hover {
-    opacity: 0.9;
-  }
-
-  .mobile-menu-button {
-    display: none;
-  }
-
-  @media (max-width: 768px) {
-    .mobile-menu-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-      border: none;
-      background: transparent;
-      color: var(--muted-foreground);
-      border-radius: 0.375rem;
-      cursor: pointer;
-    }
-
-    .mobile-menu-button:hover {
-      background: var(--accent);
-      color: var(--foreground);
-    }
-
-    .icon-button {
-      display: none;
-    }
-  }
-</style>

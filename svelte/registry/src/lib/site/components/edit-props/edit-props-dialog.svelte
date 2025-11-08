@@ -6,6 +6,7 @@
 	import { validateIdentifier, fetchFromIdentifier } from './edit-props-fetcher';
 	import type { PropDefinition } from './edit-props-context.svelte';
 	import EditPropsPreview from './edit-props-preview.svelte';
+	import { cn } from '$lib/registry/utils/cn.js';
 
 	interface Props {
 		show: boolean;
@@ -131,48 +132,47 @@
 		<Dialog.Content
 			class="fixed left-[50%] top-[50%] z-[9999] w-[90%] max-w-[600px] max-h-[90vh] translate-x-[-50%] translate-y-[-50%] overflow-y-auto rounded-lg border border-border bg-card shadow-lg"
 		>
-			<div class="modal-header">
+			<div class="p-6 border-b border-border flex justify-between items-start">
 				<div>
-					<Dialog.Title class="modal-title">Edit Props</Dialog.Title>
-					<Dialog.Description class="modal-subtitle">
+					<Dialog.Title class="text-xl font-semibold text-foreground m-0">Edit Props</Dialog.Title>
+					<Dialog.Description class="text-sm text-muted-foreground mt-1 mb-0">
 						Customize the example data shown on this page
 					</Dialog.Description>
 				</div>
 				<Dialog.Close
-					class="modal-close"
+					class="p-2 border-0 bg-transparent cursor-pointer rounded-md transition-colors text-muted-foreground hover:bg-accent hover:text-accent-foreground"
 				>
-					<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" ></path>
 					</svg>
-					<span class="sr-only">Close</span>
+					<span class="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">Close</span>
 				</Dialog.Close>
 			</div>
 
-			<div class="modal-body">
+			<div class="p-6 flex flex-col gap-6">
 				{#each props as prop (prop.name)}
-					<div class="prop-field">
-						<label class="prop-label">
+					<div class="flex flex-col gap-2">
+						<label class="text-sm font-medium text-foreground">
 							{prop.name}
-							<span class="prop-type">({prop.type})</span>
+							<span class="text-xs font-normal text-muted-foreground ml-1">({prop.type})</span>
 						</label>
 
 						<input
 							type="text"
-							class="prop-input"
-							class:error={errors[prop.name]}
+							class={cn("w-full px-3 py-2 border border-input bg-background text-foreground rounded-md text-sm transition-all font-mono focus:outline-none focus:border-ring focus:shadow-[0_0_0_3px_rgba(var(--ring)_/_0.2)]", errors[prop.name] && "border-destructive focus:shadow-[0_0_0_3px_rgba(var(--destructive)_/_0.2)]")}
 							placeholder={getPlaceholder(prop.type)}
 							value={inputs[prop.name] || ''}
 							oninput={(e) => handleInputChange(prop.name, prop.type, e.currentTarget.value)}
 						/>
 
 						{#if loading[prop.name]}
-							<div class="prop-loading">Loading preview...</div>
+							<div class="text-xs text-muted-foreground italic">Loading preview...</div>
 						{/if}
 						{#if errors[prop.name]}
-							<div class="prop-error">{errors[prop.name]}</div>
+							<div class="text-xs text-destructive">{errors[prop.name]}</div>
 						{/if}
 						{#if previews[prop.name]}
-							<div class="prop-preview">
+							<div class="p-3 bg-muted/30 border border-border rounded-md">
 								<EditPropsPreview type={prop.type} value={previews[prop.name]!} />
 							</div>
 						{/if}
@@ -180,151 +180,12 @@
 				{/each}
 			</div>
 
-			<div class="modal-footer">
-				<button class="btn-secondary" onclick={onClose}>Cancel</button>
-				<button class="btn-primary" onclick={handleApply} disabled={Object.keys(errors).length > 0}>
+			<div class="p-6 border-t border-border flex justify-end gap-3">
+				<button class="px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-all border border-border bg-transparent text-foreground hover:bg-accent" onclick={onClose}>Cancel</button>
+				<button class="px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-all border-0 bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleApply} disabled={Object.keys(errors).length > 0}>
 					Apply Changes
 				</button>
 			</div>
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>
-
-<style>
-	.modal-header {
-		padding: 1.5rem;
-		border-bottom: 1px solid var(--border);
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-	}
-
-
-	.modal-body {
-		padding: 1.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.modal-footer {
-		padding: 1.5rem;
-		border-top: 1px solid var(--border);
-		display: flex;
-		justify-content: flex-end;
-		gap: 0.75rem;
-	}
-
-	.prop-field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.prop-label {
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--foreground);
-	}
-
-	.prop-type {
-		font-size: 0.75rem;
-		font-weight: 400;
-		color: var(--muted-foreground);
-		margin-left: 0.25rem;
-	}
-
-	.prop-input {
-		width: 100%;
-		padding: 0.5rem 0.75rem;
-		border: 1px solid var(--input);
-		background: var(--background);
-		color: var(--foreground);
-		border-radius: 0.375rem;
-		font-size: 0.875rem;
-		transition: all 0.2s;
-	}
-
-	input.prop-input {
-		font-family: monospace;
-	}
-
-	.prop-input:focus {
-		outline: none;
-		border-color: var(--ring);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) calc(0.2 * 100%), transparent);
-	}
-
-	.prop-input.error {
-		border-color: var(--destructive);
-	}
-
-	.prop-input.error:focus {
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--destructive) calc(0.2 * 100%), transparent);
-	}
-
-	.prop-loading {
-		font-size: 0.75rem;
-		color: var(--muted-foreground);
-		font-style: italic;
-	}
-
-	.prop-error {
-		font-size: 0.75rem;
-		color: var(--destructive);
-	}
-
-	.prop-preview {
-		padding: 0.75rem;
-		background: color-mix(in srgb, var(--muted) calc(0.3 * 100%), transparent);
-		border: 1px solid var(--border);
-		border-radius: 0.375rem;
-	}
-
-	.btn-secondary,
-	.btn-primary {
-		padding: 0.5rem 1rem;
-		border-radius: 0.375rem;
-		font-size: 0.875rem;
-		font-weight: 500;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-
-	.btn-secondary {
-		border: 1px solid var(--border);
-		background: transparent;
-		color: var(--foreground);
-	}
-
-	.btn-secondary:hover {
-		background: var(--accent);
-	}
-
-	.btn-primary {
-		border: none;
-		background: var(--primary);
-		color: var(--primary-foreground);
-	}
-
-	.btn-primary:hover:not(:disabled) {
-		opacity: 0.9;
-	}
-
-	.btn-primary:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border-width: 0;
-	}
-</style>

@@ -29,7 +29,7 @@ Used in component documentation pages to show both the visual output and source 
 			</div>
 		</div>
 		{#if code}
-			<CodeSnippet {code} lang="svelte" class="rounded-t-none" />
+			<CodeSnippet {code} lang="svelte" class="rounded-t-none border-none" />
 		{/if}
 	</div>
 </section>

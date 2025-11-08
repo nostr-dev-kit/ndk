@@ -57,7 +57,7 @@
     class={cn(baseClasses, interactiveClasses)}
   >
     <!-- Glossy neon top border effect -->
-    <div class={cn("neon-border z-1", width, height)}></div>
+    <div class={cn("absolute top-0 left-0 right-0 z-1 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,white_40%,transparent)_0%,color-mix(in_srgb,white_15%,transparent)_50%,transparent_100%)]", width, height)}></div>
 
     <!-- Full Background Image -->
     <div class="absolute inset-0 z-1 m-[1px]">
@@ -120,19 +120,3 @@
     </div>
   </svelte:element>
 </User.Root>
-
-<style>
-  .neon-border {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: radial-gradient(
-      ellipse at top,
-      color-mix(in srgb, white 40%, transparent) 0%,
-      color-mix(in srgb, white 15%, transparent) 50%,
-      transparent 100%
-    );
-
-  }
-</style>

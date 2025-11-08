@@ -4,9 +4,12 @@
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site/components/edit-props';
   import PageTitle from '$lib/site/components/PageTitle.svelte';
+  import SectionTitle from '$lib/site/components/SectionTitle.svelte';
   import Preview from '$site-components/preview.svelte';
   import ApiTable from '$site-components/api-table.svelte';
   import PMCommand from '$lib/site/components/ui/pm-command/pm-command.svelte';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import { User } from '$lib/registry/ui/user';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';
@@ -14,12 +17,66 @@
   import StandaloneRaw from './examples/profile-composition/index.txt?raw';
   import Composition from './examples/profile-card/index.svelte';
   import CompositionRaw from './examples/profile-card/index.txt?raw';
+  import Nip05Verification from './examples/nip05-verification/index.svelte';
+  import Nip05VerificationRaw from './examples/nip05-verification/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let user = $state<NDKUser | undefined>();
 
   const userPubkey = $derived(user?.pubkey || 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
+
+  // Anatomy layers for the component anatomy viewer
+  const anatomyLayers = {
+    root: {
+      id: 'root',
+      label: 'User.Root',
+      description: 'Container that provides user context to all child primitives. Handles profile fetching and reactivity.',
+      props: ['ndk', 'pubkey', 'user', 'profile', 'class']
+    },
+    banner: {
+      id: 'banner',
+      label: 'User.Banner',
+      description: 'Displays banner/cover image with gradient fallback. Commonly used in profile headers.',
+      props: ['height', 'class']
+    },
+    avatar: {
+      id: 'avatar',
+      label: 'User.Avatar',
+      description: 'Displays profile picture with deterministic gradient fallback. Shows initials when no image exists.',
+      props: ['size', 'class', 'fallback', 'alt']
+    },
+    name: {
+      id: 'name',
+      label: 'User.Name',
+      description: 'Displays user name with intelligent fallback hierarchy through displayName → name → pubkey.',
+      props: ['field', 'size', 'truncate', 'class']
+    },
+    handle: {
+      id: 'handle',
+      label: 'User.Handle',
+      description: 'Shows @username style handle. Falls back to truncated pubkey when name is missing.',
+      props: ['showAt', 'truncate', 'class']
+    },
+    nip05: {
+      id: 'nip05',
+      label: 'User.Nip05',
+      description: 'Displays and verifies NIP-05 identifier. Shows verification status with customizable display.',
+      props: ['showNip05', 'showVerified', 'verificationSnippet', 'class']
+    },
+    bio: {
+      id: 'bio',
+      label: 'User.Bio',
+      description: 'Renders the about field from user profile. Only displays if bio exists.',
+      props: ['maxLines', 'class']
+    },
+    field: {
+      id: 'field',
+      label: 'User.Field',
+      description: 'Generic accessor for any profile field. Use for custom metadata like website, lud16, etc.',
+      props: ['field', 'size', 'maxLines', 'class']
+    }
+  };
 </script>
 
 <svelte:head>
@@ -37,6 +94,10 @@
   </PageTitle>
 
   <section>
+    <h3 class="text-xl font-semibold mb-3">Basic Composition</h3>
+    <p class="leading-relaxed text-muted-foreground mb-4">
+      The fundamental pattern for using User primitives. User.Root establishes context, then child primitives (Avatar, Name, Handle) render their respective fields. Each primitive handles its own fallback behavior when data is missing.
+    </p>
     <Preview code={BasicRaw}>
       <Basic {ndk} {userPubkey} />
     </Preview>
@@ -63,26 +124,91 @@
   </section>
 
   <section>
+    <h2 class="text-2xl font-semibold mb-4">Anatomy</h2>
+    <ComponentAnatomy.Root>
+      <ComponentAnatomy.DetailPanel layers={anatomyLayers} />
+      <ComponentAnatomy.Preview>
+        <User.Root {ndk} pubkey={userPubkey}>
+          <ComponentAnatomy.Layer id="root" label="User.Root">
+            <div class="border border-border rounded-lg overflow-hidden bg-card max-w-md">
+              <ComponentAnatomy.Layer id="banner" label="User.Banner">
+                <div class="relative h-32">
+                  <User.Banner class="w-full h-full" />
+                  <ComponentAnatomy.Layer id="avatar" label="User.Avatar">
+                    <User.Avatar class="absolute -bottom-8 left-4 border-4 border-card rounded-full w-16 h-16" />
+                  </ComponentAnatomy.Layer>
+                </div>
+              </ComponentAnatomy.Layer>
+              <div class="pt-10 px-4 pb-4 space-y-1">
+                <ComponentAnatomy.Layer id="name" label="User.Name">
+                  <User.Name class="text-lg font-semibold block" />
+                </ComponentAnatomy.Layer>
+                <ComponentAnatomy.Layer id="handle" label="User.Handle">
+                  <User.Handle class="text-sm text-muted-foreground block" />
+                </ComponentAnatomy.Layer>
+                <ComponentAnatomy.Layer id="nip05" label="User.Nip05">
+                  <User.Nip05 class="text-sm text-muted-foreground block" />
+                </ComponentAnatomy.Layer>
+                <ComponentAnatomy.Layer id="bio" label="User.Bio">
+                  <User.Bio class="mt-2 text-sm leading-relaxed block" />
+                </ComponentAnatomy.Layer>
+                <ComponentAnatomy.Layer id="field" label="User.Field">
+                  <User.Field field="website" class="text-sm text-primary block" />
+                </ComponentAnatomy.Layer>
+              </div>
+            </div>
+          </ComponentAnatomy.Layer>
+        </User.Root>
+      </ComponentAnatomy.Preview>
+    </ComponentAnatomy.Root>
+  </section>
+
+  <section>
     <h2 class="text-2xl font-semibold mb-4">Installation</h2>
     <PMCommand command="execute" args={['jsrepo', 'add', 'ui/user']} />
   </section>
 
   <section class="mb-12 space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">More Examples</h2>
+    <SectionTitle title="Examples" />
 
-    <Preview
-      title="Profile Composition"
-      code={StandaloneRaw}
-    >
-      <Standalone {ndk} {userPubkey} />
-    </Preview>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Minimal Composition</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        User.Root provides context for all child primitives. This example shows the simplest possible usage—a single Avatar with its required Root wrapper, demonstrating how little code you need for standalone primitive usage.
+      </p>
+      <Preview
+        title="Profile Composition"
+        code={StandaloneRaw}
+      >
+        <Standalone {ndk} {userPubkey} />
+      </Preview>
+    </div>
 
-    <Preview
-      title="Profile Card"
-      code={CompositionRaw}
-    >
-      <Composition {ndk} {userPubkey} />
-    </Preview>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Full Profile Card</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Combines multiple primitives (Banner, Avatar, Name, Handle, Nip05, Bio) to create a complete profile card. Shows how to position Avatar over Banner using absolute positioning, and how different primitives work together within a single Root context.
+      </p>
+      <Preview
+        title="Profile Card"
+        code={CompositionRaw}
+      >
+        <Composition {ndk} {userPubkey} />
+      </Preview>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Custom Verification Status</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Demonstrates the <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">verificationSnippet</code> prop on User.Nip05. Instead of the default ✓/✗ symbols, you can provide custom markup (text labels, SVG icons, badges) that receives the verification status and loading state.
+      </p>
+      <Preview
+        title="NIP-05 Verification with Custom Status"
+        code={Nip05VerificationRaw}
+      >
+        <Nip05Verification {ndk} {userPubkey} />
+      </Preview>
+    </div>
   </section>
 
   <section>
@@ -231,14 +357,18 @@
     <h2 class="text-2xl font-semibold mb-4">User.Nip05</h2>
     <p class="leading-relaxed text-muted-foreground mb-4">
       Displays <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.nip05</code>—a DNS-based identifier (like email@domain.com) that verifies a user owns
-      that domain. The component actively performs NIP-05 verification by fetching <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">/.well-known/nostr.json</code>
-      from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. Most users
-      don't have NIP-05 set, so this only renders when the field exists.
+      that domain. The component uses <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">formatNip05()</code> from <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">@nostr-dev-kit/ndk-svelte</code> to format the identifier,
+      automatically hiding the underscore prefix for default usernames (e.g., <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">_@domain.com</code> becomes <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">domain.com</code>).
+      The component actively performs NIP-05 verification by fetching <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">/.well-known/nostr.json</code>
+      from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. You can customize
+      the verification status display by providing a <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">verificationSnippet</code> with custom icons or styling.
+      Most users don't have NIP-05 set, so this only renders when the field exists.
     </p>
     <ApiTable
       rows={[
         { name: 'showNip05', type: 'boolean', default: 'true', description: 'Whether to show the NIP-05 identifier' },
         { name: 'showVerified', type: 'boolean', default: 'true', description: 'Whether to verify and show verification status (✓/✗)' },
+        { name: 'verificationSnippet', type: 'Snippet<[{ status: boolean | null | undefined; isVerifying: boolean }]>', default: 'undefined', description: 'Custom snippet to display verification status. Receives status (true=verified, false=invalid, null=error, undefined=not checked) and isVerifying flag' },
         { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
       ]}
     />

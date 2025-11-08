@@ -12,20 +12,20 @@
 
 	let { id, label, children, class: className = '', absolute = true }: Props = $props();
 
-	const { selectedLayer, selectLayer } = getContext<{
+	const anatomyContext = getContext<{
 		selectedLayer: string | null;
 		selectLayer: (id: string | null) => void;
 	}>('anatomy');
 
-	function toggleLayer() {
-		selectLayer(selectedLayer === id ? null : id);
+	function toggleLayer(e: MouseEvent) {
+		e.stopPropagation();
+		anatomyContext.selectLayer(anatomyContext.selectedLayer === id ? null : id);
 	}
 
-	const isSelected = $derived(selectedLayer === id);
+	const isSelected = $derived(anatomyContext.selectedLayer === id);
 </script>
 
 <div class="relative {className}">
-	{@render children()}
 	<button
 		type="button"
 		class="group {absolute ? 'absolute' : ''} inset-0 -m-1 border-2 border-dashed border-primary/60 rounded transition-all cursor-pointer {isSelected
@@ -39,4 +39,5 @@
 			{label}
 		</span>
 	</button>
+	{@render children()}
 </div>

@@ -110,7 +110,7 @@
 			{:else if handlers.length > 0}
 				<div class="text-sm font-semibold text-foreground mb-3">Open in compatible app:</div>
 				<div class="flex flex-col gap-3">
-					{#each handlers as handler (handler.name)}
+					{#each handlers as handler (handler.pubkey)}
 						<div class="flex gap-3 p-3 bg-muted rounded-lg border border-border">
 							{#if handler.picture}
 								<img src={handler.picture} alt={handler.name || 'App'} class="w-10 h-10 rounded-md object-cover flex-shrink-0" />

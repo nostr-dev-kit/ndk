@@ -86,8 +86,8 @@ export const eventCategories: NavCategory[] = [
   {
     title: 'Content',
     items: [
-      { name: 'Note', path: '/events/content/note', icon: File01Icon, title: 'Event Content', description: 'Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.', nip: 'Kind:1' },
-      { name: 'Article', path: '/events/content/article', icon: NewsIcon, title: 'ArticleContent', description: 'Render NIP-23 article content with markdown support, inline highlights, text selection, and floating avatars.', nip: 'NIP-23' },
+      { name: 'Plain Text', path: '/events/content/plain-text', icon: File01Icon, title: 'Plain Text Content', description: 'Rich event content renderer with automatic parsing of mentions, hashtags, links, media, and custom emojis.' },
+      { name: 'Markdown', path: '/events/content/markdown', icon: NewsIcon, title: 'Markdown Content', description: 'Render markdown content with Nostr extensions, inline highlights, text selection, and floating avatars.' },
     ]
   },
   {
@@ -98,10 +98,6 @@ export const eventCategories: NavCategory[] = [
       { name: 'Hashtag', path: '/events/embeds/hashtag', icon: Tag01Icon, title: 'Hashtag', description: 'Render inline hashtags with customizable styling and click handlers.' },
       { name: 'Media', path: '/events/embeds/media', icon: Image02Icon, title: 'Media Components', description: 'Custom media renderers: elegant carousels and bento grids for grouped images and videos.' },
       { name: 'Links', path: '/events/embeds/links', icon: ViewIcon, title: 'Link Components', description: 'Rich link previews: hover previews and embedded OpenGraph cards for URLs.' },
-      { name: 'Notes', path: '/events/embeds/notes', icon: Chat01Icon, title: 'Note Embedded Preview', description: 'Embedded preview handler for short text notes (Kind 1) and generic replies (Kind 1111).', nip: 'Kind:1' },
-      { name: 'Articles', path: '/events/embeds/articles', icon: NewsIcon, title: 'Article Embedded Preview', description: 'Embedded preview handler for long-form articles (Kind 30023 / NIP-23).', nip: 'NIP-23' },
-      { name: 'Highlights', path: '/events/embeds/highlights', icon: HighlighterIcon, title: 'Highlight Embedded Preview', description: 'Embedded preview handler for text highlights (Kind 9802 / NIP-84).', nip: 'NIP-84' },
-      { name: 'Generic', path: '/events/embeds/generic', icon: ViewIcon, title: 'Generic Embedded Preview', description: 'Fallback preview handler for event kinds without specific preview components.' },
     ]
   },
 ];
@@ -146,6 +142,12 @@ export const componentCategories: NavCategory[] = [
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
       { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
       { name: 'Event Dropdown', path: '/components/event-dropdown', icon: Layers01Icon, title: 'EventDropdown', description: 'Dropdown menu for event actions including mute, report, copy, and raw event viewing with optional relay information display.' },
+    ]
+  },
+  {
+    title: 'Event',
+    items: [
+      { name: 'Generic Card', path: '/components/generic-card', icon: Calendar01Icon, title: 'Generic Event Card', description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery.' },
     ]
   },
   {

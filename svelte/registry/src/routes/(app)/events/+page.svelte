@@ -139,7 +139,7 @@
 			</a>
 
 			<a
-				href="/events/content/note"
+				href="/events/content/plain-text"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
 				<div class="flex items-start justify-between mb-3">
@@ -149,7 +149,7 @@
 					>
 				</div>
 				<p class="text-sm text-muted-foreground mb-4">
-					Kind-specific content renderers for notes, articles, images, and more.
+					Content parsing strategies for plain text and markdown rendering.
 				</p>
 				<div class="text-sm text-primary group-hover:underline">View Content Components →</div>
 			</a>

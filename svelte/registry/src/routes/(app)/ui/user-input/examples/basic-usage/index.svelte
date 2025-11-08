@@ -30,43 +30,23 @@
   }
 </script>
 
-<div class="user-input-demo">
+<div class="border border-border rounded-lg p-4 bg-card">
   {#if selectedUser}
-    <div class="selected-user">
-      <strong>Selected:</strong> {selectedUser.profile?.name || selectedUser.npub}
+    <div class="mb-4 p-3 bg-muted rounded-md text-sm">
+      <strong class="font-semibold">Selected:</strong> {selectedUser.profile?.name || selectedUser.npub}
     </div>
   {/if}
 
   <UserInput.Root {ndk} onSelect={handleSelect}>
-    <UserInput.Search placeholder="Search by name, NIP-05, or npub..." />
-    <UserInput.Results>
+    <UserInput.Search placeholder="Search by name, NIP-05, or npub..." class="w-full px-3 py-2 border border-border rounded-md bg-background" />
+    <UserInput.Results class="mt-2 border border-border rounded-md bg-card overflow-hidden">
       {#snippet children(result)}
-        <UserInput.Item {result}>
-          <!-- Default rendering - UserListItem will be used in a real example -->
-          <span>{result.user.profile?.name || result.user.npub}</span>
+        <UserInput.Item {result} class="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0">
+          <div class="text-sm font-medium text-foreground truncate">
+            {result.user.profile?.name || result.user.npub}
+          </div>
         </UserInput.Item>
       {/snippet}
     </UserInput.Results>
   </UserInput.Root>
 </div>
-
-<style>
-  .user-input-demo {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background: white;
-  }
-
-  .selected-user {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    background: #f3f4f6;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-  }
-
-  .selected-user strong {
-    font-weight: 600;
-  }
-</style>

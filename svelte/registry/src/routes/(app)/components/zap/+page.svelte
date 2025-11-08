@@ -2,7 +2,9 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
   import zapButtonCode from './zap-button.example?raw';
@@ -12,9 +14,17 @@
   import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';
   import ZapButtonAvatars from '$lib/registry/components/zap/buttons/avatars/zap-button-avatars.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import zapButtonCard from '$lib/registry/components/zap/buttons/basic/registry.json';
+  import zapButtonAvatarsCard from '$lib/registry/components/zap/buttons/avatars/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Zap Buttons',
+    description: 'Interactive zap buttons for sending Bitcoin tips via Lightning',
+    showcaseTitle: 'Zap Button Variants',
+    showcaseDescription: 'Explore different zap button designs for your Nostr application',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -55,9 +65,24 @@
   {/if}
 {/snippet}
 
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...zapButtonCard, code: zapButtonCode}}>
+    {#snippet preview()}
+      {@render zapButtonsPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...zapButtonAvatarsCard, code: zapButtonAvatarsCode}}>
+    {#snippet preview()}
+      {@render avatarsPreview()}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
   showcaseComponents={[
     {
@@ -71,17 +96,7 @@
       orientation: 'horizontal'
     }
   ]}
-  componentsSection={{
-    cards: [
-      { ...zapButtonCard, code: zapButtonCode },
-      { ...zapButtonAvatarsCard, code: zapButtonAvatarsCode }
-    ],
-    previews: {
-      'zap-button': zapButtonsPreview,
-      'zap-button-avatars': avatarsPreview
-    }
-  }}
-  apiDocs={metadata.apiDocs}
+  {components}
 >
   <EditProps.Prop
     name="Sample Event"

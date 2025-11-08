@@ -1,0 +1,21 @@
+{
+  "name": "link-preview",
+  "title": "Link Preview",
+  "category": "link-preview",
+  "subcategory": "displays",
+  "variant": "basic",
+  "description": "Hover link preview component with OpenGraph metadata fetching",
+  "command": "npx jsrepo add link-preview",
+  "dependencies": [
+    "bits-ui",
+    "@hugeicons/core-free-icons",
+    "@hugeicons/svelte"
+  ],
+  "useCases": [
+    "link-previews",
+    "url-metadata",
+    "inline-links",
+    "content-enrichment",
+    "social-sharing"
+  ]
+}

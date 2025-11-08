@@ -39,7 +39,7 @@
   }
 
   interface Props {
-    bookmarks: BookmarkedRelayListState;
+    bookmarks?: BookmarkedRelayListState;
 
     class?: string;
 
@@ -61,14 +61,14 @@
     throw new Error('Relay.BookmarkButton must be used within Relay.Root');
   }
 
-  const isBookmarked = $derived(bookmarks.isBookmarked(context.relayInfo.url ?? ''));
-  const canToggle = $derived(bookmarks.includesCurrentUser);
+  const isBookmarked = $derived(bookmarks?.isBookmarked(context.relayInfo.url ?? '') ?? false);
+  const canToggle = $derived(bookmarks?.includesCurrentUser ?? false);
 
   async function handleToggle(e: MouseEvent) {
     e.stopPropagation();
 
-    if (!canToggle) {
-      console.warn('Cannot toggle bookmark: current user not in authors list');
+    if (!bookmarks || !canToggle) {
+      console.warn('Cannot toggle bookmark: bookmarks not provided or current user not in authors list');
       return;
     }
 

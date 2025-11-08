@@ -1,8 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/Demo.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import { UserInput } from '$lib/registry/ui/user-input';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';
@@ -10,6 +13,93 @@
   import CustomItemRaw from './examples/custom-item/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  // Mock data for anatomy visualization
+  const mockResults = [
+    { user: { npub: 'npub1...', profile: { name: 'Alice', nip05: 'alice@example.com' } }, matchType: 'name' },
+    { user: { npub: 'npub2...', profile: { name: 'Bob', nip05: 'bob@nostr.com' } }, matchType: 'name' }
+  ];
+
+  // Page metadata
+  const metadata = {
+    title: 'User Input',
+    description: 'Headless, composable primitives for searching and selecting Nostr users. Supports searching by display name, NIP-05 identifier, and npub with debounced lookups and customizable result rendering.',
+    importPath: 'ui/user-input',
+    nips: ['05'],
+    primitives: [
+      {
+        name: 'UserInput.Root',
+        title: 'UserInput.Root',
+        description: 'Context provider that manages search state and user selection. Handles debounced searches across display names, NIP-05 identifiers, and npub/nprofile lookups.',
+        apiDocs: [
+          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+          { name: 'onSelect', type: '(user: NDKUser) => void', default: 'optional', description: 'Callback fired when a user is selected' },
+          { name: 'debounceMs', type: 'number', default: '300', description: 'Debounce delay for search lookups (ms)' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+        ]
+      },
+      {
+        name: 'UserInput.Search',
+        title: 'UserInput.Search',
+        description: 'Search input field with built-in loading indicator. Automatically detects query type (name, NIP-05, or npub) and triggers appropriate lookups.',
+        apiDocs: [
+          { name: 'placeholder', type: 'string', default: "'Search users by name, NIP-05, npub...'", description: 'Input placeholder text' },
+          { name: 'autofocus', type: 'boolean', default: 'false', description: 'Whether to autofocus the input on mount' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'UserInput.Results',
+        title: 'UserInput.Results',
+        description: 'Results list container that displays search results. Supports custom result rendering via snippets and empty state handling.',
+        apiDocs: [
+          { name: 'children', type: 'Snippet<[UserInputResult]>', default: 'optional', description: 'Snippet for rendering each result (receives UserInputResult)' },
+          { name: 'empty', type: 'Snippet', default: 'optional', description: 'Empty state snippet when no results found' },
+          { name: 'maxResults', type: 'number', default: 'undefined', description: 'Maximum number of results to display' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'UserInput.Item',
+        title: 'UserInput.Item',
+        description: 'Headless item primitive following the bits-ui pattern. Handles selection and provides flexible rendering options with automatic prop spreading.',
+        apiDocs: [
+          { name: 'result', type: 'UserInputResult', default: 'required', description: 'Result object containing user and metadata' },
+          { name: 'child', type: 'Snippet<[{ props, result }]>', default: 'optional', description: 'Custom rendering with merged props (bits-ui pattern)' },
+          { name: 'children', type: 'Snippet<[{ result }]>', default: 'optional', description: 'Default children rendering' },
+          { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Custom click handler (merged with selection)' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      }
+    ],
+    anatomyLayers: [
+      {
+        id: 'root',
+        label: 'UserInput.Root',
+        description: 'Container that manages search state and provides context.',
+        props: ['ndk', 'onSelect', 'debounceMs', 'class']
+      },
+      {
+        id: 'search',
+        label: 'UserInput.Search',
+        description: 'Input field for searching users with loading indicator.',
+        props: ['placeholder', 'autofocus', 'class']
+      },
+      {
+        id: 'results',
+        label: 'UserInput.Results',
+        description: 'Container for displaying search results.',
+        props: ['children', 'empty', 'maxResults', 'class']
+      },
+      {
+        id: 'item',
+        label: 'UserInput.Item',
+        description: 'Individual result item with selection handling.',
+        props: ['result', 'child', 'children', 'onclick', 'class']
+      }
+    ]
+  };
 </script>
 
 <svelte:head>
@@ -17,191 +107,266 @@
   <meta name="description" content="Headless, composable primitives for searching and selecting Nostr users with NIP-05 and npub support." />
 </svelte:head>
 
-<div class="component-page">
-  <header>
-    <div class="header-badge">
-      <span class="badge">UI Primitive</span>
-      <span class="badge badge-nip">NIP-05</span>
-    </div>
-    <div class="header-title">
-      <h1>User Input</h1>
-    </div>
-    <p class="header-description">
-      Headless, composable primitives for searching and selecting Nostr users. Supports searching by display name, NIP-05 identifier, and npub with debounced lookups and customizable result rendering.
-    </p>
-    <div class="header-info">
-      <div class="info-card">
-        <strong>Headless</strong>
-        <span>Complete styling freedom</span>
-      </div>
-      <div class="info-card">
-        <strong>NIP-05 & npub</strong>
-        <span>Search by identifier or key</span>
-      </div>
-      <div class="info-card">
-        <strong>Debounced</strong>
-        <span>Optimized relay queries</span>
-      </div>
-    </div>
-  </header>
-
-  <section class="installation">
-    <h2>Installation</h2>
-    <pre><code>import &#123; UserInput &#125; from '$lib/registry/ui/user-input';</code></pre>
-  </section>
-
-  <section class="demo space-y-8">
-    <h2>Examples</h2>
-
-    <Preview
-      title="Basic Usage"
-      description="UserInput provides search functionality with default result item rendering."
-      code={BasicRaw}
-    >
+<UIPrimitivePageTemplate {metadata} {ndk}>
+  {#snippet topExample()}
+    <Preview code={BasicRaw}>
       <Basic />
     </Preview>
+  {/snippet}
 
-    <Preview
-      title="Custom Result Items"
-      description="Customize result item rendering using the resultItem snippet with User primitives or your own components."
-      code={CustomItemRaw}
-    >
-      <CustomItem />
-    </Preview>
-  </section>
+  {#snippet overview()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+      <p class="text-lg leading-relaxed text-muted-foreground mb-8">
+        User Input primitives provide headless components for searching and selecting Nostr users.
+        They support searching by display name, NIP-05 identifier, and npub/nprofile with debounced
+        lookups and customizable result rendering.
+      </p>
 
-  <section class="info">
-    <h2>Available Components</h2>
-    <div class="components-grid">
-      <div class="component-item">
-        <code>UserInput.Root</code>
-        <p>Context provider with search state management.</p>
-      </div>
-      <div class="component-item">
-        <code>UserInput.Search</code>
-        <p>Search input field with loading indicator.</p>
-      </div>
-      <div class="component-item">
-        <code>UserInput.Results</code>
-        <p>Results list container with custom item rendering.</p>
-      </div>
-      <div class="component-item">
-        <code>UserInput.Item</code>
-        <p>Headless item primitive with bits-ui pattern support.</p>
+      <h3 class="text-xl font-semibold mt-8 mb-4">When You Need These</h3>
+      <p class="leading-relaxed mb-4">
+        Use User Input primitives when you need to:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2">
+        <li class="leading-relaxed">Build user search and selection interfaces</li>
+        <li class="leading-relaxed">Create mention pickers for posts and comments</li>
+        <li class="leading-relaxed">Implement user autocomplete fields</li>
+        <li class="leading-relaxed">Search users by NIP-05, npub, or display name</li>
+        <li class="leading-relaxed">Build custom user directories or search interfaces</li>
+      </ul>
+      <p class="leading-relaxed mt-4 text-muted-foreground">
+        These primitives use NDK's <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">createUserInput</code> builder,
+        which handles debounced searches and automatic query type detection.
+      </p>
+    </section>
+  {/snippet}
+
+  {#snippet anatomyPreview()}
+    <UserInput.Root {ndk}>
+      <ComponentAnatomy.Layer id="root" label="UserInput.Root">
+        <div class="border border-border rounded-lg p-4 bg-card max-w-md space-y-3">
+          <ComponentAnatomy.Layer id="search" label="UserInput.Search">
+            <UserInput.Search placeholder="Search users..." class="w-full px-3 py-2 border border-border rounded" />
+          </ComponentAnatomy.Layer>
+          <ComponentAnatomy.Layer id="results" label="UserInput.Results">
+            <UserInput.Results class="border border-border rounded divide-y">
+              {#each mockResults as result}
+                <ComponentAnatomy.Layer id="item" label="UserInput.Item">
+                  <UserInput.Item {result} class="p-3 hover:bg-muted cursor-pointer">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full bg-muted" />
+                      <div class="flex-1">
+                        <div class="font-medium">{result.user.profile?.name}</div>
+                        <div class="text-xs text-muted-foreground">{result.user.profile?.nip05}</div>
+                      </div>
+                    </div>
+                  </UserInput.Item>
+                </ComponentAnatomy.Layer>
+              {/each}
+            </UserInput.Results>
+          </ComponentAnatomy.Layer>
+        </div>
+      </ComponentAnatomy.Layer>
+    </UserInput.Root>
+  {/snippet}
+
+  {#snippet examples()}
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Custom Result Items</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Customize how results are displayed using UserInput.Item with the bits-ui pattern.
+        This example shows custom styling with User primitives for avatars and names.
+      </p>
+      <Preview
+        title="Custom Result Items"
+        description="Customize result item rendering using the resultItem snippet with User primitives."
+        code={CustomItemRaw}
+      >
+        <CustomItem />
+      </Preview>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Search Capabilities</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        UserInput automatically detects and searches based on query type:
+      </p>
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 my-4">
+        <div class="p-4 border border-border rounded-lg">
+          <strong class="font-semibold text-primary block mb-1">Display Name</strong>
+          <p class="text-sm text-muted-foreground">Searches user profile names (e.g., "alice", "bob")</p>
+        </div>
+        <div class="p-4 border border-border rounded-lg">
+          <strong class="font-semibold text-primary block mb-1">NIP-05</strong>
+          <p class="text-sm text-muted-foreground">Looks up users by NIP-05 identifier (e.g., "alice@example.com")</p>
+        </div>
+        <div class="p-4 border border-border rounded-lg">
+          <strong class="font-semibold text-primary block mb-1">npub</strong>
+          <p class="text-sm text-muted-foreground">Direct lookup by npub/nprofile (e.g., "npub1...")</p>
+        </div>
       </div>
     </div>
-  </section>
 
-  <section class="info">
-    <h2>UserInput.Root</h2>
-    <p class="mb-4">Context provider that manages search state and user selection.</p>
-    <ApiTable
-      rows={[
-        { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-        { name: 'onSelect', type: '(user: NDKUser) => void', default: 'optional', description: 'Callback when user is selected' },
-        { name: 'debounceMs', type: 'number', default: '300', description: 'Debounce delay for lookups (ms)' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-        { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-      ]}
-    />
-  </section>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Debouncing</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        UserInput debounces search queries to avoid excessive relay requests. This prevents rapid-fire
+        requests while typing and improves performance.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`<!-- Default 300ms debounce -->
+<UserInput.Root {ndk} onSelect={handleSelect}>
+  <UserInput.Search />
+  <UserInput.Results />
+</UserInput.Root>
 
-  <section class="info">
-    <h2>UserInput.Search</h2>
-    <p class="mb-4">Search input field with built-in loading indicator.</p>
-    <ApiTable
-      rows={[
-        { name: 'placeholder', type: 'string', default: "'Search users by name, NIP-05, npub...'", description: 'Input placeholder text' },
-        { name: 'autofocus', type: 'boolean', default: 'false', description: 'Whether to autofocus the input' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>UserInput.Results</h2>
-    <p class="mb-4">Results list container that displays search results.</p>
-    <ApiTable
-      rows={[
-        { name: 'children', type: 'Snippet<[UserInputResult]>', default: 'optional', description: 'Snippet for rendering each result (receives UserInputResult)' },
-        { name: 'empty', type: 'Snippet', default: 'optional', description: 'Empty state snippet when no results found' },
-        { name: 'maxResults', type: 'number', default: 'undefined', description: 'Maximum number of results to display' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>UserInput.Item</h2>
-    <p class="mb-4">Headless item primitive following the bits-ui pattern. Supports both default and custom rendering.</p>
-    <ApiTable
-      rows={[
-        { name: 'result', type: 'UserInputResult', default: 'required', description: 'Result object containing user and metadata' },
-        { name: 'child', type: 'Snippet<[{ props, result }]>', default: 'optional', description: 'Custom rendering with merged props (bits-ui pattern)' },
-        { name: 'children', type: 'Snippet<[{ result }]>', default: 'optional', description: 'Default children rendering' },
-        { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Custom click handler (merged with selection)' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
-
-  <section class="info">
-    <h2>Search Capabilities</h2>
-    <p class="mb-4">UserInput automatically detects and searches based on query type:</p>
-    <div class="search-types-grid">
-      <div class="search-type-item">
-        <strong>Display Name</strong>
-        <p>Searches user profile names (e.g., "alice", "bob")</p>
-      </div>
-      <div class="search-type-item">
-        <strong>NIP-05</strong>
-        <p>Looks up users by NIP-05 identifier (e.g., "alice@example.com")</p>
-      </div>
-      <div class="search-type-item">
-        <strong>npub</strong>
-        <p>Direct lookup by npub/nprofile (e.g., "npub1...")</p>
+<!-- Custom debounce delay -->
+<UserInput.Root {ndk} onSelect={handleSelect} debounceMs={500}>
+  <UserInput.Search />
+  <UserInput.Results />
+</UserInput.Root>`}
+        />
       </div>
     </div>
-  </section>
 
-  <section class="info">
-    <h2>Debouncing</h2>
-    <p class="mb-4">UserInput debounces search queries to avoid excessive relay requests:</p>
-    <pre><code>// Default 300ms debounce
-&lt;UserInput.Root &#123;ndk&#125; onSelect=&#123;handleSelect&#125;&gt;
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Selection Handling</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Handle user selection with the onSelect callback:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import type { NDKUser } from '@nostr-dev-kit/ndk';
 
-// Custom debounce delay
-&lt;UserInput.Root &#123;ndk&#125; onSelect=&#123;handleSelect&#125; debounceMs=&#123;500&#125;&gt;</code></pre>
-    <p class="mb-4">This prevents rapid-fire requests while typing and improves performance.</p>
-  </section>
+let selectedUser = $state<NDKUser | null>(null);
 
-  <section class="info">
-    <h2>Custom Result Items</h2>
-    <p class="mb-4">Customize how results are displayed using UserInput.Item with the bits-ui pattern:</p>
-    <pre><code>&lt;UserInput.Results&gt;
-  &#123;#snippet children(result)&#125;
-    &lt;UserInput.Item &#123;result&#125;&gt;
-      &#123;#snippet child(&#123; props &#125;)&#125;
-        &lt;div &#123;...props&#125; class="custom-item"&gt;
-          &lt;User.Avatar &#123;ndk&#125; user=&#123;result.user&#125; class="w-10 h-10" /&gt;
-          &lt;div&gt;
-            &lt;div class="name"&gt;&#123;result.user.profile?.name&#125;&lt;/div&gt;
-            &lt;div class="nip05"&gt;&#123;result.user.profile?.nip05&#125;&lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &#123;/snippet&#125;
-    &lt;/UserInput.Item&gt;
-  &#123;/snippet&#125;
-&lt;/UserInput.Results&gt;</code></pre>
-  </section>
+function handleSelect(user: NDKUser) {
+  selectedUser = user;
+  console.log('Selected:', user.npub);
+  console.log('Profile:', user.profile);
+}
 
-  <section class="info">
-    <h2>Context Access</h2>
-    <p class="mb-4">Access UserInput context in custom components:</p>
-    <pre><code>import &#123; getContext &#125; from 'svelte';
-import &#123; type UserInputContext, USER_INPUT_CONTEXT_KEY &#125; from '$lib/registry/ui/user-input';
+<UserInput.Root {ndk} onSelect={handleSelect}>
+  <UserInput.Search />
+  <UserInput.Results />
+</UserInput.Root>`}
+        />
+      </div>
+    </div>
 
-const context = getContext&lt;UserInputContext&gt;(USER_INPUT_CONTEXT_KEY);
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Bits-UI Pattern</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        UserInput.Item supports the bits-ui pattern for flexible rendering with automatic prop spreading:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`<UserInput.Results>
+  {#snippet children(result)}
+    <UserInput.Item {result}>
+      {#snippet child({ props })}
+        <!-- props includes onclick, class, role, etc. -->
+        <div {...props} class="custom-item">
+          <User.Avatar {ndk} user={result.user} class="w-10 h-10" />
+          <div>
+            <div class="name">{result.user.profile?.name}</div>
+            <div class="nip05">{result.user.profile?.nip05}</div>
+          </div>
+        </div>
+      {/snippet}
+    </UserInput.Item>
+  {/snippet}
+</UserInput.Results>`}
+        />
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Empty State</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Customize the empty state when no results are found:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`<UserInput.Results>
+  {#snippet empty()}
+    <div class="empty-state">
+      <p>No users found</p>
+      <p class="text-sm text-muted-foreground">
+        Try searching by name, NIP-05, or npub
+      </p>
+    </div>
+  {/snippet}
+</UserInput.Results>`}
+        />
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Builder Access</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        For advanced use cases, use the underlying builder directly:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { createUserInput } from '@nostr-dev-kit/svelte';
+
+let query = $state('');
+
+const userInput = createUserInput(() => ({
+  query,
+  onSelect: (user) => console.log(user),
+  debounceMs: 300
+}), ndk);
+
+// Access reactive properties:
+userInput.results       // NDKUser[]
+userInput.loading       // boolean
+userInput.selectedUser  // NDKUser | null
+userInput.selectUser()  // Function
+userInput.clear()       // Function`}
+        />
+      </div>
+    </div>
+  {/snippet}
+
+  {#snippet contextSection()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">UserInputResult Type</h2>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Search results are represented by the UserInputResult type, which contains the user
+        and metadata about how the match was found.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import type { UserInputResult } from '@nostr-dev-kit/svelte';
+
+interface UserInputResult {
+  user: NDKUser;              // The matched user
+  matchType: 'name' | 'nip05' | 'npub';  // How the user was found
+  score?: number;             // Optional relevance score
+}`}
+        />
+      </div>
+
+      <h3 class="text-xl font-semibold mt-8 mb-4">Context Access</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Access UserInput context in custom components:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { getContext } from 'svelte';
+import { type UserInputContext, USER_INPUT_CONTEXT_KEY } from '$lib/registry/ui/user-input';
+
+const context = getContext<UserInputContext>(USER_INPUT_CONTEXT_KEY);
 
 // Available properties:
 context.ndk           // NDKSvelte instance
@@ -212,263 +377,41 @@ context.selectedUser  // Currently selected NDKUser | null
 context.selectUser()  // Select a user
 context.clear()       // Clear search and selection
 context.loading       // boolean loading state
-context.onSelect      // Selection callback</code></pre>
-  </section>
+context.onSelect      // Selection callback`}
+        />
+      </div>
 
-  <section class="info">
-    <h2>Loading State</h2>
-    <p class="mb-4">UserInput.Search automatically displays a loading spinner during searches. Access the loading state in custom components:</p>
-    <pre><code>const context = getContext&lt;UserInputContext&gt;(USER_INPUT_CONTEXT_KEY);
+      <h3 class="text-xl font-semibold mt-8 mb-4">Loading State</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        UserInput.Search automatically displays a loading spinner during searches.
+        Access the loading state in custom components:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`const context = getContext<UserInputContext>(USER_INPUT_CONTEXT_KEY);
 
-&#123;#if context.loading&#125;
-  &lt;div&gt;Searching...&lt;/div&gt;
-&#123;/if&#125;</code></pre>
-  </section>
+{#if context.loading}
+  <div>Searching...</div>
+{/if}`}
+        />
+      </div>
+    </section>
+  {/snippet}
 
-  <section class="info">
-    <h2>Selection Handling</h2>
-    <p class="mb-4">Handle user selection with the onSelect callback:</p>
-    <pre><code>import type &#123; NDKUser &#125; from '@nostr-dev-kit/ndk';
-
-let selectedUser = $state&lt;NDKUser | null&gt;(null);
-
-function handleSelect(user: NDKUser) &#123;
-  selectedUser = user;
-  console.log('Selected:', user.npub);
-  console.log('Profile:', user.profile);
-&#125;
-
-&lt;UserInput.Root &#123;ndk&#125; onSelect=&#123;handleSelect&#125;&gt;
-  &lt;!-- ... --&gt;
-&lt;/UserInput.Root&gt;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Builder Access</h2>
-    <p class="mb-4">For advanced use cases, use the underlying builder directly:</p>
-    <pre><code>import &#123; createUserInput &#125; from '@nostr-dev-kit/svelte';
-
-let query = $state('');
-
-const userInput = createUserInput(() => (&#123;
-  query,
-  onSelect: (user) => console.log(user),
-  debounceMs: 300
-&#125;), ndk);
-
-// Access reactive properties:
-userInput.results       // NDKUser[]
-userInput.loading       // boolean
-userInput.selectedUser  // NDKUser | null
-userInput.selectUser()  // Function
-userInput.clear()       // Function</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Related</h2>
-    <div class="related-grid">
-      <a href="/ui/user" class="related-card">
-        <strong>User Primitives</strong>
-        <span>For displaying user information</span>
-      </a>
-      <a href="/components/user-card" class="related-card">
-        <strong>User Card Component</strong>
-        <span>Styled user profile cards</span>
-      </a>
-    </div>
-  </section>
-</div>
-
-<style>
-  .component-page {
-    max-width: 900px;
-  }
-
-  header {
-    margin-bottom: 3rem;
-  }
-
-  .header-badge {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground);
-  }
-
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
-
-  .header-title h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0;
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .header-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 1rem 0 1.5rem 0;
-  }
-
-  .header-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-
-  .info-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .info-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .info-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .installation h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .installation pre {
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .components-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-
-  .component-item {
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .component-item code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--primary);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .component-item p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .search-types-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .search-type-item {
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .search-type-item strong {
-    font-weight: 600;
-    color: var(--primary);
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-
-  .search-type-item p {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .related-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .related-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
-
-  .related-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .related-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  pre {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  pre code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-</style>
+  {#snippet relatedComponents()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Related</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <a href="/ui/user" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">User Primitives</strong>
+          <span class="text-sm text-muted-foreground">For displaying user information</span>
+        </a>
+        <a href="/components/user-card" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">User Card Component</strong>
+          <span class="text-sm text-muted-foreground">Styled user profile cards</span>
+        </a>
+      </div>
+    </section>
+  {/snippet}
+</UIPrimitivePageTemplate>

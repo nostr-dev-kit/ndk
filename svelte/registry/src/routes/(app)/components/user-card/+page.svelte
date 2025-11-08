@@ -43,9 +43,7 @@
   // Page metadata
   const metadata = {
     title: 'User Cards',
-    description: 'Beautiful user profile cards with multiple variants and styles',
-    showcaseTitle: 'User Card Variants',
-    showcaseDescription: 'Explore different user card designs for your Nostr application',
+    description: 'Beautiful user profile cards with multiple variants and styles'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -388,6 +386,8 @@
 <!-- Use template with custom showcase component -->
 <ComponentPageTemplate
   metadata={metadata}
+  showcaseTitle="User Card Variants"
+  showcaseDescription="Explore different user card designs for your Nostr application"
   {ndk}
   showcaseComponent={ComponentsShowcase}
   showcaseComponents={showcaseComponents}

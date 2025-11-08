@@ -15,9 +15,7 @@
   // Page metadata
   const metadata = {
     title: 'Emoji Picker',
-    description: 'Emoji selection components with search, categories, and smart aggregation',
-    showcaseTitle: 'Emoji Picker Variants',
-    showcaseDescription: 'Explore different emoji picker layouts and compositions',
+    description: 'Emoji selection components with search, categories, and smart aggregation'
   };
 
   // Component cards
@@ -97,6 +95,8 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Emoji Picker Variants"
+  showcaseDescription="Explore different emoji picker layouts and compositions"
   {ndk}
   {showcaseComponents}
   {components}

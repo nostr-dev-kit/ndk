@@ -1,13 +1,8 @@
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import GenericCard from '$lib/registry/components/event/cards/generic/generic-card.svelte';
 
-  interface Props {
-    ndk: NDKSvelte;
-  }
-
-  let { ndk }: Props = $props();
+  let { ndk } = $props();
 
   // Create a sample unknown event (kind 9999)
   const sampleEvent = new NDKEvent(ndk, {
@@ -18,7 +13,7 @@
     tags: [
       ['alt', 'A sample event demonstrating the generic fallback handler']
     ]
-  } as any);
+  });
 </script>
 
 <GenericCard {ndk} event={sampleEvent} />

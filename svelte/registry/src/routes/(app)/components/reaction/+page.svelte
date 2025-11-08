@@ -23,9 +23,7 @@
   // Page metadata
   const metadata = {
     title: 'Reaction Buttons',
-    description: 'Interactive reaction buttons with emoji picker and delayed reactions',
-    showcaseTitle: 'Reaction Variants',
-    showcaseDescription: 'Add emoji reactions to events',
+    description: 'Interactive reaction buttons with emoji picker and delayed reactions'
   };
 
   // Extract cards from registry
@@ -92,6 +90,8 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Reaction Variants"
+  showcaseDescription="Add emoji reactions to events"
   {ndk}
   showcaseComponents={[
     {

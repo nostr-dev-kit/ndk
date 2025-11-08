@@ -13,9 +13,7 @@
 	// Page metadata
 	const metadata = {
 		title: 'Notification System',
-		description: 'Real-time notification feed with builders and UI primitives',
-		showcaseTitle: 'Notification Components',
-		showcaseDescription: 'Track reactions, zaps, reposts, and replies',
+		description: 'Real-time notification feed with builders and UI primitives'
 	};
 
 	// Card data for showcase components
@@ -134,6 +132,8 @@
 <!-- Use the template -->
 <ComponentPageTemplate
 	{metadata}
+	showcaseTitle="Notification Components"
+	showcaseDescription="Track reactions, zaps, reposts, and replies"
 	{ndk}
 	showcaseComponents={[
 		{

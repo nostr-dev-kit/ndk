@@ -16,9 +16,7 @@
   // Page metadata
   const metadata = {
     title: 'Zap Send Classic',
-    description: 'Classic zap sending interface for Lightning payments',
-    showcaseTitle: 'Zap Send Variants',
-    showcaseDescription: 'Send Bitcoin tips via Lightning Network',
+    description: 'Classic zap sending interface for Lightning payments'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -62,6 +60,8 @@
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Zap Send Variants"
+  showcaseDescription="Send Bitcoin tips via Lightning Network"
   {ndk}
   showcaseComponents={[
     {

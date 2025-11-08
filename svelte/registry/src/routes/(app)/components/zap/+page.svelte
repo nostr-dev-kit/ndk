@@ -21,9 +21,7 @@
   // Page metadata
   const metadata = {
     title: 'Zap Buttons',
-    description: 'Interactive zap buttons for sending Bitcoin tips via Lightning',
-    showcaseTitle: 'Zap Button Variants',
-    showcaseDescription: 'Explore different zap button designs for your Nostr application',
+    description: 'Interactive zap buttons for sending Bitcoin tips via Lightning'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -83,6 +81,8 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Zap Button Variants"
+  showcaseDescription="Explore different zap button designs for your Nostr application"
   {ndk}
   showcaseComponents={[
     {

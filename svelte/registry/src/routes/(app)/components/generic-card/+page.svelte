@@ -7,7 +7,7 @@
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code example
-  import genericCardCode from './generic-card.example?raw';
+  import genericCardCode from './examples/basic/index.txt?raw';
 
   // Import component
   import GenericCard from '$lib/registry/components/event/cards/generic/generic-card.svelte';
@@ -18,9 +18,7 @@
   // Page metadata
   const metadata = {
     title: 'Generic Event Card',
-    description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery',
-    showcaseTitle: 'Generic Card',
-    showcaseDescription: 'Universal fallback for displaying any event type without a specific handler',
+    description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -66,6 +64,8 @@
 <!-- Use template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Generic Card"
+  showcaseDescription="Universal fallback for displaying any event type without a specific handler"
   {ndk}
   {showcaseComponents}
   {components}

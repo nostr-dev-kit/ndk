@@ -20,9 +20,7 @@
   // Page metadata
   const metadata = {
     title: 'Media Upload',
-    description: 'Media upload components for Nostr applications',
-    showcaseTitle: 'Media Upload Components',
-    showcaseDescription: 'Upload and manage media files with Blossom',
+    description: 'Media upload components for Nostr applications'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -146,6 +144,8 @@
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Media Upload Components"
+  showcaseDescription="Upload and manage media files with Blossom"
   {ndk}
   showcaseComponents={[
     {

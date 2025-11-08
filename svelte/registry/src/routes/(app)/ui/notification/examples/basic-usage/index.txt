@@ -1,25 +1,11 @@
 <script>
-	import { getContext } from 'svelte';
-		import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 
-	const ndk = getContext<NDKSvelte>('ndk');
-
-	// Gigi's pubkey for demo
-	const targetPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';
-
-	const feed = createNotificationFeed(
-		() => ({
-			pubkey: targetPubkey,
-			since: Date.now() / 1000 - 24 * 60 * 60,
-			limit: 3
-		}),
-		ndk
-	);
+	let { ndk, notifications } = $props();
 </script>
 
 <div class="notification-demo">
-	{#each feed.all as notification}
+	{#each notifications as notification}
 		<NotificationItem.Root {ndk} {notification}>
 			<div class="notification-card">
 				<div class="notification-header">

@@ -12,8 +12,11 @@
   import { kindLabel } from '$lib/registry/utils/kind-label.js';
   import { User } from '$lib/registry/ui/user';
 
-  // Import code example
-  import contentTabCode from './content-tab.example?raw';
+  // Import example components
+  import BasicUsageRaw from './examples/basic-usage/index.txt?raw';
+
+  // Import registry metadata
+  import contentTabCard from '$lib/registry/components/misc/content-tab/registry.json';
 
   // Import the component
   import ContentTab from '$lib/registry/components/misc/content-tab/content-tab.svelte';
@@ -104,7 +107,7 @@
 
     <section class="min-h-[500px] lg:min-h-[60vh] py-12">
       <Tabs.Content value="basic">
-        <ComponentCard data={{ ...contentTabCard, code: contentTabCode }}>
+        <ComponentCard data={{ ...contentTabCard, code: BasicUsageRaw }}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
@@ -130,7 +133,7 @@
       </Tabs.Content>
 
       <Tabs.Content value="sorting">
-        <ComponentCard data={{ ...contentTabCard, code: contentTabCode }}>
+        <ComponentCard data={{ ...contentTabCard, code: BasicUsageRaw }}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">
@@ -157,7 +160,7 @@
       </Tabs.Content>
 
       <Tabs.Content value="custom">
-        <ComponentCard data={{ ...contentTabCard, code: contentTabCode }}>
+        <ComponentCard data={{ ...contentTabCard, code: BasicUsageRaw }}>
           {#snippet preview()}
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-2">

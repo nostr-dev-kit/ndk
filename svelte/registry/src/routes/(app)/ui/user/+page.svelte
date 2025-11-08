@@ -5,6 +5,7 @@
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import Preview from '$site-components/preview.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { User } from '$lib/registry/ui/user';
 
@@ -286,11 +287,16 @@
     <section>
       <h2 class="text-2xl font-semibold mb-4">Context</h2>
       <p class="leading-relaxed text-muted-foreground mb-4">Access User context in custom components:</p>
-      <pre class="my-4 p-4 bg-muted rounded-lg overflow-x-auto"><code class="font-mono text-sm leading-normal">import &#123; getContext &#125; from 'svelte';
-import &#123; USER_CONTEXT_KEY, type UserContext &#125; from '$lib/registry/ui/user';
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { getContext } from 'svelte';
+import { USER_CONTEXT_KEY, type UserContext } from '$lib/registry/ui/user';
 
-const context = getContext&lt;UserContext&gt;(USER_CONTEXT_KEY);
-// Access: context.profile, context.ndk, context.user</code></pre>
+const context = getContext<UserContext>(USER_CONTEXT_KEY);
+// Access: context.profile, context.ndk, context.user`}
+        />
+      </div>
     </section>
   {/snippet}
 

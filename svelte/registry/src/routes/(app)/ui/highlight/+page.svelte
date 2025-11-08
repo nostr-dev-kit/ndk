@@ -4,6 +4,7 @@
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { Highlight } from '$lib/registry/ui/highlight';
 
@@ -160,11 +161,16 @@
     <section>
       <h2 class="text-2xl font-semibold mb-4">Context</h2>
       <p class="leading-relaxed text-muted-foreground mb-4">Access highlight context in custom components:</p>
-      <pre class="my-4 p-4 bg-muted rounded-lg overflow-x-auto"><code class="font-mono text-sm leading-normal">import &#123; getContext &#125; from 'svelte';
-import &#123; HIGHLIGHT_CONTEXT_KEY, type HighlightContext &#125; from '$lib/registry/ui/highlight';
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="typescript"
+          code={`import { getContext } from 'svelte';
+import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '$lib/registry/ui/highlight';
 
-const context = getContext&lt;HighlightContext&gt;(HIGHLIGHT_CONTEXT_KEY);
-// Access: context.highlight, context.ndk, context.onclick</code></pre>
+const context = getContext<HighlightContext>(HIGHLIGHT_CONTEXT_KEY);
+// Access: context.highlight, context.ndk, context.onclick`}
+        />
+      </div>
     </section>
   {/snippet}
 

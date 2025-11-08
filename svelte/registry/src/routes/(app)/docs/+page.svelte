@@ -1,7 +1,7 @@
 <script lang="ts">
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
-  import "$lib/styles/docs-page.css";
+  import "$lib/site/styles/docs-page.css";
 
   // Import code examples
   import usingBuilders from './examples/using-builders.svelte.example?raw';

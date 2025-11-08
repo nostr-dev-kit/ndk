@@ -4,7 +4,7 @@
 	import PageTitle from '$site-components/PageTitle.svelte';
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import "$lib/styles/docs-page.css";
+	import "$lib/site/styles/docs-page.css";
 
 	// Import demo
 	import ZappedFeed from './examples/zapped-feed.example.svelte';

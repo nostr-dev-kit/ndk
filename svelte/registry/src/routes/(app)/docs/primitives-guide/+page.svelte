@@ -2,7 +2,7 @@
   import Alert from '$site-components/alert.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import PageTitle from '$site-components/PageTitle.svelte';
-  import "$lib/styles/docs-page.css";
+  import "$lib/site/styles/docs-page.css";
 </script>
 
 <svelte:head>

@@ -4,7 +4,6 @@
 
 import type { Snippet } from "svelte";
 import type { ButtonPropsWithoutHTML } from "$lib/site/components/ui/button";
-import type { UseClipboard } from "$lib/hooks/use-clipboard.svelte";
 import type { HTMLAttributes } from "svelte/elements";
 import type { WithChildren, WithoutChildren } from "bits-ui";
 
@@ -14,7 +13,7 @@ export type CopyButtonPropsWithoutHTML = WithChildren<
 		text: string;
 		icon?: Snippet<[]>;
 		animationDuration?: number;
-		onCopy?: (status: UseClipboard["status"]) => void;
+		onCopy?: (status: 'success' | 'failure') => void;
 	}
 >;
 

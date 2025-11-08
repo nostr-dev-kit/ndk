@@ -1,8 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/Demo.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import { Reaction } from '$lib/registry/ui/reaction';
 
   import Basic from './examples/basic-usage/index.svelte';
   import BasicRaw from './examples/basic-usage/index.txt?raw';
@@ -10,6 +13,37 @@
   import CustomEmojiRaw from './examples/custom-emoji/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  // Page metadata
+  const metadata = {
+    title: 'Reaction',
+    description: 'Headless primitives for displaying emoji reactions. Supports both standard Unicode emojis and custom emojis from NIP-30, with automatic extraction from kind:7 reaction events and flexible sizing.',
+    importPath: 'ui/reaction',
+    nips: ['25', '30'],
+    primitives: [
+      {
+        name: 'Reaction.Display',
+        title: 'Reaction.Display',
+        description: 'Display component for rendering emoji reactions with support for both standard Unicode emojis and custom NIP-30 emojis. Automatically extracts emoji data from kind:7 reaction events and handles proper rendering for both text-based and image-based emojis.',
+        apiDocs: [
+          { name: 'emoji', type: 'string', default: 'optional', description: 'Emoji character or shortcode (e.g., "❤️" or ":custom:")' },
+          { name: 'url', type: 'string', default: 'optional', description: 'Custom emoji image URL (NIP-30)' },
+          { name: 'shortcode', type: 'string', default: 'optional', description: 'Emoji shortcode for accessibility' },
+          { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Kind:7 reaction event (auto-extracts emoji data)' },
+          { name: 'size', type: 'number', default: '20', description: 'Display size in pixels' },
+          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+        ]
+      }
+    ],
+    anatomyLayers: [
+      {
+        id: 'display',
+        label: 'Reaction.Display',
+        description: 'Renders emoji reactions as either text (standard emojis) or images (custom NIP-30 emojis). Automatically handles sizing and accessibility.',
+        props: ['emoji', 'url', 'shortcode', 'event', 'size', 'class']
+      }
+    ]
+  };
 </script>
 
 <svelte:head>
@@ -17,43 +51,8 @@
   <meta name="description" content="Headless primitives for displaying emoji reactions with support for standard emojis and custom NIP-30 emojis." />
 </svelte:head>
 
-<div class="component-page">
-  <header>
-    <div class="header-badge">
-      <span class="badge">UI Primitive</span>
-      <span class="badge badge-nip">NIP-25</span>
-      <span class="badge badge-nip">NIP-30</span>
-    </div>
-    <div class="header-title">
-      <h1>Reaction</h1>
-    </div>
-    <p class="header-description">
-      Headless primitives for displaying emoji reactions. Supports both standard Unicode emojis and custom emojis from NIP-30, with automatic extraction from kind:7 reaction events and flexible sizing.
-    </p>
-    <div class="header-info">
-      <div class="info-card">
-        <strong>Headless</strong>
-        <span>Unstyled, fully customizable</span>
-      </div>
-      <div class="info-card">
-        <strong>NIP-30 Support</strong>
-        <span>Custom emoji images</span>
-      </div>
-      <div class="info-card">
-        <strong>Event Integration</strong>
-        <span>Auto-extract from kind:7 events</span>
-      </div>
-    </div>
-  </header>
-
-  <section class="installation">
-    <h2>Installation</h2>
-    <pre><code>import &#123; Reaction &#125; from '$lib/registry/ui/reaction';</code></pre>
-  </section>
-
-  <section class="demo space-y-8">
-    <h2>Examples</h2>
-
+<UIPrimitivePageTemplate {metadata} {ndk}>
+  {#snippet topExample()}
     <Preview
       title="Basic Usage"
       description="Display standard Unicode emojis with customizable sizes."
@@ -61,337 +60,178 @@
     >
       <Basic />
     </Preview>
+  {/snippet}
 
-    <Preview
-      title="Custom Emojis (NIP-30)"
-      description="Display custom emoji images using NIP-30 format with URLs and shortcodes."
-      code={CustomEmojiRaw}
-    >
-      <CustomEmoji />
-    </Preview>
-  </section>
+  {#snippet overview()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+      <p class="text-lg leading-relaxed text-muted-foreground mb-8">
+        Reaction primitives provide a flexible way to display emoji reactions from Nostr events (kind:7, NIP-25).
+        They handle both standard Unicode emojis and custom emoji images (NIP-30), automatically extracting emoji data
+        from reaction events and rendering them appropriately.
+      </p>
 
-  <section class="info">
-    <h2>Reaction.Display</h2>
-    <p class="mb-4">Display component for rendering emoji reactions with support for both standard and custom emojis.</p>
-    <ApiTable
-      rows={[
-        { name: 'emoji', type: 'string', default: 'optional', description: 'Emoji character or shortcode (e.g., "❤️" or ":custom:")' },
-        { name: 'url', type: 'string', default: 'optional', description: 'Custom emoji image URL (NIP-30)' },
-        { name: 'shortcode', type: 'string', default: 'optional', description: 'Emoji shortcode for accessibility' },
-        { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Kind:7 reaction event (auto-extracts emoji data)' },
-        { name: 'size', type: 'number', default: '20', description: 'Display size in pixels' },
-        { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-      ]}
-    />
-  </section>
+      <h3 class="text-xl font-semibold mt-8 mb-4">When You Need These</h3>
+      <p class="leading-relaxed mb-4">
+        Use Reaction primitives when you need to:
+      </p>
+      <ul class="ml-6 mb-4 list-disc space-y-2">
+        <li class="leading-relaxed">Display emoji reactions on posts, comments, or other content</li>
+        <li class="leading-relaxed">Support both standard Unicode emojis and custom emoji images</li>
+        <li class="leading-relaxed">Build reaction buttons with counts and interactive states</li>
+        <li class="leading-relaxed">Automatically extract and display reactions from kind:7 events</li>
+        <li class="leading-relaxed">Create custom emoji pickers integrated with reaction systems</li>
+      </ul>
+    </section>
+  {/snippet}
 
-  <section class="info">
-    <h2>Standard Emojis</h2>
-    <p class="mb-4">Display standard Unicode emojis:</p>
-    <pre><code>&lt;Reaction.Display emoji="❤️" class="text-2xl" /&gt;
-&lt;Reaction.Display emoji="🔥" class="text-2xl" /&gt;
-&lt;Reaction.Display emoji="👍" class="text-2xl" /&gt;</code></pre>
-  </section>
+  {#snippet anatomyPreview()}
+    <ComponentAnatomy.Layer id="display" label="Reaction.Display">
+      <div class="flex items-center gap-4 p-6 border border-border rounded-lg bg-card">
+        <Reaction.Display emoji="❤️" class="text-3xl" />
+        <Reaction.Display emoji="🔥" class="text-3xl" />
+        <Reaction.Display emoji="👍" class="text-3xl" />
+        <Reaction.Display emoji="🎉" class="text-3xl" />
+      </div>
+    </ComponentAnatomy.Layer>
+  {/snippet}
 
-  <section class="info">
-    <h2>Custom Emojis (NIP-30)</h2>
-    <p class="mb-4">Display custom emoji images from NIP-30:</p>
-    <pre><code>&lt;Reaction.Display
-  emoji=":party:"
-  url="https://example.com/party.gif"
-  shortcode="party"
-  class="w-6 h-6"
-/&gt;</code></pre>
-    <p class="mb-4">Custom emojis are displayed as images, while standard emojis are rendered as text.</p>
-  </section>
+  {#snippet examples()}
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Custom Emojis (NIP-30)</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Display custom emoji images using NIP-30 format. Custom emojis use URL-based images with shortcodes
+        for accessibility, allowing communities to create unique reaction sets.
+      </p>
+      <Preview
+        title="Custom Emojis (NIP-30)"
+        description="Display custom emoji images using NIP-30 format with URLs and shortcodes."
+        code={CustomEmojiRaw}
+      >
+        <CustomEmoji />
+      </Preview>
+    </div>
 
-  <section class="info">
-    <h2>From Reaction Events (NIP-25)</h2>
-    <p class="mb-4">Automatically extract and display emoji data from kind:7 reaction events:</p>
-    <pre><code>import type &#123; NDKEvent &#125; from '@nostr-dev-kit/ndk';
+    <div>
+      <h3 class="text-xl font-semibold mb-3">From Reaction Events</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Automatically extract and display emoji data from kind:7 reaction events. The component reads the
+        emoji content and any custom emoji tags to render the reaction correctly.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 // kind:7 reaction event
 const reactionEvent: NDKEvent = ...;
 
-&lt;Reaction.Display event=&#123;reactionEvent&#125; class="text-2xl" /&gt;</code></pre>
-    <p class="mb-4">The component automatically extracts:</p>
-    <ul class="ml-6 mb-4 space-y-2">
-      <li>Emoji content from <code>event.content</code></li>
-      <li>Custom emoji data from <code>["emoji", "&lt;shortcode&gt;", "&lt;url&gt;"]</code> tags</li>
-    </ul>
-  </section>
+<Reaction.Display event={reactionEvent} class="text-2xl" />`}
+        />
+      </div>
+    </div>
 
-  <section class="info">
-    <h2>Sizing</h2>
-    <p class="mb-4">Control the display size with Tailwind text classes for emojis or width/height classes for images:</p>
-    <pre><code>&lt;Reaction.Display emoji="💜" class="text-base" /&gt;  &lt;!-- Small --&gt;
-&lt;Reaction.Display emoji="💜" /&gt;  &lt;!-- Default (text-xl) --&gt;
-&lt;Reaction.Display emoji="💜" class="text-2xl" /&gt;  &lt;!-- Medium --&gt;
-&lt;Reaction.Display emoji="💜" class="text-3xl" /&gt;  &lt;!-- Large --&gt;
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Sizing Control</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Control the display size using Tailwind text classes for standard emojis or width/height classes for custom emoji images.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`<!-- Standard emojis with text sizing -->
+<Reaction.Display emoji="💜" class="text-base" />  <!-- Small -->
+<Reaction.Display emoji="💜" class="text-xl" />    <!-- Default -->
+<Reaction.Display emoji="💜" class="text-2xl" />   <!-- Medium -->
+<Reaction.Display emoji="💜" class="text-3xl" />   <!-- Large -->
 
-&lt;!-- For custom image emojis, use width/height classes --&gt;
-&lt;Reaction.Display url="..." class="w-4 h-4" /&gt;  &lt;!-- Small --&gt;
-&lt;Reaction.Display url="..." class="w-8 h-8" /&gt;  &lt;!-- Large --&gt;</code></pre>
-  </section>
+<!-- Custom emojis with width/height -->
+<Reaction.Display url="..." class="w-4 h-4" />  <!-- Small -->
+<Reaction.Display url="..." class="w-8 h-8" />  <!-- Large -->`}
+        />
+      </div>
+    </div>
 
-  <section class="info">
-    <h2>Event Tag Format</h2>
-    <p class="mb-4">For kind:7 reaction events with custom emojis, use this tag format:</p>
-    <pre><code>&#123;
-  "kind": 7,
-  "content": ":party:",
-  "tags": [
-    ["emoji", "party", "https://example.com/party.gif"],
-    ["e", "&lt;reacted-event-id&gt;"],
-    ["p", "&lt;author-pubkey&gt;"]
-  ]
-&#125;</code></pre>
-  </section>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Reaction Lists Pattern</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        Common pattern for displaying multiple reactions with counts and interactive states.
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="svelte"
+          code={`import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
-  <section class="info">
-    <h2>Styling</h2>
-    <p class="mb-4">Apply custom styling with the class prop:</p>
-    <pre><code>&lt;Reaction.Display
-  emoji="❤️"
-  size=&#123;24&#125;
-  class="hover:scale-110 transition-transform cursor-pointer"
-/&gt;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Usage in Reaction Lists</h2>
-    <p class="mb-4">Common pattern for displaying multiple reactions:</p>
-    <pre><code>import type &#123; NDKEvent &#125; from '@nostr-dev-kit/ndk';
-
-interface ReactionGroup &#123;
+interface ReactionGroup {
   emoji: string;
   url?: string;
   shortcode?: string;
   count: number;
   reacted: boolean;
-&#125;
+}
 
 let reactions: ReactionGroup[] = $state([...]);
 
-&#123;#each reactions as reaction&#125;
-  &lt;button
-    class:reacted=&#123;reaction.reacted&#125;
-    onclick=&#123;() => handleReaction(reaction.emoji)&#125;
-  &gt;
-    &lt;Reaction.Display
-      emoji=&#123;reaction.emoji&#125;
-      url=&#123;reaction.url&#125;
-      shortcode=&#123;reaction.shortcode&#125;
-      size=&#123;20&#125;
-    /&gt;
-    &lt;span&gt;&#123;reaction.count&#125;&lt;/span&gt;
-  &lt;/button&gt;
-&#123;/each&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Accessibility</h2>
-    <p class="mb-4">For custom emojis, the shortcode is used as the alt text for screen readers:</p>
-    <pre><code>&lt;!-- Renders as: --&gt;
-&lt;img
-  src="https://example.com/party.gif"
-  alt="party"
-  style="width: 24px; height: 24px;"
-/&gt;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Integration with Other Primitives</h2>
-    <p class="mb-4">Reaction.Display works seamlessly with other UI primitives:</p>
-    <pre><code>import &#123; Reaction, EmojiPicker &#125; from '$lib/registry/ui/reaction';
-
-// Select emoji from picker
-function handleEmojiSelect(emojiData: EmojiData) &#123;
-  // Display the selected emoji as a reaction
-  selectedEmoji = emojiData;
-&#125;
-
-&lt;EmojiPicker.Content &#123;ndk&#125; onSelect=&#123;handleEmojiSelect&#125; /&gt;
-
-&#123;#if selectedEmoji&#125;
-  &lt;Reaction.Display
-    emoji=&#123;selectedEmoji.emoji&#125;
-    url=&#123;selectedEmoji.url&#125;
-    shortcode=&#123;selectedEmoji.shortcode&#125;
-  /&gt;
-&#123;/if&#125;</code></pre>
-  </section>
-
-  <section class="info">
-    <h2>Related</h2>
-    <div class="related-grid">
-      <a href="/components/emoji-picker" class="related-card">
-        <strong>Emoji Picker Component</strong>
-        <span>For selecting emojis to react with</span>
-      </a>
-      <a href="/components/reaction" class="related-card">
-        <strong>Reaction Components</strong>
-        <span>Pre-built reaction UI Primitives</span>
-      </a>
+{#each reactions as reaction}
+  <button
+    class:reacted={reaction.reacted}
+    onclick={() => handleReaction(reaction.emoji)}
+  >
+    <Reaction.Display
+      emoji={reaction.emoji}
+      url={reaction.url}
+      shortcode={reaction.shortcode}
+      size={20}
+    />
+    <span>{reaction.count}</span>
+  </button>
+{/each}`}
+        />
+      </div>
     </div>
-  </section>
-</div>
+  {/snippet}
 
-<style>
-  .component-page {
-    max-width: 900px;
-  }
+  {#snippet contextSection()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Event Tag Format</h2>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        For kind:7 reaction events with custom emojis, use the following tag format:
+      </p>
+      <div class="my-4 bg-muted rounded-lg overflow-hidden">
+        <CodeBlock
+          lang="json"
+          code={`{
+  "kind": 7,
+  "content": ":party:",
+  "tags": [
+    ["emoji", "party", "https://example.com/party.gif"],
+    ["e", "<reacted-event-id>"],
+    ["p", "<author-pubkey>"]
+  ]
+}`}
+        />
+      </div>
+      <p class="leading-relaxed text-muted-foreground mt-4">
+        The component automatically extracts emoji content from <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">event.content</code>
+        and custom emoji data from <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">["emoji", "&lt;shortcode&gt;", "&lt;url&gt;"]</code> tags.
+        Custom emojis are displayed as images with the shortcode used as alt text for accessibility.
+      </p>
+    </section>
+  {/snippet}
 
-  header {
-    margin-bottom: 3rem;
-  }
-
-  .header-badge {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground);
-  }
-
-  .badge-nip {
-    background: var(--primary);
-    color: white;
-  }
-
-  .header-title h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0;
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .header-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 1rem 0 1.5rem 0;
-  }
-
-  .header-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-
-  .info-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-  }
-
-  .info-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .info-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  .installation h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .installation pre {
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .related-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .related-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
-
-  .related-card strong {
-    font-weight: 600;
-    color: var(--foreground);
-  }
-
-  .related-card span {
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-  }
-
-  pre {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  pre code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-
-  ul {
-    list-style: disc;
-  }
-
-  ul li {
-    color: var(--muted-foreground);
-    line-height: 1.6;
-  }
-
-  code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    background: var(--muted);
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875em;
-  }
-</style>
+  {#snippet relatedComponents()}
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Related</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+        <a href="/components/emoji-picker" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Emoji Picker Component</strong>
+          <span class="text-sm text-muted-foreground">For selecting emojis to react with</span>
+        </a>
+        <a href="/components/reaction" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Reaction Components</strong>
+          <span class="text-sm text-muted-foreground">Pre-built reaction UI components</span>
+        </a>
+      </div>
+    </section>
+  {/snippet}
+</UIPrimitivePageTemplate>

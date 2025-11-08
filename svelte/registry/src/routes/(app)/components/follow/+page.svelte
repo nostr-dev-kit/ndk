@@ -2,9 +2,9 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import PageTitle from '$lib/site/components/PageTitle.svelte';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import followButtonCode from './follow-button.example?raw';

@@ -5,11 +5,11 @@
 	import { VoiceMessage } from '$lib/registry/ui/voice-message';
 	import VoiceMessageCardCompact from '$lib/registry/components/voice-message/cards/compact/voice-message-card-compact.svelte';
 	import VoiceMessageCardExpanded from '$lib/registry/components/voice-message/cards/expanded';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import PageTitle from '$lib/site-components/PageTitle.svelte';
+	import { EditProps } from '$lib/site/components/edit-props';
+	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIComposition from './examples/ui-composition.example.svelte';

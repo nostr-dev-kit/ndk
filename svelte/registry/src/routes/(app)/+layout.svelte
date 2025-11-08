@@ -3,8 +3,8 @@
   import { page } from '$app/stores';
   import SidebarDrawer from '$site-components/SidebarDrawer.svelte';
   import Toc from '$site-components/toc.svelte';
-  import { sidebar } from '$lib/stores/sidebar.svelte';
-  import { docs, componentCategories, eventCategories, type NavCategory } from '$lib/navigation';
+  import { sidebar } from '$lib/site/stores/sidebar.svelte';
+  import { docs, componentCategories, eventCategories, type NavCategory } from '$lib/site/navigation';
 
   let { children }: { children: Snippet } = $props();
 

@@ -3,10 +3,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { EditProps } from '$lib/site-components/edit-props';
-  import SectionTitle from '$lib/site-components/SectionTitle.svelte';
-  import Preview from '$lib/site-components/preview.svelte';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
+  import SectionTitle from '$lib/site/components/SectionTitle.svelte';
+  import Preview from '$lib/site/components/preview.svelte';
 
   // Import code examples
   import reactionBasicCode from './reaction-button.example?raw';

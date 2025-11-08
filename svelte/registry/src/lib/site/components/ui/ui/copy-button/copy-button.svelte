@@ -3,7 +3,7 @@
 -->
 
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$lib/site/components/ui/button';
 	import { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
 	import { cn } from '$lib/registry/utils/cn.js';
 	import CheckIcon from '@lucide/svelte/icons/check';

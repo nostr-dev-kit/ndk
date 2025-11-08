@@ -5,8 +5,8 @@
 	import { nip19 } from '@nostr-dev-kit/ndk';
 	import { User } from '$lib/registry/ui/user';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
-	import * as Tabs from '$lib/components/ui/tabs';
+	import PMCommand from '$lib/site/components/ui/pm-command/pm-command.svelte';
+	import * as Tabs from '$lib/site/components/ui/tabs';
 	import CodeSnippet from '$site-components/code-snippet.svelte';
 	import Preview from '$site-components/preview.svelte';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { ndk } from '$lib/ndk.svelte';
+	import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
 
 	// Import actual blocks

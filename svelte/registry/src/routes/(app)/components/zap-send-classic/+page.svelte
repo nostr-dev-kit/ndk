@@ -2,8 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import ZapSendClassic from '$lib/registry/components/zap/send/classic/zap-send-classic.svelte';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import ZapSendClassic from '$lib/registry/components/zap/send/classic/zap-send-classic.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   // Get page data
   let { data } = $props();

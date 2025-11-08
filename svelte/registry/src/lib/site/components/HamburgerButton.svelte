@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sidebar } from '$lib/stores/sidebar.svelte';
+	import { sidebar } from '$lib/site/stores/sidebar.svelte';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { Menu01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 </script>

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { Button } from "$lib/components/ui/button";
+  import { Button } from "$lib/site/components/ui/button";
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
 

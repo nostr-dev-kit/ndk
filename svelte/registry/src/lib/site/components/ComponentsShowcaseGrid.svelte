@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cn } from '$lib/registry/utils/cn.js';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   interface Props {
     components: ShowcaseComponent[];

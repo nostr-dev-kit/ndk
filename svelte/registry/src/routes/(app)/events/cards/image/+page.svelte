@@ -5,9 +5,9 @@
 	import ImageCard from '$lib/registry/components/image/cards/basic/image-card.svelte';
 	import ImageCardInstagram from '$lib/registry/components/image/cards/basic/image-card-instagram.svelte';
 	import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import PageTitle from '$lib/site-components/PageTitle.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+	import { EditProps } from '$lib/site/components/edit-props';
+	import PageTitle from '$lib/site/components/PageTitle.svelte';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
 	import ComponentAPI from '$site-components/component-api.svelte';
 
   // Get page data

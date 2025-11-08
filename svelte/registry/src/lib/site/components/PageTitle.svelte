@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EditProps } from '$lib/site-components/edit-props';
+  import { EditProps } from '$lib/site/components/edit-props';
   import type { Snippet } from 'svelte';
 
   interface Props {

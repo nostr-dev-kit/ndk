@@ -4,12 +4,12 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte';
 	import { EventCard } from '$lib/registry/components/event/cards/compound';
-	import { EditProps } from '$lib/site-components/edit-props';
-	import PageTitle from '$lib/site-components/PageTitle.svelte';
+	import { EditProps } from '$lib/site/components/edit-props';
+	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Get page data
   let { data } = $props();

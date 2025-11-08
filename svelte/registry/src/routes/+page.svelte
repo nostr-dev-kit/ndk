@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ndk } from '$lib/ndk.svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 </script>
 
 <section class="border-b border-border">

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { componentCategories } from '$lib/navigation';
+  import { componentCategories } from '$lib/site/navigation';
   import { HugeiconsIcon } from '@hugeicons/svelte';
-  import NipBadge from '$lib/site-components/nip-badge.svelte';
+  import NipBadge from '$lib/site/components/nip-badge.svelte';
 </script>
 
 <svelte:head>

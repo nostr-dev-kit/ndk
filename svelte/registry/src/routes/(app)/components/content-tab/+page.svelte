@@ -2,13 +2,13 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site-components/edit-props';
-  import PageTitle from '$lib/site-components/PageTitle.svelte';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import PageTitle from '$lib/site/components/PageTitle.svelte';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import * as Tabs from '$lib/components/ui/tabs';
+  import * as Tabs from '$lib/site/components/ui/tabs';
   import { kindLabel } from '$lib/registry/utils/kind-label.js';
   import { User } from '$lib/registry/ui/user';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { highlightCode } from '$lib/utils/highlight';
+	import { highlightCode } from '$lib/site/utils/highlight';
 
 	interface Props {
 		code: string;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import { EditProps } from '$lib/site-components/edit-props';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import { EditProps } from '$lib/site/components/edit-props';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 

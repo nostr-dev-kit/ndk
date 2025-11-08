@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { BentoGrid, BentoGridItem } from '$lib/site-components/bento';
+  import { BentoGrid, BentoGridItem } from '$lib/site/components/bento';
   import ArticleBentoGridPreview from './previews/article-bento-grid-preview.svelte';
   import ArticleBentoHeroPreview from './previews/article-bento-hero-preview.svelte';
   import ArticleBentoFeedPreview from './previews/article-bento-feed-preview.svelte';

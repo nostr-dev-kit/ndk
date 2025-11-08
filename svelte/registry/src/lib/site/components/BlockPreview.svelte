@@ -7,11 +7,11 @@ Uses tabs to switch between preview and code views.
 	import type { Snippet } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import CodeSnippet from './code-snippet.svelte';
-	import PMCommand from '$lib/components/ui/pm-command/pm-command.svelte';
+	import PMCommand from '$lib/site/components/ui/pm-command/pm-command.svelte';
 	import { cn } from '$lib/registry/utils/cn.js';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { FolderOpenIcon, FoldersIcon, File01Icon } from '@hugeicons/core-free-icons';
-	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Tabs from '$lib/site/components/ui/tabs';
 
 	interface FileNode {
 		name: string;

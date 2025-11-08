@@ -47,7 +47,7 @@
 	</div>
 
 	<!-- Content Overlay -->
-	<div class="hero-content">
+	<div class="absolute bottom-0 left-0 right-0 p-6 pt-20 bg-gradient-to-t from-black/95 via-50% via-black/70 to-transparent">
 		{#if caption}
 			<p class="text-base leading-relaxed mb-4 text-[#ddd]">{caption}</p>
 		{/if}
@@ -66,20 +66,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.hero-content {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		padding: 1.5rem;
-		background: linear-gradient(
-			0deg,
-			rgba(0, 0, 0, 0.95) 0%,
-			rgba(0, 0, 0, 0.7) 50%,
-			transparent 100%
-		);
-		padding-top: 5rem;
-	}
-</style>

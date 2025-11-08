@@ -17,7 +17,7 @@
 -->
 <script lang="ts">
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { ndk } from '$lib/ndk.svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 
   let showLoginModal = $state(false);
 

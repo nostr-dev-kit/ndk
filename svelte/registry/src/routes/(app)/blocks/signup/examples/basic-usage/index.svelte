@@ -17,7 +17,8 @@
 -->
 <script lang="ts">
   import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
-  import { ndk } from '$lib/ndk.svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
+  import { goto } from '$app/navigation';
   import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
 
   function handleSignupSuccess(signer: NDKPrivateKeySigner) {

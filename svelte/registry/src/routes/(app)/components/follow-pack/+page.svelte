@@ -65,30 +65,6 @@
   });
 
   const displayPacks = $derived([pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]);
-
-  // Showcase blocks using ComponentsShowcase with orientation
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: followPackHeroCard,
-      preview: heroPreview,
-      orientation: 'horizontal'
-    },
-    {
-      cardData: followPackPortraitCard,
-      preview: portraitPreview,
-      orientation: 'vertical'
-    },
-    {
-      cardData: followPackCompactCard,
-      preview: compactPreview,
-      orientation: 'horizontal'
-    },
-    {
-      cardData: followPackListItemCard,
-      preview: listItemPreview,
-      orientation: 'vertical'
-    }
-  ];
 </script>
 
 <!-- Preview snippets -->
@@ -122,7 +98,33 @@
   </div>
 {/snippet}
 
-<!-- EditProps snippet -->
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...followPackHeroCard, code: followPackHeroCode}}>
+    {#snippet preview()}
+      {@render heroPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...followPackPortraitCard, code: followPackPortraitCode}}>
+    {#snippet preview()}
+      {@render portraitPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...followPackCompactCard, code: followPackCompactCode}}>
+    {#snippet preview()}
+      {@render compactPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...followPackListItemCard, code: followPackListItemCode}}>
+    {#snippet preview()}
+      {@render listItemPreview()}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <!-- Custom Anatomy section -->
 {#snippet customSections()}
   {#if displayPacks.length > 0}
@@ -158,61 +160,36 @@
   {/if}
 {/snippet}
 
-<!-- Preview snippets for Components section -->
-{#snippet heroComponentPreview()}
-  {#if pack1}
-    <div class="min-w-[800px]">
-      <FollowPackHero {ndk} followPack={pack1} />
-    </div>
-  {/if}
-{/snippet}
-
-{#snippet portraitComponentPreview()}
-  <div class="flex gap-4 flex-wrap">
-    {#each displayPacks.slice(0, 3) as pack (pack.id)}
-      <FollowPackPortrait {ndk} followPack={pack} />
-    {/each}
-  </div>
-{/snippet}
-
-{#snippet compactComponentPreview()}
-  <div class="space-y-2 max-w-2xl">
-    {#each displayPacks.slice(0, 3) as pack (pack.id)}
-      <FollowPackCompact {ndk} followPack={pack} />
-    {/each}
-  </div>
-{/snippet}
-
-{#snippet listItemComponentPreview()}
-  <div class="space-y-2 max-w-md h-full">
-    {#each displayPacks.slice(0, 4) as pack (pack.id)}
-      <FollowPackListItem {ndk} followPack={pack} />
-    {/each}
-  </div>
-{/snippet}
-
 <!-- Conditional rendering -->
 {#if displayPacks.length > 0}
   <ComponentPageTemplate
-    metadata={metadata}
+    {metadata}
     {ndk}
-    showcaseComponent={ComponentsShowcase}
-    {showcaseComponents}{customSections}
-    componentsSection={{
-      cards: [
-        { ...followPackHeroCard, code: followPackHeroCode },
-        { ...followPackPortraitCard, code: followPackPortraitCode },
-        { ...followPackCompactCard, code: followPackCompactCode },
-        { ...followPackListItemCard, code: followPackListItemCode }
-      ],
-      previews: {
-        'follow-pack-hero': heroComponentPreview,
-        'follow-pack-portrait': portraitComponentPreview,
-        'follow-pack-compact': compactComponentPreview,
-        'follow-pack-list-item': listItemComponentPreview
+    showcaseComponents={[
+      {
+        cardData: followPackHeroCard,
+        preview: heroPreview,
+        orientation: 'horizontal'
+      },
+      {
+        cardData: followPackPortraitCard,
+        preview: portraitPreview,
+        orientation: 'vertical'
+      },
+      {
+        cardData: followPackCompactCard,
+        preview: compactPreview,
+        orientation: 'horizontal'
+      },
+      {
+        cardData: followPackListItemCard,
+        preview: listItemPreview,
+        orientation: 'vertical'
       }
-    }}
-    apiDocs={metadata.apiDocs}
+    ]}
+    {components}
+    {customSections}
+    apiDocs={followPackHeroCard.apiDocs}
   >
     <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
       <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />

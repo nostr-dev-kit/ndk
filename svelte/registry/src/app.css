@@ -110,11 +110,11 @@
 }
 
 html {
-	scroll-behavior: smooth;
+	@apply scroll-smooth;
 }
 
 * {
-	overscroll-behavior: none;
+	@apply overscroll-none;
 }
 
 @layer base {

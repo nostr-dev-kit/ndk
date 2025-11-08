@@ -9,9 +9,9 @@
   import type { ShowcaseComponent } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
 
-  import RelayCardPortrait from '$lib/registry/components/relay-card-portrait/relay-card-portrait.svelte';
-  import RelayCardCompact from '$lib/registry/components/relay-card-compact/relay-card-compact.svelte';
-  import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
+  import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
+  import RelayCardCompact from '$lib/registry/components/relay/cards/compact/relay-card-compact.svelte';
+  import RelayCardList from '$lib/registry/components/relay/cards/basic/relay-card-list.svelte';
 
   // Import code examples
   import relayCardPortraitCode from './relay-card-portrait.example?raw';

@@ -41,7 +41,7 @@
   import UserCardCompact from '$lib/registry/components/user/cards/compact/user-card-compact.svelte';
   import UserCardNeon from '$lib/registry/components/user/cards/neon/user-card-neon.svelte';
   import UserCardGlass from '$lib/registry/components/user/cards/glass/user-card-glass.svelte';
-  import UserListItem from '$lib/registry/components/user-list-item/user-list-item.svelte';
+  import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

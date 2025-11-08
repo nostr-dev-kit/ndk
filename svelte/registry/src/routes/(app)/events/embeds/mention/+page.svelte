@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
+	import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
@@ -64,7 +64,7 @@
 			{
 				name: 'MentionModern',
 				description: 'Modern inline mention with avatar and user card popover on hover',
-				importPath: "import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte'",
+				importPath: "import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 					{ name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },

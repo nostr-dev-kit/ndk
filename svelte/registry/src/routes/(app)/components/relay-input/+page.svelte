@@ -11,7 +11,7 @@
   import relayInputErrorCode from './relay-input-error.example?raw';
   import relayInputDisabledCode from './relay-input-disabled.example?raw';
 
-  import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
+  import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

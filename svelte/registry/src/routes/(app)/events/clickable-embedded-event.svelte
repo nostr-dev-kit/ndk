@@ -5,18 +5,18 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import { createFetchEvent } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
-	import NoteCard from '$lib/registry/components/note-card/note-card.svelte';
-	import NoteCardInline from '$lib/registry/components/note-card-inline/note-card-inline.svelte';
-	import NoteCardCompact from '$lib/registry/components/note-card-compact/note-card-compact.svelte';
-	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
-	import ArticleCardInline from '$lib/registry/components/article-card-inline/article-card-inline.svelte';
-	import ArticleCardCompact from '$lib/registry/components/article-card-compact/article-card-compact.svelte';
-	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
-	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
-	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
-	import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
-	import HighlightCardInline from '$lib/registry/components/highlight-card-inline/highlight-card-inline.svelte';
-	import HighlightCardCompact from '$lib/registry/components/highlight-card-compact/highlight-card-compact.svelte';
+	import NoteCard from '$lib/registry/components/note/cards/basic/note-card.svelte';
+	import NoteCardInline from '$lib/registry/components/note/cards/inline/note-card-inline.svelte';
+	import NoteCardCompact from '$lib/registry/components/note/cards/compact/note-card-compact.svelte';
+	import ArticleCardMedium from '$lib/registry/components/article/cards/basic/article-card-medium.svelte';
+	import ArticleCardInline from '$lib/registry/components/article/cards/inline/article-card-inline.svelte';
+	import ArticleCardCompact from '$lib/registry/components/article/cards/compact/article-card-compact.svelte';
+	import ArticleCardHero from '$lib/registry/components/article/cards/hero/article-card-hero.svelte';
+	import ArticleCardNeon from '$lib/registry/components/article/cards/neon/article-card-neon.svelte';
+	import ArticleCardPortrait from '$lib/registry/components/article/cards/portrait/article-card-portrait.svelte';
+	import HighlightCardFeed from '$lib/registry/components/highlight/cards/basic/highlight-card-feed.svelte';
+	import HighlightCardInline from '$lib/registry/components/highlight/cards/inline/highlight-card-inline.svelte';
+	import HighlightCardCompact from '$lib/registry/components/highlight/cards/compact/highlight-card-compact.svelte';
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 
 	interface Props {

@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
+	import ArticleCardPortrait from '$lib/registry/components/article/cards/portrait/article-card-portrait.svelte';
 	import { Motion } from 'svelte-motion';
 
 	const ndk = getContext<NDKSvelte>('ndk');

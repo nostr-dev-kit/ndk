@@ -13,7 +13,7 @@
   import muteButtonCode from './mute-button.example?raw';
   import muteCustomCode from './mute-custom.example?raw';
 
-  import MuteButton from '$lib/registry/components/mute-button/mute-button.svelte';
+  import MuteButton from '$lib/registry/components/mute/buttons/basic/mute-button.svelte';
   import UIComposition from './examples/mute-action-builder.example.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');

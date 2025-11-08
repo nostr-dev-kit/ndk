@@ -18,7 +18,7 @@
   import contentTabCode from './content-tab.example?raw';
 
   // Import the component
-  import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';
+  import ContentTab from '$lib/registry/components/misc/content-tab/content-tab.svelte';
   import { byCount, byRecency } from '$lib/registry/builders/content-tab';
 
   const ndk = getContext<NDKSvelte>('ndk');

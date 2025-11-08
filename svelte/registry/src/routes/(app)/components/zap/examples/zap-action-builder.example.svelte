@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import * as ZapSend from '$lib/registry/components/zap-send/index.js';
-  import * as Zaps from '$lib/registry/components/zaps/index.js';
+  import * as ZapSend from '$lib/registry/components/article/cards/basic/index.ts';
+  import * as Zaps from '$lib/registry/components/article/cards/basic/index.ts';
 
   interface Props {
     ndk: NDKSvelte;

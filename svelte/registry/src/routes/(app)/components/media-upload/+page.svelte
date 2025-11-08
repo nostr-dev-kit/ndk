@@ -12,8 +12,8 @@
   import uploadButtonCode from './upload-button.example?raw';
   import mediaUploadCarouselCode from './media-upload-carousel.example?raw';
 
-  import UploadButton from '$lib/registry/components/upload-button/upload-button.svelte';
-  import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
+  import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
+  import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

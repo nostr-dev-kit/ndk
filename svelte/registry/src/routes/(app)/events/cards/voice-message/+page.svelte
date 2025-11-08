@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKVoiceMessage, NDKKind } from '@nostr-dev-kit/ndk';
 	import { VoiceMessage } from '$lib/registry/ui/voice-message';
-	import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card-compact/voice-message-card-compact.svelte';
+	import VoiceMessageCardCompact from '$lib/registry/components/voice-message/cards/compact/voice-message-card-compact.svelte';
 	import VoiceMessageCardExpanded from '$lib/registry/components/voice-message/cards/expanded';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
@@ -149,7 +149,7 @@
 			{
 				name: 'VoiceMessageCardCompact',
 				description: 'Compact voice message card for inline display in feeds or chat interfaces.',
-				importPath: "import VoiceMessageCardCompact from '$lib/registry/components/voice-message-card-compact/voice-message-card-compact.svelte'",
+				importPath: "import VoiceMessageCardCompact from '$lib/registry/components/voice-message/cards/compact/voice-message-card-compact.svelte'",
 				props: [
 					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 					{ name: 'event', type: 'NDKEvent', description: 'The voice message event to display', required: true },

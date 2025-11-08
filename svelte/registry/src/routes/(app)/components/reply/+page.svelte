@@ -10,7 +10,7 @@
   import replyButtonCode from './reply-button.example?raw';
 
   // Import components
-  import ReplyButton from '$lib/registry/components/reply-button/reply-button.svelte';
+  import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

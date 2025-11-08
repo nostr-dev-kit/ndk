@@ -1,15 +1,8 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
   import { Relay } from '$lib/registry/ui/relay';
 
-  const ndk = getContext('ndk');
+  let { ndk, bookmarks } = $props();
   const relayUrl = 'wss://relay.damus.io';
-
-  // Create bookmarked relay list (includes current user)
-  const bookmarks = createBookmarkedRelayList(() => ({
-    authors: ndk.$currentUser ? [ndk.$currentUser.pubkey] : []
-  }), ndk);
 </script>
 
 <div class="border border-gray-200 rounded-xl p-6 bg-white">

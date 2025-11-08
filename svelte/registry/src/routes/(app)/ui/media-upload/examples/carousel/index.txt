@@ -1,8 +1,7 @@
 <script>
-  import { getContext } from 'svelte';
-      import { MediaUpload } from '$lib/registry/ui/media-upload';
+  import { MediaUpload } from '$lib/registry/ui/media-upload';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  let { ndk } = $props();
 
   let uploads = $state<MediaUploadResult[]>([]);
 </script>

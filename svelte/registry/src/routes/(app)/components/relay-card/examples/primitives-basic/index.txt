@@ -1,13 +1,7 @@
 <script lang="ts">
   import { Relay } from '$lib/registry/ui/relay';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
-  interface Props {
-    ndk: NDKSvelte;
-    relayUrl: string;
-  }
-
-  let { ndk, relayUrl }: Props = $props();
+  let { ndk, relayUrl } = $props();
 </script>
 
 <Relay.Root {ndk} {relayUrl}>

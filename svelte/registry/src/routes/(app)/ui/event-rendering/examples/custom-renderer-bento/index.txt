@@ -1,9 +1,8 @@
 <script>
-	import { getContext } from 'svelte';
-		import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
+	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import MediaBento from './media-bento.example.svelte';
 
-	const ndk = getContext<NDKSvelte>('ndk');
+	let { ndk } = $props();
 
 	// Create custom renderer with bento grid
 	const customRenderer = new ContentRenderer();

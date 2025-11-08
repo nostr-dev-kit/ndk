@@ -4,10 +4,10 @@
 	import Demo from '$site-components/Demo.svelte';
 	import ApiTable from '$site-components/api-table.svelte';
 
-	import CustomRendererLinkPreview from '../../../ui/event-rendering/examples/custom-renderer-link-preview.example.svelte';
-	import CustomRendererLinkPreviewRaw from '../../../ui/event-rendering/examples/custom-renderer-link-preview.example.svelte?raw';
-	import CustomRendererLinkEmbed from '../../../ui/event-rendering/examples/custom-renderer-link-embed.example.svelte';
-	import CustomRendererLinkEmbedRaw from '../../../ui/event-rendering/examples/custom-renderer-link-embed.example.svelte?raw';
+	import CustomRendererLinkPreview from '../../../ui/event-rendering/examples/custom-renderer-link-preview/index.svelte';
+	import CustomRendererLinkPreviewRaw from '../../../ui/event-rendering/examples/custom-renderer-link-preview/index.txt?raw';
+	import CustomRendererLinkEmbed from '../../../ui/event-rendering/examples/custom-renderer-link-embed/index.svelte';
+	import CustomRendererLinkEmbedRaw from '../../../ui/event-rendering/examples/custom-renderer-link-embed/index.txt?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>

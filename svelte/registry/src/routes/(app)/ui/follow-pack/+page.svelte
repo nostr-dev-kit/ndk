@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import WithImage from './examples/with-image.example.svelte';
-  import WithImageRaw from './examples/with-image.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import WithImage from './examples/with-image/index.svelte';
+  import WithImageRaw from './examples/with-image/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -53,21 +53,21 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Display"
       description="Display follow pack metadata with title, description, and member count."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="With Cover Image"
       description="Include the follow pack's cover image for a richer display."
       code={WithImageRaw}
     >
       <WithImage />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

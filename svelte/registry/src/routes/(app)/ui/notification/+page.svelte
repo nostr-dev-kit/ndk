@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import Demo from '$site-components/Demo.svelte';
+	import Preview from '$site-components/Demo.svelte';
 	import ApiTable from '$site-components/api-table.svelte';
 
-	import Basic from './examples/basic.example.svelte';
-	import BasicRaw from './examples/basic.example.svelte?raw';
-	import CustomLayout from './examples/custom-layout.example.svelte';
-	import CustomLayoutRaw from './examples/custom-layout.example.svelte?raw';
+	import Basic from './examples/basic-usage/index.svelte';
+	import BasicRaw from './examples/basic-usage/index.txt?raw';
+	import CustomLayout from './examples/custom-layout/index.svelte';
+	import CustomLayoutRaw from './examples/custom-layout/index.txt?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -58,13 +58,13 @@
 	<section class="demos">
 		<h2>Examples</h2>
 
-		<Demo title="Basic Usage" code={BasicRaw}>
+		<Preview title="Basic Usage" code={BasicRaw}>
 			<Basic />
-		</Demo>
+		</Preview>
 
-		<Demo title="Custom Layout" code={CustomLayoutRaw}>
+		<Preview title="Custom Layout" code={CustomLayoutRaw}>
 			<CustomLayout />
-		</Demo>
+		</Preview>
 	</section>
 
 	<section class="api">

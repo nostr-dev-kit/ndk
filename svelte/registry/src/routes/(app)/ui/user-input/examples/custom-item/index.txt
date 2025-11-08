@@ -1,0 +1,50 @@
+<script>
+  import { getContext } from 'svelte';
+      import { UserInput } from '$lib/registry/ui/user-input';
+  import { User } from '$lib/registry/ui/user';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  let selectedUser = $state<NDKUser | null>(null);
+
+  function handleSelect(user: NDKUser) {
+    selectedUser = user;
+  }
+</script>
+
+<div class="custom-user-input-demo">
+  {#if selectedUser}
+    <div class="selected-display">
+      <User.Root {ndk} user={selectedUser}>
+        <User.Avatar class="w-8 h-8" />
+      </User.Root>
+      <div>
+        <div class="name">{selectedUser.profile?.name || 'Anonymous'}</div>
+        <div class="npub">{selectedUser.npub.slice(0, 16)}...</div>
+      </div>
+    </div>
+  {/if}
+
+  <UserInput.Root {ndk} onSelect={handleSelect}>
+    <UserInput.Search placeholder="Search users..." />
+    <UserInput.Results>
+      {#snippet children(result)}
+        <UserInput.Item {result}>
+          {#snippet child({ props })}
+            <div {...props} class="custom-result-item">
+              <User.Root {ndk} user={result.user}>
+                <User.Avatar class="w-10 h-10" />
+              </User.Root>
+              <div class="user-info">
+                <div class="user-name">{result.user.profile?.name || 'Anonymous'}</div>
+                {#if result.user.profile?.nip05}
+                  <div class="nip05">{result.user.profile.nip05}</div>
+                {/if}
+              </div>
+            </div>
+          {/snippet}
+        </UserInput.Item>
+      {/snippet}
+    </UserInput.Results>
+  </UserInput.Root>
+</div>

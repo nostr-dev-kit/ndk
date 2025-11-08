@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import CustomEmoji from './examples/custom-emoji.example.svelte';
-  import CustomEmojiRaw from './examples/custom-emoji.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import CustomEmoji from './examples/custom-emoji/index.svelte';
+  import CustomEmojiRaw from './examples/custom-emoji/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -54,21 +54,21 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Usage"
       description="Display standard Unicode emojis with customizable sizes."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Custom Emojis (NIP-30)"
       description="Display custom emoji images using NIP-30 format with URLs and shortcodes."
       code={CustomEmojiRaw}
     >
       <CustomEmoji />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

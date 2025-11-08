@@ -3,23 +3,23 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { EditProps } from '$lib/site/components/edit-props';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Preview.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import CustomRenderer from './examples/custom-renderer.example.svelte';
-  import CustomRendererRaw from './examples/custom-renderer.example.svelte?raw';
-  import CustomRendererCarousel from './examples/custom-renderer-carousel.example.svelte';
-  import CustomRendererCarouselRaw from './examples/custom-renderer-carousel.example.svelte?raw';
-  import CustomRendererBento from './examples/custom-renderer-bento.example.svelte';
-  import CustomRendererBentoRaw from './examples/custom-renderer-bento.example.svelte?raw';
-  import CustomRendererLinkPreview from './examples/custom-renderer-link-preview.example.svelte';
-  import CustomRendererLinkPreviewRaw from './examples/custom-renderer-link-preview.example.svelte?raw';
-  import CustomRendererLinkEmbed from './examples/custom-renderer-link-embed.example.svelte';
-  import CustomRendererLinkEmbedRaw from './examples/custom-renderer-link-embed.example.svelte?raw';
-  import Variants from './examples/variants.example.svelte';
-  import VariantsRaw from './examples/variants.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import CustomRenderer from './examples/custom-renderer/index.svelte';
+  import CustomRendererRaw from './examples/custom-renderer/index.txt?raw';
+  import CustomRendererCarousel from './examples/custom-renderer-carousel/index.svelte';
+  import CustomRendererCarouselRaw from './examples/custom-renderer-carousel/index.txt?raw';
+  import CustomRendererBento from './examples/custom-renderer-bento/index.svelte';
+  import CustomRendererBentoRaw from './examples/custom-renderer-bento/index.txt?raw';
+  import CustomRendererLinkPreview from './examples/custom-renderer-link-preview/index.svelte';
+  import CustomRendererLinkPreviewRaw from './examples/custom-renderer-link-preview/index.txt?raw';
+  import CustomRendererLinkEmbed from './examples/custom-renderer-link-embed/index.svelte';
+  import CustomRendererLinkEmbedRaw from './examples/custom-renderer-link-embed/index.txt?raw';
+  import Variants from './examples/variants/index.svelte';
+  import VariantsRaw from './examples/variants/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -115,63 +115,63 @@
 
     <h3 class="text-xl font-semibold mt-8 mb-4">EventContent Examples</h3>
 
-    <Demo
+    <Preview
       title="Basic Content Parsing"
       description="EventContent automatically parses and renders content with links, hashtags, and custom emojis."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Custom Renderer"
       description="Use the ContentRenderer class to customize how mentions, hashtags, links, and media are displayed."
       code={CustomRendererRaw}
     >
       <CustomRenderer />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Carousel Media Component"
       description="Display grouped media in an elegant carousel with navigation controls. Media separated only by whitespace are automatically grouped together."
       code={CustomRendererCarouselRaw}
     >
       <CustomRendererCarousel />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Bento Grid Media Component"
       description="Display grouped media in a dynamic bento/masonry grid layout that adapts based on the number of items."
       code={CustomRendererBentoRaw}
     >
       <CustomRendererBento />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Link Preview Component"
       description="Show rich link previews on hover using bits-ui LinkPreview. Grouped links (separated by whitespace) are handled together."
       code={CustomRendererLinkPreviewRaw}
     >
       <CustomRendererLinkPreview />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Embedded Link Preview Component"
       description="Auto-fetch and display rich link previews inline with OpenGraph metadata. Handles grouped links elegantly."
       code={CustomRendererLinkEmbedRaw}
     >
       <CustomRendererLinkEmbed />
-    </Demo>
+    </Preview>
 
     <h3 class="text-xl font-semibold mt-8 mb-4">EmbeddedEvent Examples</h3>
 
-    <Demo
+    <Preview
       title="Display Variants"
       description="EmbeddedEvent supports three display variants: card (default), compact, and inline."
       code={VariantsRaw}
     >
       <Variants {ndk} {eventBech32} />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

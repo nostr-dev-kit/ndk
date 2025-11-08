@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Preview.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import WithClick from './examples/with-click.example.svelte';
-  import WithClickRaw from './examples/with-click.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import WithClick from './examples/with-click/index.svelte';
+  import WithClickRaw from './examples/with-click/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -53,21 +53,19 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Usage"
-      description="Display a reply indicator that automatically detects and shows the user being replied to."
       code={BasicRaw}
     >
       <Basic {ndk} />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="With Click Handler"
-      description="Add an onclick handler to navigate to the event being replied to."
       code={WithClickRaw}
     >
       <WithClick {ndk} />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

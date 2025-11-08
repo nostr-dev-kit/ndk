@@ -32,7 +32,7 @@
         const decoded = nip19.decode(trimmed);
         if (decoded.type !== 'nsec') throw new Error('Invalid nsec format');
         const signer = new NDKPrivateKeySigner(decoded.data as string);
-        await ndk.$sessions.login(signer);
+        await ndk.$sessions.login(signer as any);
         onComplete?.();
       } else if (trimmed.startsWith('npub1')) {
         const decoded = nip19.decode(trimmed);
@@ -68,7 +68,7 @@
     try {
       isLoading = true;
       error = '';
-      await ndk.$sessions.login(new NDKNip07Signer());
+      await ndk.$sessions.login(new NDKNip07Signer() as any);
       onComplete?.();
     } catch (e) {
       error = e instanceof Error ? e.message : 'Failed to login with browser extension';
@@ -90,7 +90,7 @@
       const signer = NDKPrivateKeySigner.generate();
 
       if (ndk.$sessions) {
-        await ndk.$sessions.login(signer);
+        await ndk.$sessions.login(signer as any);
       }
 
       onComplete?.(signer);

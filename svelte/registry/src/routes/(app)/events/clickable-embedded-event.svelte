@@ -5,15 +5,18 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import { createFetchEvent } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
-	import NoteEmbeddedCard from '$lib/registry/components/note-embedded-card/note-embedded-card.svelte';
-	import NoteEmbeddedInline from '$lib/registry/components/note-embedded-inline/note-embedded-inline.svelte';
-	import NoteEmbeddedCompact from '$lib/registry/components/note-embedded-compact/note-embedded-compact.svelte';
-	import ArticleEmbeddedCard from '$lib/registry/components/article-embedded-card/article-embedded-card.svelte';
-	import ArticleEmbeddedInline from '$lib/registry/components/article-embedded-inline/article-embedded-inline.svelte';
-	import ArticleEmbeddedCompact from '$lib/registry/components/article-embedded-compact/article-embedded-compact.svelte';
-	import HighlightEmbeddedCard from '$lib/registry/components/highlight-embedded-card/highlight-embedded-card.svelte';
-	import HighlightEmbeddedInline from '$lib/registry/components/highlight-embedded-inline/highlight-embedded-inline.svelte';
-	import HighlightEmbeddedCompact from '$lib/registry/components/highlight-embedded-compact/highlight-embedded-compact.svelte';
+	import NoteCard from '$lib/registry/components/note-card/note-card.svelte';
+	import NoteCardInline from '$lib/registry/components/note-card-inline/note-card-inline.svelte';
+	import NoteCardCompact from '$lib/registry/components/note-card-compact/note-card-compact.svelte';
+	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
+	import ArticleCardInline from '$lib/registry/components/article-card-inline/article-card-inline.svelte';
+	import ArticleCardCompact from '$lib/registry/components/article-card-compact/article-card-compact.svelte';
+	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
+	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
+	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
+	import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
+	import HighlightCardInline from '$lib/registry/components/highlight-card-inline/highlight-card-inline.svelte';
+	import HighlightCardCompact from '$lib/registry/components/highlight-card-compact/highlight-card-compact.svelte';
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 
 	interface Props {
@@ -80,30 +83,38 @@
 	{:else if fetcher.event}
 		{#if embedType === 'embedded-note'}
 			{#if variant === 'card'}
-				<NoteEmbeddedCard {ndk} event={fetcher.event} />
+				<NoteCard {ndk} event={fetcher.event} />
 			{:else if variant === 'inline'}
-				<NoteEmbeddedInline {ndk} event={fetcher.event} />
+				<NoteCardInline {ndk} event={fetcher.event} />
 			{:else if variant === 'compact'}
-				<NoteEmbeddedCompact {ndk} event={fetcher.event} />
+				<NoteCardCompact {ndk} event={fetcher.event} />
 			{/if}
 		{:else if embedType === 'embedded-article' && asArticle}
 			{#if variant === 'card'}
-				<ArticleEmbeddedCard {ndk} event={asArticle} />
+				<ArticleCardMedium {ndk} article={asArticle} />
 			{:else if variant === 'inline'}
-				<ArticleEmbeddedInline {ndk} event={asArticle} />
+				<ArticleCardInline {ndk} article={asArticle} />
 			{:else if variant === 'compact'}
-				<ArticleEmbeddedCompact {ndk} event={asArticle} />
+				<ArticleCardCompact {ndk} article={asArticle} />
+			{:else if variant === 'medium'}
+				<ArticleCardMedium {ndk} article={asArticle} />
+			{:else if variant === 'hero'}
+				<ArticleCardHero {ndk} article={asArticle} />
+			{:else if variant === 'neon'}
+				<ArticleCardNeon {ndk} article={asArticle} />
+			{:else if variant === 'portrait'}
+				<ArticleCardPortrait {ndk} article={asArticle} />
 			{/if}
 		{:else if embedType === 'embedded-highlight'}
 			{#if variant === 'card'}
-				<HighlightEmbeddedCard {ndk} event={fetcher.event} />
+				<HighlightCardFeed {ndk} event={fetcher.event} />
 			{:else if variant === 'inline'}
-				<HighlightEmbeddedInline {ndk} event={fetcher.event} />
+				<HighlightCardInline {ndk} event={fetcher.event} />
 			{:else if variant === 'compact'}
-				<HighlightEmbeddedCompact {ndk} event={fetcher.event} />
+				<HighlightCardCompact {ndk} event={fetcher.event} />
 			{/if}
 		{:else}
-			<EmbeddedEvent {ndk} {bech32} variant={variant as any} {renderer} />
+			<EmbeddedEvent {ndk} {bech32} {renderer} />
 		{/if}
 	{:else}
 		<div class="text-muted-foreground text-sm p-2">Loading event...</div>

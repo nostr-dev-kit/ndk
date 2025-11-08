@@ -14,9 +14,9 @@
   import '../../components/hashtag-modern';
 
   // Embedded kind handlers (articles, notes, highlights)
-  import '../../components/article-embedded-card';
-  import '../../components/note-embedded';
-  import '../../components/highlight-embedded';
+  import '../../components/article-card';
+  import '../../components/note-card';
+  import '../../components/highlight-card';
 
   interface Props {
     ndk?: NDKSvelte;

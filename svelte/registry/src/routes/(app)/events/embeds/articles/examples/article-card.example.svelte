@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle } from '@nostr-dev-kit/ndk';
   import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
-  import ArticleEmbeddedCard from '$lib/registry/components/article-embedded-card/article-embedded-card.svelte';
+  import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
@@ -15,7 +15,7 @@
 
   // Create custom renderer for card variant
   const cardRenderer = new ContentRenderer();
-  cardRenderer.addKind(NDKArticle, ArticleEmbeddedCard);
+  cardRenderer.addKind(NDKArticle, ArticleCardMedium);
 </script>
 
 <div class="max-w-2xl">

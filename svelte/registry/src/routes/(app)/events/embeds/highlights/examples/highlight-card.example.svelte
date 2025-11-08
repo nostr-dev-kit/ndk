@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
   import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
-  import HighlightEmbeddedCard from '$lib/registry/components/highlight-embedded-card/highlight-embedded-card.svelte';
+  import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
@@ -15,7 +15,7 @@
 
   // Create custom renderer for card variant
   const cardRenderer = new ContentRenderer();
-  cardRenderer.addKind(NDKHighlight, HighlightEmbeddedCard);
+  cardRenderer.addKind(NDKHighlight, HighlightCardFeed);
 </script>
 
 <div class="max-w-2xl">

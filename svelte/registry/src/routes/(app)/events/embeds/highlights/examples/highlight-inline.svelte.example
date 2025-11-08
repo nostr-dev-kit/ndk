@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight } from '@nostr-dev-kit/ndk';
   import { EventContent, ContentRenderer } from '$lib/registry/ui/embedded-event.svelte';
-  import HighlightEmbeddedInline from '$lib/registry/components/highlight-embedded/highlight-embedded-inline.svelte';
+  import HighlightCardInline from '$lib/registry/components/highlight-embedded/highlight-embedded-inline.svelte';
   import { EventCard } from '$lib/registry/components/event-card';
 
   interface Props {
@@ -15,7 +15,7 @@
 
   // Create custom renderer for inline variant
   const inlineRenderer = new ContentRenderer();
-  inlineRenderer.addKind(NDKHighlight, HighlightEmbeddedInline);
+  inlineRenderer.addKind(NDKHighlight, HighlightCardInline);
 </script>
 
 <div class="max-w-2xl">

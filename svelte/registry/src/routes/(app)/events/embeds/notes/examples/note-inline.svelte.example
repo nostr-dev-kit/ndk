@@ -14,7 +14,7 @@
 
   // Create custom renderer for inline variant
   const inlineRenderer = new ContentRenderer();
-  inlineRenderer.addKind([1, 1111], NoteEmbeddedInline);
+  inlineRenderer.addKind([1, 1111], NoteCardInline);
 </script>
 
 <div class="max-w-2xl">

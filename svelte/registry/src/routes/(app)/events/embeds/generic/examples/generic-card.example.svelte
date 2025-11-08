@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { GenericEmbedded } from '$lib/registry/components/generic-embedded';
+  import { GenericCard } from '$lib/registry/components/generic-card';
 
   interface Props {
     ndk: NDKSvelte;
@@ -12,5 +12,5 @@
 </script>
 
 <div class="max-w-2xl">
-  <GenericEmbedded {ndk} {event} variant="card" />
+  <GenericCard {ndk} {event} />
 </div>

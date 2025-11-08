@@ -6,7 +6,7 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte.js';
 	import ClickableMention from './clickable-mention.svelte';
 	import ClickableHashtag from './clickable-hashtag.svelte';
-	import GenericEmbedded from '$lib/registry/components/generic-embedded/generic-embedded.svelte';
+	import GenericCard from '$lib/registry/components/generic-card/generic-card.svelte';
 	import { setContext } from 'svelte';
 
 	interface Props {
@@ -74,20 +74,33 @@
 		{ key: 'compact', label: 'Compact', description: 'Minimal preview' }
 	];
 
+	const articleCardVariants = [
+		{ key: 'raw', label: 'Raw', description: 'Unprocessed nostr: reference' },
+		{ key: 'card', label: 'ArticleCardMedium', description: 'Horizontal layout with image' },
+		{ key: 'inline', label: 'ArticleCardInline', description: 'Compact inline preview' },
+		{ key: 'compact', label: 'ArticleCardCompact', description: 'Minimal preview' },
+		{ key: 'medium', label: 'ArticleCardMedium', description: 'Horizontal layout with image' },
+		{ key: 'hero', label: 'ArticleCardHero', description: 'Large featured card' },
+		{ key: 'neon', label: 'ArticleCardNeon', description: 'Neon-themed card' },
+		{ key: 'portrait', label: 'ArticleCardPortrait', description: 'Portrait orientation card' }
+	];
+
 	// Generate variants with actual component names
 	const currentEmbeddedVariants = $derived.by(() => {
 		if (!selectedEmbed) return embeddedVariants;
 
+		if (selectedEmbed === 'embedded-article') {
+			return articleCardVariants;
+		}
+
 		const componentPrefix =
 			selectedEmbed === 'embedded-note'
 				? 'Note'
-				: selectedEmbed === 'embedded-article'
-					? 'Article'
-					: selectedEmbed === 'embedded-highlight'
-						? 'Highlight'
-						: selectedEmbed === 'embedded-generic'
-							? 'Generic'
-							: null;
+				: selectedEmbed === 'embedded-highlight'
+					? 'Highlight'
+					: selectedEmbed === 'embedded-generic'
+						? 'Generic'
+						: null;
 
 		if (!componentPrefix) return embeddedVariants;
 
@@ -96,7 +109,7 @@
 				? v
 				: {
 						...v,
-						label: `${componentPrefix}Embedded${v.key.charAt(0).toUpperCase() + v.key.slice(1)}`
+						label: `${componentPrefix}Card${v.key.charAt(0).toUpperCase() + v.key.slice(1)}`
 					}
 		);
 	});
@@ -114,7 +127,7 @@
 	const customRenderer = new ContentRenderer();
 	customRenderer.mentionComponent = ClickableMention as any;
 	customRenderer.hashtagComponent = ClickableHashtag as any;
-	customRenderer.fallbackComponent = GenericEmbedded;
+	customRenderer.fallbackComponent = GenericCard;
 
 	// Set context so child components can access the interactive state
 	setContext('interactive-demo', {

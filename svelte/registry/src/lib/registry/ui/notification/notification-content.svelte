@@ -7,9 +7,9 @@
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer.svelte';
 	import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer.context';
-	import NoteEmbeddedCompact from '$lib/registry/components/note-embedded-card/note-embedded-card.svelte';
-	import ArticleEmbedded from '$lib/registry/components/article-embedded/article-embedded.svelte';
-	import HighlightEmbedded from '$lib/registry/components/highlight-embedded/highlight-embedded.svelte';
+	import NoteEmbeddedCompact from '$lib/registry/components/note-card/note-card.svelte';
+	import ArticleEmbedded from '$lib/registry/components/article-card/article-card-medium.svelte';
+	import HighlightEmbedded from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
 	import { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
     import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
     import { cn } from '$lib/registry/utils/cn';

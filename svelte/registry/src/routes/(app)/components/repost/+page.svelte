@@ -21,9 +21,7 @@
   // Page metadata
   const metadata = {
     title: 'Repost Buttons',
-    description: 'Interactive repost buttons with quote support and multiple variants',
-    showcaseTitle: 'Repost Button Variants',
-    showcaseDescription: 'Explore different repost button designs for your Nostr application',
+    description: 'Interactive repost buttons with quote support and multiple variants'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -108,6 +106,8 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Repost Button Variants"
+  showcaseDescription="Explore different repost button designs for your Nostr application"
   {ndk}
   showcaseComponents={[
     {

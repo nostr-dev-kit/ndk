@@ -21,9 +21,7 @@
   // Page metadata
   const metadata = {
     title: 'Mute',
-    description: 'Mute buttons and components for Nostr users',
-    showcaseTitle: 'Mute Button Variants',
-    showcaseDescription: 'Manage user mutes with reactive state',
+    description: 'Mute buttons and components for Nostr users'
   };
 
   // Card data for custom mute example
@@ -154,6 +152,8 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Mute Button Variants"
+  showcaseDescription="Manage user mutes with reactive state"
   {ndk}
   showcaseComponents={[
     {

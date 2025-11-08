@@ -18,9 +18,7 @@
   // Page metadata
   const metadata = {
     title: 'Reply',
-    description: 'Reply buttons and components for Nostr events',
-    showcaseTitle: 'Reply Button Variants',
-    showcaseDescription: 'Add reply functionality to your Nostr events',
+    description: 'Reply buttons and components for Nostr events'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -63,6 +61,8 @@
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Reply Button Variants"
+  showcaseDescription="Add reply functionality to your Nostr events"
   {ndk}
   showcaseComponents={[
     {

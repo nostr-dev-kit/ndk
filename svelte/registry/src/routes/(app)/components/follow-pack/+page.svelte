@@ -31,9 +31,7 @@
   // Page metadata
   const metadata = {
     title: 'Follow Packs',
-    description: 'Follow pack components for curated user collections',
-    showcaseTitle: 'Follow Pack Variants',
-    showcaseDescription: 'Display and manage follow pack collections',
+    description: 'Follow pack components for curated user collections'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -164,6 +162,8 @@
 {#if displayPacks.length > 0}
   <ComponentPageTemplate
     {metadata}
+    showcaseTitle="Follow Pack Variants"
+    showcaseDescription="Display and manage follow pack collections"
     {ndk}
     showcaseComponents={[
       {

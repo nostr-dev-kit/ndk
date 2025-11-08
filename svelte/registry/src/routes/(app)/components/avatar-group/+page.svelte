@@ -16,9 +16,7 @@
   // Page metadata
   const metadata = {
     title: 'Avatar Group',
-    description: 'Display a group of user avatars with overflow handling and smart ordering',
-    showcaseTitle: 'Avatar Group Variants',
-    showcaseDescription: 'Explore different avatar group layouts and overflow styles',
+    description: 'Display a group of user avatars with overflow handling and smart ordering'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -152,6 +150,8 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Avatar Group Variants"
+  showcaseDescription="Explore different avatar group layouts and overflow styles"
   {ndk}
   {components}
   {customSections}

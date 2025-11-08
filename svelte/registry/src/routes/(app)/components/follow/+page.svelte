@@ -26,9 +26,7 @@
   // Page metadata
   const metadata = {
     title: 'Follow Buttons',
-    description: 'Interactive follow buttons with multiple variants and styles for users and topics',
-    showcaseTitle: 'Follow Button Variants',
-    showcaseDescription: 'Explore different follow button designs for your Nostr application',
+    description: 'Interactive follow buttons with multiple variants and styles for users and topics'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -243,6 +241,8 @@ await followAction.follow();</code></pre>
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Follow Button Variants"
+  showcaseDescription="Explore different follow button designs for your Nostr application"
   {ndk}
   {showcaseComponents}
   {components}

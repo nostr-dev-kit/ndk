@@ -19,9 +19,7 @@
   // Page metadata
   const metadata = {
     title: 'Relay Input',
-    description: 'Input components for relay URLs',
-    showcaseTitle: 'Relay Input Variants',
-    showcaseDescription: 'Validate and autocomplete relay URLs',
+    description: 'Input components for relay URLs'
   };
 
   // Card data for variants
@@ -131,6 +129,8 @@
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Relay Input Variants"
+  showcaseDescription="Validate and autocomplete relay URLs"
   {ndk}
   showcaseComponents={[
     {

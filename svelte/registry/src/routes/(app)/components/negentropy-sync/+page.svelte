@@ -26,9 +26,7 @@
   // Page metadata
   const metadata = {
     title: 'Negentropy Sync',
-    description: 'Negentropy sync components with real-time progress tracking',
-    showcaseTitle: 'Sync Progress Components',
-    showcaseDescription: 'Track negentropy sync with detailed progress indicators',
+    description: 'Negentropy sync components with real-time progress tracking'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -283,6 +281,8 @@ const syncBuilder = createNegentropySync(() => (&#123;
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Sync Progress Components"
+  showcaseDescription="Track negentropy sync with detailed progress indicators"
   {ndk}
   showcaseComponents={[
     {

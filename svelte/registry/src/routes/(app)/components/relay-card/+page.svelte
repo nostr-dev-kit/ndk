@@ -28,9 +28,7 @@
   // Page metadata
   const metadata = {
     title: 'Relay Cards',
-    description: 'Relay card components for displaying relay information',
-    showcaseTitle: 'Relay Card Variants',
-    showcaseDescription: 'Display relay information with NIP-11 support',
+    description: 'Relay card components for displaying relay information'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -216,6 +214,8 @@
 
 <ComponentPageTemplate
   {metadata}
+  showcaseTitle="Relay Card Variants"
+  showcaseDescription="Display relay information with NIP-11 support"
   {ndk}
   showcaseComponents={[
     {

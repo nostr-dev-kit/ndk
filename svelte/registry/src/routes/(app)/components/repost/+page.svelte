@@ -2,7 +2,9 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
   import repostButtonCode from './examples/basic/index.txt?raw';
@@ -12,9 +14,17 @@
   import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
   import RepostButtonAvatars from '$lib/registry/components/repost/buttons/avatars/repost-button-avatars.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import repostButtonCard from '$lib/registry/components/repost/buttons/basic/registry.json';
+  import repostButtonAvatarsCard from '$lib/registry/components/repost/buttons/avatars/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Repost Buttons',
+    description: 'Interactive repost buttons with quote support and multiple variants',
+    showcaseTitle: 'Repost Button Variants',
+    showcaseDescription: 'Explore different repost button designs for your Nostr application',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -80,33 +90,38 @@
   {/if}
 {/snippet}
 
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...repostButtonCard, code: repostButtonCode}}>
+    {#snippet preview()}
+      {@render repostButtonsPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...repostButtonAvatarsCard, code: repostButtonAvatarsCode}}>
+    {#snippet preview()}
+      {@render avatarsPreview()}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
   showcaseComponents={[
     {
-      cardData: metadata.cards[0],
+      cardData: repostButtonCard,
       preview: repostButtonsPreview,
       orientation: 'horizontal'
     },
     {
-      cardData: metadata.cards[1],
+      cardData: repostButtonAvatarsCard,
       preview: avatarsPreview,
       orientation: 'horizontal'
     }
   ]}
-  componentsSection={{
-    cards: [
-      { ...metadata.cards[0], code: repostButtonCode },
-      { ...metadata.cards[1], code: repostButtonAvatarsCode }
-    ],
-    previews: {
-      'repost-button': repostButtonsPreview,
-      'repost-button-avatars': avatarsPreview
-    }
-  }}
-  apiDocs={metadata.apiDocs}
+  {components}
 >
   <EditProps.Prop
     name="Sample Event"

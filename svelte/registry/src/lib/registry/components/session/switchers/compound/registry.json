@@ -1,0 +1,20 @@
+{
+  "name": "session-compound",
+  "title": "Session Compound",
+  "category": "session",
+  "subcategory": "switchers",
+  "variant": "compound",
+  "description": "A compound switcher for session content",
+  "command": "npx jsrepo add session/switchers/compound",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "session",
+    "switchers",
+    "compound",
+    "nostr",
+    "social"
+  ]
+}

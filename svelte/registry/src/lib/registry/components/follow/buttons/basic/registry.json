@@ -4,85 +4,15 @@
   "category": "follow",
   "subcategory": "buttons",
   "variant": "basic",
-  "description": "A standard follow/unfollow toggle button with optional follower count. Use in user cards, profile headers, or anywhere follow actions are needed.",
-  "showcaseTitle": "Follow Button",
-  "showcaseDescription": "Simple follow/unfollow button with state management.",
-  "command": "npx jsrepo add follow-button",
+  "description": "A basic follow/unfollow button",
+  "command": "npx jsrepo add follow/buttons/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
   ],
-  "registryDependencies": [
-    "builders/follow-action"
-  ],
-  "components": [
-    {
-      "name": "FollowButton",
-      "description": "Follow/unfollow toggle button",
-      "importPath": "import { FollowButton } from '$lib/registry/components/follow-button'",
-      "props": [
-        {
-          "name": "ndk",
-          "type": "NDKSvelte",
-          "description": "NDK instance (optional if provided via context)"
-        },
-        {
-          "name": "user",
-          "type": "NDKUser",
-          "required": true,
-          "description": "User to follow/unfollow"
-        },
-        {
-          "name": "variant",
-          "type": "'ghost' | 'outline' | 'pill' | 'solid'",
-          "default": "outline",
-          "description": "Button style variant"
-        },
-        {
-          "name": "showCount",
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to show follower count"
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "default": "md",
-          "description": "Button size"
-        },
-        {
-          "name": "class",
-          "type": "string",
-          "description": "Additional CSS classes"
-        }
-      ]
-    }
-  ],
-  "examples": [
-    {
-      "name": "basic",
-      "title": "Basic Usage",
-      "description": "Simple follow button",
-      "file": "examples/basic.svelte"
-    },
-    {
-      "name": "with-count",
-      "title": "With Count",
-      "description": "Shows follower count",
-      "file": "examples/with-count.svelte"
-    },
-    {
-      "name": "variants",
-      "title": "Style Variants",
-      "description": "All button styles",
-      "file": "examples/variants.svelte"
-    }
-  ],
   "useCases": [
     "user-profiles",
-    "user-cards",
-    "follow-suggestions",
-    "social-media",
-    "user-directories"
+    "user-lists",
+    "social-features"
   ]
 }

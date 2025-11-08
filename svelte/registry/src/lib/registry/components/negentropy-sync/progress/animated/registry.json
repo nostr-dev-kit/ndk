@@ -1,0 +1,20 @@
+{
+  "name": "negentropy-sync-animated",
+  "title": "Negentropy-sync Animated",
+  "category": "negentropy-sync",
+  "subcategory": "progress",
+  "variant": "animated",
+  "description": "A animated progres for negentropy-sync content",
+  "command": "npx jsrepo add negentropy-sync/progress/animated",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "negentropy-sync",
+    "progress",
+    "animated",
+    "nostr",
+    "social"
+  ]
+}

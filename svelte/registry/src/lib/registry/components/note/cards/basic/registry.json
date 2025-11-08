@@ -4,95 +4,15 @@
   "category": "note",
   "subcategory": "cards",
   "variant": "basic",
-  "description": "A standard note card displaying short-form text content (kind 1 events) with full author information, content, timestamp, and engagement actions. Use in main feeds, timelines, and thread views where you want to show complete note information with all interaction options.",
-  "showcaseTitle": "Note Card",
-  "showcaseDescription": "Standard note display for feeds and timelines.",
-  "command": "npx jsrepo add note-card",
+  "description": "A card for displaying short-form notes",
+  "command": "npx jsrepo add note/cards/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
   ],
-  "registryDependencies": [
-    "ui/user",
-    "components/reaction-button",
-    "components/repost-button",
-    "components/reply-button",
-    "components/zap-button"
-  ],
-  "components": [
-    {
-      "name": "NoteCard",
-      "description": "Note card component for kind 1 events",
-      "importPath": "import { NoteCard } from '$lib/registry/components/note-card'",
-      "props": [
-        {
-          "name": "ndk",
-          "type": "NDKSvelte",
-          "description": "NDK instance (optional if provided via context)"
-        },
-        {
-          "name": "event",
-          "type": "NDKEvent",
-          "required": true,
-          "description": "Note event (kind 1)"
-        },
-        {
-          "name": "showActions",
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to show action buttons"
-        },
-        {
-          "name": "showAuthor",
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to show author information"
-        },
-        {
-          "name": "showTimestamp",
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to show timestamp"
-        },
-        {
-          "name": "maxContentLength",
-          "type": "number",
-          "description": "Maximum content length before truncation"
-        },
-        {
-          "name": "class",
-          "type": "string",
-          "description": "Additional CSS classes"
-        }
-      ]
-    }
-  ],
-  "examples": [
-    {
-      "name": "basic",
-      "title": "Basic Usage",
-      "description": "Standard note card",
-      "file": "examples/basic.svelte"
-    },
-    {
-      "name": "feed",
-      "title": "Note Feed",
-      "description": "Multiple notes in a feed",
-      "file": "examples/feed.svelte"
-    },
-    {
-      "name": "thread",
-      "title": "Thread View",
-      "description": "Notes in a conversation thread",
-      "file": "examples/thread.svelte"
-    }
-  ],
   "useCases": [
-    "social-media",
-    "feeds",
-    "timelines",
-    "threads",
-    "microblogging",
-    "always"
+    "microblogs",
+    "social-feeds",
+    "status-updates"
   ]
 }

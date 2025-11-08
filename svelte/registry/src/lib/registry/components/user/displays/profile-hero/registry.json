@@ -1,0 +1,20 @@
+{
+  "name": "user-profile-hero",
+  "title": "User Profile-hero",
+  "category": "user",
+  "subcategory": "displays",
+  "variant": "profile-hero",
+  "description": "A profile-hero display for user content",
+  "command": "npx jsrepo add user/displays/profile-hero",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user",
+    "displays",
+    "profile-hero",
+    "nostr",
+    "social"
+  ]
+}

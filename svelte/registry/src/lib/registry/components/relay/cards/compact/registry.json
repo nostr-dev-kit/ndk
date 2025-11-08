@@ -1,0 +1,20 @@
+{
+  "name": "relay-compact",
+  "title": "Relay Compact",
+  "category": "relay",
+  "subcategory": "cards",
+  "variant": "compact",
+  "description": "A compact card for relay content",
+  "command": "npx jsrepo add relay/cards/compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "cards",
+    "compact",
+    "nostr",
+    "social"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "article-content",
+  "title": "Article Content",
+  "category": "article",
+  "subcategory": "content",
+  "variant": "basic",
+  "description": "Full article content renderer with highlighting support",
+  "command": "npx jsrepo add article/content/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "article-pages",
+    "blog-posts",
+    "content-display",
+    "reading-view"
+  ]
+}

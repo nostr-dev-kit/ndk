@@ -1,0 +1,20 @@
+{
+  "name": "repost-avatars",
+  "title": "Repost Avatars",
+  "category": "repost",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "description": "A avatars button for repost content",
+  "command": "npx jsrepo add repost/buttons/avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "repost",
+    "buttons",
+    "avatars",
+    "nostr",
+    "social"
+  ]
+}

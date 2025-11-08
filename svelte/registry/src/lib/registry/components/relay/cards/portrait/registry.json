@@ -1,0 +1,20 @@
+{
+  "name": "relay-portrait",
+  "title": "Relay Portrait",
+  "category": "relay",
+  "subcategory": "cards",
+  "variant": "portrait",
+  "description": "A portrait card for relay content",
+  "command": "npx jsrepo add relay/cards/portrait",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "cards",
+    "portrait",
+    "nostr",
+    "social"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "user-list-item",
+  "title": "User List-item",
+  "category": "user",
+  "subcategory": "displays",
+  "variant": "list-item",
+  "description": "A list-item display for user content",
+  "command": "npx jsrepo add user/displays/list-item",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user",
+    "displays",
+    "list-item",
+    "nostr",
+    "social"
+  ]
+}

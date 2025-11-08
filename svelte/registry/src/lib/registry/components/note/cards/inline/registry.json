@@ -1,0 +1,18 @@
+{
+  "name": "note-card-inline",
+  "title": "Note Card Inline",
+  "category": "note",
+  "subcategory": "cards",
+  "variant": "inline",
+  "description": "An inline note reference",
+  "command": "npx jsrepo add note/cards/inline",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "quotes",
+    "references",
+    "embedded-notes"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "image-hero",
+  "title": "Image Hero",
+  "category": "image",
+  "subcategory": "cards",
+  "variant": "hero",
+  "description": "A hero card for image content",
+  "command": "npx jsrepo add image/cards/hero",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "image",
+    "cards",
+    "hero",
+    "nostr",
+    "social"
+  ]
+}

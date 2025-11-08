@@ -1,0 +1,20 @@
+{
+  "name": "voice-message-basic",
+  "title": "Voice-message Basic",
+  "category": "voice-message",
+  "subcategory": "cards",
+  "variant": "basic",
+  "description": "A basic card for voice-message content",
+  "command": "npx jsrepo add voice-message/cards/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "voice-message",
+    "cards",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

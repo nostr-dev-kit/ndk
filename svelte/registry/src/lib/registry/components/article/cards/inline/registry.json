@@ -4,17 +4,16 @@
   "category": "article",
   "subcategory": "cards",
   "variant": "inline",
-  "description": "A text-only article reference showing title and author inline with surrounding content. Use in article mentions, reference lists, or within prose when citing other articles.",
+  "description": "A text-only inline article reference for citations and mentions",
   "command": "npx jsrepo add article/cards/inline",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
   ],
   "useCases": [
-    "article-mentions",
-    "reference-lists",
     "citations",
-    "inline-links",
-    "text-references"
+    "references",
+    "inline-mentions",
+    "text-links"
   ]
 }

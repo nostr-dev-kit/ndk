@@ -1,0 +1,20 @@
+{
+  "name": "negentropy-sync-detailed",
+  "title": "Negentropy-sync Detailed",
+  "category": "negentropy-sync",
+  "subcategory": "progress",
+  "variant": "detailed",
+  "description": "A detailed progres for negentropy-sync content",
+  "command": "npx jsrepo add negentropy-sync/progress/detailed",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "negentropy-sync",
+    "progress",
+    "detailed",
+    "nostr",
+    "social"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "relay-basic",
+  "title": "Relay Basic",
+  "category": "relay",
+  "subcategory": "inputs",
+  "variant": "basic",
+  "description": "A basic input for relay content",
+  "command": "npx jsrepo add relay/inputs/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "inputs",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

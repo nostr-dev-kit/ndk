@@ -1,0 +1,18 @@
+{
+  "name": "zap-send-classic",
+  "title": "Zap Send Classic",
+  "category": "zap",
+  "subcategory": "send",
+  "variant": "classic",
+  "description": "Classic zap sending interface",
+  "command": "npx jsrepo add zap/send/classic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "traditional-ui",
+    "payment-forms",
+    "desktop-apps"
+  ]
+}

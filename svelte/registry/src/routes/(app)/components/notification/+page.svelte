@@ -9,7 +9,7 @@
 	} from '$lib/component-registry/notification';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import * as NotificationItem from '$lib/registry/ui/notification';
-	import { createNotificationFeed } from '$lib/registry/builders/notification';
+	import { createNotificationFeed } from '@nostr-dev-kit/svelte';
 
 	// Import code examples
 	import notificationBuilderCode from './notification-builder.example?raw';

@@ -1,0 +1,20 @@
+{
+  "name": "highlight-basic",
+  "title": "Highlight Basic",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "basic",
+  "description": "A basic card for highlight content",
+  "command": "npx jsrepo add highlight/cards/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

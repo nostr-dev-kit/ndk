@@ -1,0 +1,20 @@
+{
+  "name": "follow-basic",
+  "title": "Follow Basic",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "basic",
+  "description": "A basic pack for follow content",
+  "command": "npx jsrepo add follow/packs/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

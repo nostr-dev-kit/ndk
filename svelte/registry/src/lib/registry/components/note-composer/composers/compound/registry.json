@@ -1,0 +1,20 @@
+{
+  "name": "note-composer-compound",
+  "title": "Note-composer Compound",
+  "category": "note-composer",
+  "subcategory": "composers",
+  "variant": "compound",
+  "description": "A compound composer for note-composer content",
+  "command": "npx jsrepo add note-composer/composers/compound",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "note-composer",
+    "composers",
+    "compound",
+    "nostr",
+    "social"
+  ]
+}

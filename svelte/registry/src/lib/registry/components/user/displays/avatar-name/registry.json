@@ -1,0 +1,20 @@
+{
+  "name": "user-avatar-name",
+  "title": "User Avatar-name",
+  "category": "user",
+  "subcategory": "displays",
+  "variant": "avatar-name",
+  "description": "A avatar-name display for user content",
+  "command": "npx jsrepo add user/displays/avatar-name",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user",
+    "displays",
+    "avatar-name",
+    "nostr",
+    "social"
+  ]
+}

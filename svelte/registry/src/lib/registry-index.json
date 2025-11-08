@@ -1,284 +1,487 @@
 {
   "version": "1.0.0",
-  "generated": "2025-11-08T07:56:42.580Z",
+  "generated": "2025-11-08T08:47:20.462Z",
   "components": {
-    "article-card": {
-      "name": "article-card",
-      "title": "Article Card",
-      "category": "article",
+    "basic": {
+      "name": "zap-send",
+      "title": "Zap Send",
+      "category": "zap",
+      "subcategory": "send",
+      "variant": "basic",
+      "description": "Interface for sending zaps",
+      "command": "npx jsrepo add zap/send/basic",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "payment-forms",
+        "tip-dialogs",
+        "zap-interfaces"
+      ],
+      "path": "zap/send/basic"
+    },
+    "compact": {
+      "name": "voice-message-compact",
+      "title": "Voice-message Compact",
+      "category": "voice-message",
       "subcategory": "cards",
-      "variant": "basic",
-      "description": "A medium-sized article card showing title, summary, cover image, author, and read time in a balanced layout. Use in article feeds, blog listings, or publication homepages where you want to showcase multiple articles with good visual hierarchy.",
-      "showcaseTitle": "Article Card",
-      "showcaseDescription": "Balanced article card for content feeds and blog listings.",
-      "command": "npx jsrepo add article-card",
+      "variant": "compact",
+      "description": "A compact card for voice-message content",
+      "command": "npx jsrepo add voice-message/cards/compact",
       "dependencies": [
         "@nostr-dev-kit/svelte",
         "@nostr-dev-kit/ndk"
       ],
-      "registryDependencies": [
-        "ui/user"
-      ],
-      "components": [
-        {
-          "name": "ArticleCard",
-          "description": "Article card component for kind 30023 events",
-          "importPath": "import { ArticleCard } from '$lib/registry/components/article-card'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional if provided via context)"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Article event (kind 30023)"
-            },
-            {
-              "name": "showImage",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show cover image"
-            },
-            {
-              "name": "showAuthor",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show author information"
-            },
-            {
-              "name": "showSummary",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show article summary"
-            },
-            {
-              "name": "maxSummaryLength",
-              "type": "number",
-              "default": 150,
-              "description": "Maximum summary length in characters"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Standard article card",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "feed",
-          "title": "Article Feed",
-          "description": "Multiple articles in a feed",
-          "file": "examples/feed.svelte"
-        }
-      ],
       "useCases": [
-        "blog",
-        "article-feed",
-        "publication",
-        "news",
-        "content-discovery",
-        "long-form"
+        "voice-message",
+        "cards",
+        "compact",
+        "nostr",
+        "social"
       ],
-      "path": "article-card"
+      "path": "voice-message/cards/compact"
     },
-    "follow-button": {
-      "name": "follow-button",
-      "title": "Follow Button",
-      "category": "follow",
-      "subcategory": "buttons",
-      "variant": "basic",
-      "description": "A standard follow/unfollow toggle button with optional follower count. Use in user cards, profile headers, or anywhere follow actions are needed.",
-      "showcaseTitle": "Follow Button",
-      "showcaseDescription": "Simple follow/unfollow button with state management.",
-      "command": "npx jsrepo add follow-button",
+    "hero": {
+      "name": "image-hero",
+      "title": "Image Hero",
+      "category": "image",
+      "subcategory": "cards",
+      "variant": "hero",
+      "description": "A hero card for image content",
+      "command": "npx jsrepo add image/cards/hero",
       "dependencies": [
         "@nostr-dev-kit/svelte",
         "@nostr-dev-kit/ndk"
       ],
-      "registryDependencies": [
-        "builders/follow-action"
-      ],
-      "components": [
-        {
-          "name": "FollowButton",
-          "description": "Follow/unfollow toggle button",
-          "importPath": "import { FollowButton } from '$lib/registry/components/follow-button'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional if provided via context)"
-            },
-            {
-              "name": "user",
-              "type": "NDKUser",
-              "required": true,
-              "description": "User to follow/unfollow"
-            },
-            {
-              "name": "variant",
-              "type": "'ghost' | 'outline' | 'pill' | 'solid'",
-              "default": "outline",
-              "description": "Button style variant"
-            },
-            {
-              "name": "showCount",
-              "type": "boolean",
-              "default": false,
-              "description": "Whether to show follower count"
-            },
-            {
-              "name": "size",
-              "type": "'sm' | 'md' | 'lg'",
-              "default": "md",
-              "description": "Button size"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Simple follow button",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "with-count",
-          "title": "With Count",
-          "description": "Shows follower count",
-          "file": "examples/with-count.svelte"
-        },
-        {
-          "name": "variants",
-          "title": "Style Variants",
-          "description": "All button styles",
-          "file": "examples/variants.svelte"
-        }
-      ],
       "useCases": [
-        "user-profiles",
-        "user-cards",
-        "follow-suggestions",
-        "social-media",
-        "user-directories"
+        "image",
+        "cards",
+        "hero",
+        "nostr",
+        "social"
       ],
-      "path": "follow-button"
+      "path": "image/cards/hero"
     },
-    "note-card": {
-      "name": "note-card",
-      "title": "Note Card",
+    "inline": {
+      "name": "note-card-inline",
+      "title": "Note Card Inline",
       "category": "note",
       "subcategory": "cards",
-      "variant": "basic",
-      "description": "A standard note card displaying short-form text content (kind 1 events) with full author information, content, timestamp, and engagement actions. Use in main feeds, timelines, and thread views where you want to show complete note information with all interaction options.",
-      "showcaseTitle": "Note Card",
-      "showcaseDescription": "Standard note display for feeds and timelines.",
-      "command": "npx jsrepo add note-card",
+      "variant": "inline",
+      "description": "An inline note reference",
+      "command": "npx jsrepo add note/cards/inline",
       "dependencies": [
         "@nostr-dev-kit/svelte",
         "@nostr-dev-kit/ndk"
       ],
-      "registryDependencies": [
-        "ui/user",
-        "components/reaction-button",
-        "components/repost-button",
-        "components/reply-button",
-        "components/zap-button"
+      "useCases": [
+        "quotes",
+        "references",
+        "embedded-notes"
       ],
-      "components": [
-        {
-          "name": "NoteCard",
-          "description": "Note card component for kind 1 events",
-          "importPath": "import { NoteCard } from '$lib/registry/components/note-card'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional if provided via context)"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Note event (kind 1)"
-            },
-            {
-              "name": "showActions",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show action buttons"
-            },
-            {
-              "name": "showAuthor",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show author information"
-            },
-            {
-              "name": "showTimestamp",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show timestamp"
-            },
-            {
-              "name": "maxContentLength",
-              "type": "number",
-              "description": "Maximum content length before truncation"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Standard note card",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "feed",
-          "title": "Note Feed",
-          "description": "Multiple notes in a feed",
-          "file": "examples/feed.svelte"
-        },
-        {
-          "name": "thread",
-          "title": "Thread View",
-          "description": "Notes in a conversation thread",
-          "file": "examples/thread.svelte"
-        }
+      "path": "note/cards/inline"
+    },
+    "neon": {
+      "name": "user-card-neon",
+      "title": "User Card Neon",
+      "category": "user",
+      "subcategory": "cards",
+      "variant": "neon",
+      "description": "A futuristic neon-styled user card",
+      "command": "npx jsrepo add user/cards/neon",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
       ],
       "useCases": [
-        "social-media",
-        "feeds",
-        "timelines",
-        "threads",
-        "microblogging",
-        "always"
+        "gaming-profiles",
+        "modern-designs",
+        "creative-portfolios"
       ],
-      "path": "note-card"
+      "path": "user/cards/neon"
+    },
+    "portrait": {
+      "name": "user-card-portrait",
+      "title": "User Card Portrait",
+      "category": "user",
+      "subcategory": "cards",
+      "variant": "portrait",
+      "description": "A vertical user card with large avatar",
+      "command": "npx jsrepo add user/cards/portrait",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "profile-pages",
+        "team-grids",
+        "featured-users"
+      ],
+      "path": "user/cards/portrait"
+    },
+    "classic": {
+      "name": "zap-send-classic",
+      "title": "Zap Send Classic",
+      "category": "zap",
+      "subcategory": "send",
+      "variant": "classic",
+      "description": "Classic zap sending interface",
+      "command": "npx jsrepo add zap/send/classic",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "traditional-ui",
+        "payment-forms",
+        "desktop-apps"
+      ],
+      "path": "zap/send/classic"
+    },
+    "compound": {
+      "name": "session-compound",
+      "title": "Session Compound",
+      "category": "session",
+      "subcategory": "switchers",
+      "variant": "compound",
+      "description": "A compound switcher for session content",
+      "command": "npx jsrepo add session/switchers/compound",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "session",
+        "switchers",
+        "compound",
+        "nostr",
+        "social"
+      ],
+      "path": "session/switchers/compound"
+    },
+    "generic": {
+      "name": "generic-card",
+      "title": "Generic Event Card",
+      "category": "event",
+      "subcategory": "cards",
+      "variant": "generic",
+      "description": "A generic card for any event type",
+      "command": "npx jsrepo add event/cards/generic",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "unknown-events",
+        "fallback-display",
+        "debugging"
+      ],
+      "path": "event/cards/generic"
+    },
+    "animated": {
+      "name": "negentropy-sync-animated",
+      "title": "Negentropy-sync Animated",
+      "category": "negentropy-sync",
+      "subcategory": "progress",
+      "variant": "animated",
+      "description": "A animated progres for negentropy-sync content",
+      "command": "npx jsrepo add negentropy-sync/progress/animated",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "negentropy-sync",
+        "progress",
+        "animated",
+        "nostr",
+        "social"
+      ],
+      "path": "negentropy-sync/progress/animated"
+    },
+    "pill": {
+      "name": "follow-button-pill",
+      "title": "Follow Button Pill",
+      "category": "follow",
+      "subcategory": "buttons",
+      "variant": "pill",
+      "description": "A pill-shaped follow button",
+      "command": "npx jsrepo add follow/buttons/pill",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "compact-ui",
+        "mobile-apps",
+        "inline-actions"
+      ],
+      "path": "follow/buttons/pill"
+    },
+    "modern": {
+      "name": "follow-modern",
+      "title": "Follow Modern",
+      "category": "follow",
+      "subcategory": "packs",
+      "variant": "modern",
+      "description": "A modern pack for follow content",
+      "command": "npx jsrepo add follow/packs/modern",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "follow",
+        "packs",
+        "modern",
+        "nostr",
+        "social"
+      ],
+      "path": "follow/packs/modern"
+    },
+    "hashtag": {
+      "name": "hashtag",
+      "title": "Hashtag",
+      "category": "hashtag",
+      "subcategory": "displays",
+      "variant": "basic",
+      "description": "Basic hashtag display component for inline hashtag references",
+      "command": "npx jsrepo add hashtag",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "hashtag-display",
+        "inline-tags",
+        "topic-links",
+        "content-categorization"
+      ],
+      "path": "hashtag"
+    },
+    "button": {
+      "name": "media-button",
+      "title": "Media Button",
+      "category": "media",
+      "subcategory": "upload",
+      "variant": "button",
+      "description": "A button uploa for media content",
+      "command": "npx jsrepo add media/upload/button",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "media",
+        "upload",
+        "button",
+        "nostr",
+        "social"
+      ],
+      "path": "media/upload/button"
+    },
+    "carousel": {
+      "name": "media-carousel",
+      "title": "Media Carousel",
+      "category": "media",
+      "subcategory": "upload",
+      "variant": "carousel",
+      "description": "A carousel uploa for media content",
+      "command": "npx jsrepo add media/upload/carousel",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "media",
+        "upload",
+        "carousel",
+        "nostr",
+        "social"
+      ],
+      "path": "media/upload/carousel"
+    },
+    "mention": {
+      "name": "mention",
+      "title": "Mention",
+      "category": "mention",
+      "subcategory": "displays",
+      "variant": "basic",
+      "description": "Basic mention display component for inline user mentions",
+      "command": "npx jsrepo add mention",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user-mentions",
+        "inline-profiles",
+        "social-references",
+        "content-attribution"
+      ],
+      "path": "mention"
+    },
+    "avatar-group": {
+      "name": "avatar-group",
+      "title": "Avatar Group",
+      "category": "misc",
+      "subcategory": "displays",
+      "variant": "avatar-group",
+      "description": "Display a group of user avatars with overflow handling",
+      "command": "npx jsrepo add misc/avatar-group",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user-groups",
+        "follower-display",
+        "reaction-authors",
+        "participant-lists"
+      ],
+      "path": "misc/avatar-group"
+    },
+    "content-tab": {
+      "name": "content-tab",
+      "title": "Content Tab",
+      "category": "misc",
+      "subcategory": "navigation",
+      "variant": "content-tab",
+      "description": "Tab component for content categorization and filtering",
+      "command": "npx jsrepo add misc/content-tab",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "content-filtering",
+        "tab-navigation",
+        "category-selection",
+        "view-switching"
+      ],
+      "path": "misc/content-tab"
+    },
+    "emoji-picker": {
+      "name": "emoji-picker",
+      "title": "Emoji Picker",
+      "category": "misc",
+      "subcategory": "inputs",
+      "variant": "emoji-picker",
+      "description": "Emoji selection component with search and categories",
+      "command": "npx jsrepo add misc/emoji-picker",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "emoji-selection",
+        "reaction-picker",
+        "message-composition",
+        "user-input"
+      ],
+      "path": "misc/emoji-picker"
+    },
+    "detailed": {
+      "name": "negentropy-sync-detailed",
+      "title": "Negentropy-sync Detailed",
+      "category": "negentropy-sync",
+      "subcategory": "progress",
+      "variant": "detailed",
+      "description": "A detailed progres for negentropy-sync content",
+      "command": "npx jsrepo add negentropy-sync/progress/detailed",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "negentropy-sync",
+        "progress",
+        "detailed",
+        "nostr",
+        "social"
+      ],
+      "path": "negentropy-sync/progress/detailed"
+    },
+    "minimal": {
+      "name": "negentropy-sync-minimal",
+      "title": "Negentropy-sync Minimal",
+      "category": "negentropy-sync",
+      "subcategory": "progress",
+      "variant": "minimal",
+      "description": "A minimal progres for negentropy-sync content",
+      "command": "npx jsrepo add negentropy-sync/progress/minimal",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "negentropy-sync",
+        "progress",
+        "minimal",
+        "nostr",
+        "social"
+      ],
+      "path": "negentropy-sync/progress/minimal"
+    },
+    "expanded": {
+      "name": "voice-message-expanded",
+      "title": "Voice-message Expanded",
+      "category": "voice-message",
+      "subcategory": "cards",
+      "variant": "expanded",
+      "description": "A expanded card for voice-message content",
+      "command": "npx jsrepo add voice-message/cards/expanded",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "voice-message",
+        "cards",
+        "expanded",
+        "nostr",
+        "social"
+      ],
+      "path": "voice-message/cards/expanded"
+    },
+    "longpress": {
+      "name": "reaction",
+      "title": "Reaction Button",
+      "category": "reaction",
+      "subcategory": "buttons",
+      "variant": "longpress",
+      "description": "A sophisticated reaction button with long-press emoji picker",
+      "command": "npx jsrepo add reaction/buttons/longpress",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "social-interactions",
+        "engagement",
+        "feedback"
+      ],
+      "path": "reaction/buttons/longpress"
+    },
+    "avatars": {
+      "name": "zap-button-avatars",
+      "title": "Zap Button Avatars",
+      "category": "zap",
+      "subcategory": "buttons",
+      "variant": "avatars",
+      "description": "Display zap senders as avatars",
+      "command": "npx jsrepo add zap/buttons/avatars",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "social-proof",
+        "top-zappers",
+        "payment-display"
+      ],
+      "path": "zap/buttons/avatars"
     },
     "reaction": {
       "name": "reaction",
@@ -387,527 +590,190 @@
       ],
       "path": "reaction"
     },
-    "reaction-button": {
-      "name": "reaction-button",
-      "title": "Reaction Button",
-      "category": "reaction",
-      "subcategory": "buttons",
-      "variant": "basic",
-      "description": "A simple reaction button with optional count display. Use in post actions, content cards, or anywhere users can react to content with a single emoji.",
-      "showcaseTitle": "Simple Reaction Button",
-      "showcaseDescription": "A minimal reaction button with optional count display. Click to react with default emoji.",
-      "command": "npx jsrepo add reaction-button",
+    "connection": {
+      "name": "relay-connection",
+      "title": "Relay Connection",
+      "category": "relay",
+      "subcategory": "status",
+      "variant": "connection",
+      "description": "A connection statu for relay content",
+      "command": "npx jsrepo add relay/status/connection",
       "dependencies": [
         "@nostr-dev-kit/svelte",
         "@nostr-dev-kit/ndk"
       ],
-      "registryDependencies": [
-        "builders/reaction-action"
-      ],
-      "components": [
-        {
-          "name": "ReactionButton",
-          "description": "Minimal reaction button with icon and count",
-          "importPath": "import { ReactionButton } from '$lib/registry/components/reaction-button'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional if provided via context)"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Event to react to"
-            },
-            {
-              "name": "emoji",
-              "type": "string",
-              "default": "❤️",
-              "description": "Emoji to use for reaction"
-            },
-            {
-              "name": "variant",
-              "type": "'ghost' | 'outline' | 'pill' | 'solid'",
-              "default": "ghost",
-              "description": "Button style variant"
-            },
-            {
-              "name": "showCount",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show reaction count"
-            },
-            {
-              "name": "delayed",
-              "type": "number",
-              "description": "Delay in seconds before publishing (for cancellable reactions)"
-            },
-            {
-              "name": "onclick",
-              "type": "() => void",
-              "description": "Handler called when button is clicked"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Simple reaction button with count",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "variants",
-          "title": "Style Variants",
-          "description": "All available button styles",
-          "file": "examples/variants.svelte"
-        }
-      ],
       "useCases": [
-        "social-media",
-        "posts",
-        "comments",
-        "feeds",
-        "engagement",
-        "likes",
-        "reactions"
+        "relay",
+        "status",
+        "connection",
+        "nostr",
+        "social"
       ],
-      "path": "reaction-button"
+      "path": "relay/status/connection"
     },
-    "reaction-button-avatars": {
-      "name": "reaction-button-avatars",
-      "title": "Reaction Button Avatars",
-      "category": "reaction",
-      "subcategory": "displays",
-      "variant": "avatars",
-      "description": "A display showing reaction count with avatars of users who reacted. Use to show social proof and engagement metrics without allowing new reactions.",
-      "showcaseTitle": "Reaction Avatars Display",
-      "showcaseDescription": "Shows avatars of users who reacted to content with reaction count. Great for showing social proof.",
-      "command": "npx jsrepo add reaction-button-avatars",
-      "dependencies": [
-        "@nostr-dev-kit/svelte",
-        "@nostr-dev-kit/ndk"
-      ],
-      "registryDependencies": [
-        "ui/user",
-        "builders/reaction-action"
-      ],
-      "components": [
-        {
-          "name": "ReactionButtonAvatars",
-          "description": "Component that displays avatars of users who have reacted to an event",
-          "importPath": "import { ReactionButtonAvatars } from '$lib/registry/components/reaction-button-avatars'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional, uses context if not provided)"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Event to show reaction authors for"
-            },
-            {
-              "name": "variant",
-              "type": "'ghost' | 'outline' | 'pill' | 'solid'",
-              "default": "ghost",
-              "description": "Button style variant"
-            },
-            {
-              "name": "emoji",
-              "type": "string",
-              "default": "❤️",
-              "description": "Filter by specific emoji"
-            },
-            {
-              "name": "max",
-              "type": "number",
-              "default": 3,
-              "description": "Maximum number of avatars to display before showing overflow"
-            },
-            {
-              "name": "avatarSize",
-              "type": "number",
-              "default": 24,
-              "description": "Size of each avatar in pixels"
-            },
-            {
-              "name": "spacing",
-              "type": "'tight' | 'normal' | 'loose'",
-              "default": "tight",
-              "description": "Spacing between avatars"
-            },
-            {
-              "name": "showCount",
-              "type": "boolean",
-              "default": true,
-              "description": "Show total reaction count"
-            },
-            {
-              "name": "onclick",
-              "type": "() => void",
-              "description": "Handler called when button is clicked"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Shows avatars and count",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "variants",
-          "title": "Style Variants",
-          "description": "All available button styles",
-          "file": "examples/variants.svelte"
-        }
-      ],
-      "useCases": [
-        "social-proof",
-        "engagement-display",
-        "reaction-metrics",
-        "posts",
-        "comments"
-      ],
-      "path": "reaction-button-avatars"
-    },
-    "reaction-emoji-button": {
-      "name": "reaction-emoji-button",
-      "title": "Reaction Emoji Button",
-      "category": "reaction",
-      "subcategory": "buttons",
-      "variant": "emoji",
-      "description": "A reaction button that opens an emoji picker on hover. Use when you want to add visual delight to the reaction action, better for desktop interfaces.",
-      "showcaseTitle": "Reaction with Emoji Picker",
-      "showcaseDescription": "Reaction button that opens an emoji picker on hover. Better for desktop interfaces.",
-      "command": "npx jsrepo add reaction-emoji-button",
-      "dependencies": [
-        "@nostr-dev-kit/svelte",
-        "@nostr-dev-kit/ndk",
-        "bits-ui"
-      ],
-      "registryDependencies": [
-        "components/reaction-button",
-        "components/emoji-picker",
-        "builders/reaction-action"
-      ],
-      "components": [
-        {
-          "name": "ReactionEmojiButton",
-          "description": "Reaction button with emoji picker popover",
-          "importPath": "import { ReactionEmojiButton } from '$lib/registry/components/reaction-emoji-button'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "required": true,
-              "description": "NDK instance"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Event to react to"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            },
-            {
-              "name": "children",
-              "type": "Snippet",
-              "description": "Custom trigger content (optional)"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Hover to open emoji picker",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "custom-trigger",
-          "title": "Custom Trigger",
-          "description": "Use custom content as trigger",
-          "file": "examples/custom-trigger.svelte"
-        }
-      ],
-      "useCases": [
-        "desktop-apps",
-        "web-apps",
-        "emoji-selection",
-        "reactions",
-        "engagement"
-      ],
-      "path": "reaction-emoji-button"
-    },
-    "reaction-slack": {
-      "name": "reaction-slack",
-      "title": "Reaction Slack",
-      "category": "reaction",
-      "subcategory": "displays",
-      "variant": "slack",
-      "description": "Displays all reactions on an event in a Slack-like format. Shows all existing reactions grouped by emoji with user attribution. Use in detailed activity views or when notifications need rich interaction.",
-      "showcaseTitle": "Slack-Style Reactions",
-      "showcaseDescription": "Display all reactions on an event in a Slack-like format with user attribution.",
-      "command": "npx jsrepo add reaction-slack",
-      "dependencies": [
-        "@nostr-dev-kit/svelte",
-        "@nostr-dev-kit/ndk",
-        "bits-ui"
-      ],
-      "registryDependencies": [
-        "ui/user",
-        "ui/reaction",
-        "builders/reaction-action"
-      ],
-      "components": [
-        {
-          "name": "ReactionSlack",
-          "description": "Slack-style reaction display with user attribution",
-          "importPath": "import { ReactionSlack } from '$lib/registry/components/reaction-slack'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "required": true,
-              "description": "NDK instance"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Event to show reactions for"
-            },
-            {
-              "name": "layout",
-              "type": "'horizontal' | 'vertical'",
-              "default": "horizontal",
-              "description": "Layout direction (horizontal shows avatars in popover, vertical shows inline)"
-            },
-            {
-              "name": "showAvatars",
-              "type": "boolean",
-              "default": true,
-              "description": "Show user avatars"
-            },
-            {
-              "name": "delayed",
-              "type": "number",
-              "description": "Delay in seconds before publishing (for cancellable reactions)"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "horizontal",
-          "title": "Horizontal Layout",
-          "description": "Avatars shown in popover on hover",
-          "file": "examples/horizontal.svelte"
-        },
-        {
-          "name": "vertical",
-          "title": "Vertical Layout",
-          "description": "Avatars shown inline",
-          "file": "examples/vertical.svelte"
-        }
-      ],
-      "useCases": [
-        "slack-clone",
-        "team-collaboration",
-        "detailed-reactions",
-        "activity-feeds",
-        "messaging"
-      ],
-      "path": "reaction-slack"
-    },
-    "user-card-classic": {
-      "name": "user-card-classic",
-      "title": "User Card Classic",
+    "glass": {
+      "name": "user-card-glass",
+      "title": "User Card Glass",
       "category": "user",
       "subcategory": "cards",
-      "variant": "classic",
-      "description": "A standard user card with avatar, name, bio, and follow button in a clean layout. Use in user directories, follow suggestions, or profile previews.",
-      "showcaseTitle": "Classic User Card",
-      "showcaseDescription": "Standard user card with clean design and essential information.",
-      "command": "npx jsrepo add user-card-classic",
+      "variant": "glass",
+      "description": "A glassmorphism-styled user card",
+      "command": "npx jsrepo add user/cards/glass",
       "dependencies": [
         "@nostr-dev-kit/svelte",
         "@nostr-dev-kit/ndk"
       ],
-      "registryDependencies": [
-        "ui/user",
-        "components/follow-button"
-      ],
-      "components": [
-        {
-          "name": "UserCardClassic",
-          "description": "Classic user card component",
-          "importPath": "import { UserCardClassic } from '$lib/registry/components/user-card-classic'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional if provided via context)"
-            },
-            {
-              "name": "user",
-              "type": "NDKUser",
-              "required": true,
-              "description": "User to display"
-            },
-            {
-              "name": "showFollowButton",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show follow button"
-            },
-            {
-              "name": "showBio",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show user bio"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Standard user card",
-          "file": "examples/basic.svelte"
-        }
-      ],
       "useCases": [
-        "user-directories",
-        "follow-suggestions",
-        "profile-previews",
-        "user-lists",
-        "social-media"
+        "modern-designs",
+        "overlay-cards",
+        "hero-sections"
       ],
-      "path": "user-card-classic"
+      "path": "user/cards/glass"
     },
-    "zap-button": {
-      "name": "zap-button",
-      "title": "Zap Button",
-      "category": "zap",
-      "subcategory": "buttons",
-      "variant": "basic",
-      "description": "A simple zap (Lightning payment) button with optional amount display. Use in post actions, profile tips, or anywhere users can send payments.",
-      "showcaseTitle": "Zap Button",
-      "showcaseDescription": "Simple Lightning payment button for sending zaps.",
-      "command": "npx jsrepo add zap-button",
+    "landscape": {
+      "name": "user-card-landscape",
+      "title": "User Card Landscape",
+      "category": "user",
+      "subcategory": "cards",
+      "variant": "landscape",
+      "description": "A horizontal user card layout",
+      "command": "npx jsrepo add user/cards/landscape",
       "dependencies": [
         "@nostr-dev-kit/svelte",
-        "@nostr-dev-kit/ndk",
-        "@getalby/sdk"
-      ],
-      "registryDependencies": [
-        "builders/zap-action"
-      ],
-      "components": [
-        {
-          "name": "ZapButton",
-          "description": "Lightning payment button",
-          "importPath": "import { ZapButton } from '$lib/registry/components/zap-button'",
-          "props": [
-            {
-              "name": "ndk",
-              "type": "NDKSvelte",
-              "description": "NDK instance (optional if provided via context)"
-            },
-            {
-              "name": "event",
-              "type": "NDKEvent",
-              "required": true,
-              "description": "Event to zap"
-            },
-            {
-              "name": "user",
-              "type": "NDKUser",
-              "description": "User to zap (if not zapping an event)"
-            },
-            {
-              "name": "amount",
-              "type": "number",
-              "description": "Default zap amount in sats"
-            },
-            {
-              "name": "showAmount",
-              "type": "boolean",
-              "default": true,
-              "description": "Whether to show zap amount"
-            },
-            {
-              "name": "variant",
-              "type": "'ghost' | 'outline' | 'pill' | 'solid'",
-              "default": "ghost",
-              "description": "Button style variant"
-            },
-            {
-              "name": "class",
-              "type": "string",
-              "description": "Additional CSS classes"
-            }
-          ]
-        }
-      ],
-      "examples": [
-        {
-          "name": "basic",
-          "title": "Basic Usage",
-          "description": "Simple zap button",
-          "file": "examples/basic.svelte"
-        },
-        {
-          "name": "with-amount",
-          "title": "With Amount",
-          "description": "Shows zap amounts",
-          "file": "examples/with-amount.svelte"
-        }
+        "@nostr-dev-kit/ndk"
       ],
       "useCases": [
-        "lightning-payments",
-        "tipping",
-        "monetization",
-        "social-media",
-        "content-support"
+        "user-lists",
+        "comment-sections",
+        "author-bios"
       ],
-      "path": "zap-button"
+      "path": "user/cards/landscape"
+    },
+    "avatar-name": {
+      "name": "user-avatar-name",
+      "title": "User Avatar-name",
+      "category": "user",
+      "subcategory": "displays",
+      "variant": "avatar-name",
+      "description": "A avatar-name display for user content",
+      "command": "npx jsrepo add user/displays/avatar-name",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user",
+        "displays",
+        "avatar-name",
+        "nostr",
+        "social"
+      ],
+      "path": "user/displays/avatar-name"
+    },
+    "list-item": {
+      "name": "user-list-item",
+      "title": "User List-item",
+      "category": "user",
+      "subcategory": "displays",
+      "variant": "list-item",
+      "description": "A list-item display for user content",
+      "command": "npx jsrepo add user/displays/list-item",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user",
+        "displays",
+        "list-item",
+        "nostr",
+        "social"
+      ],
+      "path": "user/displays/list-item"
+    },
+    "profile": {
+      "name": "user-profile",
+      "title": "User Profile",
+      "category": "user",
+      "subcategory": "displays",
+      "variant": "profile",
+      "description": "A profile display for user content",
+      "command": "npx jsrepo add user/displays/profile",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user",
+        "displays",
+        "profile",
+        "nostr",
+        "social"
+      ],
+      "path": "user/displays/profile"
+    },
+    "profile-hero": {
+      "name": "user-profile-hero",
+      "title": "User Profile-hero",
+      "category": "user",
+      "subcategory": "displays",
+      "variant": "profile-hero",
+      "description": "A profile-hero display for user content",
+      "command": "npx jsrepo add user/displays/profile-hero",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user",
+        "displays",
+        "profile-hero",
+        "nostr",
+        "social"
+      ],
+      "path": "user/displays/profile-hero"
+    },
+    "search": {
+      "name": "user-search",
+      "title": "User Search",
+      "category": "user",
+      "subcategory": "inputs",
+      "variant": "search",
+      "description": "A search input for user content",
+      "command": "npx jsrepo add user/inputs/search",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "user",
+        "inputs",
+        "search",
+        "nostr",
+        "social"
+      ],
+      "path": "user/inputs/search"
+    },
+    "list": {
+      "name": "zap-list",
+      "title": "Zap List",
+      "category": "zap",
+      "subcategory": "displays",
+      "variant": "list",
+      "description": "A list display for zap content",
+      "command": "npx jsrepo add zap/displays/list",
+      "dependencies": [
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/ndk"
+      ],
+      "useCases": [
+        "zap",
+        "displays",
+        "list",
+        "nostr",
+        "social"
+      ],
+      "path": "zap/displays/list"
     }
   },
   "categories": {
@@ -915,82 +781,376 @@
       "name": "article",
       "subcategories": {
         "cards": [
-          "article-card"
+          "basic",
+          "compact",
+          "hero",
+          "inline",
+          "neon",
+          "portrait"
+        ],
+        "content": [
+          "basic"
         ]
       },
       "components": [
-        "article-card"
+        "basic",
+        "compact",
+        "hero",
+        "inline",
+        "neon",
+        "portrait",
+        "basic"
+      ]
+    },
+    "event": {
+      "name": "event",
+      "subcategories": {
+        "cards": [
+          "classic",
+          "compound",
+          "generic"
+        ]
+      },
+      "components": [
+        "classic",
+        "compound",
+        "generic"
       ]
     },
     "follow": {
       "name": "follow",
       "subcategories": {
         "buttons": [
-          "follow-button"
+          "animated",
+          "basic",
+          "pill"
+        ],
+        "packs": [
+          "basic",
+          "compact",
+          "hero",
+          "modern",
+          "portrait"
         ]
       },
       "components": [
-        "follow-button"
+        "animated",
+        "basic",
+        "pill",
+        "basic",
+        "compact",
+        "hero",
+        "modern",
+        "portrait"
+      ]
+    },
+    "hashtag": {
+      "name": "hashtag",
+      "subcategories": {
+        "displays": [
+          "hashtag"
+        ]
+      },
+      "components": [
+        "hashtag"
+      ]
+    },
+    "highlight": {
+      "name": "highlight",
+      "subcategories": {
+        "cards": [
+          "basic",
+          "compact",
+          "inline"
+        ]
+      },
+      "components": [
+        "basic",
+        "compact",
+        "inline"
+      ]
+    },
+    "image": {
+      "name": "image",
+      "subcategories": {
+        "cards": [
+          "basic",
+          "hero"
+        ],
+        "content": [
+          "basic"
+        ]
+      },
+      "components": [
+        "basic",
+        "hero",
+        "basic"
+      ]
+    },
+    "media": {
+      "name": "media",
+      "subcategories": {
+        "upload": [
+          "button",
+          "carousel"
+        ]
+      },
+      "components": [
+        "button",
+        "carousel"
+      ]
+    },
+    "mention": {
+      "name": "mention",
+      "subcategories": {
+        "displays": [
+          "mention"
+        ]
+      },
+      "components": [
+        "mention"
+      ]
+    },
+    "misc": {
+      "name": "misc",
+      "subcategories": {
+        "displays": [
+          "avatar-group"
+        ],
+        "navigation": [
+          "content-tab"
+        ],
+        "inputs": [
+          "emoji-picker"
+        ]
+      },
+      "components": [
+        "avatar-group",
+        "content-tab",
+        "emoji-picker"
+      ]
+    },
+    "mute": {
+      "name": "mute",
+      "subcategories": {
+        "buttons": [
+          "basic"
+        ]
+      },
+      "components": [
+        "basic"
+      ]
+    },
+    "negentropy-sync": {
+      "name": "negentropy-sync",
+      "subcategories": {
+        "progress": [
+          "animated",
+          "detailed",
+          "minimal"
+        ]
+      },
+      "components": [
+        "animated",
+        "detailed",
+        "minimal"
       ]
     },
     "note": {
       "name": "note",
       "subcategories": {
         "cards": [
-          "note-card"
+          "basic",
+          "compact",
+          "inline"
         ]
       },
       "components": [
-        "note-card"
+        "basic",
+        "compact",
+        "inline"
+      ]
+    },
+    "note-composer": {
+      "name": "note-composer",
+      "subcategories": {
+        "composers": [
+          "compound"
+        ]
+      },
+      "components": [
+        "compound"
+      ]
+    },
+    "notification": {
+      "name": "notification",
+      "subcategories": {
+        "items": [
+          "compact",
+          "expanded"
+        ]
+      },
+      "components": [
+        "compact",
+        "expanded"
       ]
     },
     "reaction": {
       "name": "reaction",
       "subcategories": {
         "buttons": [
-          "reaction",
-          "reaction-button",
-          "reaction-emoji-button"
+          "longpress",
+          "reaction"
         ],
         "displays": [
-          "reaction-button-avatars",
-          "reaction-slack"
+          "avatars"
         ]
       },
       "components": [
-        "reaction",
-        "reaction-button",
-        "reaction-button-avatars",
-        "reaction-emoji-button",
-        "reaction-slack"
+        "longpress",
+        "avatars",
+        "reaction"
+      ]
+    },
+    "relay": {
+      "name": "relay",
+      "subcategories": {
+        "cards": [
+          "basic",
+          "compact",
+          "portrait"
+        ],
+        "inputs": [
+          "basic"
+        ],
+        "status": [
+          "connection"
+        ]
+      },
+      "components": [
+        "basic",
+        "compact",
+        "portrait",
+        "basic",
+        "connection"
+      ]
+    },
+    "reply": {
+      "name": "reply",
+      "subcategories": {
+        "buttons": [
+          "basic"
+        ]
+      },
+      "components": [
+        "basic"
+      ]
+    },
+    "repost": {
+      "name": "repost",
+      "subcategories": {
+        "buttons": [
+          "avatars",
+          "basic"
+        ]
+      },
+      "components": [
+        "avatars",
+        "basic"
+      ]
+    },
+    "session": {
+      "name": "session",
+      "subcategories": {
+        "switchers": [
+          "compound"
+        ]
+      },
+      "components": [
+        "compound"
       ]
     },
     "user": {
       "name": "user",
       "subcategories": {
         "cards": [
-          "user-card-classic"
+          "classic",
+          "compact",
+          "glass",
+          "landscape",
+          "neon",
+          "portrait"
+        ],
+        "displays": [
+          "avatar-name",
+          "list-item",
+          "profile",
+          "profile-hero"
+        ],
+        "inputs": [
+          "search"
         ]
       },
       "components": [
-        "user-card-classic"
+        "classic",
+        "compact",
+        "glass",
+        "landscape",
+        "neon",
+        "portrait",
+        "avatar-name",
+        "list-item",
+        "profile",
+        "profile-hero",
+        "search"
+      ]
+    },
+    "voice-message": {
+      "name": "voice-message",
+      "subcategories": {
+        "cards": [
+          "basic",
+          "compact",
+          "expanded"
+        ],
+        "players": [
+          "basic"
+        ]
+      },
+      "components": [
+        "basic",
+        "compact",
+        "expanded",
+        "basic"
       ]
     },
     "zap": {
       "name": "zap",
       "subcategories": {
         "buttons": [
-          "zap-button"
+          "avatars",
+          "basic"
+        ],
+        "displays": [
+          "list"
+        ],
+        "send": [
+          "basic",
+          "classic"
         ]
       },
       "components": [
-        "zap-button"
+        "avatars",
+        "basic",
+        "list",
+        "basic",
+        "classic"
       ]
     }
   },
   "stats": {
-    "totalComponents": 10,
-    "totalCategories": 6,
-    "totalSubcategories": 7
+    "totalComponents": 73,
+    "totalCategories": 22,
+    "totalSubcategories": 35
   }
 }

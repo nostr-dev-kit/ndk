@@ -1,0 +1,18 @@
+{
+  "name": "zap-send",
+  "title": "Zap Send",
+  "category": "zap",
+  "subcategory": "send",
+  "variant": "basic",
+  "description": "Interface for sending zaps",
+  "command": "npx jsrepo add zap/send/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "payment-forms",
+    "tip-dialogs",
+    "zap-interfaces"
+  ]
+}

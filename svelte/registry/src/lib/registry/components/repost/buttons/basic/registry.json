@@ -1,0 +1,20 @@
+{
+  "name": "repost-basic",
+  "title": "Repost Basic",
+  "category": "repost",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "description": "A basic button for repost content",
+  "command": "npx jsrepo add repost/buttons/basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "repost",
+    "buttons",
+    "basic",
+    "nostr",
+    "social"
+  ]
+}

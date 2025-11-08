@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createNotificationFeed } from '$lib/registry/builders/notification';
+	import { createNotificationFeed } from '@nostr-dev-kit/svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 
 	const ndk = getContext<NDKSvelte>('ndk');

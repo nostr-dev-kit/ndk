@@ -156,17 +156,24 @@
     >
       {#if !bannerUrl && !isUploadingBanner}
         <div class="absolute top-[15px] left-[15px] bg-white/90 backdrop-blur-[10px] px-3 py-1.5 rounded-xl text-[0.625rem] font-semibold text-foreground shadow-sm whitespace-nowrap flex items-center gap-1.5 z-[5]">
-          <button
+          <div
             class="text-xs cursor-pointer inline-flex items-center justify-center w-4 h-4 rounded bg-muted transition-all border-none text-foreground hover:bg-primary hover:text-primary-foreground hover:rotate-180"
             onclick={(e) => {
               e.stopPropagation();
               reshuffle();
             }}
-            type="button"
+            role="button"
+            tabindex="0"
+            onkeydown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+                reshuffle();
+              }
+            }}
             title="Generate new key"
           >
             ↻
-          </button>
+          </div>
         </div>
       {/if}
       <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 transition-opacity text-white text-sm font-semibold hover:opacity-100">

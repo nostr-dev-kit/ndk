@@ -1,0 +1,20 @@
+{
+  "name": "notification-expanded",
+  "title": "Notification Expanded",
+  "category": "notification",
+  "subcategory": "items",
+  "variant": "expanded",
+  "description": "A expanded item for notification content",
+  "command": "npx jsrepo add notification/items/expanded",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "notification",
+    "items",
+    "expanded",
+    "nostr",
+    "social"
+  ]
+}

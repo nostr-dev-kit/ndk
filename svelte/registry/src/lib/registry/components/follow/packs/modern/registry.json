@@ -1,0 +1,20 @@
+{
+  "name": "follow-modern",
+  "title": "Follow Modern",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "modern",
+  "description": "A modern pack for follow content",
+  "command": "npx jsrepo add follow/packs/modern",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "modern",
+    "nostr",
+    "social"
+  ]
+}

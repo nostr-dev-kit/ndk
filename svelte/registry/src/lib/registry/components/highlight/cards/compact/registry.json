@@ -1,0 +1,20 @@
+{
+  "name": "highlight-compact",
+  "title": "Highlight Compact",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "compact",
+  "description": "A compact card for highlight content",
+  "command": "npx jsrepo add highlight/cards/compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "compact",
+    "nostr",
+    "social"
+  ]
+}

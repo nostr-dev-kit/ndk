@@ -15,5 +15,6 @@
     "references",
     "inline-mentions",
     "text-links"
-  ]
+  ],
+  "apiDocs": []
 }

@@ -17,5 +17,6 @@
     "inline-links",
     "content-enrichment",
     "social-sharing"
-  ]
+  ],
+  "apiDocs": []
 }

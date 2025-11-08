@@ -14,5 +14,6 @@
     "compact-feeds",
     "sidebars",
     "notifications"
-  ]
+  ],
+  "apiDocs": []
 }

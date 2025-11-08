@@ -14,5 +14,6 @@
     "payment-forms",
     "tip-dialogs",
     "zap-interfaces"
-  ]
+  ],
+  "apiDocs": []
 }

@@ -36,7 +36,7 @@
         {
           "name": "emoji",
           "type": "string",
-          "default": "❤️",
+          "default": "\u2764\ufe0f",
           "description": "Default emoji to show"
         },
         {
@@ -102,5 +102,6 @@
     "mobile-apps",
     "engagement",
     "reactions"
-  ]
+  ],
+  "apiDocs": []
 }

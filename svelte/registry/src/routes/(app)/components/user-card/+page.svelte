@@ -8,6 +8,7 @@
   import { User } from '$lib/registry/ui/user';
   import { ScrollArea } from '$lib/site/components/ui/scroll-area';
   import { Select } from 'bits-ui';
+  import * as Tabs from '$lib/site/components/ui/tabs';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
@@ -30,9 +31,22 @@
   import UserCardGlass from '$lib/registry/components/user/cards/glass/user-card-glass.svelte';
   import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import userCardClassicCard from '$lib/registry/components/user/cards/classic/registry.json';
+  import userCardPortraitCard from '$lib/registry/components/user/cards/portrait/registry.json';
+  import userCardLandscapeCard from '$lib/registry/components/user/cards/landscape/registry.json';
+  import userCardCompactCard from '$lib/registry/components/user/cards/compact/registry.json';
+  import userCardNeonCard from '$lib/registry/components/user/cards/neon/registry.json';
+  import userCardGlassCard from '$lib/registry/components/user/cards/glass/registry.json';
+  import userCardListItemCard from '$lib/registry/components/user/displays/list-item/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'User Cards',
+    description: 'Beautiful user profile cards with multiple variants and styles',
+    showcaseTitle: 'User Card Variants',
+    showcaseDescription: 'Explore different user card designs for your Nostr application',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -63,6 +77,28 @@
   function closePrimitiveDrawer() {
     focusedPrimitive = null;
   }
+
+  // Anatomy layers for the component anatomy viewer
+  const userCardAnatomyLayers = {
+    root: { id: 'root', label: 'User.Root', description: 'Container that provides user context' },
+    avatar: { id: 'avatar', label: 'User.Avatar', description: 'User profile picture' },
+    name: { id: 'name', label: 'User.Name', description: 'User display name' },
+    nip05: { id: 'nip05', label: 'User.Nip05', description: 'NIP-05 verified identifier' },
+    field: { id: 'field', label: 'User.Field', description: 'Custom profile field' },
+  };
+
+  // Primitive data for the primitives section
+  const userCardPrimitiveData = {
+    root: { name: 'User.Root', description: 'Container component that provides user context' },
+    avatar: { name: 'User.Avatar', description: 'Display user profile picture' },
+    name: { name: 'User.Name', description: 'Display user name' },
+    nip05: { name: 'User.Nip05', description: 'Display NIP-05 identifier' },
+    field: { name: 'User.Field', description: 'Display custom profile field' },
+    bio: { name: 'User.Bio', description: 'Display user bio' },
+    banner: { name: 'User.Banner', description: 'Display profile banner' },
+    lud16: { name: 'User.Lud16', description: 'Display Lightning address' },
+    website: { name: 'User.Website', description: 'Display website URL' },
+  };
 
     const showcaseComponents: ShowcaseComponent[] = [
     {
@@ -122,10 +158,12 @@
 {/snippet}
 
 {#snippet listItemPreview()}
-  <div class="max-w-sm border border-border rounded-lg max-h-[250px]">
-    {#each displayUsers as user (user.pubkey)}
-      <UserListItem {ndk} pubkey={user.pubkey} />
-    {/each}
+  <div class="max-h-[250px]">
+    <div class="max-w-sm border border-border rounded-lg">
+      {#each displayUsers as user (user.pubkey)}
+        <UserListItem {ndk} pubkey={user.pubkey} />
+      {/each}
+    </div>
   </div>
 {/snippet}
 
@@ -162,19 +200,13 @@
 {/snippet}
 
 {#snippet glassControlNew()}
-  <div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
-    <button
-      class="px-3 py-1.5 text-xs rounded-md transition-colors {glassVariant === 'gradient' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
-      onclick={() => glassVariant = 'gradient'}
-    >
-      Gradient
-    </button>
-    <button
-      class="px-3 py-1.5 text-xs rounded-md transition-colors {glassVariant === 'transparent' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
-      onclick={() => glassVariant = 'transparent'}
-    >
-      Transparent
-    </button>
+  <div onclick={(e) => e.stopPropagation()}>
+    <Tabs.Root bind:value={glassVariant}>
+      <Tabs.List>
+        <Tabs.Trigger value="gradient">Gradient</Tabs.Trigger>
+        <Tabs.Trigger value="transparent">Transparent</Tabs.Trigger>
+      </Tabs.List>
+    </Tabs.Root>
   </div>
 {/snippet}
 
@@ -364,7 +396,6 @@
       'user-card-glass': glassComponentPreview
     }
   }}
-  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />

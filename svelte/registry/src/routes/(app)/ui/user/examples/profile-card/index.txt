@@ -1,13 +1,7 @@
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '$lib/registry/ui/user';
 
-  interface Props {
-    ndk: NDKSvelte;
-    userPubkey: string;
-  }
-
-  let { ndk, userPubkey }: Props = $props();
+  let { ndk, userPubkey } = $props();
 </script>
 
 <div class="border border-gray-200 rounded-xl overflow-hidden bg-white max-w-md">

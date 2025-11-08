@@ -1,9 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Relay } from '$lib/registry/ui/relay';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  const ndk = getContext('ndk');
   const relayUrl = 'wss://relay.damus.io';
 </script>
 
@@ -16,9 +15,3 @@
     </div>
   </div>
 </Relay.Root>
-
-<style>
-  .flex { display: flex; }
-  .items-center { align-items: center; }
-  .gap-3 { gap: 0.75rem; }
-</style>

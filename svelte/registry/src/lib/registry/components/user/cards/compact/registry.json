@@ -14,5 +14,31 @@
     "user-lists",
     "follower-lists",
     "search-results"
+  ],
+  "apiDocs": [
+    {
+      "name": "UserCardCompact",
+      "description": "A compact user profile card with minimal information",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "required": true,
+          "description": "NDK instance for fetching user data"
+        },
+        {
+          "name": "pubkey",
+          "type": "string",
+          "required": true,
+          "description": "The user's public key (hex format)"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "required": false,
+          "description": "Additional CSS classes to apply to the card"
+        }
+      ]
+    }
   ]
 }

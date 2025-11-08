@@ -1,0 +1,11 @@
+<script lang="ts">
+  import { User } from '$lib/registry/ui/user';
+
+  let { ndk, userPubkey } = $props();
+</script>
+
+<User.Root {ndk} pubkey={userPubkey} class="flex flex-col gap-2">
+  <User.Avatar class="rounded-full" />
+  <User.Name class="font-semibold" />
+  <User.Handle class="text-sm text-gray-500" />
+</User.Root>

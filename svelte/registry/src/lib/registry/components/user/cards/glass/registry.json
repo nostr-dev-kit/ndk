@@ -14,5 +14,62 @@
     "modern-designs",
     "overlay-cards",
     "hero-sections"
+  ],
+  "apiDocs": [
+    {
+      "name": "UserCardGlass",
+      "description": "A glassmorphism-styled user profile card with customizable appearance",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "required": true,
+          "description": "NDK instance for fetching user data"
+        },
+        {
+          "name": "pubkey",
+          "type": "string",
+          "required": true,
+          "description": "The user's public key (hex format)"
+        },
+        {
+          "name": "width",
+          "type": "string",
+          "required": false,
+          "description": "Custom width for the card"
+        },
+        {
+          "name": "height",
+          "type": "string",
+          "required": false,
+          "description": "Custom height for the card"
+        },
+        {
+          "name": "primaryColor",
+          "type": "string",
+          "required": false,
+          "description": "Primary color for the card design"
+        },
+        {
+          "name": "variant",
+          "type": "'gradient' | 'transparent'",
+          "required": false,
+          "default": "gradient",
+          "description": "Visual variant of the glass effect"
+        },
+        {
+          "name": "onclick",
+          "type": "(e: MouseEvent) => void",
+          "required": false,
+          "description": "Click handler for the card"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "required": false,
+          "description": "Additional CSS classes to apply to the card"
+        }
+      ]
+    }
   ]
 }

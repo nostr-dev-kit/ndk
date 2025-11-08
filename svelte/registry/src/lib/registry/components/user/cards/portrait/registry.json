@@ -14,5 +14,31 @@
     "profile-pages",
     "team-grids",
     "featured-users"
+  ],
+  "apiDocs": [
+    {
+      "name": "UserCardPortrait",
+      "description": "A portrait-oriented user profile card",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "required": true,
+          "description": "NDK instance for fetching user data"
+        },
+        {
+          "name": "pubkey",
+          "type": "string",
+          "required": true,
+          "description": "The user's public key (hex format)"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "required": false,
+          "description": "Additional CSS classes to apply to the card"
+        }
+      ]
+    }
   ]
 }

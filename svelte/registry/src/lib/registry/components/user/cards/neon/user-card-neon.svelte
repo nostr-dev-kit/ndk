@@ -30,6 +30,9 @@
     class: className = ''
   }: Props = $props();
 
+  const user = $derived(ndk.getUser({ pubkey }));
+  const stats = createUserStats(() => user ? { user, follows: true, recentNotes: true } : undefined, ndk);
+
   const baseClasses = cn(
     'user-card-neon',
     'group relative flex flex-col flex-shrink-0 overflow-hidden rounded-2xl',
@@ -45,8 +48,6 @@
 <User.Root {ndk} {pubkey}>
   {@const context = getContext<UserContext>(USER_CONTEXT_KEY)}
   {@const imageUrl = context.profile?.banner}
-  {@const user = context.ndkUser}
-  {@const stats = createUserStats(() => user ? { user, follows: true, recentNotes: true } : undefined, ndk)}
 
   <svelte:element
     data-user-card-neon=""

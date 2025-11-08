@@ -13,10 +13,10 @@
 	import type { Snippet } from 'svelte';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
-	import Heart from '$lib/registry/icons/heart.svelte';
-	import Zap from '$lib/registry/icons/zap.svelte';
-	import Repeat from '$lib/registry/icons/repost.svelte';
-	import MessageCircle from '$lib/registry/icons/reply.svelte';
+	import Heart from '../../icons/heart.svelte';
+	import Zap from '../../icons/zap.svelte';
+	import Repeat from '../../icons/repost.svelte';
+	import MessageCircle from '../../icons/reply.svelte';
 
 	interface Props {
 		snippet?: Snippet<[ActionInfo]>;

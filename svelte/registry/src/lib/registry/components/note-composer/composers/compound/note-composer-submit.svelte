@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
-	import LoadingIcon from '$lib/registry/icons/loading.svelte';
-	import { cn } from '$lib/registry/utils/cn';
+	import LoadingIcon from '../../../../icons/loading.svelte';
+	import { cn } from '../../../../utils/cn';
 
 	interface Props {
 		label?: string;

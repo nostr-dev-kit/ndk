@@ -2,9 +2,9 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import { Highlight } from '$lib/registry/ui/highlight/index.js';
-  import { EventCard } from '$lib/registry/components/event/cards/compound/index.js';
+  import { cn } from '../../../../utils/cn';
+  import { Highlight } from '../../../../ui/highlight/index.js';
+  import { EventCard } from '../../../event/cards/compound/index.js';
 
   interface Props {
     ndk: NDKSvelte;

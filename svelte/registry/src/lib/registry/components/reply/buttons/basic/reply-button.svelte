@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createReplyAction } from '$lib/registry/builders/reply-action.svelte.js';
+  import { createReplyAction } from '../../../../builders/reply-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import ReplyIcon from '$lib/registry/icons/reply.svelte';
+  import { cn } from '../../../../utils/cn';
+  import ReplyIcon from '../../../../icons/reply.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

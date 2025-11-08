@@ -2,8 +2,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKPrivateKeySigner, NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn.js';
-  import { createMediaUpload } from '$lib/registry/ui/media-upload/createMediaUpload.svelte.js';
+  import { cn } from '../utils/cn.js';
+  import { createMediaUpload } from '../ui/media-upload/createMediaUpload.svelte.js';
 
   interface Props {
     ndk?: NDKSvelte;

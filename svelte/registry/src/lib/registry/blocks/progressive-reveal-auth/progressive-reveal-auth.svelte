@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn.js';
+  import { cn } from '../../utils/cn.js';
   import AuthSection from './auth-section.svelte';
   import InterestsSection from './interests-section.svelte';
   import CommunitiesSection from './communities-section.svelte';

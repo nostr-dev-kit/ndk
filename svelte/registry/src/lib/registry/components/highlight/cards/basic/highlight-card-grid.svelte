@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import { Highlight } from '$lib/registry/ui/highlight/index.js';
-  import { User } from '$lib/registry/ui/user';
+  import { cn } from '../../../../utils/cn';
+  import { Highlight } from '../../../../ui/highlight/index.js';
+  import { User } from '../../../../ui/user';
 
   interface Props {
     ndk: NDKSvelte;

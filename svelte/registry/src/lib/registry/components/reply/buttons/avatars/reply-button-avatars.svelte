@@ -4,9 +4,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
-  import { cn } from '$lib/registry/utils/cn';
-  import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
-  import ReplyIcon from '$lib/registry/icons/reply.svelte';
+  import { cn } from '../../../../utils/cn';
+  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import ReplyIcon from '../../../../icons/reply.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

@@ -2,9 +2,9 @@
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import { createZapAction } from '$lib/registry/builders/zap-action/zap-action.svelte.js';
-  import ZapIcon from '$lib/registry/icons/zap.svelte';
+  import { cn } from '../../../../utils/cn';
+  import { createZapAction } from '../../../../builders/zap-action/zap-action.svelte.js';
+  import ZapIcon from '../../../../icons/zap.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

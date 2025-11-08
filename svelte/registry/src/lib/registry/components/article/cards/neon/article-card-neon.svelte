@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Root from '$lib/registry/ui/article/article-root.svelte';
-  import Title from '$lib/registry/ui/article/article-title.svelte';
-  import Summary from '$lib/registry/ui/article/article-summary.svelte';
-  import ReadingTime from '$lib/registry/ui/article/article-reading-time.svelte';
-  import { User } from '$lib/registry/ui/user/index.js';
-  import { cn } from '$lib/registry/utils/cn';
+  import Root from '../../../../ui/article/article-root.svelte';
+  import Title from '../../../../ui/article/article-title.svelte';
+  import Summary from '../../../../ui/article/article-summary.svelte';
+  import ReadingTime from '../../../../ui/article/article-reading-time.svelte';
+  import { User } from '../../../../ui/user/index.js';
+  import { cn } from '../../../../utils/cn';
   import { getContext } from 'svelte';
-  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '$lib/registry/ui/article/article.context.js';
+  import { ARTICLE_CONTEXT_KEY, type ArticleContext } from '../../../../ui/article/article.context.js';
 
   interface Props {
     ndk: NDKSvelte;

@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import { createHashtagStats } from '$lib/registry/builders/hashtag/stats.svelte.js';
-  import { hashtagGradient, formatHashtag } from '$lib/registry/utils/hashtag.js';
-  import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
-  import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
+  import { cn } from '../../../../utils/cn';
+  import { createHashtagStats } from '../../../../builders/hashtag/stats.svelte.js';
+  import { hashtagGradient, formatHashtag } from '../../../../utils/hashtag.js';
+  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import FollowButton from '../../../follow/buttons/basic/follow-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;

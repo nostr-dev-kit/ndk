@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '$lib/registry/utils/cn';
-  import { createHashtagStats } from '$lib/registry/builders/hashtag/stats.svelte.js';
-  import { hashtagGradient, formatHashtag } from '$lib/registry/utils/hashtag.js';
-  import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
-  import { User } from '$lib/registry/ui/user/index.js';
-  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
+  import { cn } from '../../../../utils/cn';
+  import { createHashtagStats } from '../../../../builders/hashtag/stats.svelte.js';
+  import { hashtagGradient, formatHashtag } from '../../../../utils/hashtag.js';
+  import AvatarGroup from '../../../misc/avatar-group/avatar-group.svelte';
+  import { User } from '../../../../ui/user/index.js';
+  import FollowButtonPill from '../../../follow/buttons/pill/follow-button-pill.svelte';
 
   interface Props {
     ndk: NDKSvelte;

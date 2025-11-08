@@ -3,8 +3,8 @@
 	import type { Snippet } from 'svelte';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
-	import { createTimeAgo } from '$lib/registry/utils/time-ago.svelte';
-	import { cn } from '$lib/registry/utils/cn.js';
+	import { createTimeAgo } from '../../utils/time-ago.svelte';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		snippet?: Snippet<[{ timestamp: number; formatted: string }]>;

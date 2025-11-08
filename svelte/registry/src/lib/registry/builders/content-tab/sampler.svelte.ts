@@ -46,7 +46,7 @@ export function byRecency(tabs: ContentTab[]): ContentTab[] {
  * @example
  * ```svelte
  * <script>
- *   import { createContentSampler, byCount } from '$lib/registry/builders/content-tab';
+ *   import { createContentSampler, byCount } from './';
  *
  *   const tabSampler = createContentSampler(() => ({
  *     pubkeys: ['hexpubkey'],

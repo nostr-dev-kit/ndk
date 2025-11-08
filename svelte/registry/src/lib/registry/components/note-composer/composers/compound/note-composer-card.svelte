@@ -2,7 +2,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { NoteComposer } from './index';
-	import { cn } from '$lib/registry/utils/cn';
+	import { cn } from '../../../../utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

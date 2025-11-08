@@ -18,12 +18,12 @@
 	];
 </script>
 
-<div class="visualization-container">
-	<div class="main-layout">
+<div class="p-8 md:p-4 bg-muted/50 rounded-xl border border-border">
+	<div class="grid lg:grid-cols-2 grid-cols-1 gap-8 items-start">
 		<!-- Unified Wireframe showing all three layers nested -->
-		<div class="unified-wireframe">
+		<div class="w-full">
 			<!-- Blue dashed outer border (Chrome layer) -->
-			<div class="wireframe-box chrome-layer">
+			<div class="relative w-full p-5 border-2 border-dashed border-blue-500 rounded-xl bg-background flex flex-col gap-4">
 				<!-- Header Section (Blue highlighted) -->
 				<div class="flex gap-3 items-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/20">
 					<div class="w-10 h-10 rounded-full bg-muted shrink-0"></div>
@@ -76,113 +76,36 @@
 		</div>
 
 		<!-- Info cards for all three layers -->
-		<div class="info-cards-grid">
-		<div class="info-card chrome-card">
-			<div class="flex items-center gap-2 mb-2">
-				<div class="w-6 h-6 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xs font-semibold">1</div>
-				<h3 class="font-semibold text-lg">{layers[0].title}</h3>
+		<div class="flex flex-col gap-6 w-full">
+			<div class="p-6 border-2 border-blue-500 rounded-xl bg-blue-500/[0.02]">
+				<div class="flex items-center gap-2 mb-2">
+					<div class="w-6 h-6 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xs font-semibold">1</div>
+					<h3 class="font-semibold text-lg">{layers[0].title}</h3>
+				</div>
+				<p class="text-sm text-muted-foreground">
+					{layers[0].description}
+				</p>
 			</div>
-			<p class="text-sm text-muted-foreground">
-				{layers[0].description}
-			</p>
-		</div>
 
-		<div class="info-card content-card">
-			<div class="flex items-center gap-2 mb-2">
-				<div class="w-6 h-6 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center text-xs font-semibold">2</div>
-				<h3 class="font-semibold text-lg">{layers[1].title}</h3>
+			<div class="p-6 border-2 border-purple-500 rounded-xl bg-purple-500/[0.02]">
+				<div class="flex items-center gap-2 mb-2">
+					<div class="w-6 h-6 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center text-xs font-semibold">2</div>
+					<h3 class="font-semibold text-lg">{layers[1].title}</h3>
+				</div>
+				<p class="text-sm text-muted-foreground">
+					{layers[1].description}
+				</p>
 			</div>
-			<p class="text-sm text-muted-foreground">
-				{layers[1].description}
-			</p>
-		</div>
 
-		<div class="info-card embed-card">
-			<div class="flex items-center gap-2 mb-2">
-				<div class="w-6 h-6 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xs font-semibold">3</div>
-				<h3 class="font-semibold text-lg">{layers[2].title}</h3>
+			<div class="p-6 border-2 border-orange-500 rounded-xl bg-orange-500/[0.02]">
+				<div class="flex items-center gap-2 mb-2">
+					<div class="w-6 h-6 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xs font-semibold">3</div>
+					<h3 class="font-semibold text-lg">{layers[2].title}</h3>
+				</div>
+				<p class="text-sm text-muted-foreground">
+					{layers[2].description}
+				</p>
 			</div>
-			<p class="text-sm text-muted-foreground">
-				{layers[2].description}
-			</p>
 		</div>
-	</div>
 	</div>
 </div>
-
-<style>
-	.visualization-container {
-		padding: 2rem;
-		background: var(--muted/50);
-		border-radius: 0.75rem;
-		border: 1px solid var(--border);
-	}
-
-	.main-layout {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 2rem;
-		align-items: start;
-	}
-
-	.unified-wireframe {
-		width: 100%;
-	}
-
-	.wireframe-box {
-		position: relative;
-		width: 100%;
-		padding: 1.25rem;
-		border: 2px dashed var(--border);
-		border-radius: 0.75rem;
-		background: var(--background);
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.chrome-layer {
-		border-color: rgb(59 130 246);
-	}
-
-	.info-cards-grid {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-		width: 100%;
-	}
-
-	.info-card {
-		padding: 1.5rem;
-		border: 2px solid var(--border);
-		border-radius: 0.75rem;
-		background: var(--card);
-	}
-
-	.chrome-card {
-		border-color: rgb(59 130 246);
-		background: rgb(59 130 246 / 0.02);
-	}
-
-	.content-card {
-		border-color: rgb(168 85 247);
-		background: rgb(168 85 247 / 0.02);
-	}
-
-	.embed-card {
-		border-color: rgb(249 115 22);
-		background: rgb(249 115 22 / 0.02);
-	}
-
-	@media (max-width: 1024px) {
-		.main-layout {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.visualization-container {
-			padding: 1rem;
-		}
-	}
-</style>

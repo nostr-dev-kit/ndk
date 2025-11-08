@@ -1,5 +1,5 @@
 import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "../../../ndk-svelte.svelte.js";
+import type { NDKSvelte } from "@nostr-dev-kit/svelte";
 
 /**
  * Threading metadata for UI rendering decisions

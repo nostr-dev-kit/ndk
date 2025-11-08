@@ -1,7 +1,7 @@
 import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
-import type { NDKSvelte } from "../../../ndk-svelte.svelte.js";
+import type { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { resolveNDK } from "../../resolve-ndk.svelte.js";
 import type { ThreadView, ThreadNode } from "./types.js";
 import {

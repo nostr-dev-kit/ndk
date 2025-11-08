@@ -1,0 +1,20 @@
+{
+  "name": "article-card-compact",
+  "title": "Article Card Compact",
+  "category": "article",
+  "subcategory": "cards",
+  "variant": "compact",
+  "description": "A space-efficient article card with thumbnail, title, and brief metadata in a horizontal layout. Use in sidebars, related article sections, or mobile views where you need to list many articles in limited space.",
+  "command": "npx jsrepo add article/cards/compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "sidebars",
+    "related-articles",
+    "mobile-views",
+    "article-lists",
+    "compact-feeds"
+  ]
+}

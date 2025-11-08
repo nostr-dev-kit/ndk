@@ -45,12 +45,12 @@
 </script>
 
 {#if embedded.loading}
-	<div class="embedded-loading {className}">
-		<div class="loading-spinner"></div>
+	<div class="flex items-center gap-2 p-3 rounded-lg border border-border bg-muted text-sm {className}">
+		<div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
 		<span>Loading event...</span>
 	</div>
 {:else if embedded.error}
-	<div class="embedded-error {className}">
+	<div class="p-3 rounded-lg border border-border bg-muted text-sm text-destructive {className}">
 		<span>Failed to load event</span>
 	</div>
 {:else if KindHandler && wrappedEvent}
@@ -63,40 +63,3 @@
 	<!-- NO HANDLER: Show raw bech32. Users can register generic-embedded if they want it. -->
 	<code>{bech32}</code>
 {/if}
-
-<style>
-	.embedded-loading,
-	.embedded-error,
-	.embedded-raw {
-		padding: 0.75rem;
-		border-radius: 0.5rem;
-		border: 1px solid var(--border);
-		background: var(--muted);
-		font-size: 0.875rem;
-	}
-
-	.embedded-loading {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.loading-spinner {
-		width: 1rem;
-		height: 1rem;
-		border: 2px solid var(--primary);
-		border-top-color: transparent;
-		border-radius: 50%;
-		animation: spin 0.6s linear infinite;
-	}
-
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-
-	.embedded-error {
-		color: var(--destructive);
-	}
-</style>

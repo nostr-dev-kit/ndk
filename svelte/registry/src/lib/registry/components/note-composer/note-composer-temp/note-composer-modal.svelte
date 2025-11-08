@@ -34,7 +34,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { Dialog } from 'bits-ui';
-	import { NoteComposer } from '../../components/note-composer';
+	import { NoteComposer } from '../note-composer';
 	import CancelIcon from '../../icons/cancel.svelte';
 	import { cn } from '../../utils/cn.js';
 

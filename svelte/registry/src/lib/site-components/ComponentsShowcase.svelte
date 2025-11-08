@@ -50,14 +50,19 @@
 	}
 
 	interface Props {
-		blocks: BlockVariant[];
+		components?: BlockVariant[];
+		blocks?: BlockVariant[]; // Legacy prop for backwards compatibility
 		class?: string;
 	}
 
 	let {
-		blocks,
+		components,
+		blocks, // Legacy prop for backwards compatibility
 		class: className = ''
 	}: Props = $props();
+
+	// Use components if provided, otherwise fall back to blocks for backwards compatibility
+	const componentList = $derived(components || blocks || []);
 
 	let activeBlockIndex = $state<number | null>(null);
 	let blockRefs: HTMLDivElement[] = [];
@@ -114,15 +119,15 @@
 		if (typeof window === 'undefined') return;
 
 		// Initialize scroll positions
-		scrollPositions = blocks.map(() => 0);
+		scrollPositions = componentList.map(() => 0);
 
 		const animateScroll = (index: number) => {
 			const container = previewRefs[index];
-			const block = blocks[index];
-			if (!container || !block) return;
+			const component = componentList[index];
+			if (!container || !component) return;
 
 			const isActive = activeBlockIndex === index;
-			const isHorizontal = block.orientation === 'horizontal';
+			const isHorizontal = component.orientation === 'horizontal';
 
 			if (!isActive) {
 				// Increment virtual scroll position by small amount each frame
@@ -152,8 +157,8 @@
 			scrollIntervals[index] = requestAnimationFrame(() => animateScroll(index));
 		};
 
-		// Start animation for each block
-		blocks.forEach((_, index) => {
+		// Start animation for each component
+		componentList.forEach((_, index) => {
 			animateScroll(index);
 		});
 
@@ -169,22 +174,22 @@
 </script>
 
 	<div class="space-y-0 pb-0">
-		{#each blocks as block, index (block.name)}
-			{@const isNotLast = index < blocks.length - 1}
+		{#each componentList as component, index (component.name)}
+			{@const isNotLast = index < componentList.length - 1}
 			{@const borderClass = isNotLast ? 'border-b border-border' : ''}
 			<div
 				bind:this={blockRefs[index]}
 				class="grid grid-cols-1 lg:grid-cols-7 transition-all duration-700 ease-out -mx-8 {borderClass}"
-				class:cursor-pointer={block.cardData}
+				class:cursor-pointer={component.cardData}
 				style:filter={activeBlockIndex !== index ? 'grayscale(1)' : 'grayscale(0)'}
 				style:opacity={activeBlockIndex !== index ? '0.6' : '1'}
-				role={block.cardData ? 'button' : undefined}
-				tabindex={block.cardData ? 0 : undefined}
-				onclick={() => handleBlockClick(block)}
+				role={component.cardData ? 'button' : undefined}
+				tabindex={component.cardData ? 0 : undefined}
+				onclick={() => handleBlockClick(component)}
 				onkeydown={(e) => {
-					if (block.cardData && (e.key === 'Enter' || e.key === ' ')) {
+					if (component.cardData && (e.key === 'Enter' || e.key === ' ')) {
 						e.preventDefault();
-						handleBlockClick(block);
+						handleBlockClick(component);
 					}
 				}}
 				onmouseenter={() => (activeBlockIndex = index)}
@@ -195,14 +200,14 @@
 					)}
 				>
 					<div>
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{block.name}</h3>
+						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{component.name}</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
-							{block.description}
+							{component.description}
 						</p>
 					</div>
-					{#if block.control}
+					{#if component.control}
 						<div>
-							{@render block.control()}
+							{@render component.control()}
 						</div>
 					{/if}
 				</div>
@@ -211,21 +216,21 @@
 						bind:this={previewRefs[index]}
 						class={cn(
 							"scroll-smooth scrollbar-hide",
-							block.orientation === 'horizontal'
+							component.orientation === 'horizontal'
 								? "overflow-x-auto pl-10 lg:pl-12 !pr-0 py-10 lg:py-12"
 								: "overflow-y-auto px-10 lg:px-12"
 						)}
 					>
 						<div
 							class={cn(
-								block.orientation === 'horizontal' ? "px-10" : "py-10"
+								component.orientation === 'horizontal' ? "px-10" : "py-10"
 							)}
 							onclick={(e) => e.stopPropagation()}
 						>
-							{@render block.preview()}
+							{@render component.preview()}
 						</div>
 					</div>
-					{#if block.orientation === 'horizontal'}
+					{#if component.orientation === 'horizontal'}
 						<!-- Left gradient -->
 						<div class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
 						<!-- Right gradient -->

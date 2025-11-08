@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Popover } from 'bits-ui';
-  import { cn } from '../../utils/cn.js';
+  import { cn } from '../../../utils/cn.js';
 
   interface Props {
     ndk: NDKSvelte;

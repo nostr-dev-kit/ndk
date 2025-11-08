@@ -4,8 +4,8 @@
   import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
   import { getContext } from 'svelte';
   import { Motion } from 'svelte-motion';
-  import { cn } from '../../utils/cn.js';
-  import { User } from '../../ui/user/index.js';
+  import { cn } from '../../../utils/cn.js';
+  import { User } from '../../../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

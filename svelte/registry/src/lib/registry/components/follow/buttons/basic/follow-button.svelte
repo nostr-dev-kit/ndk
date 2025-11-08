@@ -3,9 +3,9 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '$lib/registry/builders/follow-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn.js';
+  import { cn } from '../../../utils/cn.js';
   import UserAddIcon from '../../icons/user-add.svelte';
-  import { User } from '../../ui/user/index.js';
+  import { User } from '../../../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

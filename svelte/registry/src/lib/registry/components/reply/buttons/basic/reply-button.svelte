@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReplyAction } from '$lib/registry/builders/reply-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn.js';
+  import { cn } from '../../../utils/cn.js';
   import ReplyIcon from '../../icons/reply.svelte';
 
   interface Props {

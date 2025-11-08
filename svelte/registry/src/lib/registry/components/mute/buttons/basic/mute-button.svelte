@@ -3,8 +3,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createMuteAction } from '$lib/registry/builders/mute-action.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn.js';
-  import { User } from '../../ui/user/index.js';
+  import { cn } from '../../../utils/cn.js';
+  import { User } from '../../../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

@@ -2,14 +2,14 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
 	import { getContext } from 'svelte';
-	import { RELAY_CONTEXT_KEY, type RelayContext } from '../../ui/relay/relay.context.js';
-	import Root from '../../ui/relay/relay-root.svelte';
-	import Icon from '../../ui/relay/relay-icon.svelte';
-	import Name from '../../ui/relay/relay-name.svelte';
-	import Url from '../../ui/relay/relay-url.svelte';
-	import Description from '../../ui/relay/relay-description.svelte';
-	import BookmarkButton from '../../ui/relay/relay-bookmark-button.svelte';
-	import { cn } from '../../utils/cn.js';
+	import { RELAY_CONTEXT_KEY, type RelayContext } from '../../../ui/relay/relay.context.js';
+	import Root from '../../../ui/relay/relay-root.svelte';
+	import Icon from '../../../ui/relay/relay-icon.svelte';
+	import Name from '../../../ui/relay/relay-name.svelte';
+	import Url from '../../../ui/relay/relay-url.svelte';
+	import Description from '../../../ui/relay/relay-description.svelte';
+	import BookmarkButton from '../../../ui/relay/relay-bookmark-button.svelte';
+	import { cn } from '../../../utils/cn.js';
 
 	interface Props {
 		ndk: NDKSvelte;

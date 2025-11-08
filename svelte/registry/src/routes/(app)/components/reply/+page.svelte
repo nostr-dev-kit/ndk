@@ -27,17 +27,6 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
-
-  $effect(() => {
-    (async () => {
-      try {
-        const event = await ndk.fetchEvent('nevent1qqswdxy9rwcvcjpf5v577eqkzmhus2x5878tpsmrtglgqdzdexulzsg3rjsjj');
-        if (event && !sampleEvent) sampleEvent = event;
-      } catch (err) {
-        console.error('Failed to fetch sample event:', err);
-      }
-    })();
-  });
 </script>
 
 <!-- Preview snippets for showcase -->

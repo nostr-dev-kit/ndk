@@ -157,14 +157,3 @@
     </Popover.Content>
   {/if}
 </Popover.Root>
-
-<style>
-  @keyframes heartbeat {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-  }
-</style>

@@ -19,14 +19,14 @@
 	}
 </script>
 
-<div class="preview">
+<div class="text-sm">
 	{#if type === 'user' && value instanceof Object && 'profile' in value}
 		{@const user = value as NDKUser}
 		<User.Root {ndk} pubkey={user.pubkey}>
-			<div class="preview-user">
+			<div class="flex items-center gap-3">
 				<User.Avatar class="w-10 h-10" />
-				<div class="preview-user-info">
-					<div class="preview-user-name">
+				<div class="flex-1 min-w-0">
+					<div class="font-medium text-foreground">
 						<User.Name field="displayName" />
 					</div>
 					<User.Nip05 />
@@ -35,93 +35,29 @@
 		</User.Root>
 	{:else if type === 'article' && value instanceof Object && 'title' in value}
 		{@const article = value as NDKArticle}
-		<div class="preview-article">
-			<div class="preview-article-title">{article.title || 'Untitled'}</div>
+		<div class="flex flex-col gap-1">
+			<div class="font-medium text-foreground">{article.title || 'Untitled'}</div>
 			{#if article.summary}
-				<div class="preview-article-summary">{article.summary.slice(0, 100)}...</div>
+				<div class="text-xs text-muted-foreground leading-normal">{article.summary.slice(0, 100)}...</div>
 			{/if}
 			{#if article.published_at}
-				<div class="preview-article-date">{formatTimestamp(article.published_at)}</div>
+				<div class="text-xs text-muted-foreground">{formatTimestamp(article.published_at)}</div>
 			{/if}
 		</div>
 	{:else if type === 'event' && value instanceof Object && 'content' in value}
 		{@const event = value as NDKEvent}
-		<div class="preview-event">
-			<div class="preview-event-kind">Kind {event.kind}</div>
-			<div class="preview-event-content">{event.content.slice(0, 150)}...</div>
+		<div class="flex flex-col gap-1">
+			<div class="text-xs font-medium text-primary">Kind {event.kind}</div>
+			<div class="text-xs text-muted-foreground leading-normal">{event.content.slice(0, 150)}...</div>
 			{#if event.created_at}
-				<div class="preview-event-date">{formatTimestamp(event.created_at)}</div>
+				<div class="text-xs text-muted-foreground">{formatTimestamp(event.created_at)}</div>
 			{/if}
 		</div>
 	{:else if type === 'hashtag' || type === 'text'}
-		<div class="preview-text">
-			<div class="preview-text-value">"{value}"</div>
+		<div>
+			<div class="text-foreground font-mono">"{value}"</div>
 		</div>
 	{:else}
-		<div class="preview-unknown">Preview not available</div>
+		<div class="text-muted-foreground italic">Preview not available</div>
 	{/if}
 </div>
-
-<style>
-	.preview {
-		font-size: 0.875rem;
-	}
-
-	.preview-user {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-
-	.preview-user-info {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.preview-user-name {
-		font-weight: 500;
-		color: var(--foreground);
-	}
-
-	.preview-article,
-	.preview-event {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-	}
-
-	.preview-article-title {
-		font-weight: 500;
-		color: var(--foreground);
-	}
-
-	.preview-article-summary,
-	.preview-event-content {
-		font-size: 0.75rem;
-		color: var(--muted-foreground);
-		line-height: 1.4;
-	}
-
-	.preview-article-date,
-	.preview-event-date {
-		font-size: 0.75rem;
-		color: var(--muted-foreground);
-	}
-
-	.preview-event-kind {
-		font-size: 0.75rem;
-		font-weight: 500;
-		color: var(--primary);
-	}
-
-	.preview-text-value {
-		color: var(--foreground);
-		font-family: monospace;
-	}
-
-	.preview-unknown {
-		color: var(--muted-foreground);
-		font-style: italic;
-	}
-</style>

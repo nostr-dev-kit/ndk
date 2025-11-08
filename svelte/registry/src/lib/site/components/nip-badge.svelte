@@ -6,21 +6,4 @@
   let { nip }: Props = $props();
 </script>
 
-<span class="nip-badge">{nip}</span>
-
-<style>
-  .nip-badge {
-    display: inline-flex;
-    align-items: center;  
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.625rem;
-    font-weight: 500;
-    line-height: 1;
-    background: color-mix(in srgb, var(--primary) 15%, transparent);
-    color: color-mix(in srgb, var(--primary) 70%, var(--muted-foreground));
-    opacity: 0.7;
-    pointer-events: none;
-    flex-shrink: 0;
-  }
-</style>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium leading-none bg-primary/15 text-primary/70 opacity-70 pointer-events-none shrink-0">{nip}</span>

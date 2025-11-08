@@ -3,9 +3,8 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import { EditProps } from '$lib/site/components/edit-props';
   import PageTitle from '$lib/site/components/PageTitle.svelte';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as Tabs from '$lib/site/components/ui/tabs';
@@ -22,9 +21,13 @@
   import ContentTab from '$lib/registry/components/misc/content-tab/content-tab.svelte';
   import { byCount, byRecency } from '$lib/registry/builders/content-tab';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const metadata = {
+    title: 'Content Tab',
+    description: 'Smart content type selector with automatic kind detection',
+    showcaseTitle: 'Content Tab Variants',
+    showcaseDescription: 'Display content types with reactive sampling',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -43,15 +46,6 @@
 
   // Sorting state for showcase
   let sortMethod = $state<'count' | 'recency'>('count');
-
-  // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: contentTabCard,
-      preview: defaultPreview,
-      control: sortControl
-    }
-  ];
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -91,9 +85,8 @@
   </div>
 {/snippet}
 
-<!-- EditProps snippet -->
-<!-- Custom Components section with tabs -->
-{#snippet customComponentsSection()}
+<!-- Components snippet -->
+{#snippet components()}
   <Tabs.Root value="basic">
     <SectionTitle title="Components" description="Explore ContentTab variants and usage">
       {#snippet tabs()}
@@ -333,12 +326,18 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
 <!-- Conditional rendering based on data loading -->
 {#if user1 && displayUsers.length > 0}
   <ComponentPageTemplate
-    metadata={metadata}
+    {metadata}
     {ndk}
-    showcaseComponent={ComponentsShowcase}
-    {showcaseComponents}{customSections}
-    beforeComponents={customComponentsSection}
-    apiDocs={metadata.apiDocs}
+    showcaseComponents={[
+      {
+        cardData: contentTabCard,
+        preview: defaultPreview,
+        control: sortControl
+      }
+    ]}
+    {components}
+    {customSections}
+    apiDocs={contentTabCard.apiDocs}
   >
     <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />

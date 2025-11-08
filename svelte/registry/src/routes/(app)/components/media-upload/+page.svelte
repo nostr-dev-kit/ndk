@@ -6,8 +6,8 @@
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
 
   // Import code examples
-  import uploadButtonCode from './upload-button.example?raw';
-  import mediaUploadCarouselCode from './media-upload-carousel.example?raw';
+  import uploadButtonCode from './examples/button/index.txt?raw';
+  import mediaUploadCarouselCode from './examples/carousel/index.txt?raw';
 
   // Import components
   import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';

@@ -1,8 +1,0 @@
-<script lang="ts">
-  import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
-  import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
-
-  let uploads = $state<MediaUploadResult[]>([]);
-</script>
-
-<MediaUploadCarousel {ndk} bind:uploads accept="image/*,video/*" />

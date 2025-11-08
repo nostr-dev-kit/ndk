@@ -16,6 +16,11 @@
   import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
   import FollowButtonAnimated from '$lib/registry/components/follow/buttons/animated/follow-button-animated.svelte';
 
+  // Import component metadata from registry
+  import followButtonMinimalCard from '$lib/registry/components/follow/buttons/basic/registry.json';
+  import followButtonPillCard from '$lib/registry/components/follow/buttons/pill/registry.json';
+  import followButtonAnimatedCard from '$lib/registry/components/follow/buttons/animated/registry.json';
+
   // Get page data
   let { data } = $props();
   const { metadata } = data;
@@ -25,7 +30,7 @@
   let sampleUser = $state<NDKUser | undefined>();
 
   // Showcase blocks
-    const showcaseComponents: ShowcaseComponent[] = [
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       cardData: followButtonMinimalCard,
       preview: minimalPreview

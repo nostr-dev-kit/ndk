@@ -15,10 +15,10 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard } from '../components/event-card/index.js';
+  import { EventCard } from '../components/event/cards/compound/index.js';
   import { ReactionAction } from '../components/reaction/index.js';
   import { User } from '../ui/user/index.js';
-  import RepostButton from '../components/repost-button/repost-button.svelte';
+  import RepostButton from '../components/repost/buttons/basic/repost-button.svelte';
 
   interface Props {
     ndk: NDKSvelte;

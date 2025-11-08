@@ -3,17 +3,35 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
-  // Import examples
-  import UiBasic from './examples/ui-basic.example.svelte';
-  import UiComposition from './examples/ui-composition.example.svelte';
-
   // Import code examples
-  import emojiPickerListCode from './emoji-picker-list.example?raw';
-  import emojiPickerContentCode from './emoji-picker-content.example?raw';
+  import emojiPickerListCode from './examples/list/index.txt?raw';
+  import emojiPickerContentCode from './examples/content/index.txt?raw';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import registry metadata
+  import emojiPickerBaseCard from '$lib/registry/components/misc/emoji-picker/registry.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Emoji Picker',
+    description: 'Emoji selection components with search, categories, and smart aggregation',
+    showcaseTitle: 'Emoji Picker Variants',
+    showcaseDescription: 'Explore different emoji picker layouts and compositions',
+  };
+
+  // Component cards
+  const emojiPickerListCard = {
+    ...emojiPickerBaseCard,
+    name: 'emoji-picker-list',
+    title: 'Emoji Picker List',
+    description: 'Simple emoji list with selection',
+  };
+
+  const emojiPickerContentCard = {
+    ...emojiPickerBaseCard,
+    name: 'emoji-picker-content',
+    title: 'Emoji Picker Content',
+    description: 'Full emoji picker with categories and composition',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -75,5 +93,4 @@
       'emoji-picker-content': contentPreview
     }
   }}
-  apiDocs={metadata.apiDocs}
 />

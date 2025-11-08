@@ -1,0 +1,12 @@
+<script lang="ts">
+  import { EmojiPicker } from '$lib/registry/components/emoji-picker';
+
+  let { ndk } = $props();
+  let selected = $state(null);
+
+  function handleSelect(emoji) {
+    selected = emoji;
+  }
+</script>
+
+<EmojiPicker.Content {ndk} onSelect={handleSelect} />

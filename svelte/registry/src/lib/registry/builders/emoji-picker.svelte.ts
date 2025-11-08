@@ -73,8 +73,8 @@ export function createEmojiPicker(config: () => EmojiPickerConfig, ndk?: NDKSvel
             return emoji.url ? emoji.url : emoji.emoji;
         };
 
-        let userEvent: NDKEvent | undefined;
-        const otherEvents: NDKEvent[] = [];
+        let userEvent = undefined;
+        const otherEvents = [];
 
         for (const e of emojiEvents.events) {
             if (e.pubkey === resolvedNDK.$currentPubkey) {

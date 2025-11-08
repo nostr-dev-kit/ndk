@@ -1,5 +1,0 @@
-<script lang="ts">
-  import { Relay } from '$lib/registry/ui/relay';
-</script>
-
-<Relay.Input {ndk} value="wss://relay.damus.io" disabled />

@@ -1,5 +1,0 @@
-<script lang="ts">
-  import ReactionEmojiButton from '$lib/registry/components/reaction/reaction-emoji-button.svelte';
-</script>
-
-<ReactionEmojiButton event={event} />

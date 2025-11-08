@@ -1,7 +1,0 @@
-<script lang="ts">
-  import { Relay } from '$lib/registry/ui/relay';
-
-  let value = $state<string>('');
-</script>
-
-<Relay.Input {ndk} bind:value placeholder="wss://relay.example.com" />

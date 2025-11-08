@@ -1,220 +1,64 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EditProps } from '$lib/site/components/edit-props';
-  import ComponentsShowcaseGrid from '$site-components/ComponentsShowcaseGrid.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentAPI from '$site-components/component-api.svelte';
-
-  import InteractiveDemo from './examples/interactive-demo/index.svelte';
-  import VariantComparison from './examples/variant-comparison/index.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
-
-  const liveDemoData = {
-    name: 'embedded-event-live',
-    title: 'Live Preview',
-    description: 'Paste and see it render.',
-    richDescription: 'Paste a bech32 event reference (note1, nevent1, naddr1) and see it render in real-time.',
-    command: 'npx jsrepo add embedded-event',
-    apiDocs: []
-  };
-
-  const variantData = {
-    name: 'embedded-event-variants',
-    title: 'Variant Comparison',
-    description: 'Compare display variants.',
-    richDescription: 'Compare card, inline, and compact variants side by side.',
-    command: 'npx jsrepo add embedded-event',
-    apiDocs: []
-  };
 </script>
 
 <div class="px-8">
   <!-- Header -->
   <div class="mb-12 pt-8">
-    <div class="flex items-start justify-between gap-4 mb-4">
-      <h1 class="text-4xl font-bold">Embedded Components</h1>
-      <EditProps.Button>Edit Examples</EditProps.Button>
-    </div>
-    <p class="text-lg text-muted-foreground mb-6">
-      Inline components for rendering mentions, hashtags, and embedded Nostr events.
-      Automatically detect and display user mentions (@npub), hashtags (#topic), and event references (note1, nevent1, naddr1)
-      with rich, interactive UIs optimized for each content type.
+    <h1 class="text-4xl font-bold mb-4">ContentRenderer System</h1>
+    <p class="text-lg text-muted-foreground max-w-3xl">
+      Customize how inline content elements are rendered within event text.
+      Override default rendering for mentions, hashtags, links, and media with your own components.
     </p>
   </div>
 
-  <!-- How It Works Section -->
-  <section class="mb-16 prose prose-lg max-w-none">
-    <h2 class="text-3xl font-bold mb-2">How It Works</h2>
-    <p class="text-muted-foreground mb-8">
-      The embedded event system uses a simple map-based registry to determine which
-      component renders each event kind.
+  <!-- What It Is -->
+  <section class="mb-16">
+    <h2 class="text-2xl font-bold mb-4">Overview</h2>
+    <p class="text-muted-foreground mb-6 max-w-3xl">
+      ContentRenderer is a registry that controls how inline content is displayed when parsing event content.
+      By default, EventContent components render mentions, hashtags, links, and media with basic styling.
+      You can replace these defaults with your own components for custom behavior and styling.
     </p>
 
-    <div class="space-y-12">
-      <!-- Architecture Overview -->
-      <div>
-        <h3 class="text-xl font-semibold mb-4">Architecture</h3>
-        <div class="space-y-4 text-muted-foreground">
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">1</div>
-            <div>
-              <strong class="text-foreground">Event Reference Detected</strong>
-              <p class="text-sm">EventContent parser finds a bech32 event reference (note1, nevent1, naddr1) in the content</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">2</div>
-            <div>
-              <strong class="text-foreground">Fetch Event</strong>
-              <p class="text-sm">createFetchEvent builder fetches the event from relays using the bech32 identifier</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">3</div>
-            <div>
-              <strong class="text-foreground">Registry Lookup</strong>
-              <p class="text-sm">Check ContentRenderer for a registered handler matching the event's kind</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">4</div>
-            <div>
-              <strong class="text-foreground">Render</strong>
-              <p class="text-sm">Render using the kind-specific handler, or fall back to GenericCard for unknown kinds</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="p-6 bg-muted rounded-lg max-w-3xl">
+      <h3 class="text-lg font-semibold mb-3">Basic Usage</h3>
+      <pre class="text-sm bg-card p-4 rounded overflow-x-auto"><code>import &#123; ContentRenderer &#125; from '$lib/ui/event-rendering';
+import MyCustomMention from './MyCustomMention.svelte';
 
-      <!-- ContentRenderer System -->
-      <div>
-        <h3 class="text-xl font-semibold mb-4">ContentRenderer System</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          Self-registering handlers using NDK wrapper classes for automatic kind mapping and type-safe event wrapping.
-        </p>
-        <p class="text-sm text-muted-foreground mb-4">
-          Each kind handler self-registers with the <code class="px-2 py-1 bg-muted rounded">defaultContentRenderer</code> via its <code class="px-2 py-1 bg-muted rounded">index.ts</code> file:
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">NDKArticle → ArticleCardMedium</div>
-            <p class="text-xs text-muted-foreground">Automatically registers kind 30023 and wraps with NDKArticle.from()</p>
-          </div>
-          <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">[1, 1111] → NoteCard</div>
-            <p class="text-xs text-muted-foreground">Manual kinds (no NDK wrapper class exists)</p>
-          </div>
-          <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">NDKHighlight → HighlightCardFeed</div>
-            <p class="text-xs text-muted-foreground">Automatically registers kind 9802 and wraps with NDKHighlight.from()</p>
-          </div>
-          <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">* → GenericCard</div>
-            <p class="text-xs text-muted-foreground">Fallback for unknown kinds (no wrapping)</p>
-          </div>
-        </div>
-        <div class="mt-4 p-4 bg-card/50 rounded border border-primary/20">
-          <p class="text-sm"><strong>Benefits:</strong></p>
-          <ul class="text-xs text-muted-foreground list-disc list-inside mt-2 space-y-1">
-            <li>Type-safe: Components receive NDKArticle, NDKHighlight, not just NDKEvent</li>
-            <li>Automatic: Kind numbers extracted from NDK wrapper classes</li>
-            <li>Flexible: Custom registries for variant-specific previews</li>
-            <li>Clean: No manual kind number management</li>
-          </ul>
-        </div>
-      </div>
+const renderer = new ContentRenderer();
 
-      <!-- Adding New Handlers -->
-      <div>
-        <h3 class="text-xl font-semibold mb-4">Adding New Kind Handlers</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          Kind handlers self-register automatically via side effects. Just install and import - no manual registration needed.
-        </p>
-        <div class="space-y-4">
-          <div>
-            <div class="text-sm font-semibold mb-2">Step 1: Install the handler</div>
-            <code class="block p-3 bg-card rounded text-sm">
-              npx shadcn-svelte@latest add video-embedded
-            </code>
-          </div>
-          <div>
-            <div class="text-sm font-semibold mb-2">Step 2: Auto-registration</div>
-            <p class="text-xs text-muted-foreground mb-2">
-              The component automatically registers itself when imported:
-            </p>
-            <div class="p-3 bg-card rounded text-sm font-mono">
-              <div>// Registration happens via component's index.ts</div>
-            </div>
-            <p class="text-xs text-muted-foreground mt-2">
-              No manual registration required
-            </p>
-          </div>
-          <p class="text-sm text-muted-foreground">
-            That's it! The handler automatically registers itself via its index.ts file
-            and will render all video events using NDKVideo.kinds and NDKVideo.from().
-          </p>
-        </div>
-      </div>
+// Set custom component for mentions
+renderer.mentionComponent = MyCustomMention;
 
-      <!-- Custom Renderers -->
-      <div class="p-6 border border-border rounded-lg bg-primary/5 border-primary/20">
-        <h3 class="text-xl font-semibold mb-4">Custom Renderers (Advanced)</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          Create custom renderers to render the same kind differently in different contexts:
-        </p>
-        <div class="p-4 bg-card rounded text-sm font-mono space-y-2 mb-4">
-          <div class="text-muted-foreground">// Create variant-specific renderer</div>
-          <div>const compactRenderer = new ContentRenderer();</div>
-          <div>compactRenderer.addKind(NDKHighlight, HighlightCompactPreview);</div>
-          <div class="h-2"></div>
-          <div class="text-muted-foreground">// Use in component</div>
-          <div>&lt;EventContent renderer={'{compactRenderer}'} /&gt;</div>
-        </div>
-        <p class="text-sm text-muted-foreground">
-          <strong>Use case:</strong> Show full highlight cards in feeds, but compact previews in sidebars -
-          just pass different renderers with different components.
-        </p>
-      </div>
-
-      <!-- Fallback Behavior -->
-      <div>
-        <h3 class="text-xl font-semibold mb-4">Fallback Behavior</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          When an event kind has no registered handler, the system automatically falls back
-          to <code class="px-2 py-1 bg-muted rounded">GenericCard</code>, which:
-        </p>
-        <ul class="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-          <li>Renders using EventCard primitives (universal event display)</li>
-          <li>Shows a "Kind X" badge to indicate the event type</li>
-          <li>Displays author, content (truncated), and timestamp</li>
-          <li>Provides a consistent experience for unknown kinds</li>
-        </ul>
-      </div>
+// Use in EventContent
+&lt;EventContent &#123;ndk&#125; &#123;event&#125; &#123;renderer&#125; /&gt;</code></pre>
     </div>
   </section>
 
-  <!-- Inline Content Handlers Section -->
+  <!-- Available Handlers -->
   <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Inline Content Handlers</h2>
-    <p class="text-muted-foreground mb-8">
-      Customize how mentions, hashtags, links, and media are rendered within event content.
+    <h2 class="text-2xl font-bold mb-4">Customizable Handlers</h2>
+    <p class="text-muted-foreground mb-8 max-w-3xl">
+      Each handler type has example implementations you can use or learn from:
     </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
       <!-- Mention -->
       <a href="/events/embeds/mention" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-lg font-semibold">Mention</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">@npub</span>
         </div>
-        <p class="text-sm text-muted-foreground mb-4">
-          Render user mentions with profile fetching and optional hover cards.
+        <p class="text-sm text-muted-foreground mb-2">
+          Custom components for rendering user mentions
         </p>
+        <code class="text-xs block mb-3">renderer.mentionComponent</code>
         <div class="text-sm text-primary group-hover:underline">
-          View documentation →
+          View examples →
         </div>
       </a>
 
@@ -224,11 +68,12 @@
           <h3 class="text-lg font-semibold">Hashtag</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">#topic</span>
         </div>
-        <p class="text-sm text-muted-foreground mb-4">
-          Render hashtags with stats and optional hover cards showing activity.
+        <p class="text-sm text-muted-foreground mb-2">
+          Custom components for rendering hashtags
         </p>
+        <code class="text-xs block mb-3">renderer.hashtagComponent</code>
         <div class="text-sm text-primary group-hover:underline">
-          View documentation →
+          View examples →
         </div>
       </a>
 
@@ -238,11 +83,12 @@
           <h3 class="text-lg font-semibold">Media</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">Images/Videos</span>
         </div>
-        <p class="text-sm text-muted-foreground mb-4">
-          Custom media renderers with carousels and bento grids for grouped media.
+        <p class="text-sm text-muted-foreground mb-2">
+          Carousels, grids, and custom media displays
         </p>
+        <code class="text-xs block mb-3">renderer.mediaComponent</code>
         <div class="text-sm text-primary group-hover:underline">
-          View documentation →
+          View examples →
         </div>
       </a>
 
@@ -252,22 +98,72 @@
           <h3 class="text-lg font-semibold">Links</h3>
           <span class="text-xs px-2 py-1 bg-muted rounded">URLs</span>
         </div>
+        <p class="text-sm text-muted-foreground mb-2">
+          Link previews with OpenGraph metadata
+        </p>
+        <code class="text-xs block mb-3">renderer.linkComponent</code>
+        <div class="text-sm text-primary group-hover:underline">
+          View examples →
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Context vs Prop -->
+  <section class="mb-16">
+    <h2 class="text-2xl font-bold mb-4">Context vs Prop</h2>
+    <p class="text-muted-foreground mb-6 max-w-3xl">
+      You can provide a renderer globally via context or pass it directly as a prop to specific components.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+      <div class="p-6 border border-border rounded-lg bg-card">
+        <h3 class="text-lg font-semibold mb-3">Via Context (Global)</h3>
         <p class="text-sm text-muted-foreground mb-4">
-          Rich link previews with hover cards and embedded OpenGraph metadata.
+          Set once at app/page level, all nested components inherit automatically:
+        </p>
+        <pre class="text-xs bg-muted p-3 rounded overflow-x-auto"><code>import &#123; setContext &#125; from 'svelte';
+import &#123; CONTENT_RENDERER_CONTEXT_KEY &#125; from '$lib/ui/event-rendering';
+
+setContext(CONTENT_RENDERER_CONTEXT_KEY, &#123; renderer &#125;);
+
+// All EventContent components automatically use it
+&lt;EventContent &#123;ndk&#125; &#123;event&#125; /&gt;</code></pre>
+      </div>
+
+      <div class="p-6 border border-border rounded-lg bg-card">
+        <h3 class="text-lg font-semibold mb-3">Via Prop (Override)</h3>
+        <p class="text-sm text-muted-foreground mb-4">
+          Pass directly to override context for specific use:
+        </p>
+        <pre class="text-xs bg-muted p-3 rounded overflow-x-auto"><code>// Different renderer for this component only
+&lt;EventContent
+  &#123;ndk&#125;
+  &#123;event&#125;
+  renderer=&#123;customRenderer&#125;
+/&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related -->
+  <section class="mb-16">
+    <h2 class="text-2xl font-bold mb-4">Related</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+      <a href="/ui/event-rendering" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <h3 class="text-lg font-semibold mb-2">Event Rendering</h3>
+        <p class="text-sm text-muted-foreground mb-4">
+          EventContent, EmbeddedEvent, and MarkdownEventContent components
         </p>
         <div class="text-sm text-primary group-hover:underline">
           View documentation →
         </div>
       </a>
 
-      <!-- Generic Fallback -->
-      <a href="/events/embeds/generic" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-        <div class="flex items-start justify-between mb-3">
-          <h3 class="text-lg font-semibold">Generic Fallback</h3>
-          <span class="text-xs px-2 py-1 bg-muted rounded">Unknown Kinds</span>
-        </div>
+      <a href="/components/generic-card" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <h3 class="text-lg font-semibold mb-2">Generic Card</h3>
         <p class="text-sm text-muted-foreground mb-4">
-          Default handler for event kinds without specific components.
+          Fallback component for unknown event kinds
         </p>
         <div class="text-sm text-primary group-hover:underline">
           View documentation →
@@ -275,119 +171,13 @@
       </a>
     </div>
   </section>
-
-  <!-- Interactive Demo Section -->
-  {#snippet liveDemoPreview()}
-    <InteractiveDemo {ndk} />
-  {/snippet}
-
-  <SectionTitle
-    title="Interactive Demo"
-    description="Try pasting any Nostr event reference."
-  />
-
-  <ComponentsShowcaseGrid
-    blocks={[
-      {
-        name: 'Live Preview',
-        description: 'Paste and render',
-        command: 'npx jsrepo add embedded-event',
-        preview: liveDemoPreview,
-        cardData: liveDemoData
-      }
-    ]}
-  />
-
-  <!-- Variant Comparison Section -->
-  {#snippet variantPreview()}
-    <VariantComparison {ndk} />
-  {/snippet}
-
-  <SectionTitle
-    title="Variant Support"
-    description="All handlers support three display variants."
-  />
-
-  <ComponentsShowcaseGrid
-    blocks={[
-      {
-        name: 'Variant Comparison',
-        description: 'Compare variants',
-        command: 'npx jsrepo add embedded-event',
-        preview: variantPreview,
-        cardData: variantData
-      }
-    ]}
-  />
-
-  <!-- Components Section -->
-  <SectionTitle title="Components" description="Explore each variant in detail" />
-
-  <section class="py-12 space-y-16">
-    <ComponentCard data={liveDemoData}>
-      {#snippet preview()}
-        <InteractiveDemo {ndk} />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={variantData}>
-      {#snippet preview()}
-        <VariantComparison {ndk} />
-      {/snippet}
-    </ComponentCard>
-  </section>
-
-  <!-- Component API -->
-  <ComponentAPI
-    components={[
-      {
-        name: 'EmbeddedEvent',
-        description: 'Main orchestrator component that fetches events and routes to kind-specific handlers.',
-        importPath: "import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            required: true,
-            description: 'NDK instance for fetching events'
-          },
-          {
-            name: 'bech32',
-            type: 'string',
-            required: true,
-            description: 'Bech32-encoded event reference (note1, nevent1, naddr1)'
-          },
-          {
-            name: 'renderer',
-            type: 'ContentRenderer',
-            description: 'Optional custom ContentRenderer instance. Defaults to defaultContentRenderer'
-          },
-          {
-            name: 'class',
-            type: 'string',
-            description: 'Additional CSS classes to apply'
-          }
-        ]
-      },
-      {
-        name: 'Card Components',
-        description: 'Card components for each event kind. These auto-register with defaultContentRenderer and are used automatically when rendering embedded references. Can also be imported directly for standalone use. See /components for full documentation.',
-        importPath: "import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte'; import NoteCard from '$lib/registry/components/note-card/note-card.svelte'; import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            required: true,
-            description: 'NDK instance'
-          },
-          {
-            name: 'event',
-            type: 'NDKEvent | NDKArticle | NDKHighlight',
-            required: true,
-            description: 'The event to render'
-          }
-        ]
-      }
-    ]}
-  />
 </div>
+
+<style>
+  code {
+    background: hsl(var(--muted));
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+</style>

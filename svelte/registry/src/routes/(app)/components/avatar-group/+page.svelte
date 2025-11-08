@@ -1,7 +1,9 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
   import avatarGroupCode from './examples/basic-usage/index.txt?raw';
@@ -33,37 +35,32 @@
     '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
   ];
 
-  // Components section
-  const componentsSection = $derived({
-    cards: [
-      { ...avatarGroupCard, code: avatarGroupCode }
-    ],
-    previews: {
-      [avatarGroupCard.name]: avatarGroupCardPreview
-    }
-  });
 </script>
 
-<!-- Component card preview snippet -->
-{#snippet avatarGroupCardPreview()}
-  <div class="flex flex-col gap-6 items-center">
-    <div class="flex flex-col gap-2 items-center">
-      <span class="text-xs text-muted-foreground">Default</span>
-      <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
-    </div>
-    <div class="flex flex-col gap-2 items-center">
-      <span class="text-xs text-muted-foreground">With Overflow (max: 3)</span>
-      <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} />
-    </div>
-    <div class="flex flex-col gap-2 items-center">
-      <span class="text-xs text-muted-foreground">Text Overflow</span>
-      <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
-    </div>
-    <div class="flex flex-col gap-2 items-center">
-      <span class="text-xs text-muted-foreground">Vertical Stack</span>
-      <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
-    </div>
-  </div>
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...avatarGroupCard, code: avatarGroupCode}}>
+    {#snippet preview()}
+      <div class="flex flex-col gap-6 items-center">
+        <div class="flex flex-col gap-2 items-center">
+          <span class="text-xs text-muted-foreground">Default</span>
+          <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
+        </div>
+        <div class="flex flex-col gap-2 items-center">
+          <span class="text-xs text-muted-foreground">With Overflow (max: 3)</span>
+          <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} />
+        </div>
+        <div class="flex flex-col gap-2 items-center">
+          <span class="text-xs text-muted-foreground">Text Overflow</span>
+          <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
+        </div>
+        <div class="flex flex-col gap-2 items-center">
+          <span class="text-xs text-muted-foreground">Vertical Stack</span>
+          <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
+        </div>
+      </div>
+    {/snippet}
+  </ComponentCard>
 {/snippet}
 
 <!-- EditProps snippet -->
@@ -154,9 +151,9 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
-  {componentsSection}
+  {components}
   {customSections}
 >
     <EditProps.Prop

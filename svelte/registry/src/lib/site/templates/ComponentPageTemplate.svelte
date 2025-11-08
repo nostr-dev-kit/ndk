@@ -14,6 +14,9 @@
     ndk: propNdk,
     showcaseComponents = [],
     showcaseComponent,
+    components,
+    componentsTitle,
+    componentsDescription,
     componentsSection,
     apiDocs = [],
     beforeShowcase,
@@ -76,8 +79,18 @@
   {@render beforeComponents()}
 {/if}
 
-<!-- Components Section -->
-{#if componentsSection && componentsSection.cards.length > 0}
+<!-- Components Section (new simplified pattern) -->
+{#if components}
+  <SectionTitle
+    title={componentsTitle || metadata.componentsTitle || 'Components'}
+    description={componentsDescription || metadata.componentsDescription || 'Explore each variant in detail'}
+  />
+
+  <section class="py-12 space-y-16">
+    {@render components()}
+  </section>
+{:else if componentsSection && componentsSection.cards.length > 0}
+  <!-- Components Section (old pattern - backward compatibility) -->
   <SectionTitle
     title={componentsSection.title || metadata.componentsTitle || 'Components'}
     description={componentsSection.description || metadata.componentsDescription || 'Explore each variant in detail'}

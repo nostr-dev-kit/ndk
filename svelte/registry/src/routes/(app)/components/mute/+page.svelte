@@ -8,11 +8,10 @@
   import Alert from '$site-components/alert.svelte';
 
   // Import code examples
-  import muteButtonCode from './mute-button.example?raw';
-  import muteCustomCode from './mute-custom.example?raw';
+  import muteButtonCode from './examples/basic/index.txt?raw';
+  import muteCustomCode from './examples/custom/index.txt?raw';
 
   import MuteButton from '$lib/registry/components/mute/buttons/basic/mute-button.svelte';
-  import UIComposition from './examples/mute-action-builder.example.svelte';
 
   // Get page data
   let { data } = $props();

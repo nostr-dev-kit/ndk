@@ -76,7 +76,12 @@ export interface ComponentPageTemplateProps {
   showcaseComponents?: ShowcaseComponent[];
   showcaseComponent?: ComponentType | any;
 
-  // Components section
+  // Components section (new simplified pattern)
+  components?: Snippet;
+  componentsTitle?: string;
+  componentsDescription?: string;
+
+  // Components section (old pattern - kept for backward compatibility)
   componentsSection?: ComponentSection;
 
   // API documentation

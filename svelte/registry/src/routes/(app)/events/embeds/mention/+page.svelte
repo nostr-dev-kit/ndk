@@ -1,97 +1,137 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { Snippet } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
-	import ComponentAPI from '$site-components/component-api.svelte';
-	import { EditProps } from '$lib/site/components/edit-props';
-	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import { getContext } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+  import ComponentAPI from '$site-components/component-api.svelte';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
-	import UIBasic from './examples/ui-basic.example.svelte';
-	import UIFull from './examples/ui-full.example.svelte';
+  // Import examples
+  import BasicExample from './basic.example.svelte';
+  import ModernExample from './modern.example.svelte';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Import code examples
+  import basicCode from './basic.example.svelte?raw';
+  import modernCode from './modern.example.svelte?raw';
 
-	const ndk = getContext<NDKSvelte>('ndk');
+  const ndk = getContext<NDKSvelte>('ndk');
 
-	const showcaseComponents: ShowcaseComponent[] = [
-    {
-      cardData: mentionModernCard,
-      preview: mentionModernPreview
-    },
+  // Event with mentions
+  let event = $state<NDKEvent | undefined>();
+
+  // Card metadata for showcase
+  const mentionBasicCard = {
+    name: 'mention-basic',
+    title: 'Basic Mention',
+    description: 'Simple inline mention with user name',
+    category: 'mention',
+    subcategory: 'displays',
+    variant: 'basic'
+  };
+
+  const mentionModernCard = {
+    name: 'mention-modern',
+    title: 'Modern Mention',
+    description: 'Inline mention with avatar and hover card',
+    category: 'mention',
+    subcategory: 'displays',
+    variant: 'modern'
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       cardData: mentionBasicCard,
-      preview: basicPreview
+      preview: basicPreview,
+      orientation: 'vertical'
     },
     {
-      cardData: mentionCustomCard,
-      preview: customPreview
+      cardData: mentionModernCard,
+      preview: modernPreview,
+      orientation: 'vertical'
     }
   ];
 </script>
 
-{#snippet mentionModernPreview()}
-	<div class="p-4 border rounded-lg">
-		<p class="text-sm">
-			Hey <MentionModern
-				{ndk}
-				bech32="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-			/>, check this out!
-		</p>
-	</div>
-{/snippet}
-
+<!-- Preview snippets for showcase -->
 {#snippet basicPreview()}
-	<UIBasic {ndk} />
+  {#if event}
+    <BasicExample {ndk} {event} />
+  {/if}
 {/snippet}
 
-{#snippet customPreview()}
-	<UIFull {ndk} />
+{#snippet modernPreview()}
+  {#if event}
+    <ModernExample {ndk} {event} />
+  {/if}
+{/snippet}
+
+<!-- Preview snippets for components section -->
+{#snippet basicComponentPreview()}
+  {#if event}
+    <BasicExample {ndk} {event} />
+  {/if}
+{/snippet}
+
+{#snippet modernComponentPreview()}
+  {#if event}
+    <ModernExample {ndk} {event} />
+  {/if}
 {/snippet}
 
 {#snippet customSections()}
-	<ComponentAPI
-		components={[
-			{
-				name: 'MentionModern',
-				description: 'Modern inline mention with avatar and user card popover on hover',
-				importPath: "import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			},
-			{
-				name: 'Mention (UI Primitive)',
-				description: 'Headless mention primitive with automatic profile fetching',
-				importPath: "import { Mention } from '$lib/registry/ui/mention'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]}
-	/>
+  <ComponentAPI
+    components={[
+      {
+        name: 'MentionModern',
+        description: 'Modern inline mention with avatar and user card popover on hover',
+        importPath: "import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+          { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      },
+      {
+        name: 'Mention',
+        description: 'Basic inline mention component with automatic profile fetching',
+        importPath: "import Mention from '$lib/registry/components/mention/mention.svelte'",
+        props: [
+          { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+          { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
+          { name: 'class', type: 'string', description: 'Additional CSS classes' }
+        ]
+      }
+    ]}
+  />
 {/snippet}
 
-{#if true}
-	{@const previews = {
-		'mention-modern': mentionModernPreview,
-		'mention-basic': basicPreview,
-		'mention-custom': customPreview
-	} as any}
-	<ComponentPageTemplate
-	metadata={metadata}
-	{ndk}
-	{showcaseComponents}
-	componentsSection={{
-		cards: mentionCards,
-		previews
-	}}
-	{customSections}
-	/>
-{/if}
+<!-- Page metadata -->
+<ComponentPageTemplate
+  metadata={{
+    title: 'Mention Embeds',
+    description: 'Display inline user mentions in Nostr events with different styles',
+    showcaseTitle: 'Mention Display Variants',
+    showcaseDescription: 'Explore different ways to display user mentions in your Nostr application'
+  }}
+  {ndk}
+  {showcaseComponents}
+  componentsSection={{
+    cards: [
+      { ...mentionBasicCard, code: basicCode },
+      { ...mentionModernCard, code: modernCode }
+    ],
+    previews: {
+      'mention-basic': basicComponentPreview,
+      'mention-modern': modernComponentPreview
+    }
+  }}
+  {customSections}
+>
+  <EditProps.Prop
+    name="Event with mentions"
+    type="event"
+    bind:value={event}
+    default="nevent1qqsxh2z42kgf2hc7yqh0jz0vxzxw9mxwqvqzqyqzqyqzqyqzqyqzqyqpzamhxue69uhhyetvv9ujumn0wd68ytnzv9hxgtcpzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqyq8wumn8ghj7un9d3shjtnwdaehgu3wvfskueqpz4mhxue69uhhyetvv9ujuerpd46hxtnfduhsz9thwden5te0v4jx2m3wdehhxarj9ekxzmny9uq3xamnwvaz7tm0venxx6rpd9hzuur4vghsz9thwden5te0wfjkccte9ejxzmt4wvhxjme0qy88wumn8ghj7mn0wvhxcmmv9uqsuamnwvaz7tmwdaejumr0dshsz9mhwden5te0wfjkccte9ehx7um5wghxyctwvshszythwden5te0dehhxarj9emkjmn99uqsuamnwvaz7tmwdaejumr0dshs6q9vqx"
+  />
+</ComponentPageTemplate>

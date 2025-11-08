@@ -1,7 +1,9 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import emojiPickerListCode from './examples/list/index.txt?raw';
@@ -57,6 +59,21 @@
   <UiComposition {ndk} />
 {/snippet}
 
+<!-- Components snippet -->
+{#snippet components()}
+  <ComponentCard data={{...emojiPickerListCard, code: emojiPickerListCode}}>
+    {#snippet preview()}
+      {@render basicPreview()}
+    {/snippet}
+  </ComponentCard>
+
+  <ComponentCard data={{...emojiPickerContentCard, code: emojiPickerContentCode}}>
+    {#snippet preview()}
+      {@render contentPreview()}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
 <!-- Custom sections for Builder API -->
 {#snippet customSections()}
   <!-- Builder API -->
@@ -79,18 +96,9 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={metadata}
+  {metadata}
   {ndk}
   {showcaseComponents}
+  {components}
   {customSections}
-  componentsSection={{
-    cards: [
-      { ...emojiPickerListCard, code: emojiPickerListCode },
-      { ...emojiPickerContentCard, code: emojiPickerContentCode }
-    ],
-    previews: {
-      'emoji-picker-list': basicPreview,
-      'emoji-picker-content': contentPreview
-    }
-  }}
 />

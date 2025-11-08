@@ -4,6 +4,7 @@
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
+  import Preview from '$site-components/preview.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import Alert from '$site-components/alert.svelte';
 
@@ -22,18 +23,6 @@
   const metadata = {
     title: 'Mute',
     description: 'Mute buttons and components for Nostr users'
-  };
-
-  // Card data for custom mute example
-  const muteCustomCard = {
-    name: 'mute-custom',
-    title: 'Mute Custom',
-    category: 'mute',
-    subcategory: 'buttons',
-    variant: 'custom',
-    description: 'Custom mute button composition',
-    command: 'npx jsrepo add mute/buttons/custom',
-    apiDocs: []
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -70,16 +59,29 @@
       {@render muteButtonPreview()}
     {/snippet}
   </ComponentCard>
+{/snippet}
 
-  <ComponentCard data={{...muteCustomCard, code: muteCustomCode}}>
-    {#snippet preview()}
-      {@render customPreview()}
-    {/snippet}
-  </ComponentCard>
+<!-- Custom composition examples -->
+{#snippet compositionExamples()}
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Custom Compositions</h2>
+    <p class="text-muted-foreground mb-6">
+      Build custom mute buttons using the <code class="px-2 py-1 bg-muted rounded text-sm">createMuteAction()</code> builder.
+      These are teaching examples, not installable components.
+    </p>
+
+    {#if sampleUser}
+      <Preview code={muteCustomCode}>
+        <UIComposition {ndk} user={sampleUser} />
+      </Preview>
+    {/if}
+  </section>
 {/snippet}
 
 <!-- Custom sections for Builder API and ndk.$mutes API -->
 {#snippet customSections()}
+  {@render compositionExamples()}
+
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Builder API</h2>
     <p class="text-muted-foreground mb-6">
@@ -158,11 +160,6 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
       id: "muteButtonCard",
       cardData: muteButtonCard,
       preview: muteButtonPreview
-    },
-    {
-      id: "muteCustomCard",
-      cardData: muteCustomCard,
-      preview: customPreview
     }
   ]}
   {components}

@@ -2,6 +2,7 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import Preview from '$site-components/preview.svelte';
 	import { EditProps } from '$lib/site/components/edit-props';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
@@ -14,25 +15,6 @@
 	const metadata = {
 		title: 'Notification System',
 		description: 'Real-time notification feed with builders and UI primitives'
-	};
-
-	// Card data for showcase components
-	const notificationBuilderCard = {
-		name: 'notification-builder',
-		title: 'Notification Feed Builder',
-		description: 'Create notification feeds with createNotificationFeed()',
-		command: 'npx jsrepo add notification/builder',
-		dependencies: ['@nostr-dev-kit/svelte', '@nostr-dev-kit/ndk'],
-		apiDocs: []
-	};
-
-	const notificationPrimitivesCard = {
-		name: 'notification-primitives',
-		title: 'Notification UI Primitives',
-		description: 'Composable notification display components',
-		command: 'npx jsrepo add notification/ui',
-		dependencies: ['@nostr-dev-kit/svelte', '@nostr-dev-kit/ndk'],
-		apiDocs: []
 	};
 
 	const ndk = getContext<NDKSvelte>('ndk');
@@ -129,24 +111,36 @@
 	</div>
 {/snippet}
 
+<!-- Custom sections with examples -->
+{#snippet customSections()}
+	<section class="mt-16">
+		<h2 class="text-3xl font-bold mb-4">Builder Pattern</h2>
+		<p class="text-muted-foreground mb-6">
+			The <code class="px-2 py-1 bg-muted rounded text-sm">createNotificationFeed()</code> builder aggregates and categorizes notifications.
+			This is a teaching example, not an installable component.
+		</p>
+
+		<Preview code={notificationBuilderCode}>
+			{@render builderPreview()}
+		</Preview>
+	</section>
+
+	<section class="mt-16">
+		<h2 class="text-3xl font-bold mb-4">UI Primitives</h2>
+		<p class="text-muted-foreground mb-6">
+			Compose notification displays using UI primitives.
+			This is a teaching example showing how to build custom layouts.
+		</p>
+
+		<Preview code={notificationPrimitivesCode}>
+			{@render primitivesPreview()}
+		</Preview>
+	</section>
+{/snippet}
+
 <!-- Use the template -->
 <ComponentPageTemplate
 	{metadata}
 	{ndk}
-	showcaseComponents={[
-		{
-   id: "notificationBuilderCard",
-			cardData: notificationBuilderCard,
-			preview: builderPreview,
-			code: notificationBuilderCode,
-			orientation: 'vertical'
-		},
-		{
-   id: "notificationPrimitivesCard",
-			cardData: notificationPrimitivesCard,
-			preview: primitivesPreview,
-			code: notificationPrimitivesCode,
-			orientation: 'vertical'
-		}
-	]}
+	{customSections}
 />

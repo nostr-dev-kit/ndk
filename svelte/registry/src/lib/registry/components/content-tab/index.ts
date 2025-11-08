@@ -34,8 +34,8 @@
  * @example Using the builder directly:
  * ```svelte
  * <script>
- *   import { createContentSampler, byRecency } from '../../../builders/content-tab';
- *   import { kindLabel } from '../../../utils/kind-label.js';
+ *   import { createContentSampler, byRecency } from '../../builders/content-tab';
+ *   import { kindLabel } from '../../utils/kind-label.js';
  *
  *   const tabSampler = createContentSampler(() => ({
  *     pubkeys: ['hexpubkey'],
@@ -53,6 +53,6 @@
 import ContentTab from './content-tab.svelte';
 
 export { ContentTab };
-export { createContentSampler, byCount, byRecency } from '../../../builders/content-tab';
-export type { ContentTab as ContentTabType } from '../../../builders/content-tab';
+export { createContentSampler, byCount, byRecency } from '../../builders/content-tab';
+export type { ContentTab as ContentTabType } from '../../builders/content-tab';
 export default ContentTab;

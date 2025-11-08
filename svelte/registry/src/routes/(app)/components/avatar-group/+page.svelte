@@ -4,16 +4,20 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
-  import avatarGroupCode from './avatar-group.example?raw';
+  import avatarGroupCode from './examples/basic-usage/index.txt?raw';
 
   // Import registry metadata
   import avatarGroupCard from '$lib/registry/components/misc/avatar-group/registry.json';
 
   import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const metadata = {
+    title: 'Avatar Group',
+    description: 'Display a group of user avatars with overflow handling and smart ordering',
+    showcaseTitle: 'Avatar Group Variants',
+    showcaseDescription: 'Explore different avatar group layouts and overflow styles',
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -154,7 +158,6 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
   {ndk}
   {componentsSection}
   {customSections}
-  apiDocs={metadata.apiDocs}
 >
     <EditProps.Prop
       name="Max avatars"

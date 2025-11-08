@@ -1,0 +1,89 @@
+{
+  "name": "article-card",
+  "title": "Article Card",
+  "category": "article",
+  "subcategory": "cards",
+  "variant": "basic",
+  "description": "A medium-sized article card showing title, summary, cover image, author, and read time in a balanced layout. Use in article feeds, blog listings, or publication homepages where you want to showcase multiple articles with good visual hierarchy.",
+  "showcaseTitle": "Article Card",
+  "showcaseDescription": "Balanced article card for content feeds and blog listings.",
+  "command": "npx jsrepo add article-card",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "registryDependencies": [
+    "ui/user"
+  ],
+  "components": [
+    {
+      "name": "ArticleCard",
+      "description": "Article card component for kind 30023 events",
+      "importPath": "import { ArticleCard } from '$lib/registry/components/article-card'",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "description": "NDK instance (optional if provided via context)"
+        },
+        {
+          "name": "event",
+          "type": "NDKEvent",
+          "required": true,
+          "description": "Article event (kind 30023)"
+        },
+        {
+          "name": "showImage",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show cover image"
+        },
+        {
+          "name": "showAuthor",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show author information"
+        },
+        {
+          "name": "showSummary",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show article summary"
+        },
+        {
+          "name": "maxSummaryLength",
+          "type": "number",
+          "default": 150,
+          "description": "Maximum summary length in characters"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "name": "basic",
+      "title": "Basic Usage",
+      "description": "Standard article card",
+      "file": "examples/basic.svelte"
+    },
+    {
+      "name": "feed",
+      "title": "Article Feed",
+      "description": "Multiple articles in a feed",
+      "file": "examples/feed.svelte"
+    }
+  ],
+  "useCases": [
+    "blog",
+    "article-feed",
+    "publication",
+    "news",
+    "content-discovery",
+    "long-form"
+  ]
+}

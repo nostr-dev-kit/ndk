@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { eventsIntroductionCards } from '$lib/component-registry/events-introduction';
+	// Events introduction cards are now loaded via parent page
+	const eventsIntroductionCards = [];
 </script>
 
 <div class="visualization-container">

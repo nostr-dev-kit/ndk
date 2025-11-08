@@ -1,0 +1,7 @@
+<script lang="ts">
+  import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
+
+  let { user } = $props();
+</script>
+
+<FollowButton target={user} />

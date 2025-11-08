@@ -1,5 +1,0 @@
-<script lang="ts">
-  import FollowButtonPill from '$lib/registry/components/follow-button-pill/follow-button-pill.svelte';
-</script>
-
-<FollowButtonPill target={user} variant="solid" />

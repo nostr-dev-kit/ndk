@@ -1,0 +1,7 @@
+<script lang="ts">
+  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
+
+  let { user } = $props();
+</script>
+
+<FollowButtonPill target={user} variant="solid" />

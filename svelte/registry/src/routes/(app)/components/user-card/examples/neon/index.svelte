@@ -17,7 +17,7 @@
 -->
 <script lang="ts">
   import UserCardNeon from '$lib/registry/components/user/cards/neon/user-card-neon.svelte';
-  import type { NDKUser, NDKSvelte } from '@nostr-dev-kit/ndk';
+  import type { NDKUser, NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;

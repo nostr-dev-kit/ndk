@@ -51,7 +51,7 @@
 	<p>If you don't have a SvelteKit project yet, create one:</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={createProject}
 	/>
 
@@ -73,7 +73,7 @@
 	</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={installTailwind}
 	/>
 
@@ -82,7 +82,7 @@
 	<p>Add the Tailwind plugin to your <code>vite.config.ts</code>:</p>
 
 	<CodeBlock
-		language="typescript"
+		lang="typescript"
 		code={viteConfig}
 	/>
 
@@ -90,14 +90,14 @@
 
 	<p>Create <code>src/app.css</code> and import Tailwind:</p>
 
-	<CodeBlock language="css" code={appCss} />
+	<CodeBlock lang="css" code={appCss} />
 
 	<h3>Import in Layout</h3>
 
 	<p>Import the CSS in <code>src/routes/+layout.svelte</code>:</p>
 
 	<CodeBlock
-		language="svelte"
+		lang="svelte"
 		code={layout}
 	/>
 
@@ -109,7 +109,7 @@
 	<p>Install the core NDK packages that power @nostr/svelte components:</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={installNdk}
 	/>
 
@@ -118,7 +118,7 @@
 	<p>Depending on your needs, you may want additional NDK packages:</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={installNdkOptional}
 	/>
 
@@ -132,7 +132,7 @@
 	<p>Create <code>src/lib/ndk.ts</code>:</p>
 
 	<CodeBlock
-		language="typescript"
+		lang="typescript"
 		code={ndkConfig}
 	/>
 
@@ -154,7 +154,7 @@
 	</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={installJsrepo}
 	/>
 
@@ -165,7 +165,7 @@
 
 	<p>Initialize jsrepo in your project to configure component installation paths:</p>
 
-	<CodeBlock language="bash" code={jsrepoInit} />
+	<CodeBlock lang="bash" code={jsrepoInit} />
 
 	<p>This will prompt you to configure:</p>
 	<ul>
@@ -177,7 +177,7 @@
 	<h3>Recommended Path Configuration</h3>
 
 	<CodeBlock
-		language="json"
+		lang="json"
 		code={jsrepoConfig}
 	/>
 
@@ -186,7 +186,7 @@
 	<p>If you chose Biome, install it:</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={installBiome}
 	/>
 
@@ -199,14 +199,14 @@
 
 	<h3>Browse Available Components</h3>
 
-	<CodeBlock language="bash" code={jsrepoInfo} />
+	<CodeBlock lang="bash" code={jsrepoInfo} />
 
 	<h3>Add Components</h3>
 
 	<p>Install components individually or in groups:</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={jsrepoAdd}
 	/>
 
@@ -226,7 +226,7 @@
 	<p>Once installed, import and use components in your Svelte files:</p>
 
 	<CodeBlock
-		language="svelte"
+		lang="svelte"
 		code={usingComponents}
 	/>
 
@@ -238,7 +238,7 @@
 	<p>Keep your components up to date with the latest versions:</p>
 
 	<CodeBlock
-		language="bash"
+		lang="bash"
 		code={jsrepoUpdate}
 	/>
 
@@ -252,7 +252,7 @@
 	<p>Your <code>jsrepo.json</code> file controls how components are installed:</p>
 
 	<CodeBlock
-		language="json"
+		lang="json"
 		code={jsrepoConfigReference}
 	/>
 
@@ -266,7 +266,7 @@
 	<p>For production applications, consider this enhanced NDK configuration:</p>
 
 	<CodeBlock
-		language="typescript"
+		lang="typescript"
 		code={ndkAdvancedConfig}
 	/>
 

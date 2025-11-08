@@ -43,7 +43,7 @@
 
   <h4>Example Implementation</h4>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`<!-- relay-bookmarked-by.svelte -->
 <script lang="ts">
   import { getContext } from 'svelte';
@@ -73,7 +73,7 @@
 
   <h4>Usage Example</h4>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`<Relay.BookmarkedBy {bookmarks}>
   {#snippet children({ pubkeys, count })}
     <div class="flex gap-2">
@@ -100,7 +100,7 @@
 
   <h4>Example Implementation</h4>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`<!-- relay-bookmark-button.svelte -->
 <script lang="ts">
   import type { Snippet } from 'svelte';
@@ -151,7 +151,7 @@
 
   <h4>Usage Examples</h4>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`<!-- Default button -->
 <Relay.BookmarkButton {bookmarks} />
 
@@ -188,7 +188,7 @@
 
   <h4>Example Implementation</h4>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`<!-- user-name.svelte -->
 <script lang="ts">
   import { getContext } from 'svelte';
@@ -238,7 +238,7 @@
     When using the child snippet pattern, always merge user props with internal props to ensure both work correctly:
   </p>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`import { mergeProps } from '../utils.js';
 
 const mergedProps = $derived(mergeProps(restProps, {
@@ -255,7 +255,7 @@ const mergedProps = $derived(mergeProps(restProps, {
     Use Svelte's context API for sharing state between related components:
   </p>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`// In root component
 const CONTEXT_KEY = Symbol('my-component');
 setContext(CONTEXT_KEY, {
@@ -278,7 +278,7 @@ if (!context) {
     Always type your snippet parameters for better developer experience:
   </p>
 
-  <CodeBlock language="typescript">
+  <CodeBlock lang="typescript">
 {`interface SnippetProps {
   isSelected: boolean;
   isLoading: boolean;
@@ -324,7 +324,7 @@ interface Props {
     Export components as a namespace for better developer experience:
   </p>
 
-  <CodeBlock language="typescript">
+  <CodeBlock lang="typescript">
 {`// index.ts
 import Root from './user-root.svelte';
 import Avatar from './user-avatar.svelte';
@@ -379,7 +379,7 @@ import { User } from '$lib/registry/ui/user';
 
   <h3>Conditional Rendering with Data</h3>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`{#if data.length > 0}
   {@render children({ data })}
 {/if}`}
@@ -387,7 +387,7 @@ import { User } from '$lib/registry/ui/user';
 
   <h3>Default Fallback Content</h3>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`{#if children}
   {@render children(props)}
 {:else}
@@ -397,7 +397,7 @@ import { User } from '$lib/registry/ui/user';
 
   <h3>Exposing Multiple States</h3>
 
-  <CodeBlock language="svelte">
+  <CodeBlock lang="svelte">
 {`const snippetProps = $derived({
   isOpen,
   isLoading,

@@ -17,7 +17,7 @@
 -->
 <script lang="ts">
   import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;

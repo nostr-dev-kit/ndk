@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { setContext, getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { createFetchEvent, type NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer.svelte.js';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer.context.js';
-    // import { createEmbeddedEvent } from '$lib/registry/builders/event-content/event-content.svelte.js';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;
 		bech32: string;
-		variant?: 'inline' | 'card' | 'compact';
 		renderer?: ContentRenderer;
 		class?: string;
 	}
@@ -16,7 +14,6 @@
 	let {
 		ndk,
 		bech32,
-		variant = 'card',
 		renderer: rendererProp,
 		class: className = ''
 	}: EmbeddedEventProps = $props();
@@ -28,7 +25,7 @@
 	// Set renderer in context so nested components can access it
 	setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
 
-	const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
+	const embedded = createFetchEvent(() => ({ bech32 }), ndk);
 
 	// Lookup handler from registry for this specific kind
 	let handlerInfo = $derived(renderer.getKindHandler(embedded.event?.kind));

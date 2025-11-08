@@ -3,16 +3,14 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { replyMetadata, replyButtonCard, followButtonAvatarsCard } from '$lib/component-registry/reply';
+  import { replyMetadata, replyButtonCard } from '$lib/component-registry/reply';
   import { EditProps } from '$lib/site-components/edit-props';
 
   // Import code examples
   import replyButtonCode from './reply-button.example?raw';
-  import followButtonAvatarsCode from './follow-button-avatars.example?raw';
 
   // Import components
   import ReplyButton from '$lib/registry/components/reply-button/reply-button.svelte';
-  import FollowButtonAvatars from '$lib/registry/components/follow-button-avatars/follow-button-avatars.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -42,17 +40,6 @@
   {/if}
 {/snippet}
 
-{#snippet avatarsPreview()}
-  {#if sampleEvent}
-    <div class="flex gap-4 items-center flex-wrap">
-      <FollowButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
-      <FollowButtonAvatars {ndk} event={sampleEvent} variant="outline" />
-      <FollowButtonAvatars {ndk} event={sampleEvent} variant="pill" />
-      <FollowButtonAvatars {ndk} event={sampleEvent} variant="solid" />
-    </div>
-  {/if}
-{/snippet}
-
 <!-- Use the template -->
 <ComponentPageTemplate
   metadata={replyMetadata}
@@ -65,23 +52,14 @@
       preview: replyButtonsPreview,
       cardData: replyMetadata.cards[0],
       orientation: 'horizontal'
-    },
-    {
-      name: 'Reply Authors Avatars',
-      description: 'Show avatars of people who replied',
-      command: 'npx jsrepo add reply-button',
-      preview: avatarsPreview,
-      orientation: 'horizontal'
     }
   ]}
   componentsSection={{
     cards: [
-      { ...replyButtonCard, code: replyButtonCode },
-      { ...followButtonAvatarsCard, code: followButtonAvatarsCode }
+      { ...replyButtonCard, code: replyButtonCode }
     ],
     previews: {
-      'reply-button': replyButtonsPreview,
-      'follow-button-avatars': avatarsPreview
+      'reply-button': replyButtonsPreview
     }
   }}
   apiDocs={replyMetadata.apiDocs}

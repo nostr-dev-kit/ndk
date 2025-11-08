@@ -233,13 +233,13 @@
       </p>
       <div class="p-4 bg-muted rounded font-mono text-sm space-y-2">
         <div class="text-muted-foreground">// Import the variant component</div>
-        <div>import HighlightEmbeddedInline from './highlight-embedded-inline.svelte';</div>
+        <div>import HighlightCardInline from './highlight-embedded-inline.svelte';</div>
         <div>import {'{ ContentRenderer }'} from '$lib/registry/ui/embedded-event.svelte';</div>
         <div>import {'{ NDKHighlight }'} from '@nostr-dev-kit/ndk';</div>
         <div class="h-2"></div>
         <div class="text-muted-foreground">// Create custom registry</div>
         <div>const inlineRenderer = new ContentRenderer();</div>
-        <div>inlineRenderer.addKind(NDKHighlight, HighlightEmbeddedInline);</div>
+        <div>inlineRenderer.addKind(NDKHighlight, HighlightCardInline);</div>
         <div class="h-2"></div>
         <div class="text-muted-foreground">// Pass to EventContent</div>
         <div>&lt;EventContent {'{ndk}'} {'{event}'} renderer={'{inlineRenderer}'} /&gt;</div>

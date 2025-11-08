@@ -2,7 +2,7 @@
   import { NDKEvent, NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFetchEvent } from '@nostr-dev-kit/svelte';
-  import GenericEmbedded from '$lib/registry/ui/embedded-event.svelte';
+  import GenericCard from '$lib/registry/ui/embedded-event.svelte';
 
   // Import kind handlers
   import { ArticleEmbedded } from '$lib/registry/components/article-embedded';
@@ -45,7 +45,7 @@
   let handlerInfo = $derived(
     fetcher.event ? KIND_HANDLERS[fetcher.event.kind] : null
   );
-  let Handler = $derived(handlerInfo?.component ?? GenericEmbedded);
+  let Handler = $derived(handlerInfo?.component ?? GenericCard);
 
   // Wrap event using NDK wrapper class
   let wrappedEvent = $derived(

@@ -1,10 +1,9 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { getContext } from 'svelte';
-  import { SvelteSet } from 'svelte/reactivity';
   import { cn } from '../../utils/cn.js';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
+  import { createReactionAction } from '../../builders/reaction-action.svelte.js';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -32,37 +31,14 @@
     class: className = ''
   }: Props = $props();
 
-  const ndkContext = getContext<NDKSvelte>('ndk');
-  const ndk = ndkProp || ndkContext;
+  const reaction = createReactionAction(() => ({ event }), ndkProp);
 
-  const pubkeySet = new SvelteSet<string>();
-
-  const reactionAuthorPubkeys = $derived(Array.from(pubkeySet));
+  const reactionData = $derived(reaction.get(emoji));
+  const reactionAuthorPubkeys = $derived(reactionData?.pubkeys || []);
   const totalReactions = $derived(reactionAuthorPubkeys.length);
 
-  $effect(() => {
-    if (!ndk || !event?.id) return;
-
-    // Fetch reactions (kind 7) for this event - get ALL reactions, not filtered by emoji
-    const filter = {
-      kinds: [7],
-      '#e': [event.id]
-    };
-
-    const sub = ndk.subscribe(filter, { closeOnEose: false });
-
-    sub.on('event', (reactionEvent) => {
-      if (reactionEvent.pubkey) {
-        pubkeySet.add(reactionEvent.pubkey);
-      }
-    });
-
-    return () => {
-      sub.stop();
-    };
-  });
-
-  function handleClick() {
+  async function handleClick() {
+    await reaction.react(emoji);
     onclick?.();
   }
 </script>

@@ -17,29 +17,29 @@
   let sampleNote = $state<NDKEvent | undefined>();
 
   const cardData = {
-    name: 'generic-embedded-card',
+    name: 'generic-card-card',
     title: 'Card Variant',
     description: 'Full display with kind badge.',
     richDescription: 'Full display with event content and kind badge. Shows NIP-31 alt tag when available.',
-    command: 'npx jsrepo add generic-embedded-card',
+    command: 'npx jsrepo add generic-card-card',
     apiDocs: []
   };
 
   const inlineData = {
-    name: 'generic-embedded-inline',
+    name: 'generic-card-inline',
     title: 'Inline Variant',
     description: 'Medium-sized display.',
     richDescription: 'Medium-sized display suitable for inline references within content.',
-    command: 'npx jsrepo add generic-embedded-inline',
+    command: 'npx jsrepo add generic-card-inline',
     apiDocs: []
   };
 
   const compactData = {
-    name: 'generic-embedded-compact',
+    name: 'generic-card-compact',
     title: 'Compact Variant',
     description: 'Minimal with truncated content.',
     richDescription: 'Minimal display with truncated content and compact header.',
-    command: 'npx jsrepo add generic-embedded-compact',
+    command: 'npx jsrepo add generic-card-compact',
     apiDocs: []
   };
 </script>
@@ -74,14 +74,14 @@
   <section class="mb-12 max-w-3xl">
     <h2 class="text-3xl font-bold mb-6">Overview</h2>
     <p class="text-base leading-relaxed mb-6">
-      When an event kind has no registered handler, <code class="px-1.5 py-0.5 bg-muted/50 rounded text-sm font-mono">GenericEmbedded</code> provides an intelligent fallback
+      When an event kind has no registered handler, <code class="px-1.5 py-0.5 bg-muted/50 rounded text-sm font-mono">GenericCard</code> provides an intelligent fallback
       that leverages NIP-31 and NIP-89 to help users understand and interact with unknown event kinds.
     </p>
     <p class="text-base leading-relaxed mb-4">
       <strong class="font-semibold">Handles:</strong> Any kind not in the registry
     </p>
     <p class="text-base leading-relaxed mb-4">
-      <strong class="font-semibold">Component:</strong> <code class="px-1.5 py-0.5 bg-muted/50 rounded text-sm font-mono">GenericEmbedded</code>
+      <strong class="font-semibold">Component:</strong> <code class="px-1.5 py-0.5 bg-muted/50 rounded text-sm font-mono">GenericCard</code>
     </p>
     <p class="text-base leading-relaxed mb-4">
       <strong class="font-semibold">NIP-31:</strong> Displays human-readable alt tag summaries
@@ -183,21 +183,21 @@
       {
         name: 'Card Variant',
         description: 'Full display',
-        command: 'npx jsrepo add generic-embedded-card',
+        command: 'npx jsrepo add generic-card-card',
         preview: cardPreview,
         cardData: cardData
       },
       {
         name: 'Inline Variant',
         description: 'Medium-sized display',
-        command: 'npx jsrepo add generic-embedded-inline',
+        command: 'npx jsrepo add generic-card-inline',
         preview: inlinePreview,
         cardData: inlineData
       },
       {
         name: 'Compact Variant',
         description: 'Minimal truncated',
-        command: 'npx jsrepo add generic-embedded-compact',
+        command: 'npx jsrepo add generic-card-compact',
         preview: compactPreview,
         cardData: compactData
       }
@@ -284,7 +284,7 @@
     <div class="p-6 border border-border rounded-lg bg-card">
       <p class="text-sm text-muted-foreground mb-4">
         NIP-31 defines how custom event kinds should include a human-readable summary in an <code class="px-2 py-1 bg-muted rounded">alt</code> tag.
-        When GenericEmbedded encounters an event with an alt tag, it displays the summary prominently:
+        When GenericCard encounters an event with an alt tag, it displays the summary prominently:
       </p>
 
       <div class="space-y-4">
@@ -319,7 +319,7 @@
     <div class="p-6 border border-border rounded-lg bg-card">
       <p class="text-sm text-muted-foreground mb-4">
         NIP-89 enables automatic discovery of applications that can handle unknown event kinds.
-        When GenericEmbedded renders an event, it automatically:
+        When GenericCard renders an event, it automatically:
       </p>
 
       <div class="space-y-4">

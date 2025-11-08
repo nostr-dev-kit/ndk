@@ -83,7 +83,7 @@
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">4</div>
             <div>
               <strong class="text-foreground">Render</strong>
-              <p class="text-sm">Render using the kind-specific handler, or fall back to GenericEmbedded for unknown kinds</p>
+              <p class="text-sm">Render using the kind-specific handler, or fall back to GenericCard for unknown kinds</p>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
             <p class="text-xs text-muted-foreground">Automatically registers kind 9802 and wraps with NDKHighlight.from()</p>
           </div>
           <div class="p-4 bg-card rounded border border-border">
-            <div class="text-sm font-mono mb-2">* → GenericEmbedded</div>
+            <div class="text-sm font-mono mb-2">* → GenericCard</div>
             <p class="text-xs text-muted-foreground">Fallback for unknown kinds (no wrapping)</p>
           </div>
         </div>
@@ -184,7 +184,7 @@
         <h3 class="text-xl font-semibold mb-4">Fallback Behavior</h3>
         <p class="text-sm text-muted-foreground mb-4">
           When an event kind has no registered handler, the system automatically falls back
-          to <code class="px-2 py-1 bg-muted rounded">GenericEmbedded</code>, which:
+          to <code class="px-2 py-1 bg-muted rounded">GenericCard</code>, which:
         </p>
         <ul class="list-disc list-inside space-y-2 text-sm text-muted-foreground">
           <li>Renders using EventCard primitives (universal event display)</li>

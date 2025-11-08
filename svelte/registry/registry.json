@@ -112,13 +112,85 @@
       "updatedAt": "2025-10-31T07:15:56.000Z"
     },
     {
+      "name": "event-content",
+      "type": "registry:lib",
+      "title": "Event Content Builder",
+      "description": "Pure parsing logic for Nostr event content - extracts text, mentions, hashtags, links, media, emojis, and event references",
+      "registryDependencies": [],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/builders/event-content/event-content.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/builders/event-content/utils.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/builders/event-content/index.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "version": "1.0.0",
+      "updatedAt": "2025-11-08T00:00:00.000Z"
+    },
+    {
+      "name": "event-rendering",
+      "type": "registry:component",
+      "title": "Event Rendering",
+      "description": "Complete event rendering system with content parsing, embedded event display, markdown support, and customizable content handlers",
+      "registryDependencies": [
+        "event-content"
+      ],
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "files": [
+        {
+          "path": "registry/ndk/ui/event-content.svelte",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ndk/ui/embedded-event.svelte",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ndk/ui/markdown-event-content/markdown-event-content.svelte",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ndk/ui/markdown-event-content/markdown-event-content.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/ui/markdown-event-content/index.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/ui/content-renderer.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/ui/content-renderer.context.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "version": "1.0.0",
+      "updatedAt": "2025-11-08T00:00:00.000Z"
+    },
+    {
       "name": "event-card",
       "type": "registry:component",
       "title": "Event Card",
       "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions",
       "registryDependencies": [
         "user-profile",
-        "event-content",
+        "event-rendering",
         "actions",
         "ndk-context"
       ],

@@ -11,7 +11,20 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import * as ComponentAnatomy from '$site-components/component-anatomy';  import type { ShowcaseComponent } from '$lib/site/templates/types';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
+
+  // Import registry metadata
+  import highlightCardBasicCard from '$lib/registry/components/highlight/cards/basic/registry.json';
+  import highlightCardCompactCardBase from '$lib/registry/components/highlight/cards/compact/registry.json';
+
+  // Create variant cards from base registry
+  const highlightCardFeedCard = { ...highlightCardBasicCard, name: 'highlight-card-feed', title: 'Highlight Card Feed', variant: 'feed' };
+  const highlightCardElegantCard = { ...highlightCardBasicCard, name: 'highlight-card-elegant', title: 'Highlight Card Elegant', variant: 'elegant' };
+  const highlightCardGridCard = { ...highlightCardBasicCard, name: 'highlight-card-grid', title: 'Highlight Card Grid', variant: 'grid' };
+  const highlightCardCompactCard = { ...highlightCardCompactCardBase, name: 'highlight-card-compact', title: 'Highlight Card Compact' };
+
+  const highlightCardCards = [highlightCardFeedCard, highlightCardElegantCard, highlightCardGridCard, highlightCardCompactCard];
 
   // Get page data
   let { data } = $props();

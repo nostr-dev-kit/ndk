@@ -20,6 +20,8 @@
 	import articleCardMediumCard from '$lib/registry/components/article/cards/basic/registry.json';
 	import articleCardNeonCard from '$lib/registry/components/article/cards/neon/registry.json';
 
+	const articleCardCards = [articleCardPortraitCard, articleCardHeroCard, articleCardMediumCard, articleCardNeonCard];
+
   // Get page data
   let { data } = $props();
   const { metadata } = data;

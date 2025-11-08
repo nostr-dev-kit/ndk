@@ -9,6 +9,12 @@
 	import BasicSimpleExample from './examples/basic-simple.example.svelte';
 	import BasicExample from './examples/basic.example.svelte';
 
+	// Import registry metadata
+	import articleContentBasicCardBase from '$lib/registry/components/article/content/basic/registry.json';
+
+	const articleContentBasicCard = { ...articleContentBasicCardBase };
+	const articleContentCard = { ...articleContentBasicCardBase, name: 'article-content', title: 'Article Content' };
+
   // Get page data
   let { data } = $props();
   const { metadata } = data;

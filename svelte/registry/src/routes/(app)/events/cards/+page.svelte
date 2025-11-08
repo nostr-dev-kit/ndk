@@ -9,7 +9,13 @@
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import type { ShowcaseComponent } from '$lib/site/templates/types';
+
+	// Import registry metadata
+	import eventCardClassicCard from '$lib/registry/components/event/cards/classic/registry.json';
+
+	const eventCardCards = [eventCardClassicCard];
 
   // Get page data
   let { data } = $props();

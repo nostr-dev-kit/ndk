@@ -9,7 +9,12 @@
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/site/templates/types';
+	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import type { ShowcaseComponent } from '$lib/site/templates/types';
+
+	// Import registry metadata
+	import voiceMessageCardCompactCard from '$lib/registry/components/voice-message/cards/compact/registry.json';
+	import voiceMessageCardExpandedCard from '$lib/registry/components/voice-message/cards/expanded/registry.json';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIComposition from './examples/ui-composition.example.svelte';

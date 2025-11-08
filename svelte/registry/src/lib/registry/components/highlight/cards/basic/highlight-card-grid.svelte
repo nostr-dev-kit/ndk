@@ -23,7 +23,7 @@
   }: Props = $props();
 </script>
 
-<Highlight.Root {ndk} {event} variant="grid" class={cn(className)}>
+<Highlight.Root {ndk} {event} class={cn(className)}>
   <article
     data-highlight-card-grid=""
     class="hover:bg-card/30 transition-colors w-full"

@@ -20,6 +20,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
+	import type { ActionInfo } from '$lib/registry/ui/notification';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -41,8 +42,8 @@
 			<!-- Custom Twitter-style layout -->
 			<div class="twitter-style">
 				<div class="action-icon">
-					{#snippet actionIcon({ icon }: { icon: any })}
-						<svelte:component this={icon} size={20} class="text-primary" />
+					{#snippet actionIcon(action: ActionInfo)}
+						<svelte:component this={action.icon} size={20} class="text-primary" />
 					{/snippet}
 					<NotificationItem.Action snippet={actionIcon} />
 				</div>
@@ -50,8 +51,8 @@
 				<div class="notification-body">
 					<div class="actors-line">
 						<NotificationItem.Actors max={3} size={24} spacing="tight" />
-						{#snippet actionText({ type }: { type: string })}
-							<span class="action-text">{type} your post</span>
+						{#snippet actionText(action: ActionInfo)}
+							<span class="action-text">{action.type} your post</span>
 						{/snippet}
 						<NotificationItem.Action snippet={actionText} />
 						<NotificationItem.Timestamp />

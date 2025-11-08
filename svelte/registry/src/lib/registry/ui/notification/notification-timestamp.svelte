@@ -15,17 +15,17 @@
 
 	const context = getContext<NotificationContext>(NOTIFICATION_CONTEXT_KEY);
 
-	const formatted = createTimeAgo(context.notification.mostRecentInteraction);
+	const formatted = createTimeAgo(context.notification.mostRecentAt);
 </script>
 
 {#if snippet}
 	{@render snippet({
-		timestamp: context.notification.mostRecentInteraction,
+		timestamp: context.notification.mostRecentAt,
 		formatted
 	})}
 {:else}
 	<time
-		datetime={new Date(context.notification.mostRecentInteraction * 1000).toISOString()}
+		datetime={new Date(context.notification.mostRecentAt * 1000).toISOString()}
 		class={cn('text-xs text-muted-foreground', className)}
 	>
 		{formatted}

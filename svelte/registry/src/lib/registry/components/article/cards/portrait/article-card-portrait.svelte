@@ -54,6 +54,7 @@
     data-article-card-portrait=""
     this={onclick ? 'button' : 'div'}
     type={onclick ? 'button' : undefined}
+    role={onclick ? 'button' : undefined}
     {onclick}
     class={cn(baseClasses, interactiveClasses)}
   >

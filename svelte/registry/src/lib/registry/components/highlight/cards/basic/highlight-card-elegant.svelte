@@ -20,7 +20,7 @@
   let { ndk, event, class: className = '' }: Props = $props();
 </script>
 
-<Highlight.Root {ndk} {event} variant="grid" class={cn(className)}>
+<Highlight.Root {ndk} {event} class={cn(className)}>
   <article
     data-highlight-card-elegant=""
     class="w-full"

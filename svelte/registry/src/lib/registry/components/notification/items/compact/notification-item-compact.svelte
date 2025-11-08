@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import type { NotificationGroup } from '$lib/registry/builders/notification';
+	import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte.js';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import { cn } from '$lib/registry/utils/cn';
 

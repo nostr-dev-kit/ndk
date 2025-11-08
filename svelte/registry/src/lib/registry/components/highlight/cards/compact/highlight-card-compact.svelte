@@ -35,7 +35,7 @@
   const timeAgo = createTimeAgo(event.created_at);
 </script>
 
-<Highlight.Root {ndk} {event} variant="compact" class={cn(className)}>
+<Highlight.Root {ndk} {event} class={cn(className)}>
   <div
     data-highlight-card-compact=""
     class="block p-4 hover:bg-card/30 transition-colors rounded-lg group"

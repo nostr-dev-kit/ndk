@@ -109,8 +109,9 @@
       <h3 class="column-title">Create Account</h3>
 
       <div class="form-group">
-        <label>Your Name</label>
+        <label for="signup-name">Your Name</label>
         <input
+          id="signup-name"
           type="text"
           bind:value={signupName}
           placeholder="What should we call you?"
@@ -119,8 +120,9 @@
       </div>
 
       <div class="form-group">
-        <label>About You (Optional)</label>
+        <label for="signup-bio">About You (Optional)</label>
         <textarea
+          id="signup-bio"
           bind:value={signupBio}
           placeholder="Tell us a bit about yourself..."
           disabled={isLoading}
@@ -143,8 +145,9 @@
       <h3 class="column-title">Sign In</h3>
 
       <div class="form-group">
-        <label>Your Credentials</label>
+        <label for="login-credential">Your Credentials</label>
         <input
+          id="login-credential"
           type="text"
           bind:value={loginCredential}
           placeholder="nsec, npub, bunker://, or name@domain.com"

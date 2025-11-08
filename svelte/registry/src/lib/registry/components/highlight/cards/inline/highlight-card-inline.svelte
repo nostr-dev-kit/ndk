@@ -12,7 +12,7 @@
 </script>
 
 <div data-highlight-card-inline="" class="rounded-lg overflow-hidden border border-border bg-card max-w-[500px]">
-  <Highlight.Root {ndk} {event} variant="feed">
+  <Highlight.Root {ndk} {event}>
     <div class="relative p-3.5 min-h-[80px] flex items-center justify-center">
       <Highlight.Content class="text-sm" />
       <Highlight.Source class="flex items-center gap-1.5 px-2 py-1 text-[10px] bg-background/80 backdrop-blur-sm border border-border rounded text-muted-foreground hover:bg-background transition-colors absolute bottom-2 right-2">

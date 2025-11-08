@@ -36,7 +36,7 @@
 			{#if variant === 'full'}
 				<div class="flex-1 text-left min-w-0">
 					<User.Name class="text-sm font-medium text-foreground whitespace-nowrap overflow-hidden text-ellipsis" />
-					<User.Npub class="text-xs text-muted-foreground font-mono" transform={truncateNpub} />
+					<User.Handle class="text-xs text-muted-foreground font-mono" showAt={false} />
 				</div>
 				<svg
 					class="w-4 h-4 text-muted-foreground transition-transform flex-shrink-0 [[data-state=open]_&]:rotate-180"

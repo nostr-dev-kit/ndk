@@ -55,13 +55,6 @@
   setContext(USER_INPUT_CONTEXT_KEY, context);
 </script>
 
-<div class="user-input-root {className}">
+<div class="relative w-full {className}">
   {@render children()}
 </div>
-
-<style>
-  .user-input-root {
-    position: relative;
-    width: 100%;
-  }
-</style>

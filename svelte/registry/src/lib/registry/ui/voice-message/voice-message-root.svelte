@@ -42,12 +42,6 @@
   setContext(VOICE_MESSAGE_CONTEXT_KEY, context);
 </script>
 
-<div class="voice-message-root {className}">
+<div class="contents {className}">
   {@render children()}
 </div>
-
-<style>
-  .voice-message-root {
-    display: contents;
-  }
-</style>

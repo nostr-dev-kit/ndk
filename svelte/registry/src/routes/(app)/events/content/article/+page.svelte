@@ -6,10 +6,12 @@
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { articleContentMetadata, articleContentBasicCard, articleContentCard } from '$lib/component-registry/article-content';
-
 	import BasicSimpleExample from './examples/basic-simple.example.svelte';
 	import BasicExample from './examples/basic.example.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let article = $state<NDKArticle | null | undefined>();
@@ -103,7 +105,7 @@
 {/snippet}
 
 <ComponentPageTemplate
-	metadata={articleContentMetadata}
+	metadata={metadata}
 	{ndk}
 	componentsSection={{
 		cards: [articleContentBasicCardWithDescription, articleContentCardWithDescription],

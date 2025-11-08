@@ -2,20 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import {
-    userCardMetadata,
-    userCardClassicCard,
-    userCardCompactCard,
-    userCardListItemCard,
-    userCardPortraitCard,
-    userCardLandscapeCard,
-    userCardNeonCard,
-    userCardGlassCard,
-    userCardAnatomyLayers,
-    userCardPrimitiveData
-  } from '$lib/component-registry/user-card';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { User } from '$lib/registry/ui/user';
@@ -42,6 +29,10 @@
   import UserCardNeon from '$lib/registry/components/user/cards/neon/user-card-neon.svelte';
   import UserCardGlass from '$lib/registry/components/user/cards/glass/user-card-glass.svelte';
   import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -348,7 +339,7 @@
 
 <!-- Use template with custom showcase component -->
 <ComponentPageTemplate
-  metadata={userCardMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
   showcaseComponents={showcaseComponents}
@@ -373,7 +364,7 @@
       'user-card-glass': glassComponentPreview
     }
   }}
-  apiDocs={userCardMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />

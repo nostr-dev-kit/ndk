@@ -4,14 +4,16 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import HashtagModern from '$lib/registry/components/hashtag/displays/modern/hashtag-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { hashtagMetadata, hashtagCards, hashtagModernCard, hashtagBasicCard, hashtagCustomCard, hashtagInteractiveCard } from '$lib/component-registry/hashtag';
-	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	import UIModern from './examples/ui-modern.example.svelte';
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UICustom from './examples/ui-custom.example.svelte';
 	import UIInteractive from './examples/ui-interactive.example.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -97,7 +99,7 @@
 		'hashtag-interactive': interactivePreview
 	} as any}
 	<ComponentPageTemplate
-	metadata={hashtagMetadata}
+	metadata={metadata}
 	{ndk}
 	{showcaseComponents}
 	componentsSection={{

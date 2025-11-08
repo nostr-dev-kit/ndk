@@ -3,9 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-	import { eventDropdownMetadata, eventDropdownCard } from '$lib/component-registry/event-dropdown';
-	import { EditProps } from '$lib/site-components/edit-props';
+	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import type { ShowcaseComponent } from '$lib/templates/types';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
@@ -15,6 +13,10 @@
 
 	// Import code example
 	import eventDropdownCode from './event-dropdown.example?raw';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -109,7 +111,7 @@
 {/snippet}
 
 <ComponentPageTemplate
-	metadata={eventDropdownMetadata}
+	metadata={metadata}
 	{ndk}
 	showcaseComponent={ComponentsShowcase}
 	{showcaseComponents}

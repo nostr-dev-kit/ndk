@@ -1,6 +1,6 @@
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
-import type { NotificationGroup } from '$lib/registry/builders/notification';
+import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte';
 
 export interface NotificationContext {
 	ndk: NDKSvelte;

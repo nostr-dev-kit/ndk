@@ -4,9 +4,7 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
-  import { relayCardMetadata } from '$lib/component-registry/relay-card';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentCard from '$site-components/ComponentCard.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
   import { EditProps } from '$lib/site-components/edit-props';
 
   import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
@@ -21,6 +19,10 @@
   // UI component examples
   import BasicExample from './examples/basic.example.svelte';
   import BuilderUsageExample from './examples/builder-usage.example.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -38,17 +40,17 @@
   // Blocks showcase blocks
     const showcaseComponents: ShowcaseComponent[] = [
     {
-      cardData: relayCardMetadata.cards[0],
+      cardData: metadata.cards[0],
       preview: portraitPreview,
       orientation: 'horizontal'
     },
     {
-      cardData: relayCardMetadata.cards[1],
+      cardData: metadata.cards[1],
       preview: compactPreview,
       orientation: 'horizontal'
     },
     {
-      cardData: relayCardMetadata.cards[2],
+      cardData: metadata.cards[2],
       preview: listPreview,
       orientation: 'vertical'
     }
@@ -137,13 +139,13 @@
   <SectionTitle title="UI Primitives" description="Primitive components for building custom relay card layouts" />
 
   <section class="py-12 space-y-16">
-    <ComponentCard data={relayCardMetadata.cards[3]}>
+    <ComponentCard data={metadata.cards[3]}>
       {#snippet preview()}
         <BasicExample {ndk} relayUrl={exampleRelay} />
       {/snippet}
     </ComponentCard>
 
-    <ComponentCard data={relayCardMetadata.cards[4]}>
+    <ComponentCard data={metadata.cards[4]}>
       {#snippet preview()}
         <BuilderUsageExample {ndk} />
       {/snippet}
@@ -241,14 +243,14 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={relayCardMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponent={ComponentsShowcase}
   {showcaseComponents}componentsSection={{
     cards: [
-      { ...relayCardMetadata.cards[0], code: relayCardPortraitCode },
-      { ...relayCardMetadata.cards[1], code: relayCardCompactCode },
-      { ...relayCardMetadata.cards[2], code: relayCardListCode }
+      { ...metadata.cards[0], code: relayCardPortraitCode },
+      { ...metadata.cards[1], code: relayCardCompactCode },
+      { ...metadata.cards[2], code: relayCardListCode }
     ],
     previews: {
       'relay-card-portrait': portraitComponentPreview,
@@ -257,7 +259,7 @@
     }
   }}
   {afterComponents}
-  apiDocs={relayCardMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
   {customSections}
 >
     <EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />

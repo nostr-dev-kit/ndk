@@ -2,9 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { repostMetadata, repostButtonCard, repostButtonAvatarsCard } from '$lib/component-registry/repost';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
 
   // Import code examples
   import repostButtonCode from './repost-button.example?raw';
@@ -13,6 +11,10 @@
   // Import components
   import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
   import RepostButtonAvatars from '$lib/registry/components/repost/buttons/avatars/repost-button-avatars.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -80,7 +82,7 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={repostMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={[
     {
@@ -104,7 +106,7 @@
       'repost-button-avatars': avatarsPreview
     }
   }}
-  apiDocs={repostMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop
     name="Sample Event"

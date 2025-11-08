@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { NotificationContext } from './notification.context';
 	import { NOTIFICATION_CONTEXT_KEY } from './notification.context';
-	import AvatarGroup from '$lib/registry/components/avatar-group/avatar-group.svelte';
+	import AvatarGroup from '$lib/registry/components/misc/avatar-group/avatar-group.svelte';
 
 	interface Props {
 		max?: number;

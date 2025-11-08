@@ -2,9 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { zapMetadata, zapButtonCard, zapButtonAvatarsCard } from '$lib/component-registry/zap';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
 
   // Import code examples
   import zapButtonCode from './zap-button.example?raw';
@@ -13,6 +11,10 @@
   // Import components
   import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';
   import ZapButtonAvatars from '$lib/registry/components/zap/buttons/avatars/zap-button-avatars.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -55,7 +57,7 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={zapMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={[
     {
@@ -79,7 +81,7 @@
       'zap-button-avatars': avatarsPreview
     }
   }}
-  apiDocs={zapMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop
     name="Sample Event"

@@ -11,9 +11,11 @@
 	import { ScrollArea } from '$lib/site-components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
 	import SectionTitle from '$site-components/SectionTitle.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { articleCardMetadata, articleCardCards } from '$lib/component-registry/article-card';
-	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -317,7 +319,7 @@
 
 {#if !loading && article1}
 	<ComponentPageTemplate
-		metadata={articleCardMetadata}
+		metadata={metadata}
 		{ndk}
 		{showcaseComponents}componentsSection={{
 			cards: articleCardCards,

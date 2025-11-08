@@ -2,10 +2,12 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { zapSendClassicMetadata, zapSendClassicCard } from '$lib/component-registry/zap-send-classic';
-  import ZapSendClassic from '$lib/registry/components/zap/send/classic/zap-send-classic.svelte';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import ZapSendClassic from '$lib/registry/components/zap/send/classic/zap-send-classic.svelte';
   import { EditProps } from '$lib/site-components/edit-props';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -41,7 +43,7 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={zapSendClassicMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={[
     {
@@ -65,7 +67,7 @@
       'zap-send-classic': preview
     }
   }}
-  apiDocs={zapSendClassicMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
   <EditProps.Prop name="Target" type="text" bind:value={targetInput} placeholder="npub, nevent, or note1" default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
 </ComponentPageTemplate>

@@ -3,9 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-  import { contentTabMetadata, contentTabCard } from '$lib/component-registry/content-tab';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import PageTitle from '$lib/site-components/PageTitle.svelte';
   import type { ShowcaseComponent } from '$lib/templates/types';
   import ComponentCard from '$site-components/ComponentCard.svelte';
@@ -20,6 +18,10 @@
   // Import the component
   import ContentTab from '$lib/registry/components/misc/content-tab/content-tab.svelte';
   import { byCount, byRecency } from '$lib/registry/builders/content-tab';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -328,12 +330,12 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
 <!-- Conditional rendering based on data loading -->
 {#if user1 && displayUsers.length > 0}
   <ComponentPageTemplate
-    metadata={contentTabMetadata}
+    metadata={metadata}
     {ndk}
     showcaseComponent={ComponentsShowcase}
     {showcaseComponents}{customSections}
     beforeComponents={customComponentsSection}
-    apiDocs={contentTabMetadata.apiDocs}
+    apiDocs={metadata.apiDocs}
   >
     <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
@@ -346,7 +348,7 @@ tabSampler.tabs  // ContentTab[] - only kinds user has published
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">
-    <PageTitle title={contentTabMetadata.title}>
+    <PageTitle title={metadata.title}>
       <EditProps.Prop name="User 1" type="user" bind:value={user1} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />
     <EditProps.Prop name="User 4" type="user" bind:value={user4} default="npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" />

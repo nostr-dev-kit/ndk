@@ -1,9 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { relayInputMetadata } from '$lib/component-registry/relay-input';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import relayInputBasicCode from './relay-input-basic.example?raw';
@@ -12,6 +10,10 @@
   import relayInputDisabledCode from './relay-input-disabled.example?raw';
 
   import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -22,19 +24,19 @@
   // Showcase blocks
     const showcaseComponents: ShowcaseComponent[] = [
     {
-      cardData: relayInputMetadata.cards[0],
+      cardData: metadata.cards[0],
       preview: basicBlockPreview
     },
     {
-      cardData: relayInputMetadata.cards[1],
+      cardData: metadata.cards[1],
       preview: labelBlockPreview
     },
     {
-      cardData: relayInputMetadata.cards[2],
+      cardData: metadata.cards[2],
       preview: errorBlockPreview
     },
     {
-      cardData: relayInputMetadata.cards[3],
+      cardData: metadata.cards[3],
       preview: disabledBlockPreview
     }
   ];
@@ -107,15 +109,15 @@
 {/snippet}
 
 <ComponentPageTemplate
-  metadata={relayInputMetadata}
+  metadata={metadata}
   {ndk}
   showcaseComponents={showcaseComponents}
   componentsSection={{
     cards: [
-      { ...relayInputMetadata.cards[0], code: relayInputBasicCode },
-      { ...relayInputMetadata.cards[1], code: relayInputLabelCode },
-      { ...relayInputMetadata.cards[2], code: relayInputErrorCode },
-      { ...relayInputMetadata.cards[3], code: relayInputDisabledCode }
+      { ...metadata.cards[0], code: relayInputBasicCode },
+      { ...metadata.cards[1], code: relayInputLabelCode },
+      { ...metadata.cards[2], code: relayInputErrorCode },
+      { ...metadata.cards[3], code: relayInputDisabledCode }
     ],
     previews: {
       'relay-input-basic': basicBlockPreview,
@@ -125,5 +127,5 @@
     }
   }}
   {customSections}
-  apiDocs={relayInputMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 />

@@ -1,15 +1,17 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { avatarGroupMetadata, avatarGroupCard } from '$lib/component-registry/avatar-group';
-  import { EditProps } from '$lib/site-components/edit-props';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site-components/edit-props';
   import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import code examples
   import avatarGroupCode from './avatar-group.example?raw';
 
   import { AvatarGroup } from '$lib/registry/components/misc/avatar-group/index.js';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -199,12 +201,12 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={avatarGroupMetadata}
+  metadata={metadata}
   {ndk}
   {showcaseComponents}
   {componentsSection}
   {customSections}
-  apiDocs={avatarGroupMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 >
     <EditProps.Prop
       name="Max avatars"

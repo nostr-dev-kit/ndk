@@ -11,9 +11,11 @@
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
-  import * as ComponentAnatomy from '$site-components/component-anatomy';
-  import { highlightCardMetadata, highlightCardCards, highlightCardFeedCard, highlightCardElegantCard, highlightCardCompactCard, highlightCardGridCard } from '$lib/component-registry/highlight-card';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import * as ComponentAnatomy from '$site-components/component-anatomy';  import type { ShowcaseComponent } from '$lib/templates/types';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -377,7 +379,7 @@
   </div>
 {:else if highlight1}
   <ComponentPageTemplate
-    metadata={highlightCardMetadata}
+    metadata={metadata}
     {ndk}
     {showcaseComponents}
     componentsSection={{

@@ -7,10 +7,12 @@
 	import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { imageCardMetadata, imageCardCards, imageCardInstagramCard, imageCardHeroCard, imageCardCard } from '$lib/component-registry/image-card';
-	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
 	import ComponentAPI from '$site-components/component-api.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleImage = $state<NDKImage | undefined>();
@@ -117,7 +119,7 @@
 
 {#if sampleImage}
 	<ComponentPageTemplate
-		metadata={imageCardMetadata}
+		metadata={metadata}
 		{ndk}
 		{showcaseComponents}
 		componentsSection={{
@@ -134,7 +136,7 @@
 	</ComponentPageTemplate>
 {:else}
 	<div class="px-8">
-		<PageTitle title={imageCardMetadata.title} subtitle={imageCardMetadata.description}>
+		<PageTitle title={metadata.title} subtitle={metadata.description}>
 			<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
 		</PageTitle>
 		<div class="flex items-center justify-center py-12">

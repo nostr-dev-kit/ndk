@@ -1,13 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import {
-    emojiPickerMetadata,
-    emojiPickerListCard,
-    emojiPickerContentCard
-  } from '$lib/component-registry/emoji-picker';
-  import type { ShowcaseComponent } from '$lib/templates/types';
+  import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';  import type { ShowcaseComponent } from '$lib/templates/types';
 
   // Import examples
   import UiBasic from './examples/ui-basic.example.svelte';
@@ -16,6 +10,10 @@
   // Import code examples
   import emojiPickerListCode from './emoji-picker-list.example?raw';
   import emojiPickerContentCode from './emoji-picker-content.example?raw';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -63,7 +61,7 @@
 
 <!-- Use the template -->
 <ComponentPageTemplate
-  metadata={emojiPickerMetadata}
+  metadata={metadata}
   {ndk}
   {showcaseComponents}
   {customSections}
@@ -77,5 +75,5 @@
       'emoji-picker-content': contentPreview
     }
   }}
-  apiDocs={emojiPickerMetadata.apiDocs}
+  apiDocs={metadata.apiDocs}
 />

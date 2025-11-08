@@ -4,7 +4,6 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
   import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-  import { reactionMetadata } from '$lib/component-registry/reaction';
   import { EditProps } from '$lib/site-components/edit-props';
   import SectionTitle from '$lib/site-components/SectionTitle.svelte';
   import Preview from '$lib/site-components/preview.svelte';
@@ -15,7 +14,11 @@
   import reactionBuilderCode from './reaction-builder.example?raw';
 
   // Import components
-  import { Reaction } from '$lib/registry/components/reaction';
+  import { ReactionAction, ReactionLongpress } from '$lib/registry/components/reaction';
+
+  // Get page data
+  let { data } = $props();
+  const { reactionMetadata } = data;
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -26,7 +29,7 @@
 {#snippet reactionBasicPreview()}
   {#if sampleEvent}
     <div class="flex gap-4 items-center flex-wrap">
-      <Reaction.Button {ndk} event={sampleEvent} />
+      <ReactionLongpress {ndk} event={sampleEvent} />
     </div>
   {/if}
 {/snippet}
@@ -34,7 +37,7 @@
 {#snippet reactionDelayedPreview()}
   {#if sampleEvent}
     <div class="flex gap-4 items-center flex-wrap">
-      <Reaction.Button {ndk} event={sampleEvent} delayed={5} />
+      <ReactionLongpress {ndk} event={sampleEvent} delayed={5} />
       <p class="text-sm text-muted-foreground mt-2">Reactions are delayed 5 seconds. Click again to cancel.</p>
     </div>
   {/if}

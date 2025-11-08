@@ -5,12 +5,14 @@
 	import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import { EditProps } from '$lib/site-components/edit-props';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { mentionMetadata, mentionCards, mentionModernCard, mentionBasicCard, mentionCustomCard } from '$lib/component-registry/mention';
-	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIFull from './examples/ui-full.example.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -83,7 +85,7 @@
 		'mention-custom': customPreview
 	} as any}
 	<ComponentPageTemplate
-	metadata={mentionMetadata}
+	metadata={metadata}
 	{ndk}
 	{showcaseComponents}
 	componentsSection={{

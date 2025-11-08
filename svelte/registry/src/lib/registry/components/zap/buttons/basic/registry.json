@@ -14,5 +14,37 @@
     "monetization",
     "tips",
     "lightning-payments"
+  ],
+  "showcaseTitle": "Zap Button",
+  "showcaseDescription": "Lightning payment button",
+  "apiDocs": [
+    {
+      "name": "ZapButton",
+      "description": "Zap button component",
+      "importPath": "import { ZapButton } from '$lib/registry/components/zap/buttons/basic'",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "description": "NDK instance"
+        },
+        {
+          "name": "event",
+          "type": "NDKEvent",
+          "description": "Event to zap"
+        },
+        {
+          "name": "defaultAmount",
+          "type": "number",
+          "default": "21",
+          "description": "Default zap amount in sats"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      ]
+    }
   ]
 }

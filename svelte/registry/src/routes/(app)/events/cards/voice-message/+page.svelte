@@ -9,12 +9,14 @@
 	import PageTitle from '$lib/site-components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
-	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';
-	import { voiceMessageCardMetadata, voiceMessageCardCards, voiceMessageCardCompactCard, voiceMessageCardExpandedCard, voiceMessageCardBasicCard, voiceMessageCardCompositionCard } from '$lib/component-registry/voice-message-card';
-	import type { ShowcaseComponent } from '$lib/templates/types';
+	import ComponentPageTemplate from '$lib/templates/ComponentPageTemplate.svelte';	import type { ShowcaseComponent } from '$lib/templates/types';
 
 	import UIBasic from './examples/ui-basic.example.svelte';
 	import UIComposition from './examples/ui-composition.example.svelte';
+
+  // Get page data
+  let { data } = $props();
+  const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
@@ -166,7 +168,7 @@
 
 {#if loading}
 	<div class="px-8">
-		<PageTitle title={voiceMessageCardMetadata.title} subtitle={voiceMessageCardMetadata.description}>
+		<PageTitle title={metadata.title} subtitle={metadata.description}>
 			{#key voiceMessages}
 				<EditProps.Prop
 					name="Voice Message 1"
@@ -194,7 +196,7 @@
 	</div>
 {:else if voiceMessages.length === 0}
 	<div class="px-8">
-		<PageTitle title={voiceMessageCardMetadata.title} subtitle={voiceMessageCardMetadata.description}>
+		<PageTitle title={metadata.title} subtitle={metadata.description}>
 			{#key voiceMessages}
 				<EditProps.Prop
 					name="Voice Message 1"
@@ -222,7 +224,7 @@
 	</div>
 {:else if voiceMessage1}
 	<ComponentPageTemplate
-		metadata={voiceMessageCardMetadata}
+		metadata={metadata}
 		{ndk}
 		{showcaseComponents}
 		{afterShowcase}

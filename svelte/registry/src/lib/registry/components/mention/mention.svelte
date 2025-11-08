@@ -18,22 +18,10 @@
 	})
 </script>
 
-<span data-mention="" class="mention {className}" role="button" tabindex="0">
+<span data-mention="" class="text-primary underline cursor-pointer hover:opacity-80 {className}" role="button" tabindex="0">
 	{#if user}
 		<User.Root {ndk} {user}>
 			@<User.Name class="inline" field="name" />
 		</User.Root>
 	{/if}
 </span>
-
-<style>
-	.mention {
-		color: var(--primary);
-		text-decoration: underline;
-		cursor: pointer;
-	}
-
-	.mention:hover {
-		opacity: 0.8;
-	}
-</style>

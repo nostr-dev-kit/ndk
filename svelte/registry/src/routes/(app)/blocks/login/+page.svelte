@@ -7,11 +7,11 @@
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
 
   // Import code examples
-  import withoutExtension from './examples/without-extension.svelte.example?raw';
-  import withExtension from './examples/with-extension.svelte.example?raw';
-  import basicFlow from './examples/basic-flow.svelte.example?raw';
-  import withStyling from './examples/with-styling.svelte.example?raw';
-  import inModal from './examples/in-modal.svelte.example?raw';
+  import withoutExtension from './examples/without-extension/index.txt?raw';
+  import withExtension from './examples/with-extension/index.txt?raw';
+  import basicFlow from './examples/basic-flow/index.txt?raw';
+  import withStyling from './examples/with-styling/index.txt?raw';
+  import inModal from './examples/in-modal/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>

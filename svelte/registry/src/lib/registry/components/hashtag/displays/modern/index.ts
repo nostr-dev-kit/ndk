@@ -1,5 +1,5 @@
 import HashtagModern from './hashtag-modern.svelte';
-import { defaultContentRenderer } from '../../ui/content-renderer.svelte.js';
+import { defaultContentRenderer } from '../../../ui/content-renderer.svelte.js';
 
 // Self-register this component as the default hashtag handler
 defaultContentRenderer.hashtagComponent = HashtagModern;

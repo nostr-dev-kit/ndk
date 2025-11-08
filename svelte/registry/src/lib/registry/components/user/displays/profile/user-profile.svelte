@@ -2,8 +2,8 @@
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Component } from 'svelte';
-  import { User } from '../../ui/user';
-  import { cn } from '../../utils/cn.js';
+  import { User } from '../../../ui/user';
+  import { cn } from '../../../utils/cn.js';
 
   interface Props {
     ndk: NDKSvelte;

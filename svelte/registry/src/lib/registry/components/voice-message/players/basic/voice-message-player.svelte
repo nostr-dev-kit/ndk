@@ -68,11 +68,11 @@
 </script>
 
 <VoiceMessage.Root {ndk} {voiceMessage}>
-  <div data-voice-message-player="" class="voice-message-player {className}">
+  <div data-voice-message-player="" class="flex items-center w-full {className}">
     {#if showButton}
       <button
         type="button"
-        class="play-button"
+        class="flex items-center justify-center cursor-pointer"
         onclick={togglePlayPause}
         aria-label={isPlaying ? 'Pause' : 'Play'}
       >
@@ -84,8 +84,8 @@
       </button>
     {/if}
 
-    <div class="progress-container" onclick={handleSeek}>
-      <div class="progress-bar" style="width: {progress}%"></div>
+    <div class="flex-1 cursor-pointer relative" onclick={handleSeek}>
+      <div class="h-full" style="width: {progress}%"></div>
     </div>
 
     <audio
@@ -100,28 +100,3 @@
     </audio>
   </div>
 </VoiceMessage.Root>
-
-<style>
-  .voice-message-player {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-
-  .play-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .progress-container {
-    flex: 1;
-    cursor: pointer;
-    position: relative;
-  }
-
-  .progress-bar {
-    height: 100%;
-  }
-</style>

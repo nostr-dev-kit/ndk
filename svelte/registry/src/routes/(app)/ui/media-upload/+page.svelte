@@ -15,10 +15,10 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Mock upload data for anatomy visualization
-  const mockUploads = [
+  let mockUploads = $state([
     { url: 'https://example.com/image1.jpg', file: new File([], 'image1.jpg'), progress: 100, uploading: false },
     { url: 'https://example.com/image2.jpg', file: new File([], 'image2.jpg'), progress: 100, uploading: false }
-  ];
+  ]);
 
   // Page metadata
   const metadata = {

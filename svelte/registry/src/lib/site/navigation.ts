@@ -13,7 +13,6 @@ import {
   Calendar01Icon,
   Chat01Icon,
   File01Icon,
-  UserCircleIcon,
   IdentificationIcon,
   UserIcon,
   NewsIcon,
@@ -137,11 +136,9 @@ export const componentCategories: NavCategory[] = [
   {
     title: 'Bits',
     items: [
-      { name: 'Threads', path: '/components/event-thread', icon: Chat01Icon, title: 'ThreadView', description: 'Display Nostr event threads with parent chains, focused events, and replies.' },
       { name: 'Notification', path: '/components/notification', icon: Chat01Icon, title: 'Notification', description: 'Real-time notification feed using $metaSubscription. Groups interactions by target event and provides composable primitives for custom layouts.' },
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
       { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
-      { name: 'Event Dropdown', path: '/components/event-dropdown', icon: Layers01Icon, title: 'EventDropdown', description: 'Dropdown menu for event actions including mute, report, copy, and raw event viewing with optional relay information display.' },
     ]
   },
   {
@@ -154,14 +151,7 @@ export const componentCategories: NavCategory[] = [
     title: 'User',
     items: [
       { name: 'Card', path: '/components/user-card', icon: IdentificationIcon, title: 'User Card', description: 'Display user information in card layouts. Choose from compact list items, portrait cards, or landscape layouts.' },
-      { name: 'Input', path: '/components/input', icon: Search01Icon, title: 'Input', description: 'Search and select Nostr users with autocomplete functionality. Searches cached profiles and supports NIP-05/npub/nprofile lookups.' },
       { name: 'Avatar Group', path: '/components/avatar-group', icon: UserGroupIcon, title: 'Avatar Group', description: 'Display a group of avatars.' },
-    ]
-  },
-  {
-    title: 'Hashtag',
-    items: [
-      { name: 'Card', path: '/components/hashtag-card', icon: Tag01Icon, title: 'Hashtag Card', description: 'Display hashtag activity and statistics. Track conversations, see contributors, and follow topics with portrait and compact variants.' },
     ]
   },
   {
@@ -169,7 +159,6 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'Card', path: '/components/relay-card', icon: ServerStack01Icon, title: 'RelayCard', description: 'Composable relay display components with NIP-11 info and bookmark functionality.' },
       { name: 'Input', path: '/components/relay-input', icon: Search01Icon, title: 'RelayInput', description: 'Input field for relay URLs with NIP-11 autocomplete and relay information display.' },
-      { name: 'Selector', path: '/components/relay-selector', icon: ServerStack01Icon, title: 'RelaySelector', description: 'Dropdown selector for choosing relays from connected pool with ability to add new ones.' },
     ]
   },
   {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import Demo from '$site-components/Demo.svelte';
+	import Preview from '$site-components/preview.svelte';
 	import ApiTable from '$site-components/api-table.svelte';
 
 	import CustomRendererLinkPreview from '../../../ui/event-rendering/examples/custom-renderer-link-preview/index.svelte';
@@ -52,21 +52,19 @@
 	<section class="demo space-y-8">
 		<h2>Examples</h2>
 
-		<Demo
+		<Preview
 			title="Link Preview (Hover)"
-			description="Show rich link previews on hover using bits-ui LinkPreview. Fetches OpenGraph metadata client-side and displays in an elegant popover. Perfect for inline links that don't need to dominate the content."
 			code={CustomRendererLinkPreviewRaw}
 		>
 			<CustomRendererLinkPreview />
-		</Demo>
+		</Preview>
 
-		<Demo
+		<Preview
 			title="Embedded Link Preview"
-			description="Auto-fetch and display rich link previews inline with OpenGraph metadata. Shows full preview cards with images, titles, descriptions, and favicons. Great for highlighting important links or creating link collections."
 			code={CustomRendererLinkEmbedRaw}
 		>
 			<CustomRendererLinkEmbed />
-		</Demo>
+		</Preview>
 	</section>
 
 	<section class="info">

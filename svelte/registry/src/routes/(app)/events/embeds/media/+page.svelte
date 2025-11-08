@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import Demo from '$site-components/Demo.svelte';
+	import Preview from '$site-components/preview.svelte';
 	import ApiTable from '$site-components/api-table.svelte';
 
 	import CustomRendererCarousel from '../../../ui/event-rendering/examples/custom-renderer-carousel/index.svelte';
@@ -52,21 +52,19 @@
 	<section class="demo space-y-8">
 		<h2>Examples</h2>
 
-		<Demo
+		<Preview
 			title="Carousel Media Renderer"
-			description="Display grouped media in an elegant carousel with smooth animations, navigation controls, and keyboard support. Perfect for photo galleries and image sequences."
 			code={CustomRendererCarouselRaw}
 		>
 			<CustomRendererCarousel />
-		</Demo>
+		</Preview>
 
-		<Demo
+		<Preview
 			title="Bento Grid Media Renderer"
-			description="Display grouped media in a dynamic bento/masonry grid layout. Adapts intelligently based on the number of items: single (full), pair (50/50), triple (asymmetric), quad (2x2), or many (Pinterest-style)."
 			code={CustomRendererBentoRaw}
 		>
 			<CustomRendererBento />
-		</Demo>
+		</Preview>
 	</section>
 
 	<section class="info">

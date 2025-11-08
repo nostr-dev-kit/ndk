@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import WithWaveform from './examples/with-waveform.example.svelte';
-  import WithWaveformRaw from './examples/with-waveform.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import WithWaveform from './examples/with-waveform/index.svelte';
+  import WithWaveformRaw from './examples/with-waveform/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -52,21 +52,21 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Player"
       description="VoiceMessage provides audio playback controls with duration display."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="With Waveform"
       description="Add waveform visualization to show audio amplitude over time."
       code={WithWaveformRaw}
     >
       <WithWaveform />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

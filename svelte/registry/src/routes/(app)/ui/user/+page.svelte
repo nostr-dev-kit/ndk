@@ -27,7 +27,7 @@
   <meta name="description" content="Headless, composable primitives for displaying user profiles and metadata." />
 </svelte:head>
 
-<div class="flex flex-col gap">
+<div class="flex flex-col gap-8">
   <PageTitle
     title="User"
     subtitle="Headless, composable primitives for displaying user profiles and metadata."
@@ -36,13 +36,13 @@
     <EditProps.Prop name="User" type="user" bind:value={user} default="fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52" />
   </PageTitle>
 
-  <section class="mb-12">
+  <section>
     <Preview code={BasicRaw}>
       <Basic {ndk} {userPubkey} />
     </Preview>
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">Overview</h2>
     <p class="text-lg leading-relaxed text-muted-foreground mb-8">
       User primitives expose individual fields from Nostr user profiles (kind 0 events) as composable
@@ -62,7 +62,7 @@
     </ul>
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">Installation</h2>
     <PMCommand command="execute" args={['jsrepo', 'add', 'ui/user']} />
   </section>
@@ -85,7 +85,7 @@
     </Preview>
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">Available Primitives</h2>
     <div class="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
       <div class="p-4 border border-border rounded-lg">
@@ -123,9 +123,9 @@
     </div>
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Root</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Required wrapper that establishes context for all User primitives. Pass either a <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">pubkey</code> string
       (Root will construct an NDKUser and fetch the profile) or an existing <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">user</code> object. If you already
       have profile data, pass it via the <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile</code> prop to skip fetching. All child primitives automatically
@@ -144,9 +144,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Avatar</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Displays <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.picture</code> with a sophisticated fallback: when no image exists, generates a
       deterministic gradient using <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">deterministicPubkeyGradient()</code> based on the user's pubkey. This ensures
       each user gets a consistent, unique color scheme. Shows the first 2 characters of the pubkey as initials over
@@ -162,9 +162,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Name</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Displays the user's name with intelligent fallback hierarchy. By default (<code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">field="displayName"</code>),
       cascades through: <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.displayName</code> → <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.name</code> → truncated pubkey.
       Set <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">field="name"</code> to skip displayName. Set <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">field="both"</code> to show both fields
@@ -180,9 +180,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Handle</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Displays the user's handle—their "username" in social media terms. Pulls from <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.name</code>
       (not displayName) and formats as <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">@name</code>. When <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">name</code> is missing, falls back to showing
       the first 8 characters of the pubkey. This is distinct from User.Name: Handle is for Twitter-style @usernames,
@@ -197,9 +197,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Bio</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Renders the <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.about</code> field (the user's bio/description). Uses CSS line-clamp to limit height
       while preserving readability. Only renders if the field exists—many users don't set bios, so this component
       handles that gracefully by rendering nothing.
@@ -212,9 +212,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Banner</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Displays <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.banner</code> (the header/cover image for profiles). When no banner exists, shows a
       pubkey-derived gradient background using the same deterministic color generation as Avatar. Common use case:
       hero headers on profile pages.
@@ -227,9 +227,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Nip05</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Displays <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">profile.nip05</code>—a DNS-based identifier (like email@domain.com) that verifies a user owns
       that domain. The component actively performs NIP-05 verification by fetching <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">/.well-known/nostr.json</code>
       from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. Most users
@@ -244,9 +244,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">User.Field</h2>
-    <p class="mb-4">
+    <p class="leading-relaxed text-muted-foreground mb-4">
       Generic accessor for any <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">NDKUserProfile</code> field not covered by other primitives. Use this to display
       fields like <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">website</code>, <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">lud16</code> (Lightning address), <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">lud06</code>, or any custom
       metadata fields. If you pass <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">field="about"</code>, it delegates to User.Bio for proper rendering. Only
@@ -262,9 +262,9 @@
     />
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">Context</h2>
-    <p class="mb-4">Access User context in custom components:</p>
+    <p class="leading-relaxed text-muted-foreground mb-4">Access User context in custom components:</p>
     <pre class="my-4 p-4 bg-muted rounded-lg overflow-x-auto"><code class="font-mono text-sm leading-normal">import &#123; getContext &#125; from 'svelte';
 import &#123; USER_CONTEXT_KEY, type UserContext &#125; from '$lib/registry/ui/user';
 
@@ -272,7 +272,7 @@ const context = getContext&lt;UserContext&gt;(USER_CONTEXT_KEY);
 // Access: context.profile, context.ndk, context.user</code></pre>
   </section>
 
-  <section class="mb-12">
+  <section>
     <h2 class="text-2xl font-semibold mb-4">Related</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
       <a href="/components/user-card" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">

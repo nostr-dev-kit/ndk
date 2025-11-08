@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import Styled from './examples/styled.example.svelte';
-  import StyledRaw from './examples/styled.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import Styled from './examples/styled/index.svelte';
+  import StyledRaw from './examples/styled/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -53,21 +53,21 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Display"
       description="Display zap amounts and comments using the primitive components."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Styled Cards"
       description="Build custom zap cards with your own styling."
       code={StyledRaw}
     >
       <Styled />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

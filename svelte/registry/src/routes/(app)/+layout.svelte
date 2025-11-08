@@ -42,7 +42,7 @@
 
 <div class="flex justify-center">
   <div
-    class="w-full max-w-7xl border-l border-r border-border transition-[margin-left] duration-300 ease-in-out ml-[280px] md:ml-[280px] px-8"
+    class="w-full max-w-5xl border-l border-r border-border transition-[margin-left] duration-300 ease-in-out ml-[280px] md:ml-[280px] px-8"
     class:!ml-16={sidebar.collapsed}
     class:max-md:!ml-0={!sidebar.open}
     class:max-md:!ml-[280px]={sidebar.open && !sidebar.collapsed}

@@ -1,0 +1,32 @@
+<script>
+  import { getContext } from 'svelte';
+      import { UserInput } from '$lib/registry/ui/user-input';
+
+  const ndk = getContext<NDKSvelte>('ndk');
+
+  let selectedUser = $state<NDKUser | null>(null);
+
+  function handleSelect(user: NDKUser) {
+    selectedUser = user;
+  }
+</script>
+
+<div class="user-input-demo">
+  {#if selectedUser}
+    <div class="selected-user">
+      <strong>Selected:</strong> {selectedUser.profile?.name || selectedUser.npub}
+    </div>
+  {/if}
+
+  <UserInput.Root {ndk} onSelect={handleSelect}>
+    <UserInput.Search placeholder="Search by name, NIP-05, or npub..." />
+    <UserInput.Results>
+      {#snippet children(result)}
+        <UserInput.Item {result}>
+          <!-- Default rendering - UserListItem will be used in a real example -->
+          <span>{result.user.profile?.name || result.user.npub}</span>
+        </UserInput.Item>
+      {/snippet}
+    </UserInput.Results>
+  </UserInput.Root>
+</div>

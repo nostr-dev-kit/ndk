@@ -4,10 +4,10 @@
 	import Demo from '$site-components/Demo.svelte';
 	import ApiTable from '$site-components/api-table.svelte';
 
-	import CustomRendererCarousel from '../../../ui/event-rendering/examples/custom-renderer-carousel.example.svelte';
-	import CustomRendererCarouselRaw from '../../../ui/event-rendering/examples/custom-renderer-carousel.example.svelte?raw';
-	import CustomRendererBento from '../../../ui/event-rendering/examples/custom-renderer-bento.example.svelte';
-	import CustomRendererBentoRaw from '../../../ui/event-rendering/examples/custom-renderer-bento.example.svelte?raw';
+	import CustomRendererCarousel from '../../../ui/event-rendering/examples/custom-renderer-carousel/index.svelte';
+	import CustomRendererCarouselRaw from '../../../ui/event-rendering/examples/custom-renderer-carousel/index.txt?raw';
+	import CustomRendererBento from '../../../ui/event-rendering/examples/custom-renderer-bento/index.svelte';
+	import CustomRendererBentoRaw from '../../../ui/event-rendering/examples/custom-renderer-bento/index.txt?raw';
 
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>

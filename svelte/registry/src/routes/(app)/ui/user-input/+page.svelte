@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/Demo.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import CustomItem from './examples/custom-item.example.svelte';
-  import CustomItemRaw from './examples/custom-item.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import CustomItem from './examples/custom-item/index.svelte';
+  import CustomItemRaw from './examples/custom-item/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -53,21 +53,21 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Usage"
       description="UserInput provides search functionality with default result item rendering."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Custom Result Items"
       description="Customize result item rendering using the resultItem snippet with User primitives or your own components."
       code={CustomItemRaw}
     >
       <CustomItem />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

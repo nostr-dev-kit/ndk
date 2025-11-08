@@ -36,26 +36,32 @@
   // Showcase blocks
   const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'follow-button-minimal',
       cardData: followButtonMinimalCard,
       preview: minimalPreview
     },
     {
+      id: 'follow-button-minimal-icon-only',
       cardData: followButtonMinimalCard,
       preview: minimalIconOnlyPreview
     },
     {
+      id: 'follow-button-pill-solid',
       cardData: followButtonPillCard,
       preview: pillSolidPreview
     },
     {
+      id: 'follow-button-pill-outline',
       cardData: followButtonPillCard,
       preview: pillOutlinePreview
     },
     {
+      id: 'follow-button-pill-compact',
       cardData: followButtonPillCard,
       preview: pillCompactPreview
     },
     {
+      id: 'follow-button-animated',
       cardData: followButtonAnimatedCard,
       preview: animatedPreview
     }

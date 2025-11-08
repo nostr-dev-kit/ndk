@@ -7,8 +7,8 @@
 	import "$lib/site/styles/docs-page.css";
 
 	// Import demo
-	import ZappedFeed from './examples/zapped-feed.example.svelte';
-	import ZappedFeedRaw from './examples/zapped-feed.example.svelte?raw';
+	import ZappedFeed from './examples/zapped-feed/index.svelte';
+	import ZappedFeedRaw from './examples/zapped-feed/index.txt?raw';
 
 	// Import code examples
 	import basicUsage from './examples/basic-usage.example?raw';

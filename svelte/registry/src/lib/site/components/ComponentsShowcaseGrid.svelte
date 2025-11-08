@@ -11,7 +11,7 @@
 </script>
 
 <div class={cn('grid grid-cols-1 md:grid-cols-3 -mx-8', className)}>
-  {#each components as component, index (component.cardData.name)}
+  {#each components as component, index (component.id)}
     <div
       class={cn(
         'flex flex-col items-center justify-center px-8 py-12 min-h-[280px] border-border transition-colors group relative  overflow-clip',

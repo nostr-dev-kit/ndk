@@ -1,3 +1,23 @@
+<!--
+  IMPORTANT: Keep this file in sync with index.txt
+
+  This file (index.svelte) is the SOURCE OF TRUTH and includes:
+  - Full TypeScript types and interfaces
+  - Detailed inline documentation
+  - Type-safe prop definitions using interfaces
+
+  The index.txt file is a SIMPLIFIED VERSION for documentation that:
+  - Removes TypeScript interface definitions
+  - Uses inline prop destructuring: let { ndk, prop } = $props();
+  - Removes most type annotations (keep only those essential for runtime)
+  - Keeps inline classes but removes <style> blocks
+  - Focuses on component API usage, not implementation details
+
+  When updating this file:
+  1. Make changes here first
+  2. Copy to index.txt
+  3. Simplify index.txt following the rules above
+-->
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '$lib/registry/components/event/cards/compound';

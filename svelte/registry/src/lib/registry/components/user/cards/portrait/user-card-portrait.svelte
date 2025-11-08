@@ -4,8 +4,6 @@
   import { User } from '$lib/registry/ui/user';
   import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
   import { createUserStats } from '$lib/registry/builders/user/stats.svelte.js';
-  import { getContext } from 'svelte';
-  import { USER_CONTEXT_KEY, type UserContext } from '$lib/registry/ui/user/user.context.js';
 
   interface Props {
     ndk: NDKSvelte;
@@ -22,9 +20,7 @@
   }: Props = $props();
 
   const user = $derived(ndk.getUser({ pubkey }));
-  const context = getContext<UserContext>(USER_CONTEXT_KEY);
-  const ndkUser = $derived(context.ndkUser);
-  const stats = createUserStats(() => ndkUser ? { user: ndkUser, follows: true, recentNotes: true } : undefined, ndk);
+  const stats = createUserStats(() => user ? { user, follows: true, recentNotes: true } : undefined, ndk);
 </script>
 
 <User.Root {ndk} {pubkey}>

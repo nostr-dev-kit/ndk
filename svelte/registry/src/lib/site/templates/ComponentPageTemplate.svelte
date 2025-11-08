@@ -30,84 +30,82 @@
   const ndk = propNdk || getContext<NDKSvelte>('ndk');
 </script>
 
-<div class="px-8">
-  <!-- Header Section -->
-  <PageTitle title={metadata.title} subtitle={metadata.description}>
-    {#if children}
-      {@render children()}
-    {/if}
-  </PageTitle>
-
-  <!-- Before Showcase Extension Point -->
-  {#if beforeShowcase}
-    {@render beforeShowcase()}
+<!-- Header Section -->
+<PageTitle title={metadata.title} subtitle={metadata.description}>
+  {#if children}
+    {@render children()}
   {/if}
+</PageTitle>
 
-  <!-- Showcase Section or Empty State -->
-  {#if showcaseComponents.length > 0}
-    <SectionTitle
-      title={metadata.showcaseTitle || 'Showcase'}
-      description={metadata.showcaseDescription}
+<!-- Before Showcase Extension Point -->
+{#if beforeShowcase}
+  {@render beforeShowcase()}
+{/if}
+
+<!-- Showcase Section or Empty State -->
+{#if showcaseComponents.length > 0}
+  <SectionTitle
+    title={metadata.showcaseTitle || 'Showcase'}
+    description={metadata.showcaseDescription}
+  />
+
+  {#if showcaseComponent}
+    {@const Component = showcaseComponent}
+    <Component components={showcaseComponents} />
+  {:else if showcaseComponents.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
+    <!-- Use ComponentsShowcase if orientations are specified -->
+    <ComponentsShowcase
+      class="-mx-8 px-8"
+      components={showcaseComponents}
     />
-
-    {#if showcaseComponent}
-      {@const Component = showcaseComponent}
-      <Component components={showcaseComponents} />
-    {:else if showcaseComponents.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
-      <!-- Use ComponentsShowcase if orientations are specified -->
-      <ComponentsShowcase
-        class="-mx-8 px-8"
-        components={showcaseComponents}
-      />
-    {:else}
-      <!-- Default to ComponentsShowcaseGrid -->
-      <ComponentsShowcaseGrid components={showcaseComponents} />
-    {/if}
-  {:else if emptyState}
-    {@render emptyState()}
+  {:else}
+    <!-- Default to ComponentsShowcaseGrid -->
+    <ComponentsShowcaseGrid components={showcaseComponents} />
   {/if}
+{:else if emptyState}
+  {@render emptyState()}
+{/if}
 
-  <!-- After Showcase Extension Point -->
-  {#if afterShowcase}
-    {@render afterShowcase()}
-  {/if}
+<!-- After Showcase Extension Point -->
+{#if afterShowcase}
+  {@render afterShowcase()}
+{/if}
 
-  <!-- Before Components Extension Point -->
-  {#if beforeComponents}
-    {@render beforeComponents()}
-  {/if}
+<!-- Before Components Extension Point -->
+{#if beforeComponents}
+  {@render beforeComponents()}
+{/if}
 
-  <!-- Components Section -->
-  {#if componentsSection && componentsSection.cards.length > 0}
-    <SectionTitle
-      title={componentsSection.title || metadata.componentsTitle || 'Components'}
-      description={componentsSection.description || metadata.componentsDescription || 'Explore each variant in detail'}
-    />
+<!-- Components Section -->
+{#if componentsSection && componentsSection.cards.length > 0}
+  <SectionTitle
+    title={componentsSection.title || metadata.componentsTitle || 'Components'}
+    description={componentsSection.description || metadata.componentsDescription || 'Explore each variant in detail'}
+  />
 
-    <section class="py-12 space-y-16">
-      {#each componentsSection.cards as cardData, index (cardData.name)}
-        <ComponentCard data={cardData}>
-          {#snippet preview()}
-            {#if componentsSection.previews?.[cardData.name]}
-              {@render componentsSection.previews[cardData.name]()}
-            {:else}
-              <div class="text-muted-foreground">
-                Preview not defined for {cardData.name}
-              </div>
-            {/if}
-          {/snippet}
-        </ComponentCard>
-      {/each}
-    </section>
-  {/if}
+  <section class="py-12 space-y-16">
+    {#each componentsSection.cards as cardData, index (cardData.name)}
+      <ComponentCard data={cardData}>
+        {#snippet preview()}
+          {#if componentsSection.previews?.[cardData.name]}
+            {@render componentsSection.previews[cardData.name]()}
+          {:else}
+            <div class="text-muted-foreground">
+              Preview not defined for {cardData.name}
+            </div>
+          {/if}
+        {/snippet}
+      </ComponentCard>
+    {/each}
+  </section>
+{/if}
 
-  <!-- After Components Extension Point -->
-  {#if afterComponents}
-    {@render afterComponents()}
-  {/if}
+<!-- After Components Extension Point -->
+{#if afterComponents}
+  {@render afterComponents()}
+{/if}
 
-  <!-- Custom Sections (Anatomy, Primitives, etc.) -->
-  {#if customSections}
-    {@render customSections()}
-  {/if}
-</div>
+<!-- Custom Sections (Anatomy, Primitives, etc.) -->
+{#if customSections}
+  {@render customSections()}
+{/if}

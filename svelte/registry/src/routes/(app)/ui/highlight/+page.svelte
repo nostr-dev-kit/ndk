@@ -1,13 +1,13 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Demo from '$site-components/Demo.svelte';
+  import Preview from '$site-components/preview.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
-  import Basic from './examples/basic.example.svelte';
-  import BasicRaw from './examples/basic.example.svelte?raw';
-  import Composition from './examples/composition.example.svelte';
-  import CompositionRaw from './examples/composition.example.svelte?raw';
+  import Basic from './examples/basic-usage/index.svelte';
+  import BasicRaw from './examples/basic-usage/index.txt?raw';
+  import Composition from './examples/styled-card/index.svelte';
+  import CompositionRaw from './examples/styled-card/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>
@@ -53,21 +53,19 @@
   <section class="demo space-y-8">
     <h2>Examples</h2>
 
-    <Demo
+    <Preview
       title="Basic Usage"
-      description="Simple highlight display with content and source."
       code={BasicRaw}
     >
       <Basic />
-    </Demo>
+    </Preview>
 
-    <Demo
+    <Preview
       title="Styled Highlight Card"
-      description="Build a visually distinct highlight card with custom styling."
       code={CompositionRaw}
     >
       <Composition />
-    </Demo>
+    </Preview>
   </section>
 
   <section class="info">

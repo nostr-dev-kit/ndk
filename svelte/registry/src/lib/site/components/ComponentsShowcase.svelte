@@ -153,7 +153,7 @@
 					<div>
 						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{component.cardData.title}</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
-							{component.cardData.richDescription}
+							{component.cardData.richDescription || component.cardData.description}
 						</p>
 					</div>
 					{#if component.control}

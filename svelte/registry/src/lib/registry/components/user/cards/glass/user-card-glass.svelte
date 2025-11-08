@@ -34,6 +34,8 @@
     class: className = ''
   }: Props = $props();
 
+  const user = $derived(ndk.getUser({ pubkey }));
+
   // Generate color from pubkey if not provided
   function pubkeyToColor(pubkey: string): string {
     let hash = 0;
@@ -150,7 +152,6 @@
 
 <User.Root {ndk} {pubkey}>
   {@const context = getContext<UserContext>(USER_CONTEXT_KEY)}
-  {@const user = context.ndkUser}
 
   <svelte:element
     data-user-card-glass=""

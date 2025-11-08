@@ -34,11 +34,12 @@
 	export interface ComponentCardData {
 		name: string;
 		title: string;
+		description?: string;
 		richDescription?: string | Snippet;
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];
-		apiDocs: ComponentDoc[]; // REQUIRED: Must not be empty - provide API documentation
+		apiDocs: ComponentDoc[];
 		relatedComponents?: RelatedComponent[];
 		version?: string;
 		updatedAt?: string;
@@ -82,12 +83,16 @@
 			</div>
 
 			<Tabs.Content value="about" class="flex flex-col gap-8">
-				{#if data.richDescription}
+				{#if data.richDescription || data.description}
 					<section class="flex flex-col gap-4">
-						{#if typeof data.richDescription === 'function'}
-							{@render data.richDescription()}
-						{:else}
-							<p class="text-base leading-normal text-foreground m-0">{data.richDescription}</p>
+						{#if data.richDescription}
+							{#if typeof data.richDescription === 'function'}
+								{@render data.richDescription()}
+							{:else}
+								<p class="text-base leading-normal text-foreground m-0">{data.richDescription}</p>
+							{/if}
+						{:else if data.description}
+							<p class="text-base leading-normal text-foreground m-0">{data.description}</p>
 						{/if}
 					</section>
 				{/if}

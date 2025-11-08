@@ -8,23 +8,6 @@
   }
 
   let { components, class: className }: Props = $props();
-
-  // Validate components have required cardData in development
-  $effect(() => {
-    if (import.meta.env.DEV) {
-      components.forEach((component, index) => {
-        if (!component.cardData) {
-          console.error(`ShowcaseComponent at index ${index} is missing required cardData`);
-        }
-        if (component.cardData && !component.cardData.name) {
-          console.error(`ShowcaseComponent at index ${index} has cardData without required 'name' field`);
-        }
-        if (component.cardData && !component.cardData.title) {
-          console.error(`ShowcaseComponent at index ${index} has cardData without required 'title' field`);
-        }
-      });
-    }
-  });
 </script>
 
 <div class={cn('grid grid-cols-1 md:grid-cols-3 -mx-8', className)}>

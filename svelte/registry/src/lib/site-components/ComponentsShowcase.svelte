@@ -18,23 +18,6 @@
 		class: className = ''
 	}: Props = $props();
 
-	// Validate components have required cardData
-	$effect(() => {
-		if (import.meta.env.DEV) {
-			components.forEach((component, index) => {
-				if (!component.cardData) {
-					console.error(`ShowcaseComponent at index ${index} is missing required cardData`);
-				}
-				if (component.cardData && !component.cardData.name) {
-					console.error(`ShowcaseComponent at index ${index} has cardData without required 'name' field`);
-				}
-				if (component.cardData && !component.cardData.title) {
-					console.error(`ShowcaseComponent at index ${index} has cardData without required 'title' field`);
-				}
-			});
-		}
-	});
-
 	let activeComponentIndex = $state<number | null>(null);
 	let componentRefs: HTMLDivElement[] = [];
 	let previewRefs: HTMLDivElement[] = [];

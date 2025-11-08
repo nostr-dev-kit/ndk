@@ -16,8 +16,6 @@
 
     event: NDKEvent;
 
-    variant?: 'feed' | 'compact' | 'grid';
-
     class?: string;
 
     children?: Snippet;
@@ -26,7 +24,6 @@
   let {
     ndk: providedNdk,
     event,
-    variant = 'feed',
     class: className = '',
     children,
   }: Props = $props();
@@ -46,9 +43,6 @@
     },
     get state() {
       return state;
-    },
-    get variant() {
-      return variant;
     },
   };
 

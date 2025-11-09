@@ -59,6 +59,7 @@ export function createAppHandlerRecommendations(
 				'#d': [kind.toString()]
 			};
 
+			console.log('running', filter)
 			const events = await ndk.fetchEvents(filter);
 			const handlerSet = new Set<string>();
 

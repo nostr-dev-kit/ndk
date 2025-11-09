@@ -63,6 +63,7 @@ export function validateIdentifier(type: PropType, identifier: string): { valid:
 				}
 				return { valid: false, error: 'Hashtag must contain only letters, numbers, dashes, and underscores' };
 
+			case 'kind':
 			case 'text':
 				return { valid: true };
 
@@ -137,6 +138,7 @@ export async function fetchFromIdentifier(
 			}
 
 			case 'hashtag':
+			case 'kind':
 			case 'text':
 				return { success: true, value: identifier };
 

@@ -3,7 +3,6 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code example
@@ -43,6 +42,18 @@
       orientation: 'vertical'
     }
   ];
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...genericCardMetadata, code: genericCardCode}
+    ],
+    previews: {
+      'generic-card': genericCardComponentPreview
+    }
+  };
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -52,21 +63,34 @@
   </div>
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...genericCardMetadata, code: genericCardCode}}>
-    {#snippet preview()}
-      {@render genericPreview()}
-    {/snippet}
-  </ComponentCard>
+{#snippet genericCardComponentPreview()}
+  {@render genericPreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      The Generic Event Card provides a fallback UI for displaying unknown or unsupported Nostr event kinds. It intelligently handles events that don't have dedicated card components, showing the event content with metadata and discovery options.
+    </p>
+
+    <p>
+      The card respects NIP-31 by displaying the alt tag when present, which provides a human-readable description of the event. It also implements NIP-89 app handler discovery, allowing users to find and open specialized applications that can properly render the event kind.
+    </p>
+
+    <p>
+      This ensures every event has a usable fallback display, preventing broken or empty cards when encountering new or custom event kinds in the wild.
+    </p>
+  </div>
 {/snippet}
 
 <!-- Use template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
+  {overview}
   {showcaseComponents}
-  {components}
+  {componentsSection}
 >
   <EditProps.Prop
     name="Event Kind"

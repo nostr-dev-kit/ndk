@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { ThreadView } from '@nostr-dev-kit/svelte';
+  import type { ThreadView } from '../builders/event/thread/types.js';
   import { EventCard } from '../components/event/cards/compound/index.js';
   import ReactionButton from '../components/reaction/buttons/basic/reaction-button.svelte';
   import { User } from '../ui/user/index.js';

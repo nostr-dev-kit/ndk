@@ -147,11 +147,11 @@
 			>
 				<div
 					class={cn(
-						"lg:col-span-2 p-8 text-right sticky top-20 border-border flex flex-col justify-between gap-6",
+						"lg:col-span-2 p-8 text-right sticky top-20 border-border flex flex-col justify-between gap-6 min-h-[233px]",
 					)}
 				>
-					<div>
-						<h3 class="text-2xl font-semibold mb-3 tracking-tight">{component.cardData.title}</h3>
+					<div class="flex items-end justify-center flex-col h-full">
+						<h3 class="text-lg font-semibold mb-3 tracking-tight">{component.cardData.title}</h3>
 						<p class="text-sm text-muted-foreground leading-relaxed">
 							{component.cardData.richDescription || component.cardData.description}
 						</p>

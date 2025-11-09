@@ -37,6 +37,7 @@
 
   const showcaseComponents = [
     {
+      id: 'generic-card',
       cardData: genericCardMetadata,
       preview: genericPreview,
       orientation: 'vertical'

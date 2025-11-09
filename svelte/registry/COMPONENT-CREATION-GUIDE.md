@@ -777,12 +777,7 @@ You can include multiple recipes in the snippet:
 | Prop name | `recipes` | `customSections` |
 | Use case | Show combinations | Builder API, Anatomy, Primitives |
 
-### Current Usage
-
-**Currently used by**:
-- ✅ `reaction` component - Shows EmojiPicker integration
-
-**Best practices**:
+### Best Practices
 - Keep recipes focused on common, practical patterns
 - Show real integration with related components
 - Include state management if relevant
@@ -1124,7 +1119,7 @@ The primitives section should contain **all lower-level content** organized as s
 - ❌ Don't scatter lower-level docs across multiple top-level sections
 - ❌ Don't mix high-level usage patterns with low-level docs
 
-**Migration note**: Some older components may still use `customSections` for this content. The architectural direction is to consolidate all lower-level content into the `primitives` section.
+**Note**: The `customSections` prop exists for backward compatibility, but all lower-level content should be organized into the `primitives` section following the architectural pattern above.
 
 ---
 

@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../../../utils/cn';
-  import { User } from '../../../../ui/user';
+  import { cn } from '../../utils/cn';
+  import { User } from '../../ui/user';
   import FollowButtonPill from '../../../follow/buttons/pill/follow-button-pill.svelte';
-  import { createUserStats } from '../../../../builders/user/stats.svelte.js';
+  import { createUserStats } from '../../builders/user/stats.svelte.js';
 
   interface Props {
     ndk: NDKSvelte;

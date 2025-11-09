@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { NegentrogySync } from '../../../../ui/negentropy-sync';
-	import { createNegentropySync } from '../../../../builders/negentropy-sync/index.js';
+	import { NegentrogySync } from '../../ui/negentropy-sync';
+	import { createNegentropySync } from '../../builders/negentropy-sync/index.js';
 
 	interface Props {
 		syncBuilder: ReturnType<typeof createNegentropySync>;

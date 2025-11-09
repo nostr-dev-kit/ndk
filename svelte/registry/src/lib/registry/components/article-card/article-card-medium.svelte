@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Root from '../../../../ui/article/article-root.svelte';
-  import Image from '../../../../ui/article/article-image.svelte';
-  import Title from '../../../../ui/article/article-title.svelte';
-  import Summary from '../../../../ui/article/article-summary.svelte';
-  import ReadingTime from '../../../../ui/article/article-reading-time.svelte';
-  import { cn } from '../../../../utils/cn';
+  import Root from '../../ui/article/article-root.svelte';
+  import Image from '../../ui/article/article-image.svelte';
+  import Title from '../../ui/article/article-title.svelte';
+  import Summary from '../../ui/article/article-summary.svelte';
+  import ReadingTime from '../../ui/article/article-reading-time.svelte';
+  import { cn } from '../../utils/cn';
 
   interface Props {
     ndk: NDKSvelte;

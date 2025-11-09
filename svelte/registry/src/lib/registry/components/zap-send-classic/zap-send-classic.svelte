@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createZapSendAction } from '../../../../builders/zap-send/index.svelte.js';
+  import { createZapSendAction } from '../../builders/zap-send/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../../../utils/cn';
-  import {User} from '../../../../ui/user';
+  import { cn } from '../../utils/cn';
+  import {User} from '../../ui/user';
   import ZapIcon from '../../../../icons/zap.svelte';
 
   interface Props {

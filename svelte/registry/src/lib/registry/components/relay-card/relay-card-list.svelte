@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { createBookmarkedRelayList } from '../../../../builders/relay/bookmarks.svelte.js';
-	import Root from '../../../../ui/relay/relay-root.svelte';
-	import Icon from '../../../../ui/relay/relay-icon.svelte';
-	import Name from '../../../../ui/relay/relay-name.svelte';
-	import Url from '../../../../ui/relay/relay-url.svelte';
-	import Description from '../../../../ui/relay/relay-description.svelte';
-	import BookmarkButton from '../../../../ui/relay/relay-bookmark-button.svelte';
-	import { cn } from '../../../../utils/cn';
+	import { createBookmarkedRelayList } from '../../builders/relay/bookmarks.svelte.js';
+	import Root from '../../ui/relay/relay-root.svelte';
+	import Icon from '../../ui/relay/relay-icon.svelte';
+	import Name from '../../ui/relay/relay-name.svelte';
+	import Url from '../../ui/relay/relay-url.svelte';
+	import Description from '../../ui/relay/relay-description.svelte';
+	import BookmarkButton from '../../ui/relay/relay-bookmark-button.svelte';
+	import { cn } from '../../utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createFollowAction } from '../../../../builders/follow-action/index.svelte.js';
+  import { createFollowAction } from '../../builders/follow-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../../../utils/cn';
+  import { cn } from '../../utils/cn';
   import UserAddIcon from '../../../../icons/user-add.svelte';
-  import { User } from '../../../../ui/user/index.js';
+  import { User } from '../../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

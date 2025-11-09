@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -15,14 +16,18 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Mock article for anatomy visualization
-  const mockArticle = {
-    title: 'Building Decentralized Social Networks',
-    summary: 'An in-depth exploration of how Nostr enables truly decentralized social media without central authorities or single points of failure.',
-    image: 'https://via.placeholder.com/800x400',
+  const mockArticle = new NDKArticle(ndk, {
+    kind: 30023,
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(50),
-    published_at: Date.now() / 1000 - 86400, // 1 day ago
-    tags: [['t', 'nostr'], ['t', 'decentralization']]
-  };
+    tags: [
+      ['title', 'Building Decentralized Social Networks'],
+      ['summary', 'An in-depth exploration of how Nostr enables truly decentralized social media without central authorities or single points of failure.'],
+      ['image', 'https://via.placeholder.com/800x400'],
+      ['published_at', String(Math.floor(Date.now() / 1000) - 86400)],
+      ['t', 'nostr'],
+      ['t', 'decentralization']
+    ]
+  });
 
   // Page metadata
   const metadata = {

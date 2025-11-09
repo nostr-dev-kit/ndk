@@ -4,7 +4,7 @@
   "category": "article",
   "subcategory": "cards",
   "variant": "neon",
-  "description": "A futuristic neon-styled article card",
+  "oneLiner": "A futuristic neon-styled article card",
   "command": "npx jsrepo add article/cards/neon",
   "dependencies": [
     "@nostr-dev-kit/svelte",

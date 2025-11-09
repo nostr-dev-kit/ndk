@@ -4,7 +4,7 @@
   "category": "notification",
   "subcategory": "items",
   "variant": "expanded",
-  "description": "A expanded item for notification content",
+  "oneLiner": "A expanded item for notification content",
   "command": "npx jsrepo add notification/items/expanded",
   "dependencies": [
     "@nostr-dev-kit/svelte",

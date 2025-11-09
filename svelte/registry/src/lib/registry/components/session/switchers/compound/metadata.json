@@ -4,7 +4,7 @@
   "category": "session",
   "subcategory": "switchers",
   "variant": "compound",
-  "description": "A compound switcher for session content",
+  "oneLiner": "A compound switcher for session content",
   "command": "npx jsrepo add session/switchers/compound",
   "dependencies": [
     "@nostr-dev-kit/svelte",

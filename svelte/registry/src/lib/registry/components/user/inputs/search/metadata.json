@@ -4,7 +4,7 @@
   "category": "user",
   "subcategory": "inputs",
   "variant": "search",
-  "description": "A search input for user content",
+  "oneLiner": "A search input for user content",
   "command": "npx jsrepo add user/inputs/search",
   "dependencies": [
     "@nostr-dev-kit/svelte",

@@ -4,7 +4,7 @@
   "category": "article",
   "subcategory": "cards",
   "variant": "basic",
-  "description": "A medium-sized article card with image, title, summary and metadata",
+  "oneLiner": "A medium-sized article card with image, title, summary and metadata",
   "command": "npx jsrepo add article/cards/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

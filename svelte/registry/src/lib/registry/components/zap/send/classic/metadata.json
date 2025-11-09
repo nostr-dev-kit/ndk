@@ -4,7 +4,7 @@
   "category": "zap",
   "subcategory": "send",
   "variant": "classic",
-  "description": "Classic zap sending interface",
+  "oneLiner": "Classic zap sending interface",
   "command": "npx jsrepo add zap/send/classic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

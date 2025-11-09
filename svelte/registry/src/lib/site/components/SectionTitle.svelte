@@ -11,7 +11,7 @@
 	let { title, description, tabs, children }: Props = $props();
 </script>
 
-<div class="mb-8">
+<div class="">
 	<div class="">
 		<h2 class="text-3xl font-bold mb-2">{title}</h2>
 		{#if description}

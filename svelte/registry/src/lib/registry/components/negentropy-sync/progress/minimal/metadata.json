@@ -4,7 +4,7 @@
   "category": "negentropy-sync",
   "subcategory": "progress",
   "variant": "minimal",
-  "description": "A minimal progres for negentropy-sync content",
+  "oneLiner": "A minimal progres for negentropy-sync content",
   "command": "npx jsrepo add negentropy-sync/progress/minimal",
   "dependencies": [
     "@nostr-dev-kit/svelte",

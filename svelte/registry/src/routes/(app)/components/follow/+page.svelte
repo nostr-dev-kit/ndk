@@ -5,8 +5,6 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-  import CodeBlock from '$site-components/CodeBlock.svelte';
-  import ApiTable from '$site-components/api-table.svelte';
 
   // Import code examples
   import followButtonCode from './examples/basic/index.txt?raw';
@@ -16,6 +14,7 @@
 
   // Import registry metadata
   import followButtonCard from '$lib/registry/components/follow/buttons/basic/metadata.json';
+  import followActionBuilder from '$lib/registry/builders/follow-action/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -122,59 +121,6 @@
   </div>
 {/snippet}
 
-<!-- Primitives section -->
-{#snippet primitives()}
-  <p class="text-muted-foreground mb-6">
-    Use <code class="px-2 py-1 bg-muted rounded text-sm">createFollowAction()</code> to build custom follow button implementations.
-  </p>
-
-  <h3 class="text-lg font-semibold mb-3">createFollowAction</h3>
-  <CodeBlock lang="typescript" code={`import { createFollowAction } from '@nostr-dev-kit/svelte';
-
-// Create follow action
-const followAction = createFollowAction(() => ({ target: user }), ndk);
-
-// Access reactive state
-followAction.isFollowing  // boolean - whether currently following
-
-// Toggle follow/unfollow
-await followAction.follow();`} />
-
-  <ApiTable
-    title="Parameters"
-    rows={[
-      {
-        name: 'options',
-        type: '() => { target: NDKUser | string }',
-        description: 'Function returning the target to follow/unfollow',
-        required: true
-      },
-      {
-        name: 'ndk',
-        type: 'NDKSvelte',
-        description: 'NDK instance for publishing events',
-        required: true
-      }
-    ]}
-  />
-
-  <ApiTable
-    title="Returns"
-    rows={[
-      {
-        name: 'isFollowing',
-        type: 'boolean',
-        description: 'Current follow state'
-      },
-      {
-        name: 'follow',
-        type: '() => Promise<void>',
-        description: 'Toggle follow/unfollow'
-      }
-    ]}
-  />
-{/snippet}
-
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
@@ -209,7 +155,9 @@ await followAction.follow();`} />
     }
   ]}
   {componentsSection}
-  {primitives}
+  buildersSection={{
+    builders: [followActionBuilder]
+  }}
 >
   <EditProps.Prop
     name="Sample User"

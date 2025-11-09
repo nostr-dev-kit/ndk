@@ -4,7 +4,7 @@
   "category": "zap",
   "subcategory": "displays",
   "variant": "list",
-  "description": "A list display for zap content",
+  "oneLiner": "A list display for zap content",
   "command": "npx jsrepo add zap/displays/list",
   "dependencies": [
     "@nostr-dev-kit/svelte",

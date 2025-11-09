@@ -4,7 +4,7 @@
   "category": "mention",
   "subcategory": "displays",
   "variant": "basic",
-  "description": "Basic mention display component for inline user mentions",
+  "oneLiner": "Basic mention display component for inline user mentions",
   "command": "npx jsrepo add mention",
   "dependencies": [
     "@nostr-dev-kit/svelte",

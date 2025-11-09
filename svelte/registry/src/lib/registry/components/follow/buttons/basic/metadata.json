@@ -4,7 +4,7 @@
   "category": "follow",
   "subcategory": "buttons",
   "variant": "basic",
-  "description": "A basic follow/unfollow button",
+  "oneLiner": "A basic follow/unfollow button",
   "command": "npx jsrepo add follow/buttons/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

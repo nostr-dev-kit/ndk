@@ -4,7 +4,7 @@
   "category": "navigation",
   "subcategory": "tabs",
   "variant": "content-tab",
-  "description": "Tab component for content categorization and filtering",
+  "oneLiner": "Tab component for content categorization and filtering",
   "command": "npx jsrepo add content-tab",
   "dependencies": [
     "@nostr-dev-kit/svelte",

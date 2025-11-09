@@ -20,33 +20,28 @@
 	}
 
 	interface Props {
-		components: ComponentDoc[];
-		title?: string;
+		component: ComponentDoc;
 	}
 
-	let { components }: Props = $props();
+	let { component }: Props = $props();
 </script>
 
 <section>
-	<div class="flex flex-col gap-8">
-		{#each components as component (component.name)}
-			<div>
-				<div class="mb-4">
-					<CodeBlock lang="typescript" code={component.importPath} />
-				</div>
+	<div class="flex flex-col gap-2">
+		<div class="mb-4">
+			<CodeBlock lang="typescript" code={component.importPath} />
+		</div>
 
-				{#if component.props && component.props.length > 0}
-					<ApiTable title="Props" rows={component.props} />
-				{/if}
+		{#if component.props && component.props.length > 0}
+			<ApiTable title="Props" rows={component.props} />
+		{/if}
 
-				{#if component.events && component.events.length > 0}
-					<ApiTable title="Events" rows={component.events.map(e => ({ name: e.name, type: 'function', description: e.description }))} />
-				{/if}
+		{#if component.events && component.events.length > 0}
+			<ApiTable title="Events" rows={component.events.map(e => ({ name: e.name, type: 'function', description: e.description }))} />
+		{/if}
 
-				{#if component.slots && component.slots.length > 0}
-					<ApiTable title="Slots" rows={component.slots.map(s => ({ name: s.name, type: 'Snippet', description: s.description }))} />
-				{/if}
-			</div>
-		{/each}
+		{#if component.slots && component.slots.length > 0}
+			<ApiTable title="Slots" rows={component.slots.map(s => ({ name: s.name, type: 'Snippet', description: s.description }))} />
+		{/if}
 	</div>
 </section>

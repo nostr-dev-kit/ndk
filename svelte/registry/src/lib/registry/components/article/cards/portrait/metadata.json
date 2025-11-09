@@ -4,7 +4,7 @@
   "category": "article",
   "subcategory": "cards",
   "variant": "portrait",
-  "description": "A vertical article card with prominent image",
+  "oneLiner": "A vertical article card with prominent image",
   "command": "npx jsrepo add article/cards/portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",

@@ -4,7 +4,7 @@
   "category": "user",
   "subcategory": "displays",
   "variant": "profile-hero",
-  "description": "A profile-hero display for user content",
+  "oneLiner": "A profile-hero display for user content",
   "command": "npx jsrepo add user/displays/profile-hero",
   "dependencies": [
     "@nostr-dev-kit/svelte",

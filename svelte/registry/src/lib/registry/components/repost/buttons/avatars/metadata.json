@@ -4,7 +4,7 @@
   "category": "repost",
   "subcategory": "buttons",
   "variant": "avatars",
-  "description": "A avatars button for repost content",
+  "oneLiner": "A avatars button for repost content",
   "command": "npx jsrepo add repost/buttons/avatars",
   "dependencies": [
     "@nostr-dev-kit/svelte",

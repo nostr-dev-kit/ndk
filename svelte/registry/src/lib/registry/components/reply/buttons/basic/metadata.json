@@ -4,7 +4,7 @@
   "category": "reply",
   "subcategory": "buttons",
   "variant": "basic",
-  "description": "A basic button for reply content",
+  "oneLiner": "A basic button for reply content",
   "command": "npx jsrepo add reply/buttons/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

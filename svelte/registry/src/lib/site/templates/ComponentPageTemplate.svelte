@@ -6,6 +6,7 @@
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
+  import BuilderCard from '$site-components/BuilderCard.svelte';
   import type { ComponentPageTemplateProps } from './types';
 
   let {
@@ -15,6 +16,7 @@
     emptyState,
     overview,
     componentsSection,
+    buildersSection,
     recipes,
     anatomy,
     primitives,
@@ -57,7 +59,7 @@
 
   <!-- Components Section -->
   {#if componentsSection?.cards.length}
-    <section class="py-8">
+    <section class="py-8 flex flex-col gap-8">
       <SectionTitle title="Components" />
       {#each componentsSection.cards as cardData (cardData.name)}
         <ComponentCard data={cardData}>
@@ -71,6 +73,16 @@
             {/if}
           {/snippet}
         </ComponentCard>
+      {/each}
+    </section>
+  {/if}
+
+  <!-- Builders Section -->
+  {#if buildersSection?.builders.length}
+    <section class="py-8 flex flex-col gap-8">
+      <SectionTitle title="Builders" />
+      {#each buildersSection.builders as builderData (builderData.name)}
+        <BuilderCard data={builderData} />
       {/each}
     </section>
   {/if}

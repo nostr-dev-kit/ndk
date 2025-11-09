@@ -4,7 +4,7 @@
   "category": "inputs",
   "subcategory": "pickers",
   "variant": "emoji-picker",
-  "description": "Emoji selection component with search and categories",
+  "oneLiner": "Emoji selection component with search and categories",
   "command": "npx jsrepo add emoji-picker",
   "dependencies": [
     "@nostr-dev-kit/svelte",

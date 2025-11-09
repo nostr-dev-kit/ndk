@@ -4,7 +4,7 @@
   "category": "relay",
   "subcategory": "status",
   "variant": "connection",
-  "description": "A connection statu for relay content",
+  "oneLiner": "A connection statu for relay content",
   "command": "npx jsrepo add relay/status/connection",
   "dependencies": [
     "@nostr-dev-kit/svelte",

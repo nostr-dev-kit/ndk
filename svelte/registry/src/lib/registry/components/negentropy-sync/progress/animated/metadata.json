@@ -4,7 +4,7 @@
   "category": "negentropy-sync",
   "subcategory": "progress",
   "variant": "animated",
-  "description": "A animated progres for negentropy-sync content",
+  "oneLiner": "A animated progres for negentropy-sync content",
   "command": "npx jsrepo add negentropy-sync/progress/animated",
   "dependencies": [
     "@nostr-dev-kit/svelte",

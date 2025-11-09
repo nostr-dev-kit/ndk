@@ -650,7 +650,11 @@ export class NDKSvelte extends NDK {
         const kind = eventClass.kinds[0];
         const existing = this.$sessions.getSessionEvent(kind) as T | undefined;
 
-        if (existing) return existing;
+        if (existing) {
+            // Clone the event to prevent mutations from affecting the session-stored version
+            // This ensures publishReplaceable() doesn't mutate the stored event
+            return eventClass.from(existing);
+        }
 
         if (options?.create) {
             const newEvent = new eventClass(this);

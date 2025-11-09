@@ -23,7 +23,7 @@ Use for: component API documentation across all component pages.
 </script>
 
 {#if title}
-	<h3 class="text-xl font-semibold text-foreground my-8 mt-8 mb-4">{title}</h3>
+	<h3 class="text-xl font-semibold text-foreground">{title}</h3>
 {/if}
 
 <div class={cn("my-4 mb-8 border border-border rounded-lg overflow-hidden", className)}>

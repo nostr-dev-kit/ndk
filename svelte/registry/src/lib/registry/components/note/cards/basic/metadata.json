@@ -4,7 +4,7 @@
   "category": "note",
   "subcategory": "cards",
   "variant": "basic",
-  "description": "A card for displaying short-form notes",
+  "oneLiner": "A card for displaying short-form notes",
   "command": "npx jsrepo add note/cards/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

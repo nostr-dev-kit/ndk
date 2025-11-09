@@ -4,7 +4,7 @@
   "category": "follow",
   "subcategory": "packs",
   "variant": "portrait",
-  "description": "A portrait pack for follow content",
+  "oneLiner": "A portrait pack for follow content",
   "command": "npx jsrepo add follow/packs/portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",

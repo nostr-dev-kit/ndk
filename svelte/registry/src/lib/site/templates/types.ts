@@ -72,6 +72,42 @@ export interface ComponentSection {
   previews?: Record<string, Snippet>;
 }
 
+// Builder parameter structure
+export interface BuilderParameter {
+  name: string;
+  type: string;
+  description: string;
+  required?: boolean;
+  default?: string;
+}
+
+// Builder return property structure
+export interface BuilderReturn {
+  name: string;
+  type: string;
+  description: string;
+}
+
+// Builder card data structure
+export interface BuilderCardData {
+  name: string;
+  title: string;
+  oneLiner?: string;
+  description?: string;
+  importPath: string;
+  command: string;
+  dependencies?: string[];
+  nips?: string[];
+  parameters: BuilderParameter[];
+  returns: BuilderReturn[];
+  usageExample?: string;
+}
+
+// Builders section configuration
+export interface BuildersSection {
+  builders: BuilderCardData[];
+}
+
 // Template props interface
 export interface ComponentPageTemplateProps {
   metadata: ComponentPageMetadata;
@@ -84,6 +120,7 @@ export interface ComponentPageTemplateProps {
   // Content sections (in render order)
   overview?: Snippet;
   componentsSection?: ComponentSection;
+  buildersSection?: BuildersSection;
   recipes?: Snippet;
   anatomy?: Snippet;
   primitives?: Snippet;

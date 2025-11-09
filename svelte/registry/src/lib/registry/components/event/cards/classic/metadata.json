@@ -4,7 +4,7 @@
   "category": "event",
   "subcategory": "cards",
   "variant": "classic",
-  "description": "A classic styled event card",
+  "oneLiner": "A classic styled event card",
   "command": "npx jsrepo add event/cards/classic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

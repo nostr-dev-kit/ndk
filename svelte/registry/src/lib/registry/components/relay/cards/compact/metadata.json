@@ -4,7 +4,7 @@
   "category": "relay",
   "subcategory": "cards",
   "variant": "compact",
-  "description": "A compact card for relay content",
+  "oneLiner": "A compact card for relay content",
   "command": "npx jsrepo add relay/cards/compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",

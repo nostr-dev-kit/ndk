@@ -35,13 +35,14 @@
 	export interface ComponentCardData {
 		name: string;
 		title: string;
+		oneLiner?: string;
 		description?: string;
 		richDescription?: string | Snippet;
 		documentation?: string;
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];
-		apiDoc?: ComponentDoc;
+		apiDoc: ComponentDoc;
 		relatedComponents?: RelatedComponent[];
 		version?: string;
 		updatedAt?: string;
@@ -90,6 +91,9 @@
 						<Tabs.Trigger value="usage">Usage</Tabs.Trigger>
 					</Tabs.List>
 				</div>
+				{#if data.oneLiner}
+					<p class="text-muted-foreground mt-2">{data.oneLiner}</p>
+				{/if}
 			</div>
 
 			<Tabs.Content value="about" class="flex flex-col gap-8">
@@ -165,16 +169,7 @@
 				</section>
 
 				<section class="flex flex-col gap-4">
-					{#if data.apiDoc}
-						<ComponentAPI components={[data.apiDoc]} />
-					{:else}
-						<div class="p-8 border border-destructive rounded-lg bg-destructive/10">
-							<h4 class="text-lg font-semibold text-destructive mb-2">⚠️ Missing API Documentation</h4>
-							<p class="text-sm text-destructive/90">
-								This component is missing API documentation. Please add an <code class="px-1 py-0.5 bg-destructive/20 rounded">apiDoc</code> object including props, events, and usage information.
-							</p>
-						</div>
-					{/if}
+					<ComponentAPI component={data.apiDoc} />
 				</section>
 			</Tabs.Content>
 		</div>

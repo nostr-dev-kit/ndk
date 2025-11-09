@@ -4,7 +4,7 @@
   "category": "user",
   "subcategory": "cards",
   "variant": "landscape",
-  "description": "A horizontal user card layout",
+  "oneLiner": "A horizontal user card layout",
   "command": "npx jsrepo add user/cards/landscape",
   "dependencies": [
     "@nostr-dev-kit/svelte",

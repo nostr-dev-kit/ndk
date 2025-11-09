@@ -10,7 +10,7 @@
 	"doNotListCategories": [],
 	"listBlocks": [],
 	"listCategories": [],
-	"excludeDeps": [],
+	"excludeDeps": ["svelte"],
 	"includeBlocks": [],
 	"includeCategories": [],
 	"includeFiles": [],

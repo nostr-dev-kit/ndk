@@ -1,0 +1,439 @@
+{
+  "icons": [
+    {
+      "from": "icons/bookmark.svelte",
+      "to": "icons/bookmark/bookmark.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/calendar.svelte",
+      "to": "icons/calendar/calendar.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/cancel.svelte",
+      "to": "icons/cancel/cancel.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/file.svelte",
+      "to": "icons/file/file.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/hashtag.svelte",
+      "to": "icons/hashtag/hashtag.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/heart.svelte",
+      "to": "icons/heart/heart.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/image-add.svelte",
+      "to": "icons/image-add/image-add.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/link.svelte",
+      "to": "icons/link/link.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/loading.svelte",
+      "to": "icons/loading/loading.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/pause.svelte",
+      "to": "icons/pause/pause.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/play.svelte",
+      "to": "icons/play/play.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/reply.svelte",
+      "to": "icons/reply/reply.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/repost.svelte",
+      "to": "icons/repost/repost.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/user-add.svelte",
+      "to": "icons/user-add/user-add.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/user-following.svelte",
+      "to": "icons/user-following/user-following.svelte",
+      "type": "icon"
+    },
+    {
+      "from": "icons/zap.svelte",
+      "to": "icons/zap/zap.svelte",
+      "type": "icon"
+    }
+  ],
+  "simpleComponents": [
+    {
+      "from": "components/article/cards/compact",
+      "to": "components/article-card-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/article/cards/portrait",
+      "to": "components/article-card-portrait",
+      "type": "simple"
+    },
+    {
+      "from": "components/article/cards/inline",
+      "to": "components/article-card-inline",
+      "type": "simple"
+    },
+    {
+      "from": "components/article/cards/neon",
+      "to": "components/article-card-neon",
+      "type": "simple"
+    },
+    {
+      "from": "components/article/cards/hero",
+      "to": "components/article-card-hero",
+      "type": "simple"
+    },
+    {
+      "from": "components/event/cards/classic",
+      "to": "components/event-card-classic",
+      "type": "simple"
+    },
+    {
+      "from": "components/event/cards/generic",
+      "to": "components/event-card-generic",
+      "type": "simple"
+    },
+    {
+      "from": "components/follow/buttons/pill",
+      "to": "components/follow-button-pill",
+      "type": "simple"
+    },
+    {
+      "from": "components/follow-pack/compact",
+      "to": "components/follow-pack-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/follow-pack/portrait",
+      "to": "components/follow-pack-portrait",
+      "type": "simple"
+    },
+    {
+      "from": "components/follow-pack/modern",
+      "to": "components/follow-pack-modern",
+      "type": "simple"
+    },
+    {
+      "from": "components/follow-pack/hero",
+      "to": "components/follow-pack-hero",
+      "type": "simple"
+    },
+    {
+      "from": "components/hashtag/cards/compact",
+      "to": "components/hashtag-card-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/hashtag/cards/portrait",
+      "to": "components/hashtag-card-portrait",
+      "type": "simple"
+    },
+    {
+      "from": "components/hashtag/displays/modern",
+      "to": "components/hashtag-modern",
+      "type": "simple"
+    },
+    {
+      "from": "components/highlight/cards/compact",
+      "to": "components/highlight-card-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/highlight/cards/inline",
+      "to": "components/highlight-card-inline",
+      "type": "simple"
+    },
+    {
+      "from": "components/image/cards/hero",
+      "to": "components/image-card-hero",
+      "type": "simple"
+    },
+    {
+      "from": "components/image/content/basic",
+      "to": "components/image-content",
+      "type": "simple"
+    },
+    {
+      "from": "components/media/upload/carousel",
+      "to": "components/media-upload-carousel",
+      "type": "simple"
+    },
+    {
+      "from": "components/media/upload/button",
+      "to": "components/media-upload-button",
+      "type": "simple"
+    },
+    {
+      "from": "components/mention/displays/modern",
+      "to": "components/mention-modern",
+      "type": "simple"
+    },
+    {
+      "from": "components/mute/buttons/basic",
+      "to": "components/mute-button",
+      "type": "simple"
+    },
+    {
+      "from": "components/negentropy-sync/progress/detailed",
+      "to": "components/negentropy-sync-detailed",
+      "type": "simple"
+    },
+    {
+      "from": "components/negentropy-sync/progress/minimal",
+      "to": "components/negentropy-sync-minimal",
+      "type": "simple"
+    },
+    {
+      "from": "components/negentropy-sync/progress/animated",
+      "to": "components/negentropy-sync-animated",
+      "type": "simple"
+    },
+    {
+      "from": "components/note/cards/compact",
+      "to": "components/note-card-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/note/cards/inline",
+      "to": "components/note-card-inline",
+      "type": "simple"
+    },
+    {
+      "from": "components/notification/items/compact",
+      "to": "components/notification-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/notification/items/expanded",
+      "to": "components/notification-expanded",
+      "type": "simple"
+    },
+    {
+      "from": "components/reaction/buttons/slack",
+      "to": "components/reaction-button-slack",
+      "type": "simple"
+    },
+    {
+      "from": "components/reaction/buttons/avatars",
+      "to": "components/reaction-button-avatars",
+      "type": "simple"
+    },
+    {
+      "from": "components/relay/cards/compact",
+      "to": "components/relay-card-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/relay/cards/portrait",
+      "to": "components/relay-card-portrait",
+      "type": "simple"
+    },
+    {
+      "from": "components/relay/inputs/basic",
+      "to": "components/relay-input",
+      "type": "simple"
+    },
+    {
+      "from": "components/reply/buttons/avatars",
+      "to": "components/reply-button-avatars",
+      "type": "simple"
+    },
+    {
+      "from": "components/repost/buttons/avatars",
+      "to": "components/repost-button-avatars",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/cards/compact",
+      "to": "components/user-card-compact",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/cards/classic",
+      "to": "components/user-card-classic",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/cards/portrait",
+      "to": "components/user-card-portrait",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/cards/glass",
+      "to": "components/user-card-glass",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/cards/neon",
+      "to": "components/user-card-neon",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/cards/landscape",
+      "to": "components/user-card-landscape",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/displays/list-item",
+      "to": "components/user-list-item",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/displays/profile",
+      "to": "components/user-profile",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/displays/profile-hero",
+      "to": "components/user-profile-hero",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/displays/avatar-name",
+      "to": "components/user-avatar-name",
+      "type": "simple"
+    },
+    {
+      "from": "components/user/inputs/search",
+      "to": "components/user-search",
+      "type": "simple"
+    },
+    {
+      "from": "components/zap/buttons/avatars",
+      "to": "components/zap-button-avatars",
+      "type": "simple"
+    },
+    {
+      "from": "components/zap/displays/list",
+      "to": "components/zap-list",
+      "type": "simple"
+    },
+    {
+      "from": "components/zap/send/classic",
+      "to": "components/zap-send-classic",
+      "type": "simple"
+    }
+  ],
+  "multiFileComponents": [
+    {
+      "from": "components/article/cards/basic",
+      "to": "components/article-card",
+      "type": "multi",
+      "note": "Contains article-card-medium.svelte"
+    },
+    {
+      "from": "components/article/content/basic",
+      "to": "components/article-content",
+      "type": "multi",
+      "note": "Contains article-content.svelte, highlight-toolbar.svelte"
+    },
+    {
+      "from": "components/event/cards/compound",
+      "to": "components/event-card",
+      "type": "multi",
+      "note": "Contains 7 files: event-card-*.svelte, event-dropdown.svelte"
+    },
+    {
+      "from": "components/follow/buttons/basic",
+      "to": "components/follow-button",
+      "type": "multi",
+      "note": "Contains follow-button.svelte"
+    },
+    {
+      "from": "components/follow-pack/basic",
+      "to": "components/follow-pack",
+      "type": "multi",
+      "note": "Contains follow-pack-list-item.svelte"
+    },
+    {
+      "from": "components/highlight/cards/basic",
+      "to": "components/highlight-card",
+      "type": "multi",
+      "note": "Contains 3 files: highlight-card-elegant/grid/feed.svelte"
+    },
+    {
+      "from": "components/image/cards/basic",
+      "to": "components/image-card",
+      "type": "multi",
+      "note": "Contains 2 files: image-card.svelte, image-card-instagram.svelte"
+    },
+    {
+      "from": "components/note/cards/basic",
+      "to": "components/note-card",
+      "type": "multi",
+      "note": "Contains note-card.svelte"
+    },
+    {
+      "from": "components/note-composer/composers/compound",
+      "to": "components/note-composer",
+      "type": "multi",
+      "note": "Contains 9 files: note-composer-*.svelte"
+    },
+    {
+      "from": "components/reaction/buttons/basic",
+      "to": "components/reaction-button",
+      "type": "multi",
+      "note": "Contains reaction-button.svelte"
+    },
+    {
+      "from": "components/relay/cards/basic",
+      "to": "components/relay-card",
+      "type": "multi",
+      "note": "Contains 2 files: relay-card.svelte, relay-card-list.svelte"
+    },
+    {
+      "from": "components/reply/buttons/basic",
+      "to": "components/reply-button",
+      "type": "multi",
+      "note": "Contains reply-button.svelte"
+    },
+    {
+      "from": "components/repost/buttons/basic",
+      "to": "components/repost-button",
+      "type": "multi",
+      "note": "Contains repost-button.svelte"
+    },
+    {
+      "from": "components/session/switchers/compound",
+      "to": "components/session-switcher",
+      "type": "multi",
+      "note": "Contains 7 files: session-switcher-*.svelte"
+    },
+    {
+      "from": "components/zap/buttons/basic",
+      "to": "components/zap-button",
+      "type": "multi",
+      "note": "Contains zap-button.svelte"
+    },
+    {
+      "from": "components/zap/send/basic",
+      "to": "components/zap-send",
+      "type": "multi",
+      "note": "Contains 2 files: zap-send-root.svelte, zap-send-splits.svelte"
+    }
+  ]
+}

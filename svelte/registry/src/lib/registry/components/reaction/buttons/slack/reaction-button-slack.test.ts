@@ -1,4 +1,5 @@
 import { NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { flushSync } from "svelte";
@@ -7,20 +8,22 @@ import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } f
 import ReactionButtonSlack from "./reaction-button-slack.svelte";
 
 describe("ReactionButtonSlack", () => {
-    let ndk;
+    let ndk: NDKSvelte;
     let testEvent: NDKEvent;
-    let alice, bob, carol;
+    let alice: Awaited<ReturnType<typeof UserGenerator.getUser>>;
+    let bob: Awaited<ReturnType<typeof UserGenerator.getUser>>;
+    let carol: Awaited<ReturnType<typeof UserGenerator.getUser>>;
 
     beforeEach(async () => {
         ndk = createTestNDK();
         ndk.signer = NDKPrivateKeySigner.generate();
         await ndk.signer.blockUntilReady();
 
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
-        carol = await UserGenerator.getUser("carol", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as any);
+        bob = await UserGenerator.getUser("bob", ndk as any);
+        carol = await UserGenerator.getUser("carol", ndk as any);
 
-        const factory = new TestEventFactory(ndk);
+        const factory = new TestEventFactory(ndk as any);
         testEvent = await factory.createSignedTextNote("Test note", "alice");
         testEvent.id = generateTestEventId("note1");
     });
@@ -76,7 +79,7 @@ describe("ReactionButtonSlack", () => {
 
     describe("displaying all reactions", () => {
         it("should show all different emoji reactions", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -114,7 +117,7 @@ describe("ReactionButtonSlack", () => {
         });
 
         it("should show count for each reaction", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -148,7 +151,7 @@ describe("ReactionButtonSlack", () => {
 
     describe("horizontal variant with avatars", () => {
         it("should show tooltip with avatars in horizontal mode", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -177,7 +180,7 @@ describe("ReactionButtonSlack", () => {
 
     describe("vertical variant with avatars", () => {
         it("should show inline avatars in vertical mode", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -208,7 +211,7 @@ describe("ReactionButtonSlack", () => {
         it("should react when clicking a reaction button", async () => {
             const user = userEvent.setup();
 
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -262,7 +265,7 @@ describe("ReactionButtonSlack", () => {
 
     describe("data attributes for reacted state", () => {
         it("should show data-reacted on reacted buttons", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -287,7 +290,7 @@ describe("ReactionButtonSlack", () => {
         });
 
         it("should not show data-reacted on non-reacted buttons", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -316,7 +319,7 @@ describe("ReactionButtonSlack", () => {
 
     describe("without avatars", () => {
         it("should not show avatars when showAvatars is false", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 

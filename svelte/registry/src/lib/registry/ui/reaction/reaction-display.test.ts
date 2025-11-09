@@ -1,11 +1,12 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { render } from "@testing-library/svelte";
 import { describe, expect, it, beforeEach } from "vitest";
 import { createTestNDK } from "../../../../test-utils";
 import ReactionDisplay from "./reaction-display.svelte";
 
 describe("ReactionDisplay", () => {
-    let ndk;
+    let ndk: NDKSvelte;
 
     beforeEach(() => {
         ndk = createTestNDK();

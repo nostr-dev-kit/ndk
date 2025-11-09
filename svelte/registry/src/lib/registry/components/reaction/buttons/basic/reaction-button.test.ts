@@ -1,4 +1,5 @@
 import { NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { flushSync } from "svelte";
@@ -7,18 +8,18 @@ import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } f
 import ReactionButton from "./reaction-button.svelte";
 
 describe("ReactionButton", () => {
-    let ndk;
+    let ndk: NDKSvelte;
     let testEvent: NDKEvent;
-    let alice;
+    let alice: Awaited<ReturnType<typeof UserGenerator.getUser>>;
 
     beforeEach(async () => {
         ndk = createTestNDK();
         ndk.signer = NDKPrivateKeySigner.generate();
         await ndk.signer.blockUntilReady();
 
-        alice = await UserGenerator.getUser("alice", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as any);
 
-        const factory = new TestEventFactory(ndk);
+        const factory = new TestEventFactory(ndk as any);
         testEvent = await factory.createSignedTextNote("Test note", "alice");
         testEvent.id = generateTestEventId("note1");
     });
@@ -60,7 +61,7 @@ describe("ReactionButton", () => {
         });
 
         it("should show count when showCount is true (default)", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -86,7 +87,7 @@ describe("ReactionButton", () => {
         });
 
         it("should hide count when showCount is false", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -179,7 +180,7 @@ describe("ReactionButton", () => {
 
     describe("reacted state", () => {
         it("should show data-reacted when user has reacted", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -205,7 +206,7 @@ describe("ReactionButton", () => {
         });
 
         it("should not show data-reacted when user has not reacted", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -233,7 +234,7 @@ describe("ReactionButton", () => {
         });
 
         it("should fill heart icon when reacted", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -272,7 +273,7 @@ describe("ReactionButton", () => {
 
     describe("count modes", () => {
         it("should show total count in total mode (default)", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -307,7 +308,7 @@ describe("ReactionButton", () => {
         });
 
         it("should show emoji-specific count in emoji mode", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -420,7 +421,7 @@ describe("ReactionButton", () => {
 
     describe("accessibility", () => {
         it("should have aria-label with count", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 

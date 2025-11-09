@@ -2,13 +2,12 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';  import { EditProps } from '$lib/site/components/edit-props';
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import { EditProps } from '$lib/site/components/edit-props';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { User } from '$lib/registry/ui/user';
-  import { ScrollArea } from '$lib/site/components/ui/scroll-area';
   import * as Tabs from '$lib/site/components/ui/tabs';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
@@ -96,7 +95,31 @@
     website: { name: 'User.Website', description: 'Display website URL' },
   };
 
-    const showcaseComponents: ShowcaseComponent[] = [
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...userCardClassicCard, code: userCardClassicCode},
+      {...userCardCompactCard, code: userCardCompactCode},
+      {...userCardListItemCard, code: userListItemCode},
+      {...userCardPortraitCard, code: userCardPortraitCode},
+      {...userCardLandscapeCard, code: userCardLandscapeCode},
+      {...userCardNeonCard, code: userCardNeonCode},
+      {...userCardGlassCard, code: userCardGlassCode}
+    ],
+    previews: {
+      'user-card-classic': userCardClassicComponentPreview,
+      'user-card-compact': userCardCompactComponentPreview,
+      'user-card-list-item': userCardListItemComponentPreview,
+      'user-card-portrait': userCardPortraitComponentPreview,
+      'user-card-landscape': userCardLandscapeComponentPreview,
+      'user-card-neon': userCardNeonComponentPreview,
+      'user-card-glass': userCardGlassComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
     {
       id: 'user-card-classic',
       cardData: userCardClassicCard,
@@ -213,11 +236,79 @@
   </div>
 {/snippet}
 
-<!-- EditProps snippet -->
-<!-- Custom sections (Anatomy + Primitives) -->
-{#snippet customSections()}
+<!-- Component preview snippets for componentsSection -->
+{#snippet userCardClassicComponentPreview()}
+  <UserCardClassic {ndk} pubkey={user1?.pubkey || ''} />
+{/snippet}
+
+{#snippet userCardCompactComponentPreview()}
+  <div class="space-y-2 max-w-sm">
+    {#each displayUsers as user (user.pubkey)}
+      <UserCardCompact {ndk} pubkey={user.pubkey} />
+    {/each}
+  </div>
+{/snippet}
+
+{#snippet userCardListItemComponentPreview()}
+  <div class="max-w-sm border border-border rounded-lg overflow-hidden">
+    {#each displayUsers as user (user.pubkey)}
+      <UserListItem {ndk} pubkey={user.pubkey} />
+    {/each}
+  </div>
+{/snippet}
+
+{#snippet userCardPortraitComponentPreview()}
+  <div class="flex gap-4 pb-4">
+    {#each displayUsers as user (user.pubkey)}
+      <UserCardPortrait {ndk} pubkey={user.pubkey} />
+    {/each}
+  </div>
+{/snippet}
+
+{#snippet userCardLandscapeComponentPreview()}
+  <div class="space-y-4 max-w-2xl">
+    {#each displayUsers as user (user.pubkey)}
+      <UserCardLandscape {ndk} pubkey={user.pubkey} />
+    {/each}
+  </div>
+{/snippet}
+
+{#snippet userCardNeonComponentPreview()}
+  <div class="flex gap-4 pb-4">
+    {#each displayUsers as user (user.pubkey)}
+      <UserCardNeon {ndk} pubkey={user.pubkey} />
+    {/each}
+  </div>
+{/snippet}
+
+{#snippet userCardGlassComponentPreview()}
+  <div class="flex gap-4 pb-4">
+    {#each displayUsers.slice(0, 5) as user (user.pubkey)}
+      <UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
+    {/each}
+  </div>
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      User Cards provide beautiful, customizable displays for Nostr user profiles. With seven distinct variants, you can choose the perfect style for your application - from classic cards to modern glass morphism designs.
+    </p>
+
+    <p>
+      Each variant is built using composable User primitives (Avatar, Name, Nip05, Bio, Banner, etc.), making it easy to create custom layouts or modify existing designs. All cards automatically fetch and display user profile data from NDK.
+    </p>
+
+    <p>
+      The cards support various layouts: compact for lists, portrait and landscape for grids, classic for traditional profiles, and special effect variants like neon and glass for modern interfaces.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Anatomy section -->
+{#snippet anatomy()}
   {#if displayUsers.length > 0}
-    <!-- Anatomy Section -->
     <SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
 
     <ComponentAnatomy.Root>
@@ -313,88 +404,14 @@
   {/if}
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...userCardClassicCard, code: userCardClassicCode}}>
-    {#snippet preview()}
-      <UserCardClassic {ndk} pubkey={user1?.pubkey || ''} />
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...userCardCompactCard, code: userCardCompactCode}}>
-    {#snippet preview()}
-      <div class="space-y-2 max-w-sm">
-        {#each displayUsers as user (user.pubkey)}
-          <UserCardCompact {ndk} pubkey={user.pubkey} />
-        {/each}
-      </div>
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...userCardListItemCard, code: userListItemCode}}>
-    {#snippet preview()}
-      <div class="max-w-sm border border-border rounded-lg overflow-hidden">
-        {#each displayUsers as user (user.pubkey)}
-          <UserListItem {ndk} pubkey={user.pubkey} />
-        {/each}
-      </div>
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...userCardPortraitCard, code: userCardPortraitCode}}>
-    {#snippet preview()}
-      <ScrollArea orientation="horizontal" class="w-full">
-        <div class="flex gap-4 pb-4">
-          {#each displayUsers as user (user.pubkey)}
-            <UserCardPortrait {ndk} pubkey={user.pubkey} />
-          {/each}
-        </div>
-      </ScrollArea>
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...userCardLandscapeCard, code: userCardLandscapeCode}}>
-    {#snippet preview()}
-      <div class="space-y-4 max-w-2xl">
-        {#each displayUsers as user (user.pubkey)}
-          <UserCardLandscape {ndk} pubkey={user.pubkey} />
-        {/each}
-      </div>
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...userCardNeonCard, code: userCardNeonCode}}>
-    {#snippet preview()}
-      <ScrollArea orientation="horizontal" class="w-full">
-        <div class="flex gap-4 pb-4">
-          {#each displayUsers as user (user.pubkey)}
-            <UserCardNeon {ndk} pubkey={user.pubkey} />
-          {/each}
-        </div>
-      </ScrollArea>
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...userCardGlassCard, code: userCardGlassCode}}>
-    {#snippet preview()}
-      <ScrollArea orientation="horizontal" class="w-full">
-        <div class="flex gap-4 pb-4">
-          {#each displayUsers.slice(0, 5) as user (user.pubkey)}
-            <UserCardGlass {ndk} pubkey={user.pubkey} variant={glassVariant} />
-          {/each}
-        </div>
-      </ScrollArea>
-    {/snippet}
-  </ComponentCard>
-{/snippet}
-
 <!-- Use template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
+  {overview}
   {showcaseComponents}
-  {customSections}
-  {components}
+  {componentsSection}
+  {anatomy}
 >
   <EditProps.Prop name="User 1" type="user" bind:value={user1} options={users} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
     <EditProps.Prop name="User 2" type="user" bind:value={user2} options={users} default="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" />

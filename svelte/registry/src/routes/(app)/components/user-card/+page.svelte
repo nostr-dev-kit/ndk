@@ -448,20 +448,22 @@
         <p class="text-muted-foreground leading-relaxed">{data.description}</p>
       </div>
 
-      <div>
-        <h3 class="text-lg font-bold mb-4">Props</h3>
-        <div class="space-y-4">
-          {#each data.props as prop (prop.name)}
-            <div class="bg-muted/50 border border-border rounded-lg p-4">
-              <div class="flex justify-between items-start mb-2">
-                <code class="font-mono font-semibold text-primary">{prop.name}</code>
-                <code class="font-mono text-xs text-muted-foreground">{prop.type}</code>
+      {#if 'props' in data && data.props}
+        <div>
+          <h3 class="text-lg font-bold mb-4">Props</h3>
+          <div class="space-y-4">
+            {#each data.props as prop (prop.name)}
+              <div class="bg-muted/50 border border-border rounded-lg p-4">
+                <div class="flex justify-between items-start mb-2">
+                  <code class="font-mono font-semibold text-primary">{prop.name}</code>
+                  <code class="font-mono text-xs text-muted-foreground">{prop.type}</code>
+                </div>
+                <p class="text-sm text-muted-foreground">{prop.desc}</p>
               </div>
-              <p class="text-sm text-muted-foreground">{prop.desc}</p>
-            </div>
-          {/each}
+            {/each}
+          </div>
         </div>
-      </div>
+      {/if}
     </div>
   </div>
 {/if}

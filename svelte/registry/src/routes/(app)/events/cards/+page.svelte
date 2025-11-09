@@ -340,7 +340,7 @@
 				{ name: 'onclick', type: '(event: NDKEvent) => void', description: 'Click handler for the parent event' }
 			],
 			slots: [
-				{ name: 'children', type: 'Snippet<[{ event: NDKEvent | null; loading: boolean }]>', description: 'Custom render function for reply indicator' }
+				{ name: 'children', description: 'Custom render function for reply indicator (receives { event: NDKEvent | null; loading: boolean })' }
 			]
 		}}
 	/>

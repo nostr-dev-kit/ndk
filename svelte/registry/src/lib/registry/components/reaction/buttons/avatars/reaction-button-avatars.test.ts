@@ -1,4 +1,5 @@
 import { NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { render } from "@testing-library/svelte";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -6,19 +7,20 @@ import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } f
 import ReactionButtonAvatars from "./reaction-button-avatars.svelte";
 
 describe("ReactionButtonAvatars", () => {
-    let ndk;
+    let ndk: NDKSvelte;
     let testEvent: NDKEvent;
-    let alice, bob;
+    let alice: Awaited<ReturnType<typeof UserGenerator.getUser>>;
+    let bob: Awaited<ReturnType<typeof UserGenerator.getUser>>;
 
     beforeEach(async () => {
         ndk = createTestNDK();
         ndk.signer = NDKPrivateKeySigner.generate();
         await ndk.signer.blockUntilReady();
 
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as any);
+        bob = await UserGenerator.getUser("bob", ndk as any);
 
-        const factory = new TestEventFactory(ndk);
+        const factory = new TestEventFactory(ndk as any);
         testEvent = await factory.createSignedTextNote("Test note", "alice");
         testEvent.id = generateTestEventId("note1");
     });
@@ -60,7 +62,7 @@ describe("ReactionButtonAvatars", () => {
 
     describe("avatar display", () => {
         it("should show avatars of users who reacted", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -109,7 +111,7 @@ describe("ReactionButtonAvatars", () => {
 
     describe("count display", () => {
         it("should show count when showCount is true", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -134,7 +136,7 @@ describe("ReactionButtonAvatars", () => {
         });
 
         it("should hide count when showCount is false", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -161,7 +163,7 @@ describe("ReactionButtonAvatars", () => {
         });
 
         it("should use emoji count when countMode is emoji", () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 
@@ -227,7 +229,7 @@ describe("ReactionButtonAvatars", () => {
         });
 
         it("should show data-reacted when user has reacted", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: []
             };
 

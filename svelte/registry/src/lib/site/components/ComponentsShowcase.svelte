@@ -1,12 +1,9 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
 	import { Dialog } from 'bits-ui';
 	import ComponentCard from '$site-components/ComponentCard.svelte';
-	import { PMCommand } from '$lib/site/components/ui/pm-command';
     import { cn } from '$lib/registry/utils/cn.js';
 
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
-	import type { ComponentCardData } from '$lib/site/components/ComponentCard.svelte';
 
 	interface Props {
 		components: ShowcaseComponent[];
@@ -151,10 +148,12 @@
 					)}
 				>
 					<div class="flex items-end justify-center flex-col h-full">
-						<h3 class="text-lg font-semibold mb-3 tracking-tight">{component.cardData.title}</h3>
-						<p class="text-sm text-muted-foreground leading-relaxed">
-							{component.cardData.richDescription || component.cardData.description}
-						</p>
+						<h3 class="text-lg font-semibold tracking-tight">{component.cardData.title}</h3>
+						{#if component.cardData.oneLiner}
+							<p class="text-sm text-muted-foreground leading-relaxed">
+								{component.cardData.oneLiner}
+							</p>
+						{/if}
 					</div>
 					{#if component.control}
 						<div onclick={(e) => e.stopPropagation()}>

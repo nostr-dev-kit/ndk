@@ -33,7 +33,6 @@
   async function copyToClipboard(text: string, label: string) {
     try {
       await navigator.clipboard.writeText(text);
-      console.log(`Copied ${label}`);
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -60,7 +59,6 @@
 
     try {
       await ndk.$mutes?.toggle(event.author.pubkey);
-      console.log(isMuted ? 'User muted' : 'User unmuted');
       showMenu = false;
     } catch (error) {
       console.error('Failed to toggle mute:', error);
@@ -68,7 +66,6 @@
   }
 
   function handleReport() {
-    console.log('Report event:', event.id);
     showMenu = false;
   }
 

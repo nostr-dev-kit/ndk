@@ -30,6 +30,8 @@
       <div
         class="flex-1 flex items-center justify-center w-full grayscale group-hover:grayscale-0"
         onclick={(e) => e.stopPropagation()}
+        onkeydown={(e) => e.stopPropagation()}
+        role="presentation"
       >
         {@render component.preview()}
       </div>

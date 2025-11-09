@@ -156,7 +156,7 @@
 						{/if}
 					</div>
 					{#if component.control}
-						<div onclick={(e) => e.stopPropagation()}>
+						<div onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
 							{@render component.control()}
 						</div>
 					{/if}
@@ -176,6 +176,8 @@
 								component.orientation === 'horizontal' ? "px-8" : "py-8"
 							)}
 							onclick={(e) => e.stopPropagation()}
+							onkeydown={(e) => e.stopPropagation()}
+							role="presentation"
 						>
 							{@render component.preview()}
 						</div>

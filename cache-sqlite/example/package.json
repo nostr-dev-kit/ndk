@@ -12,7 +12,7 @@
     "clean": "rm -rf dist cache.db"
   },
   "dependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.48",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.44",
     "better-sqlite3": "^9.6.0"
   },
   "devDependencies": {

@@ -14,5 +14,52 @@
     "compact-ui",
     "mobile-apps",
     "inline-actions"
-  ]
+  ],
+  "apiDoc": {
+    "name": "FollowButtonPill",
+    "description": "A pill-shaped follow button with smooth hover animations and compact mode. Supports following both users and hashtags with icon display, target name display, and expandable compact mode that shows full content on hover. Features solid and outline variants with automatic state management.",
+    "importPath": "import { FollowButtonPill } from '$lib/registry/components/follow/buttons/pill'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "target",
+        "type": "NDKUser | string",
+        "required": true,
+        "description": "User or hashtag string to follow/unfollow"
+      },
+      {
+        "name": "variant",
+        "type": "'solid' | 'outline'",
+        "default": "'solid'",
+        "description": "Visual style variant"
+      },
+      {
+        "name": "showIcon",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show icon in button"
+      },
+      {
+        "name": "showTarget",
+        "type": "boolean",
+        "default": "false",
+        "description": "Show target name/hashtag in button"
+      },
+      {
+        "name": "compact",
+        "type": "boolean",
+        "default": "false",
+        "description": "Enable compact mode with hover expansion"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

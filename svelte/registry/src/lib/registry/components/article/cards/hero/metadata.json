@@ -14,5 +14,45 @@
     "hero-sections",
     "featured-content",
     "landing-pages"
-  ]
+  ],
+  "apiDoc": {
+    "name": "ArticleCardHero",
+    "description": "A large hero article card with full-width background image, gradient overlay, and prominent typography. Features article title, summary, author details with avatar, publication time, and reading time. Ideal for featured content and landing pages.",
+    "importPath": "import { ArticleCardHero } from '$lib/registry/components/article/cards/hero'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "article",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to display"
+      },
+      {
+        "name": "height",
+        "type": "string",
+        "default": "'h-[500px]'",
+        "description": "Tailwind CSS height class for the card"
+      },
+      {
+        "name": "badgeText",
+        "type": "string",
+        "description": "Optional badge text displayed above the title"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler - renders as button when provided"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

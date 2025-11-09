@@ -15,5 +15,78 @@
     "follower-display",
     "reaction-authors",
     "participant-lists"
-  ]
+  ],
+  "apiDoc": {
+    "name": "AvatarGroup",
+    "description": "Displays a stacked group of user avatars with customizable layout, spacing, and overflow handling. Supports horizontal/vertical orientation, configurable maximum display count, and optional click handlers for avatars and overflow indicator. Can skip current user and provides custom overflow snippet support.",
+    "importPath": "import { AvatarGroup } from '$lib/registry/components/avatar-group'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for user data fetching"
+      },
+      {
+        "name": "pubkeys",
+        "type": "string[]",
+        "required": true,
+        "description": "Array of pubkeys to display as avatars"
+      },
+      {
+        "name": "skipCurrentUser",
+        "type": "boolean",
+        "default": "false",
+        "description": "Skip displaying the current user's avatar"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "5",
+        "description": "Maximum number of avatars to display"
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "default": "40",
+        "description": "Size of avatars in pixels"
+      },
+      {
+        "name": "spacing",
+        "type": "'tight' | 'normal' | 'loose'",
+        "default": "'normal'",
+        "description": "Spacing between avatars"
+      },
+      {
+        "name": "overflowVariant",
+        "type": "'avatar' | 'text' | 'none'",
+        "description": "How to display overflow indicator"
+      },
+      {
+        "name": "direction",
+        "type": "'horizontal' | 'vertical'",
+        "description": "Stack direction for avatars"
+      },
+      {
+        "name": "onAvatarClick",
+        "type": "(user: NDKUser) => void",
+        "description": "Click handler for individual avatars"
+      },
+      {
+        "name": "onOverflowClick",
+        "type": "() => void",
+        "description": "Click handler for overflow indicator"
+      },
+      {
+        "name": "overflowSnippet",
+        "type": "(count: number) => any",
+        "description": "Custom Svelte 5 snippet for overflow display"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

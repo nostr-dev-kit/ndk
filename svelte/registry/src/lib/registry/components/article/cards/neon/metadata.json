@@ -14,5 +14,46 @@
     "modern-designs",
     "gaming-sites",
     "tech-blogs"
-  ]
+  ],
+  "apiDoc": {
+    "name": "ArticleCardNeon",
+    "description": "A futuristic neon-styled article card with full background image, glossy neon border effect, and gradient overlays. Features article title, summary, author name, and reading time with modern dark aesthetics. Perfect for gaming sites and tech blogs.",
+    "importPath": "import { ArticleCardNeon } from '$lib/registry/components/article/cards/neon'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "article",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to display"
+      },
+      {
+        "name": "width",
+        "type": "string",
+        "default": "'w-[320px]'",
+        "description": "Tailwind CSS width class for the card"
+      },
+      {
+        "name": "height",
+        "type": "string",
+        "default": "'h-[480px]'",
+        "description": "Tailwind CSS height class for the card"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler - renders as button when provided"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

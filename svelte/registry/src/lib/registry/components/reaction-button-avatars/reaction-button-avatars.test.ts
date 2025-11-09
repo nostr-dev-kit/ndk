@@ -3,7 +3,7 @@ import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { render } from "@testing-library/svelte";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../../test-utils";
+import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../test-utils";
 import ReactionButtonAvatars from "./reaction-button-avatars.svelte";
 
 describe("ReactionButtonAvatars", () => {

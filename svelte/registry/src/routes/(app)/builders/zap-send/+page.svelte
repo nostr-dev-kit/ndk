@@ -24,7 +24,7 @@
   // Create the zap send action
   const zap = $derived(
     sampleEvent
-      ? createZapSendAction(() => ({ target: sampleEvent }), ndk)
+      ? createZapSendAction(() => ({ target: sampleEvent! }), ndk)
       : null
   );
 </script>

@@ -3,7 +3,6 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
@@ -17,6 +16,7 @@
   // Import registry metadata
   import replyButtonCard from '$lib/registry/components/reply/buttons/basic/metadata.json';
   import replyButtonAvatarsCard from '$lib/registry/components/reply/buttons/avatars/metadata.json';
+  import replyActionBuilder from '$lib/registry/builders/reply-action/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -27,6 +27,20 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...replyButtonCard, code: replyButtonCode},
+      {...replyButtonAvatarsCard, code: replyButtonAvatarsCode}
+    ],
+    previews: {
+      'reply-button': replyButtonComponentPreview,
+      'reply-button-avatars': replyButtonAvatarsComponentPreview
+    }
+  };
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -52,40 +66,58 @@
   {/if}
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...replyButtonCard, code: replyButtonCode}}>
-    {#snippet preview()}
-      {@render replyButtonsPreview()}
-    {/snippet}
-  </ComponentCard>
+{#snippet replyButtonComponentPreview()}
+  {#if sampleEvent}
+    {@render replyButtonsPreview()}
+  {/if}
+{/snippet}
 
-  <ComponentCard data={{...replyButtonAvatarsCard, code: replyButtonAvatarsCode}}>
-    {#snippet preview()}
-      {@render avatarsPreview()}
-    {/snippet}
-  </ComponentCard>
+{#snippet replyButtonAvatarsComponentPreview()}
+  {#if sampleEvent}
+    {@render avatarsPreview()}
+  {/if}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Reply buttons enable users to create replies to Nostr events. Clicking a reply button opens a composer interface where users can write and publish their reply.
+    </p>
+
+    <p>
+      The buttons support multiple visual variants (ghost, outline, pill, solid) and can display reply counts and user avatars showing who has replied. All replies properly reference the original event using NIP-10 event references.
+    </p>
+
+    <p>
+      The builder automatically handles both kind 1 notes and kind 1111 Generic Reply events, filtering true replies from other event references like quotes.
+    </p>
+  </div>
 {/snippet}
 
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
+  {overview}
   showcaseComponents={[
     {
       id: "replyButtonCard",
-      cardData: replyButtonCard,
+      cardData: { ...replyButtonCard, title: "Basic Variants" },
       preview: replyButtonsPreview,
       orientation: 'horizontal'
     },
     {
       id: "replyButtonAvatarsCard",
-      cardData: replyButtonAvatarsCard,
+      cardData: { ...replyButtonAvatarsCard, title: "With Avatars" },
       preview: avatarsPreview,
       orientation: 'horizontal'
     }
   ]}
-  {components}
+  {componentsSection}
+  buildersSection={{
+    builders: [replyActionBuilder]
+  }}
 >
   <EditProps.Prop
     name="Sample Event"

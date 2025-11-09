@@ -1,10 +1,10 @@
 {
-  "name": "reply-avatars",
-  "title": "Reply Avatars",
+  "name": "reply-button-avatars",
+  "title": "Reply Button Avatars",
   "category": "reply",
   "subcategory": "buttons",
   "variant": "avatars",
-  "oneLiner": "An avatars button showing who replied to content",
+  "oneLiner": "Reply button showing avatars of users who replied",
   "command": "npx jsrepo add reply/buttons/avatars",
   "dependencies": [
     "@nostr-dev-kit/svelte",
@@ -16,5 +16,63 @@
     "avatars",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "ReplyButtonAvatars",
+    "description": "Reply button with avatar display showing who replied",
+    "importPath": "import { ReplyButtonAvatars } from '$lib/registry/components/reply/buttons/avatars';",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (optional if available in context)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to show replies for"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual variant of the button"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "3",
+        "description": "Maximum number of avatars to show"
+      },
+      {
+        "name": "avatarSize",
+        "type": "number",
+        "default": "24",
+        "description": "Size of avatars in pixels"
+      },
+      {
+        "name": "spacing",
+        "type": "'tight' | 'normal' | 'loose'",
+        "default": "'tight'",
+        "description": "Spacing between avatars"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Whether to show reply count"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Optional click handler"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

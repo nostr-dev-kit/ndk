@@ -271,8 +271,6 @@ let selectedUser = $state<NDKUser | null>(null);
 
 function handleSelect(user: NDKUser) {
   selectedUser = user;
-  console.log('Selected:', user.npub);
-  console.log('Profile:', user.profile);
 }
 
 <UserInput.Root {ndk} onSelect={handleSelect}>

@@ -453,12 +453,13 @@
           <h3 class="text-lg font-bold mb-4">Props</h3>
           <div class="space-y-4">
             {#each data.props as prop (prop.name)}
+              {@const typedProp = prop as { name: string; type: string; desc: string }}
               <div class="bg-muted/50 border border-border rounded-lg p-4">
                 <div class="flex justify-between items-start mb-2">
-                  <code class="font-mono font-semibold text-primary">{prop.name}</code>
-                  <code class="font-mono text-xs text-muted-foreground">{prop.type}</code>
+                  <code class="font-mono font-semibold text-primary">{typedProp.name}</code>
+                  <code class="font-mono text-xs text-muted-foreground">{typedProp.type}</code>
                 </div>
-                <p class="text-sm text-muted-foreground">{prop.desc}</p>
+                <p class="text-sm text-muted-foreground">{typedProp.desc}</p>
               </div>
             {/each}
           </div>

@@ -5,8 +5,7 @@
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import example components
   import MinimalExample from './examples/minimal/index.svelte';
@@ -54,6 +53,43 @@
       };
     }, ndk)
   );
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...negentropySyncProgressMinimalCard, code: MinimalExampleRaw},
+      {...negentropySyncProgressAnimatedCard, code: AnimatedExampleRaw},
+      {...negentropySyncProgressDetailedCard, code: DetailedExampleRaw}
+    ],
+    previews: {
+      'negentropy-sync-progress-minimal': minimalComponentPreview,
+      'negentropy-sync-progress-animated': animatedComponentPreview,
+      'negentropy-sync-progress-detailed': detailedComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      id: "negentropySyncProgressMinimalCard",
+      cardData: negentropySyncProgressMinimalCard,
+      preview: minimalPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "negentropySyncProgressAnimatedCard",
+      cardData: negentropySyncProgressAnimatedCard,
+      preview: animatedPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "negentropySyncProgressDetailedCard",
+      cardData: negentropySyncProgressDetailedCard,
+      preview: detailedPreview,
+      orientation: 'horizontal'
+    }
+  ];
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -69,49 +105,47 @@
   <AnimatedExample {ndk} />
 {/snippet}
 
-{#snippet compactPreview()}
-  <div>Compact component not available</div>
+<!-- Component preview snippets for componentsSection -->
+{#snippet minimalComponentPreview()}
+  <div class="flex flex-col gap-6 max-w-md mx-auto">
+    <MinimalExample {ndk} />
+    <div class="text-xs text-muted-foreground text-center">
+      Click "Start Demo Sync" below to see progress
+    </div>
+  </div>
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <SectionTitle
-    title="Components"
-    description="Pre-built negentropy sync progress component variants ready to use in your application"
-  />
-
-  <section class="py-12 space-y-16">
-    <ComponentCard data={{ ...negentropySyncProgressMinimalCard, code: MinimalExampleRaw }}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-6 max-w-md mx-auto">
-          <MinimalExample {ndk} />
-          <div class="text-xs text-muted-foreground text-center">
-            Click "Start Demo Sync" above to see progress
-          </div>
-        </div>
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...negentropySyncProgressDetailedCard, code: DetailedExampleRaw }}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-          <DetailedExample {ndk} />
-        </div>
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={{ ...negentropySyncProgressAnimatedCard, code: AnimatedExampleRaw }}>
-      {#snippet preview()}
-        <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-          <AnimatedExample {ndk} />
-        </div>
-      {/snippet}
-    </ComponentCard>
-  </section>
+{#snippet animatedComponentPreview()}
+  <div class="flex flex-col gap-6 max-w-2xl mx-auto">
+    <AnimatedExample {ndk} />
+  </div>
 {/snippet}
 
-<!-- Custom Builder API section -->
-{#snippet customSections()}
+{#snippet detailedComponentPreview()}
+  <div class="flex flex-col gap-6 max-w-2xl mx-auto">
+    <DetailedExample {ndk} />
+  </div>
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Negentropy Sync components provide real-time progress tracking for efficient event synchronization using the Negentropy protocol. Monitor sync status across multiple relays with detailed negotiation phase tracking, velocity calculations, and completion estimates.
+    </p>
+
+    <p>
+      The components display relay-by-relay progress including negotiation rounds, event counts, and sync velocity (events/second). Choose from minimal progress bars for compact layouts, animated variants for engaging visualizations, or detailed views showing per-relay status and negotiation phases.
+    </p>
+
+    <p>
+      Built on top of the createNegentropySync builder, which handles the complex negentropy protocol negotiation and provides reactive state management for all sync metrics.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Recipes section (Builder API + Progress Tracking) -->
+{#snippet recipes()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Builder API</h2>
     <p class="text-muted-foreground mb-6">
@@ -234,7 +268,10 @@ sync.activeNegotiations.forEach(relay => &#123;
 &#125;);</code></pre>
     </div>
   </section>
+{/snippet}
 
+<!-- Anatomy section (Primitive Components) -->
+{#snippet anatomy()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Primitive Components</h2>
     <p class="text-muted-foreground mb-6">
@@ -282,27 +319,11 @@ const syncBuilder = createNegentropySync(() => (&#123;
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  showcaseComponents={[
-    {
-      id: "negentropySyncProgressMinimalCard",
-      cardData: negentropySyncProgressMinimalCard,
-      preview: minimalPreview
-    },
-    {
-      id: "negentropySyncProgressAnimatedCard",
-      cardData: negentropySyncProgressAnimatedCard,
-      preview: animatedPreview
-    },
-    {
-      id: "negentropySyncProgressDetailedCard",
-      cardData: negentropySyncProgressDetailedCard,
-      preview: detailedPreview,
-      cellClass: 'md:col-span-3'
-    }
-  ]}
-  {components}
-  {customSections}
-  apiDocs={negentropySyncProgressMinimalCard.apiDocs}
+  {overview}
+  {showcaseComponents}
+  {componentsSection}
+  {recipes}
+  {anatomy}
 >
     <Button variant="outline" onclick={() => demoSyncBuilder?.startSync()}>
       Start Demo Sync

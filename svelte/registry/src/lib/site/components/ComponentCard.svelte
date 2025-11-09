@@ -72,7 +72,7 @@
 		<div class="flex flex-col gap-8 border border-border p-8">
 			<div class="mb-0 border-b border-border -mx-8 pb-4 px-8">
 				<div class="flex flex-row items-end justify-between gap-2">
-					<div class="flex flex-row items-end gap-2">
+					<div class="flex flex-col items-end gap-2">
 						<h1 class="text-3xl">{data.title}</h1>
 						<div class="m-0">
 							<User.Root {ndk} pubkey="fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52">
@@ -85,15 +85,15 @@
 								</div>
 							</User.Root>
 						</div>
+						{#if data.oneLiner}
+							<p class="text-muted-foreground mt-2">{data.oneLiner}</p>
+						{/if}
 					</div>
 					<Tabs.List class="">
 						<Tabs.Trigger value="about">About</Tabs.Trigger>
 						<Tabs.Trigger value="usage">Usage</Tabs.Trigger>
 					</Tabs.List>
 				</div>
-				{#if data.oneLiner}
-					<p class="text-muted-foreground mt-2">{data.oneLiner}</p>
-				{/if}
 			</div>
 
 			<Tabs.Content value="about" class="flex flex-col gap-8">

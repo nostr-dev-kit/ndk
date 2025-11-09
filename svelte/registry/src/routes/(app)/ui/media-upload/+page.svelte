@@ -16,8 +16,8 @@
 
   // Mock upload data for anatomy visualization
   let mockUploads = $state([
-    { url: 'https://example.com/image1.jpg', file: new File([], 'image1.jpg'), progress: 100, uploading: false },
-    { url: 'https://example.com/image2.jpg', file: new File([], 'image2.jpg'), progress: 100, uploading: false }
+    { url: 'https://example.com/image1.jpg', file: new File([], 'image1.jpg'), sha256: 'mock-hash-1', mimeType: 'image/jpeg' },
+    { url: 'https://example.com/image2.jpg', file: new File([], 'image2.jpg'), sha256: 'mock-hash-2', mimeType: 'image/jpeg' }
   ]);
 
   // Page metadata

@@ -4,7 +4,7 @@
   "category": "event",
   "subcategory": "cards",
   "variant": "compound",
-  "description": "A compound event card component with header, content and actions",
+  "oneLiner": "A compound event card component with header, content and actions",
   "command": "npx jsrepo add event/cards/compound",
   "dependencies": [
     "@nostr-dev-kit/svelte",

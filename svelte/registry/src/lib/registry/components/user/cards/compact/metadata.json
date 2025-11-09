@@ -4,7 +4,7 @@
   "category": "user",
   "subcategory": "cards",
   "variant": "compact",
-  "description": "A compact user card for lists and grids",
+  "oneLiner": "A compact user card for lists and grids",
   "command": "npx jsrepo add user/cards/compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",

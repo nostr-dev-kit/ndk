@@ -4,7 +4,7 @@
   "category": "notification",
   "subcategory": "items",
   "variant": "compact",
-  "description": "A compact item for notification content",
+  "oneLiner": "A compact item for notification content",
   "command": "npx jsrepo add notification/items/compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",

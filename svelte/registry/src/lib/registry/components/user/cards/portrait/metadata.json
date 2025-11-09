@@ -4,7 +4,7 @@
   "category": "user",
   "subcategory": "cards",
   "variant": "portrait",
-  "description": "A vertical user card with large avatar",
+  "oneLiner": "A vertical user card with large avatar",
   "command": "npx jsrepo add user/cards/portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",

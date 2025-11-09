@@ -4,7 +4,7 @@
   "category": "hashtag",
   "subcategory": "displays",
   "variant": "basic",
-  "description": "Basic hashtag display component for inline hashtag references",
+  "oneLiner": "Basic hashtag display component for inline hashtag references",
   "command": "npx jsrepo add hashtag",
   "dependencies": [
     "@nostr-dev-kit/svelte",

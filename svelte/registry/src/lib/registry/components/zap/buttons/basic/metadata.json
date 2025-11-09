@@ -4,7 +4,7 @@
   "category": "zap",
   "subcategory": "buttons",
   "variant": "basic",
-  "description": "Lightning payment button for zapping content",
+  "oneLiner": "Lightning payment button for zapping content",
   "command": "npx jsrepo add zap/buttons/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

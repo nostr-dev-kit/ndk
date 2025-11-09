@@ -4,7 +4,7 @@
   "category": "link-preview",
   "subcategory": "displays",
   "variant": "basic",
-  "description": "Hover link preview component with OpenGraph metadata fetching",
+  "oneLiner": "Hover link preview component with OpenGraph metadata fetching",
   "command": "npx jsrepo add link-preview",
   "dependencies": [
     "bits-ui",

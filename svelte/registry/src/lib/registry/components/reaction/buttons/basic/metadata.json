@@ -4,7 +4,7 @@
   "category": "reaction",
   "subcategory": "buttons",
   "variant": "basic",
-  "description": "A simple reaction button with variants",
+  "oneLiner": "A simple reaction button with variants",
   "documentation": "# Reaction Button\n\n## Overview\n\nThe Reaction Button component provides a simple and elegant way for users to react to Nostr events. It supports multiple visual variants and displays real-time reaction counts.\n\n## Features\n\n- **Multiple Variants**: Choose from ghost, outline, pill, or solid styles\n- **Customizable Emoji**: Use any emoji for reactions (defaults to ❤️)\n- **Real-time Counts**: Shows live reaction counts that update automatically\n- **Optimistic Updates**: Immediate visual feedback for better UX\n- **Count Modes**: Display total reactions or count for specific emoji\n- **NDK Integration**: Seamlessly works with NDK context or explicit instance\n\n## When to Use\n\n- Social feeds requiring user engagement\n- Comment sections for feedback\n- Content cards needing interaction options\n- Anywhere you want to gauge user sentiment\n\n## Variants\n\n- **Ghost**: Minimal style with transparent background\n- **Outline**: Border-only style for subtle emphasis\n- **Pill**: Rounded pill shape for modern interfaces\n- **Solid**: Filled background for maximum emphasis\n\n## Best Practices\n\n1. **Consider Context**: Use ghost variant in dense UIs, solid for CTAs\n2. **Show Counts**: Always display reaction counts for social proof\n3. **Emoji Choice**: Pick emojis that match your app's tone\n4. **Performance**: Use countMode='emoji' for better performance with many reaction types\n5. **Accessibility**: Ensure sufficient color contrast in custom themes",
   "command": "npx jsrepo add reaction/buttons/basic",
   "dependencies": [

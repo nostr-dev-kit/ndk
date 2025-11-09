@@ -4,7 +4,7 @@
   "category": "follow",
   "subcategory": "packs",
   "variant": "hero",
-  "description": "A hero pack for follow content",
+  "oneLiner": "A hero pack for follow content",
   "command": "npx jsrepo add follow/packs/hero",
   "dependencies": [
     "@nostr-dev-kit/svelte",

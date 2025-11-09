@@ -4,7 +4,7 @@
   "category": "follow",
   "subcategory": "packs",
   "variant": "compact",
-  "description": "A compact pack for follow content",
+  "oneLiner": "A compact pack for follow content",
   "command": "npx jsrepo add follow/packs/compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",

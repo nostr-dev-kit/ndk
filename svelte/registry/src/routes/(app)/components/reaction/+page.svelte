@@ -2,31 +2,25 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-  import SectionTitle from '$lib/site/components/SectionTitle.svelte';
-  import Preview from '$lib/site/components/preview.svelte';
 
   // Import code examples
   import reactionButtonCode from './examples/button-variants/index.txt?raw';
   import reactionButtonAvatarsCode from './examples/avatars/index.txt?raw';
   import reactionSlackHorizontalCode from './examples/slack-horizontal/index.txt?raw';
   import reactionSlackVerticalCode from './examples/slack-vertical/index.txt?raw';
-  import reactionBuilderCode from './examples/builder/index.txt?raw';
-  import dropdownHoverCode from './examples/dropdown-hover/index.txt?raw';
 
   // Import components
   import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
   import ReactionButtonAvatars from '$lib/registry/components/reaction/buttons/avatars/reaction-button-avatars.svelte';
   import ReactionButtonSlack from '$lib/registry/components/reaction/buttons/slack/reaction-button-slack.svelte';
-  import { EmojiPicker } from '$lib/registry/components/emoji-picker';
 
   // Import registry metadata
   import reactionButtonCard from '$lib/registry/components/reaction/buttons/basic/metadata.json';
   import reactionButtonAvatarsCard from '$lib/registry/components/reaction/buttons/avatars/metadata.json';
   import reactionDisplaySlackCard from '$lib/registry/components/reaction/buttons/slack/metadata.json';
+  import reactionActionBuilder from '$lib/registry/builders/reaction-action/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -38,6 +32,23 @@
 
   let sampleEvent = $state<NDKEvent | undefined>();
   let slackVariant = $state<'horizontal' | 'vertical'>('horizontal');
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...reactionButtonCard, code: reactionButtonCode},
+      {...reactionButtonAvatarsCard, code: reactionButtonAvatarsCode},
+      {...reactionDisplaySlackCard, code: reactionSlackHorizontalCode, title: "Slack-style (Horizontal)"},
+      {...reactionDisplaySlackCard, code: reactionSlackVerticalCode, title: "Slack-style (Vertical)"}
+    ],
+    previews: {
+      'reaction': reactionButtonComponentPreview,
+      'reaction-button-avatars': reactionButtonAvatarsComponentPreview,
+      'reaction-button-slack': reactionSlackHorizontalComponentPreview
+    }
+  };
 </script>
 
 <!-- Preview snippets for showcase -->

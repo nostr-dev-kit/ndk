@@ -4,7 +4,7 @@
   "category": "repost",
   "subcategory": "buttons",
   "variant": "basic",
-  "description": "A basic button for repost content",
+  "oneLiner": "A basic button for repost content",
   "command": "npx jsrepo add repost/buttons/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

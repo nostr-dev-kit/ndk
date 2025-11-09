@@ -4,7 +4,7 @@
   "category": "article",
   "subcategory": "cards",
   "variant": "inline",
-  "description": "A text-only inline article reference for citations and mentions",
+  "oneLiner": "A text-only inline article reference for citations and mentions",
   "command": "npx jsrepo add article/cards/inline",
   "dependencies": [
     "@nostr-dev-kit/svelte",

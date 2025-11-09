@@ -19,7 +19,7 @@
   );
 
   const sidebarClasses = $derived(
-    `fixed top-14 left-0 h-[calc(100vh-3.5rem)] overflow-y-auto bg-background border-r border-border/50 z-[900] flex flex-col transition-[width,transform] duration-300 ease-in-out ${
+    `fixed top-14 left-0 h-[calc(100vh-3.5rem)] overflow-y-auto bg-background z-[900] flex flex-col transition-[width,transform] duration-300 ease-in-out ${
       sidebar.collapsed ? 'w-16 hover:w-[280px]' : 'w-[280px]'
     } ${
       sidebar.open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'

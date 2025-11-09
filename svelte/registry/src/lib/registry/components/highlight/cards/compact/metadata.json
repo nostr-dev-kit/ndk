@@ -4,7 +4,7 @@
   "category": "highlight",
   "subcategory": "cards",
   "variant": "compact",
-  "description": "A compact card for highlight content",
+  "oneLiner": "A compact card for highlight content",
   "command": "npx jsrepo add highlight/cards/compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",

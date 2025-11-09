@@ -4,7 +4,7 @@
   "category": "follow",
   "subcategory": "packs",
   "variant": "modern",
-  "description": "A modern pack for follow content",
+  "oneLiner": "A modern pack for follow content",
   "command": "npx jsrepo add follow/packs/modern",
   "dependencies": [
     "@nostr-dev-kit/svelte",

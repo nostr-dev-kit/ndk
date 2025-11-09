@@ -4,7 +4,7 @@
   "category": "relay",
   "subcategory": "inputs",
   "variant": "basic",
-  "description": "A basic input for relay content",
+  "oneLiner": "A basic input for relay content",
   "command": "npx jsrepo add relay/inputs/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",

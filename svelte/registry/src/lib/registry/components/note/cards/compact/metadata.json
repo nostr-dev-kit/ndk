@@ -4,7 +4,7 @@
   "category": "note",
   "subcategory": "cards",
   "variant": "compact",
-  "description": "A compact note card for dense feeds",
+  "oneLiner": "A compact note card for dense feeds",
   "command": "npx jsrepo add note/cards/compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",

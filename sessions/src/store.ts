@@ -389,11 +389,18 @@ export function createSessionStore() {
                 return;
             }
 
+            console.log(`[session-store] updateSession called for pubkey=${pubkey}`, {
+                hasEventsUpdate: !!data.events,
+                oldEventsMapId: session.events ? `Map@${(session.events as any).__id || 'unknown'}` : 'none',
+                newEventsMapId: data.events ? `Map@${(data.events as any).__id || 'unknown'}` : 'none'
+            });
+
             const updatedSession = { ...session, ...data };
             const newSessions = new Map(state.sessions);
             newSessions.set(pubkey, updatedSession);
 
             set({ sessions: newSessions });
+            console.log(`[session-store] updateSession completed, Zustand set() called`);
         },
 
         updatePreferences: (pubkey: Hexpubkey, preferences: Partial<import("./types").SessionPreferences>) => {

@@ -4,7 +4,7 @@
   "category": "negentropy-sync",
   "subcategory": "progress",
   "variant": "detailed",
-  "description": "A detailed progres for negentropy-sync content",
+  "oneLiner": "A detailed progres for negentropy-sync content",
   "command": "npx jsrepo add negentropy-sync/progress/detailed",
   "dependencies": [
     "@nostr-dev-kit/svelte",

@@ -21,7 +21,7 @@
       )}
     >
       <!-- Title and description -->
-      <div class="bg-linear-to-t from-background to-transparent z-50 mb-6 text-center brightness-50 opacity-0 -bottom-16 group-hover:opacity-100 group-hover:brightness-100 transition-all duration-700 absolute group-hover:bottom-0">
+      <div class="bg-linear-to-t w-full from-background to-transparent z-50 text-center opacity-0 -bottom-16 group-hover:opacity-100 transition-all duration-700 absolute group-hover:bottom-0">
         <h3 class="text-base font-semibold text-foreground transition-colors mb-1">{component.cardData.title}</h3>
         <p class="text-sm text-muted-foreground transition-colors">{component.cardData.richDescription}</p>
       </div>

@@ -4,7 +4,7 @@
   "category": "follow",
   "subcategory": "buttons",
   "variant": "pill",
-  "description": "A pill-shaped follow button",
+  "oneLiner": "A pill-shaped follow button",
   "command": "npx jsrepo add follow/buttons/pill",
   "dependencies": [
     "@nostr-dev-kit/svelte",

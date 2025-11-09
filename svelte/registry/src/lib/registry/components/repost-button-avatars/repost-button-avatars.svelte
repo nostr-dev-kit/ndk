@@ -4,8 +4,8 @@
   import { createRepostAction } from '../../builders/repost-action/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn';
-  import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
-  import RepostIcon from '../../../../icons/repost.svelte';
+  import AvatarGroup from '../avatar-group/avatar-group.svelte';
+  import RepostIcon from '../../icons/repost/repost.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

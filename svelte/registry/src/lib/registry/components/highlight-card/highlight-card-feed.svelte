@@ -4,7 +4,7 @@
   import type { Snippet } from 'svelte';
   import { cn } from '../../utils/cn';
   import { Highlight } from '../../ui/highlight/index.js';
-  import { EventCard } from '../../../event/cards/compound/index.js';
+  import { EventCard } from '../event-card/index.js';
 
   interface Props {
     ndk: NDKSvelte;

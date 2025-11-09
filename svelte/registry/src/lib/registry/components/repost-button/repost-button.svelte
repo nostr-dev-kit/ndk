@@ -4,7 +4,7 @@
   import { createRepostAction } from '../../builders/repost-action/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn';
-  import RepostIcon from '../../../../icons/repost.svelte';
+  import RepostIcon from '../../icons/repost/repost.svelte';
   import { LinkPreview } from 'bits-ui';
 
   interface Props {

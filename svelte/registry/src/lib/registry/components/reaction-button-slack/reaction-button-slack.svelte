@@ -3,7 +3,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { createReactionAction } from '../../builders/reaction-action/index.svelte.js';
   import { Tooltip } from 'bits-ui';
-  import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
+  import AvatarGroup from '../avatar-group/avatar-group.svelte';
   import { Reaction } from '../../ui/reaction';
   import { cn } from '../../utils/cn.js';
 

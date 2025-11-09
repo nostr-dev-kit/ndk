@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { NOTE_COMPOSER_CONTEXT_KEY, type NoteComposerContext } from './note-composer.context';
-	import LoadingIcon from '../../../../icons/loading.svelte';
+	import LoadingIcon from '../../icons/loading/loading.svelte';
 	import { cn } from '../../utils/cn';
 
 	interface Props {

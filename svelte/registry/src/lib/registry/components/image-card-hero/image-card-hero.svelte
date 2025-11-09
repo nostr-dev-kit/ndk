@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../../ui/user';
-	import FollowButton from '../../../follow/buttons/basic/follow-button.svelte';
+	import FollowButton from '../follow-button/follow-button.svelte';
 	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import { cn } from '../../utils/cn';
 

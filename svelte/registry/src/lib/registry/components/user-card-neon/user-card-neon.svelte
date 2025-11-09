@@ -4,7 +4,7 @@
   import { cn } from '../../utils/cn';
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/user.context.js';
-  import FollowButton from '../../../follow/buttons/basic/follow-button.svelte';
+  import FollowButton from '../follow-button/follow-button.svelte';
   import { createUserStats } from '../../builders/user/stats.svelte.js';
 
   interface Props {

@@ -4,7 +4,7 @@
   import { createReactionAction } from '../../builders/reaction-action/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn';
-  import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
+  import AvatarGroup from '../avatar-group/avatar-group.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

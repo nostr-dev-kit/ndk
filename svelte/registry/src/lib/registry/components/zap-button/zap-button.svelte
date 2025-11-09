@@ -4,7 +4,7 @@
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn';
   import { createZapAction } from '../../builders/zap-action/zap-action.svelte.js';
-  import ZapIcon from '../../../../icons/zap.svelte';
+  import ZapIcon from '../../icons/zap/zap.svelte';
 
   interface Props {
     ndk?: NDKSvelte;

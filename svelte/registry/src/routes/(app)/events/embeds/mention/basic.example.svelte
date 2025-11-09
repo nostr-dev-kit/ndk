@@ -36,26 +36,24 @@
   const contentParts = $derived(parseMentions(event.content));
 </script>
 
-<Event.Root {ndk} {event}>
-  <div class="bg-card border border-border rounded-lg p-4 max-w-2xl">
-    <div class="flex items-start gap-3 mb-3">
-      <Event.AuthorAvatar class="w-10 h-10" />
-      <div class="flex-1">
-        <div class="flex items-center gap-2">
-          <Event.AuthorName class="font-semibold" />
-          <Event.Time class="text-sm text-muted-foreground" />
-        </div>
+<div class="bg-card border border-border rounded-lg p-4 max-w-2xl">
+  <div class="flex items-start gap-3 mb-3">
+    <div class="w-10 h-10 rounded-full bg-muted" />
+    <div class="flex-1">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold">Author</span>
+        <Event.Time {event} class="text-sm text-muted-foreground" />
       </div>
     </div>
-
-    <div class="text-foreground leading-relaxed">
-      {#each contentParts as part}
-        {#if part.type === 'text'}
-          {part.content}
-        {:else}
-          <Mention {ndk} bech32={part.content} />
-        {/if}
-      {/each}
-    </div>
   </div>
-</Event.Root>
+
+  <div class="text-foreground leading-relaxed">
+    {#each contentParts as part}
+      {#if part.type === 'text'}
+        {part.content}
+      {:else}
+        <Mention {ndk} bech32={part.content} />
+      {/if}
+    {/each}
+  </div>
+</div>

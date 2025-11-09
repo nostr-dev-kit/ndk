@@ -14,5 +14,52 @@
     "traditional-feeds",
     "forums",
     "comment-sections"
-  ]
+  ],
+  "apiDoc": {
+    "name": "EventCardClassic",
+    "description": "A classic styled event card displaying event header, content, and optional actions. Includes hover effects and customizable interaction modes. Supports showing/hiding dropdown menu and action buttons (reactions, reposts). Uses compound EventCard builder for consistent layout.",
+    "importPath": "import { EventCardClassic } from '$lib/registry/components/event/cards/classic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "interactive",
+        "type": "boolean",
+        "default": "false",
+        "description": "Enable clickable interaction mode"
+      },
+      {
+        "name": "showActions",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show action buttons (reactions, reposts)"
+      },
+      {
+        "name": "showDropdown",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show dropdown menu"
+      },
+      {
+        "name": "truncate",
+        "type": "number",
+        "description": "Character limit for truncating content"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

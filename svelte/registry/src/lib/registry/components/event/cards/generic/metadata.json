@@ -14,5 +14,24 @@
     "unknown-events",
     "fallback-display",
     "debugging"
-  ]
+  ],
+  "apiDoc": {
+    "name": "GenericCard",
+    "description": "A fallback card for displaying any event kind. Automatically discovers and displays NIP-89 app handler recommendations for unknown event types. Shows event's alt tag (NIP-31) and provides links to recommended handlers with URL template replacement. Ideal for debugging or displaying events without specific renderers.",
+    "importPath": "import { GenericCard } from '$lib/registry/components/event/cards/generic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      }
+    ]
+  }
 }

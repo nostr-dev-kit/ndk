@@ -247,7 +247,7 @@
                     {ndk}
                     pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063]}
-                    onTabClick={(tab) => console.log('Clicked:', tab)}
+                    onTabClick={(tab) => {}}
                   >
                     {#snippet tab({ kind, name, count })}
                       <button

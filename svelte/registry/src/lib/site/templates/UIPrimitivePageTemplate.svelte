@@ -158,15 +158,8 @@
       <p class="leading-relaxed text-muted-foreground mb-4">
         {primitive.description}
       </p>
-      {#if primitive.apiDocs && primitive.apiDocs.length > 0}
-        <ApiTable
-          rows={primitive.apiDocs.map(doc => ({
-            name: doc.name,
-            type: doc.type || '',
-            default: doc.default,
-            description: doc.description || ''
-          }))}
-        />
+      {#if primitive.apiDocs && primitive.apiDocs.length > 0 && primitive.apiDocs[0].props}
+        <ApiTable rows={primitive.apiDocs[0].props} />
       {/if}
     </section>
   {/each}

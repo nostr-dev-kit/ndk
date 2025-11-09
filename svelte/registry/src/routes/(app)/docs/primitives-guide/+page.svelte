@@ -209,7 +209,8 @@
   const displayName = $derived(
     context.profile?.displayName ||
     context.profile?.name ||
-    context.npub.substring(0, 8)
+    context.ndkUser?.npub?.substring(0, 8) ||
+    'Unknown'
   );
 </script>
 

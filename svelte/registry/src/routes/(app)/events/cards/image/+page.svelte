@@ -90,7 +90,7 @@
 	{/if}
 {/snippet}
 
-{#snippet customSections()}
+{#snippet anatomy()}
 	<ComponentAPI
 		components={[
 			{
@@ -145,7 +145,7 @@
 				'image-card': imageCardPreview
 			}
 		}}
-		{customSections}
+		{anatomy}
 	>
 		<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
 	</ComponentPageTemplate>

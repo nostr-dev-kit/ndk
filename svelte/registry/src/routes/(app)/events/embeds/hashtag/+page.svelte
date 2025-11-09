@@ -11,7 +11,7 @@
 	const ndk = getContext<NDKSvelte>('ndk');
 </script>
 
-{#snippet customSections()}
+{#snippet anatomy()}
 	<ComponentAPI
 		components={[
 			{
@@ -42,5 +42,5 @@
 <ComponentPageTemplate
 	metadata={metadata}
 	{ndk}
-	{customSections}
+	{anatomy}
 />

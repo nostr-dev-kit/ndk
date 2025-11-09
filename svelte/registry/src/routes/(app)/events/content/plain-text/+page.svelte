@@ -47,7 +47,7 @@ Pretty cool, right? #awesome`);
 </script>
 
 <!-- Composition examples -->
-{#snippet customSections()}
+{#snippet anatomy()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Composition Examples</h2>
     <p class="text-muted-foreground mb-6">
@@ -79,7 +79,7 @@ Pretty cool, right? #awesome`);
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  {customSections}
+  {anatomy}
 >
   <EditProps.Prop name="Event content" type="text" bind:value={eventContent} />
 </ComponentPageTemplate>

@@ -83,7 +83,7 @@
 	{/if}
 {/snippet}
 
-{#snippet customSections()}
+{#snippet anatomy()}
 	<ComponentAPI
 		components={[
 			{
@@ -120,7 +120,7 @@
 			'article-content': articleContentPreview
 		}
 	}}
-	{customSections}
+	{anatomy}
 >
 <EditProps.Prop
 		name="Real Article"

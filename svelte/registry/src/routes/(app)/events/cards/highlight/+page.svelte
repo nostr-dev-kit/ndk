@@ -154,7 +154,7 @@
   </div>
 {/snippet}
 
-{#snippet customSections()}
+{#snippet anatomy()}
   {#if highlight1}
     <!-- Anatomy Section -->
     <SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
@@ -408,7 +408,7 @@
         'highlight-card-grid': gridPreview
       }
     }}
-    {customSections}
+    {anatomy}
   >
     {#key highlights}
       <EditProps.Prop name="Highlight 1" type="highlight" bind:value={highlight1} options={highlights} />

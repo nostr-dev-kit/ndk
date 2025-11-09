@@ -8,8 +8,8 @@
 	interface Props {
 		name: string;
 		type: PropType;
-		default?: string;
-		value?: NDKUser | NDKEvent | NDKArticle | string;
+		default?: string | number | boolean;
+		value?: NDKUser | NDKEvent | NDKArticle | string | number | boolean;
 		options?: (NDKUser | NDKEvent | NDKArticle)[];
 	}
 

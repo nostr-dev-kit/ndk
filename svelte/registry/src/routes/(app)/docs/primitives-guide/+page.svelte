@@ -192,6 +192,8 @@
 {`<!-- user-name.svelte -->
 <script lang="ts">
   import { getContext } from 'svelte';
+  import type { UserContext } from './user.context.svelte';
+  import { USER_CONTEXT_KEY } from './user.context.svelte';
 
   interface Props {
     class?: string;

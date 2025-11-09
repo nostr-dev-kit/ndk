@@ -18,7 +18,7 @@
 	];
 </script>
 
-<div class="p-8 md:p-4 bg-muted/50 rounded-xl border border-border">
+<div class="">
 	<div class="grid lg:grid-cols-2 grid-cols-1 gap-8 items-start">
 		<!-- Unified Wireframe showing all three layers nested -->
 		<div class="w-full">
@@ -80,7 +80,7 @@
 			<div class="p-6 border-2 border-blue-500 rounded-xl bg-blue-500/[0.02]">
 				<div class="flex items-center gap-2 mb-2">
 					<div class="w-6 h-6 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xs font-semibold">1</div>
-					<h3 class="font-semibold text-lg">{layers[0].title}</h3>
+					<h3 class="font-semibold text-lg my-0!">{layers[0].title}</h3>
 				</div>
 				<p class="text-sm text-muted-foreground">
 					{layers[0].description}
@@ -90,7 +90,7 @@
 			<div class="p-6 border-2 border-purple-500 rounded-xl bg-purple-500/[0.02]">
 				<div class="flex items-center gap-2 mb-2">
 					<div class="w-6 h-6 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center text-xs font-semibold">2</div>
-					<h3 class="font-semibold text-lg">{layers[1].title}</h3>
+					<h3 class="font-semibold text-lg !my-0">{layers[1].title}</h3>
 				</div>
 				<p class="text-sm text-muted-foreground">
 					{layers[1].description}
@@ -100,7 +100,7 @@
 			<div class="p-6 border-2 border-orange-500 rounded-xl bg-orange-500/[0.02]">
 				<div class="flex items-center gap-2 mb-2">
 					<div class="w-6 h-6 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xs font-semibold">3</div>
-					<h3 class="font-semibold text-lg">{layers[2].title}</h3>
+					<h3 class="font-semibold text-lg !my-0">{layers[2].title}</h3>
 				</div>
 				<p class="text-sm text-muted-foreground">
 					{layers[2].description}

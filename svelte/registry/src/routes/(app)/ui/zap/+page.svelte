@@ -33,19 +33,29 @@
         name: 'ZapAmount',
         title: 'ZapAmount',
         description: 'Displays the zap amount in satoshis. This is a simple display primitive that shows the raw satoshi value from a ProcessedZap object. Add your own formatting and styling as needed.',
-        apiDocs: [
-          { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing amount and metadata' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'ZapAmount',
+          description: 'Displays the zap amount in satoshis. This is a simple display primitive that shows the raw satoshi value from a ProcessedZap object. Add your own formatting and styling as needed.',
+          importPath: '$lib/registry/ui/zap',
+          props: [
+            { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing amount and metadata' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'ZapContent',
         title: 'ZapContent',
         description: 'Displays the zap comment/message if present. Automatically handles conditional rendering—renders nothing if the comment is empty. This allows you to always include the component without manual conditional checks.',
-        apiDocs: [
-          { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing comment and metadata' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'ZapContent',
+          description: 'Displays the zap comment/message if present. Automatically handles conditional rendering—renders nothing if the comment is empty. This allows you to always include the component without manual conditional checks.',
+          importPath: '$lib/registry/ui/zap',
+          props: [
+            { name: 'zap', type: 'ProcessedZap', default: 'required', description: 'Processed zap object containing comment and metadata' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

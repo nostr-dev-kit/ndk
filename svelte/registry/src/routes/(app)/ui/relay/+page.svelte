@@ -28,83 +28,128 @@
         name: 'Relay.Root',
         title: 'Relay.Root',
         description: 'Context provider that fetches NIP-11 metadata and provides it to child components. Required wrapper for all Relay primitives.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-          { name: 'relayUrl', type: 'string', default: 'required', description: 'Relay WebSocket URL (wss://...)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'Relay.Root',
+          description: 'Context provider that fetches NIP-11 metadata and provides it to child components. Required wrapper for all Relay primitives.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+            { name: 'relayUrl', type: 'string', default: 'required', description: 'Relay WebSocket URL (wss://...)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'Relay.Icon',
         title: 'Relay.Icon',
         description: 'Displays the relay icon from NIP-11 metadata. Shows fallback icon if not available.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback icon URL when relay has no icon' }
-        ]
+        apiDocs: [{
+          name: 'Relay.Icon',
+          description: 'Displays the relay icon from NIP-11 metadata. Shows fallback icon if not available.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback icon URL when relay has no icon' }
+          ]
+        }]
       },
       {
         name: 'Relay.Name',
         title: 'Relay.Name',
         description: 'Displays the relay name from NIP-11 metadata.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.Name',
+          description: 'Displays the relay name from NIP-11 metadata.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Relay.Url',
         title: 'Relay.Url',
         description: 'Displays the relay WebSocket URL.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.Url',
+          description: 'Displays the relay WebSocket URL.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Relay.Description',
         title: 'Relay.Description',
         description: 'Displays the relay description from NIP-11 metadata.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.Description',
+          description: 'Displays the relay description from NIP-11 metadata.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Relay.ConnectionStatus',
         title: 'Relay.ConnectionStatus',
         description: 'Shows live connection status (connected, connecting, disconnected). Updates in real-time as connection status changes.',
-        apiDocs: [
-          { name: 'showLabel', type: 'boolean', default: 'false', description: 'Show text label with status (e.g., "Connected", "Disconnected")' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.ConnectionStatus',
+          description: 'Shows live connection status (connected, connecting, disconnected). Updates in real-time as connection status changes.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'showLabel', type: 'boolean', default: 'false', description: 'Show text label with status (e.g., "Connected", "Disconnected")' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Relay.BookmarkButton',
         title: 'Relay.BookmarkButton',
         description: 'Toggle bookmark status for the relay. Uses NIP-65 relay lists to add/remove bookmarks.',
-        apiDocs: [
-          { name: 'bookmarks', type: 'BookmarkedRelayList', default: 'undefined', description: 'Bookmarked relay list builder instance' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.BookmarkButton',
+          description: 'Toggle bookmark status for the relay. Uses NIP-65 relay lists to add/remove bookmarks.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'bookmarks', type: 'BookmarkedRelayList', default: 'undefined', description: 'Bookmarked relay list builder instance' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Relay.BookmarkedBy',
         title: 'Relay.BookmarkedBy',
         description: 'Display list of users who bookmarked this relay. Shows user avatars and counts.',
-        apiDocs: [
-          { name: 'bookmarks', type: 'BookmarkedRelayList', default: 'required', description: 'Bookmarked relay list builder instance' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.BookmarkedBy',
+          description: 'Display list of users who bookmarked this relay. Shows user avatars and counts.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'bookmarks', type: 'BookmarkedRelayList', default: 'required', description: 'Bookmarked relay list builder instance' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Relay.Input',
         title: 'Relay.Input',
         description: 'Input field for relay URLs with NIP-11 autocomplete. Validates URL format and fetches relay info.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-          { name: 'value', type: 'string', default: "''", description: 'Bound input value (relay URL)' },
-          { name: 'placeholder', type: 'string', default: "'wss://...'", description: 'Input placeholder text' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Relay.Input',
+          description: 'Input field for relay URLs with NIP-11 autocomplete. Validates URL format and fetches relay info.',
+          importPath: '$lib/registry/ui/relay',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+            { name: 'value', type: 'string', default: "''", description: 'Bound input value (relay URL)' },
+            { name: 'placeholder', type: 'string', default: "'wss://...'", description: 'Input placeholder text' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

@@ -36,49 +36,74 @@
         name: 'NotificationItem.Root',
         title: 'NotificationItem.Root',
         description: 'Context provider that sets up notification data for child primitives. Required wrapper for all NotificationItem primitives.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance' },
-          { name: 'notification', type: 'NotificationGroup', default: 'required', description: 'Notification group from createNotificationFeed' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'NotificationItem.Root',
+          description: 'Context provider that sets up notification data for child primitives. Required wrapper for all NotificationItem primitives.',
+          importPath: '$lib/registry/ui/notification',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance' },
+            { name: 'notification', type: 'NotificationGroup', default: 'required', description: 'Notification group from createNotificationFeed' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'NotificationItem.Actors',
         title: 'NotificationItem.Actors',
         description: 'Shows avatars of users who interacted with the event. Uses AvatarGroup internally and supports custom snippets for advanced layouts.',
-        apiDocs: [
-          { name: 'max', type: 'number', default: '5', description: 'Maximum avatars before showing overflow (+N indicator)' },
-          { name: 'size', type: 'number', default: '32', description: 'Avatar size in pixels' },
-          { name: 'spacing', type: "'tight' | 'normal' | 'loose'", default: "'tight'", description: 'Spacing between avatars' },
-          { name: 'snippet', type: 'Snippet<[{ pubkeys: string[], count: number }]>', default: 'optional', description: 'Custom render snippet for full control' }
-        ]
+        apiDocs: [{
+          name: 'NotificationItem.Actors',
+          description: 'Shows avatars of users who interacted with the event. Uses AvatarGroup internally and supports custom snippets for advanced layouts.',
+          importPath: '$lib/registry/ui/notification',
+          props: [
+            { name: 'max', type: 'number', default: '5', description: 'Maximum avatars before showing overflow (+N indicator)' },
+            { name: 'size', type: 'number', default: '32', description: 'Avatar size in pixels' },
+            { name: 'spacing', type: "'tight' | 'normal' | 'loose'", default: "'tight'", description: 'Spacing between avatars' },
+            { name: 'snippet', type: 'Snippet<[{ pubkeys: string[], count: number }]>', default: 'optional', description: 'Custom render snippet for full control' }
+          ]
+        }]
       },
       {
         name: 'NotificationItem.Action',
         title: 'NotificationItem.Action',
         description: 'Shows the interaction type (reacted, zapped, reposted, replied) with an icon and count. Automatically displays the appropriate icon based on the notification type.',
-        apiDocs: [
-          { name: 'snippet', type: 'Snippet<[{ type: string, count: number, icon: Component }]>', default: 'optional', description: 'Custom render snippet for full control over action display' }
-        ]
+        apiDocs: [{
+          name: 'NotificationItem.Action',
+          description: 'Shows the interaction type (reacted, zapped, reposted, replied) with an icon and count. Automatically displays the appropriate icon based on the notification type.',
+          importPath: '$lib/registry/ui/notification',
+          props: [
+            { name: 'snippet', type: 'Snippet<[{ type: string, count: number, icon: Component }]>', default: 'optional', description: 'Custom render snippet for full control over action display' }
+          ]
+        }]
       },
       {
         name: 'NotificationItem.Content',
         title: 'NotificationItem.Content',
         description: 'Renders the embedded event being interacted with using ContentRenderer and EmbeddedEvent. Automatically handles different event types with sensible defaults.',
-        apiDocs: [
-          { name: 'renderer', type: 'ContentRenderer', default: 'optional', description: 'Custom content renderer (has sensible defaults)' },
-          { name: 'snippet', type: 'Snippet<[{ event: NDKEvent }]>', default: 'optional', description: 'Custom render snippet for full control' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'NotificationItem.Content',
+          description: 'Renders the embedded event being interacted with using ContentRenderer and EmbeddedEvent. Automatically handles different event types with sensible defaults.',
+          importPath: '$lib/registry/ui/notification',
+          props: [
+            { name: 'renderer', type: 'ContentRenderer', default: 'optional', description: 'Custom content renderer (has sensible defaults)' },
+            { name: 'snippet', type: 'Snippet<[{ event: NDKEvent }]>', default: 'optional', description: 'Custom render snippet for full control' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'NotificationItem.Timestamp',
         title: 'NotificationItem.Timestamp',
         description: 'Shows relative time of the most recent interaction using createTimeAgo. Automatically updates every minute to keep the display current.',
-        apiDocs: [
-          { name: 'snippet', type: 'Snippet<[{ timestamp: number, formatted: string }]>', default: 'optional', description: 'Custom render snippet for full control' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'NotificationItem.Timestamp',
+          description: 'Shows relative time of the most recent interaction using createTimeAgo. Automatically updates every minute to keep the display current.',
+          importPath: '$lib/registry/ui/notification',
+          props: [
+            { name: 'snippet', type: 'Snippet<[{ timestamp: number, formatted: string }]>', default: 'optional', description: 'Custom render snippet for full control' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

@@ -43,50 +43,70 @@
         name: 'EventContent',
         title: 'EventContent',
         description: 'Parses and renders event content with support for various Nostr content types. Automatically detects mentions, hashtags, links, media, and custom emojis.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
-          { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
-          { name: 'content', type: 'string', default: 'optional', description: 'Raw content string to parse (alternative to event)' },
-          { name: 'emojiTags', type: 'string[][]', default: 'optional', description: 'Custom emoji tags from event (NIP-30)' },
-          { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer (prop overrides context)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'EventContent',
+          description: 'Parses and renders event content with support for various Nostr content types. Automatically detects mentions, hashtags, links, media, and custom emojis.',
+          importPath: '$lib/registry/ui/event-rendering',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
+            { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
+            { name: 'content', type: 'string', default: 'optional', description: 'Raw content string to parse (alternative to event)' },
+            { name: 'emojiTags', type: 'string[][]', default: 'optional', description: 'Custom emoji tags from event (NIP-30)' },
+            { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer (prop overrides context)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'EmbeddedEvent',
         title: 'EmbeddedEvent',
         description: 'Loads an event from a bech32 reference and renders it using registered handlers from ContentRenderer.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for fetching the event' },
-          { name: 'bech32', type: 'string', default: 'required', description: 'Event reference (nevent, note1, naddr)' },
-          { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Content renderer (prop overrides context)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'EmbeddedEvent',
+          description: 'Loads an event from a bech32 reference and renders it using registered handlers from ContentRenderer.',
+          importPath: '$lib/registry/ui/event-rendering',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for fetching the event' },
+            { name: 'bech32', type: 'string', default: 'required', description: 'Event reference (nevent, note1, naddr)' },
+            { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Content renderer (prop overrides context)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'MarkdownEventContent',
         title: 'MarkdownEventContent',
         description: 'Renders markdown content with Nostr-specific extensions for mentions, event references, and custom emojis.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
-          { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
-          { name: 'content', type: 'string', default: 'optional', description: 'Raw markdown string to parse' },
-          { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'MarkdownEventContent',
+          description: 'Renders markdown content with Nostr-specific extensions for mentions, event references, and custom emojis.',
+          importPath: '$lib/registry/ui/event-rendering',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
+            { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
+            { name: 'content', type: 'string', default: 'optional', description: 'Raw markdown string to parse' },
+            { name: 'renderer', type: 'ContentRenderer', default: 'from context or default', description: 'Custom content renderer' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'ContentRenderer',
         title: 'ContentRenderer Class',
         description: 'Pluggable registry system for customizing all rendering behavior. Allows registration of custom components for inline elements (mentions, hashtags, links, media) and event kinds.',
-        apiDocs: [
-          { name: 'mentionComponent', type: 'Component', default: 'default mention', description: 'Component for rendering user mentions (npub, nprofile)' },
-          { name: 'hashtagComponent', type: 'Component', default: 'default hashtag', description: 'Component for rendering hashtags' },
-          { name: 'linkComponent', type: 'Component', default: 'default link', description: 'Component for rendering links and link groups' },
-          { name: 'mediaComponent', type: 'Component', default: 'default media', description: 'Component for rendering media and image grids' },
-          { name: 'fallbackComponent', type: 'Component', default: 'default card', description: 'Fallback component for unknown event kinds' },
-          { name: 'addKind', type: '(kinds: number[] | NDKClass, component: Component) => void', default: 'method', description: 'Register component for specific event kinds' }
-        ]
+        apiDocs: [{
+          name: 'ContentRenderer',
+          description: 'Pluggable registry system for customizing all rendering behavior. Allows registration of custom components for inline elements (mentions, hashtags, links, media) and event kinds.',
+          importPath: '$lib/registry/ui/event-rendering',
+          props: [
+            { name: 'mentionComponent', type: 'Component', default: 'default mention', description: 'Component for rendering user mentions (npub, nprofile)' },
+            { name: 'hashtagComponent', type: 'Component', default: 'default hashtag', description: 'Component for rendering hashtags' },
+            { name: 'linkComponent', type: 'Component', default: 'default link', description: 'Component for rendering links and link groups' },
+            { name: 'mediaComponent', type: 'Component', default: 'default media', description: 'Component for rendering media and image grids' },
+            { name: 'fallbackComponent', type: 'Component', default: 'default card', description: 'Fallback component for unknown event kinds' },
+            { name: 'addKind', type: '(kinds: number[] | NDKClass, component: Component) => void', default: 'method', description: 'Register component for specific event kinds' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

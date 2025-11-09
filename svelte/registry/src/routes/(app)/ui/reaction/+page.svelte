@@ -25,14 +25,19 @@
         name: 'Reaction.Display',
         title: 'Reaction.Display',
         description: 'Display component for rendering emoji reactions with support for both standard Unicode emojis and custom NIP-30 emojis. Automatically extracts emoji data from kind:7 reaction events and handles proper rendering for both text-based and image-based emojis.',
-        apiDocs: [
-          { name: 'emoji', type: 'string', default: 'optional', description: 'Emoji character or shortcode (e.g., "❤️" or ":custom:")' },
-          { name: 'url', type: 'string', default: 'optional', description: 'Custom emoji image URL (NIP-30)' },
-          { name: 'shortcode', type: 'string', default: 'optional', description: 'Emoji shortcode for accessibility' },
-          { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Kind:7 reaction event (auto-extracts emoji data)' },
-          { name: 'size', type: 'number', default: '20', description: 'Display size in pixels' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Reaction.Display',
+          description: 'Display component for rendering emoji reactions with support for both standard Unicode emojis and custom NIP-30 emojis. Automatically extracts emoji data from kind:7 reaction events and handles proper rendering for both text-based and image-based emojis.',
+          importPath: '$lib/registry/ui/reaction',
+          props: [
+            { name: 'emoji', type: 'string', default: 'optional', description: 'Emoji character or shortcode (e.g., "❤️" or ":custom:")' },
+            { name: 'url', type: 'string', default: 'optional', description: 'Custom emoji image URL (NIP-30)' },
+            { name: 'shortcode', type: 'string', default: 'optional', description: 'Emoji shortcode for accessibility' },
+            { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Kind:7 reaction event (auto-extracts emoji data)' },
+            { name: 'size', type: 'number', default: '20', description: 'Display size in pixels' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

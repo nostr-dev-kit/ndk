@@ -38,46 +38,66 @@
         name: 'UserInput.Root',
         title: 'UserInput.Root',
         description: 'Context provider that manages search state and user selection. Handles debounced searches across display names, NIP-05 identifiers, and npub/nprofile lookups.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-          { name: 'onSelect', type: '(user: NDKUser) => void', default: 'optional', description: 'Callback fired when a user is selected' },
-          { name: 'debounceMs', type: 'number', default: '300', description: 'Debounce delay for search lookups (ms)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'UserInput.Root',
+          description: 'Context provider that manages search state and user selection. Handles debounced searches across display names, NIP-05 identifiers, and npub/nprofile lookups.',
+          importPath: '$lib/registry/ui/user-input',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+            { name: 'onSelect', type: '(user: NDKUser) => void', default: 'optional', description: 'Callback fired when a user is selected' },
+            { name: 'debounceMs', type: 'number', default: '300', description: 'Debounce delay for search lookups (ms)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'UserInput.Search',
         title: 'UserInput.Search',
         description: 'Search input field with built-in loading indicator. Automatically detects query type (name, NIP-05, or npub) and triggers appropriate lookups.',
-        apiDocs: [
-          { name: 'placeholder', type: 'string', default: "'Search users by name, NIP-05, npub...'", description: 'Input placeholder text' },
-          { name: 'autofocus', type: 'boolean', default: 'false', description: 'Whether to autofocus the input on mount' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'UserInput.Search',
+          description: 'Search input field with built-in loading indicator. Automatically detects query type (name, NIP-05, or npub) and triggers appropriate lookups.',
+          importPath: '$lib/registry/ui/user-input',
+          props: [
+            { name: 'placeholder', type: 'string', default: "'Search users by name, NIP-05, npub...'", description: 'Input placeholder text' },
+            { name: 'autofocus', type: 'boolean', default: 'false', description: 'Whether to autofocus the input on mount' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'UserInput.Results',
         title: 'UserInput.Results',
         description: 'Results list container that displays search results. Supports custom result rendering via snippets and empty state handling.',
-        apiDocs: [
-          { name: 'children', type: 'Snippet<[UserInputResult]>', default: 'optional', description: 'Snippet for rendering each result (receives UserInputResult)' },
-          { name: 'empty', type: 'Snippet', default: 'optional', description: 'Empty state snippet when no results found' },
-          { name: 'maxResults', type: 'number', default: 'undefined', description: 'Maximum number of results to display' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'UserInput.Results',
+          description: 'Results list container that displays search results. Supports custom result rendering via snippets and empty state handling.',
+          importPath: '$lib/registry/ui/user-input',
+          props: [
+            { name: 'children', type: 'Snippet<[UserInputResult]>', default: 'optional', description: 'Snippet for rendering each result (receives UserInputResult)' },
+            { name: 'empty', type: 'Snippet', default: 'optional', description: 'Empty state snippet when no results found' },
+            { name: 'maxResults', type: 'number', default: 'undefined', description: 'Maximum number of results to display' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'UserInput.Item',
         title: 'UserInput.Item',
         description: 'Headless item primitive following the bits-ui pattern. Handles selection and provides flexible rendering options with automatic prop spreading.',
-        apiDocs: [
-          { name: 'result', type: 'UserInputResult', default: 'required', description: 'Result object containing user and metadata' },
-          { name: 'child', type: 'Snippet<[{ props, result }]>', default: 'optional', description: 'Custom rendering with merged props (bits-ui pattern)' },
-          { name: 'children', type: 'Snippet<[{ result }]>', default: 'optional', description: 'Default children rendering' },
-          { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Custom click handler (merged with selection)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'UserInput.Item',
+          description: 'Headless item primitive following the bits-ui pattern. Handles selection and provides flexible rendering options with automatic prop spreading.',
+          importPath: '$lib/registry/ui/user-input',
+          props: [
+            { name: 'result', type: 'UserInputResult', default: 'required', description: 'Result object containing user and metadata' },
+            { name: 'child', type: 'Snippet<[{ props, result }]>', default: 'optional', description: 'Custom rendering with merged props (bits-ui pattern)' },
+            { name: 'children', type: 'Snippet<[{ result }]>', default: 'optional', description: 'Default children rendering' },
+            { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Custom click handler (merged with selection)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

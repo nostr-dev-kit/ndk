@@ -33,46 +33,71 @@
         name: 'FollowPack.Root',
         title: 'FollowPack.Root',
         description: 'Context provider that manages follow pack data and provides it to child components. Required wrapper for all FollowPack primitives.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-          { name: 'followPack', type: 'NDKFollowPack', default: 'required', description: 'Follow pack event instance' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'FollowPack.Root',
+          description: 'Context provider that manages follow pack data and provides it to child components. Required wrapper for all FollowPack primitives.',
+          importPath: '$lib/registry/ui/follow-pack',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+            { name: 'followPack', type: 'NDKFollowPack', default: 'required', description: 'Follow pack event instance' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'FollowPack.Image',
         title: 'FollowPack.Image',
         description: 'Displays the follow pack\'s cover image from the image tag in the event metadata.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if cover image is missing' }
-        ]
+        apiDocs: [{
+          name: 'FollowPack.Image',
+          description: 'Displays the follow pack\'s cover image from the image tag in the event metadata.',
+          importPath: '$lib/registry/ui/follow-pack',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if cover image is missing' }
+          ]
+        }]
       },
       {
         name: 'FollowPack.Title',
         title: 'FollowPack.Title',
         description: 'Displays the follow pack\'s name/title from the title tag in the event.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'FollowPack.Title',
+          description: 'Displays the follow pack\'s name/title from the title tag in the event.',
+          importPath: '$lib/registry/ui/follow-pack',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'FollowPack.Description',
         title: 'FollowPack.Description',
         description: 'Displays the follow pack\'s description text from the description tag.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'FollowPack.Description',
+          description: 'Displays the follow pack\'s description text from the description tag.',
+          importPath: '$lib/registry/ui/follow-pack',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'FollowPack.MemberCount',
         title: 'FollowPack.MemberCount',
         description: 'Displays the number of members (users) in the follow pack. Count is derived from the number of "p" tags in the event.',
-        apiDocs: [
-          { name: 'format', type: "'short' | 'long'", default: "'short'", description: 'Display format: "42" (short) or "42 members" (long)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'FollowPack.MemberCount',
+          description: 'Displays the number of members (users) in the follow pack. Count is derived from the number of "p" tags in the event.',
+          importPath: '$lib/registry/ui/follow-pack',
+          props: [
+            { name: 'format', type: "'short' | 'long'", default: "'short'", description: 'Display format: "42" (short) or "42 members" (long)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

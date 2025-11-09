@@ -4,7 +4,7 @@
   import { createFollowAction } from '../../builders/follow-action/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../utils/cn';
-  import UserAddIcon from '../../../../icons/user-add.svelte';
+  import UserAddIcon from '../../icons/user-add/user-add.svelte';
   import { User } from '../../ui/user/index.js';
 
   interface Props {

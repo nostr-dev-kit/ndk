@@ -24,7 +24,7 @@
 
 	const ndk = getContext<NDKSvelte>('ndk');
 
-	const targetPubkey = 'npub1dergggklka99wwrs92yz8wdjs952h2ux2ha2ed598ngwu9w7a6fsh9xzpc';
+	const targetPubkey = '6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93';
 
 	const feed = createNotificationFeed(
 		() => ({
@@ -36,24 +36,26 @@
 	);
 </script>
 
+{#snippet actionIcon(action: ActionInfo)}
+	<action.icon size={20} class="text-primary" />
+{/snippet}
+
+{#snippet actionText(action: ActionInfo)}
+	<span class="action-text">{action.type} your post</span>
+{/snippet}
+
 <div class="custom-demo">
-	{#each feed.all as notification}
+	{#each feed.all as notification (notification.targetEvent.id)}
 		<NotificationItem.Root {ndk} {notification}>
 			<!-- Custom Twitter-style layout -->
 			<div class="twitter-style">
 				<div class="action-icon">
-					{#snippet actionIcon(action: ActionInfo)}
-						<svelte:component this={action.icon} size={20} class="text-primary" />
-					{/snippet}
 					<NotificationItem.Action snippet={actionIcon} />
 				</div>
 
 				<div class="notification-body">
 					<div class="actors-line">
 						<NotificationItem.Actors max={3} size={24} spacing="tight" />
-						{#snippet actionText(action: ActionInfo)}
-							<span class="action-text">{action.type} your post</span>
-						{/snippet}
 						<NotificationItem.Action snippet={actionText} />
 						<NotificationItem.Timestamp />
 					</div>

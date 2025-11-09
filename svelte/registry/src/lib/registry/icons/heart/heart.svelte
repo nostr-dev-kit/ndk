@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '../utils/cn.js';
+	import { cn } from '../../utils/cn.js';
 
 	interface Props {
 		size?: number;

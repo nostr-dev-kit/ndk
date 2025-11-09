@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "generic",
   "oneLiner": "A generic card for any event type",
-  "command": "npx jsrepo add event/cards/generic",
+  "command": "npx jsrepo add event-card-generic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

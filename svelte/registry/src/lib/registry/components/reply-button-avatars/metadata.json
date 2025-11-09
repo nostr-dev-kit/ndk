@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "avatars",
   "oneLiner": "Reply button showing avatars of users who replied",
-  "command": "npx jsrepo add reply/buttons/avatars",
+  "command": "npx jsrepo add reply-button-avatars",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

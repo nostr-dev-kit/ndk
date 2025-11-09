@@ -5,7 +5,7 @@
   "subcategory": "content",
   "variant": "basic",
   "oneLiner": "A basic conten for image content",
-  "command": "npx jsrepo add image/content/basic",
+  "command": "npx jsrepo add image-content",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

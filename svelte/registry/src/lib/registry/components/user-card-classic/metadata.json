@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "classic",
   "oneLiner": "A classic user profile card with avatar, bio and stats",
-  "command": "npx jsrepo add user/cards/classic",
+  "command": "npx jsrepo add user-card-classic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

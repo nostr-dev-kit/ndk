@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "basic",
   "oneLiner": "A basic card for highlight content",
-  "command": "npx jsrepo add highlight/cards/basic",
+  "command": "npx jsrepo add highlight-card",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

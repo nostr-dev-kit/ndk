@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "basic",
   "oneLiner": "A basic card for image content",
-  "command": "npx jsrepo add image/cards/basic",
+  "command": "npx jsrepo add image-card",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

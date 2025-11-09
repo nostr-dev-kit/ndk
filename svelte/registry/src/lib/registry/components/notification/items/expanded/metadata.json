@@ -16,5 +16,29 @@
     "expanded",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "NotificationItemExpanded",
+    "description": "An expanded notification item displaying full notification details with border and padding. Features action description, timestamp, full target event content, and actor list (max 10) with count display. Uses Svelte 5 snippet for custom actor count rendering. Perfect for detailed notification views or notification detail pages.",
+    "importPath": "import { NotificationItemExpanded } from '$lib/registry/components/notification/items/expanded'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "notification",
+        "type": "NotificationGroup",
+        "required": true,
+        "description": "Grouped notification data"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

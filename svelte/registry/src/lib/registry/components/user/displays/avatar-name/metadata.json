@@ -16,5 +16,53 @@
     "avatar-name",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "UserAvatarName",
+    "description": "A simple user display combining avatar and name with optional metadata line. Supports multiple meta display modes: 'handle' shows NIP-05, 'about' shows bio, or custom string/snippet. Clickable with optional handler. Uses User builder pattern. Perfect for inline user mentions, author attributions, or compact user displays.",
+    "importPath": "import { UserAvatarName } from '$lib/registry/components/user/displays/avatar-name'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching user data"
+      },
+      {
+        "name": "user",
+        "type": "NDKUser",
+        "description": "NDKUser instance (alternative to pubkey)"
+      },
+      {
+        "name": "pubkey",
+        "type": "string",
+        "description": "User's public key (alternative to user)"
+      },
+      {
+        "name": "profile",
+        "type": "NDKUserProfile",
+        "description": "Pre-fetched profile data"
+      },
+      {
+        "name": "avatarClass",
+        "type": "string",
+        "description": "CSS classes for avatar element"
+      },
+      {
+        "name": "meta",
+        "type": "'handle' | 'about' | string | Snippet",
+        "description": "Metadata to display below name"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler for component"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

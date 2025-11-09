@@ -3,18 +3,20 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
+  import emojiPickerCode from './examples/content/index.txt?raw';
   import emojiPickerListCode from './examples/list/index.txt?raw';
   import emojiPickerContentCode from './examples/content/index.txt?raw';
 
   // Import example components
   import UiBasic from './examples/list/index.svelte';
   import UiComposition from './examples/content/index.svelte';
+  import { EmojiPicker } from '$lib/registry/components/emoji-picker';
 
   // Import registry metadata
-  import emojiPickerBaseCard from '$lib/registry/components/emoji-picker/metadata.json';
+  import emojiPickerCard from '$lib/registry/components/emoji-picker/metadata.json';
+  import emojiPickerBuilder from '$lib/registry/builders/emoji-picker/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -23,62 +25,95 @@
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
+
+  let selectedEmoji = $state<string>('');
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...emojiPickerCard, code: emojiPickerCode}
+    ],
+    previews: {
+      'emoji-picker': emojiPickerComponentPreview
+    }
+  };
 </script>
 
-<!-- Composition examples -->
-{#snippet compositionExamples()}
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Composition Examples</h2>
-    <p class="text-muted-foreground mb-6">
-      These examples show how to compose the emoji picker using the <code class="px-2 py-1 bg-muted rounded text-sm">createEmojiPicker()</code> builder.
-      These are teaching examples, not installable components.
-    </p>
-
-    <div class="space-y-8">
-      <div>
-        <h3 class="text-xl font-semibold mb-3">Simple List</h3>
-        <p class="text-muted-foreground mb-4">Basic emoji list with selection.</p>
-        <Preview code={emojiPickerListCode}>
-          <UiBasic />
-        </Preview>
+<!-- Showcase preview -->
+{#snippet showcasePreview()}
+  <div class="flex flex-col gap-4">
+    <EmojiPicker.Content
+      {ndk}
+      onSelect={(emoji) => selectedEmoji = emoji.emoji}
+    />
+    {#if selectedEmoji}
+      <div class="text-center text-4xl p-4 bg-muted/50 rounded-lg">
+        Selected: {selectedEmoji}
       </div>
-
-      <div>
-        <h3 class="text-xl font-semibold mb-3">Full Picker</h3>
-        <p class="text-muted-foreground mb-4">Complete emoji picker with categories and composition.</p>
-        <Preview code={emojiPickerContentCode}>
-          <UiComposition {ndk} />
-        </Preview>
-      </div>
-    </div>
-  </section>
+    {/if}
+  </div>
 {/snippet}
 
-<!-- Custom sections for Builder API -->
-{#snippet customSections()}
-  {@render compositionExamples()}
+{#snippet emojiPickerComponentPreview()}
+  {@render showcasePreview()}
+{/snippet}
 
-  <!-- Builder API -->
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
-    <p class="text-muted-foreground mb-6">
-      Use <code class="px-2 py-1 bg-muted rounded text-sm">createEmojiPicker()</code> to aggregate emojis from multiple sources.
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      The Emoji Picker provides smart emoji selection with aggregation from multiple sources. It displays emojis in priority order: user's saved custom emojis (NIP-51 kind 10030), aggregated emojis from followed users sorted by frequency, and default emoji sets.
     </p>
 
-    <div class="bg-muted/50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold mb-3">Emoji Order</h3>
-      <ol class="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-        <li><strong>User's saved emojis</strong> (NIP-51 kind:10030) - shown first</li>
-        <li><strong>Aggregated emojis</strong> from <code>from</code> pubkeys (sorted by frequency) - shown second</li>
-        <li><strong>Default emojis</strong> from <code>defaults</code> - shown last</li>
-      </ol>
+    <p>
+      The picker supports both standard Unicode emojis and custom emojis with shortcodes and image URLs (NIP-30). It features customizable grid layouts, emoji sections, and selection callbacks for seamless integration into reactions, comments, and messaging interfaces.
+    </p>
+
+    <p>
+      Multiple variants are available including Content (full picker with sections), List (simple emoji grid), Dropdown (popover trigger), and Item (individual emoji button) for flexible composition.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Recipes section -->
+{#snippet recipes()}
+  <div class="space-y-8">
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Simple List</h3>
+      <p class="text-muted-foreground mb-4">Basic emoji list with selection.</p>
+      <Preview code={emojiPickerListCode}>
+        <UiBasic />
+      </Preview>
     </div>
-  </section>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Full Picker</h3>
+      <p class="text-muted-foreground mb-4">Complete emoji picker with categories and composition.</p>
+      <Preview code={emojiPickerContentCode}>
+        <UiComposition {ndk} />
+      </Preview>
+    </div>
+  </div>
 {/snippet}
 
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  {customSections}
+  {overview}
+  showcaseComponents={[
+    {
+      id: "emojiPickerCard",
+      cardData: emojiPickerCard,
+      preview: showcasePreview,
+      orientation: 'horizontal'
+    }
+  ]}
+  {componentsSection}
+  buildersSection={{
+    builders: [emojiPickerBuilder]
+  }}
+  {recipes}
 />

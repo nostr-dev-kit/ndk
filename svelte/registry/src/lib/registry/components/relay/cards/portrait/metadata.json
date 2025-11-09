@@ -16,5 +16,46 @@
     "portrait",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "RelayCardPortrait",
+    "description": "A vertical portrait relay card displaying relay icon, name, URL, description, and bookmark button. Clickable with customizable width and height. Integrates with bookmarked relay list. Ideal for list views or detailed relay browsing interfaces with more information than compact variant.",
+    "importPath": "import { RelayCardPortrait } from '$lib/registry/components/relay/cards/portrait'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "relayUrl",
+        "type": "string",
+        "required": true,
+        "description": "Relay WebSocket URL"
+      },
+      {
+        "name": "width",
+        "type": "string",
+        "default": "w-[220px]",
+        "description": "CSS class for card width"
+      },
+      {
+        "name": "height",
+        "type": "string",
+        "default": "h-[320px]",
+        "description": "CSS class for card height"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler for card interaction"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

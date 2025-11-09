@@ -135,7 +135,7 @@
 <UIPrimitivePageTemplate {metadata} {ndk}>
   {#snippet topExample()}
     <Preview code={BasicRaw}>
-      <Basic />
+      <Basic {ndk} eventBech32="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j" />
     </Preview>
   {/snippet}
 

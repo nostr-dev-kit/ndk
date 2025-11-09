@@ -119,7 +119,6 @@
   {#snippet topExample()}
     <Preview
       title="Basic Display"
-      description="Display follow pack metadata with title, description, and member count."
       code={BasicRaw}
     >
       <Basic />
@@ -180,7 +179,6 @@
       </p>
       <Preview
         title="With Cover Image"
-        description="Include the follow pack's cover image for a richer display."
         code={WithImageRaw}
       >
         <WithImage />

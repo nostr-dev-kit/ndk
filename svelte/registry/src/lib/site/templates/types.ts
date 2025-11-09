@@ -47,6 +47,17 @@ export interface ShowcaseComponent {
   code?: string;  // Optional code example - can override cardData.code if needed
 }
 
+// Showcase block structure (simpler variant used in helpers)
+export interface ShowcaseBlock {
+  name: string;
+  description: string;
+  command: string;
+  preview: Snippet;
+  cardData?: ComponentCardDataBase;
+  orientation?: 'horizontal' | 'vertical';
+  control?: Snippet;
+}
+
 // Page metadata structure
 export interface ComponentPageMetadata {
   title: string;
@@ -82,9 +93,9 @@ export interface ComponentPageTemplateProps {
 
   // Custom sections via snippets
   beforeShowcase?: Snippet;
-  afterShowcase?: Snippet;
-  beforeComponents?: Snippet;
   afterComponents?: Snippet;
+  recipes?: Snippet;
+  primitives?: Snippet;
   customSections?: Snippet;
 
   // Controls for showcase items

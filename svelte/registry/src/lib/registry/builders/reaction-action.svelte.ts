@@ -202,9 +202,14 @@ export function createReactionAction(
         return all.find(r => r.emoji === emoji);
     }
 
+    const totalCount = $derived(all.reduce((sum, r) => sum + r.count, 0));
+
     return {
         get all() {
             return all;
+        },
+        get totalCount() {
+            return totalCount;
         },
         get,
         react

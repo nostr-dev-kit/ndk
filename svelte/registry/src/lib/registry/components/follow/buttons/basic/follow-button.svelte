@@ -10,12 +10,13 @@
   interface Props {
     ndk?: NDKSvelte;
     target: NDKUser | string;
+    variant?: 'ghost' | 'outline' | 'pill' | 'solid';
     showIcon?: boolean;
     showTarget?: boolean;
     class?: string;
   }
 
-  let { ndk: ndkProp, target, showIcon = true, showTarget = false, class: className = '' }: Props = $props();
+  let { ndk: ndkProp, target, variant = 'ghost', showIcon = true, showTarget = false, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
   const ndk = ndkProp || ndkContext;
@@ -47,10 +48,15 @@
     data-follow-button=""
     data-following={followAction.isFollowing ? '' : undefined}
     data-target-type={isHashtag ? 'hashtag' : 'user'}
+    data-variant={variant}
     type="button"
     onclick={handleToggle}
     class={cn(
-      'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-colors',
+      'inline-flex items-center gap-2 cursor-pointer transition-all',
+      variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
+      variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
+      variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
+      variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
       followAction.isFollowing ? 'text-muted-foreground hover:text-foreground' : 'text-primary',
       className
     )}

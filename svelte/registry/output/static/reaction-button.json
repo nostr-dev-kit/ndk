@@ -1,1 +1,0 @@
-{"name":"reaction-button","type":"registry:component","title":"Reaction Button","description":"Reaction component - reaction button variant","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/reaction-button.svelte"}],"version":"0.2.0","updatedAt":"2025-10-31T07:15:56.000Z"}

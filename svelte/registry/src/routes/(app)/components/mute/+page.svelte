@@ -61,8 +61,8 @@
   </ComponentCard>
 {/snippet}
 
-<!-- Custom composition examples -->
-{#snippet compositionExamples()}
+<!-- Primitives snippet for Builder API and ndk.$mutes API -->
+{#snippet primitives()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Custom Compositions</h2>
     <p class="text-muted-foreground mb-6">
@@ -76,11 +76,6 @@
       </Preview>
     {/if}
   </section>
-{/snippet}
-
-<!-- Custom sections for Builder API and ndk.$mutes API -->
-{#snippet customSections()}
-  {@render compositionExamples()}
 
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Builder API</h2>
@@ -163,8 +158,8 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
     }
   ]}
   {components}
+  {primitives}
   apiDocs={muteButtonCard.apiDocs}
-  {customSections}
 >
   {#if !ndk.$currentUser}
     <Alert variant="warning" title="Login required">

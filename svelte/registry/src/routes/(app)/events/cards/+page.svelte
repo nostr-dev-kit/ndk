@@ -334,7 +334,7 @@
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 				],
 				slots: [
-					{ name: 'children', description: 'Action components (ReactionAction, RepostButton, etc.)' }
+					{ name: 'children', description: 'Action components (ReactionButton, ReactionLongpress, RepostButton, etc.)' }
 				]
 			},
 			{

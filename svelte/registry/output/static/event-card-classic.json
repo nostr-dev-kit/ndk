@@ -1,1 +1,0 @@
-{"name":"event-card-classic","type":"registry:component","title":"Event Card Classic","description":"Block component - event card classic","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/event-card-classic.svelte"}],"version":"0.2.0","updatedAt":"2025-10-31T07:15:56.000Z"}

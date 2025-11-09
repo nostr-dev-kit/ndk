@@ -243,7 +243,6 @@
       </p>
       <Preview
         title="Full Relay Card"
-        description="Complete relay card with all metadata and controls."
         code={FullCardRaw}
       >
         <FullCard />

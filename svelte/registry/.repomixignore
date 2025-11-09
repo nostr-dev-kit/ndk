@@ -1,0 +1,8 @@
+.svelte-kit/
+dist/
+node_modules/
+coverage/
+.vercel/
+.turbo/
+mockups/
+*.html

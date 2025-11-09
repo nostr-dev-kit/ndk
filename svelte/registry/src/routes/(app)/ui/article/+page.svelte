@@ -202,7 +202,6 @@
       </p>
       <Preview
         title="Full Article Card"
-        description="Complete article preview with all metadata."
         code={FullCardRaw}
       >
         <FullCard />

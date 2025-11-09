@@ -29,7 +29,7 @@
 
 <User.Root {ndk} pubkey={userPubkey} class="flex flex-col gap-4">
   <div class="flex items-center gap-3">
-    <User.Avatar size={48} class="rounded-full" />
+    <User.Avatar class="w-12 h-12 rounded-full" />
     <div class="flex flex-col">
       <User.Name class="font-semibold" />
       <User.Nip05 class="text-sm text-muted-foreground">

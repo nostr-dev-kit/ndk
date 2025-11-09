@@ -38,7 +38,7 @@
 
 	// Set renderer in context so nested components inherit it
 	// This is a legitimate use of prop override - notifications need compact rendering
-	setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer: activeRenderer });
+	setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return activeRenderer } });
 </script>
 
 {#if snippet}

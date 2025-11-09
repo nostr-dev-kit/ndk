@@ -1,1 +1,0 @@
-{"name":"follow-pack-hero","type":"registry:component","title":"Follow Pack Hero","description":"Follow button component - follow pack hero variant","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/follow-pack-hero.svelte"}],"version":"0.3.0","updatedAt":"2025-10-31T07:15:56.000Z"}

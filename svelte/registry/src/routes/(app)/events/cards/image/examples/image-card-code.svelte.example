@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '$lib/registry/components/event-card';
-	import { ReactionAction } from '$lib/registry/components/reaction';
+	import { ReactionLongpress } from '$lib/registry/components/reaction';
 	import { ImageContent } from '$lib/registry/components/image-content';
 	import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
 
@@ -35,7 +35,7 @@
 	<div class="px-4 pb-4 pt-2">
 		<EventCard.Actions>
 			<RepostButton {ndk} event={image} />
-			<ReactionAction />
+			<ReactionLongpress />
 		</EventCard.Actions>
 	</div>
 </EventCard.Root>

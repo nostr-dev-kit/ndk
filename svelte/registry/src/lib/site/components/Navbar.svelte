@@ -44,7 +44,7 @@
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="flex items-center gap-1 md:hidden">
+      <div class="flex items-center gap-1 max-md:hidden">
         {#each mainNav as navItem (navItem.path)}
           <a
             href={navItem.path}
@@ -60,7 +60,7 @@
     <div class="flex items-center gap-2">
       <!-- Theme Toggle -->
       <button
-        class="flex items-center justify-center w-8 h-8 p-0 border-0 bg-transparent text-muted-foreground rounded-md cursor-pointer transition-all duration-150 hover:bg-accent hover:text-foreground md:hidden"
+        class="flex items-center justify-center w-8 h-8 p-0 border-0 bg-transparent text-muted-foreground rounded-md cursor-pointer transition-all duration-150 hover:bg-accent hover:text-foreground max-md:hidden"
         onclick={() => themeManager.toggle()}
         aria-label="Toggle theme"
       >

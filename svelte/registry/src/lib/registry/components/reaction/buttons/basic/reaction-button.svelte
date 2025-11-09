@@ -11,17 +11,19 @@
     variant?: 'ghost' | 'outline' | 'pill' | 'solid';
     emoji?: string;
     showCount?: boolean;
+    countMode?: 'total' | 'emoji';
     onclick?: () => void;
     class?: string;
   }
 
-  let { ndk: ndkProp, event, variant = 'ghost', emoji = '❤️', showCount = true, onclick, class: className = '' }: Props = $props();
+  let { ndk: ndkProp, event, variant = 'ghost', emoji = '❤️', showCount = true, countMode = 'total', onclick, class: className = '' }: Props = $props();
 
   const ndkContext = getContext<NDKSvelte>('ndk');
   const ndk = ndkProp || ndkContext;
 
   const reactionState = createReactionAction(() => ({ event }), ndk);
   const stats = $derived(reactionState?.get(emoji) ?? { count: 0, hasReacted: false, pubkeys: [], emoji });
+  const displayCount = $derived(countMode === 'total' ? reactionState.totalCount : stats.count);
 
   function handleClick() {
     reactionState.react(emoji);
@@ -40,10 +42,10 @@
     variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
     variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
     variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-    stats.hasReacted && 'text-red-500',
+    stats.hasReacted && 'text-primary',
     className
   )}
-  aria-label={`React (${stats.count})`}
+  aria-label={`React (${displayCount})`}
 >
   <svg
     class={cn(
@@ -59,7 +61,7 @@
   >
     <path d="M10.4107 19.9677C7.58942 17.858 2 13.0348 2 8.69444C2 5.82563 4.10526 3.5 7 3.5C8.5 3.5 10 4 12 6C14 4 15.5 3.5 17 3.5C19.8947 3.5 22 5.82563 22 8.69444C22 13.0348 16.4106 17.858 13.5893 19.9677C12.6399 20.6776 11.3601 20.6776 10.4107 19.9677Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" ></path>
   </svg>
-  {#if showCount && stats.count > 0}
-    <span class="text-sm font-medium">{stats.count}</span>
+  {#if showCount && displayCount > 0}
+    <span class="text-sm font-medium">{displayCount}</span>
   {/if}
 </button>

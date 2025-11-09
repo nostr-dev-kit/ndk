@@ -189,7 +189,6 @@
       </p>
       <Preview
         title="Custom Layout"
-        description="Create custom notification layouts by composing primitives differently."
         code={CustomLayoutRaw}
       >
         <CustomLayout />

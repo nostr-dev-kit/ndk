@@ -5,6 +5,7 @@ import { resolveNDK } from './resolve-ndk.svelte.js';
 export interface ReplyStats {
     count: number;
     hasReplied: boolean;
+    pubkeys: string[];
 }
 
 export interface ReplyActionConfig {
@@ -55,21 +56,24 @@ export function createReplyAction(
 
     const stats = $derived.by((): ReplyStats => {
         const sub = repliesSub;
-        if (!sub) return { count: 0, hasReplied: false };
+        if (!sub) return { count: 0, hasReplied: false, pubkeys: [] };
 
         const { event } = config();
-        if (!event?.id) return { count: 0, hasReplied: false };
+        if (!event?.id) return { count: 0, hasReplied: false, pubkeys: [] };
 
         // Use NDK's built-in eventIsReply to filter actual replies
         const actualReplies = Array.from(sub.events).filter(replyEvent =>
             eventIsReply(event, replyEvent)
         );
 
+        const pubkeys = actualReplies.map(r => r.pubkey);
+
         return {
             count: actualReplies.length,
             hasReplied: resolvedNDK.$currentPubkey
                 ? actualReplies.some(r => r.pubkey === resolvedNDK.$currentPubkey)
-                : false
+                : false,
+            pubkeys
         };
     });
 
@@ -97,6 +101,9 @@ export function createReplyAction(
         },
         get hasReplied() {
             return stats.hasReplied;
+        },
+        get pubkeys() {
+            return stats.pubkeys;
         },
         reply
     };

@@ -289,86 +289,99 @@
 
 {#snippet anatomy()}
 	<ComponentAPI
-		components={[
-			{
-				name: 'EventCard.Root',
-				description:
-					'Root container that provides event context to all child components. Handles interactive states and threading metadata.',
-				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
-					{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
-					{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				],
-				slots: [
-					{ name: 'children', description: 'Card content (Header, Content, Actions, etc.)' }
-				]
-			},
-			{
-				name: 'EventCard.Header',
-				description: 'Displays event author information with avatar, name, and timestamp. Supports custom actions slot.',
-				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
-				props: [
-					{ name: 'variant', type: "'full' | 'compact' | 'minimal'", default: "'full'", description: 'Display variant' },
-					{ name: 'showAvatar', type: 'boolean', default: 'true', description: 'Show author avatar' },
-					{ name: 'showTimestamp', type: 'boolean', default: 'true', description: 'Show event timestamp' },
-					{ name: 'avatarSize', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Avatar size' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				],
-				slots: [
-					{ name: 'children', description: 'Custom actions (e.g., EventDropdown)' }
-				]
-			},
-			{
-				name: 'EventCard.Content',
-				description: 'Displays event content with optional truncation and media preview support.',
-				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
-				props: [
-					{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			},
-			{
-				name: 'EventCard.ReplyIndicator',
-				description: 'Shows when the event is a reply, displaying "Replying to @author" with the parent event author information.',
-				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
-				props: [
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' },
-					{ name: 'onclick', type: '(event: NDKEvent) => void', description: 'Click handler for the parent event' }
-				],
-				slots: [
-					{ name: 'children', type: 'Snippet<[{ event: NDKEvent | null; loading: boolean }]>', description: 'Custom render function for reply indicator' }
-				]
-			},
-			{
-				name: 'EventCard.Actions',
-				description: 'Container for action buttons (reactions, reposts, etc.).',
-				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
-				props: [
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				],
-				slots: [
-					{ name: 'children', description: 'Action components (ReactionButton, ReactionLongpress, RepostButton, etc.)' }
-				]
-			},
-			{
-				name: 'EventCardClassic',
-				description: 'Pre-composed event card with complete functionality including background, dropdown menu, and all action buttons.',
-				importPath: "import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
-					{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
-					{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
-					{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable' },
-					{ name: 'showActions', type: 'boolean', default: 'true', description: 'Show action buttons (repost, reaction)' },
-					{ name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu' },
-					{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]}
+		component={{
+			name: 'EventCard.Root',
+			description:
+				'Root container that provides event context to all child components. Handles interactive states and threading metadata.',
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional if provided via context)' },
+				{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
+				{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
+				{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			],
+			slots: [
+				{ name: 'children', description: 'Card content (Header, Content, Actions, etc.)' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'EventCard.Header',
+			description: 'Displays event author information with avatar, name, and timestamp. Supports custom actions slot.',
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			props: [
+				{ name: 'variant', type: "'full' | 'compact' | 'minimal'", default: "'full'", description: 'Display variant' },
+				{ name: 'showAvatar', type: 'boolean', default: 'true', description: 'Show author avatar' },
+				{ name: 'showTimestamp', type: 'boolean', default: 'true', description: 'Show event timestamp' },
+				{ name: 'avatarSize', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Avatar size' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			],
+			slots: [
+				{ name: 'children', description: 'Custom actions (e.g., EventDropdown)' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'EventCard.Content',
+			description: 'Displays event content with optional truncation and media preview support.',
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			props: [
+				{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'EventCard.ReplyIndicator',
+			description: 'Shows when the event is a reply, displaying "Replying to @author" with the parent event author information.',
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			props: [
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' },
+				{ name: 'onclick', type: '(event: NDKEvent) => void', description: 'Click handler for the parent event' }
+			],
+			slots: [
+				{ name: 'children', type: 'Snippet<[{ event: NDKEvent | null; loading: boolean }]>', description: 'Custom render function for reply indicator' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'EventCard.Actions',
+			description: 'Container for action buttons (reactions, reposts, etc.).',
+			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			props: [
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			],
+			slots: [
+				{ name: 'children', description: 'Action components (ReactionButton, ReactionLongpress, RepostButton, etc.)' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'EventCardClassic',
+			description: 'Pre-composed event card with complete functionality including background, dropdown menu, and all action buttons.',
+			importPath: "import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
+				{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
+				{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
+				{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable' },
+				{ name: 'showActions', type: 'boolean', default: 'true', description: 'Show action buttons (repost, reaction)' },
+				{ name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu' },
+				{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}}
 	/>
 {/snippet}
 

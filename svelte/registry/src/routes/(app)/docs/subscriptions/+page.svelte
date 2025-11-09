@@ -66,7 +66,6 @@
 
 		<Preview
 			title="Reposted Content Feed"
-			description="Real-time feed of content reposted by your follows. Try the sort options to see the feed reorganize instantly. The feed automatically updates as new reposts arrive."
 			code={ZappedFeedRaw}
 		>
 			<div class="max-w-3xl w-full">

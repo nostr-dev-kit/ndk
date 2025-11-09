@@ -17,7 +17,10 @@
 
   // Mock article for anatomy visualization
   const mockArticle = new NDKArticle(ndk, {
+    id: 'mock-article-id',
     kind: 30023,
+    pubkey: 'mock-pubkey',
+    created_at: Math.floor(Date.now() / 1000) - 86400,
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(50),
     tags: [
       ['title', 'Building Decentralized Social Networks'],
@@ -26,7 +29,8 @@
       ['published_at', String(Math.floor(Date.now() / 1000) - 86400)],
       ['t', 'nostr'],
       ['t', 'decentralization']
-    ]
+    ],
+    sig: 'mock-signature'
   });
 
   // Page metadata

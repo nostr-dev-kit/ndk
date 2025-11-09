@@ -337,6 +337,7 @@
 		}}
 	/>
 
+	<h3 class="text-xl font-bold">EventCard.ReplyIndicator</h3>
 	<ComponentAPI
 		component={{
 			name: 'EventCard.ReplyIndicator',
@@ -374,8 +375,6 @@
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
-				{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
-				{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable' },
 				{ name: 'showActions', type: 'boolean', default: 'true', description: 'Show action buttons (repost, reaction)' },
 				{ name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu' },
 				{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },

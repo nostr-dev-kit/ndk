@@ -32,7 +32,7 @@
   }), ndk);
 </script>
 
-{#snippet actorCount(count: number)}
+{#snippet actorCount({ count }: { pubkeys: string[]; count: number })}
   <span class="text-xs text-muted-foreground">
     {count} {count === 1 ? 'person' : 'people'}
   </span>

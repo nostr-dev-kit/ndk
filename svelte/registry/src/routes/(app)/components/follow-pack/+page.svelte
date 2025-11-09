@@ -3,12 +3,11 @@
   import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import PageTitle from '$lib/site/components/PageTitle.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import components
   import FollowPackPortrait from '$lib/registry/components/follow/packs/portrait/follow-pack-portrait.svelte';
@@ -63,6 +62,59 @@
   });
 
   const displayPacks = $derived([pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]);
+
+  // Anatomy layers for the component anatomy viewer
+  const followPackAnatomyLayers = {
+    image: { id: 'image', label: 'FollowPack.Image', description: 'Follow pack cover image' },
+    title: { id: 'title', label: 'FollowPack.Title', description: 'Follow pack title' },
+    description: { id: 'description', label: 'FollowPack.Description', description: 'Follow pack description' },
+    memberCount: { id: 'memberCount', label: 'FollowPack.MemberCount', description: 'Number of users in pack' },
+  };
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...followPackHeroCard, code: followPackHeroCode},
+      {...followPackPortraitCard, code: followPackPortraitCode},
+      {...followPackCompactCard, code: followPackCompactCode},
+      {...followPackListItemCard, code: followPackListItemCode}
+    ],
+    previews: {
+      'follow-pack-hero': heroComponentPreview,
+      'follow-pack-portrait': portraitComponentPreview,
+      'follow-pack-compact': compactComponentPreview,
+      'follow-pack-list-item': listItemComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      id: "followPackHeroCard",
+      cardData: followPackHeroCard,
+      preview: heroPreview,
+      orientation: 'horizontal'
+    },
+    {
+      id: "followPackPortraitCard",
+      cardData: followPackPortraitCard,
+      preview: portraitPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "followPackCompactCard",
+      cardData: followPackCompactCard,
+      preview: compactPreview,
+      orientation: 'horizontal'
+    },
+    {
+      id: "followPackListItemCard",
+      cardData: followPackListItemCard,
+      preview: listItemPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 
 <!-- Preview snippets -->
@@ -96,38 +148,43 @@
   </div>
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...followPackHeroCard, code: followPackHeroCode}}>
-    {#snippet preview()}
-      {@render heroPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...followPackPortraitCard, code: followPackPortraitCode}}>
-    {#snippet preview()}
-      {@render portraitPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...followPackCompactCard, code: followPackCompactCode}}>
-    {#snippet preview()}
-      {@render compactPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...followPackListItemCard, code: followPackListItemCode}}>
-    {#snippet preview()}
-      {@render listItemPreview()}
-    {/snippet}
-  </ComponentCard>
+<!-- Component preview snippets for componentsSection -->
+{#snippet heroComponentPreview()}
+  {@render heroPreview()}
 {/snippet}
 
-<!-- Custom Anatomy section -->
-{#snippet customSections()}
-  {#if displayPacks.length > 0}
-    <SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
+{#snippet portraitComponentPreview()}
+  {@render portraitPreview()}
+{/snippet}
 
+{#snippet compactComponentPreview()}
+  {@render compactPreview()}
+{/snippet}
+
+{#snippet listItemComponentPreview()}
+  {@render listItemPreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Follow Packs are curated lists of Nostr users grouped by topic, interest, or community (NIP-51, kind 39089). They help users discover and follow groups of people who share common interests or expertise.
+    </p>
+
+    <p>
+      Choose from hero cards for featured packs, portrait cards for grid layouts, compact cards for dense views, or list items for browsable pack directories. All variants automatically display pack metadata including title, description, cover image, and member count.
+    </p>
+
+    <p>
+      Built with composable FollowPack primitives (FollowPack.Root, FollowPack.Title, FollowPack.Image, etc.) for creating custom follow pack displays.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Anatomy section -->
+{#snippet anatomy()}
+  {#if displayPacks.length > 0}
     <ComponentAnatomy.Root>
       <ComponentAnatomy.Preview>
         <div class="relative bg-card border border-border rounded-xl overflow-hidden">
@@ -163,41 +220,16 @@
   <ComponentPageTemplate
     {metadata}
     {ndk}
-    showcaseComponents={[
-      {
-        id: "followPackHeroCard",
-        cardData: followPackHeroCard,
-        preview: heroPreview,
-        orientation: 'horizontal'
-      },
-      {
-        id: "followPackPortraitCard",
-        cardData: followPackPortraitCard,
-        preview: portraitPreview,
-        orientation: 'vertical'
-      },
-      {
-        id: "followPackCompactCard",
-        cardData: followPackCompactCard,
-        preview: compactPreview,
-        orientation: 'horizontal'
-      },
-      {
-        id: "followPackListItemCard",
-        cardData: followPackListItemCard,
-        preview: listItemPreview,
-        orientation: 'vertical'
-      }
-    ]}
-    {components}
-    {customSections}
-    apiDocs={followPackHeroCard.apiDocs}
+    {overview}
+    {showcaseComponents}
+    {componentsSection}
+    {anatomy}
   >
     <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-      <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-      <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-      <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-      <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
+    <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
+    <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
+    <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
+    <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
   </ComponentPageTemplate>
 {:else}
   <div class="px-8">

@@ -91,8 +91,6 @@
     field: { name: 'User.Field', description: 'Display custom profile field' },
     bio: { name: 'User.Bio', description: 'Display user bio' },
     banner: { name: 'User.Banner', description: 'Display profile banner' },
-    lud16: { name: 'User.Lud16', description: 'Display Lightning address' },
-    website: { name: 'User.Website', description: 'Display website URL' },
   };
 
   // Components section configuration
@@ -309,8 +307,6 @@
 <!-- Anatomy section -->
 {#snippet anatomy()}
   {#if displayUsers.length > 0}
-    <SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
-
     <ComponentAnatomy.Root>
       <ComponentAnatomy.Preview>
         {#if user1}

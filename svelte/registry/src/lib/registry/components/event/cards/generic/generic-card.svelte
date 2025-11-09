@@ -27,13 +27,11 @@
 	let handlers = $state<AppHandlerInfo[]>([]);
 	let loadingHandlers = $state(false);
 
-	onMount(() => {
-		loadHandlers();
+	$effect(() => {
+		if (event?.kind) loadHandlers(event.kind);
 	});
 
-	async function loadHandlers() {
-		if (!event.kind) return;
-
+	async function loadHandlers(kind: number) {
 		loadingHandlers = true;
 		await recommendations.load();
 
@@ -105,7 +103,7 @@
 			{#if loadingHandlers}
 				<div class="flex items-center gap-2 text-sm text-muted-foreground">
 					<div class="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-					<span>Discovering compatible apps...</span>
+					<span>Discovering compatible apps with {event.kind}...</span>
 				</div>
 			{:else if handlers.length > 0}
 				<div class="text-sm font-semibold text-foreground mb-3">Open in compatible app:</div>

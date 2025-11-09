@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import type { NDKArticle, NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
 
-export type PropType = 'user' | 'event' | 'article' | 'hashtag' | 'text' | 'highlight';
+export type PropType = 'user' | 'event' | 'article' | 'hashtag' | 'text' | 'highlight' | 'kind';
 
 export interface PropDefinition {
 	name: string;

@@ -28,12 +28,12 @@
 
   // Create a sample unknown event (kind 9999)
   const sampleEvent = new NDKEvent(ndk, {
-    kind: 9999,
+    kind: 30023,
     content: 'This is a sample event of an unknown kind.',
     pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
     created_at: Math.floor(Date.now() / 1000),
     tags: [
-      ['alt', 'A sample event demonstrating the generic fallback handler']
+      ['alt', 'A sample event demonstrating the generic fallback handler30023']
     ]
   } as any);
 </script>

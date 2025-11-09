@@ -147,8 +147,8 @@
 						"lg:col-span-2 p-8 text-right sticky top-20 border-border flex flex-col justify-between gap-6 min-h-[233px]",
 					)}
 				>
-					<div class="flex items-end justify-center flex-col h-full">
-						<h3 class="text-lg font-semibold tracking-tight">{component.cardData.title}</h3>
+					<div class="">
+						<h3 class="text-xl font-semibold tracking-tight">{component.cardData.title}</h3>
 						{#if component.cardData.oneLiner}
 							<p class="text-sm text-muted-foreground leading-relaxed">
 								{component.cardData.oneLiner}

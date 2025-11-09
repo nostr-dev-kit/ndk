@@ -94,7 +94,7 @@
 >
   <EditProps.Prop
     name="Event Kind"
-    type="number"
+    type="kind"
     bind:value={eventKind}
     default={9999}
   />

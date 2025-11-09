@@ -11,8 +11,6 @@
 
     event: NDKEvent;
 
-    interactive?: boolean;
-
     showActions?: boolean;
 
     showDropdown?: boolean;
@@ -25,7 +23,6 @@
   let {
     ndk,
     event,
-    interactive = false,
     showActions = true,
     showDropdown = true,
     truncate,
@@ -50,7 +47,7 @@
     {/if}
   </div>
 
-  <EventCard.Content {truncate} />
+  <EventCard.Content {truncate} class="wrap-break-word" />
 
   {#if showActions}
     <EventCard.Actions>

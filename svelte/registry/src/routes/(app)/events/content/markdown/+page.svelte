@@ -20,8 +20,8 @@
   const { metadata } = data;
 
 	const ndk = getContext<NDKSvelte>('ndk');
-	let article = $state<NDKArticle | null | undefined>();
-	let testArticle = $state<NDKArticle | null | undefined>();
+	let article = $state<NDKArticle | undefined>();
+	let testArticle = $state<NDKArticle | undefined>();
 
 	const articleContentBasicCardWithDescription = {
 		...articleContentBasicCard,

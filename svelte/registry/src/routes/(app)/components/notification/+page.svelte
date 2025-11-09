@@ -25,6 +25,23 @@
 	);
 </script>
 
+<!-- Overview section -->
+{#snippet overview()}
+	<div class="text-lg text-muted-foreground space-y-4">
+		<p>
+			The Notification System provides a real-time feed aggregating user interactions including reactions, zaps, reposts, and replies. It uses the createNotificationFeed builder to automatically categorize and track notification events as they arrive.
+		</p>
+
+		<p>
+			Built with composable UI primitives (NotificationItem.Root, NotificationItem.Action, NotificationItem.Actors, etc.), you can create custom notification layouts matching your app's design system. The builder handles event subscription, categorization, and reactive state management.
+		</p>
+
+		<p>
+			This page demonstrates the builder pattern and UI primitives through interactive teaching examples rather than pre-built component variants.
+		</p>
+	</div>
+{/snippet}
+
 <!-- Preview snippets for showcase -->
 {#snippet builderPreview()}
 	<div class="space-y-4">
@@ -111,8 +128,8 @@
 	</div>
 {/snippet}
 
-<!-- Custom sections with examples -->
-{#snippet customSections()}
+<!-- Recipes section (Builder Pattern + UI Primitives examples) -->
+{#snippet recipes()}
 	<section class="mt-16">
 		<h2 class="text-3xl font-bold mb-4">Builder Pattern</h2>
 		<p class="text-muted-foreground mb-6">
@@ -142,5 +159,6 @@
 <ComponentPageTemplate
 	{metadata}
 	{ndk}
-	{customSections}
+	{overview}
+	{recipes}
 />

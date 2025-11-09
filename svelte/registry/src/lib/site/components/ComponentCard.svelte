@@ -71,14 +71,14 @@
 	<Tabs.Root value="about" class="component-card-tabs">
 		<div class="flex flex-col gap-8 border border-border p-8">
 			<div class="mb-0 border-b border-border -mx-8 pb-4 px-8">
-				<div class="flex flex-row items-end justify-between gap-2">
-					<div class="flex flex-col items-end gap-2">
+				<div class="flex flex-row items-end justify-start gap-2">
+					<div class="flex flex-col items-start gap-2 flex-1">
 						<h1 class="text-3xl">{data.title}</h1>
 						<div class="m-0">
 							<User.Root {ndk} pubkey="fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52">
 								<div class="flex items-center gap-3">
-									<User.Avatar class="!w-6 !h-6 rounded-md" />
-									<div class="text-sm">
+									<User.Avatar class="w-6 h-6" />
+									<div class="text-xs">
 										<span class="text-muted-foreground font-normal">by</span>
 										<User.Name class="text-sm text-foreground font-semibold" />
 									</div>

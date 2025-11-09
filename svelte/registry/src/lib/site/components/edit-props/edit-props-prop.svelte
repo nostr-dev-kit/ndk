@@ -33,7 +33,7 @@
 	$effect(() => {
 		if (!value && defaultValue && (type === 'user' || type === 'event' || type === 'article')) {
 			untrack(async () => {
-				const result = await fetchFromIdentifier(ndk, type, defaultValue);
+				const result = await fetchFromIdentifier(ndk, type, String(defaultValue));
 				if (result.success && result.value) {
 					value = result.value;
 					context.updatePropValue(name, result.value);

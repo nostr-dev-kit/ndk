@@ -23,13 +23,13 @@
 	let inputs = $state<Record<string, string>>({});
 	let errors = $state<Record<string, string>>({});
 	let loading = $state<Record<string, boolean>>({});
-	let previews = $state<Record<string, NDKUser | NDKEvent | NDKArticle | string | null>>({});
+	let previews = $state<Record<string, NDKUser | NDKEvent | NDKArticle | string | number | boolean | null>>({});
 
 	// Initialize inputs with defaults
 	$effect(() => {
 		if (show) {
 			const newInputs: Record<string, string> = {};
-			const newPreviews: Record<string, NDKUser | NDKEvent | NDKArticle | string | null> = {};
+			const newPreviews: Record<string, NDKUser | NDKEvent | NDKArticle | string | number | boolean | null> = {};
 			for (const prop of props) {
 				// Set current value as preview
 				if (prop.value) {
@@ -44,7 +44,7 @@
 					}
 				}
 				if (!newInputs[prop.name]) {
-					newInputs[prop.name] = prop.default || '';
+					newInputs[prop.name] = String(prop.default || '');
 				}
 			}
 			inputs = newInputs;

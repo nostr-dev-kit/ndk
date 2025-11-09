@@ -16,5 +16,51 @@
     "carousel",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "MediaUploadCarousel",
+    "description": "A horizontal scrollable carousel for managing uploaded media files. Features upload previews, remove functionality, drag-and-drop reordering, progress indicators, and bindable uploads array. Uses MediaUpload builder with Carousel, Item, and Preview subcomponents. Perfect for image galleries, attachment lists, or multi-file upload interfaces.",
+    "importPath": "import { MediaUploadCarousel } from '$lib/registry/components/media/upload/carousel'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "uploads",
+        "type": "MediaUploadResult[]",
+        "default": "[]",
+        "description": "Bindable array of upload results"
+      },
+      {
+        "name": "fallbackServer",
+        "type": "string",
+        "default": "https://blossom.primal.net",
+        "description": "Fallback Blossom server URL"
+      },
+      {
+        "name": "accept",
+        "type": "string",
+        "default": "*/*",
+        "description": "Accepted file MIME types"
+      },
+      {
+        "name": "maxFiles",
+        "type": "number",
+        "description": "Maximum number of files allowed"
+      },
+      {
+        "name": "showProgress",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show upload progress indicators"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes for carousel container"
+      }
+    ]
+  }
 }

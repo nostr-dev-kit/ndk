@@ -16,5 +16,46 @@
     "profile-hero",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "UserProfileHero",
+    "description": "A hero-style user profile display with banner image, overlapping avatar, and optional follow button. Features customizable banner and avatar sizing. Shows name, handle, bio, and follow button. Perfect for profile headers, user detail pages, or prominent user showcases.",
+    "importPath": "import { UserProfileHero } from '$lib/registry/components/user/displays/profile-hero'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "pubkey",
+        "type": "string",
+        "required": true,
+        "description": "User's public key"
+      },
+      {
+        "name": "bannerClass",
+        "type": "string",
+        "default": "h-64",
+        "description": "CSS class for banner height"
+      },
+      {
+        "name": "avatarClass",
+        "type": "string",
+        "default": "w-[120px] h-[120px]",
+        "description": "CSS classes for avatar sizing"
+      },
+      {
+        "name": "showFollow",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show follow button"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

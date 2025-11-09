@@ -15,5 +15,39 @@
     "reaction-picker",
     "message-composition",
     "user-input"
-  ]
+  ],
+  "apiDoc": {
+    "name": "EmojiPickerContent",
+    "description": "Emoji selection component with sections for user's custom emojis (NIP-51 kind:10030), aggregated emojis from followed users, and default emoji sets. Features customizable columns, default emoji overrides, and selection callback. Uses createEmojiPicker builder for emoji aggregation and frequency sorting. Exports EmojiPicker.List, EmojiPicker.Content, EmojiPicker.Item, and EmojiPicker.Dropdown variants.",
+    "importPath": "import { EmojiPicker } from '$lib/registry/components/emoji-picker'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "onSelect",
+        "type": "(emoji: EmojiData) => void",
+        "required": true,
+        "description": "Callback when emoji is selected"
+      },
+      {
+        "name": "defaults",
+        "type": "EmojiData[]",
+        "description": "Default emoji set override"
+      },
+      {
+        "name": "columns",
+        "type": "number",
+        "default": "6",
+        "description": "Number of emoji columns in grid"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

@@ -16,5 +16,23 @@
     "animated",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "NegentropySyncProgressAnimated",
+    "description": "Animated negentropy sync progress display with gradient background and shimmer effects. Features pulsing status indicator, animated shimmer background during sync, large percentage display, and detailed relay/item statistics. Includes green completion indicator and blue pulsing active state. Perfect for onboarding flows or prominent sync status displays.",
+    "importPath": "import { NegentropySyncProgressAnimated } from '$lib/registry/components/negentropy-sync/progress/animated'",
+    "props": [
+      {
+        "name": "syncBuilder",
+        "type": "ReturnType<typeof createNegentropySync>",
+        "required": true,
+        "description": "Negentropy sync builder instance from createNegentropySync"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

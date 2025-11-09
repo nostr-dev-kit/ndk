@@ -16,5 +16,34 @@
     "compound",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "SessionSwitcherRoot",
+    "description": "Root component for compound session switcher using bits-ui DropdownMenu. Enables multi-account switching with session management. Creates context for nested SessionSwitcher subcomponents (Trigger, Content, Item, etc.). Features bindable open state, open change callback, and automatic session switching. Uses NDKSvelteWithSession for multi-account support.",
+    "importPath": "import { SessionSwitcher } from '$lib/registry/components/session/switchers/compound'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelteWithSession",
+        "required": true,
+        "description": "NDK instance with session management support"
+      },
+      {
+        "name": "children",
+        "type": "Snippet",
+        "description": "Svelte 5 snippet for switcher content composition"
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "default": "false",
+        "description": "Bindable open state for dropdown"
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: boolean) => void",
+        "description": "Callback when dropdown open state changes"
+      }
+    ]
+  }
 }

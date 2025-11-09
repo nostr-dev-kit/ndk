@@ -15,5 +15,29 @@
     "inline-profiles",
     "social-references",
     "content-attribution"
-  ]
+  ],
+  "apiDoc": {
+    "name": "Mention",
+    "description": "Inline user mention component displaying @name with primary color styling and hover effects. Fetches user by bech32 identifier (npub/nprofile) and renders name inline. Features underline, cursor pointer, and keyboard navigation support. Uses User builder pattern for data fetching and display.",
+    "importPath": "import { Mention } from '$lib/registry/components/mention'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for user fetching"
+      },
+      {
+        "name": "bech32",
+        "type": "string",
+        "required": true,
+        "description": "Bech32 user identifier (npub/nprofile)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

@@ -16,5 +16,66 @@
     "profile",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "UserProfile",
+    "description": "A flexible user profile display with multiple layout variants (horizontal, stacked, inline, compact) and size options (xs, sm, md, lg). Features optional avatar, name, handle, custom byline, and click handler. Responsive sizing classes adapt based on size prop. Perfect for user cards, sidebars, or profile summaries.",
+    "importPath": "import { UserProfile } from '$lib/registry/components/user/displays/profile'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching user data"
+      },
+      {
+        "name": "user",
+        "type": "NDKUser",
+        "description": "NDKUser instance (alternative to pubkey)"
+      },
+      {
+        "name": "pubkey",
+        "type": "string",
+        "description": "User's public key (alternative to user)"
+      },
+      {
+        "name": "profile",
+        "type": "NDKUserProfile",
+        "description": "Pre-fetched profile data"
+      },
+      {
+        "name": "variant",
+        "type": "'horizontal' | 'stacked' | 'inline' | 'compact'",
+        "default": "horizontal",
+        "description": "Layout variant for profile display"
+      },
+      {
+        "name": "size",
+        "type": "'xs' | 'sm' | 'md' | 'lg'",
+        "default": "md",
+        "description": "Size preset affecting spacing and text"
+      },
+      {
+        "name": "showAvatar",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show user avatar"
+      },
+      {
+        "name": "byline",
+        "type": "string | Component",
+        "description": "Custom byline text or component"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler for component"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

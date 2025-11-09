@@ -2,9 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import SectionTitle from '$site-components/SectionTitle.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import components
   import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
@@ -43,6 +42,43 @@
   let relay5 = $state<string>('wss://nostr.wine');
 
   const displayRelays = $derived([relay1, relay2, relay3, relay4, relay5].filter(Boolean));
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...relayCardPortraitCard, code: PortraitExampleRaw},
+      {...relayCardCompactCard, code: CompactExampleRaw},
+      {...relayCardListCard, code: ListExampleRaw}
+    ],
+    previews: {
+      'relay-card-portrait': portraitComponentPreview,
+      'relay-card-compact': compactComponentPreview,
+      'relay-card-list': listComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      id: "relayCardPortraitCard",
+      cardData: relayCardPortraitCard,
+      preview: portraitPreview,
+      orientation: 'horizontal'
+    },
+    {
+      id: "relayCardCompactCard",
+      cardData: relayCardCompactCard,
+      preview: compactPreview,
+      orientation: 'horizontal'
+    },
+    {
+      id: "relayCardListCard",
+      cardData: relayCardListCard,
+      preview: listPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 
 <!-- Preview snippets -->
@@ -83,48 +119,55 @@
   </div>
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...relayCardPortraitCard, code: PortraitExampleRaw}}>
-    {#snippet preview()}
-      {@render portraitPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...relayCardCompactCard, code: CompactExampleRaw}}>
-    {#snippet preview()}
-      {@render compactPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...relayCardListCard, code: ListExampleRaw}}>
-    {#snippet preview()}
-      {@render listPreview()}
-    {/snippet}
-  </ComponentCard>
+<!-- Component preview snippets for componentsSection -->
+{#snippet portraitComponentPreview()}
+  {@render portraitPreview()}
 {/snippet}
 
-<!-- UI Primitives section -->
-{#snippet afterComponents()}
-  <SectionTitle title="UI Primitives" description="Primitive components for building custom relay card layouts" />
-
-  <section class="py-12 space-y-16">
-    <ComponentCard data={metadata.cards[3]}>
-      {#snippet preview()}
-        <BasicExample {ndk} relayUrl={exampleRelay} />
-      {/snippet}
-    </ComponentCard>
-
-    <ComponentCard data={metadata.cards[4]}>
-      {#snippet preview()}
-        <BuilderUsageExample {ndk} />
-      {/snippet}
-    </ComponentCard>
-  </section>
+{#snippet compactComponentPreview()}
+  {@render compactPreview()}
 {/snippet}
 
-<!-- Builder API section -->
-{#snippet customSections()}
+{#snippet listComponentPreview()}
+  {@render listPreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Relay Cards display Nostr relay information with NIP-11 metadata fetching. Choose from portrait cards for featured relays, compact cards for dense layouts, or list items for relay browsers and settings interfaces.
+    </p>
+
+    <p>
+      All cards automatically fetch and display relay information documents (NIP-11) including relay name, description, supported NIPs, and software version. They support bookmark functionality through the createBookmarkedRelayList builder for tracking user-saved relays.
+    </p>
+
+    <p>
+      Built with composable Relay primitives (Relay.Root, Relay.Name, Relay.Description, etc.) for creating custom relay display layouts.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Anatomy section (UI Primitives examples) -->
+{#snippet anatomy()}
+  <div class="space-y-8">
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Basic Composition</h3>
+      <p class="text-muted-foreground mb-4">Build custom relay cards using Relay primitives</p>
+      <BasicExample {ndk} relayUrl={exampleRelay} />
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">With Builder</h3>
+      <p class="text-muted-foreground mb-4">Using createBookmarkedRelayList for bookmark tracking</p>
+      <BuilderUsageExample {ndk} />
+    </div>
+  </div>
+{/snippet}
+
+<!-- Recipes section (Builder API) -->
+{#snippet recipes()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Builder API</h2>
 
@@ -215,30 +258,11 @@
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  showcaseComponents={[
-    {
-      id: "relayCardPortraitCard",
-      cardData: relayCardPortraitCard,
-      preview: portraitPreview,
-      orientation: 'horizontal'
-    },
-    {
-      id: "relayCardCompactCard",
-      cardData: relayCardCompactCard,
-      preview: compactPreview,
-      orientation: 'horizontal'
-    },
-    {
-      id: "relayCardListCard",
-      cardData: relayCardListCard,
-      preview: listPreview,
-      orientation: 'vertical'
-    }
-  ]}
-  {components}
-  {afterComponents}
-  apiDocs={relayCardPortraitCard.apiDocs}
-  {customSections}
+  {overview}
+  {showcaseComponents}
+  {componentsSection}
+  {anatomy}
+  {recipes}
 >
     <EditProps.Prop name="Example Relay" type="text" bind:value={exampleRelay} />
     <EditProps.Prop name="Relay 1" type="text" bind:value={relay1} />

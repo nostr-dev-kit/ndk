@@ -41,7 +41,7 @@
   });
 
   function handleQuote() {
-    console.log('Quote handler called - you would open your quote composer here');
+    // Open quote composer here
   }
 
   // Components section configuration

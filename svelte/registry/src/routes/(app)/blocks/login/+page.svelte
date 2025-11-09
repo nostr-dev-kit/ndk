@@ -23,7 +23,7 @@
 >
   {#snippet topPreview()}
     <Preview title="Login" code={withoutExtension} previewAreaClass="max-h-none">
-      <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => console.log('Login successful!')} />
+      <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => {}} />
     </Preview>
   {/snippet}
 </BlockPageLayout>
@@ -39,11 +39,11 @@
 
     <div class="space-y-8">
       <Preview title="Without Extension Detected" code={withoutExtension} previewAreaClass="max-h-none">
-        <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => console.log('Login successful!')} />
+        <LoginCompact {ndk} forceExtensionState={false} onSuccess={() => {}} />
       </Preview>
 
       <Preview title="With Extension Detected" code={withExtension} previewAreaClass="max-h-none">
-        <LoginCompact {ndk} forceExtensionState={true} onSuccess={() => console.log('Login successful!')} />
+        <LoginCompact {ndk} forceExtensionState={true} onSuccess={() => {}} />
       </Preview>
     </div>
   </section>

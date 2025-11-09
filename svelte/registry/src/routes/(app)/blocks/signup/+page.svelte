@@ -15,7 +15,7 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   function handleSuccess(signer: NDKPrivateKeySigner) {
-    console.log('Profile created! nsec:', signer.privateKey);
+    // Profile created successfully
   }
 </script>
 

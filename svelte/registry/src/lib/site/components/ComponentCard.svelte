@@ -61,8 +61,7 @@
 	// Configure marked for safe rendering
 	marked.setOptions({
 		breaks: true,
-		gfm: true,
-		mangle: false
+		gfm: true
 	});
 </script>
 

@@ -93,6 +93,7 @@ export interface ComponentPageTemplateProps {
 
   // Custom sections via snippets
   beforeShowcase?: Snippet;
+  overview?: Snippet;
   afterComponents?: Snippet;
   recipes?: Snippet;
   primitives?: Snippet;

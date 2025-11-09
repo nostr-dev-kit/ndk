@@ -17,8 +17,6 @@
     "nostr",
     "social"
   ],
-  "showcaseTitle": "Repost Avatars",
-  "showcaseDescription": "Repost button displaying avatars of users who reposted. Clicking toggles repost state and shows visual feedback with avatar group.",
   "apiDocs": [
     {
       "name": "RepostButtonAvatars",

@@ -16,8 +16,6 @@
     "engagement",
     "feedback"
   ],
-  "showcaseTitle": "Slack-style Reactions",
-  "showcaseDescription": "Display all reactions in a Slack-like interface with avatars and counts.",
   "apiDocs": [
     {
       "name": "ReactionButtonSlack",

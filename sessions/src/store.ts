@@ -453,8 +453,13 @@ function handleIncomingEvent(
     constructorMap: Map<NDKKind, import("./types").NDKEventConstructor>,
     getState: () => SessionStore,
 ): void {
+    console.log(`[session-store] handleIncomingEvent: kind=${event.kind}, id=${event.id}, pubkey=${pubkey}`);
+
     const currentSession = getState().sessions.get(pubkey);
-    if (!currentSession) return;
+    if (!currentSession) {
+        console.log(`[session-store] No session found for pubkey=${pubkey}`);
+        return;
+    }
 
     // Process contact list
     if (event.kind === NDKKind.Contacts) {
@@ -620,18 +625,31 @@ function handleReplaceableEvent(
 ): void {
     if (event.kind === undefined) return;
 
+    console.log(`[session-store] handleReplaceableEvent: kind=${event.kind}, id=${event.id}`);
+
     const existingEvent = session.events.get(event.kind);
 
     // Skip if we already have this exact event or a newer one
     if (existingEvent) {
-        if (existingEvent.id === event.id) return;
-        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+        console.log(`[session-store] Existing event: id=${existingEvent.id}, created_at=${existingEvent.created_at}`);
+        console.log(`[session-store] New event: id=${event.id}, created_at=${event.created_at}`);
+
+        if (existingEvent.id === event.id) {
+            console.log(`[session-store] Skipping: same event ID`);
+            return;
+        }
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) {
+            console.log(`[session-store] Skipping: existing event is newer`);
+            return;
+        }
     }
 
     // Check if there's an event constructor to wrap this event
     const eventConstructor = constructorMap.get(event.kind);
     const wrappedEvent = eventConstructor && typeof eventConstructor.from === "function" ? eventConstructor.from(event) : event;
 
+    console.log(`[session-store] Updating session with new event`);
     session.events.set(event.kind, wrappedEvent);
     getState().updateSession(pubkey, { events: new Map(session.events) });
+    console.log(`[session-store] Session updated, new events Map created`);
 }

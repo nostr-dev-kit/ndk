@@ -15,8 +15,6 @@
     "tips",
     "lightning-payments"
   ],
-  "showcaseTitle": "Zap Button",
-  "showcaseDescription": "Lightning payment button",
   "apiDocs": [
     {
       "name": "ZapButton",

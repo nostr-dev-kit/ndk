@@ -20,6 +20,7 @@
   "apiDoc": {
     "name": "UserListItem",
     "description": "A compact user list item for displaying users in lists",
+    "importPath": "$lib/registry/components/user/displays/list-item",
     "props": [
       {
         "name": "ndk",

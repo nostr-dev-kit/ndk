@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../../../utils/cn';
-  import { User } from '../../../../ui/user';
+  import { cn } from '../../utils/cn';
+  import { User } from '../../ui/user';
   import { getContext } from 'svelte';
-  import { USER_CONTEXT_KEY, type UserContext } from '../../../../ui/user/user.context.js';
+  import { USER_CONTEXT_KEY, type UserContext } from '../../ui/user/user.context.js';
 
   interface Props {
     ndk: NDKSvelte;

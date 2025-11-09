@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { DropdownMenu } from 'bits-ui';
-	import { User } from '../../../../ui/user';
+	import { User } from '../../ui/user';
 	import type { SessionSwitcherContext } from './session-switcher.context.js';
 	import { SESSION_SWITCHER_CONTEXT_KEY } from './session-switcher.context.js';
 

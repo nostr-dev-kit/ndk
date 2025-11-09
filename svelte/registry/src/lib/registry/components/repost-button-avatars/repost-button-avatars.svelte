@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createRepostAction } from '../../../../builders/repost-action/index.svelte.js';
+  import { createRepostAction } from '../../builders/repost-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../../../utils/cn';
+  import { cn } from '../../utils/cn';
   import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
   import RepostIcon from '../../../../icons/repost.svelte';
 

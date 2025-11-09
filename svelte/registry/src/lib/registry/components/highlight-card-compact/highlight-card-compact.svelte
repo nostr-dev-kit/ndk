@@ -2,11 +2,11 @@
   import { getContext } from 'svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../../../utils/cn';
-  import { Highlight } from '../../../../ui/highlight/index.js';
-  import { User } from '../../../../ui/user';
-  import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../../../../ui/highlight/highlight.context.js';
-  import { createTimeAgo } from '../../../../utils/time-ago';
+  import { cn } from '../../utils/cn';
+  import { Highlight } from '../../ui/highlight/index.js';
+  import { User } from '../../ui/user';
+  import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '../../ui/highlight/highlight.context.js';
+  import { createTimeAgo } from '../../utils/time-ago';
 
   interface Props {
     ndk: NDKSvelte;

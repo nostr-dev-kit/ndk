@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { cn } from '../../../../utils/cn';
-  import { User } from '../../../../ui/user';
+  import { cn } from '../../utils/cn';
+  import { User } from '../../ui/user';
   import FollowButton from '../../../follow/buttons/basic/follow-button.svelte';
 
   interface Props {

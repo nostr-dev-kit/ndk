@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createMuteAction } from '../../../../builders/mute-action/index.svelte.js';
+  import { createMuteAction } from '../../builders/mute-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../../../utils/cn';
-  import { User } from '../../../../ui/user/index.js';
+  import { cn } from '../../utils/cn';
+  import { User } from '../../ui/user/index.js';
 
   interface Props {
     ndk?: NDKSvelte;

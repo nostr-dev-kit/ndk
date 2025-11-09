@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { NegentrogySync } from '../../../../ui/negentropy-sync';
-	import { createNegentropySync } from '../../../../builders/negentropy-sync/index.js';
+	import { NegentrogySync } from '../../ui/negentropy-sync';
+	import { createNegentropySync } from '../../builders/negentropy-sync/index.js';
 	import { getContext } from 'svelte';
-	import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from '../../../../ui/negentropy-sync/negentropy-sync.context.js';
+	import { NEGENTROPY_SYNC_CONTEXT_KEY, type NegentropySyncContext } from '../../ui/negentropy-sync/negentropy-sync.context.js';
 
 	interface Props {
 		syncBuilder: ReturnType<typeof createNegentropySync>;

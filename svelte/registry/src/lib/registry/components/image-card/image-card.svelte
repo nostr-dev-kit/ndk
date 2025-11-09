@@ -5,7 +5,7 @@
 	import ReactionButton from '../../../reaction/buttons/basic/reaction-button.svelte';
 	import { ImageContent } from '../../content/basic/index.js';
 	import RepostButton from '../../../repost/buttons/basic/repost-button.svelte';
-	import { cn } from '../../../../utils/cn';
+	import { cn } from '../../utils/cn';
 
 	interface Props {
 		ndk: NDKSvelte;

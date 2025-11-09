@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKImetaTag } from '@nostr-dev-kit/ndk';
-	import { getNDKFromContext } from '../../../../utils/ndk-context.svelte.js';
+	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
 	import { Image01Icon } from '@hugeicons/core-free-icons';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 

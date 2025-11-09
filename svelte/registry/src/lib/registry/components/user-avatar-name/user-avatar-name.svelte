@@ -2,7 +2,7 @@
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
-  import { User } from '../../../../ui/user';
+  import { User } from '../../ui/user';
 
   interface Props {
     ndk: NDKSvelte;

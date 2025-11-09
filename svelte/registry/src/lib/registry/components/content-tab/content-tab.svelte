@@ -9,7 +9,7 @@
   ```svelte
 <script>
     import { ContentTab, byCount } from './';
-    import { kindLabel } from '../../../utils/kind-label.js';
+    import { kindLabel } from '../../utils/kind-label.js';
 
     const pubkeys = ['hexpubkey'];
     const kinds = [1, 30023, 1063];

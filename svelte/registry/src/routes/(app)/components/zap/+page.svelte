@@ -10,12 +10,12 @@
   import zapButtonAvatarsCode from './examples/avatars/index.txt?raw';
 
   // Import components
-  import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';
-  import ZapButtonAvatars from '$lib/registry/components/zap/buttons/avatars/zap-button-avatars.svelte';
+  import ZapButton from '$lib/registry/components/zap-button/zap-button.svelte';
+  import ZapButtonAvatars from '$lib/registry/components/zap-button-avatars/zap-button-avatars.svelte';
 
   // Import registry metadata
-  import zapButtonCard from '$lib/registry/components/zap/buttons/basic/metadata.json';
-  import zapButtonAvatarsCard from '$lib/registry/components/zap/buttons/avatars/metadata.json';
+  import zapButtonCard from '$lib/registry/components/zap-button/metadata.json';
+  import zapButtonAvatarsCard from '$lib/registry/components/zap-button-avatars/metadata.json';
 
   // Page metadata
   const metadata = {

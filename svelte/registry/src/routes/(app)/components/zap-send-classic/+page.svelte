@@ -10,7 +10,7 @@
   import BasicUsageRaw from './examples/basic-usage/index.txt?raw';
 
   // Import registry metadata
-  import zapSendClassicCard from '$lib/registry/components/zap/send/classic/metadata.json';
+  import zapSendClassicCard from '$lib/registry/components/zap-send-classic/metadata.json';
 
   // Page metadata
   const metadata = {

@@ -10,12 +10,12 @@
   import replyButtonAvatarsCode from './examples/avatars/index.txt?raw';
 
   // Import components
-  import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
-  import ReplyButtonAvatars from '$lib/registry/components/reply/buttons/avatars/reply-button-avatars.svelte';
+  import ReplyButton from '$lib/registry/components/reply-button/reply-button.svelte';
+  import ReplyButtonAvatars from '$lib/registry/components/reply-button-avatars/reply-button-avatars.svelte';
 
   // Import registry metadata
-  import replyButtonCard from '$lib/registry/components/reply/buttons/basic/metadata.json';
-  import replyButtonAvatarsCard from '$lib/registry/components/reply/buttons/avatars/metadata.json';
+  import replyButtonCard from '$lib/registry/components/reply-button/metadata.json';
+  import replyButtonAvatarsCard from '$lib/registry/components/reply-button-avatars/metadata.json';
   import replyActionBuilder from '$lib/registry/builders/reply-action/metadata.json';
 
   // Page metadata

@@ -10,10 +10,10 @@
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import components
-  import FollowPackPortrait from '$lib/registry/components/follow-pack/portrait/follow-pack-portrait.svelte';
-  import FollowPackHero from '$lib/registry/components/follow-pack/hero/follow-pack-hero.svelte';
-  import FollowPackCompact from '$lib/registry/components/follow-pack/compact/follow-pack-compact.svelte';
-  import FollowPackListItem from '$lib/registry/components/follow-pack/basic/follow-pack-list-item.svelte';
+  import FollowPackPortrait from '$lib/registry/components/follow-pack-portrait/follow-pack-portrait.svelte';
+  import FollowPackHero from '$lib/registry/components/follow-pack-hero/follow-pack-hero.svelte';
+  import FollowPackCompact from '$lib/registry/components/follow-pack-compact/follow-pack-compact.svelte';
+  import FollowPackListItem from '$lib/registry/components/follow-pack/follow-pack-list-item.svelte';
 
   // Import code examples
   import followPackHeroCode from './examples/hero/index.txt?raw';
@@ -22,10 +22,10 @@
   import followPackListItemCode from './examples/list-item/index.txt?raw';
 
   // Import registry metadata
-  import followPackHeroCard from '$lib/registry/components/follow-pack/hero/metadata.json';
-  import followPackPortraitCard from '$lib/registry/components/follow-pack/portrait/metadata.json';
-  import followPackCompactCard from '$lib/registry/components/follow-pack/compact/metadata.json';
-  import followPackListItemCard from '$lib/registry/components/follow-pack/basic/metadata.json';
+  import followPackHeroCard from '$lib/registry/components/follow-pack-hero/metadata.json';
+  import followPackPortraitCard from '$lib/registry/components/follow-pack-portrait/metadata.json';
+  import followPackCompactCard from '$lib/registry/components/follow-pack-compact/metadata.json';
+  import followPackListItemCard from '$lib/registry/components/follow-pack/metadata.json';
 
   // Page metadata
   const metadata = {

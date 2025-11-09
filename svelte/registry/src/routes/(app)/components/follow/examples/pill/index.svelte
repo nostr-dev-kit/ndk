@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
+  import FollowButtonPill from '$lib/registry/components/follow-button-pill/follow-button-pill.svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
 
   interface Props {

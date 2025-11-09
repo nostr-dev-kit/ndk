@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import MuteButton from '$lib/registry/components/mute/buttons/basic/mute-button.svelte';
+  import MuteButton from '$lib/registry/components/mute-button/mute-button.svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
 
   interface Props {

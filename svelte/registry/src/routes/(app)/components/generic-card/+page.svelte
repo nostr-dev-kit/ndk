@@ -9,10 +9,10 @@
   import genericCardCode from './examples/basic/index.txt?raw';
 
   // Import component
-  import GenericCard from '$lib/registry/components/event/cards/generic/generic-card.svelte';
+  import GenericCard from '$lib/registry/components/event-card-generic/generic-card.svelte';
 
   // Import registry metadata
-  import genericCardMetadata from '$lib/registry/components/event/cards/generic/metadata.json';
+  import genericCardMetadata from '$lib/registry/components/event-card-generic/metadata.json';
 
   // Page metadata
   const metadata = {

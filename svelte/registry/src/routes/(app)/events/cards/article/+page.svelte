@@ -3,10 +3,10 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import { Article } from '$lib/registry/ui/article';
-	import ArticleCardPortrait from '$lib/registry/components/article/cards/portrait/article-card-portrait.svelte';
-	import ArticleCardHero from '$lib/registry/components/article/cards/hero/article-card-hero.svelte';
-	import ArticleCardNeon from '$lib/registry/components/article/cards/neon/article-card-neon.svelte';
-	import ArticleCardMedium from '$lib/registry/components/article/cards/basic/article-card-medium.svelte';
+	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
+	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
+	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
+	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import { EditProps } from '$lib/site/components/edit-props';
 	import { ScrollArea } from '$lib/site/components/ui/scroll-area';
 	import * as ComponentAnatomy from '$site-components/component-anatomy';
@@ -15,10 +15,10 @@
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	// Import registry metadata
-	import articleCardPortraitCard from '$lib/registry/components/article/cards/portrait/metadata.json';
-	import articleCardHeroCard from '$lib/registry/components/article/cards/hero/metadata.json';
-	import articleCardMediumCard from '$lib/registry/components/article/cards/basic/metadata.json';
-	import articleCardNeonCard from '$lib/registry/components/article/cards/neon/metadata.json';
+	import articleCardPortraitCard from '$lib/registry/components/article-card-portrait/metadata.json';
+	import articleCardHeroCard from '$lib/registry/components/article-card-hero/metadata.json';
+	import articleCardMediumCard from '$lib/registry/components/article-card/metadata.json';
+	import articleCardNeonCard from '$lib/registry/components/article-card-neon/metadata.json';
 
 	const articleCardCards = [articleCardPortraitCard, articleCardHeroCard, articleCardMediumCard, articleCardNeonCard];
 

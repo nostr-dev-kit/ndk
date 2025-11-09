@@ -10,10 +10,10 @@
   import followButtonCode from './examples/basic/index.txt?raw';
 
   // Import components
-  import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
+  import FollowButton from '$lib/registry/components/follow-button/follow-button.svelte';
 
   // Import registry metadata
-  import followButtonCard from '$lib/registry/components/follow/buttons/basic/metadata.json';
+  import followButtonCard from '$lib/registry/components/follow-button/metadata.json';
   import followActionBuilder from '$lib/registry/builders/follow-action/metadata.json';
 
   // Page metadata

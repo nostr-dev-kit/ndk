@@ -17,7 +17,7 @@
 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
+  import RelayCardPortrait from '$lib/registry/components/relay-card-portrait/relay-card-portrait.svelte';
 
   interface Props {
     ndk: NDKSvelte;

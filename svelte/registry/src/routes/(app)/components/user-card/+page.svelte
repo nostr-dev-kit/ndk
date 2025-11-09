@@ -20,22 +20,22 @@
   import userCardGlassCode from './examples/glass/index.txt?raw';
 
   // Import blocks
-  import UserCardClassic from '$lib/registry/components/user/cards/classic/user-card-classic.svelte';
-  import UserCardPortrait from '$lib/registry/components/user/cards/portrait/user-card-portrait.svelte';
-  import UserCardLandscape from '$lib/registry/components/user/cards/landscape/user-card-landscape.svelte';
-  import UserCardCompact from '$lib/registry/components/user/cards/compact/user-card-compact.svelte';
-  import UserCardNeon from '$lib/registry/components/user/cards/neon/user-card-neon.svelte';
-  import UserCardGlass from '$lib/registry/components/user/cards/glass/user-card-glass.svelte';
-  import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
+  import UserCardClassic from '$lib/registry/components/user-card-classic/user-card-classic.svelte';
+  import UserCardPortrait from '$lib/registry/components/user-card-portrait/user-card-portrait.svelte';
+  import UserCardLandscape from '$lib/registry/components/user-card-landscape/user-card-landscape.svelte';
+  import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
+  import UserCardNeon from '$lib/registry/components/user-card-neon/user-card-neon.svelte';
+  import UserCardGlass from '$lib/registry/components/user-card-glass/user-card-glass.svelte';
+  import UserListItem from '$lib/registry/components/user-list-item/user-list-item.svelte';
 
   // Import registry metadata
-  import userCardClassicCard from '$lib/registry/components/user/cards/classic/metadata.json';
-  import userCardPortraitCard from '$lib/registry/components/user/cards/portrait/metadata.json';
-  import userCardLandscapeCard from '$lib/registry/components/user/cards/landscape/metadata.json';
-  import userCardCompactCard from '$lib/registry/components/user/cards/compact/metadata.json';
-  import userCardNeonCard from '$lib/registry/components/user/cards/neon/metadata.json';
-  import userCardGlassCard from '$lib/registry/components/user/cards/glass/metadata.json';
-  import userCardListItemCard from '$lib/registry/components/user/displays/list-item/metadata.json';
+  import userCardClassicCard from '$lib/registry/components/user-card-classic/metadata.json';
+  import userCardPortraitCard from '$lib/registry/components/user-card-portrait/metadata.json';
+  import userCardLandscapeCard from '$lib/registry/components/user-card-landscape/metadata.json';
+  import userCardCompactCard from '$lib/registry/components/user-card-compact/metadata.json';
+  import userCardNeonCard from '$lib/registry/components/user-card-neon/metadata.json';
+  import userCardGlassCard from '$lib/registry/components/user-card-glass/metadata.json';
+  import userCardListItemCard from '$lib/registry/components/user-list-item/metadata.json';
 
   // Page metadata
   const metadata = {

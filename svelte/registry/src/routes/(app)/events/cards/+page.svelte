@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte';
-	import { EventCard } from '$lib/registry/components/event/cards/compound';
+	import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte';
+	import { EventCard } from '$lib/registry/components/event-card';
 	import { EditProps } from '$lib/site/components/edit-props';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
@@ -13,7 +13,7 @@
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	// Import registry metadata
-	import eventCardClassicCard from '$lib/registry/components/event/cards/classic/metadata.json';
+	import eventCardClassicCard from '$lib/registry/components/event-card-classic/metadata.json';
 
 	const eventCardCards = [eventCardClassicCard];
 
@@ -285,7 +285,7 @@
 			name: 'EventCard.Root',
 			description:
 				'Root container that provides event context to all child components. Handles interactive states and threading metadata.',
-			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },
@@ -303,7 +303,7 @@
 		component={{
 			name: 'EventCard.Header',
 			description: 'Displays event author information with avatar, name, and timestamp. Supports custom actions slot.',
-			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 			props: [
 				{ name: 'variant', type: "'full' | 'compact' | 'minimal'", default: "'full'", description: 'Display variant' },
 				{ name: 'showAvatar', type: 'boolean', default: 'true', description: 'Show author avatar' },
@@ -321,7 +321,7 @@
 		component={{
 			name: 'EventCard.Content',
 			description: 'Displays event content with optional truncation and media preview support.',
-			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 			props: [
 				{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
 				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
@@ -334,7 +334,7 @@
 		component={{
 			name: 'EventCard.ReplyIndicator',
 			description: 'Shows when the event is a reply, displaying "Replying to @author" with the parent event author information.',
-			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 			props: [
 				{ name: 'class', type: 'string', description: 'Additional CSS classes' },
 				{ name: 'onclick', type: '(event: NDKEvent) => void', description: 'Click handler for the parent event' }
@@ -349,7 +349,7 @@
 		component={{
 			name: 'EventCard.Actions',
 			description: 'Container for action buttons (reactions, reposts, etc.).',
-			importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+			importPath: "import { EventCard } from '$lib/registry/components/event-card'",
 			props: [
 				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
 			],
@@ -363,7 +363,7 @@
 		component={{
 			name: 'EventCardClassic',
 			description: 'Pre-composed event card with complete functionality including background, dropdown menu, and all action buttons.',
-			importPath: "import EventCardClassic from '$lib/registry/components/event/cards/classic/event-card-classic.svelte'",
+			importPath: "import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance', required: true },
 				{ name: 'event', type: 'NDKEvent', description: 'The event to display', required: true },

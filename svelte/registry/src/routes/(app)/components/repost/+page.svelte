@@ -10,12 +10,12 @@
   import repostButtonAvatarsCode from './examples/avatars/index.txt?raw';
 
   // Import components
-  import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
-  import RepostButtonAvatars from '$lib/registry/components/repost/buttons/avatars/repost-button-avatars.svelte';
+  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
+  import RepostButtonAvatars from '$lib/registry/components/repost-button-avatars/repost-button-avatars.svelte';
 
   // Import registry metadata
-  import repostButtonCard from '$lib/registry/components/repost/buttons/basic/metadata.json';
-  import repostButtonAvatarsCard from '$lib/registry/components/repost/buttons/avatars/metadata.json';
+  import repostButtonCard from '$lib/registry/components/repost-button/metadata.json';
+  import repostButtonAvatarsCard from '$lib/registry/components/repost-button-avatars/metadata.json';
   import repostActionBuilder from '$lib/registry/builders/repost-action/metadata.json';
 
   // Page metadata

@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import UserCardGlass from '$lib/registry/components/user/cards/glass/user-card-glass.svelte';
+  import UserCardGlass from '$lib/registry/components/user-card-glass/user-card-glass.svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

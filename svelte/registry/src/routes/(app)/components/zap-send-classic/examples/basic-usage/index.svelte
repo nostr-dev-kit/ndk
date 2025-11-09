@@ -18,7 +18,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-  import { ZapSendClassic } from '$lib/registry/components/zap/send/classic';
+  import { ZapSendClassic } from '$lib/registry/components/zap-send-classic';
 
   interface Props {
     ndk: NDKSvelte;

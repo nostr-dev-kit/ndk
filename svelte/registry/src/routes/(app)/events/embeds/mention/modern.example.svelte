@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { Event } from '$lib/registry/ui/event';
-  import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
+  import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
 
   interface Props {
     ndk: NDKSvelte;

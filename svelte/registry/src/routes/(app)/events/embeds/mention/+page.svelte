@@ -69,7 +69,7 @@
     component={{
       name: 'MentionModern',
       description: 'Modern inline mention with avatar and user card popover on hover (not installable - teaching example)',
-      importPath: "import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte'",
+      importPath: "import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte'",
       props: [
         { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
         { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },

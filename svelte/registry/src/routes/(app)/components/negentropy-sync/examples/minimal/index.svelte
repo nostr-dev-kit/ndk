@@ -18,7 +18,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync';
-  import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync/progress/minimal/negentropy-sync-progress-minimal.svelte';
+  import NegentropySyncProgressMinimal from '$lib/registry/components/negentropy-sync-minimal/negentropy-sync-progress-minimal.svelte';
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 
   interface Props {

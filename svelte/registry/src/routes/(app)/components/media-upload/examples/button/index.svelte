@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
+  import UploadButton from '$lib/registry/components/media-upload-button/upload-button.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

@@ -10,10 +10,10 @@
   import muteButtonCode from './examples/basic/index.txt?raw';
 
   // Import example components
-  import MuteButton from '$lib/registry/components/mute/buttons/basic/mute-button.svelte';
+  import MuteButton from '$lib/registry/components/mute-button/mute-button.svelte';
 
   // Import registry metadata
-  import muteButtonCard from '$lib/registry/components/mute/buttons/basic/metadata.json';
+  import muteButtonCard from '$lib/registry/components/mute-button/metadata.json';
   import muteActionBuilder from '$lib/registry/builders/mute-action/metadata.json';
 
   // Page metadata

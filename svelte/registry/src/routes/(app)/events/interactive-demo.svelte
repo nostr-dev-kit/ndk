@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import { EventCard } from '$lib/registry/components/event/cards/compound';
+	import { EventCard } from '$lib/registry/components/event-card';
 	import ClickableEventContent from './clickable-event-content.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import ClickableMention from './clickable-mention.svelte';
 	import ClickableHashtag from './clickable-hashtag.svelte';
-	import GenericCard from '$lib/registry/components/event/cards/generic/generic-card.svelte';
+	import GenericCard from '$lib/registry/components/event-card-generic/generic-card.svelte';
 	import { setContext } from 'svelte';
 
 	interface Props {

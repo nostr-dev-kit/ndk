@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import Mention from '$lib/registry/components/mention/mention.svelte';
-	import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte';
+	import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
 	import { getContext } from 'svelte';
 
 	interface Props {

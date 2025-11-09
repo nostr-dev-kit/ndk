@@ -448,7 +448,7 @@
         <p class="text-muted-foreground leading-relaxed">{data.description}</p>
       </div>
 
-      {#if 'props' in data && data.props}
+      {#if 'props' in data && data.props && Array.isArray(data.props)}
         <div>
           <h3 class="text-lg font-bold mb-4">Props</h3>
           <div class="space-y-4">

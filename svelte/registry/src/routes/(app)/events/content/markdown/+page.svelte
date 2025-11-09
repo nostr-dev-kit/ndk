@@ -85,28 +85,26 @@
 
 {#snippet anatomy()}
 	<ComponentAPI
-		components={[
-			{
-				name: 'ArticleContent',
-				description: 'Renders NIP-23 article content with markdown, inline highlights, and text selection.',
-				importPath: "import { ArticleContent } from '$lib/registry/components/article/content/basic'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'article', type: 'NDKArticle', required: true, description: 'The article to display' },
-					{
-						name: 'onHighlightClick',
-						type: '(highlight: NDKHighlight, event: MouseEvent) => void',
-						description: 'Callback when a highlight is clicked'
-					},
-					{
-						name: 'highlightFilter',
-						type: '(highlight: NDKHighlight) => boolean',
-						description: 'Filter function for highlights'
-					},
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]}
+		component={{
+			name: 'ArticleContent',
+			description: 'Renders NIP-23 article content with markdown, inline highlights, and text selection.',
+			importPath: "import { ArticleContent } from '$lib/registry/components/article/content/basic'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+				{ name: 'article', type: 'NDKArticle', required: true, description: 'The article to display' },
+				{
+					name: 'onHighlightClick',
+					type: '(highlight: NDKHighlight, event: MouseEvent) => void',
+					description: 'Callback when a highlight is clicked'
+				},
+				{
+					name: 'highlightFilter',
+					type: '(highlight: NDKHighlight) => boolean',
+					description: 'Filter function for highlights'
+				},
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}}
 	/>
 {/snippet}
 

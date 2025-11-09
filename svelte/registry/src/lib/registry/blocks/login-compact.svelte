@@ -149,7 +149,7 @@
   {#if !hasExtension}
     <!-- State 1: No Extension Detected -->
     <div class="mb-6">
-      <label class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider">Enter your credentials</label>
+      <div class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider" role="heading" aria-level="3">Enter your credentials</div>
       <div class="flex gap-2 mb-1.5">
         <input
           type="text"
@@ -209,7 +209,7 @@
   {:else}
     <!-- State 2: Extension Detected -->
     <div class="mb-6">
-      <label class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider">Quick connect</label>
+      <div class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider" role="heading" aria-level="3">Quick connect</div>
       <button class="w-full px-3.5 py-3.5 bg-primary text-primary-foreground border-none rounded-lg text-sm font-semibold cursor-pointer transition-all flex items-center justify-center gap-2 mt-3 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleExtensionLogin} disabled={isLoading}>
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2"></rect>
@@ -225,7 +225,7 @@
     </div>
 
     <div class="flex flex-col gap-0">
-      <label class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider">Enter your credentials</label>
+      <div class="text-[0.8125rem] font-semibold text-foreground mb-3 block uppercase tracking-wider" role="heading" aria-level="3">Enter your credentials</div>
       <div class="flex gap-2 mb-1.5">
         <input
           type="text"

@@ -51,6 +51,12 @@
               class:tweet--first={isFirst}
               class:tweet--last={isLast}
               onclick={() => thread.focusOn(node.id)}
+              onkeydown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  thread.focusOn(node.id);
+                }
+              }}
               role="button"
               tabindex="0"
             >
@@ -71,7 +77,12 @@
       {#if thread.replies.length > 0}
         {#each thread.replies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply}>
-            <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
+            <div class="tweet" onclick={() => thread.focusOn(reply)} onkeydown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                thread.focusOn(reply);
+              }
+            }} role="button" tabindex="0">
               <div class="relative flex justify-center items-start z-10">
                 <User.Root {ndk} user={reply.author}>
                   <User.Avatar class="w-10 h-10 avatar" />
@@ -97,7 +108,12 @@
       <div class="flex flex-col">
         {#each thread.otherReplies as reply (reply.id)}
           <EventCard.Root {ndk} event={reply}>
-            <div class="tweet" onclick={() => thread.focusOn(reply)} role="button" tabindex="0">
+            <div class="tweet" onclick={() => thread.focusOn(reply)} onkeydown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                thread.focusOn(reply);
+              }
+            }} role="button" tabindex="0">
               <div class="relative flex justify-center items-start z-10">
                 <User.Root {ndk} user={reply.author}>
                   <User.Avatar class="w-10 h-10 avatar" />

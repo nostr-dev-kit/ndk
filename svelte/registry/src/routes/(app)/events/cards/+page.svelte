@@ -287,7 +287,7 @@
 	{/if}
 {/snippet}
 
-{#snippet customSections()}
+{#snippet anatomy()}
 	<ComponentAPI
 		components={[
 			{
@@ -384,7 +384,7 @@
 				'event-card-classic': classicComponentPreview
 			}
 		}}
-		{customSections}
+		{anatomy}
 	>
 		<EditProps.Prop
 			name="Sample Event"

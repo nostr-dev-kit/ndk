@@ -52,7 +52,6 @@
   }
 
   $effect(() => {
-    console.log('connect')
     initializeNDK().then(async () => {
       isInitialized = true;
 

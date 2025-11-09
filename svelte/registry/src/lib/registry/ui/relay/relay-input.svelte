@@ -50,32 +50,25 @@
 		}
 
 		// Add wss:// prefix
-		const withPrefix = `wss://${trimmed}`;
-		console.log('[RelayInput] Normalized URL:', trimmed, '->', withPrefix);
-		return withPrefix;
+		return `wss://${trimmed}`;
 	}
 
 	// Fetch relay info (NIP-11) - validates and fetches URL
 	const relayInfo = createRelayInfo(() => {
 		// Validate URL format inside the getter to ensure proper reactivity
 		if (!normalizedUrl) {
-			console.log('[RelayInput] createRelayInfo: empty URL, skipping fetch');
 			return { relayUrl: '' };
 		}
 
 		try {
-			console.log('normalized url ', normalizedUrl);
 			const url = new URL(normalizedUrl);
 			const isValid = url.protocol === 'wss:' || url.protocol === 'ws:';
 			if (isValid) {
-				console.log('[RelayInput] createRelayInfo: fetching', normalizedUrl);
 				return { relayUrl: normalizedUrl };
 			} else {
-				console.log('[RelayInput] createRelayInfo: invalid protocol', url.protocol);
 				return { relayUrl: '' };
 			}
 		} catch (e) {
-			console.log('[RelayInput] createRelayInfo: invalid URL', normalizedUrl);
 			return { relayUrl: '' };
 		}
 	}, ndk);
@@ -99,29 +92,21 @@
 
 	// Debounce URL changes and normalize
 	$effect(() => {
-		console.log('[RelayInput] Effect running for value:', value);
-
 		// Clear any existing timer
 		if (debounceTimer) {
-			console.log('[RelayInput] Clearing existing timer');
 			clearTimeout(debounceTimer);
 			debounceTimer = null;
 		}
 
 		// Set new timer
 		debounceTimer = setTimeout(() => {
-			console.log('[RelayInput] Debounce FIRED for:', value);
 			normalizedUrl = normalizeUrl(value);
 			debounceTimer = null;
 		}, debounceMs);
 
-		console.log('[RelayInput] Timer set for:', debounceMs, 'ms');
-
 		// Cleanup function - runs when effect re-runs or component unmounts
 		return () => {
-			console.log('[RelayInput] Cleanup running');
 			if (debounceTimer) {
-				console.log('[RelayInput] Cleanup clearing timer');
 				clearTimeout(debounceTimer);
 				debounceTimer = null;
 			}

@@ -38,8 +38,6 @@ export function createMediaUpload(ndk: NDKSvelte, options: MediaUploadOptions = 
 	const errors = $derived(state.uploadErrors);
 
 	async function uploadFile(file: File): Promise<void> {
-		console.log('uploadFile called with:', file.name, file.type);
-
 		// Validate file type if accept filter is provided
 		if (accept && !isFileAccepted(file, accept)) {
 			const error = new Error(`File type ${file.type} not accepted`);
@@ -60,10 +58,7 @@ export function createMediaUpload(ndk: NDKSvelte, options: MediaUploadOptions = 
 		state.uploadErrors.delete(file);
 
 		try {
-			console.log('Starting upload to:', fallbackServer);
 			await upload.upload(file, { fallbackServer });
-
-			console.log('Upload result:', upload.result);
 
 			if (upload.result?.url) {
 				// Get image dimensions if it's an image
@@ -85,9 +80,7 @@ export function createMediaUpload(ndk: NDKSvelte, options: MediaUploadOptions = 
 					file
 				};
 
-				console.log('Adding upload result:', result);
 				state.uploads.push(result);
-				console.log('Current uploads:', state.uploads.length);
 				state.uploadingFiles.delete(file);
 			} else {
 				console.error('No URL in upload result');

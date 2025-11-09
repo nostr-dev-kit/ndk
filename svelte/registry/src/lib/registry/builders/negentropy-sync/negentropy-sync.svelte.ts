@@ -185,11 +185,9 @@ export function createNegentropySync(
         state.relayProgress = newRelayProgress;
 
         // Start sync and subscribe
-        console.log('[NegentropySyncBuilder] Starting sync with filters:', unwrappedFilters);
         const subscription = await sync.syncAndSubscribe(unwrappedFilters, {
             relaySet,
             onNegotiationProgress: (relay: NDKRelay, progress: NegotiationProgress) => {
-                console.log('[NegentropySyncBuilder] onNegotiationProgress', relay.url, progress);
                 const relayProgress = state.relayProgress.get(relay.url);
                 if (relayProgress) {
                     relayProgress.status = 'syncing';
@@ -208,14 +206,12 @@ export function createNegentropySync(
                 }
             },
             onRelaySynced: (relay: NDKRelay, eventCount: number) => {
-                console.log('[NegentropySyncBuilder] onRelaySynced', relay.url, eventCount);
                 const progress = state.relayProgress.get(relay.url);
                 if (progress) {
                     progress.status = 'completed';
                     // Don't update eventCount here - we're tracking it in real-time via subscription
                     // Just ensure it matches the final count (in case we missed any)
                     if (progress.eventCount !== eventCount) {
-                        console.log(`[NegentropySyncBuilder] Adjusting ${relay.url} count from ${progress.eventCount} to ${eventCount}`);
                         state.totalEvents += (eventCount - progress.eventCount);
                         progress.eventCount = eventCount;
                     }
@@ -225,7 +221,6 @@ export function createNegentropySync(
                 state.completedRelays++;
             },
             onRelayError: (relay: NDKRelay, error: Error) => {
-                console.log('[NegentropySyncBuilder] onRelayError', relay.url, error);
                 const progress = state.relayProgress.get(relay.url);
                 if (progress) {
                     progress.status = 'error';
@@ -237,11 +232,9 @@ export function createNegentropySync(
                 state.completedRelays++;
             },
             onSyncComplete: () => {
-                console.log('[NegentropySyncBuilder] onSyncComplete');
                 state.syncing = false;
             }
         });
-        console.log('[NegentropySyncBuilder] Sync started, subscription:', subscription);
 
         // Listen to events as they come in to track progress per relay
         subscription.on('event', (event) => {

@@ -11,31 +11,33 @@
 
   // Import code examples
   import reactionButtonCode from './examples/button-variants/index.txt?raw';
-  import reactionBasicCode from './examples/basic/index.txt?raw';
-  import reactionDelayedCode from './examples/delayed/index.txt?raw';
+  import reactionButtonAvatarsCode from './examples/avatars/index.txt?raw';
+  import reactionSlackHorizontalCode from './examples/slack-horizontal/index.txt?raw';
+  import reactionSlackVerticalCode from './examples/slack-vertical/index.txt?raw';
   import reactionBuilderCode from './examples/builder/index.txt?raw';
+  import dropdownHoverCode from './examples/dropdown-hover/index.txt?raw';
 
   // Import components
-  import { ReactionButton, ReactionAction, ReactionLongpress } from '$lib/registry/components/reaction';
+  import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
+  import ReactionButtonAvatars from '$lib/registry/components/reaction/buttons/avatars/reaction-button-avatars.svelte';
+  import ReactionButtonSlack from '$lib/registry/components/reaction/buttons/slack/reaction-button-slack.svelte';
+  import { EmojiPicker } from '$lib/registry/components/emoji-picker';
 
   // Import registry metadata
   import reactionButtonCard from '$lib/registry/components/reaction/buttons/basic/registry.json';
-  import reactionLongpressCard from '$lib/registry/components/reaction/buttons/longpress/registry.json';
+  import reactionButtonAvatarsCard from '$lib/registry/components/reaction/buttons/avatars/registry.json';
+  import reactionDisplaySlackCard from '$lib/registry/components/reaction/buttons/slack/registry.json';
 
   // Page metadata
   const metadata = {
-    title: 'Reaction Buttons',
-    description: 'Interactive reaction buttons with emoji picker and delayed reactions'
+    title: 'Reactions',
+    description: 'Interactive reaction buttons and displays with emoji picker, avatars, and Slack-style layouts'
   };
-
-  // Extract cards from registry
-  const reactionBasicCard = reactionLongpressCard.cards[0];
-  const reactionDelayedCard = reactionLongpressCard.cards[1];
-  const reactionBuilderCard = reactionLongpressCard.cards[2];
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleEvent = $state<NDKEvent | undefined>();
+  let slackVariant = $state<'horizontal' | 'vertical'>('horizontal');
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -50,21 +52,50 @@
   {/if}
 {/snippet}
 
-{#snippet reactionBasicPreview()}
+{#snippet avatarsPreview()}
   {#if sampleEvent}
     <div class="flex gap-4 items-center flex-wrap">
-      <ReactionLongpress {ndk} event={sampleEvent} />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="ghost" />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="outline" />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="pill" />
+      <ReactionButtonAvatars {ndk} event={sampleEvent} variant="solid" />
     </div>
   {/if}
 {/snippet}
 
-{#snippet reactionDelayedPreview()}
+{#snippet slackPreview()}
   {#if sampleEvent}
-    <div class="flex gap-4 items-center flex-wrap">
-      <ReactionLongpress {ndk} event={sampleEvent} delayed={5} />
-      <p class="text-sm text-muted-foreground mt-2">Reactions are delayed 5 seconds. Click again to cancel.</p>
-    </div>
+    <ReactionButtonSlack {ndk} event={sampleEvent} variant={slackVariant} />
   {/if}
+{/snippet}
+
+{#snippet slackHorizontalPreview()}
+  {#if sampleEvent}
+    <ReactionButtonSlack {ndk} event={sampleEvent} variant="horizontal" />
+  {/if}
+{/snippet}
+
+{#snippet slackVerticalPreview()}
+  {#if sampleEvent}
+    <ReactionButtonSlack {ndk} event={sampleEvent} variant="vertical" />
+  {/if}
+{/snippet}
+
+{#snippet slackControl()}
+  <div class="flex flex-col gap-2">
+    <button
+      onclick={() => slackVariant = 'horizontal'}
+      class="px-4 py-2 rounded-md text-sm transition-colors {slackVariant === 'horizontal' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+    >
+      Horizontal
+    </button>
+    <button
+      onclick={() => slackVariant = 'vertical'}
+      class="px-4 py-2 rounded-md text-sm transition-colors {slackVariant === 'vertical' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
+    >
+      Vertical
+    </button>
+  </div>
 {/snippet}
 
 <!-- Components snippet -->
@@ -75,22 +106,53 @@
     {/snippet}
   </ComponentCard>
 
-  <ComponentCard data={{...reactionBasicCard, code: reactionBasicCode}}>
+  <ComponentCard data={{...reactionButtonAvatarsCard, code: reactionButtonAvatarsCode}}>
     {#snippet preview()}
-      {@render reactionBasicPreview()}
+      {@render avatarsPreview()}
     {/snippet}
   </ComponentCard>
 
-  <ComponentCard data={{...reactionDelayedCard, code: reactionDelayedCode}}>
+  <ComponentCard data={{...reactionDisplaySlackCard, code: reactionSlackHorizontalCode, title: "Slack-style (Horizontal)"}}>
     {#snippet preview()}
-      {@render reactionDelayedPreview()}
+      {@render slackHorizontalPreview()}
     {/snippet}
   </ComponentCard>
 
-  <ComponentCard data={{...reactionBuilderCard, code: reactionBuilderCode}}>
+  <ComponentCard data={{...reactionDisplaySlackCard, code: reactionSlackVerticalCode, title: "Slack-style (Vertical)"}}>
     {#snippet preview()}
-      {#if sampleEvent}
-        {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
+      {@render slackVerticalPreview()}
+    {/snippet}
+  </ComponentCard>
+{/snippet}
+
+<!-- Recipes snippet -->
+{#snippet recipes()}
+  {#if sampleEvent}
+    {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
+
+    <Preview title="Emoji Picker Dropdown" code={dropdownHoverCode}>
+      <EmojiPicker.Dropdown
+        {ndk}
+        onEmojiSelect={(emoji) => reactionState.react(emoji)}
+      >
+        <ReactionButton {ndk} event={sampleEvent} variant="ghost" />
+      </EmojiPicker.Dropdown>
+    </Preview>
+  {/if}
+{/snippet}
+
+<!-- Primitives snippet -->
+{#snippet primitives()}
+  <SectionTitle
+    title="Builder Pattern"
+    description="The reaction component uses the createReactionAction builder from @nostr-dev-kit/svelte. This builder provides reactive state management for reactions, making it easy to build custom reaction interfaces."
+  />
+
+  <div class="py-12 space-y-8">
+    {#if sampleEvent}
+      {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
+
+      <Preview title="Building from Scratch" code={reactionBuilderCode}>
         {@const totalCount = reactionState.all.reduce((sum, r) => sum + r.count, 0)}
         <button
           onclick={() => reactionState.react('❤️')}
@@ -101,9 +163,22 @@
             <span>{totalCount}</span>
           {/if}
         </button>
-      {/if}
-    {/snippet}
-  </ComponentCard>
+      </Preview>
+
+      <div class="prose prose-sm max-w-none">
+        <p class="text-muted-foreground">
+          The <code>createReactionAction</code> builder returns a reactive state object that:
+        </p>
+        <ul class="text-muted-foreground space-y-2">
+          <li>Tracks all reactions on the event</li>
+          <li>Provides <code>react(emoji)</code> method to add/remove reactions</li>
+          <li>Exposes <code>totalCount</code> for the total number of reactions</li>
+          <li>Offers <code>get(emoji)</code> to get stats for a specific emoji</li>
+          <li>Includes <code>reactions</code> map of all emoji reactions</li>
+        </ul>
+      </div>
+    {/if}
+  </div>
 {/snippet}
 
 <!-- Use the template -->
@@ -118,59 +193,24 @@
       orientation: 'horizontal'
     },
     {
-      id: "reactionBasic",
-      cardData: reactionBasicCard,
-      preview: reactionBasicPreview,
+      id: "reactionButtonAvatars",
+      cardData: reactionButtonAvatarsCard,
+      preview: avatarsPreview,
       orientation: 'horizontal'
     },
     {
-      id: "reactionDelayed",
-      cardData: reactionDelayedCard,
-      preview: reactionDelayedPreview,
-      orientation: 'horizontal'
+      id: "slackReactions",
+      cardData: { ...reactionDisplaySlackCard, title: "Slack-style Reactions" },
+      preview: slackPreview,
+      orientation: slackVariant,
+      control: slackControl
     }
   ]}
   {components}
+  {recipes}
+  {primitives}
   apiDocs={reactionButtonCard.apiDocs}
 >
-  {#snippet customSections()}
-    <SectionTitle
-      title="Builder Pattern"
-      description="The reaction component uses the createReactionAction builder from @nostr-dev-kit/svelte. This builder provides reactive state management for reactions, making it easy to build custom reaction interfaces."
-    />
-
-    <div class="py-12 space-y-8">
-      {#if sampleEvent}
-        {@const reactionState = createReactionAction(() => ({ event: sampleEvent }), ndk)}
-
-        <Preview title="Building from Scratch" code={reactionBuilderCode}>
-          {@const totalCount = reactionState.all.reduce((sum, r) => sum + r.count, 0)}
-          <button
-            onclick={() => reactionState.react('❤️')}
-            class="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
-          >
-            <span>❤️</span>
-            {#if totalCount > 0}
-              <span>{totalCount}</span>
-            {/if}
-          </button>
-        </Preview>
-
-        <div class="prose prose-sm max-w-none">
-          <p class="text-muted-foreground">
-            The <code>createReactionAction</code> builder returns a reactive state object that:
-          </p>
-          <ul class="text-muted-foreground space-y-2">
-            <li>Tracks all reactions on the event</li>
-            <li>Provides <code>react(emoji)</code> method to add/remove reactions</li>
-            <li>Exposes <code>totalCount</code> for the total number of reactions</li>
-            <li>Offers <code>get(emoji)</code> to get stats for a specific emoji</li>
-            <li>Includes <code>reactions</code> map of all emoji reactions</li>
-          </ul>
-        </div>
-      {/if}
-    </div>
-  {/snippet}
 
   <EditProps.Prop
     name="Sample Event"

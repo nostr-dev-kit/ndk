@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '../../../event/cards/compound/index.js';
-	import { ReactionAction } from '../../../reaction/index.js';
+	import ReactionButton from '../../../reaction/buttons/basic/reaction-button.svelte';
 	import { ImageContent } from '../../content/basic/index.js';
 	import RepostButton from '../../../repost/buttons/basic/repost-button.svelte';
 	import { cn } from '../../../../utils/cn';
@@ -69,7 +69,7 @@
 		<div class="px-4 pb-4 pt-2">
 			<EventCard.Actions>
 				<RepostButton {ndk} event={image} />
-				<ReactionAction />
+				<ReactionButton {ndk} event={image} />
 			</EventCard.Actions>
 		</div>
 	{/if}

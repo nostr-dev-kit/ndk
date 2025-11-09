@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
+  import ReplyButton from '$lib/registry/components/reply-button/reply-button.svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

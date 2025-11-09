@@ -16,9 +16,9 @@
   import DetailedExampleRaw from './examples/detailed/index.txt?raw';
 
   // Import registry metadata
-  import negentropySyncProgressMinimalCard from '$lib/registry/components/negentropy-sync/progress/minimal/metadata.json';
-  import negentropySyncProgressDetailedCard from '$lib/registry/components/negentropy-sync/progress/detailed/metadata.json';
-  import negentropySyncProgressAnimatedCard from '$lib/registry/components/negentropy-sync/progress/animated/metadata.json';
+  import negentropySyncProgressMinimalCard from '$lib/registry/components/negentropy-sync-minimal/metadata.json';
+  import negentropySyncProgressDetailedCard from '$lib/registry/components/negentropy-sync-detailed/metadata.json';
+  import negentropySyncProgressAnimatedCard from '$lib/registry/components/negentropy-sync-animated/metadata.json';
 
   import type { NDKFilter } from '@nostr-dev-kit/ndk';
 

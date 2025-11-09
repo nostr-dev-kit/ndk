@@ -11,10 +11,10 @@
   import relayInputDisabledCode from './examples/disabled/index.txt?raw';
 
   // Import component
-  import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
+  import RelayInputBlock from '$lib/registry/components/relay-input/relay-input.svelte';
 
   // Import registry metadata
-  import relayInputCard from '$lib/registry/components/relay/inputs/basic/metadata.json';
+  import relayInputCard from '$lib/registry/components/relay-input/metadata.json';
 
   // Page metadata
   const metadata = {

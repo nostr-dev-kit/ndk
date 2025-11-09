@@ -10,12 +10,12 @@
   import mediaUploadCarouselCode from './examples/carousel/index.txt?raw';
 
   // Import components
-  import UploadButton from '$lib/registry/components/media/upload/button/upload-button.svelte';
-  import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
+  import UploadButton from '$lib/registry/components/media-upload-button/upload-button.svelte';
+  import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
 
   // Import registry metadata
-  import uploadButtonCard from '$lib/registry/components/media/upload/button/metadata.json';
-  import mediaUploadCarouselCard from '$lib/registry/components/media/upload/carousel/metadata.json';
+  import uploadButtonCard from '$lib/registry/components/media-upload-button/metadata.json';
+  import mediaUploadCarouselCard from '$lib/registry/components/media-upload-carousel/metadata.json';
 
   // Page metadata
   const metadata = {

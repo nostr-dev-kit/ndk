@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import UserCardCompact from '$lib/registry/components/user/cards/compact/user-card-compact.svelte';
+  import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

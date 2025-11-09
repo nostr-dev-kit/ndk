@@ -3,7 +3,7 @@
   import { ndk } from '$lib/site/ndk.svelte';
   import { themeManager } from '$lib/site/theme.svelte';
   import { User } from '$lib/registry/ui/user';
-  import { UserProfile } from '$lib/registry/components/user/displays/profile';
+  import { UserProfile } from '$lib/registry/components/user-profile';
   import { sidebar } from '$lib/site/stores/sidebar.svelte';
   import { mainNav } from '$lib/site/navigation';
   import { cn } from '$lib/registry/utils/cn.js';

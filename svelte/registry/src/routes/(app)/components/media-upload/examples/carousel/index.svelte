@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
+  import MediaUploadCarousel from '$lib/registry/components/media-upload-carousel/media-upload-carousel.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

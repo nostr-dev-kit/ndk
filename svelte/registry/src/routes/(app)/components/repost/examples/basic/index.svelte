@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import RepostButton from '$lib/registry/components/repost/buttons/basic/repost-button.svelte';
+  import RepostButton from '$lib/registry/components/repost-button/repost-button.svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

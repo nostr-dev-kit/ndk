@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import ZapButton from '$lib/registry/components/zap/buttons/basic/zap-button.svelte';
+  import ZapButton from '$lib/registry/components/zap-button/zap-button.svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

@@ -16,7 +16,7 @@
 		component={{
 			name: 'HashtagModern',
 			description: 'Modern inline hashtag with stats card popover on hover',
-			importPath: "import HashtagModern from '$lib/registry/components/hashtag/displays/modern/hashtag-modern.svelte'",
+			importPath: "import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'tag', type: 'string', required: true, description: 'Hashtag text (with or without # prefix)' },

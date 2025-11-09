@@ -12,14 +12,14 @@
   import reactionSlackVerticalCode from './examples/slack-vertical/index.txt?raw';
 
   // Import components
-  import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
-  import ReactionButtonAvatars from '$lib/registry/components/reaction/buttons/avatars/reaction-button-avatars.svelte';
-  import ReactionButtonSlack from '$lib/registry/components/reaction/buttons/slack/reaction-button-slack.svelte';
+  import ReactionButton from '$lib/registry/components/reaction-button/reaction-button.svelte';
+  import ReactionButtonAvatars from '$lib/registry/components/reaction-button-avatars/reaction-button-avatars.svelte';
+  import ReactionButtonSlack from '$lib/registry/components/reaction-button-slack/reaction-button-slack.svelte';
 
   // Import registry metadata
-  import reactionButtonCard from '$lib/registry/components/reaction/buttons/basic/metadata.json';
-  import reactionButtonAvatarsCard from '$lib/registry/components/reaction/buttons/avatars/metadata.json';
-  import reactionDisplaySlackCard from '$lib/registry/components/reaction/buttons/slack/metadata.json';
+  import reactionButtonCard from '$lib/registry/components/reaction-button/metadata.json';
+  import reactionButtonAvatarsCard from '$lib/registry/components/reaction-button-avatars/metadata.json';
+  import reactionDisplaySlackCard from '$lib/registry/components/reaction-button-slack/metadata.json';
   import reactionActionBuilder from '$lib/registry/builders/reaction-action/metadata.json';
 
   // Page metadata

@@ -1,0 +1,29 @@
+{
+  "name": "resolveNDK",
+  "title": "Resolve NDK Utility",
+  "oneLiner": "Helper function to resolve NDK instance from explicit parameter or Svelte context",
+  "description": "A utility function used internally by all builders to resolve the NDK instance. It provides flexible NDK resolution by checking two sources in priority order:\n\n1. Explicit NDK parameter (if provided) - useful for testing or using custom NDK instances\n2. Svelte context (if available) - the standard approach for most apps\n\nIf neither source provides an NDK instance, it throws a helpful error message explaining the two ways to provide NDK.\n\nThis utility enables the ergonomic builder API where NDK can be omitted if set in context, while still allowing explicit override when needed. Most applications set NDK in their root layout using `setContext('ndk', ndk)` and builders automatically pick it up.",
+  "importPath": "import { resolveNDK } from '$lib/registry/builders/resolve-ndk';",
+  "command": "npx jsrepo add builders/resolve-ndk",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "svelte"
+  ],
+  "nips": [],
+  "parameters": [
+    {
+      "name": "providedNDK",
+      "type": "NDKSvelte | undefined",
+      "description": "Optional explicit NDK instance to use instead of context",
+      "required": false
+    }
+  ],
+  "returns": [
+    {
+      "name": "ndk",
+      "type": "NDKSvelte",
+      "description": "Resolved NDK instance from parameter or context"
+    }
+  ],
+  "usageExample": "import { resolveNDK } from '$lib/registry/builders/resolve-ndk';\n\n// In your builder\nexport function createMyBuilder(config: () => Config, ndk?: NDKSvelte) {\n  const resolvedNDK = resolveNDK(ndk);\n  // Now use resolvedNDK...\n}\n\n// Usage 1: NDK from context (most common)\nconst builder = createMyBuilder(() => ({ ... }));\n\n// Usage 2: Explicit NDK (testing, custom instances)\nconst builder = createMyBuilder(() => ({ ... }), customNDK);"
+}

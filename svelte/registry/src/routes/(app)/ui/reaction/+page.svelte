@@ -55,7 +55,6 @@
   {#snippet topExample()}
     <Preview
       title="Basic Usage"
-      description="Display standard Unicode emojis with customizable sizes."
       code={BasicRaw}
     >
       <Basic />
@@ -105,7 +104,6 @@
       </p>
       <Preview
         title="Custom Emojis (NIP-30)"
-        description="Display custom emoji images using NIP-30 format with URLs and shortcodes."
         code={CustomEmojiRaw}
       >
         <CustomEmoji />

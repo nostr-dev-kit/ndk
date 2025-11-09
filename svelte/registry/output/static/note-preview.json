@@ -1,1 +1,0 @@
-{"name":"note-preview","type":"registry:component","title":"Note Preview","description":"Preview card for notes","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"event/cards/preview/note-preview/note-preview.svelte"}],"version":"0.7.0","updatedAt":"2025-10-30T07:19:17.000Z"}

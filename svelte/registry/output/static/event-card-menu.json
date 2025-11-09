@@ -1,1 +1,0 @@
-{"name":"event-card-menu","type":"registry:component","title":"Event Card Menu","description":"Block component - event card menu","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"blocks/event-card-menu.svelte"}],"version":"0.2.0","updatedAt":"2025-10-31T07:15:56.000Z"}

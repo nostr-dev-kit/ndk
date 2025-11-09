@@ -183,7 +183,6 @@
       </p>
       <Preview
         title="Carousel Display"
-        description="Display uploaded media in a navigable carousel."
         code={CarouselRaw}
       >
         <Carousel />

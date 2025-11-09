@@ -6,7 +6,6 @@
   import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
   import SectionTitle from '$site-components/SectionTitle.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
-  import ComponentAPI from '$site-components/component-api.svelte';
   import type { ComponentPageTemplateProps } from './types';
 
   let {
@@ -17,11 +16,10 @@
     componentsTitle,
     componentsDescription,
     componentsSection,
-    apiDocs = [],
     beforeShowcase,
-    afterShowcase,
-    beforeComponents,
     afterComponents,
+    recipes,
+    primitives,
     customSections,
     showcaseControls,
     emptyState,
@@ -60,16 +58,6 @@
   {@render emptyState()}
 {/if}
 
-<!-- After Showcase Extension Point -->
-{#if afterShowcase}
-  {@render afterShowcase()}
-{/if}
-
-<!-- Before Components Extension Point -->
-{#if beforeComponents}
-  {@render beforeComponents()}
-{/if}
-
 <!-- Components Section (new simplified pattern) -->
 {#if components}
   <SectionTitle
@@ -84,7 +72,7 @@
   <!-- Components Section (old pattern - backward compatibility) -->
   <SectionTitle
     title={componentsSection.title || 'Components'}
-    description={componentsSection.description || 'Explore each variant in detail'}
+    description={componentsSection.description || 'Explore all components in detail'}
   />
 
   <section class="py-12 space-y-16">
@@ -109,7 +97,24 @@
   {@render afterComponents()}
 {/if}
 
-<!-- Custom Sections (Anatomy, Primitives, etc.) -->
+<!-- Recipes Section -->
+{#if recipes}
+  <SectionTitle
+    title="Recipes"
+    description="Common patterns and combinations using these components"
+  />
+
+  <section class="py-12 space-y-8">
+    {@render recipes()}
+  </section>
+{/if}
+
+<!-- Primitives Section -->
+{#if primitives}
+  {@render primitives()}
+{/if}
+
+<!-- Custom Sections (Anatomy, etc.) -->
 {#if customSections}
   {@render customSections()}
 {/if}

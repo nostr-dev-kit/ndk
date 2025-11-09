@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { NDKUser } from '@nostr-dev-kit/ndk';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -15,9 +16,15 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Mock data for anatomy visualization
+  const mockUser1 = new NDKUser({ npub: 'npub1mock1...' });
+  mockUser1.profile = { name: 'Alice', nip05: 'alice@example.com' };
+
+  const mockUser2 = new NDKUser({ npub: 'npub1mock2...' });
+  mockUser2.profile = { name: 'Bob', nip05: 'bob@nostr.com' };
+
   const mockResults = [
-    { user: { npub: 'npub1...', profile: { name: 'Alice', nip05: 'alice@example.com' } }, matchType: 'name' },
-    { user: { npub: 'npub2...', profile: { name: 'Bob', nip05: 'bob@nostr.com' } }, matchType: 'name' }
+    { user: mockUser1 },
+    { user: mockUser2 }
   ];
 
   // Page metadata
@@ -154,7 +161,7 @@
                 <ComponentAnatomy.Layer id="item" label="UserInput.Item">
                   <UserInput.Item {result} class="p-3 hover:bg-muted cursor-pointer">
                     <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-full bg-muted" />
+                      <div class="w-8 h-8 rounded-full bg-muted"></div>
                       <div class="flex-1">
                         <div class="font-medium">{result.user.profile?.name}</div>
                         <div class="text-xs text-muted-foreground">{result.user.profile?.nip05}</div>
@@ -179,7 +186,6 @@
       </p>
       <Preview
         title="Custom Result Items"
-        description="Customize result item rendering using the resultItem snippet with User primitives."
         code={CustomItemRaw}
       >
         <CustomItem />

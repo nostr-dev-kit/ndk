@@ -147,7 +147,7 @@
 			>
 				<div
 					class={cn(
-						"lg:col-span-2 p-10 lg:p-12 lg:border-r text-right sticky top-20 border-border flex flex-col justify-between gap-6",
+						"lg:col-span-2 p-8 text-right sticky top-20 border-border flex flex-col justify-between gap-6",
 					)}
 				>
 					<div>
@@ -157,24 +157,24 @@
 						</p>
 					</div>
 					{#if component.control}
-						<div>
+						<div onclick={(e) => e.stopPropagation()}>
 							{@render component.control()}
 						</div>
 					{/if}
 				</div>
-				<div class="lg:col-span-5 relative">
+				<div class="lg:col-span-5 relative flex items-center">
 					<div
 						bind:this={previewRefs[index]}
 						class={cn(
 							"scroll-smooth scrollbar-hide",
 							component.orientation === 'horizontal'
-								? "overflow-x-auto pl-10 lg:pl-12 !pr-0 py-10 lg:py-12"
-								: "overflow-y-auto px-10 lg:px-12"
+								? "overflow-x-auto pl-8 !pr-0 py-8"
+								: "overflow-y-auto px-8"
 						)}
 					>
 						<div
 							class={cn(
-								component.orientation === 'horizontal' ? "px-10" : "py-10"
+								component.orientation === 'horizontal' ? "px-8" : "py-8"
 							)}
 							onclick={(e) => e.stopPropagation()}
 						>
@@ -213,7 +213,7 @@
 					</Dialog.Close>
 				</div>
 
-				<div class="p-12">
+				<div class="p-8">
 					<ComponentCard
 						data={selectedComponent?.cardData ?? null}
 						preview={selectedComponent?.preview}

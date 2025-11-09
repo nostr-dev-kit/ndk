@@ -1,0 +1,12 @@
+<script lang="ts">
+  import ReactionButtonAvatars from '$lib/registry/components/reaction/buttons/avatars/reaction-button-avatars.svelte';
+
+  let { ndk, event } = $props();
+</script>
+
+<div class="flex gap-4 items-center flex-wrap">
+  <ReactionButtonAvatars {ndk} {event} variant="ghost" />
+  <ReactionButtonAvatars {ndk} {event} variant="outline" />
+  <ReactionButtonAvatars {ndk} {event} variant="pill" />
+  <ReactionButtonAvatars {ndk} {event} variant="solid" />
+</div>

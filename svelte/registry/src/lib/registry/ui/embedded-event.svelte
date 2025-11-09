@@ -24,7 +24,7 @@
 	const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
 
 	// Set renderer in context so nested components can access it
-	setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
+	setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return renderer } });
 
 	// Fetch event from bech32
 	let event = $state<NDKEvent | undefined>(undefined);

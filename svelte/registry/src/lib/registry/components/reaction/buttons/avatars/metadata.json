@@ -1,0 +1,92 @@
+{
+  "name": "reaction-avatars",
+  "title": "Reaction Button with Avatars",
+  "category": "reaction",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "description": "A reaction button showing avatars of users who reacted",
+  "command": "npx jsrepo add reaction/buttons/avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "social-interactions",
+    "engagement",
+    "feedback"
+  ],
+  "showcaseTitle": "Reaction Button with Avatars",
+  "showcaseDescription": "Shows avatars of users who reacted. Perfect for social engagement visualization.",
+  "apiDocs": [
+    {
+      "name": "ReactionButtonAvatars",
+      "description": "Reaction button displaying avatars of reactors",
+      "importPath": "import { ReactionButtonAvatars } from '$lib/registry/components/reaction/buttons/avatars'",
+      "props": [
+        {
+          "name": "ndk",
+          "type": "NDKSvelte",
+          "description": "NDK instance (optional if available in context)"
+        },
+        {
+          "name": "event",
+          "type": "NDKEvent",
+          "required": true,
+          "description": "Event to show reactions for"
+        },
+        {
+          "name": "variant",
+          "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+          "default": "'ghost'",
+          "description": "Visual variant of the button"
+        },
+        {
+          "name": "emoji",
+          "type": "string",
+          "default": "'❤️'",
+          "description": "Emoji to filter reactions by"
+        },
+        {
+          "name": "max",
+          "type": "number",
+          "default": "3",
+          "description": "Maximum number of avatars to display"
+        },
+        {
+          "name": "avatarSize",
+          "type": "number",
+          "default": "24",
+          "description": "Size of each avatar in pixels"
+        },
+        {
+          "name": "spacing",
+          "type": "'tight' | 'normal' | 'loose'",
+          "default": "'tight'",
+          "description": "Spacing between avatars"
+        },
+        {
+          "name": "showCount",
+          "type": "boolean",
+          "default": "true",
+          "description": "Whether to show total reaction count"
+        },
+        {
+          "name": "countMode",
+          "type": "'total' | 'emoji'",
+          "default": "'total'",
+          "description": "Whether to show total count of all reactions or just count for the specific emoji"
+        },
+        {
+          "name": "onclick",
+          "type": "() => void",
+          "description": "Optional click handler"
+        },
+        {
+          "name": "class",
+          "type": "string",
+          "description": "Additional CSS classes"
+        }
+      ]
+    }
+  ]
+}

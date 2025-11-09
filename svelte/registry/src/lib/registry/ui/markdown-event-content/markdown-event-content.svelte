@@ -32,7 +32,7 @@
   const renderer = $derived(providedRenderer ?? rendererContext?.renderer ?? defaultContentRenderer);
 
   // Set renderer in context so nested components can access it
-  setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return renderer } });
 
   let contentElement: HTMLDivElement;
   let mountedComponents: Array<{ target: Element; unmount: () => void }> = [];

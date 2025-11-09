@@ -1,7 +1,0 @@
-<script lang="ts">
-  import { ReactionLongpress } from '$lib/registry/components/reaction';
-
-  let { ndk, event } = $props();
-</script>
-
-<ReactionLongpress {ndk} {event} />

@@ -107,7 +107,6 @@
       </p>
       <Preview
         title="With Click Handler"
-        description="Navigate to the parent event when clicked."
         code={WithClickRaw}
       >
         <WithClick {ndk} />

@@ -1,1 +1,0 @@
-{"name":"relay-pool-tabs","type":"registry:component","title":"Relay Pool Tabs","description":"Tabbed interface for relay pool management","registryDependencies":[],"dependencies":["@nostr-dev-kit/ndk","@nostr-dev-kit/svelte"],"files":[{"content":"","type":"registry:ui","target":"relay-pool-tabs/relay-pool-tabs.svelte"}],"version":"0.5.0","updatedAt":"2025-10-30T07:19:17.000Z"}

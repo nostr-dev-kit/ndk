@@ -18,7 +18,8 @@
   const mockZap = {
     amount: 1000,
     comment: 'Great post!',
-    sender: { pubkey: 'mock' }
+    sender: { pubkey: 'mock' },
+    recipient: { pubkey: 'recipient-mock' }
   };
 
   // Page metadata
@@ -73,7 +74,6 @@
   {#snippet topExample()}
     <Preview
       title="Basic Display"
-      description="Display zap amounts and comments using the primitive components."
       code={BasicRaw}
     >
       <Basic />
@@ -130,7 +130,6 @@
       </p>
       <Preview
         title="Styled Cards"
-        description="Build custom zap cards with your own styling."
         code={StyledRaw}
       >
         <Styled />

@@ -186,7 +186,6 @@
       </p>
       <Preview
         title="Custom Renderer"
-        description="Customize inline element rendering."
         code={CustomRendererRaw}
       >
         <CustomRenderer />
@@ -201,7 +200,6 @@
       </p>
       <Preview
         title="Carousel Media"
-        description="Display media in a carousel layout."
         code={CustomRendererCarouselRaw}
       >
         <CustomRendererCarousel />
@@ -215,7 +213,6 @@
       </p>
       <Preview
         title="Bento Grid"
-        description="Display media in a dynamic grid layout."
         code={CustomRendererBentoRaw}
       >
         <CustomRendererBento />
@@ -230,7 +227,6 @@
       </p>
       <Preview
         title="Link Preview"
-        description="Show previews on hover."
         code={CustomRendererLinkPreviewRaw}
       >
         <CustomRendererLinkPreview />
@@ -244,7 +240,6 @@
       </p>
       <Preview
         title="Embedded Link Preview"
-        description="Auto-fetch and display link metadata."
         code={CustomRendererLinkEmbedRaw}
       >
         <CustomRendererLinkEmbed />
@@ -258,7 +253,6 @@
       </p>
       <Preview
         title="Display Variants"
-        description="Different ways to display embedded events."
         code={VariantsRaw}
       >
         <Variants {ndk} eventBech32="nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j" />

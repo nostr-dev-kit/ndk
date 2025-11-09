@@ -5,206 +5,106 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-  import PageTitle from '$lib/site/components/PageTitle.svelte';
-  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import followButtonCode from './examples/basic/index.txt?raw';
-  import followButtonPillCode from './examples/pill/index.txt?raw';
-  import followButtonAnimatedCode from './examples/animated/index.txt?raw';
 
-  // Import block components
+  // Import components
   import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
-  import FollowButtonPill from '$lib/registry/components/follow/buttons/pill/follow-button-pill.svelte';
-  import FollowButtonAnimated from '$lib/registry/components/follow/buttons/animated/follow-button-animated.svelte';
 
-  // Import component metadata from registry
-  import followButtonMinimalCard from '$lib/registry/components/follow/buttons/basic/registry.json';
-  import followButtonPillCard from '$lib/registry/components/follow/buttons/pill/registry.json';
-  import followButtonAnimatedCard from '$lib/registry/components/follow/buttons/animated/registry.json';
+  // Import registry metadata
+  import followButtonCard from '$lib/registry/components/follow/buttons/basic/registry.json';
 
   // Page metadata
   const metadata = {
-    title: 'Follow Buttons',
-    description: 'Interactive follow buttons with multiple variants and styles for users and topics'
+    title: 'Follow',
+    description: 'Follow buttons for Nostr users and topics'
   };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let sampleUser = $state<NDKUser | undefined>();
 
-  // Showcase blocks
-  const showcaseComponents: ShowcaseComponent[] = [
-    {
-      id: 'follow-button-minimal',
-      cardData: followButtonMinimalCard,
-      preview: minimalPreview
-    },
-    {
-      id: 'follow-button-minimal-icon-only',
-      cardData: followButtonMinimalCard,
-      preview: minimalIconOnlyPreview
-    },
-    {
-      id: 'follow-button-pill-solid',
-      cardData: followButtonPillCard,
-      preview: pillSolidPreview
-    },
-    {
-      id: 'follow-button-pill-outline',
-      cardData: followButtonPillCard,
-      preview: pillOutlinePreview
-    },
-    {
-      id: 'follow-button-pill-compact',
-      cardData: followButtonPillCard,
-      preview: pillCompactPreview
-    },
-    {
-      id: 'follow-button-animated',
-      cardData: followButtonAnimatedCard,
-      preview: animatedPreview
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...followButtonCard, code: followButtonCode}
+    ],
+    previews: {
+      'follow-button': followButtonComponentPreview
     }
-  ];
-
+  };
 </script>
 
 <!-- Preview snippets for showcase -->
-{#snippet minimalPreview()}
+{#snippet followButtonGhostPreview()}
   {#if sampleUser}
-    <FollowButton {ndk} target={sampleUser} showTarget={true} />
+    <div class="flex flex-col gap-4 items-center">
+      <FollowButton {ndk} target={sampleUser} variant="ghost" />
+      <FollowButton {ndk} target={sampleUser} variant="ghost" showTarget={true} />
+    </div>
   {/if}
 {/snippet}
 
-{#snippet minimalIconOnlyPreview()}
+{#snippet followButtonOutlinePreview()}
   {#if sampleUser}
-    <FollowButton {ndk} target={sampleUser} />
+    <div class="flex flex-col gap-4 items-center">
+      <FollowButton {ndk} target={sampleUser} variant="outline" />
+      <FollowButton {ndk} target={sampleUser} variant="outline" showTarget={true} />
+    </div>
   {/if}
 {/snippet}
 
-{#snippet pillSolidPreview()}
+{#snippet followButtonPillPreview()}
   {#if sampleUser}
-    <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
+    <div class="flex flex-col gap-4 items-center">
+      <FollowButton {ndk} target={sampleUser} variant="pill" />
+      <FollowButton {ndk} target={sampleUser} variant="pill" showTarget={true} />
+    </div>
   {/if}
 {/snippet}
 
-{#snippet pillOutlinePreview()}
+{#snippet followButtonSolidPreview()}
   {#if sampleUser}
-    <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
+    <div class="flex flex-col gap-4 items-center">
+      <FollowButton {ndk} target={sampleUser} variant="solid" />
+      <FollowButton {ndk} target={sampleUser} variant="solid" showTarget={true} />
+    </div>
   {/if}
 {/snippet}
 
-{#snippet pillCompactPreview()}
+{#snippet followButtonHashtagPreview()}
+  <div class="flex flex-wrap gap-4 items-center justify-center">
+    <FollowButton {ndk} target="#nostr" variant="ghost" showTarget={true} />
+    <FollowButton {ndk} target="#bitcoin" variant="outline" showTarget={true} />
+    <FollowButton {ndk} target="#photography" variant="pill" showTarget={true} />
+    <FollowButton {ndk} target="#technology" variant="solid" showTarget={true} />
+  </div>
+{/snippet}
+
+{#snippet followButtonComponentPreview()}
   {#if sampleUser}
-    <FollowButtonPill {ndk} target={sampleUser} compact />
+    <div class="flex flex-col gap-4">
+      <div class="flex gap-4 items-center flex-wrap">
+        <FollowButton {ndk} target={sampleUser} variant="ghost" />
+        <FollowButton {ndk} target={sampleUser} variant="outline" />
+        <FollowButton {ndk} target={sampleUser} variant="pill" />
+        <FollowButton {ndk} target={sampleUser} variant="solid" />
+      </div>
+      <div class="flex gap-4 items-center flex-wrap">
+        <FollowButton {ndk} target={sampleUser} variant="ghost" showTarget={true} />
+        <FollowButton {ndk} target={sampleUser} variant="outline" showTarget={true} />
+        <FollowButton {ndk} target={sampleUser} variant="pill" showTarget={true} />
+        <FollowButton {ndk} target={sampleUser} variant="solid" showTarget={true} />
+      </div>
+    </div>
   {/if}
 {/snippet}
 
-{#snippet animatedPreview()}
-  {#if sampleUser}
-    <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
-  {/if}
-{/snippet}
-
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...followButtonMinimalCard, code: followButtonCode}}>
-    {#snippet preview()}
-      {#if sampleUser}
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-muted-foreground w-24">Default:</span>
-            <FollowButton {ndk} target={sampleUser} />
-          </div>
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-muted-foreground w-24">With User:</span>
-            <FollowButton {ndk} target={sampleUser} showTarget={true} />
-          </div>
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-muted-foreground w-24">With Hashtag:</span>
-            <FollowButton {ndk} target="bitcoin" showTarget={true} />
-          </div>
-        </div>
-      {/if}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...followButtonPillCard, code: followButtonPillCode}}>
-    {#snippet preview()}
-      {#if sampleUser}
-        <div class="flex flex-col gap-6 items-center">
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Default</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} variant="solid" />
-              <FollowButtonPill {ndk} target={sampleUser} variant="outline" />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With User Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} variant="solid" showTarget={true} />
-              <FollowButtonPill {ndk} target={sampleUser} variant="outline" showTarget={true} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target="nostr" variant="solid" showTarget={true} />
-              <FollowButtonPill {ndk} target="bitcoin" variant="outline" showTarget={true} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Compact (Hover to expand)</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} compact />
-              <FollowButtonPill {ndk} target={sampleUser} compact variant="outline" />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Compact + Target (Hover to see name)</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="solid" />
-              <FollowButtonPill {ndk} target={sampleUser} compact showTarget={true} variant="outline" />
-            </div>
-          </div>
-        </div>
-      {/if}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...followButtonAnimatedCard, code: followButtonAnimatedCode}}>
-    {#snippet preview()}
-      {#if sampleUser}
-        <div class="flex flex-col gap-6 items-center">
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">Default</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonAnimated {ndk} target={sampleUser} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With User Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonAnimated {ndk} target={sampleUser} showTarget={true} />
-            </div>
-          </div>
-          <div class="flex flex-col gap-2 items-center">
-            <span class="text-xs text-muted-foreground">With Hashtag Target</span>
-            <div class="flex flex-wrap gap-4 justify-center">
-              <FollowButtonAnimated {ndk} target="nostr" showTarget={true} />
-              <FollowButtonAnimated {ndk} target="bitcoin" showTarget={true} />
-            </div>
-          </div>
-        </div>
-      {/if}
-    {/snippet}
-  </ComponentCard>
-{/snippet}
-
-
-<!-- Custom Builder API section -->
-{#snippet customSections()}
+<!-- Primitives section -->
+{#snippet primitives()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Builder API</h2>
     <p class="text-muted-foreground mb-6">
@@ -245,12 +145,41 @@ await followAction.follow();</code></pre>
   </section>
 {/snippet}
 
+<!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  {showcaseComponents}
-  {components}
-  {customSections}
+  showcaseComponents={[
+    {
+      id: "followButtonGhost",
+      cardData: { ...followButtonCard, title: "Ghost", richDescription: "Minimal ghost style button" },
+      preview: followButtonGhostPreview
+    },
+    {
+      id: "followButtonOutline",
+      cardData: { ...followButtonCard, title: "Outline", richDescription: "Outlined button style" },
+      preview: followButtonOutlinePreview
+    },
+    {
+      id: "followButtonPill",
+      cardData: { ...followButtonCard, title: "Pill", richDescription: "Rounded pill style button" },
+      preview: followButtonPillPreview
+    },
+    {
+      id: "followButtonSolid",
+      cardData: { ...followButtonCard, title: "Solid", richDescription: "Solid filled button" },
+      preview: followButtonSolidPreview
+    },
+    {
+      id: "followButtonHashtag",
+      cardData: { ...followButtonCard, title: "Hashtag Follow", richDescription: "Follow hashtags and topics" },
+      preview: followButtonHashtagPreview,
+      cellClass: "md:col-span-2"
+    }
+  ]}
+  {componentsSection}
+  {primitives}
+  apiDocs={followButtonCard.apiDocs}
 >
   <EditProps.Prop
     name="Sample User"

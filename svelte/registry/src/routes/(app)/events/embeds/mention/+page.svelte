@@ -25,17 +25,6 @@
   let event = $state<NDKEvent | undefined>();
 </script>
 
-<!-- Installable component -->
-{#snippet components()}
-  <ComponentCard data={{...mentionRegistryCard, code: basicCode}}>
-    {#snippet preview()}
-      {#if event}
-        <BasicExample {ndk} {event} />
-      {/if}
-    {/snippet}
-  </ComponentCard>
-{/snippet}
-
 <!-- Snippet for showcase preview -->
 {#snippet basicShowcasePreview()}
   {#if event}
@@ -43,8 +32,8 @@
   {/if}
 {/snippet}
 
-<!-- Custom sections -->
-{#snippet customSections()}
+<!-- Anatomy section -->
+{#snippet anatomy()}
   <section class="mt-16">
     <h2 class="text-3xl font-bold mb-4">Variants</h2>
     <p class="text-muted-foreground mb-6">
@@ -64,28 +53,29 @@
   </section>
 
   <ComponentAPI
-    components={[
-      {
-        name: 'Mention',
-        description: 'Basic inline mention component with automatic profile fetching',
-        importPath: "import Mention from '$lib/registry/components/mention/mention.svelte'",
-        props: [
-          { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
-          { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
-          { name: 'class', type: 'string', description: 'Additional CSS classes' }
-        ]
-      },
-      {
-        name: 'MentionModern',
-        description: 'Modern inline mention with avatar and user card popover on hover (not installable - teaching example)',
-        importPath: "import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte'",
-        props: [
-          { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-          { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
-          { name: 'class', type: 'string', description: 'Additional CSS classes' }
-        ]
-      }
-    ]}
+    component={{
+      name: 'Mention',
+      description: 'Basic inline mention component with automatic profile fetching',
+      importPath: "import Mention from '$lib/registry/components/mention/mention.svelte'",
+      props: [
+        { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
+        { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'MentionModern',
+      description: 'Modern inline mention with avatar and user card popover on hover (not installable - teaching example)',
+      importPath: "import MentionModern from '$lib/registry/components/mention/displays/modern/mention-modern.svelte'",
+      props: [
+        { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+        { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
+        { name: 'class', type: 'string', description: 'Additional CSS classes' }
+      ]
+    }}
   />
 {/snippet}
 
@@ -104,8 +94,7 @@
       orientation: 'vertical'
     }
   ]}
-  {components}
-  {customSections}
+  {anatomy}
 >
   <EditProps.Prop
     name="Event with mentions"

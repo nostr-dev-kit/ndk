@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -18,8 +19,8 @@
   const mockZap = {
     amount: 1000,
     comment: 'Great post!',
-    sender: { pubkey: 'mock' },
-    recipient: { pubkey: 'recipient-mock' }
+    sender: new NDKUser({ pubkey: 'mock' }),
+    recipient: new NDKUser({ pubkey: 'recipient-mock' })
   };
 
   // Page metadata

@@ -34,87 +34,127 @@
         name: 'User.Root',
         title: 'User.Root',
         description: 'Required wrapper that establishes context for all User primitives. Pass either a pubkey string (Root will construct an NDKUser and fetch the profile) or an existing user object. If you already have profile data, pass it via the profile prop to skip fetching. All child primitives automatically access this context to display their fields.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance' },
-          { name: 'user', type: 'NDKUser', default: 'undefined', description: 'NDKUser instance' },
-          { name: 'pubkey', type: 'string', default: 'undefined', description: 'User pubkey (alternative to user prop)' },
-          { name: 'profile', type: 'NDKUserProfile', default: 'undefined', description: 'Pre-loaded profile data (avoids fetch)' },
-          { name: 'onclick', type: '(e: MouseEvent) => void', default: 'undefined', description: 'Click handler for the root element' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'User.Root',
+          description: 'Required wrapper that establishes context for all User primitives. Pass either a pubkey string (Root will construct an NDKUser and fetch the profile) or an existing user object. If you already have profile data, pass it via the profile prop to skip fetching. All child primitives automatically access this context to display their fields.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'required', description: 'NDK instance' },
+            { name: 'user', type: 'NDKUser', default: 'undefined', description: 'NDKUser instance' },
+            { name: 'pubkey', type: 'string', default: 'undefined', description: 'User pubkey (alternative to user prop)' },
+            { name: 'profile', type: 'NDKUserProfile', default: 'undefined', description: 'Pre-loaded profile data (avoids fetch)' },
+            { name: 'onclick', type: '(e: MouseEvent) => void', default: 'undefined', description: 'Click handler for the root element' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'User.Avatar',
         title: 'User.Avatar',
         description: 'Displays profile.picture with a sophisticated fallback: when no image exists, generates a deterministic gradient using deterministicPubkeyGradient() based on the user\'s pubkey. This ensures each user gets a consistent, unique color scheme. Shows the first 2 characters of the pubkey as initials over the gradient. Image loading is progressive—fallback displays immediately while the image loads.',
-        apiDocs: [
-          { name: 'size', type: 'number', default: '48', description: 'Avatar size in pixels' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if profile.picture is missing' },
-          { name: 'alt', type: 'string', default: 'undefined', description: 'Image alt text (defaults to user display name)' }
-        ]
+        apiDocs: [{
+          name: 'User.Avatar',
+          description: 'Displays profile.picture with a sophisticated fallback: when no image exists, generates a deterministic gradient using deterministicPubkeyGradient() based on the user\'s pubkey. This ensures each user gets a consistent, unique color scheme. Shows the first 2 characters of the pubkey as initials over the gradient. Image loading is progressive—fallback displays immediately while the image loads.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'size', type: 'number', default: '48', description: 'Avatar size in pixels' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if profile.picture is missing' },
+            { name: 'alt', type: 'string', default: 'undefined', description: 'Image alt text (defaults to user display name)' }
+          ]
+        }]
       },
       {
         name: 'User.Name',
         title: 'User.Name',
         description: 'Displays the user\'s name with intelligent fallback hierarchy. By default (field="displayName"), cascades through: profile.displayName → profile.name → truncated pubkey. Set field="name" to skip displayName. Set field="both" to show both fields as "DisplayName (@name)". This handles the Nostr reality where users inconsistently use either field.',
-        apiDocs: [
-          { name: 'field', type: "'displayName' | 'name' | 'both'", default: "'displayName'", description: 'Which name field to display. "both" shows "DisplayName (@name)"' },
-          { name: 'size', type: 'string', default: "'text-base'", description: 'Text size CSS classes (e.g., "text-lg", "text-sm")' },
-          { name: 'truncate', type: 'boolean', default: 'true', description: 'Whether to truncate long names with ellipsis' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'User.Name',
+          description: 'Displays the user\'s name with intelligent fallback hierarchy. By default (field="displayName"), cascades through: profile.displayName → profile.name → truncated pubkey. Set field="name" to skip displayName. Set field="both" to show both fields as "DisplayName (@name)". This handles the Nostr reality where users inconsistently use either field.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'field', type: "'displayName' | 'name' | 'both'", default: "'displayName'", description: 'Which name field to display. "both" shows "DisplayName (@name)"' },
+            { name: 'size', type: 'string', default: "'text-base'", description: 'Text size CSS classes (e.g., "text-lg", "text-sm")' },
+            { name: 'truncate', type: 'boolean', default: 'true', description: 'Whether to truncate long names with ellipsis' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'User.Handle',
         title: 'User.Handle',
         description: 'Displays the user\'s handle—their "username" in social media terms. Pulls from profile.name (not displayName) and formats as @name. When name is missing, falls back to showing the first 8 characters of the pubkey. This is distinct from User.Name: Handle is for Twitter-style @usernames, Name is for full display names.',
-        apiDocs: [
-          { name: 'showAt', type: 'boolean', default: 'true', description: 'Whether to show @ prefix before handle' },
-          { name: 'truncate', type: 'boolean', default: 'true', description: 'Whether to truncate long handles with ellipsis' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'User.Handle',
+          description: 'Displays the user\'s handle—their "username" in social media terms. Pulls from profile.name (not displayName) and formats as @name. When name is missing, falls back to showing the first 8 characters of the pubkey. This is distinct from User.Name: Handle is for Twitter-style @usernames, Name is for full display names.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'showAt', type: 'boolean', default: 'true', description: 'Whether to show @ prefix before handle' },
+            { name: 'truncate', type: 'boolean', default: 'true', description: 'Whether to truncate long handles with ellipsis' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'User.Bio',
         title: 'User.Bio',
         description: 'Renders the profile.about field (the user\'s bio/description). Uses CSS line-clamp to limit height while preserving readability. Only renders if the field exists—many users don\'t set bios, so this component handles that gracefully by rendering nothing.',
-        apiDocs: [
-          { name: 'maxLines', type: 'number', default: '3', description: 'Maximum number of lines to show (uses line-clamp CSS)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'User.Bio',
+          description: 'Renders the profile.about field (the user\'s bio/description). Uses CSS line-clamp to limit height while preserving readability. Only renders if the field exists—many users don\'t set bios, so this component handles that gracefully by rendering nothing.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'maxLines', type: 'number', default: '3', description: 'Maximum number of lines to show (uses line-clamp CSS)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'User.Banner',
         title: 'User.Banner',
         description: 'Displays profile.banner (the header/cover image for profiles). When no banner exists, shows a pubkey-derived gradient background using the same deterministic color generation as Avatar. Common use case: hero headers on profile pages.',
-        apiDocs: [
-          { name: 'height', type: 'string', default: "'12rem'", description: 'Banner height (CSS height value)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'User.Banner',
+          description: 'Displays profile.banner (the header/cover image for profiles). When no banner exists, shows a pubkey-derived gradient background using the same deterministic color generation as Avatar. Common use case: hero headers on profile pages.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'height', type: 'string', default: "'12rem'", description: 'Banner height (CSS height value)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'User.Nip05',
         title: 'User.Nip05',
         description: 'Displays profile.nip05—a DNS-based identifier (like email@domain.com) that verifies a user owns that domain. The component uses formatNip05() from @nostr-dev-kit/svelte to format the identifier, automatically hiding the underscore prefix for default usernames (e.g., _@domain.com becomes domain.com). The component actively performs NIP-05 verification by fetching /.well-known/nostr.json from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. You can customize the verification status display by providing a verificationSnippet with custom icons or styling. Most users don\'t have NIP-05 set, so this only renders when the field exists.',
-        apiDocs: [
-          { name: 'showNip05', type: 'boolean', default: 'true', description: 'Whether to show the NIP-05 identifier' },
-          { name: 'showVerified', type: 'boolean', default: 'true', description: 'Whether to verify and show verification status (✓/✗)' },
-          { name: 'verificationSnippet', type: 'Snippet<[{ status: boolean | null | undefined; isVerifying: boolean }]>', default: 'undefined', description: 'Custom snippet to display verification status. Receives status (true=verified, false=invalid, null=error, undefined=not checked) and isVerifying flag' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'User.Nip05',
+          description: 'Displays profile.nip05—a DNS-based identifier (like email@domain.com) that verifies a user owns that domain. The component uses formatNip05() from @nostr-dev-kit/svelte to format the identifier, automatically hiding the underscore prefix for default usernames (e.g., _@domain.com becomes domain.com). The component actively performs NIP-05 verification by fetching /.well-known/nostr.json from the domain and checking if the pubkey matches. Shows ✓ when verified, ✗ when verification fails. You can customize the verification status display by providing a verificationSnippet with custom icons or styling. Most users don\'t have NIP-05 set, so this only renders when the field exists.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'showNip05', type: 'boolean', default: 'true', description: 'Whether to show the NIP-05 identifier' },
+            { name: 'showVerified', type: 'boolean', default: 'true', description: 'Whether to verify and show verification status (✓/✗)' },
+            { name: 'verificationSnippet', type: 'Snippet<[{ status: boolean | null | undefined; isVerifying: boolean }]>', default: 'undefined', description: 'Custom snippet to display verification status. Receives status (true=verified, false=invalid, null=error, undefined=not checked) and isVerifying flag' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'User.Field',
         title: 'User.Field',
         description: 'Generic accessor for any NDKUserProfile field not covered by other primitives. Use this to display fields like website, lud16 (Lightning address), lud06, or any custom metadata fields. If you pass field="about", it delegates to User.Bio for proper rendering. Only renders when the field exists.',
-        apiDocs: [
-          { name: 'field', type: 'keyof NDKUserProfile', default: 'required', description: 'Profile field name to display (e.g., "website", "lud16", "about")' },
-          { name: 'size', type: 'string', default: "'text-sm'", description: 'Text size CSS classes' },
-          { name: 'maxLines', type: 'number', default: 'undefined', description: 'Maximum number of lines to show (uses line-clamp)' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'User.Field',
+          description: 'Generic accessor for any NDKUserProfile field not covered by other primitives. Use this to display fields like website, lud16 (Lightning address), lud06, or any custom metadata fields. If you pass field="about", it delegates to User.Bio for proper rendering. Only renders when the field exists.',
+          importPath: '$lib/registry/ui/user',
+          props: [
+            { name: 'field', type: 'keyof NDKUserProfile', default: 'required', description: 'Profile field name to display (e.g., "website", "lud16", "about")' },
+            { name: 'size', type: 'string', default: "'text-sm'", description: 'Text size CSS classes' },
+            { name: 'maxLines', type: 'number', default: 'undefined', description: 'Maximum number of lines to show (uses line-clamp)' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

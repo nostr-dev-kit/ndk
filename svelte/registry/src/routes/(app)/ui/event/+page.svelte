@@ -36,13 +36,18 @@
         name: 'Event.ReplyIndicator',
         title: 'Event.ReplyIndicator',
         description: 'Displays a "Replying to @user" indicator when an event is a reply. Automatically detects reply relationships using NIP-10 markers and reactively fetches the parent event and user profile.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional, falls back to context)' },
-          { name: 'event', type: 'NDKEvent', default: 'required', description: 'The event to check for reply relationship' },
-          { name: 'onclick', type: '(event: NDKEvent) => void', default: 'optional', description: 'Click handler that receives the event being replied to' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet<[{ event: NDKEvent | null, loading: boolean }]>', default: 'optional', description: 'Custom rendering snippet receiving event and loading state' }
-        ]
+        apiDocs: [{
+          name: 'Event.ReplyIndicator',
+          description: 'Displays a "Replying to @user" indicator when an event is a reply. Automatically detects reply relationships using NIP-10 markers and reactively fetches the parent event and user profile.',
+          importPath: '$lib/registry/ui/embedded-event',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional, falls back to context)' },
+            { name: 'event', type: 'NDKEvent', default: 'required', description: 'The event to check for reply relationship' },
+            { name: 'onclick', type: '(event: NDKEvent) => void', default: 'optional', description: 'Click handler that receives the event being replied to' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet<[{ event: NDKEvent | null, loading: boolean }]>', default: 'optional', description: 'Custom rendering snippet receiving event and loading state' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

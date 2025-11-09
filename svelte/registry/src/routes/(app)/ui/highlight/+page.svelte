@@ -39,29 +39,44 @@
         name: 'Highlight.Root',
         title: 'Highlight.Root',
         description: 'Context provider for highlight primitives. Required wrapper for all Highlight components.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-          { name: 'event', type: 'NDKHighlight', default: 'required', description: 'The highlight event to display' },
-          { name: 'onclick', type: '(event: MouseEvent) => void', default: 'undefined', description: 'Click handler for the root element' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'Highlight.Root',
+          description: 'Context provider for highlight primitives. Required wrapper for all Highlight components.',
+          importPath: '$lib/registry/ui/highlight',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+            { name: 'event', type: 'NDKHighlight', default: 'required', description: 'The highlight event to display' },
+            { name: 'onclick', type: '(event: MouseEvent) => void', default: 'undefined', description: 'Click handler for the root element' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'Highlight.Content',
         title: 'Highlight.Content',
         description: 'Displays the highlighted text from the event content.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Highlight.Content',
+          description: 'Displays the highlighted text from the event content.',
+          importPath: '$lib/registry/ui/highlight',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Highlight.Source',
         title: 'Highlight.Source',
         description: 'Displays a link to the source article or context tag.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Highlight.Source',
+          description: 'Displays a link to the source article or context tag.',
+          importPath: '$lib/registry/ui/highlight',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

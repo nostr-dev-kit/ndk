@@ -31,50 +31,75 @@
         name: 'MediaUpload.Root',
         title: 'MediaUpload.Root',
         description: 'Context provider that manages file uploads and upload state. Handles Blossom server selection, authentication, and upload coordination.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for auth and server selection' },
-          { name: 'fallbackServer', type: 'string', default: "'https://blossom.primal.net'", description: 'Fallback Blossom server URL when auto-discovery fails' },
-          { name: 'accept', type: 'string', default: 'optional', description: 'Accepted file types (e.g., "image/*,video/*")' },
-          { name: 'maxFiles', type: 'number', default: 'optional', description: 'Maximum number of files allowed' },
-          { name: 'uploads', type: 'MediaUploadResult[]', default: '[]', description: 'Bindable array of upload results' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'MediaUpload.Root',
+          description: 'Context provider that manages file uploads and upload state. Handles Blossom server selection, authentication, and upload coordination.',
+          importPath: '$lib/registry/ui/media-upload',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for auth and server selection' },
+            { name: 'fallbackServer', type: 'string', default: "'https://blossom.primal.net'", description: 'Fallback Blossom server URL when auto-discovery fails' },
+            { name: 'accept', type: 'string', default: 'optional', description: 'Accepted file types (e.g., "image/*,video/*")' },
+            { name: 'maxFiles', type: 'number', default: 'optional', description: 'Maximum number of files allowed' },
+            { name: 'uploads', type: 'MediaUploadResult[]', default: '[]', description: 'Bindable array of upload results' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'MediaUpload.Button',
         title: 'MediaUpload.Button',
         description: 'File selection button that triggers the native file picker. Respects accept and maxFiles constraints from Root.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Button content' }
-        ]
+        apiDocs: [{
+          name: 'MediaUpload.Button',
+          description: 'File selection button that triggers the native file picker. Respects accept and maxFiles constraints from Root.',
+          importPath: '$lib/registry/ui/media-upload',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Button content' }
+          ]
+        }]
       },
       {
         name: 'MediaUpload.Preview',
         title: 'MediaUpload.Preview',
         description: 'Preview component for individual uploads with progress indicator. Shows uploading state, progress bar, and error messages.',
-        apiDocs: [
-          { name: 'upload', type: 'MediaUploadResult', default: 'required', description: 'Upload result object containing file, URL, and progress' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'MediaUpload.Preview',
+          description: 'Preview component for individual uploads with progress indicator. Shows uploading state, progress bar, and error messages.',
+          importPath: '$lib/registry/ui/media-upload',
+          props: [
+            { name: 'upload', type: 'MediaUploadResult', default: 'required', description: 'Upload result object containing file, URL, and progress' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'MediaUpload.Carousel',
         title: 'MediaUpload.Carousel',
         description: 'Carousel component for navigating through uploaded media. Automatically renders all uploaded items in a swipeable carousel.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'MediaUpload.Carousel',
+          description: 'Carousel component for navigating through uploaded media. Automatically renders all uploaded items in a swipeable carousel.',
+          importPath: '$lib/registry/ui/media-upload',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'MediaUpload.Item',
         title: 'MediaUpload.Item',
         description: 'Individual carousel item with navigation controls. Displays media content with next/previous buttons.',
-        apiDocs: [
-          { name: 'upload', type: 'MediaUploadResult', default: 'required', description: 'Upload result object' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'MediaUpload.Item',
+          description: 'Individual carousel item with navigation controls. Displays media content with next/previous buttons.',
+          importPath: '$lib/registry/ui/media-upload',
+          props: [
+            { name: 'upload', type: 'MediaUploadResult', default: 'required', description: 'Upload result object' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

@@ -17,7 +17,7 @@
 
 <div class="px-8 flex flex-col gap-8">
 	<!-- Header -->
-	<PageTitle title={metadata.title} subtitle={metadata.description}>
+	<PageTitle title={metadata.title} subtitle={metadata.oneLiner}>
 		<EditProps.Prop
 			name="Sample Event"
 			type="event"

@@ -155,7 +155,7 @@
 	</ComponentPageTemplate>
 {:else}
 	<div class="px-8">
-		<PageTitle title={metadata.title} subtitle={metadata.description}>
+		<PageTitle title={metadata.title} subtitle={metadata.oneLiner}>
 			<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
 		</PageTitle>
 		<div class="flex items-center justify-center py-12">

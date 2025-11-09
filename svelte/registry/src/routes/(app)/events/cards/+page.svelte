@@ -395,7 +395,7 @@
 	</ComponentPageTemplate>
 {:else}
 	<div class="px-8">
-		<PageTitle title={metadata.title} subtitle={metadata.description}>
+		<PageTitle title={metadata.title} subtitle={metadata.oneLiner}>
 			<EditProps.Prop
 				name="Sample Event"
 				type="event"

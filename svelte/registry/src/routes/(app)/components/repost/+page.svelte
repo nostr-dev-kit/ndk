@@ -15,8 +15,8 @@
   import RepostButtonAvatars from '$lib/registry/components/repost/buttons/avatars/repost-button-avatars.svelte';
 
   // Import registry metadata
-  import repostButtonCard from '$lib/registry/components/repost/buttons/basic/registry.json';
-  import repostButtonAvatarsCard from '$lib/registry/components/repost/buttons/avatars/registry.json';
+  import repostButtonCard from '$lib/registry/components/repost/buttons/basic/metadata.json';
+  import repostButtonAvatarsCard from '$lib/registry/components/repost/buttons/avatars/metadata.json';
 
   // Page metadata
   const metadata = {

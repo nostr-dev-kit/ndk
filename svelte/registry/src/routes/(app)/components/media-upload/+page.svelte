@@ -14,8 +14,8 @@
   import MediaUploadCarousel from '$lib/registry/components/media/upload/carousel/media-upload-carousel.svelte';
 
   // Import registry metadata
-  import uploadButtonCard from '$lib/registry/components/media/upload/button/registry.json';
-  import mediaUploadCarouselCard from '$lib/registry/components/media/upload/carousel/registry.json';
+  import uploadButtonCard from '$lib/registry/components/media/upload/button/metadata.json';
+  import mediaUploadCarouselCard from '$lib/registry/components/media/upload/carousel/metadata.json';
 
   // Page metadata
   const metadata = {

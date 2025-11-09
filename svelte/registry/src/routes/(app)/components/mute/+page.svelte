@@ -17,7 +17,7 @@
   import UIComposition from './examples/custom/index.svelte';
 
   // Import registry metadata
-  import muteButtonCard from '$lib/registry/components/mute/buttons/basic/registry.json';
+  import muteButtonCard from '$lib/registry/components/mute/buttons/basic/metadata.json';
 
   // Page metadata
   const metadata = {

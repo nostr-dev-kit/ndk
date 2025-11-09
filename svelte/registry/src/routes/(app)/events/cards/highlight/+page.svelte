@@ -15,8 +15,8 @@
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import registry metadata
-  import highlightCardBasicCard from '$lib/registry/components/highlight/cards/basic/registry.json';
-  import highlightCardCompactCardBase from '$lib/registry/components/highlight/cards/compact/registry.json';
+  import highlightCardBasicCard from '$lib/registry/components/highlight/cards/basic/metadata.json';
+  import highlightCardCompactCardBase from '$lib/registry/components/highlight/cards/compact/metadata.json';
 
   // Create variant cards from base registry
   const highlightCardFeedCard = { ...highlightCardBasicCard, name: 'highlight-card-feed', title: 'Highlight Card Feed', variant: 'feed' };

@@ -90,7 +90,7 @@ src/lib/registry/components/
         └── {variant}/   # e.g., "hero", "classic", "modern", "basic"
             ├── {component-name}.svelte
             ├── index.ts
-            └── registry.json
+            └── metadata.json
 ```
 
 **Example**:
@@ -98,7 +98,7 @@ src/lib/registry/components/
 components/follow/packs/hero/
 ├── follow-pack-hero.svelte
 ├── index.ts
-└── registry.json
+└── metadata.json
 ```
 
 ---
@@ -158,7 +158,7 @@ components/follow/packs/hero/
 export { default as RelayInputBasic } from './relay-input-basic.svelte';
 ```
 
-#### File 3: `registry.json`
+#### File 3: `metadata.json`
 
 ```json
 {
@@ -168,6 +168,7 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
   "subcategory": "inputs",
   "variant": "basic",
   "description": "A basic input field for relay URLs with validation and autocomplete",
+  "documentation": "# Relay Input\n\n## Overview\n\nThe Relay Input component provides a user-friendly way to input and validate Nostr relay URLs. It includes autocomplete functionality and real-time validation.\n\n## Features\n\n- URL validation for wss:// and ws:// protocols\n- Autocomplete from known relay lists\n- Visual feedback for valid/invalid URLs\n- Keyboard navigation support\n\n## Usage\n\nBest used in settings pages, relay configuration forms, or anywhere users need to add or manage relay connections.\n\n## Best Practices\n\n1. Always validate relay connectivity after input\n2. Provide visual feedback during connection testing\n3. Consider showing relay metadata (name, description) when available",
   "command": "npx jsrepo add relay/inputs/basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
@@ -183,13 +184,14 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
 }
 ```
 
-**registry.json Fields**:
+**metadata.json Fields**:
 - `name` (required): kebab-case identifier
 - `title` (required): Display name
 - `category` (required): Top-level category
 - `subcategory` (optional): Second-level grouping
 - `variant` (optional): Style/behavior variant
 - `description` (required): Short description
+- `documentation` (optional): Detailed markdown documentation explaining component behavior, use cases, features, and best practices
 - `command` (required): Installation command for jsrepo
 - `dependencies` (required): NPM dependencies array
 - `useCases` (required): Keywords for search/discovery
@@ -204,13 +206,13 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
 
 **Location**: `/scripts/create-all-registry-json.js`
 
-**Purpose**: Auto-generates `registry.json` files for ALL components by scanning directory structure.
+**Purpose**: Auto-generates `metadata.json` files for ALL components by scanning directory structure.
 
 **How it works**:
 1. Recursively scans `src/lib/registry/components/`
 2. Finds all 3-level directory structures: `{category}/{subcategory}/{variant}/`
 3. Auto-generates metadata from directory names
-4. Creates `registry.json` only if it doesn't already exist (won't overwrite)
+4. Creates `metadata.json` only if it doesn't already exist (won't overwrite)
 
 **Run it**:
 ```bash
@@ -221,12 +223,12 @@ node scripts/create-all-registry-json.js
 
 **Location**: `/scripts/update-root-registry.js`
 
-**Purpose**: Maintains the master `/registry.json` file at project root.
+**Purpose**: Maintains the master `/metadata.json` file at project root.
 
 **How it works**:
-1. Scans all `registry.json` files in component directories
+1. Scans all `metadata.json` files in component directories
 2. Builds a pathMap of component names to file paths
-3. Updates root `registry.json` with correct paths
+3. Updates root `metadata.json` with correct paths
 4. Removes stale entries for deleted components
 
 **Run it**:
@@ -241,7 +243,7 @@ node scripts/update-root-registry.js
 # 1. Create component files in correct directory structure
 mkdir -p src/lib/registry/components/relay/inputs/basic/
 
-# 2. Auto-generate registry.json (if it doesn't exist)
+# 2. Auto-generate metadata.json (if it doesn't exist)
 node scripts/create-all-registry-json.js
 
 # 3. Update root registry
@@ -356,7 +358,7 @@ src/routes/(app)/components/{component-name}/
   import RelayInput from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
 
   // Import registry metadata
-  import relayInputCard from '$lib/registry/components/relay/inputs/basic/registry.json';
+  import relayInputCard from '$lib/registry/components/relay/inputs/basic/metadata.json';
 
   // Import example code (for display)
   import BasicCode from './examples/basic-usage/index.txt?raw';
@@ -1199,7 +1201,7 @@ Use for component identification and testing:
   node scripts/create-all-registry-json.js
   node scripts/update-root-registry.js
   ```
-- [ ] Verify `registry.json` was created
+- [ ] Verify `metadata.json` was created
 
 ### ✅ Phase 2: Navigation Update (MANUAL - DON'T FORGET!)
 
@@ -1221,7 +1223,7 @@ Use for component identification and testing:
 - [ ] Create directory: `src/routes/(app)/components/{component-name}/`
 - [ ] Create `+page.svelte`:
   - [ ] Import `ComponentPageTemplate`
-  - [ ] Import component, registry.json, examples
+  - [ ] Import component, metadata.json, examples
   - [ ] Define `metadata` object
   - [ ] Create preview snippets
   - [ ] Create `components` snippet with ComponentCard
@@ -1262,7 +1264,7 @@ For each example:
   ```bash
   node scripts/update-root-registry.js
   ```
-- [ ] Verify root `/registry.json` includes your component
+- [ ] Verify root `/metadata.json` includes your component
 - [ ] Commit all files
 
 ---
@@ -1334,11 +1336,11 @@ node scripts/create-all-registry-json.js
 node scripts/update-root-registry.js
 ```
 
-### Pitfall 8: Missing registry.json Fields
+### Pitfall 8: Missing metadata.json Fields
 
 **Problem**: Component can't be published or searched.
 
-**Solution**: Ensure registry.json has all required fields:
+**Solution**: Ensure metadata.json has all required fields:
 - name, title, category, description, command, dependencies, useCases
 
 ---
@@ -1348,7 +1350,7 @@ node scripts/update-root-registry.js
 ### Key Commands
 
 ```bash
-# Generate registry.json files
+# Generate metadata.json files
 node scripts/create-all-registry-json.js
 
 # Update master registry
@@ -1372,7 +1374,7 @@ npm run dev
 | `examples/{name}/index.svelte` + `index.txt` | **Dual-file examples** |
 | `scripts/create-all-registry-json.js` | Auto-generate registry |
 | `scripts/update-root-registry.js` | Update master registry |
-| `/registry.json` | Master registry index |
+| `/metadata.json` | Master registry index |
 
 ### Decision Tree Summary
 

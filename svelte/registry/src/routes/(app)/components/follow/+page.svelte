@@ -13,7 +13,7 @@
   import FollowButton from '$lib/registry/components/follow/buttons/basic/follow-button.svelte';
 
   // Import registry metadata
-  import followButtonCard from '$lib/registry/components/follow/buttons/basic/registry.json';
+  import followButtonCard from '$lib/registry/components/follow/buttons/basic/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -77,10 +77,10 @@
 
 {#snippet followButtonHashtagPreview()}
   <div class="flex flex-wrap gap-4 items-center justify-center">
-    <FollowButton {ndk} target="#nostr" variant="ghost" showTarget={true} />
-    <FollowButton {ndk} target="#bitcoin" variant="outline" showTarget={true} />
-    <FollowButton {ndk} target="#photography" variant="pill" showTarget={true} />
-    <FollowButton {ndk} target="#technology" variant="solid" showTarget={true} />
+    <FollowButton {ndk} target="nostr" variant="ghost" showTarget={true} />
+    <FollowButton {ndk} target="bitcoin" variant="outline" showTarget={true} />
+    <FollowButton {ndk} target="photography" variant="pill" showTarget={true} />
+    <FollowButton {ndk} target="technology" variant="solid" showTarget={true} />
   </div>
 {/snippet}
 

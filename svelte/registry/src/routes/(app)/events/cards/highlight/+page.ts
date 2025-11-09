@@ -1,4 +1,4 @@
-import metadata from '$lib/registry/components/highlight/cards/basic/registry.json';
+import metadata from '$lib/registry/components/highlight/cards/basic/metadata.json';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = () => {

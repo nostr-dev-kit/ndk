@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { nip19 } from '@nostr-dev-kit/ndk';
+	import { marked } from 'marked';
 	import { User } from '$lib/registry/ui/user';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import PMCommand from '$lib/site/components/ui/pm-command/pm-command.svelte';
@@ -36,6 +37,7 @@
 		title: string;
 		description?: string;
 		richDescription?: string | Snippet;
+		documentation?: string;
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];
@@ -54,6 +56,14 @@
 	let { data, preview }: Props = $props();
 
 	const ndk = getContext<NDKSvelte>('ndk');
+
+	// Configure marked for safe rendering
+	marked.setOptions({
+		breaks: true,
+		gfm: true,
+		headerIds: true,
+		mangle: false
+	});
 </script>
 
 {#if data}
@@ -94,6 +104,12 @@
 						{:else if data.description}
 							<p class="text-base leading-normal text-foreground m-0">{data.description}</p>
 						{/if}
+					</section>
+				{/if}
+
+				{#if data.documentation}
+					<section class="flex flex-col gap-4 prose prose-sm max-w-none dark:prose-invert">
+						{@html marked.parse(data.documentation)}
 					</section>
 				{/if}
 

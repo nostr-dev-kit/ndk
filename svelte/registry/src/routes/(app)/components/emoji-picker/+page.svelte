@@ -14,7 +14,7 @@
   import UiComposition from './examples/content/index.svelte';
 
   // Import registry metadata
-  import emojiPickerBaseCard from '$lib/registry/components/emoji-picker/registry.json';
+  import emojiPickerBaseCard from '$lib/registry/components/emoji-picker/metadata.json';
 
   // Page metadata
   const metadata = {

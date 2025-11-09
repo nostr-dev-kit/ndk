@@ -10,7 +10,7 @@
 	import BasicExample from './examples/basic.example.svelte';
 
 	// Import registry metadata
-	import articleContentBasicCardBase from '$lib/registry/components/article/content/basic/registry.json';
+	import articleContentBasicCardBase from '$lib/registry/components/article/content/basic/metadata.json';
 
 	const articleContentBasicCard = { ...articleContentBasicCardBase };
 	const articleContentCard = { ...articleContentBasicCardBase, name: 'article-content', title: 'Article Content' };

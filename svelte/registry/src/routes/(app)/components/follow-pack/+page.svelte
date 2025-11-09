@@ -23,10 +23,10 @@
   import followPackListItemCode from './examples/list-item/index.txt?raw';
 
   // Import registry metadata
-  import followPackHeroCard from '$lib/registry/components/follow/packs/hero/registry.json';
-  import followPackPortraitCard from '$lib/registry/components/follow/packs/portrait/registry.json';
-  import followPackCompactCard from '$lib/registry/components/follow/packs/compact/registry.json';
-  import followPackListItemCard from '$lib/registry/components/follow/packs/basic/registry.json';
+  import followPackHeroCard from '$lib/registry/components/follow/packs/hero/metadata.json';
+  import followPackPortraitCard from '$lib/registry/components/follow/packs/portrait/metadata.json';
+  import followPackCompactCard from '$lib/registry/components/follow/packs/compact/metadata.json';
+  import followPackListItemCard from '$lib/registry/components/follow/packs/basic/metadata.json';
 
   // Page metadata
   const metadata = {

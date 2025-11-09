@@ -13,7 +13,7 @@
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	// Import registry metadata
-	import eventCardClassicCard from '$lib/registry/components/event/cards/classic/registry.json';
+	import eventCardClassicCard from '$lib/registry/components/event/cards/classic/metadata.json';
 
 	const eventCardCards = [eventCardClassicCard];
 

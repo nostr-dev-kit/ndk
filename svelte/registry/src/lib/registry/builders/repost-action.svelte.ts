@@ -5,6 +5,7 @@ import { resolveNDK } from './resolve-ndk.svelte.js';
 export interface RepostStats {
     count: number;
     hasReposted: boolean;
+    pubkeys: string[];
     userRepost?: NDKEvent;
 }
 
@@ -68,35 +69,28 @@ export function createRepostAction(
 
     const stats = $derived.by((): RepostStats => {
         const sub = repostsSub;
-        if (!sub) return { count: 0, hasReposted: false };
+        if (!sub) return { count: 0, hasReposted: false, pubkeys: [] };
 
         const reposts = sub.events;
-        if (!reposts) return { count: 0, hasReposted: false };
+        if (!reposts) return { count: 0, hasReposted: false, pubkeys: [] };
 
         let userRepost: NDKEvent | undefined;
         const uniquePubkeys = new Set<string>();
 
-        const hasReposted = resolvedNDK.$currentPubkey
-            ? Array.from(reposts).some(r => {
-                uniquePubkeys.add(r.pubkey);
-                if (r.pubkey === resolvedNDK.$currentPubkey) {
-                    userRepost = r;
-                    return true;
-                }
-                return false;
-            })
-            : false;
-
-        // If user is not logged in, still need to count unique pubkeys
-        if (!resolvedNDK.$currentPubkey) {
-            for (const r of reposts) {
-                uniquePubkeys.add(r.pubkey);
+        // Collect all unique pubkeys and check if user has reposted
+        for (const r of reposts) {
+            uniquePubkeys.add(r.pubkey);
+            if (resolvedNDK.$currentPubkey && r.pubkey === resolvedNDK.$currentPubkey) {
+                userRepost = r;
             }
         }
+
+        const hasReposted = !!userRepost;
 
         return {
             count: uniquePubkeys.size,
             hasReposted,
+            pubkeys: Array.from(uniquePubkeys),
             userRepost
         };
     });
@@ -138,12 +132,9 @@ export function createRepostAction(
         const quoteEvent = new NDKEvent(ndk, {
             kind: NDKKind.Text,
             content,
-            tags: [
-                ["q", event.tagId()],
-                ["e", event.id, event.relay?.url || "", "mention"],
-                ["p", event.pubkey]
-            ]
         });
+
+        quoteEvent.tag(event, undefined, false, "q");
 
         await quoteEvent.publish();
         return quoteEvent;
@@ -155,6 +146,9 @@ export function createRepostAction(
         },
         get hasReposted() {
             return stats.hasReposted;
+        },
+        get pubkeys() {
+            return stats.pubkeys;
         },
         repost,
         quote

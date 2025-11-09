@@ -193,7 +193,7 @@
 		// Floating animation for components
 		componentNodes.forEach((node, index) => {
 			const delay = index * 0.2;
-			const element = document.querySelector(`[data-node-id="${node.id}"]`);
+			const element = document.querySelector(`[data-node-id="${node.id}"]`) as HTMLElement;
 			if (element) {
 				element.style.animationDelay = `${delay}s`;
 			}

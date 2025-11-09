@@ -2,8 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import avatarGroupCode from './examples/basic-usage/index.txt?raw';
@@ -33,46 +33,80 @@
     '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
   ];
 
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...avatarGroupCard, code: avatarGroupCode}
+    ],
+    previews: {
+      'avatar-group': avatarGroupComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      id: 'avatar-group',
+      cardData: avatarGroupCard,
+      preview: showcasePreview,
+      orientation: 'horizontal'
+    }
+  ];
+
 </script>
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...avatarGroupCard, code: avatarGroupCode}}>
-    {#snippet preview()}
-      <div class="flex flex-col gap-6 items-center">
-        <div class="flex flex-col gap-2 items-center">
-          <span class="text-xs text-muted-foreground">Default</span>
-          <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
-        </div>
-        <div class="flex flex-col gap-2 items-center">
-          <span class="text-xs text-muted-foreground">With Overflow (max: 3)</span>
-          <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} />
-        </div>
-        <div class="flex flex-col gap-2 items-center">
-          <span class="text-xs text-muted-foreground">Text Overflow</span>
-          <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
-        </div>
-        <div class="flex flex-col gap-2 items-center">
-          <span class="text-xs text-muted-foreground">Vertical Stack</span>
-          <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
-        </div>
-      </div>
-    {/snippet}
-  </ComponentCard>
+<!-- Showcase preview -->
+{#snippet showcasePreview()}
+  <div class="flex flex-col gap-6 items-center">
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Default</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">With Overflow (max: 3)</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} />
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Text Overflow</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
+    </div>
+    <div class="flex flex-col gap-2 items-center">
+      <span class="text-xs text-muted-foreground">Vertical Stack</span>
+      <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 4)} direction="vertical" />
+    </div>
+  </div>
 {/snippet}
 
-<!-- EditProps snippet -->
-<!-- Custom sections for Builder API and Usage Examples -->
-{#snippet customSections()}
-  <!-- Builder API -->
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
-    <p class="text-muted-foreground mb-6">
-      Use <code class="px-2 py-1 bg-muted rounded text-sm">createAvatarGroup()</code> to build custom avatar group implementations with smart user ordering.
+{#snippet avatarGroupComponentPreview()}
+  {@render showcasePreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Avatar Group displays a collection of user avatars in a compact, overlapping layout. It automatically handles overflow with customizable indicators when the number of avatars exceeds the maximum display limit.
     </p>
 
+    <p>
+      The component uses smart ordering, automatically placing users you follow at the front of the group. It supports horizontal and vertical layouts, custom overflow variants (avatar or text), and click handlers for both individual avatars and the overflow indicator.
+    </p>
+
+    <p>
+      Built on top of the createAvatarGroup builder, which provides reactive state management and automatic user ordering based on your follow list.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Recipes section -->
+{#snippet recipes()}
+  <div class="space-y-6">
     <div class="bg-muted/50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold mb-3">createAvatarGroup</h3>
+      <h3 class="text-lg font-semibold mb-3">Builder API</h3>
+      <p class="text-muted-foreground mb-4">
+        Use <code class="px-2 py-1 bg-muted rounded text-sm">createAvatarGroup()</code> to build custom avatar group implementations with smart user ordering.
+      </p>
       <pre class="text-sm overflow-x-auto"><code>import &#123; createAvatarGroup &#125; from '@nostr-dev-kit/svelte';
 
 // Create avatar group with smart ordering
@@ -86,16 +120,16 @@ avatarGroup.users           // All users, ordered
 avatarGroup.followedUsers   // Users you follow
 avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
 
-      <div class="mt-4">
-        <h4 class="font-semibold mb-2">Parameters:</h4>
+      <div class="mt-4 space-y-2">
+        <h4 class="font-semibold">Parameters:</h4>
         <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
           <li><code>options</code>: Function returning &#123; pubkeys: string[], skipCurrentUser?: boolean &#125;</li>
           <li><code>ndk</code>: NDKSvelte instance</li>
         </ul>
       </div>
 
-      <div class="mt-4">
-        <h4 class="font-semibold mb-2">Returns:</h4>
+      <div class="mt-4 space-y-2">
+        <h4 class="font-semibold">Returns:</h4>
         <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
           <li><code>users</code>: NDKUser[] - All users with followed users first</li>
           <li><code>followedUsers</code>: NDKUser[] - Users that you follow</li>
@@ -103,56 +137,51 @@ avatarGroup.unfollowedUsers // Users you don't follow</code></pre>
         </ul>
       </div>
     </div>
-  </section>
 
-  <!-- Usage Examples -->
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Usage Examples</h2>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Basic Usage</h3>
+      <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; pubkeys=&#123;['pubkey1', 'pubkey2', 'pubkey3']&#125; /&gt;</code></pre>
+    </div>
 
-    <div class="space-y-6">
-      <div>
-        <h3 class="text-xl font-semibold mb-2">Basic Usage</h3>
-        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; pubkeys=&#123;['pubkey1', 'pubkey2', 'pubkey3']&#125; /&gt;</code></pre>
-      </div>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">With Text Overflow</h3>
+      <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; max=&#123;3&#125; overflowVariant="text" /&gt;</code></pre>
+    </div>
 
-      <div>
-        <h3 class="text-xl font-semibold mb-2">With Text Overflow</h3>
-        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; max=&#123;3&#125; overflowVariant="text" /&gt;</code></pre>
-      </div>
-
-      <div>
-        <h3 class="text-xl font-semibold mb-2">With Custom Snippet</h3>
-        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; max=&#123;4&#125;&gt;
+    <div>
+      <h3 class="text-xl font-semibold mb-3">With Custom Snippet</h3>
+      <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; max=&#123;4&#125;&gt;
   &#123;#snippet overflowSnippet(count)&#125;
     &lt;span&gt;+&#123;count&#125; more&lt;/span&gt;
   &#123;/snippet&#125;
 &lt;/AvatarGroup&gt;</code></pre>
-      </div>
+    </div>
 
-      <div>
-        <h3 class="text-xl font-semibold mb-2">Vertical Stack</h3>
-        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; direction="vertical" /&gt;</code></pre>
-      </div>
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Vertical Stack</h3>
+      <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup &#123;ndk&#125; &#123;pubkeys&#125; direction="vertical" /&gt;</code></pre>
+    </div>
 
-      <div>
-        <h3 class="text-xl font-semibold mb-2">With Click Handlers</h3>
-        <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup
+    <div>
+      <h3 class="text-xl font-semibold mb-3">With Click Handlers</h3>
+      <pre class="bg-muted/50 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;AvatarGroup
   &#123;ndk&#125;
   &#123;pubkeys&#125;
   onAvatarClick=&#123;(user) =&gt; console.log('Clicked:', user.pubkey)&#125;
   onOverflowClick=&#123;() =&gt; console.log('Show all users')&#125;
 /&gt;</code></pre>
-      </div>
     </div>
-  </section>
+  </div>
 {/snippet}
 
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  {components}
-  {customSections}
+  {overview}
+  {showcaseComponents}
+  {componentsSection}
+  {recipes}
 >
     <EditProps.Prop
       name="Max avatars"

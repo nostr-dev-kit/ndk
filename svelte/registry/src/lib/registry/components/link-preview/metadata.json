@@ -17,5 +17,23 @@
     "inline-links",
     "content-enrichment",
     "social-sharing"
-  ]
+  ],
+  "apiDoc": {
+    "name": "LinkPreview",
+    "description": "Hover-based link preview component that fetches and displays OpenGraph metadata (title, description, image, domain) in a popover. Supports single or multiple URLs with caching and loading states. Uses bits-ui LinkPreview primitive for hover interactions.",
+    "importPath": "import { LinkPreview } from '$lib/registry/components/link-preview'",
+    "props": [
+      {
+        "name": "url",
+        "type": "string | string[]",
+        "required": true,
+        "description": "URL(s) to preview - single string or array"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

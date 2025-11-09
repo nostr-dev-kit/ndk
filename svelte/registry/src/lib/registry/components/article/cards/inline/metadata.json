@@ -15,5 +15,24 @@
     "references",
     "inline-mentions",
     "text-links"
-  ]
+  ],
+  "apiDoc": {
+    "name": "ArticleCardInline",
+    "description": "A compact inline article card with vertical layout showing image, title, truncated summary, and reading time. Designed for inline references, citations, and compact article previews with a max width of 400px.",
+    "importPath": "import { ArticleCardInline } from '$lib/registry/components/article/cards/inline'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "article",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to display"
+      }
+    ]
+  }
 }

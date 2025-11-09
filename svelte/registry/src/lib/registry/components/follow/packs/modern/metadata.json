@@ -16,5 +16,33 @@
     "modern",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "FollowPackModernPortrait",
+    "description": "A modern portrait card with full-bleed image background, glossy gradient overlays, and frosted glass UI elements. Displays pack title, member count in a glassmorphic badge, description, and author details. Features 320x460px size, hover lift effect with shadow, and contemporary design aesthetics perfect for modern apps.",
+    "importPath": "import { FollowPackModernPortrait } from '$lib/registry/components/follow/packs/modern'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "followPack",
+        "type": "NDKFollowPack",
+        "required": true,
+        "description": "Follow pack to display"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler callback"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

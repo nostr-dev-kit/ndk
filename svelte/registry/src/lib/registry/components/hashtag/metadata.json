@@ -15,5 +15,28 @@
     "inline-tags",
     "topic-links",
     "content-categorization"
-  ]
+  ],
+  "apiDoc": {
+    "name": "Hashtag",
+    "description": "Simple inline hashtag display component with primary color styling, hover underline effect, and keyboard navigation support. Renders hashtag with # prefix and optional click handler for tag interaction.",
+    "importPath": "import { Hashtag } from '$lib/registry/components/hashtag'",
+    "props": [
+      {
+        "name": "tag",
+        "type": "string",
+        "required": true,
+        "description": "Hashtag text (without # prefix)"
+      },
+      {
+        "name": "onclick",
+        "type": "(tag: string) => void",
+        "description": "Click handler receiving the tag string"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

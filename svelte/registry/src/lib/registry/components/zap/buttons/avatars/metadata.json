@@ -14,5 +14,67 @@
     "social-proof",
     "top-zappers",
     "payment-display"
-  ]
+  ],
+  "apiDoc": {
+    "name": "ZapButtonAvatars",
+    "description": "Zap button showing avatars of users who sent zaps with total amount and count. Displays zapper avatars in an avatar group and shows both sats count and total amount. Supports both event and user targets with multiple visual variants.",
+    "importPath": "import { ZapButtonAvatars } from '$lib/registry/components/zap/buttons/avatars'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "description": "Event to show zaps for (either event or user required)"
+      },
+      {
+        "name": "user",
+        "type": "NDKUser",
+        "description": "User to show zaps for (either event or user required)"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual style variant"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "3",
+        "description": "Maximum number of avatars to show"
+      },
+      {
+        "name": "avatarSize",
+        "type": "number",
+        "default": "24",
+        "description": "Size of avatars in pixels"
+      },
+      {
+        "name": "spacing",
+        "type": "'tight' | 'normal' | 'loose'",
+        "default": "'tight'",
+        "description": "Spacing between avatars"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show zap count"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Click handler callback"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

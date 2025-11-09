@@ -16,5 +16,33 @@
     "portrait",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "FollowPackPortrait",
+    "description": "A portrait-oriented card with full-bleed background image and gradient overlay for text legibility. Displays pack title, description, member avatars (up to 4), and author details. Features 320x420px size, content positioned at bottom, and smooth hover background transition. Ideal for grid layouts and content discovery.",
+    "importPath": "import { FollowPackPortrait } from '$lib/registry/components/follow/packs/portrait'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "followPack",
+        "type": "NDKFollowPack",
+        "required": true,
+        "description": "Follow pack to display"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler callback"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

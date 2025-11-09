@@ -53,7 +53,7 @@
 					<SessionSwitcher.Action onclick={action.onclick} variant={action.variant}>
 						{#if action.icon}
 							{#snippet icon()}
-								{@render action.icon()}
+								{@render action.icon!()}
 							{/snippet}
 						{/if}
 						{action.label}

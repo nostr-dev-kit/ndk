@@ -63,7 +63,9 @@
     - "When You Need These" subsection with bullet points of specific use cases
     - Mention alternative components if this is too low-level for some users
   -->
-  {@render overview()}
+  {#if overview}
+    {@render overview()}
+  {/if}
 
   <!--
     INSTALLATION SECTION
@@ -109,10 +111,12 @@
     - Custom styling/behavior patterns
     - Edge cases (missing data, custom fallbacks, etc.)
   -->
-  <section class="mb-12 space-y-8">
-    <SectionTitle title="Examples" />
-    {@render examples()}
-  </section>
+  {#if examples}
+    <section class="mb-12 space-y-8">
+      <SectionTitle title="Examples" />
+      {@render examples()}
+    </section>
+  {/if}
 
   <!--
     AVAILABLE PRIMITIVES SECTION

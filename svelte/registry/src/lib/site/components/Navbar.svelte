@@ -35,7 +35,7 @@
   <div class="flex items-center justify-between h-full max-w-full px-6">
     <!-- Left section: Logo + Navigation Links -->
     <div class="flex items-center gap-8">
-      <a href="/" class="flex items-center no-underline text-primary">
+      <a href="/" class="flex items-center no-underline text-primary" aria-label="Home">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
           <path d="M2 17l10 5 10-5"></path>
@@ -97,7 +97,7 @@
           </button>
 
           {#if showUserDropdown}
-            <div class="absolute right-0 top-[calc(100%_+_0.5rem)] min-w-64 bg-popover border border-border rounded-lg shadow-[0_10px_15px_-3px_rgba(var(--foreground)_/_0.1)] overflow-hidden" onclick={(e) => e.stopPropagation()}>
+            <div class="absolute right-0 top-[calc(100%_+_0.5rem)] min-w-64 bg-popover border border-border rounded-lg shadow-[0_10px_15px_-3px_rgba(var(--foreground)_/_0.1)] overflow-hidden" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
               <div class="p-3 px-4">
                 <UserProfile {ndk} pubkey={ndk.$currentPubkey} variant="horizontal" size="md" byline={User.Handle} />
               </div>

@@ -4,7 +4,7 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, UserGenerator } from "../../../../../test-utils";
+import { createTestNDK, UserGenerator } from "../../../../test-utils";
 import FollowButton from "./follow-button.svelte";
 
 describe("FollowButton", () => {

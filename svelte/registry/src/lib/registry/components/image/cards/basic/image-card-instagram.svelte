@@ -4,7 +4,7 @@
 	import { User } from '../../../../ui/user';
 	import { getNDKFromContext } from '../../../../utils/ndk-context.svelte.js';
 	import RepostButton from '../../../repost/buttons/basic/repost-button.svelte';
-	import { ReactionLongpress } from '../../../reaction/index.js';
+	import ReactionButton from '../../../reaction/buttons/basic/reaction-button.svelte';
 	// import { ZapButton } from '../zap/index.js'; // TODO: Add ZapButton when available
 	import { cn } from '../../../../utils/cn';
 
@@ -68,7 +68,7 @@
 
 	<!-- Actions -->
 	<div class="p-3 px-4 flex items-center gap-4">
-		<ReactionLongpress {ndk} event={image} />
+		<ReactionButton {ndk} event={image} />
 		<RepostButton {ndk} event={image} />
 		<!-- <ZapButton {ndk} event={image} /> -->
 	</div>

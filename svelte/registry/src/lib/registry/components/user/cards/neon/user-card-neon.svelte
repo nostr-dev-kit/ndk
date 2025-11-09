@@ -4,7 +4,7 @@
   import { cn } from '../../../../utils/cn';
   import { getContext } from 'svelte';
   import { USER_CONTEXT_KEY, type UserContext } from '../../../../ui/user/user.context.js';
-  import FollowButtonAnimated from '../../../follow/buttons/animated/follow-button-animated.svelte';
+  import FollowButton from '../../../follow/buttons/basic/follow-button.svelte';
   import { createUserStats } from '../../../../builders/user/stats.svelte.js';
 
   interface Props {
@@ -114,7 +114,7 @@
 
         <!-- Follow Button -->
         {#if user}
-          <FollowButtonAnimated {ndk} target={user} class="!bg-white/10 !backdrop-blur-sm !text-white !border !border-white/20 hover:!bg-white [&:hover_*]:!text-black !rounded-full" />
+          <FollowButton {ndk} target={user} class="!bg-white/10 !backdrop-blur-sm !text-white !border !border-white/20 hover:!bg-white [&:hover_*]:!text-black !rounded-full" />
         {/if}
       </div>
     </div>

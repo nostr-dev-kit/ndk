@@ -16,7 +16,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { ThreadView } from '@nostr-dev-kit/svelte';
   import { EventCard } from '../components/event/cards/compound/index.js';
-  import { ReactionAction } from '../components/reaction/index.js';
+  import ReactionButton from '../components/reaction/buttons/basic/reaction-button.svelte';
   import { User } from '../ui/user/index.js';
   import RepostButton from '../components/repost/buttons/basic/repost-button.svelte';
 
@@ -60,7 +60,7 @@
 
                   <EventCard.Actions class="tweet-actions ml-5 ">
                     <RepostButton {ndk} event={node.event} />
-                    <ReactionAction />
+                    <ReactionButton {ndk} event={node.event} />
                   </EventCard.Actions>
               </div>
             </div>

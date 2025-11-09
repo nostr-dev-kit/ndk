@@ -2,7 +2,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EventCard } from '../compound/index.js';
-  import { ReactionAction } from '../../../reaction/index.js';
+  import ReactionButton from '../../../reaction/buttons/basic/reaction-button.svelte';
   import RepostButton from '../../../repost/buttons/basic/repost-button.svelte';
   import { cn } from '../../../../utils/cn';
 
@@ -55,7 +55,7 @@
   {#if showActions}
     <EventCard.Actions>
       <RepostButton {ndk} {event} />
-      <ReactionAction />
+      <ReactionButton {ndk} {event} />
     </EventCard.Actions>
   {/if}
 </EventCard.Root>

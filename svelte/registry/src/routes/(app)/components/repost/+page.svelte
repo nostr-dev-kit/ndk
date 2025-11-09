@@ -3,7 +3,6 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
@@ -17,6 +16,7 @@
   // Import registry metadata
   import repostButtonCard from '$lib/registry/components/repost/buttons/basic/metadata.json';
   import repostButtonAvatarsCard from '$lib/registry/components/repost/buttons/avatars/metadata.json';
+  import repostActionBuilder from '$lib/registry/builders/repost-action/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -43,6 +43,20 @@
   function handleQuote() {
     console.log('Quote handler called - you would open your quote composer here');
   }
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...repostButtonCard, code: repostButtonCode},
+      {...repostButtonAvatarsCard, code: repostButtonAvatarsCode}
+    ],
+    previews: {
+      'repost-button': repostButtonComponentPreview,
+      'repost-button-avatars': repostButtonAvatarsComponentPreview
+    }
+  };
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -88,6 +102,18 @@
   {/if}
 {/snippet}
 
+{#snippet repostButtonComponentPreview()}
+  {#if sampleEvent}
+    {@render repostButtonsPreview()}
+  {/if}
+{/snippet}
+
+{#snippet repostButtonAvatarsComponentPreview()}
+  {#if sampleEvent}
+    {@render avatarsPreview()}
+  {/if}
+{/snippet}
+
 <!-- Overview section -->
 {#snippet overview()}
   <div class="text-lg text-muted-foreground space-y-4">
@@ -105,21 +131,6 @@
   </div>
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...repostButtonCard, code: repostButtonCode}}>
-    {#snippet preview()}
-      {@render repostButtonsPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...repostButtonAvatarsCard, code: repostButtonAvatarsCode}}>
-    {#snippet preview()}
-      {@render avatarsPreview()}
-    {/snippet}
-  </ComponentCard>
-{/snippet}
-
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
@@ -128,18 +139,21 @@
   showcaseComponents={[
     {
       id: "repostButtonCard",
-      cardData: repostButtonCard,
+      cardData: { ...repostButtonCard, title: "Basic Variants" },
       preview: repostButtonsPreview,
       orientation: 'horizontal'
     },
     {
       id: "repostButtonAvatarsCard",
-      cardData: repostButtonAvatarsCard,
+      cardData: { ...repostButtonAvatarsCard, title: "With Avatars" },
       preview: avatarsPreview,
       orientation: 'horizontal'
     }
   ]}
-  {components}
+  {componentsSection}
+  buildersSection={{
+    builders: [repostActionBuilder]
+  }}
 >
   <EditProps.Prop
     name="Sample Event"

@@ -28,8 +28,7 @@
 			event,
 			content: contentProp,
 			emojiTags
-		}),
-		ndk
+		})
 	);
 </script>
 

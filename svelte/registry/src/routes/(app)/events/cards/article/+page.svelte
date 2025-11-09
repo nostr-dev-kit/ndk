@@ -161,7 +161,7 @@
       orientation: 'vertical'
     },
     {
-      id: 'article-card-medium',
+      id: 'article-card-basic',
       cardData: articleCardMediumCard,
       preview: mediumPreview,
       orientation: 'vertical'
@@ -339,7 +339,7 @@
 			previews: {
 				'article-card-portrait': portraitComponentPreview,
 				'article-card-hero': heroComponentPreview,
-				'article-card-medium': mediumComponentPreview,
+				'article-card-basic': mediumComponentPreview,
 				'article-card-neon': neonComponentPreview
 			}
 		}}

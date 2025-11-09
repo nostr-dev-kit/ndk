@@ -55,12 +55,6 @@
   {/if}
 {/snippet}
 
-{#snippet customPreview()}
-  {#if sampleUser}
-    <UIComposition {ndk} user={sampleUser} />
-  {/if}
-{/snippet}
-
 {#snippet muteButtonComponentPreview()}
   {#if sampleUser}
     {@render muteButtonPreview()}

@@ -13,7 +13,7 @@
   import GenericCard from '$lib/registry/components/event/cards/generic/generic-card.svelte';
 
   // Import registry metadata
-  import genericCardMetadata from '$lib/registry/components/event/cards/generic/registry.json';
+  import genericCardMetadata from '$lib/registry/components/event/cards/generic/metadata.json';
 
   // Page metadata
   const metadata = {

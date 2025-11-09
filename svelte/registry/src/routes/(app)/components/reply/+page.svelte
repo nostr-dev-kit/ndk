@@ -15,8 +15,8 @@
   import ReplyButtonAvatars from '$lib/registry/components/reply/buttons/avatars/reply-button-avatars.svelte';
 
   // Import registry metadata
-  import replyButtonCard from '$lib/registry/components/reply/buttons/basic/registry.json';
-  import replyButtonAvatarsCard from '$lib/registry/components/reply/buttons/avatars/registry.json';
+  import replyButtonCard from '$lib/registry/components/reply/buttons/basic/metadata.json';
+  import replyButtonAvatarsCard from '$lib/registry/components/reply/buttons/avatars/metadata.json';
 
   // Page metadata
   const metadata = {

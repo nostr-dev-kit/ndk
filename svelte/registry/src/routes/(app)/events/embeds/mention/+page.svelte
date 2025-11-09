@@ -17,7 +17,7 @@
   import modernCode from './modern.example.svelte?raw';
 
   // Import registry metadata for actual installable component
-  import mentionRegistryCard from '$lib/registry/components/mention/registry.json';
+  import mentionRegistryCard from '$lib/registry/components/mention/metadata.json';
 
   const ndk = getContext<NDKSvelte>('ndk');
 

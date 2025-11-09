@@ -14,7 +14,7 @@
   import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
 
   // Import registry metadata
-  import relayInputCard from '$lib/registry/components/relay/inputs/basic/registry.json';
+  import relayInputCard from '$lib/registry/components/relay/inputs/basic/metadata.json';
 
   // Page metadata
   const metadata = {

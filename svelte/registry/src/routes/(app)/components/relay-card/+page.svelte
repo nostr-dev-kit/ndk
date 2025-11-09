@@ -21,9 +21,9 @@
   import BuilderUsageExample from './examples/builder-usage/index.svelte';
 
   // Import registry metadata
-  import relayCardPortraitCard from '$lib/registry/components/relay/cards/portrait/registry.json';
-  import relayCardCompactCard from '$lib/registry/components/relay/cards/compact/registry.json';
-  import relayCardListCard from '$lib/registry/components/relay/cards/basic/registry.json';
+  import relayCardPortraitCard from '$lib/registry/components/relay/cards/portrait/metadata.json';
+  import relayCardCompactCard from '$lib/registry/components/relay/cards/compact/metadata.json';
+  import relayCardListCard from '$lib/registry/components/relay/cards/basic/metadata.json';
 
   // Page metadata
   const metadata = {

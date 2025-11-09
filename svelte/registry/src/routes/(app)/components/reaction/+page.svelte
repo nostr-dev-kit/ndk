@@ -24,9 +24,9 @@
   import { EmojiPicker } from '$lib/registry/components/emoji-picker';
 
   // Import registry metadata
-  import reactionButtonCard from '$lib/registry/components/reaction/buttons/basic/registry.json';
-  import reactionButtonAvatarsCard from '$lib/registry/components/reaction/buttons/avatars/registry.json';
-  import reactionDisplaySlackCard from '$lib/registry/components/reaction/buttons/slack/registry.json';
+  import reactionButtonCard from '$lib/registry/components/reaction/buttons/basic/metadata.json';
+  import reactionButtonAvatarsCard from '$lib/registry/components/reaction/buttons/avatars/metadata.json';
+  import reactionDisplaySlackCard from '$lib/registry/components/reaction/buttons/slack/metadata.json';
 
   // Page metadata
   const metadata = {

@@ -12,8 +12,8 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import registry metadata
-	import imageCardBasicCard from '$lib/registry/components/image/cards/basic/registry.json';
-	import imageCardHeroCardBase from '$lib/registry/components/image/cards/hero/registry.json';
+	import imageCardBasicCard from '$lib/registry/components/image/cards/basic/metadata.json';
+	import imageCardHeroCardBase from '$lib/registry/components/image/cards/hero/metadata.json';
 
 	// Create variant cards
 	const imageCardCard = { ...imageCardBasicCard, name: 'image-card', title: 'Image Card' };

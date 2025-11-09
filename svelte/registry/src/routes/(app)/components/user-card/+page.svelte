@@ -30,13 +30,13 @@
   import UserListItem from '$lib/registry/components/user/displays/list-item/user-list-item.svelte';
 
   // Import registry metadata
-  import userCardClassicCard from '$lib/registry/components/user/cards/classic/registry.json';
-  import userCardPortraitCard from '$lib/registry/components/user/cards/portrait/registry.json';
-  import userCardLandscapeCard from '$lib/registry/components/user/cards/landscape/registry.json';
-  import userCardCompactCard from '$lib/registry/components/user/cards/compact/registry.json';
-  import userCardNeonCard from '$lib/registry/components/user/cards/neon/registry.json';
-  import userCardGlassCard from '$lib/registry/components/user/cards/glass/registry.json';
-  import userCardListItemCard from '$lib/registry/components/user/displays/list-item/registry.json';
+  import userCardClassicCard from '$lib/registry/components/user/cards/classic/metadata.json';
+  import userCardPortraitCard from '$lib/registry/components/user/cards/portrait/metadata.json';
+  import userCardLandscapeCard from '$lib/registry/components/user/cards/landscape/metadata.json';
+  import userCardCompactCard from '$lib/registry/components/user/cards/compact/metadata.json';
+  import userCardNeonCard from '$lib/registry/components/user/cards/neon/metadata.json';
+  import userCardGlassCard from '$lib/registry/components/user/cards/glass/metadata.json';
+  import userCardListItemCard from '$lib/registry/components/user/displays/list-item/metadata.json';
 
   // Page metadata
   const metadata = {

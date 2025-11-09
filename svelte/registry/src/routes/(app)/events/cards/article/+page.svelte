@@ -15,10 +15,10 @@
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
 
 	// Import registry metadata
-	import articleCardPortraitCard from '$lib/registry/components/article/cards/portrait/registry.json';
-	import articleCardHeroCard from '$lib/registry/components/article/cards/hero/registry.json';
-	import articleCardMediumCard from '$lib/registry/components/article/cards/basic/registry.json';
-	import articleCardNeonCard from '$lib/registry/components/article/cards/neon/registry.json';
+	import articleCardPortraitCard from '$lib/registry/components/article/cards/portrait/metadata.json';
+	import articleCardHeroCard from '$lib/registry/components/article/cards/hero/metadata.json';
+	import articleCardMediumCard from '$lib/registry/components/article/cards/basic/metadata.json';
+	import articleCardNeonCard from '$lib/registry/components/article/cards/neon/metadata.json';
 
 	const articleCardCards = [articleCardPortraitCard, articleCardHeroCard, articleCardMediumCard, articleCardNeonCard];
 

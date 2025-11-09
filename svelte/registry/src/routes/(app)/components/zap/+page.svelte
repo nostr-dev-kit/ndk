@@ -15,8 +15,8 @@
   import ZapButtonAvatars from '$lib/registry/components/zap/buttons/avatars/zap-button-avatars.svelte';
 
   // Import registry metadata
-  import zapButtonCard from '$lib/registry/components/zap/buttons/basic/registry.json';
-  import zapButtonAvatarsCard from '$lib/registry/components/zap/buttons/avatars/registry.json';
+  import zapButtonCard from '$lib/registry/components/zap/buttons/basic/metadata.json';
+  import zapButtonAvatarsCard from '$lib/registry/components/zap/buttons/avatars/metadata.json';
 
   // Page metadata
   const metadata = {

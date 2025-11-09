@@ -15,7 +15,7 @@
   import BasicUsageRaw from './examples/basic-usage/index.txt?raw';
 
   // Import registry metadata
-  import contentTabCard from '$lib/registry/components/content-tab/registry.json';
+  import contentTabCard from '$lib/registry/components/content-tab/metadata.json';
 
   // Import the component
   import ContentTab from '$lib/registry/components/content-tab/content-tab.svelte';

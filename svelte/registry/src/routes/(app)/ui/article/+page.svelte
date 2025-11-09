@@ -210,9 +210,6 @@
               <Article.Summary class="text-sm text-muted-foreground line-clamp-2" />
             </ComponentAnatomy.Layer>
             <div class="flex items-center gap-4 text-xs text-muted-foreground">
-              <ComponentAnatomy.Layer id="published-at" label="Article.PublishedAt">
-                <Article.PublishedAt format="relative" />
-              </ComponentAnatomy.Layer>
               <ComponentAnatomy.Layer id="reading-time" label="Article.ReadingTime">
                 <Article.ReadingTime />
               </ComponentAnatomy.Layer>

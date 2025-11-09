@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import relayInputBasicCode from './examples/basic/index.txt?raw';
@@ -32,6 +32,51 @@
   let basicBlockUrl = $state<string>('');
   let labelBlockUrl = $state<string>('');
   let errorBlockUrl = $state<string>('');
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...relayInputCard, code: relayInputBasicCode},
+      {...relayInputLabelCard, code: relayInputLabelCode},
+      {...relayInputErrorCard, code: relayInputErrorCode},
+      {...relayInputDisabledCard, code: relayInputDisabledCode}
+    ],
+    previews: {
+      'relay-input': basicComponentPreview,
+      'relay-input-label': labelComponentPreview,
+      'relay-input-error': errorComponentPreview,
+      'relay-input-disabled': disabledComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      id: "relayInputCard",
+      cardData: relayInputCard,
+      preview: basicBlockPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "relayInputLabelCard",
+      cardData: relayInputLabelCard,
+      preview: labelBlockPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "relayInputErrorCard",
+      cardData: relayInputErrorCard,
+      preview: errorBlockPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "relayInputDisabledCard",
+      cardData: relayInputDisabledCard,
+      preview: disabledBlockPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 
 <!-- Preview snippets -->
@@ -67,92 +112,80 @@
   />
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...relayInputCard, code: relayInputBasicCode}}>
-    {#snippet preview()}
-      {@render basicBlockPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...relayInputLabelCard, code: relayInputLabelCode}}>
-    {#snippet preview()}
-      {@render labelBlockPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...relayInputErrorCard, code: relayInputErrorCode}}>
-    {#snippet preview()}
-      {@render errorBlockPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...relayInputDisabledCard, code: relayInputDisabledCode}}>
-    {#snippet preview()}
-      {@render disabledBlockPreview()}
-    {/snippet}
-  </ComponentCard>
+<!-- Component preview snippets for componentsSection -->
+{#snippet basicComponentPreview()}
+  {@render basicBlockPreview()}
 {/snippet}
 
-<!-- Custom sections for Features -->
-{#snippet customSections()}
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Features</h2>
-    <div class="grid gap-4 md:grid-cols-2">
-      <div class="border rounded-lg p-4">
-        <h3 class="font-semibold mb-2">NIP-11 Autocomplete</h3>
-        <p class="text-sm text-muted-foreground">
-          Automatically fetches and displays relay metadata including name, icon, and description.
-        </p>
-      </div>
-      <div class="border rounded-lg p-4">
-        <h3 class="font-semibold mb-2">Icon Replacement</h3>
-        <p class="text-sm text-muted-foreground">
-          Replaces the input icon with the relay's icon from NIP-11 data when available.
-        </p>
-      </div>
-      <div class="border rounded-lg p-4">
-        <h3 class="font-semibold mb-2">URL Validation</h3>
-        <p class="text-sm text-muted-foreground">
-          Built-in validation for WebSocket URLs (ws:// and wss://) with visual feedback.
-        </p>
-      </div>
-      <div class="border rounded-lg p-4">
-        <h3 class="font-semibold mb-2">Debounced Loading</h3>
-        <p class="text-sm text-muted-foreground">
-          Intelligent debouncing prevents excessive NIP-11 requests while typing.
-        </p>
+{#snippet labelComponentPreview()}
+  {@render labelBlockPreview()}
+{/snippet}
+
+{#snippet errorComponentPreview()}
+  {@render errorBlockPreview()}
+{/snippet}
+
+{#snippet disabledComponentPreview()}
+  {@render disabledBlockPreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Relay Input provides a specialized text input for entering and validating Nostr relay URLs (WebSocket addresses). It automatically fetches relay metadata via NIP-11 and displays relay information including name, icon, and description.
+    </p>
+
+    <p>
+      The input features intelligent debouncing to prevent excessive NIP-11 requests while typing, real-time URL validation, and visual feedback for valid/invalid relay addresses. Relay icons from NIP-11 metadata automatically replace the default input icon when available.
+    </p>
+
+    <p>
+      Supports standard input states including labels, helper text, error states, and disabled mode for locked relay configurations.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Recipes section (Features) -->
+{#snippet recipes()}
+  <div class="space-y-6">
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Features</h3>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="border rounded-lg p-4">
+          <h4 class="font-semibold mb-2">NIP-11 Autocomplete</h4>
+          <p class="text-sm text-muted-foreground">
+            Automatically fetches and displays relay metadata including name, icon, and description.
+          </p>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h4 class="font-semibold mb-2">Icon Replacement</h4>
+          <p class="text-sm text-muted-foreground">
+            Replaces the input icon with the relay's icon from NIP-11 data when available.
+          </p>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h4 class="font-semibold mb-2">URL Validation</h4>
+          <p class="text-sm text-muted-foreground">
+            Built-in validation for WebSocket URLs (ws:// and wss://) with visual feedback.
+          </p>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h4 class="font-semibold mb-2">Debounced Loading</h4>
+          <p class="text-sm text-muted-foreground">
+            Intelligent debouncing prevents excessive NIP-11 requests while typing.
+          </p>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 {/snippet}
 
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  showcaseComponents={[
-    {
-      id: "relayInputCard",
-      cardData: relayInputCard,
-      preview: basicBlockPreview
-    },
-    {
-      id: "relayInputLabelCard",
-      cardData: relayInputLabelCard,
-      preview: labelBlockPreview
-    },
-    {
-      id: "relayInputErrorCard",
-      cardData: relayInputErrorCard,
-      preview: errorBlockPreview
-    },
-    {
-      id: "relayInputDisabledCard",
-      cardData: relayInputDisabledCard,
-      preview: disabledBlockPreview
-    }
-  ]}
-  {components}
-  {customSections}
-  apiDocs={relayInputCard.apiDocs}
+  {overview}
+  {showcaseComponents}
+  {componentsSection}
+  {recipes}
 />

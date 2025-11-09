@@ -2,8 +2,8 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
+  import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import code examples
   import uploadButtonCode from './examples/button/index.txt?raw';
@@ -27,6 +27,35 @@
 
   let buttonUploads = $state<MediaUploadResult[]>([]);
   let carouselUploads = $state<MediaUploadResult[]>([]);
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...uploadButtonCard, code: uploadButtonCode},
+      {...mediaUploadCarouselCard, code: mediaUploadCarouselCode}
+    ],
+    previews: {
+      'upload-button': uploadButtonComponentPreview,
+      'media-upload-carousel': carouselComponentPreview
+    }
+  };
+
+  const showcaseComponents: ShowcaseComponent[] = [
+    {
+      id: "uploadButtonCard",
+      cardData: uploadButtonCard,
+      preview: uploadButtonPreview,
+      orientation: 'vertical'
+    },
+    {
+      id: "mediaUploadCarouselCard",
+      cardData: mediaUploadCarouselCard,
+      preview: carouselPreview,
+      orientation: 'vertical'
+    }
+  ];
 </script>
 
 <!-- Preview snippets -->
@@ -45,25 +74,36 @@
   <MediaUploadCarousel {ndk} bind:uploads={carouselUploads} accept="image/*,video/*" />
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...uploadButtonCard, code: uploadButtonCode}}>
-    {#snippet preview()}
-      {@render uploadButtonPreview()}
-    {/snippet}
-  </ComponentCard>
-
-  <ComponentCard data={{...mediaUploadCarouselCard, code: mediaUploadCarouselCode}}>
-    {#snippet preview()}
-      {@render carouselPreview()}
-    {/snippet}
-  </ComponentCard>
+<!-- Component preview snippets for componentsSection -->
+{#snippet uploadButtonComponentPreview()}
+  {@render uploadButtonPreview()}
 {/snippet}
 
-<!-- Custom Builder API section -->
-{#snippet customSections()}
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold mb-2">Builder API</h2>
+{#snippet carouselComponentPreview()}
+  {@render carouselPreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Media Upload components provide file upload functionality for Nostr applications using Blossom servers (NIP-96). Upload images, videos, and other media files with automatic authentication and progress tracking.
+    </p>
+
+    <p>
+      The Upload Button component offers a simple drag-and-drop or click-to-upload interface, while the Carousel variant provides a visual preview of uploaded files with reordering capabilities. Both components handle authentication via NIP-98, automatically signing requests with the current user's credentials.
+    </p>
+
+    <p>
+      Built on top of the createMediaUpload builder, which manages upload state, progress tracking, error handling, and file queue management with support for multiple concurrent uploads.
+    </p>
+  </div>
+{/snippet}
+
+<!-- Recipes section (Builder API) -->
+{#snippet recipes()}
+  <section class="mt-16">
+    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
 
     <div class="space-y-6">
       <div class="border border-border rounded-lg p-6">
@@ -145,19 +185,8 @@
 <ComponentPageTemplate
   {metadata}
   {ndk}
-  showcaseComponents={[
-    {
-      id: "uploadButtonCard",
-      cardData: uploadButtonCard,
-      preview: uploadButtonPreview
-    },
-    {
-      id: "mediaUploadCarouselCard",
-      cardData: mediaUploadCarouselCard,
-      preview: carouselPreview
-    }
-  ]}
-  {components}
-  apiDocs={uploadButtonCard.apiDocs}
-  {customSections}
+  {overview}
+  {showcaseComponents}
+  {componentsSection}
+  {recipes}
 />

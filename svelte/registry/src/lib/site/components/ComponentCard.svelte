@@ -86,7 +86,7 @@
 							</User.Root>
 						</div>
 					</div>
-					<Tabs.List class="!h-auto !bg-transparent !border-none !p-0">
+					<Tabs.List class="">
 						<Tabs.Trigger value="about">About</Tabs.Trigger>
 						<Tabs.Trigger value="usage">Usage</Tabs.Trigger>
 					</Tabs.List>

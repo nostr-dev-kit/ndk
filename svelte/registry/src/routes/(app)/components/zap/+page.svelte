@@ -3,7 +3,6 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
@@ -38,6 +37,20 @@
       }
     })();
   });
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...zapButtonCard, code: zapButtonCode},
+      {...zapButtonAvatarsCard, code: zapButtonAvatarsCode}
+    ],
+    previews: {
+      'zap-button': zapButtonComponentPreview,
+      'zap-button-avatars': zapButtonAvatarsComponentPreview
+    }
+  };
 </script>
 
 <!-- Preview snippets for showcase -->
@@ -63,40 +76,55 @@
   {/if}
 {/snippet}
 
-<!-- Components snippet -->
-{#snippet components()}
-  <ComponentCard data={{...zapButtonCard, code: zapButtonCode}}>
-    {#snippet preview()}
-      {@render zapButtonsPreview()}
-    {/snippet}
-  </ComponentCard>
+{#snippet zapButtonComponentPreview()}
+  {#if sampleEvent}
+    {@render zapButtonsPreview()}
+  {/if}
+{/snippet}
 
-  <ComponentCard data={{...zapButtonAvatarsCard, code: zapButtonAvatarsCode}}>
-    {#snippet preview()}
-      {@render avatarsPreview()}
-    {/snippet}
-  </ComponentCard>
+{#snippet zapButtonAvatarsComponentPreview()}
+  {#if sampleEvent}
+    {@render avatarsPreview()}
+  {/if}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Zap Buttons enable users to send Bitcoin Lightning payments (zaps) to Nostr events and users. These buttons integrate with Lightning wallets to facilitate instant micropayments, making it easy to tip content creators and support valuable contributions.
+    </p>
+
+    <p>
+      The buttons support multiple visual variants and can display zap counts, total amounts, and avatars of users who have sent zaps. When clicked, they trigger the Lightning payment flow through the user's configured wallet (via NIP-07 extension or webln).
+    </p>
+
+    <p>
+      Zaps are published as kind 9735 events that reference the original content, creating an on-chain record of the payment while preserving privacy through the Lightning Network.
+    </p>
+  </div>
 {/snippet}
 
 <!-- Use the template -->
 <ComponentPageTemplate
   {metadata}
   {ndk}
+  {overview}
   showcaseComponents={[
     {
       id: "zapButtonCard",
-      cardData: zapButtonCard,
+      cardData: { ...zapButtonCard, title: "Basic Variants" },
       preview: zapButtonsPreview,
       orientation: 'horizontal'
     },
     {
       id: "zapButtonAvatarsCard",
-      cardData: zapButtonAvatarsCard,
+      cardData: { ...zapButtonAvatarsCard, title: "With Avatars" },
       preview: avatarsPreview,
       orientation: 'horizontal'
     }
   ]}
-  {components}
+  {componentsSection}
 >
   <EditProps.Prop
     name="Sample Event"

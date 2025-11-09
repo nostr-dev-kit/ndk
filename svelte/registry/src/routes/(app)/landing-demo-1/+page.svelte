@@ -288,7 +288,7 @@
 				{:else if node.component === 'UserCard'}
 					{#if sampleUser}
 						<div class="glass-card rounded-xl bg-gray-950/30 backdrop-blur-xl border border-gray-800/30 p-4 w-48">
-							<UserCard user={sampleUser} />
+							<UserCard {ndk} pubkey={sampleUser.pubkey} />
 						</div>
 					{:else}
 						<div class="glass-card rounded-xl bg-gray-950/30 backdrop-blur-xl border border-gray-800/30 p-4 w-48">

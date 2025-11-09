@@ -226,7 +226,7 @@
                   <span class="text-sm text-muted-foreground">Default (no sorting):</span>
                   <ContentTab
                     {ndk}
-                    pubkeys={[user1.pubkey]}
+                    pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063, 9802]}
                   >
                     {#snippet tab({ kind, name, count })}
@@ -245,7 +245,7 @@
                   <span class="text-sm text-muted-foreground">With click handler:</span>
                   <ContentTab
                     {ndk}
-                    pubkeys={[user1.pubkey]}
+                    pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063]}
                     onTabClick={(tab) => console.log('Clicked:', tab)}
                   >
@@ -274,7 +274,7 @@
                   <span class="text-sm text-muted-foreground">Sorted by count (most published):</span>
                   <ContentTab
                     {ndk}
-                    pubkeys={[user1.pubkey]}
+                    pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063, 9802]}
                     sort={byCount}
                   >
@@ -294,7 +294,7 @@
                   <span class="text-sm text-muted-foreground">Sorted by recency (most recent):</span>
                   <ContentTab
                     {ndk}
-                    pubkeys={[user1.pubkey]}
+                    pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063, 9802]}
                     sort={byRecency}
                   >
@@ -323,7 +323,7 @@
                   <span class="text-sm text-muted-foreground">Custom tab rendering:</span>
                   <ContentTab
                     {ndk}
-                    pubkeys={[user1.pubkey]}
+                    pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063, 9802]}
                     sort={byCount}
                   >
@@ -342,7 +342,7 @@
                   <span class="text-sm text-muted-foreground">Pill style tabs:</span>
                   <ContentTab
                     {ndk}
-                    pubkeys={[user1.pubkey]}
+                    pubkeys={[user1!.pubkey]}
                     kinds={[1, 30023, 1063, 9802]}
                     sort={byRecency}
                   >

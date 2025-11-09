@@ -1,0 +1,34 @@
+{
+  "name": "createMuteAction",
+  "title": "Mute Action Builder",
+  "oneLiner": "Reactive state manager for muting/unmuting Nostr users",
+  "description": "The Mute Action builder provides a simple reactive interface for managing user mutes on Nostr. It integrates with NDK's mute list functionality to provide real-time mute state tracking.\n\nThe builder accepts either an NDKUser object or a pubkey string as the target, making it flexible for different use cases. It automatically syncs with the user's mute list and reactively updates when mutes are added or removed.\n\nWhen calling the mute() function, it intelligently toggles the state - if the user is not muted, it adds them to the mute list; if already muted, it removes them. All mute changes are automatically published to relays.",
+  "importPath": "import { createMuteAction } from '$lib/registry/builders/mute-action';",
+  "command": "npx jsrepo add builders/mute-action",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["51"],
+  "parameters": [
+    {
+      "name": "target",
+      "type": "NDKUser | string | undefined",
+      "description": "User or pubkey to mute/unmute",
+      "required": true
+    }
+  ],
+  "returns": [
+    {
+      "name": "isMuted",
+      "type": "boolean",
+      "description": "Whether the target is currently muted"
+    },
+    {
+      "name": "mute",
+      "type": "() => Promise<void>",
+      "description": "Toggle mute state - mutes if not muted, unmutes if already muted"
+    }
+  ],
+  "usageExample": "const muteAction = createMuteAction(() => ({ target: user }), ndk);\n\n// Check if user is muted\nmuteAction.isMuted  // boolean\n\n// Toggle mute state\nawait muteAction.mute();"
+}

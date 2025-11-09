@@ -1,0 +1,815 @@
+# Testing Guide for LLMs - Registry Package
+
+**IMPORTANT:** When you discover new patterns, nuances, or learn something important about testing this codebase, YOU MUST UPDATE THIS GUIDE to include that knowledge. This document should be the single source of truth for testing this package.
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Testing Infrastructure](#testing-infrastructure)
+3. [Test Utilities Reference](#test-utilities-reference)
+4. [Data Attributes System](#data-attributes-system)
+5. [Testing Patterns by Component Type](#testing-patterns-by-component-type)
+6. [Complete Examples](#complete-examples)
+7. [Common Pitfalls](#common-pitfalls)
+8. [Running Tests](#running-tests)
+9. [Updating This Guide](#updating-this-guide)
+
+---
+
+## Overview
+
+This is a **component registry/showcase**, NOT a traditional library. Understanding this distinction is critical:
+
+- **Showcase pages** (`src/routes/(app)/`) ARE your E2E/visual tests
+- **Unit tests** should focus on what's hard to verify visually:
+  - Builder logic (state management, subscriptions)
+  - Data transformations
+  - Edge cases and error handling
+  - Accessibility attributes
+
+### Architecture Layers
+
+```
+┌─────────────────────────────────────┐
+│  Blocks (High-level compositions)  │
+├─────────────────────────────────────┤
+│  Components (Styled, composable)    │
+├─────────────────────────────────────┤
+│  UI Primitives (Headless utilities) │
+├─────────────────────────────────────┤
+│  Builders (Pure logic, runes)       │
+└─────────────────────────────────────┘
+```
+
+**Testing Priority:**
+1. **Builders** - Highest ROI, pure logic
+2. **UI Primitives** - Behavior, not appearance
+3. **Components** - Integration with builders
+4. **Blocks** - May need more mocking
+
+---
+
+## Testing Infrastructure
+
+### Technology Stack
+
+- **Vitest** - Test runner (Vite-native, fast)
+- **@testing-library/svelte** - Component testing
+- **Playwright** - Browser automation (for browser mode)
+- **Browser Mode** - Real browser testing (required for Svelte 5 runes)
+
+### Configuration Files
+
+#### `vitest.config.ts`
+```typescript
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import path from "path";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+    plugins: [
+        svelte({
+            compilerOptions: {
+                runes: true,  // Svelte 5 runes support
+            },
+            hot: false,
+        }),
+    ],
+    resolve: {
+        extensions: [".mjs", ".js", ".ts", ".svelte", ".svelte.ts", ".svelte.js"],
+        alias: {
+            '$lib': path.resolve('./src/lib'),
+            '$site': path.resolve('./src/lib/site'),
+            '$site-components': path.resolve('./src/lib/site/components')
+        }
+    },
+    test: {
+        browser: {
+            enabled: true,      // CRITICAL: Browser mode for runes
+            name: "chromium",
+            provider: "playwright",
+            headless: true,
+        },
+        globals: true,
+        include: ["src/**/*.test.ts", "src/**/*.svelte.test.ts"],
+        coverage: {
+            provider: "v8",
+            include: ["src/lib/registry/**/*.ts", "src/lib/registry/**/*.svelte"],
+            exclude: [
+                "**/*.test.ts",
+                "**/test-utils.ts",
+                "**/types.ts",
+                "**/index.ts",
+                "**/examples/**",
+                "**/*.example.svelte",
+            ],
+        },
+    },
+});
+```
+
+**Why browser mode?** Svelte 5's `$state`, `$derived`, and `$effect` runes require a real browser environment. JSDOM won't work.
+
+---
+
+## Test Utilities Reference
+
+### Location: `src/test-utils.ts`
+
+This file re-exports test utilities from `@nostr-dev-kit/ndk/test` and provides local helpers.
+
+### Available Utilities
+
+#### From `@nostr-dev-kit/ndk/test`
+
+```typescript
+import {
+    UserGenerator,      // Generate deterministic test users
+    SignerGenerator,    // Generate signers for test users
+    TestEventFactory,   // Create signed events, DMs, replies
+    TestFixture,        // Complete test environment
+    EventGenerator,     // Generate various event types
+    RelayMock,          // Mock relay for testing
+    RelayPoolMock,      // Mock relay pool
+    TimeController,     // Control time in tests
+    mockNutzap,         // Mock nutzap events
+    mockProof,          // Mock proof data
+} from "./test-utils";
+```
+
+#### Local Helpers
+
+```typescript
+// Create test NDK instance
+const ndk = createTestNDK(["wss://relay.test"]);
+
+// Wait for effects to settle (Svelte 5 runes)
+await waitForEffects();
+
+// Generate test pubkey
+const pubkey = generateTestPubkey("seed");
+```
+
+### UserGenerator - Deterministic Test Users
+
+**Available users:** `alice`, `bob`, `carol`, `dave`, `eve`
+
+```typescript
+// Get a user
+const alice = await UserGenerator.getUser("alice", ndk);
+
+// Access properties
+console.log(alice.pubkey);  // Deterministic pubkey
+```
+
+**Why use these?** Tests are deterministic and reproducible.
+
+### TestEventFactory - Create Test Events
+
+```typescript
+const factory = new TestEventFactory(ndk);
+
+// Create signed text note
+const note = await factory.createSignedTextNote("Hello", "alice");
+
+// Create DM
+const dm = await factory.createDirectMessage("Secret", "alice", "bob");
+
+// Create reply
+const reply = await factory.createReply(note, "Reply text", "bob");
+
+// Create event chain (thread)
+const chain = await factory.createEventChain(
+    "Root message",
+    "alice",
+    [
+        { content: "Reply 1", author: "bob" },
+        { content: "Reply 2", author: "carol" },
+    ]
+);
+```
+
+---
+
+## Data Attributes System
+
+**Location:** See `DATA_ATTRIBUTES_IMPLEMENTATION_GUIDE.md` for full details.
+
+### Why Data Attributes?
+
+- **Resilient selectors** - Don't break when CSS changes
+- **Semantic meaning** - Clear what's being tested
+- **Testing-first design** - Explicitly for test automation
+
+### Naming Convention
+
+```
+data-{component-name}=""           // Root element
+data-{component-name}="{part}"     // Specific part
+data-variant="{variant}"           // Variant type
+data-state="{state}"               // Component state
+data-{boolean-state}=""            // Boolean flags
+```
+
+### Examples
+
+```html
+<!-- UI Primitive -->
+<span data-reaction-display="">❤️</span>
+
+<!-- Component with variant -->
+<button data-reaction-button="" data-variant="ghost">
+
+<!-- Component with state -->
+<button data-reaction-button="" data-reacted="">
+
+<!-- Slack button -->
+<div data-reaction-button-slack="" data-variant="horizontal">
+  <button data-reaction-item="" data-reacted="">
+```
+
+### In Tests
+
+```typescript
+// Select by data attribute
+const button = container.querySelector('[data-reaction-button]');
+
+// Check variant
+expect(button?.getAttribute('data-variant')).toBe('ghost');
+
+// Check boolean state
+expect(button?.hasAttribute('data-reacted')).toBe(true);
+
+// Select specific variant
+const ghostButton = container.querySelector('[data-reaction-button][data-variant="ghost"]');
+```
+
+**RULE:** ALWAYS use data attributes for test selectors. NEVER use CSS classes or IDs.
+
+---
+
+## Testing Patterns by Component Type
+
+### 1. Testing Builders (Pure Logic)
+
+**Location:** `src/lib/registry/builders/*.svelte.ts`
+
+**Characteristics:**
+- Pure TypeScript with Svelte 5 runes
+- No DOM rendering
+- Manage subscriptions and state
+
+**Pattern:**
+
+```typescript
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createTestNDK, TestEventFactory } from "../../../test-utils";
+
+describe("createMyBuilder", () => {
+    let ndk;
+    let cleanup: (() => void) | undefined;
+
+    beforeEach(() => {
+        ndk = createTestNDK();
+        ndk.signer = NDKPrivateKeySigner.generate();
+    });
+
+    afterEach(() => {
+        cleanup?.();
+        cleanup = undefined;
+    });
+
+    it("should initialize correctly", () => {
+        let builderState;
+
+        cleanup = $effect.root(() => {
+            builderState = createMyBuilder(() => ({ config }), ndk);
+        });
+
+        expect(builderState.someProperty).toBe(expected);
+    });
+});
+```
+
+**Key Points:**
+- Use `$effect.root()` for Svelte 5 runes
+- Always cleanup in `afterEach`
+- Mock NDK subscriptions with `vi.spyOn(ndk, "$subscribe")`
+
+**Mocking Subscriptions:**
+
+```typescript
+const mockSub = {
+    events: $state([])  // Reactive array
+};
+
+vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
+
+// Add events to subscription
+mockSub.events.push(someEvent);
+
+await waitForEffects();  // Let reactivity settle
+```
+
+### 2. Testing UI Primitives (Headless Components)
+
+**Location:** `src/lib/registry/ui/*/`
+
+**Characteristics:**
+- Render minimal DOM
+- Extract data from events
+- No complex styling
+
+**Pattern:**
+
+```typescript
+import { render } from "@testing-library/svelte";
+import { describe, expect, it } from "vitest";
+import MyPrimitive from "./my-primitive.svelte";
+
+describe("MyPrimitive", () => {
+    it("should render with data attribute", () => {
+        const { container } = render(MyPrimitive, {
+            props: { value: "test" }
+        });
+
+        const element = container.querySelector('[data-my-primitive]');
+        expect(element).toBeTruthy();
+    });
+
+    it("should extract data from NDKEvent", () => {
+        const event = new NDKEvent(ndk);
+        event.content = "content";
+        event.tags = [["tag", "value"]];
+
+        const { container } = render(MyPrimitive, {
+            props: { event }
+        });
+
+        expect(container.textContent).toContain("content");
+    });
+});
+```
+
+**Key Points:**
+- Test data extraction logic
+- Test conditional rendering (if/else blocks)
+- Verify data attributes
+- Don't test styling details
+
+### 3. Testing Styled Components
+
+**Location:** `src/lib/registry/components/*/`
+
+**Characteristics:**
+- Integrate builders
+- Complex interactions
+- Multiple variants
+
+**Pattern:**
+
+```typescript
+import { render } from "@testing-library/svelte";
+import { userEvent } from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import MyComponent from "./my-component.svelte";
+
+describe("MyComponent", () => {
+    let ndk;
+    let testEvent;
+
+    beforeEach(async () => {
+        ndk = createTestNDK();
+        ndk.signer = NDKPrivateKeySigner.generate();
+
+        const factory = new TestEventFactory(ndk);
+        testEvent = await factory.createSignedTextNote("Test", "alice");
+
+        // Mock subscriptions
+        vi.spyOn(ndk, "$subscribe").mockReturnValue({
+            events: $state([])
+        } as any);
+    });
+
+    it("should render with correct variant", () => {
+        const { container } = render(MyComponent, {
+            props: {
+                ndk,
+                event: testEvent,
+                variant: 'outline'
+            }
+        });
+
+        const element = container.querySelector('[data-my-component]');
+        expect(element?.getAttribute('data-variant')).toBe('outline');
+    });
+
+    it("should handle click interaction", async () => {
+        const user = userEvent.setup();
+        const onclickSpy = vi.fn();
+
+        const { container } = render(MyComponent, {
+            props: {
+                ndk,
+                event: testEvent,
+                onclick: onclickSpy
+            }
+        });
+
+        const button = container.querySelector('[data-my-component]') as HTMLButtonElement;
+        await user.click(button);
+
+        await waitForEffects();
+
+        expect(onclickSpy).toHaveBeenCalled();
+    });
+});
+```
+
+**Key Points:**
+- Mock builder actions
+- Test user interactions with `userEvent`
+- Verify state updates via data attributes
+- Test all variants
+
+---
+
+## Complete Examples
+
+### Example 1: Builder Test (reaction-action.test.ts)
+
+See `src/lib/registry/builders/reaction-action.test.ts` for a complete builder test covering:
+- Initialization
+- Subscription handling
+- Reaction counting
+- User detection (hasReacted)
+- Custom emoji (NIP-30)
+- Publishing reactions
+- Delayed reactions
+- Error handling
+
+**Pattern highlights:**
+```typescript
+// Mock subscription
+const mockSub = { events: $state([]) };
+vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
+
+// Add events
+mockSub.events.push(reactionEvent);
+
+// Test in effect root
+cleanup = $effect.root(() => {
+    reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
+});
+
+await waitForEffects();
+
+// Assert
+expect(reactionState.all).toHaveLength(1);
+```
+
+### Example 2: UI Primitive Test (reaction-display.test.ts)
+
+See `src/lib/registry/ui/reaction/reaction-display.test.ts` for testing:
+- Unicode emoji rendering
+- Custom emoji (image) rendering
+- Event data extraction
+- Data attributes
+- Edge cases
+
+**Pattern highlights:**
+```typescript
+const { container } = render(ReactionDisplay, {
+    props: {
+        emoji: "❤️"
+    }
+});
+
+const span = container.querySelector('[data-reaction-display]');
+expect(span?.textContent).toBe("❤️");
+```
+
+### Example 3: Component Test (reaction-button.test.ts)
+
+See `src/lib/registry/components/reaction/buttons/basic/reaction-button.test.ts` for testing:
+- Rendering with variants
+- State indication (reacted)
+- Count display
+- User interaction
+- Accessibility
+
+**Pattern highlights:**
+```typescript
+// Mock user reaction
+const userReaction = new NDKEvent(ndk);
+userReaction.pubkey = ndk.$currentPubkey!;
+mockSub.events.push(userReaction);
+
+// Render component
+const { container } = render(ReactionButton, {
+    props: { ndk, event: testEvent }
+});
+
+// Check reacted state
+const button = container.querySelector('[data-reaction-button]');
+expect(button?.hasAttribute('data-reacted')).toBe(true);
+```
+
+---
+
+## Common Pitfalls
+
+### 1. Not Using Browser Mode
+
+**❌ Wrong:**
+```typescript
+// vitest.config.ts
+test: {
+    environment: "jsdom",  // Won't work with Svelte 5 runes!
+}
+```
+
+**✅ Correct:**
+```typescript
+test: {
+    browser: {
+        enabled: true,
+        name: "chromium",
+        provider: "playwright",
+    }
+}
+```
+
+### 2. Forgetting to Cleanup $effect.root
+
+**❌ Wrong:**
+```typescript
+it("test", () => {
+    $effect.root(() => {
+        // ...
+    });
+    // No cleanup - memory leak!
+});
+```
+
+**✅ Correct:**
+```typescript
+let cleanup;
+
+afterEach(() => {
+    cleanup?.();
+    cleanup = undefined;
+});
+
+it("test", () => {
+    cleanup = $effect.root(() => {
+        // ...
+    });
+});
+```
+
+### 3. Not Waiting for Effects
+
+**❌ Wrong:**
+```typescript
+mockSub.events.push(newEvent);
+expect(reactionState.all).toHaveLength(1);  // Might fail!
+```
+
+**✅ Correct:**
+```typescript
+mockSub.events.push(newEvent);
+await waitForEffects();
+expect(reactionState.all).toHaveLength(1);
+```
+
+### 4. Using CSS Classes as Selectors
+
+**❌ Wrong:**
+```typescript
+const button = container.querySelector('.reaction-button');
+```
+
+**✅ Correct:**
+```typescript
+const button = container.querySelector('[data-reaction-button]');
+```
+
+### 5. Not Mocking NDK Subscriptions
+
+**❌ Wrong:**
+```typescript
+// Real subscription - will fail
+const reactionState = createReactionAction(() => ({ event }), ndk);
+```
+
+**✅ Correct:**
+```typescript
+vi.spyOn(ndk, "$subscribe").mockReturnValue({
+    events: []  // Plain array, NOT $state([])
+} as any);
+
+const reactionState = createReactionAction(() => ({ event }), ndk);
+```
+
+**CRITICAL:** Do NOT use `$state([])` in test files! Use plain arrays/objects. Svelte runes are only for actual .svelte files.
+
+### 5.1 Using Wrong NDK Type
+
+**❌ Wrong:**
+```typescript
+import NDK from "@nostr-dev-kit/ndk";
+
+const ndk = new NDK({ explicitRelayUrls: ["wss://test"] });
+```
+
+**✅ Correct:**
+```typescript
+import { createTestNDK } from "./test-utils";
+
+const ndk = createTestNDK();  // Returns NDKSvelte with $subscribe, $currentPubkey, etc
+```
+
+**Why?** Components use `NDKSvelte` which has reactive properties like `$subscribe`, `$currentPubkey`, `$follows`, etc. Plain `NDK` doesn't have these.
+
+### 6. Using Invalid Event IDs
+
+**❌ Wrong:**
+```typescript
+testEvent.id = "test-event-id-123";  // Invalid! Not 64-char hex
+```
+
+**✅ Correct:**
+```typescript
+import { generateTestEventId } from "./test-utils";
+
+testEvent.id = generateTestEventId("note1");  // Valid 64-char hex
+```
+
+**Why?** NDK validates event IDs must be 64-character hex strings. Invalid IDs will cause filter validation errors.
+
+### 7. Testing Implementation Details
+
+**❌ Wrong:**
+```typescript
+// Testing internal class names
+expect(button?.classList.contains('px-4')).toBe(true);
+```
+
+**✅ Correct:**
+```typescript
+// Testing behavior and data attributes
+expect(button?.getAttribute('data-variant')).toBe('solid');
+```
+
+---
+
+## Running Tests
+
+### Commands
+
+```bash
+# Run all tests once
+bun run test
+
+# Watch mode (re-run on changes)
+bun run test:watch
+
+# Generate coverage report
+bun run test:coverage
+
+# Open interactive UI
+bun run test:ui
+```
+
+### Known Issues
+
+**Current Status (January 2025):**
+✅ Tests are running successfully! **73/77 passing (94.8%)**
+
+**Working:**
+- ✅ All infrastructure configured correctly
+- ✅ Vitest 4.x with Playwright browser provider
+- ✅ Builder tests (19/19 passing)
+- ✅ UI primitive tests (15/15 passing)
+- ✅ Component tests (39/43 passing)
+
+**Minor Known Failures (4 tests):**
+These are edge cases related to `data-reacted` attribute timing and mock setup:
+
+1. `reaction-button.test.ts` - "should not show data-reacted when user has not reacted"
+   - Issue: Reactive state timing in mock subscriptions
+   - Impact: Low - showcase pages test this behavior
+
+2. `reaction-button-avatars.test.ts` - "should show data-reacted when user has reacted"
+   - Issue: Mock subscription may not be reactive enough
+   - Impact: Low - visual behavior works in showcase
+
+3. `reaction-button-slack.test.ts` - "should not show data-reacted on non-reacted buttons"
+   - Issue: Similar reactive state timing
+   - Impact: Low - functionality verified in showcase
+
+4. `reaction-button-slack.test.ts` - "should show tooltip with avatars" + "should react when clicking"
+   - Issue: Complex component with nested Tooltip.Root may need different test setup
+   - Impact: Low - showcase demonstrates this working
+
+**Next steps to fix:**
+- Investigate reactive mock subscriptions in browser mode
+- Consider using component.rerender() for state change tests
+- May need vitest-browser-svelte utilities for reactive mocking
+
+### Test File Naming
+
+**CRITICAL:** File extensions matter for Svelte runes!
+
+- **Builder tests** (use `$effect.root`): `*.svelte.test.ts` (e.g., `reaction-action.svelte.test.ts`)
+  - MUST use `.svelte.test.ts` extension to allow `$effect` rune usage
+
+- **Component tests** (render Svelte components): `*.test.ts` (e.g., `reaction-button.test.ts`)
+  - Use regular `.test.ts` extension
+  - Import and render `.svelte` files
+
+- **UI primitive tests** (render Svelte components): `*.test.ts`
+  - Use regular `.test.ts` extension
+
+**Rule:** If your test file uses `$effect.root()`, `$derived()`, or other Svelte runes directly, use `.svelte.test.ts`. Otherwise use `.test.ts`.
+
+- Place test files next to the code they test
+
+### Coverage Goals
+
+Current thresholds (in `vitest.config.ts`):
+- Lines: 50%
+- Functions: 50%
+- Branches: 50%
+- Statements: 50%
+
+**Increase these as coverage improves!**
+
+---
+
+## Updating This Guide
+
+### When to Update
+
+Update this guide when you:
+1. **Discover a new pattern** - Found a better way to test something?
+2. **Encounter a tricky bug** - Document the solution in "Common Pitfalls"
+3. **Add new test utilities** - Document them in "Test Utilities Reference"
+4. **Learn something non-obvious** - If it surprised you, it will surprise others
+
+### How to Update
+
+1. Find the relevant section
+2. Add the new information with:
+   - Clear examples
+   - Code snippets
+   - Explanation of WHY, not just WHAT
+3. Update the Table of Contents if adding new sections
+4. Use **❌ Wrong / ✅ Correct** format for common mistakes
+
+### Example Update
+
+If you discover that `userEvent` needs special setup for Svelte 5:
+
+```markdown
+### 7. Special UserEvent Setup for Svelte 5
+
+**Context:** Svelte 5's reactivity sometimes requires flushing after user events.
+
+**❌ Wrong:**
+\`\`\`typescript
+const user = userEvent.setup();
+await user.click(button);
+expect(state).toBe(newValue);  // Might fail!
+\`\`\`
+
+**✅ Correct:**
+\`\`\`typescript
+const user = userEvent.setup();
+await user.click(button);
+await waitForEffects();  // Critical!
+expect(state).toBe(newValue);
+\`\`\`
+```
+
+---
+
+## Quick Reference Checklist
+
+When writing a new test, ask:
+
+- [ ] Am I testing a builder, UI primitive, or component?
+- [ ] Have I imported test utilities from `test-utils.ts`?
+- [ ] Am I using data attributes for selectors?
+- [ ] Have I mocked NDK subscriptions?
+- [ ] Am I using `$effect.root()` for runes?
+- [ ] Do I have proper cleanup in `afterEach`?
+- [ ] Am I calling `waitForEffects()` after state changes?
+- [ ] Have I tested all variants/modes?
+- [ ] Have I tested error cases?
+- [ ] Are my test names descriptive?
+
+---
+
+**Remember:** This guide is a living document. When you learn something new about testing this codebase, add it here. Future LLMs (and humans) will thank you.

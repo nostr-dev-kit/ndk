@@ -15,8 +15,6 @@
     "user-lists",
     "social-features"
   ],
-  "showcaseTitle": "Follow Button",
-  "showcaseDescription": "Button to follow/unfollow users",
   "apiDocs": [
     {
       "name": "FollowButton",

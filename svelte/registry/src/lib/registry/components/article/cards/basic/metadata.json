@@ -16,8 +16,6 @@
     "blog-layouts",
     "news-sites"
   ],
-  "showcaseTitle": "Article Card",
-  "showcaseDescription": "Article preview card with title and excerpt",
   "apiDocs": [
     {
       "name": "ArticleCard",

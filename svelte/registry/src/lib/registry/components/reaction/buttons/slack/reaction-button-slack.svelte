@@ -32,11 +32,15 @@
   }
 </script>
 
-<div class={cn(
-  'flex',
-  variant === 'vertical' ? 'flex-col gap-1.5' : 'flex-row flex-wrap gap-2',
-  className
-)}>
+<div
+  data-reaction-button-slack=""
+  data-variant={variant}
+  class={cn(
+    'flex',
+    variant === 'vertical' ? 'flex-col gap-1.5' : 'flex-row flex-wrap gap-2',
+    className
+  )}
+>
   {#if showAvatars && variant === 'horizontal'}
     <!-- Horizontal with popover avatars -->
     <Tooltip.Provider delayDuration={100}>
@@ -44,6 +48,8 @@
         <Tooltip.Root>
           <Tooltip.Trigger>
             <button
+              data-reaction-item=""
+              data-reacted={reaction.hasReacted || undefined}
               class={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full',
                 'border transition-all hover:scale-105',
@@ -76,6 +82,8 @@
     <!-- Vertical with inline avatars -->
     {#each reactionState.all as reaction (reaction.emoji)}
       <button
+        data-reaction-item=""
+        data-reacted={reaction.hasReacted || undefined}
         class={cn(
           'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg',
           'transition-colors cursor-pointer',
@@ -100,6 +108,8 @@
     <!-- No avatars -->
     {#each reactionState.all as reaction (reaction.emoji)}
       <button
+        data-reaction-item=""
+        data-reacted={reaction.hasReacted || undefined}
         class={cn(
           'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full',
           'border transition-all hover:scale-105',

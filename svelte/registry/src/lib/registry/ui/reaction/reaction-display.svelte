@@ -43,12 +43,13 @@
 
 {#if emojiData.url}
   <img
+    data-reaction-display=""
     src={emojiData.url}
     alt={emojiData.shortcode || emojiData.emoji}
     class={cn('inline-block object-contain w-5 h-5', className)}
   />
 {:else}
-  <span class={cn('inline-block leading-none text-xl', className)}>
+  <span data-reaction-display="" class={cn('inline-block leading-none text-xl', className)}>
     {emojiData.emoji}
   </span>
 {/if}

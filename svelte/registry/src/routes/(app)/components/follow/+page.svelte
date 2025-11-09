@@ -103,6 +103,29 @@
   {/if}
 {/snippet}
 
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="space-y-8">
+    <div>
+      <h2 class="text-3xl font-bold mb-8">Overview</h2>
+
+      <div class="text-lg text-muted-foreground space-y-4">
+        <p>
+          The Follow Button enables users to follow or unfollow Nostr users and hashtags. Clicking the button toggles the follow state - if you're not following, it follows; if you're already following, it unfollows.
+        </p>
+
+        <p>
+          When following a user, the button publishes a NIP-02 contact list event containing the target user's pubkey. For hashtags and topics, it publishes a NIP-51 interest list event instead.
+        </p>
+
+        <p>
+          The button accepts either <code class="px-2 py-1 bg-muted rounded text-sm">NDKUser</code> objects for following users or string values for following hashtags and topics.
+        </p>
+      </div>
+    </div>
+  </div>
+{/snippet}
+
 <!-- Primitives section -->
 {#snippet primitives()}
   <section class="mt-16">
@@ -149,6 +172,7 @@ await followAction.follow();</code></pre>
 <ComponentPageTemplate
   {metadata}
   {ndk}
+  {overview}
   showcaseComponents={[
     {
       id: "followButtonGhost",

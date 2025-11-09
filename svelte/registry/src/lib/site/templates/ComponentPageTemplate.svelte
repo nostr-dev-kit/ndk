@@ -12,6 +12,7 @@
     metadata,
     ndk: propNdk,
     showcaseComponents = [],
+    overview,
     components,
     componentsTitle,
     componentsDescription,
@@ -56,6 +57,13 @@
   {/if}
 {:else if emptyState}
   {@render emptyState()}
+{/if}
+
+<!-- Overview Section -->
+{#if overview}
+  <section class="py-12">
+    {@render overview()}
+  </section>
 {/if}
 
 <!-- Components Section (new simplified pattern) -->

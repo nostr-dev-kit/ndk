@@ -17,8 +17,6 @@
     "nostr",
     "social"
   ],
-  "showcaseTitle": "Repost Basic",
-  "showcaseDescription": "Basic repost button with style variants. Clicking toggles repost state and displays repost count.",
   "apiDocs": [
     {
       "name": "RepostButton",

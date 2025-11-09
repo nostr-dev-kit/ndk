@@ -15,8 +15,6 @@
     "engagement",
     "feedback"
   ],
-  "showcaseTitle": "Reaction Button with Avatars",
-  "showcaseDescription": "Shows avatars of users who reacted. Perfect for social engagement visualization.",
   "apiDocs": [
     {
       "name": "ReactionButtonAvatars",

@@ -18,6 +18,7 @@
   "apiDoc": {
     "name": "UserCardGlass",
     "description": "A glassmorphism-styled user profile card with customizable appearance",
+    "importPath": "$lib/registry/components/user/cards/glass",
     "props": [
       {
         "name": "ndk",

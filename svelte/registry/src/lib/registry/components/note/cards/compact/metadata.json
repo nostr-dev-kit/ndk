@@ -14,5 +14,24 @@
     "compact-feeds",
     "sidebars",
     "notifications"
-  ]
+  ],
+  "apiDoc": {
+    "name": "NoteCardCompact",
+    "description": "A compact note card optimized for dense feeds and space-constrained layouts. Features smaller text sizing, reduced padding, truncated content with disabled media/link previews. Ideal for sidebars, notification lists, or high-density timeline views.",
+    "importPath": "import { NoteCardCompact } from '$lib/registry/components/note/cards/compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Note event to display"
+      }
+    ]
+  }
 }

@@ -14,5 +14,24 @@
     "microblogs",
     "social-feeds",
     "status-updates"
-  ]
+  ],
+  "apiDoc": {
+    "name": "NoteCard",
+    "description": "A card for displaying short-form notes (kind 1 events) with compact header, truncated content, and clean border styling. Uses EventCard builder pattern with pre-configured settings for note display. Includes shadow and rounded corners for card elevation.",
+    "importPath": "import { NoteCard } from '$lib/registry/components/note/cards/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Note event to display"
+      }
+    ]
+  }
 }

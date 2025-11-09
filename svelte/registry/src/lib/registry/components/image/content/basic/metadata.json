@@ -16,5 +16,45 @@
     "basic",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "ImageContent",
+    "description": "A content renderer for image events supporting NIP-94 imeta tags. Displays multiple images with metadata (dimensions, file size, mime type) and optional alt text captions. Features formatted file sizes, mime type labels, and separate image/container CSS classes. Ideal for rendering image galleries or individual images from NIP-94 events.",
+    "importPath": "import { ImageContent } from '$lib/registry/components/image/content/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "image",
+        "type": "NDKImage",
+        "required": true,
+        "description": "Image event containing imeta tags"
+      },
+      {
+        "name": "showMeta",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show image metadata (dimensions, size, type)"
+      },
+      {
+        "name": "showAlt",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show alt text captions"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes for container"
+      },
+      {
+        "name": "imageClass",
+        "type": "string",
+        "description": "CSS classes for image elements"
+      }
+    ]
+  }
 }

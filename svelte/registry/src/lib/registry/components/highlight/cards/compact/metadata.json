@@ -16,5 +16,47 @@
     "compact",
     "nostr",
     "social"
-  ]
+  ],
+  "apiDoc": {
+    "name": "HighlightCardCompact",
+    "description": "A compact highlight card with vertical accent line and minimal layout. Features highlighted text with optional author, timestamp, and source information. Includes hover background transition and group hover effects. Ideal for dense lists or sidebar displays of highlights.",
+    "importPath": "import { HighlightCardCompact } from '$lib/registry/components/highlight/cards/compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Highlight event to display"
+      },
+      {
+        "name": "showAuthor",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show author information"
+      },
+      {
+        "name": "showTimestamp",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show time ago timestamp"
+      },
+      {
+        "name": "showSource",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show highlight source information"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

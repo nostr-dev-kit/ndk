@@ -299,7 +299,7 @@
 				{:else if node.component === 'EventCard'}
 					{#if sampleEvent}
 						<div class="glass-card rounded-xl bg-gray-950/30 backdrop-blur-xl border border-gray-800/30 p-4 w-64">
-							<EventCardClassic event={sampleEvent} />
+							<EventCardClassic {ndk} event={sampleEvent} />
 						</div>
 					{:else}
 						<div class="glass-card rounded-xl bg-gray-950/30 backdrop-blur-xl border border-gray-800/30 p-4 w-64">

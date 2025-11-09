@@ -1,15 +1,16 @@
 import { NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../test-utils";
+import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../test-utils";
 import { createReactionAction } from "./index.svelte";
 
 describe("createReactionAction", () => {
-    let ndk;
+    let ndk: NDKSvelte;
     let cleanup: (() => void) | undefined;
     let testEvent: NDKEvent;
-    let alice;
-    let bob;
+    let alice: Awaited<ReturnType<typeof UserGenerator.getUser>>;
+    let bob: Awaited<ReturnType<typeof UserGenerator.getUser>>;
 
     beforeEach(async () => {
         ndk = createTestNDK();
@@ -17,11 +18,11 @@ describe("createReactionAction", () => {
         await ndk.signer.blockUntilReady();
 
         // Create test users
-        alice = await UserGenerator.getUser("alice", ndk);
-        bob = await UserGenerator.getUser("bob", ndk);
+        alice = await UserGenerator.getUser("alice", ndk as any);
+        bob = await UserGenerator.getUser("bob", ndk as any);
 
         // Create a test event to react to
-        const factory = new TestEventFactory(ndk);
+        const factory = new TestEventFactory(ndk as any);
         testEvent = await factory.createSignedTextNote("Test note", "alice");
         testEvent.id = generateTestEventId("note1");
     });
@@ -33,47 +34,47 @@ describe("createReactionAction", () => {
 
     describe("initialization", () => {
         it("should initialize with empty reactions when no subscription events", () => {
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
 
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
-            expect(reactionState.all).toEqual([]);
-            expect(reactionState.totalCount).toBe(0);
+            expect(reactionState!.all).toEqual([]);
+            expect(reactionState!.totalCount).toBe(0);
         });
 
         it("should handle undefined event", () => {
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
 
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: undefined }), ndk);
             });
 
-            expect(reactionState.all).toEqual([]);
+            expect(reactionState!.all).toEqual([]);
         });
     });
 
     describe("get()", () => {
         it("should return undefined when emoji has no reactions", () => {
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
 
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
-            expect(reactionState.get("❤️")).toBeUndefined();
+            expect(reactionState!.get("❤️")).toBeUndefined();
         });
 
         it("should return EmojiReaction when emoji exists", async () => {
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
 
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             // Mock a subscription that returns reaction events
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -101,7 +102,7 @@ describe("createReactionAction", () => {
 
             flushSync();
 
-            const reaction = reactionState.get("❤️");
+            const reaction = reactionState!.get("❤️");
             expect(reaction).toBeDefined();
             expect(reaction?.emoji).toBe("❤️");
             expect(reaction?.count).toBe(1);
@@ -112,7 +113,7 @@ describe("createReactionAction", () => {
 
     describe("reaction counting and grouping", () => {
         it("should group reactions by emoji", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -138,21 +139,21 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            expect(reactionState.all).toHaveLength(2);
-            expect(reactionState.get("❤️")?.count).toBe(2);
-            expect(reactionState.get("🔥")?.count).toBe(1);
-            expect(reactionState.totalCount).toBe(3);
+            expect(reactionState!.all).toHaveLength(2);
+            expect(reactionState!.get("❤️")?.count).toBe(2);
+            expect(reactionState!.get("🔥")?.count).toBe(1);
+            expect(reactionState!.totalCount).toBe(3);
         });
 
         it("should sort reactions by count descending", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -176,23 +177,23 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            expect(reactionState.all[0].emoji).toBe("🔥");
-            expect(reactionState.all[0].count).toBe(3);
-            expect(reactionState.all[1].emoji).toBe("❤️");
-            expect(reactionState.all[1].count).toBe(1);
+            expect(reactionState!.all[0].emoji).toBe("🔥");
+            expect(reactionState!.all[0].count).toBe(3);
+            expect(reactionState!.all[1].emoji).toBe("❤️");
+            expect(reactionState!.all[1].count).toBe(1);
         });
     });
 
     describe("hasReacted detection", () => {
         it("should detect when current user has reacted", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -207,20 +208,20 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            const reaction = reactionState.get("❤️");
+            const reaction = reactionState!.get("❤️");
             expect(reaction?.hasReacted).toBe(true);
             expect(reaction?.userReaction).toBe(userReaction);
         });
 
         it("should not detect hasReacted for other users", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -235,14 +236,14 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            const reaction = reactionState.get("❤️");
+            const reaction = reactionState!.get("❤️");
             expect(reaction?.hasReacted).toBe(false);
             expect(reaction?.userReaction).toBeUndefined();
         });
@@ -250,7 +251,7 @@ describe("createReactionAction", () => {
 
     describe("custom emoji (NIP-30)", () => {
         it("should extract custom emoji data from reaction event", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -267,14 +268,14 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            const reaction = reactionState.get(":pepe:");
+            const reaction = reactionState!.get(":pepe:");
             expect(reaction?.shortcode).toBe("pepe");
             expect(reaction?.url).toBe("https://example.com/pepe.png");
         });
@@ -288,12 +289,12 @@ describe("createReactionAction", () => {
 
             vi.spyOn(testEvent, "react").mockResolvedValue(mockReactionEvent);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
-            await reactionState.react("❤️");
+            await reactionState!.react("❤️");
 
             expect(testEvent.react).toHaveBeenCalledWith("❤️", false);
             expect(mockPublish).toHaveBeenCalled();
@@ -308,12 +309,12 @@ describe("createReactionAction", () => {
 
             vi.spyOn(testEvent, "react").mockResolvedValue(mockReactionEvent);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent, delayed: 5 }), ndk);
             });
 
-            await reactionState.react("❤️");
+            await reactionState!.react("❤️");
 
             // Should not publish immediately
             expect(mockPublish).not.toHaveBeenCalled();
@@ -334,17 +335,17 @@ describe("createReactionAction", () => {
 
             vi.spyOn(testEvent, "react").mockResolvedValue(mockReactionEvent);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent, delayed: 5 }), ndk);
             });
 
             // First click - add reaction
-            await reactionState.react("❤️");
+            await reactionState!.react("❤️");
             expect(mockPublish).not.toHaveBeenCalled();
 
             // Second click before delay - cancel
-            await reactionState.react("❤️");
+            await reactionState!.react("❤️");
 
             // Advance time - should not publish
             await vi.advanceTimersByTimeAsync(5000);
@@ -354,7 +355,7 @@ describe("createReactionAction", () => {
         });
 
         it("should delete existing reaction when already reacted", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -370,7 +371,7 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
@@ -378,7 +379,7 @@ describe("createReactionAction", () => {
             flushSync();
 
             // React again - should delete
-            await reactionState.react("❤️");
+            await reactionState!.react("❤️");
 
             expect(userReaction.delete).toHaveBeenCalled();
         });
@@ -391,12 +392,12 @@ describe("createReactionAction", () => {
 
             vi.spyOn(testEvent, "react").mockResolvedValue(mockReactionEvent);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
-            await reactionState.react({
+            await reactionState!.react({
                 emoji: ":pepe:",
                 shortcode: "pepe",
                 url: "https://example.com/pepe.png"
@@ -407,30 +408,30 @@ describe("createReactionAction", () => {
         });
 
         it("should throw error when no event to react to", async () => {
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: undefined }), ndk);
             });
 
-            await expect(reactionState.react("❤️")).rejects.toThrow("No event to react to");
+            await expect(reactionState!.react("❤️")).rejects.toThrow("No event to react to");
         });
 
         it("should throw error when user not logged in", async () => {
             // Create NDK without signer
             const ndkNoSigner = createTestNDK();
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndkNoSigner);
             });
 
-            await expect(reactionState.react("❤️")).rejects.toThrow("User must be logged in to react");
+            await expect(reactionState!.react("❤️")).rejects.toThrow("User must be logged in to react");
         });
     });
 
     describe("pubkey tracking", () => {
         it("should track all unique pubkeys who reacted", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -450,21 +451,21 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            const reaction = reactionState.get("❤️");
+            const reaction = reactionState!.get("❤️");
             expect(reaction?.pubkeys).toHaveLength(2);
             expect(reaction?.pubkeys).toContain(bob.pubkey);
             expect(reaction?.pubkeys).toContain(alice.pubkey);
         });
 
         it("should not duplicate pubkeys in tracking", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -485,14 +486,14 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            const reaction = reactionState.get("❤️");
+            const reaction = reactionState!.get("❤️");
             expect(reaction?.pubkeys).toHaveLength(1);
             expect(reaction?.pubkeys).toContain(bob.pubkey);
         });
@@ -500,7 +501,7 @@ describe("createReactionAction", () => {
 
     describe("totalCount", () => {
         it("should sum all reaction counts", async () => {
-            const mockSub = {
+            const mockSub: { events: NDKEvent[] } = {
                 events: [],
             };
 
@@ -525,14 +526,14 @@ describe("createReactionAction", () => {
 
             vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
 
-            let reactionState;
+            let reactionState: ReturnType<typeof createReactionAction> | undefined;
             cleanup = $effect.root(() => {
                 reactionState = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             flushSync();
 
-            expect(reactionState.totalCount).toBe(6);
+            expect(reactionState!.totalCount).toBe(6);
         });
     });
 });

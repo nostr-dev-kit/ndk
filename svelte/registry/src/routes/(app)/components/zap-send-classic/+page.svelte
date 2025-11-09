@@ -96,5 +96,5 @@
   ]}
   {componentsSection}
 >
-  <EditProps.Prop name="Target" type="text" bind:value={targetInput} placeholder="npub, nevent, or note1" default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
+  <EditProps.Prop name="Target" type="text" bind:value={targetInput} default="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />
 </ComponentPageTemplate>

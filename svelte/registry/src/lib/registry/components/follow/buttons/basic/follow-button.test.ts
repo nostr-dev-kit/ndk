@@ -11,9 +11,9 @@ describe("FollowButton", () => {
     let ndk: NDKSvelte;
     let alice: Awaited<ReturnType<typeof UserGenerator.getUser>>;
     let bob: Awaited<ReturnType<typeof UserGenerator.getUser>>;
-    let mockFollows;
-    let mockSessions;
-    let mockCurrentUser;
+    let mockFollows: any;
+    let mockSessions: any;
+    let mockCurrentUser: any;
 
     beforeEach(async () => {
         ndk = createTestNDK();
@@ -50,7 +50,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -79,7 +79,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -93,7 +93,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -105,7 +105,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob,
+                    target: bob as any,
                     variant: 'outline'
                 }
             });
@@ -118,7 +118,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob,
+                    target: bob as any,
                     variant: 'pill'
                 }
             });
@@ -131,7 +131,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob,
+                    target: bob as any,
                     variant: 'solid'
                 }
             });
@@ -146,7 +146,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -178,7 +178,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -192,7 +192,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -206,7 +206,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -219,7 +219,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -235,7 +235,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -255,7 +255,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -274,7 +274,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -286,7 +286,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob,
+                    target: bob as any,
                     showIcon: false
                 }
             });
@@ -303,7 +303,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -317,7 +317,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob
+                    target: bob as any
                 }
             });
 
@@ -347,7 +347,7 @@ describe("FollowButton", () => {
             const { container } = render(FollowButton, {
                 props: {
                     ndk,
-                    target: bob,
+                    target: bob as any,
                     class: "my-custom-class"
                 }
             });

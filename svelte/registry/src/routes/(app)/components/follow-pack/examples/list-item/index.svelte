@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import FollowPackListItem from '$lib/registry/components/follow/packs/basic/follow-pack-list-item.svelte';
+  import FollowPackListItem from '$lib/registry/components/follow-pack/basic/follow-pack-list-item.svelte';
   import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 
   interface Props {

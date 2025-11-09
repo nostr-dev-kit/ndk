@@ -167,6 +167,7 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
   "category": "relay",
   "subcategory": "inputs",
   "variant": "basic",
+  "oneLiner": "A basic input field for relay URLs with validation and autocomplete",
   "description": "A basic input field for relay URLs with validation and autocomplete",
   "documentation": "# Relay Input\n\n## Overview\n\nThe Relay Input component provides a user-friendly way to input and validate Nostr relay URLs. It includes autocomplete functionality and real-time validation.\n\n## Features\n\n- URL validation for wss:// and ws:// protocols\n- Autocomplete from known relay lists\n- Visual feedback for valid/invalid URLs\n- Keyboard navigation support\n\n## Usage\n\nBest used in settings pages, relay configuration forms, or anywhere users need to add or manage relay connections.\n\n## Best Practices\n\n1. Always validate relay connectivity after input\n2. Provide visual feedback during connection testing\n3. Consider showing relay metadata (name, description) when available",
   "command": "npx jsrepo add relay/inputs/basic",
@@ -190,12 +191,119 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
 - `category` (required): Top-level category
 - `subcategory` (optional): Second-level grouping
 - `variant` (optional): Style/behavior variant
+- `oneLiner` (optional): Short one-line description shown under the title
 - `description` (required): Short description
 - `documentation` (optional): Detailed markdown documentation explaining component behavior, use cases, features, and best practices
 - `command` (required): Installation command for jsrepo
 - `dependencies` (required): NPM dependencies array
 - `useCases` (required): Keywords for search/discovery
-- `apiDoc` (optional): Component API documentation object with props, events, and slots
+- `apiDoc` (required): Component API documentation object with props, events, and slots
+
+---
+
+## 2.5. Builder Metadata (`metadata.json` for Builders)
+
+Builders (like `createFollowAction()`, `createReactionAction()`) have `metadata.json` files in their directories at `src/lib/registry/builders/{builder-name}/`.
+
+### Builder Metadata Location
+
+```
+src/lib/registry/builders/
+├── follow-action/
+│   ├── index.svelte.ts         # Builder source code
+│   └── metadata.json           # Builder metadata
+├── reaction-action/
+│   ├── index.svelte.ts
+│   └── metadata.json
+└── ...
+```
+
+### Builder Metadata Schema
+
+```json
+{
+  "name": "createFollowAction",
+  "title": "Follow Action Builder",
+  "oneLiner": "Reactive state manager for following/unfollowing Nostr users and hashtags",
+  "description": "Detailed markdown documentation about the builder's features, behavior, and use cases",
+  "importPath": "import { createFollowAction } from '$lib/registry/builders/follow-action';",
+  "command": "npx jsrepo add builders/follow-action",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["02", "51"],
+  "parameters": [
+    {
+      "name": "target",
+      "type": "NDKUser | string",
+      "description": "User or hashtag to follow/unfollow",
+      "required": true
+    }
+  ],
+  "returns": [
+    {
+      "name": "isFollowing",
+      "type": "boolean",
+      "description": "Whether currently following the target"
+    },
+    {
+      "name": "follow",
+      "type": "() => Promise<void>",
+      "description": "Toggle follow/unfollow state"
+    }
+  ],
+  "usageExample": "const followAction = createFollowAction(() => ({ target: user }), ndk);\n\n// Access reactive state\nfollowAction.isFollowing\n\n// Toggle follow/unfollow\nawait followAction.follow();"
+}
+```
+
+### Builder Metadata Fields
+
+- `name` (required): Function name (e.g., "createFollowAction")
+- `title` (required): Display title (e.g., "Follow Action Builder")
+- `oneLiner` (optional): Short one-line description shown under the title
+- `description` (optional): Detailed markdown documentation about features and behavior
+- `importPath` (required): Import statement
+- `command` (required): jsrepo installation command
+- `dependencies` (optional): NPM dependencies
+- `nips` (optional): Related NIP numbers
+- `parameters` (required): Array of configuration object properties (what goes inside the `() => ({ ... })` function)
+- `returns` (required): Array of return property objects with name, type, and description
+- `usageExample` (optional): Code example showing typical usage
+
+### Using Builder Metadata in Pages
+
+Import builder metadata and pass to `ComponentPageTemplate`:
+
+```svelte
+<script lang="ts">
+  import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+  import followActionBuilder from '$lib/registry/builders/follow-action/metadata.json';
+
+  // ... other imports and setup
+</script>
+
+<ComponentPageTemplate
+  {metadata}
+  {ndk}
+  {overview}
+  {componentsSection}
+  buildersSection={{
+    builders: [followActionBuilder]
+  }}
+/>
+```
+
+### BuilderCard Rendering
+
+The `ComponentPageTemplate` automatically renders builders using the `BuilderCard` component, which provides:
+
+- **Header**: Title with one-liner description underneath
+- **About Tab**: Usage code snippet and detailed markdown description
+- **Usage Tab**: Installation, import, dependencies, NIPs, parameters table, returns table, and example
+- No preview area (builders have no UI)
+- No attribution (unlike ComponentCard)
+- Syntax-highlighted code examples
 
 ---
 

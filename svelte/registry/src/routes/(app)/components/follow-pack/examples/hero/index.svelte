@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import FollowPackHero from '$lib/registry/components/follow/packs/hero/follow-pack-hero.svelte';
+  import FollowPackHero from '$lib/registry/components/follow-pack/hero/follow-pack-hero.svelte';
   import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 
   interface Props {

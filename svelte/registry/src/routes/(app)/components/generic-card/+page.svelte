@@ -40,7 +40,7 @@
       id: 'generic-card',
       cardData: genericCardMetadata,
       preview: genericPreview,
-      orientation: 'vertical'
+      orientation: 'vertical' as const
     }
   ];
 

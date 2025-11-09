@@ -406,7 +406,7 @@
 									: variants[selectedEmbed] === variant.key
 										? 'border-orange-500 bg-orange-500/10'
 										: 'border-border hover:border-orange-500/50 hover:bg-accent'}"
-								onclick={() => selectVariant(selectedEmbed, variant.key)}
+								onclick={() => selectVariant(selectedEmbed!, variant.key)}
 							>
 								<div class="font-medium text-sm flex items-center gap-2">
 									{variant.label}

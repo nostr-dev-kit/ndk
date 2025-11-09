@@ -62,7 +62,6 @@
 	marked.setOptions({
 		breaks: true,
 		gfm: true,
-		headerIds: true,
 		mangle: false
 	});
 </script>

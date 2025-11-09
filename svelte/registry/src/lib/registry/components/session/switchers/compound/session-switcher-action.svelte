@@ -14,7 +14,7 @@
 
 <DropdownMenu.Item
 	class="flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-colors text-sm hover:bg-accent {variant === 'primary' ? 'text-primary' : variant === 'danger' ? 'text-destructive' : 'text-foreground'} {className}"
-	on:click={onclick}
+	onclick={onclick}
 >
 	{#if icon}
 		<div

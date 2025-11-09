@@ -44,9 +44,9 @@
 	{#snippet children(context)}
 		<div class={cn('w-full', className)}>
 			{#if label}
-				<label class="block text-sm font-medium mb-2">
+				<div class="block text-sm font-medium mb-2" role="heading" aria-level="3">
 					{label}
-				</label>
+				</div>
 			{/if}
 
 			<div class="space-y-4">

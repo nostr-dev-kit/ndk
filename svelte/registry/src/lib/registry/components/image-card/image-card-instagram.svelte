@@ -45,7 +45,7 @@
 		</User.Root>
 
 		{#if showDropdown}
-			<button class="p-2 rounded-full transition-colors bg-none border-none text-foreground cursor-pointer hover:bg-accent">
+			<button class="p-2 rounded-full transition-colors bg-none border-none text-foreground cursor-pointer hover:bg-accent" aria-label="Open options menu">
 				<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
 					<circle cx="12" cy="12" r="2" ></circle>
 					<circle cx="19" cy="12" r="2" ></circle>

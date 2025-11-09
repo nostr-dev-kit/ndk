@@ -86,6 +86,7 @@
     onclick={(e) => { e.stopPropagation(); showMenu = !showMenu; }}
     class="p-1 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-foreground"
     type="button"
+    aria-label="Open event menu"
   >
     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
       <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path>
@@ -203,7 +204,7 @@
     <div class="relative bg-card border border-border rounded-lg shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col">
       <div class="flex items-center justify-between px-6 py-4 border-b border-border">
         <h3 class="text-lg font-semibold text-foreground m-0">Raw Event</h3>
-        <button onclick={() => showRawEventModal = false} class="p-1 hover:bg-accent rounded transition-colors text-muted-foreground hover:text-foreground">
+        <button onclick={() => showRawEventModal = false} class="p-1 hover:bg-accent rounded transition-colors text-muted-foreground hover:text-foreground" aria-label="Close modal">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>

@@ -27,9 +27,9 @@
 	</PageTitle>
 
 	<!-- Introduction -->
-	<section class="prose prose-lg max-w-none mb-12">
-		<h2 class="text-3xl font-bold mb-4">The Three-Layer Architecture</h2>
-		<p class="text-muted-foreground mb-6">
+	<section class="prose prose-lg max-w-none mb-12 flex flex-col gap-4">
+		<h2 class="text-3xl font-bold">The Three-Layer Architecture</h2>
+		<p class="text-muted-foreground">
 			Nostr events render through three composable layers. Each layer has a specific responsibility
 			and can be used independently or combined together. This separation allows for maximum
 			flexibility and reusability.

@@ -8,7 +8,7 @@
 
   let { children }: Props = $props();
 
-  let portalTarget: HTMLDivElement | undefined;
+  let portalTarget = $state<HTMLDivElement | undefined>(undefined);
 
   $effect(() => {
     // Create portal container

@@ -119,7 +119,7 @@
         {/if}
       </div>
 
-      <button class="bg-transparent border-none cursor-pointer p-1 text-muted-foreground transition-colors hover:text-foreground">
+      <button class="bg-transparent border-none cursor-pointer p-1 text-muted-foreground transition-colors hover:text-foreground" aria-label={isExpanded ? "Collapse relay details" : "Expand relay details"}>
         <svg
           class="w-5 h-5 transition-transform duration-200 {isExpanded ? 'rotate-180' : ''}"
           xmlns="http://www.w3.org/2000/svg"

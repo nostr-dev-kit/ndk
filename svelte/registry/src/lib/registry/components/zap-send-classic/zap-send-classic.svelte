@@ -63,7 +63,7 @@
 
     <!-- Amount Selection -->
     <div class="mb-6" data-section="">
-      <label class="block font-semibold text-sm mb-2 text-foreground" data-label="">Amount</label>
+      <label for="zap-amount-input" class="block font-semibold text-sm mb-2 text-foreground" data-label="">Amount</label>
       <div class="flex gap-2 mb-3 flex-wrap" data-amount-presets="">
         {#each presets as preset}
           <button
@@ -81,6 +81,7 @@
         {/each}
       </div>
       <input
+        id="zap-amount-input"
         type="number"
         bind:value={zap.amount}
         min="1"
@@ -92,9 +93,9 @@
     <!-- Recipients -->
     {#if zap.splits.length > 0}
       <div class="mb-6" data-section="">
-        <label class="block font-semibold text-sm mb-2 text-foreground" data-label="">
+        <div class="block font-semibold text-sm mb-2 text-foreground" data-label="" role="heading" aria-level="3">
           Recipients ({zap.splits.length})
-        </label>
+        </div>
         <div class="flex flex-col gap-3 max-h-[200px] overflow-y-auto p-2 border border-border rounded-md bg-muted" data-recipients="">
           {#each zap.splits as split}
             <div class="flex items-center gap-3 p-3 bg-background rounded-md" data-recipient="">
@@ -119,14 +120,15 @@
 
     <!-- Comment -->
     <div class="mb-6" data-section="">
-      <label class="block font-semibold text-sm mb-2 text-foreground" data-label="">Comment (optional)</label>
+      <label for="zap-comment-input" class="block font-semibold text-sm mb-2 text-foreground" data-label="">Comment (optional)</label>
       <textarea
+        id="zap-comment-input"
         bind:value={zap.comment}
         placeholder="Say something nice..."
         rows="3"
         class="w-full px-2.5 py-2.5 border border-border rounded-md bg-background font-[inherit] text-sm resize-y focus:outline-none focus:border-primary"
         data-comment-input=""
-      />
+      ></textarea>
     </div>
 
     <!-- Error -->

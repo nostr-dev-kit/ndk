@@ -38,9 +38,9 @@
 
 <div data-relay-input="" data-error={error ? '' : undefined} data-disabled={disabled ? '' : undefined} class={cn('w-full', className)}>
 	{#if label}
-		<label class="block text-sm font-medium mb-2">
+		<div class="block text-sm font-medium mb-2" role="heading" aria-level="3">
 			{label}
-		</label>
+		</div>
 	{/if}
 
 	<Relay.Input

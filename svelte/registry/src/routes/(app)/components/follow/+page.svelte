@@ -5,6 +5,8 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentCard from '$site-components/ComponentCard.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
+  import CodeBlock from '$site-components/CodeBlock.svelte';
+  import ApiTable from '$site-components/api-table.svelte';
 
   // Import code examples
   import followButtonCode from './examples/basic/index.txt?raw';
@@ -105,67 +107,72 @@
 
 <!-- Overview section -->
 {#snippet overview()}
-  <div class="space-y-8">
-    <div>
-      <h2 class="text-3xl font-bold mb-8">Overview</h2>
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      The Follow Button enables users to follow or unfollow Nostr users and hashtags. Clicking the button toggles the follow state - if you're not following, it follows; if you're already following, it unfollows.
+    </p>
 
-      <div class="text-lg text-muted-foreground space-y-4">
-        <p>
-          The Follow Button enables users to follow or unfollow Nostr users and hashtags. Clicking the button toggles the follow state - if you're not following, it follows; if you're already following, it unfollows.
-        </p>
+    <p>
+      When following a user, the button publishes a NIP-02 contact list event containing the target user's pubkey. For hashtags and topics, it publishes a NIP-51 interest list event instead.
+    </p>
 
-        <p>
-          When following a user, the button publishes a NIP-02 contact list event containing the target user's pubkey. For hashtags and topics, it publishes a NIP-51 interest list event instead.
-        </p>
-
-        <p>
-          The button accepts either <code class="px-2 py-1 bg-muted rounded text-sm">NDKUser</code> objects for following users or string values for following hashtags and topics.
-        </p>
-      </div>
-    </div>
+    <p>
+      The button accepts either <code class="px-2 py-1 bg-muted rounded text-sm">NDKUser</code> objects for following users or string values for following hashtags and topics.
+    </p>
   </div>
 {/snippet}
 
 <!-- Primitives section -->
 {#snippet primitives()}
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Builder API</h2>
-    <p class="text-muted-foreground mb-6">
-      Use <code class="px-2 py-1 bg-muted rounded text-sm">createFollowAction()</code> to build custom follow button implementations with reactive state management.
-    </p>
+  <p class="text-muted-foreground mb-6">
+    Use <code class="px-2 py-1 bg-muted rounded text-sm">createFollowAction()</code> to build custom follow button implementations.
+  </p>
 
-    <div class="bg-muted/50 rounded-lg p-6">
-      <h3 class="text-lg font-semibold mb-3">createFollowAction</h3>
-      <pre class="text-sm overflow-x-auto"><code>import &#123; createFollowAction &#125; from '@nostr-dev-kit/svelte';
+  <h3 class="text-lg font-semibold mb-3">createFollowAction</h3>
+  <CodeBlock lang="typescript" code={`import { createFollowAction } from '@nostr-dev-kit/svelte';
 
 // Create follow action
-const followAction = createFollowAction(() => (&#123; target: user &#125;), ndk);
+const followAction = createFollowAction(() => ({ target: user }), ndk);
 
 // Access reactive state
 followAction.isFollowing  // boolean - whether currently following
 
 // Toggle follow/unfollow
-await followAction.follow();</code></pre>
+await followAction.follow();`} />
 
-      <div class="mt-4">
-        <h4 class="font-semibold mb-2">Parameters:</h4>
-        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-          <li>
-            <code>options</code>: Function returning &#123; target: NDKUser | string &#125;
-          </li>
-          <li><code>ndk</code>: NDKSvelte instance</li>
-        </ul>
-      </div>
+  <ApiTable
+    title="Parameters"
+    rows={[
+      {
+        name: 'options',
+        type: '() => { target: NDKUser | string }',
+        description: 'Function returning the target to follow/unfollow',
+        required: true
+      },
+      {
+        name: 'ndk',
+        type: 'NDKSvelte',
+        description: 'NDK instance for publishing events',
+        required: true
+      }
+    ]}
+  />
 
-      <div class="mt-4">
-        <h4 class="font-semibold mb-2">Returns:</h4>
-        <ul class="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-          <li><code>isFollowing</code>: boolean - Current follow state</li>
-          <li><code>follow()</code>: async function - Toggle follow/unfollow</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+  <ApiTable
+    title="Returns"
+    rows={[
+      {
+        name: 'isFollowing',
+        type: 'boolean',
+        description: 'Current follow state'
+      },
+      {
+        name: 'follow',
+        type: '() => Promise<void>',
+        description: 'Toggle follow/unfollow'
+      }
+    ]}
+  />
 {/snippet}
 
 <!-- Use the template -->
@@ -203,7 +210,6 @@ await followAction.follow();</code></pre>
   ]}
   {componentsSection}
   {primitives}
-  apiDocs={followButtonCard.apiDocs}
 >
   <EditProps.Prop
     name="Sample User"

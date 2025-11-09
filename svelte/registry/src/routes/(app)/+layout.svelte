@@ -55,7 +55,7 @@
 </div>
 
 {#if showTocForRoute}
-  <aside class="fixed right-0 top-14 w-[280px] h-[calc(100vh-3.5rem)] py-12 px-8 overflow-y-auto bg-background border-l border-border max-2xl:hidden">
+  <aside class="fixed right-0 top-14 w-[280px] h-[calc(100vh-3.5rem)] py-12 px-8 overflow-y-auto bg-background max-2xl:hidden">
     <Toc />
   </aside>
 {/if}

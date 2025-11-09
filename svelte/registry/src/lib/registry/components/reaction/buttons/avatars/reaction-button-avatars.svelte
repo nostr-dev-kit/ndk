@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createReactionAction } from '../../../../builders/reaction-action.svelte.js';
+  import { createReactionAction } from '../../../../builders/reaction-action/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../../../utils/cn';
   import AvatarGroup from '../../../avatar-group/avatar-group.svelte';

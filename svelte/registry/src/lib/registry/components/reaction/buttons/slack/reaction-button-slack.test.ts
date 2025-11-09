@@ -1,8 +1,9 @@
 import { NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, TestEventFactory, UserGenerator, waitForEffects, generateTestEventId } from "../../../../../../test-utils";
+import { flushSync } from "svelte";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../../../test-utils";
 import ReactionButtonSlack from "./reaction-button-slack.svelte";
 
 describe("ReactionButtonSlack", () => {
@@ -22,14 +23,16 @@ describe("ReactionButtonSlack", () => {
         const factory = new TestEventFactory(ndk);
         testEvent = await factory.createSignedTextNote("Test note", "alice");
         testEvent.id = generateTestEventId("note1");
+    });
 
-        vi.spyOn(ndk, "$subscribe").mockReturnValue({
-            events: []
-        } as any);
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     describe("rendering", () => {
         it("should render with data attributes", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonSlack, {
                 props: {
                     ndk,
@@ -42,6 +45,8 @@ describe("ReactionButtonSlack", () => {
         });
 
         it("should apply variant data attribute", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonSlack, {
                 props: {
                     ndk,
@@ -55,6 +60,8 @@ describe("ReactionButtonSlack", () => {
         });
 
         it("should default to horizontal variant", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonSlack, {
                 props: {
                     ndk,
@@ -230,7 +237,7 @@ describe("ReactionButtonSlack", () => {
             const button = container.querySelector('[data-reaction-item]') as HTMLButtonElement;
             await user.click(button);
 
-            await waitForEffects();
+            flushSync();
 
             expect(testEvent.react).toHaveBeenCalledWith("❤️", false);
         });
@@ -238,6 +245,8 @@ describe("ReactionButtonSlack", () => {
 
     describe("delayed reactions", () => {
         it("should support delayed publishing when delayed prop is set", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonSlack, {
                 props: {
                     ndk,
@@ -298,7 +307,7 @@ describe("ReactionButtonSlack", () => {
                 }
             });
 
-            await waitForEffects();
+            flushSync();
 
             const button = container.querySelector('[data-reaction-item]');
             expect(button?.hasAttribute('data-reacted')).toBe(false);

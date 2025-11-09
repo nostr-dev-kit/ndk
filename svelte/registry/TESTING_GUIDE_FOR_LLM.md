@@ -18,6 +18,8 @@
 
 ## Overview
 
+**Source:** This guide incorporates patterns from [Svelte Official Testing Documentation](https://svelte.dev/docs/svelte/testing)
+
 This is a **component registry/showcase**, NOT a traditional library. Understanding this distinction is critical:
 
 - **Showcase pages** (`src/routes/(app)/`) ARE your E2E/visual tests
@@ -46,6 +48,49 @@ This is a **component registry/showcase**, NOT a traditional library. Understand
 2. **UI Primitives** - Behavior, not appearance
 3. **Components** - Integration with builders
 4. **Blocks** - May need more mocking
+
+### Official Svelte Testing Guidelines Applied
+
+Based on [Svelte's official testing docs](https://svelte.dev/docs/svelte/testing), we follow these patterns:
+
+**1. Filename Convention (CRITICAL)**
+- Tests using `$effect`, `$state`, `$derived` runes: `*.svelte.test.ts`
+- Regular component tests: `*.test.ts`
+- **Why:** Vitest needs `.svelte` in filename to process runes
+
+**2. Use `flushSync()` for Reactive State**
+```typescript
+import { flushSync } from "svelte";
+
+mockSub.events.push(newEvent);
+flushSync();  // Synchronously execute pending effects
+expect(reactionState.all).toHaveLength(1);
+```
+
+**Why:** Effects run after microtasks. `flushSync()` executes them immediately for deterministic testing.
+
+**3. `$effect.root()` Pattern**
+```typescript
+const cleanup = $effect.root(() => {
+    builderState = createBuilder(() => config, ndk);
+});
+
+// Always cleanup
+cleanup();
+```
+
+**4. @testing-library/svelte Over Low-level mount()**
+- We use @testing-library/svelte's `render()` - recommended for less brittle tests
+- Reduces coupling to component structure
+
+**5. Browser Mode for Runes**
+- We use Vitest browser mode with Playwright
+- Official docs mention jsdom with `conditions: ['browser']` as lighter option
+- Browser mode is more comprehensive for complex components
+
+**6. Extract Logic to `.svelte.ts` Files**
+- Our builders already follow this pattern!
+- Makes testing pure logic easier
 
 ---
 
@@ -143,11 +188,21 @@ import {
 // Create test NDK instance
 const ndk = createTestNDK(["wss://relay.test"]);
 
-// Wait for effects to settle (Svelte 5 runes)
-await waitForEffects();
+// Flush pending effects (Svelte 5 runes) - PREFERRED
+flushEffects();  // Uses Svelte's flushSync() internally
 
 // Generate test pubkey
 const pubkey = generateTestPubkey("seed");
+
+// Generate test event ID (64-char hex)
+const eventId = generateTestEventId("note1");
+```
+
+**Import flushEffects:**
+```typescript
+import { flushEffects } from "./test-utils";
+// Or import flushSync directly:
+import { flushSync } from "svelte";
 ```
 
 ### UserGenerator - Deterministic Test Users
@@ -438,7 +493,7 @@ describe("MyComponent", () => {
 
 ### Example 1: Builder Test (reaction-action.test.ts)
 
-See `src/lib/registry/builders/reaction-action.test.ts` for a complete builder test covering:
+See `src/lib/registry/builders/reaction-action/index.svelte.test.ts` for a complete builder test covering:
 - Initialization
 - Subscription handling
 - Reaction counting
@@ -568,7 +623,7 @@ it("test", () => {
 });
 ```
 
-### 3. Not Waiting for Effects
+### 3. Not Flushing Effects
 
 **❌ Wrong:**
 ```typescript
@@ -576,12 +631,16 @@ mockSub.events.push(newEvent);
 expect(reactionState.all).toHaveLength(1);  // Might fail!
 ```
 
-**✅ Correct:**
+**✅ Correct (per official Svelte docs):**
 ```typescript
+import { flushSync } from "svelte";
+
 mockSub.events.push(newEvent);
-await waitForEffects();
+flushSync();  // Synchronously execute pending effects
 expect(reactionState.all).toHaveLength(1);
 ```
+
+**Why:** Effects run after microtasks. `flushSync()` executes them immediately for deterministic testing. Don't use `setTimeout`-based approaches like `waitForEffects()`.
 
 ### 4. Using CSS Classes as Selectors
 
@@ -813,3 +872,39 @@ When writing a new test, ask:
 ---
 
 **Remember:** This guide is a living document. When you learn something new about testing this codebase, add it here. Future LLMs (and humans) will thank you.
+
+---
+
+## Comparison with Official Svelte Testing Docs
+
+### What We Do That Aligns Perfectly
+
+✅ **Vitest** - Official recommendation for Vite/SvelteKit projects
+✅ **`.svelte.test.ts` naming** - Files with runes have `.svelte` extension
+✅ **`$effect.root()` with cleanup** - Exactly as documented
+✅ **@testing-library/svelte** - Recommended over low-level `mount()`
+✅ **Browser mode** - Valid for comprehensive component testing
+✅ **Extracted builders** - Logic in `.svelte.ts` files as suggested
+✅ **`flushSync()` usage** - Per official docs, not `setTimeout`
+
+### Differences (Both Valid)
+
+**Browser Mode vs JSDom:**
+- Official docs mention jsdom with `conditions: ['browser']` for lighter tests
+- We use full Playwright browser mode for more comprehensive testing
+- **Tradeoff:** Slower but catches browser-specific issues
+
+**Testing Library vs Direct mount():**
+- Official docs show both approaches
+- We prefer @testing-library/svelte (higher level, less brittle)
+- Both are valid choices
+
+### Key Takeaway
+
+Our approach **exceeds** the official recommendations by using:
+1. Real browser testing (vs jsdom simulation)
+2. Testing Library (vs manual DOM queries)
+3. Data attributes system (robust selectors)
+4. Comprehensive test utilities from core package
+
+**Status:** ✅ **Fully compliant** with official Svelte 5 testing best practices.

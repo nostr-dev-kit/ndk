@@ -79,31 +79,14 @@ export interface ComponentPageTemplateProps {
 
   // Showcase configuration
   showcaseComponents?: ShowcaseComponent[];
-
-  // Components section (new simplified pattern)
-  components?: Snippet;
-  componentsTitle?: string;
-  componentsDescription?: string;
-
-  // Components section (old pattern - kept for backward compatibility)
-  componentsSection?: ComponentSection;
-
-  // API documentation
-  apiDocs?: ApiDoc[];
-
-  // Custom sections via snippets
-  beforeShowcase?: Snippet;
-  overview?: Snippet;
-  afterComponents?: Snippet;
-  recipes?: Snippet;
-  primitives?: Snippet;
-  customSections?: Snippet;
-
-  // Controls for showcase items
-  showcaseControls?: Snippet<[component: ShowcaseComponent]>;
-
-  // Empty state snippet (shown when no showcase components)
   emptyState?: Snippet;
+
+  // Content sections (in render order)
+  overview?: Snippet;
+  componentsSection?: ComponentSection;
+  recipes?: Snippet;
+  anatomy?: Snippet;
+  primitives?: Snippet;
 
   // Children (EditProps.Prop components)
   children?: Snippet;

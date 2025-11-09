@@ -72,9 +72,9 @@ export type { FollowPackContext } from './follow-pack.context.js';
 **Files**: `.svelte.ts` files (Svelte 5 runes-based)
 
 **Examples**:
-- `follow-action.svelte.ts`
-- `reaction-action.svelte.ts`
-- `zap-action.svelte.ts`
+- `follow-action/index.svelte.ts`
+- `reaction-action/index.svelte.ts`
+- `zap-action/index.svelte.ts`
 
 ### Layer 3: Components (`src/lib/registry/components/`)
 
@@ -195,6 +195,7 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
 - `command` (required): Installation command for jsrepo
 - `dependencies` (required): NPM dependencies array
 - `useCases` (required): Keywords for search/discovery
+- `apiDoc` (optional): Component API documentation object with props, events, and slots
 
 ---
 
@@ -497,7 +498,7 @@ src/routes/(app)/components/your-component/
 <script lang="ts">
   import { EmojiPicker } from '$lib/registry/components/emoji-picker';
   import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
-  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
 
   let { ndk, event } = $props();
 
@@ -590,7 +591,7 @@ interface PreviewProps {
   import { Preview } from '$lib/site/components';
   import { EmojiPicker } from '$lib/registry/components/emoji-picker';
   import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
-  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
 
   // Import recipe code
   import emojiPickerDropdownCode from './examples/emoji-picker-dropdown/index.txt?raw';

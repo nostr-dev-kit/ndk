@@ -3,6 +3,8 @@ Standardized API documentation table for props, methods, events, etc.
 Use for: component API documentation across all component pages.
 -->
 <script lang="ts">
+	import { cn } from '$lib/registry/utils/cn.js';
+
 	interface ApiRow {
 		name: string;
 		type: string;
@@ -21,173 +23,44 @@ Use for: component API documentation across all component pages.
 </script>
 
 {#if title}
-	<h3 class="api-table-title">{title}</h3>
+	<h3 class="text-xl font-semibold text-foreground my-8 mt-8 mb-4">{title}</h3>
 {/if}
 
-<div class="api-table-container {className}">
-	<table class="api-table">
-		<thead>
+<div class={cn("my-4 mb-8 border border-border rounded-lg overflow-hidden", className)}>
+	<table class="w-full border-collapse text-sm md:text-[0.8125rem]">
+		<thead class="bg-transparent">
 			<tr>
-				<th>Name</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
+				<th class="text-left px-4 py-3 md:px-3 md:py-2 font-semibold text-foreground border-b border-border">Property</th>
+				<th class="text-left px-4 py-3 md:px-3 md:py-2 font-semibold text-foreground border-b border-border">Type</th>
+				<th class="text-left px-4 py-3 md:px-3 md:py-2 font-semibold text-foreground border-b border-border">Description</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each rows as row (row.name)}
-				<tr>
-					<td>
-						<code class="prop-name">{row.name}</code>
-						{#if row.required}
-							<span class="required-badge">required</span>
-						{/if}
+			{#each rows as row, i (row.name)}
+				<tr class="group">
+					<td class={cn("px-4 py-3 md:px-3 md:py-2 text-muted-foreground border-b border-border align-top", i === rows.length - 1 && "border-b-0")}>
+						<div class="flex items-center gap-2">
+							<code class="text-foreground font-medium text-[0.8125rem] font-mono">{row.name}</code>
+							{#if row.required}
+								<span class="inline-block ml-2 px-1.5 py-0.5 bg-muted text-foreground border border-border rounded text-[0.6875rem] font-medium tracking-wide">required</span>
+							{/if}
+						</div>
 					</td>
-					<td><code class="prop-type">{row.type}</code></td>
-					<td>
-						{#if row.default}
-							<code class="prop-default">{row.default}</code>
-						{:else}
-							<span class="no-default">-</span>
-						{/if}
+					<td class={cn("px-4 py-3 md:px-3 md:py-2 text-muted-foreground border-b border-border align-top", i === rows.length - 1 && "border-b-0")}>
+						<code class="text-muted-foreground text-[0.8125rem] font-mono">{row.type}</code>
 					</td>
-					<td class="prop-description">{row.description}</td>
+					<td class={cn("px-4 py-3 md:px-3 md:py-2 text-muted-foreground border-b border-border align-top", i === rows.length - 1 && "border-b-0")}>
+						<div class="leading-relaxed">
+							{row.description}
+							{#if row.default !== undefined}
+								<div class="mt-2 text-[0.8125rem] text-muted-foreground">
+									Default: <code class="ml-1 text-muted-foreground text-[0.8125rem] font-mono">{row.default}</code>
+								</div>
+							{/if}
+						</div>
+					</td>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
 </div>
-
-<style>
-	.api-table-title {
-		font-size: 1.25rem;
-		font-weight: 600;
-		color: var(--foreground);
-		margin: 2rem 0 1rem 0;
-	}
-
-	.api-table-container {
-		margin: 1rem 0 2rem 0;
-		border: 1px solid var(--border);
-		border-radius: 0.5rem;
-		overflow: hidden;
-	}
-
-	.api-table {
-		width: 100%;
-		border-collapse: collapse;
-		background: var(--card);
-		font-size: 0.875rem;
-	}
-
-	.api-table thead {
-		background: color-mix(in srgb, var(--muted) calc(0.5 * 100%), transparent);
-	}
-
-	.api-table th {
-		text-align: left;
-		padding: 0.75rem 1rem;
-		font-weight: 600;
-		color: var(--foreground);
-		border-bottom: 1px solid var(--border);
-	}
-
-	.api-table td {
-		padding: 0.75rem 1rem;
-		color: var(--muted-foreground);
-		border-bottom: 1px solid var(--border);
-		vertical-align: top;
-	}
-
-	.api-table tbody tr:last-child td {
-		border-bottom: none;
-	}
-
-	.api-table code {
-		background: color-mix(in srgb, var(--muted) calc(0.5 * 100%), transparent);
-		padding: 0.125rem 0.375rem;
-		border-radius: 0.25rem;
-		font-size: 0.8125rem;
-		font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-	}
-
-	.prop-name {
-		color: var(--primary);
-		font-weight: 500;
-	}
-
-	.prop-type {
-		color: var(--foreground);
-	}
-
-	.prop-default {
-		color: var(--muted-foreground);
-	}
-
-	.prop-description {
-		color: var(--muted-foreground);
-		line-height: 1.5;
-	}
-
-	.no-default {
-		color: color-mix(in srgb, var(--muted-foreground) calc(0.5 * 100%), transparent);
-	}
-
-	.required-badge {
-		display: inline-block;
-		margin-left: 0.5rem;
-		padding: 0.125rem 0.375rem;
-		background: color-mix(in srgb, var(--destructive) calc(0.1 * 100%), transparent);
-		color: var(--destructive);
-		border-radius: 0.25rem;
-		font-size: 0.6875rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.025em;
-	}
-
-	/* Responsive design */
-	@media (max-width: 768px) {
-		.api-table {
-			font-size: 0.8125rem;
-		}
-
-		.api-table th,
-		.api-table td {
-			padding: 0.5rem 0.75rem;
-		}
-
-		/* Stack on very small screens */
-		@media (max-width: 640px) {
-			.api-table thead {
-				display: none;
-			}
-
-			.api-table tr {
-				display: block;
-				margin-bottom: 1rem;
-				border: 1px solid var(--border);
-				border-radius: 0.375rem;
-				overflow: hidden;
-			}
-
-			.api-table td {
-				display: block;
-				padding: 0.5rem 0.75rem;
-				border-bottom: 1px solid var(--border);
-			}
-
-			.api-table td:last-child {
-				border-bottom: none;
-			}
-
-			.api-table td::before {
-				content: attr(data-label);
-				font-weight: 600;
-				color: var(--foreground);
-				display: block;
-				margin-bottom: 0.25rem;
-			}
-		}
-	}
-</style>

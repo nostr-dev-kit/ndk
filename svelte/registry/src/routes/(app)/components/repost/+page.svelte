@@ -88,6 +88,23 @@
   {/if}
 {/snippet}
 
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      The Repost Button enables users to repost or unrepost Nostr events. Clicking the button toggles the repost state - if you haven't reposted, it reposts; if you've already reposted, it unreposts.
+    </p>
+
+    <p>
+      When reposting an event, the button publishes a kind 6 (Repost) or kind 16 (GenericRepost) event that references the original event. The button displays a count of how many users have reposted the event.
+    </p>
+
+    <p>
+      The button can optionally support quote reposts by providing an <code class="px-2 py-1 bg-muted rounded text-sm">onquote</code> handler. When provided, the button displays a dropdown menu with "Repost" and "Quote" options, allowing users to choose between a regular repost or opening a composer to quote the event.
+    </p>
+  </div>
+{/snippet}
+
 <!-- Components snippet -->
 {#snippet components()}
   <ComponentCard data={{...repostButtonCard, code: repostButtonCode}}>
@@ -107,6 +124,7 @@
 <ComponentPageTemplate
   {metadata}
   {ndk}
+  {overview}
   showcaseComponents={[
     {
       id: "repostButtonCard",

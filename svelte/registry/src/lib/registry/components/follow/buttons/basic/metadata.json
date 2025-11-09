@@ -15,34 +15,32 @@
     "user-lists",
     "social-features"
   ],
-  "apiDocs": [
-    {
-      "name": "FollowButton",
-      "description": "Follow button component",
-      "importPath": "import { FollowButton } from '$lib/registry/components/follow/buttons/basic'",
-      "props": [
-        {
-          "name": "ndk",
-          "type": "NDKSvelte",
-          "description": "NDK instance"
-        },
-        {
-          "name": "user",
-          "type": "NDKUser",
-          "description": "User to follow"
-        },
-        {
-          "name": "variant",
-          "type": "string",
-          "default": "'primary'",
-          "description": "Button variant"
-        },
-        {
-          "name": "class",
-          "type": "string",
-          "description": "Additional CSS classes"
-        }
-      ]
-    }
-  ]
+  "apiDoc": {
+    "name": "FollowButton",
+    "description": "Follow button component",
+    "importPath": "import { FollowButton } from '$lib/registry/components/follow/buttons/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance"
+      },
+      {
+        "name": "user",
+        "type": "NDKUser",
+        "description": "User to follow"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Button visual style"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

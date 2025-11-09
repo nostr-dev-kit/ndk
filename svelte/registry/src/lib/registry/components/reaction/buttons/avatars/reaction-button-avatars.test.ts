@@ -1,5 +1,6 @@
 import { NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { render } from "@testing-library/svelte";
+import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../../../test-utils";
 import ReactionButtonAvatars from "./reaction-button-avatars.svelte";
@@ -23,7 +24,7 @@ describe("ReactionButtonAvatars", () => {
     });
 
     afterEach(() => {
-        vi.clearAllMocks();
+        vi.restoreAllMocks();
     });
 
     describe("rendering", () => {
@@ -42,6 +43,8 @@ describe("ReactionButtonAvatars", () => {
         });
 
         it("should apply variant data attribute", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonAvatars, {
                 props: {
                     ndk,
@@ -89,6 +92,8 @@ describe("ReactionButtonAvatars", () => {
         });
 
         it("should respect max avatars limit", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonAvatars, {
                 props: {
                     ndk,
@@ -191,6 +196,8 @@ describe("ReactionButtonAvatars", () => {
 
     describe("custom emoji", () => {
         it("should use custom emoji when provided", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonAvatars, {
                 props: {
                     ndk,
@@ -206,6 +213,8 @@ describe("ReactionButtonAvatars", () => {
 
     describe("data attributes", () => {
         it("should have data-reaction-button-avatars attribute", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
             const { container } = render(ReactionButtonAvatars, {
                 props: {
                     ndk,
@@ -238,7 +247,7 @@ describe("ReactionButtonAvatars", () => {
                 }
             });
 
-            await waitForEffects();
+            flushSync();
 
             const button = container.querySelector('[data-reaction-button-avatars]');
             expect(button?.hasAttribute('data-reacted')).toBe(true);

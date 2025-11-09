@@ -15,30 +15,28 @@
     "modern-designs",
     "creative-portfolios"
   ],
-  "apiDocs": [
-    {
-      "name": "UserCardNeon",
-      "description": "A futuristic neon-styled user profile card with glowing effects",
-      "props": [
-        {
-          "name": "ndk",
-          "type": "NDKSvelte",
-          "required": true,
-          "description": "NDK instance for fetching user data"
-        },
-        {
-          "name": "pubkey",
-          "type": "string",
-          "required": true,
-          "description": "The user's public key (hex format)"
-        },
-        {
-          "name": "class",
-          "type": "string",
-          "required": false,
-          "description": "Additional CSS classes to apply to the card"
-        }
-      ]
-    }
-  ]
+  "apiDoc": {
+    "name": "UserCardNeon",
+    "description": "A futuristic neon-styled user profile card with glowing effects",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching user data"
+      },
+      {
+        "name": "pubkey",
+        "type": "string",
+        "required": true,
+        "description": "The user's public key (hex format)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "required": false,
+        "description": "Additional CSS classes to apply to the card"
+      }
+    ]
+  }
 }

@@ -93,7 +93,6 @@
         {ndk}
         bind:open={showModal}
         onPublish={(event: any) => {
-          console.log('Published:', event);
           showModal = false;
         }}
       />
@@ -141,7 +140,6 @@
         replyTo={sampleEvent}
         bind:open={showReplyModal}
         onPublish={(event: any) => {
-          console.log('Reply published:', event);
           showReplyModal = false;
         }}
       />

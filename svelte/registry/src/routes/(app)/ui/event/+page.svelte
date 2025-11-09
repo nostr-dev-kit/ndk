@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -15,15 +16,14 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Mock event for anatomy visualization
-  const mockReplyEvent = {
-    id: 'event123',
+  const mockReplyEvent = new NDKEvent(ndk, {
     kind: 1,
     content: 'This is a reply',
     tags: [
       ['e', 'parent-event-id', '', 'reply'],
       ['p', 'author-pubkey']
     ]
-  };
+  });
 
   // Page metadata
   const metadata = {

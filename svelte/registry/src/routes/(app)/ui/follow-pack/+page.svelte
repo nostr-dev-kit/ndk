@@ -17,14 +17,18 @@
 
   // Mock follow pack for anatomy visualization
   const mockFollowPack = new NDKFollowPack(ndk, {
+    id: 'mock-followpack-id',
     kind: 30000,
+    pubkey: 'mock-pubkey',
+    created_at: Math.floor(Date.now() / 1000),
     content: '',
     tags: [
       ['title', 'Amazing Nostr Devs'],
       ['description', 'Top developers building on Nostr'],
       ['image', 'https://via.placeholder.com/400x200'],
       ...Array.from({ length: 42 }, (_, i) => ['p', `pubkey${i}`])
-    ]
+    ],
+    sig: 'mock-signature'
   });
 
   // Page metadata

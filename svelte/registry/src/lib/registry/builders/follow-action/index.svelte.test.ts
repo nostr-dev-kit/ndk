@@ -1,14 +1,15 @@
 import { NDKInterestList, NDKPrivateKeySigner, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKSvelte } from "@nostr-dev-kit/svelte";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestNDK, UserGenerator } from "../../../../test-utils";
 import { createFollowAction } from "./index.svelte";
 
 describe("createFollowAction", () => {
-    let ndk;
+    let ndk: NDKSvelte;
     let cleanup: (() => void) | undefined;
-    let alice: NDKUser;
-    let bob: NDKUser;
+    let alice: Awaited<ReturnType<typeof UserGenerator.getUser>>;
+    let bob: Awaited<ReturnType<typeof UserGenerator.getUser>>;
 
     beforeEach(async () => {
         ndk = createTestNDK();
@@ -35,12 +36,12 @@ describe("createFollowAction", () => {
                 };
                 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
-                    followAction = createFollowAction(() => ({ target: bob }), ndk);
+                    followAction = createFollowAction(() => ({ target: bob as any }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(false);
+                expect(followAction!.isFollowing).toBe(false);
             });
 
             it("should initialize with isFollowing true when already following", () => {
@@ -51,21 +52,21 @@ describe("createFollowAction", () => {
                 };
                 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
-                    followAction = createFollowAction(() => ({ target: bob }), ndk);
+                    followAction = createFollowAction(() => ({ target: bob as any }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(true);
+                expect(followAction!.isFollowing).toBe(true);
             });
 
             it("should return false when target is undefined", () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: undefined }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(false);
+                expect(followAction!.isFollowing).toBe(false);
             });
 
             it("should handle user without pubkey gracefully", () => {
@@ -77,12 +78,12 @@ describe("createFollowAction", () => {
                 };
                 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: invalidUser }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(false);
+                expect(followAction!.isFollowing).toBe(false);
             });
         });
 
@@ -95,12 +96,12 @@ describe("createFollowAction", () => {
                 };
                 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
-                    followAction = createFollowAction(() => ({ target: bob }), ndk);
+                    followAction = createFollowAction(() => ({ target: bob as any }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 expect(mockFollows.add).toHaveBeenCalledWith(bob.pubkey);
                 expect(mockFollows.remove).not.toHaveBeenCalled();
@@ -114,24 +115,24 @@ describe("createFollowAction", () => {
                 };
                 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
-                    followAction = createFollowAction(() => ({ target: bob }), ndk);
+                    followAction = createFollowAction(() => ({ target: bob as any }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 expect(mockFollows.remove).toHaveBeenCalledWith(bob.pubkey);
                 expect(mockFollows.add).not.toHaveBeenCalled();
             });
 
             it("should do nothing when target is undefined", async () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: undefined }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
                 // Should not throw
             });
 
@@ -143,19 +144,19 @@ describe("createFollowAction", () => {
                 };
                 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: invalidUser }), ndk);
                 });
 
-                await expect(followAction.follow()).rejects.toThrow("User not loaded yet");
+                await expect(followAction!.follow()).rejects.toThrow("User not loaded yet");
             });
         });
     });
 
     describe("hashtag follows", () => {
         let mockInterestList: any;
-        let mockSessions;
+        let mockSessions: any;
 
         beforeEach(() => {
             const interests = new Set<string>();
@@ -181,7 +182,7 @@ describe("createFollowAction", () => {
 
         describe("initialization", () => {
             it("should add interest list monitor on creation", () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
@@ -190,56 +191,56 @@ describe("createFollowAction", () => {
             });
 
             it("should return false for hashtag not in interest list", () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(false);
+                expect(followAction!.isFollowing).toBe(false);
             });
 
             it("should return true for hashtag in interest list", () => {
                 mockInterestList.interests.add("bitcoin");
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(true);
+                expect(followAction!.isFollowing).toBe(true);
             });
 
             it("should normalize hashtags to lowercase", () => {
                 mockInterestList.interests.add("bitcoin");
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "BITCOIN" }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(true);
+                expect(followAction!.isFollowing).toBe(true);
             });
 
             it("should return false when interest list is not available", () => {
                 vi.spyOn(ndk, "$sessionEvent").mockReturnValue(undefined);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
 
-                expect(followAction.isFollowing).toBe(false);
+                expect(followAction!.isFollowing).toBe(false);
             });
         });
 
         describe("follow() function for hashtags", () => {
             it("should add hashtag to interest list when not following", async () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 expect(mockInterestList.addInterest).toHaveBeenCalledWith("bitcoin");
                 expect(mockInterestList.publishReplaceable).toHaveBeenCalled();
@@ -248,24 +249,24 @@ describe("createFollowAction", () => {
             it("should remove hashtag from interest list when already following", async () => {
                 mockInterestList.interests.add("bitcoin");
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 expect(mockInterestList.removeInterest).toHaveBeenCalledWith("bitcoin");
                 expect(mockInterestList.publishReplaceable).toHaveBeenCalled();
             });
 
             it("should normalize hashtag to lowercase before adding", async () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "BITCOIN" }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 expect(mockInterestList.addInterest).toHaveBeenCalledWith("bitcoin");
             });
@@ -273,24 +274,24 @@ describe("createFollowAction", () => {
             it("should do nothing when interest list is not available", async () => {
                 vi.spyOn(ndk, "$sessionEvent").mockReturnValue(undefined);
 
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: "bitcoin" }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 // Should not throw, just return early
                 expect(mockInterestList.addInterest).not.toHaveBeenCalled();
             });
 
             it("should do nothing when target is undefined", async () => {
-                let followAction;
+                let followAction: ReturnType<typeof createFollowAction> | undefined;
                 cleanup = $effect.root(() => {
                     followAction = createFollowAction(() => ({ target: undefined }), ndk);
                 });
 
-                await followAction.follow();
+                await followAction!.follow();
 
                 expect(mockInterestList.addInterest).not.toHaveBeenCalled();
                 expect(mockInterestList.removeInterest).not.toHaveBeenCalled();
@@ -307,13 +308,13 @@ describe("createFollowAction", () => {
             };
             vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows as any);
 
-            let followAction;
+            let followAction: ReturnType<typeof createFollowAction> | undefined;
             cleanup = $effect.root(() => {
-                followAction = createFollowAction(() => ({ target: bob }), ndk);
+                followAction = createFollowAction(() => ({ target: bob as any }), ndk);
             });
 
             // Should not throw
-            expect(followAction.isFollowing).toBe(false);
+            expect(followAction!.isFollowing).toBe(false);
         });
     });
 });

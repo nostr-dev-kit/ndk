@@ -303,7 +303,7 @@ const notifications = $derived(notificationFeed.notifications);
   <NotificationItem.Action>
     {#snippet snippet({ type, count, icon })}
       <div class="custom-action">
-        <svelte:component this={icon} />
+        <icon />
         <span>{type}</span>
         <span class="badge">{count}</span>
       </div>

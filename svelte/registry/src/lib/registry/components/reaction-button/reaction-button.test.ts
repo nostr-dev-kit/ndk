@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../../../test-utils";
+import { createTestNDK, TestEventFactory, UserGenerator, generateTestEventId } from "../../../../../test-utils";
 import ReactionButton from "./reaction-button.svelte";
 
 describe("ReactionButton", () => {

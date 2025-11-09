@@ -32,6 +32,12 @@
   }), ndk);
 </script>
 
+{#snippet actorCount(count: number)}
+  <span class="text-xs text-muted-foreground">
+    {count} {count === 1 ? 'person' : 'people'}
+  </span>
+{/snippet}
+
 <div class="space-y-4">
   {#each feed.all as notification}
     <NotificationItem.Root {ndk} {notification}>
@@ -46,13 +52,7 @@
 
         <div class="flex items-center gap-3 pt-3 border-t">
           <NotificationItem.Actors max={5} size={28} spacing="tight" />
-          <NotificationItem.Actors
-            snippet={({ count }) => (
-              <span class="text-xs text-muted-foreground">
-                {count} {count === 1 ? 'person' : 'people'}
-              </span>
-            )}
-          />
+          <NotificationItem.Actors snippet={actorCount} />
         </div>
       </div>
     </NotificationItem.Root>

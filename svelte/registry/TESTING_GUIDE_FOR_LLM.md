@@ -741,41 +741,36 @@ bun run test:coverage
 bun run test:ui
 ```
 
-### Known Issues
+### Common Testing Challenges
 
-**Current Status (January 2025):**
-✅ Tests are running successfully! **73/77 passing (94.8%)**
+**Challenge 1: Reactive State Timing with Mock Subscriptions**
 
-**Working:**
-- ✅ All infrastructure configured correctly
-- ✅ Vitest 4.x with Playwright browser provider
-- ✅ Builder tests (19/19 passing)
-- ✅ UI primitive tests (15/15 passing)
-- ✅ Component tests (39/43 passing)
+When testing components that rely on reactive subscriptions, you may encounter timing issues where state updates don't propagate immediately to data attributes.
 
-**Minor Known Failures (4 tests):**
-These are edge cases related to `data-reacted` attribute timing and mock setup:
+**Symptoms:**
+- Tests checking `data-reacted` or similar state attributes fail intermittently
+- Mock subscription changes don't trigger component updates
 
-1. `reaction-button.test.ts` - "should not show data-reacted when user has not reacted"
-   - Issue: Reactive state timing in mock subscriptions
-   - Impact: Low - showcase pages test this behavior
+**Solutions:**
+- Use `flushSync()` after modifying mock subscription arrays
+- Consider using `component.rerender()` for complex state changes
+- For deeply nested components (e.g., within Tooltip.Root), you may need additional flush cycles
 
-2. `reaction-button-avatars.test.ts` - "should show data-reacted when user has reacted"
-   - Issue: Mock subscription may not be reactive enough
-   - Impact: Low - visual behavior works in showcase
+**Example:**
+```typescript
+mockSub.events.push(reactionEvent);
+flushSync();  // Ensure effects run
+expect(button?.hasAttribute('data-reacted')).toBe(true);
+```
 
-3. `reaction-button-slack.test.ts` - "should not show data-reacted on non-reacted buttons"
-   - Issue: Similar reactive state timing
-   - Impact: Low - functionality verified in showcase
+**Challenge 2: Testing Components with Complex Composition**
 
-4. `reaction-button-slack.test.ts` - "should show tooltip with avatars" + "should react when clicking"
-   - Issue: Complex component with nested Tooltip.Root may need different test setup
-   - Impact: Low - showcase demonstrates this working
+Components that wrap other reactive components (tooltips, dropdowns, etc.) may need special test setup.
 
-**Next steps to fix:**
-- Investigate reactive mock subscriptions in browser mode
-- Consider using component.rerender() for state change tests
-- May need vitest-browser-svelte utilities for reactive mocking
+**Strategy:**
+- Test core functionality separately from wrapper components
+- Use visual verification in showcase pages for complex interactions
+- Focus unit tests on the component's primary behavior
 
 ### Test File Naming
 

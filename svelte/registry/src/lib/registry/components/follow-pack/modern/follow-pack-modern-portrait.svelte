@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
-	import { FollowPack } from '../../../../ui/follow-pack';
-	import { User } from '../../../../ui/user';
-	import { getNDKFromContext } from '../../../../utils/ndk-context.svelte.js';
+	import { FollowPack } from '../../../ui/follow-pack';
+	import { User } from '../../../ui/user';
+	import { getNDKFromContext } from '../../../utils/ndk-context.svelte.js';
 
 	interface Props {
 		ndk?: NDKSvelte;

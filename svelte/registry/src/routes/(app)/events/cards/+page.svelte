@@ -40,7 +40,7 @@
   ];
 </script>
 
-{#snippet beforeShowcase()}
+{#snippet overview()}
 	{#if sampleEvent}
 		<section class="mb-16">
 			<h2 class="text-3xl font-bold mb-4">EventCard Primitives</h2>
@@ -377,7 +377,7 @@
 		metadata={metadata}
 		{ndk}
 		{showcaseComponents}
-		{beforeShowcase}
+		{overview}
 		componentsSection={{
 			cards: eventCardCards,
 			previews: {

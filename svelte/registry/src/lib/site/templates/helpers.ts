@@ -9,14 +9,14 @@ export function createCardData(config: {
   title: string;
   richDescription?: string;
   command: string;
-  apiDocs?: any[];
+  apiDoc?: any;
 }): ComponentCardData {
   return {
     name: config.name,
     title: config.title,
     richDescription: config.richDescription,
     command: config.command,
-    apiDocs: config.apiDocs || []
+    apiDoc: config.apiDoc
   };
 }
 
@@ -66,7 +66,7 @@ export function extractMetadataFromCardData(cardData: any): ComponentCardData {
     title: cardData.title || '',
     richDescription: cardData.richDescription,
     command: cardData.command || '',
-    apiDocs: cardData.apiDocs || []
+    apiDoc: cardData.apiDoc
   };
 }
 

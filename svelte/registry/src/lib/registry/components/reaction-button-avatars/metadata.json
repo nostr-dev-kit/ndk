@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "avatars",
   "oneLiner": "A reaction button showing avatars of users who reacted",
-  "command": "npx jsrepo add reaction/buttons/avatars",
+  "command": "npx jsrepo add reaction-button-avatars",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

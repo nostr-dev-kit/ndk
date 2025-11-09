@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "compact",
   "oneLiner": "A compact article card optimized for lists and sidebars",
-  "command": "npx jsrepo add article/cards/compact",
+  "command": "npx jsrepo add article-card-compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

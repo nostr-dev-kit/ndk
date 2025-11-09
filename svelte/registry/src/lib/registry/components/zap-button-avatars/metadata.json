@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "avatars",
   "oneLiner": "Display zap senders as avatars",
-  "command": "npx jsrepo add zap/buttons/avatars",
+  "command": "npx jsrepo add zap-button-avatars",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

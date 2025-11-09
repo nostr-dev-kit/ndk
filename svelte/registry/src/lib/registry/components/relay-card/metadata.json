@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "basic",
   "oneLiner": "A basic card for relay content",
-  "command": "npx jsrepo add relay/cards/basic",
+  "command": "npx jsrepo add relay-card",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "inline",
   "oneLiner": "An inline note reference",
-  "command": "npx jsrepo add note/cards/inline",
+  "command": "npx jsrepo add note-card-inline",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

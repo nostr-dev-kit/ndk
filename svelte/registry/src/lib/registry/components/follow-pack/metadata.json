@@ -5,7 +5,7 @@
   "subcategory": "packs",
   "variant": "basic",
   "oneLiner": "A basic pack for follow content",
-  "command": "npx jsrepo add follow/packs/basic",
+  "command": "npx jsrepo add follow-pack",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

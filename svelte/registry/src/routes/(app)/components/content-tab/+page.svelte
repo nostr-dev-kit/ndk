@@ -29,16 +29,14 @@
 
   let user1 = $state<NDKUser | undefined>();
   let user2 = $state<NDKUser | undefined>();
-  let user3 = $state<NDKUser | undefined>();
   let user4 = $state<NDKUser | undefined>();
-  let user5 = $state<NDKUser | undefined>();
   let user6 = $state<NDKUser | undefined>();
   let user7 = $state<NDKUser | undefined>();
   let user8 = $state<NDKUser | undefined>();
   let user9 = $state<NDKUser | undefined>();
   let user10 = $state<NDKUser | undefined>();
 
-  const displayUsers = $derived([user1, user2, user3, user4, user5, user6, user7, user8, user9, user10].filter(Boolean) as NDKUser[]);
+  const displayUsers = $derived([user1, user2, user4, user6, user7, user8, user9, user10].filter(Boolean) as NDKUser[]);
 
   // Sorting state for showcase
   let sortMethod = $state<'count' | 'recency'>('count');

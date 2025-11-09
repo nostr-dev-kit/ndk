@@ -78,7 +78,6 @@ export const eventCategories: NavCategory[] = [
       { name: 'EventCard', path: '/events/cards', icon: Calendar01Icon, title: 'EventCard Primitives', description: 'Composable primitives for displaying any NDKEvent type with flexible layouts and interactions.' },
       { name: 'Article', path: '/events/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.', nip: 'NIP-23' },
       { name: 'Highlight', path: '/events/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.', nip: 'NIP-84' },
-      { name: 'Audio', path: '/events/cards/voice-message', icon: VoiceIcon, title: 'VoiceMessageCard', description: 'Composable voice message card components for displaying NIP-A0 voice messages with audio playback and waveform visualization.', nip: 'NIP-A0' },
       { name: 'Image', path: '/events/cards/image', icon: Image02Icon, title: 'ImageCard', description: 'Composable image card components for displaying NIP-68 image events (kind 20) with customizable layouts.', nip: 'NIP-68' },
     ]
   },
@@ -114,7 +113,6 @@ export const componentCategories: NavCategory[] = [
       { name: 'Reaction', path: '/ui/reaction', icon: FavouriteIcon, title: 'Reaction Primitives', description: 'Headless primitives for displaying event reactions.' },
       { name: 'Follow Pack', path: '/ui/follow-pack', icon: UserGroupIcon, title: 'Follow Pack Primitives', description: 'Headless primitives for displaying curated user lists.' },
       { name: 'User Input', path: '/ui/user-input', icon: Search01Icon, title: 'User Input Primitives', description: 'Headless primitives for searching and selecting users.' },
-      { name: 'Voice Message', path: '/ui/voice-message', icon: VoiceIcon, title: 'Voice Message Primitives', description: 'Headless primitives for playing voice messages with waveforms.' },
       { name: 'Zap', path: '/ui/zap', icon: ZapIcon, title: 'Zap Primitives', description: 'Headless primitives for displaying lightning payments.' },
       { name: 'Notification', path: '/ui/notification', icon: Chat01Icon, title: 'Notification Primitives', description: 'Composable primitives for building notification UIs with grouped interactions.' },
       { name: 'Event Content', path: '/ui/event-content', icon: File01Icon, title: 'Event Content Primitive', description: 'Render event content with rich formatting, mentions, and embedded media.' },

@@ -111,14 +111,6 @@
 					</p>
 					<span class="text-sm text-primary">View variants →</span>
 				</a>
-
-				<a href="/events/cards/voice-message" class="group p-6 border rounded-lg hover:bg-accent/50 transition-colors">
-					<h3 class="font-semibold mb-2 group-hover:text-primary">VoiceMessageCard</h3>
-					<p class="text-sm text-muted-foreground mb-3">
-						Audio message players with waveform visualization.
-					</p>
-					<span class="text-sm text-primary">View variants →</span>
-				</a>
 			</div>
 		</section>
 	{/if}

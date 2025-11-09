@@ -223,17 +223,6 @@
         </div>
       </a>
 
-      <a href="/ui/voice-message" class="primitive-card">
-        <h3>Voice Message</h3>
-        <p>Play voice messages with waveforms</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Player</span>
-          <span>Waveform</span>
-          <span>+1</span>
-        </div>
-      </a>
-
       <a href="/ui/zap" class="primitive-card">
         <h3>Zap</h3>
         <p>Display lightning payments</p>

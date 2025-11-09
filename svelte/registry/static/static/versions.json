@@ -729,28 +729,6 @@
       ],
       "registryDependencies": []
     },
-    "voice-message-card-compact": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-31T07:15:56.000Z",
-      "type": "registry:component",
-      "title": "Voice Message Card Compact",
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "registryDependencies": []
-    },
-    "voice-message-card-expanded": {
-      "version": "0.2.0",
-      "lastModified": "2025-10-31T07:15:56.000Z",
-      "type": "registry:component",
-      "title": "Voice Message Card Expanded",
-      "dependencies": [
-        "@nostr-dev-kit/ndk",
-        "@nostr-dev-kit/svelte"
-      ],
-      "registryDependencies": []
-    },
     "zap-button": {
       "version": "0.0.0",
       "lastModified": "2025-10-31T09:10:47.332Z",

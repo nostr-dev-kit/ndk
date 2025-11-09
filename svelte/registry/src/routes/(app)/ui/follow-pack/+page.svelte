@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import { NDKFollowPack } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -15,12 +16,16 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Mock follow pack for anatomy visualization
-  const mockFollowPack = {
-    title: 'Amazing Nostr Devs',
-    description: 'Top developers building on Nostr',
-    image: 'https://via.placeholder.com/400x200',
-    members: new Array(42)
-  };
+  const mockFollowPack = new NDKFollowPack(ndk, {
+    kind: 30000,
+    content: '',
+    tags: [
+      ['title', 'Amazing Nostr Devs'],
+      ['description', 'Top developers building on Nostr'],
+      ['image', 'https://via.placeholder.com/400x200'],
+      ...Array.from({ length: 42 }, (_, i) => ['p', `pubkey${i}`])
+    ]
+  });
 
   // Page metadata
   const metadata = {

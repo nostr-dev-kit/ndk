@@ -18,6 +18,7 @@
   "apiDoc": {
     "name": "UserCardClassic",
     "description": "A classic user profile card displaying avatar, name, bio, and stats (notes count and following count)",
+    "importPath": "$lib/registry/components/user/cards/classic",
     "props": [
       {
         "name": "ndk",

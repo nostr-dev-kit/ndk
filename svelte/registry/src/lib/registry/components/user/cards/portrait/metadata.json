@@ -18,6 +18,7 @@
   "apiDoc": {
     "name": "UserCardPortrait",
     "description": "A portrait-oriented user profile card",
+    "importPath": "$lib/registry/components/user/cards/portrait",
     "props": [
       {
         "name": "ndk",

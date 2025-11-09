@@ -17,7 +17,7 @@
 		}
 	}
 
-	function updatePropValue(name: string, value: NDKUser | NDKEvent | NDKArticle | string) {
+	function updatePropValue(name: string, value: NDKUser | NDKEvent | NDKArticle | string | number | boolean) {
 		propDefinitions = propDefinitions.map(p => (p.name === name ? { ...p, value } : p));
 	}
 

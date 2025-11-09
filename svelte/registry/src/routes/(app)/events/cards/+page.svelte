@@ -66,6 +66,10 @@
 					</li>
 					<li class="flex items-start gap-2">
 						<span class="text-primary">•</span>
+						<span><strong>EventCard.ReplyIndicator</strong> — Shows reply context with parent event author</span>
+					</li>
+					<li class="flex items-start gap-2">
+						<span class="text-primary">•</span>
 						<span><strong>EventCard.Actions</strong> — Interaction buttons (reply, repost, reactions)</span>
 					</li>
 					<li class="flex items-start gap-2">
@@ -324,6 +328,18 @@
 				props: [
 					{ name: 'truncate', type: 'number', description: 'Maximum content length before truncation' },
 					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+				]
+			},
+			{
+				name: 'EventCard.ReplyIndicator',
+				description: 'Shows when the event is a reply, displaying "Replying to @author" with the parent event author information.',
+				importPath: "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+				props: [
+					{ name: 'class', type: 'string', description: 'Additional CSS classes' },
+					{ name: 'onclick', type: '(event: NDKEvent) => void', description: 'Click handler for the parent event' }
+				],
+				slots: [
+					{ name: 'children', type: 'Snippet<[{ event: NDKEvent | null; loading: boolean }]>', description: 'Custom render function for reply indicator' }
 				]
 			},
 			{

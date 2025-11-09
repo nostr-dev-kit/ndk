@@ -246,7 +246,7 @@
 	</ScrollArea>
 {/snippet}
 
-{#snippet customSections()}
+{#snippet anatomy()}
 	{#if !loading}
 		<!-- Anatomy Section -->
 		<SectionTitle title="Anatomy" description="Click on any layer to see its details and props" />
@@ -343,7 +343,7 @@
 				'article-card-neon': neonComponentPreview
 			}
 		}}
-		{customSections}
+		{anatomy}
 	>
     <EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} />
 			<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} />

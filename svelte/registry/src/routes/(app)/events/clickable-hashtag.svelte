@@ -10,7 +10,11 @@
 		class?: string;
 	}
 
-	let { ndk, tag, class: className = '' }: Props = $props();
+	let { ndk: ndkProp, tag, class: className = '' }: Props = $props();
+
+	// Get NDK from context if not provided as prop
+	const contextNdk = getContext<NDKSvelte>('ndk');
+	const ndk = ndkProp || contextNdk;
 
 	// Get interactive state from context
 	const interactiveState = getContext<{

@@ -46,11 +46,17 @@
   <div
     class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
     onclick={close}
+    onkeydown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        close();
+      }
+    }}
     role="button"
     tabindex="0"
   ></div>
 
-  <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[51] w-[90%] max-w-[500px] bg-card border border-border rounded-lg shadow-lg" onclick={(e) => e.stopPropagation()}>
+  <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[51] w-[90%] max-w-[500px] bg-card border border-border rounded-lg shadow-lg" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
     <div class="p-6 border-b border-border flex justify-between items-start">
       <div>
         <h2 class="text-xl font-semibold text-foreground m-0">Login to NDK Registry</h2>

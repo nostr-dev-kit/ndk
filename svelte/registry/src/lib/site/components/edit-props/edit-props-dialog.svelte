@@ -152,12 +152,13 @@
 			<div class="p-6 flex flex-col gap-6">
 				{#each props as prop (prop.name)}
 					<div class="flex flex-col gap-2">
-						<label class="text-sm font-medium text-foreground">
+						<label for="prop-{prop.name}" class="text-sm font-medium text-foreground">
 							{prop.name}
 							<span class="text-xs font-normal text-muted-foreground ml-1">({prop.type})</span>
 						</label>
 
 						<input
+							id="prop-{prop.name}"
 							type="text"
 							class={cn("w-full px-3 py-2 border border-input bg-background text-foreground rounded-md text-sm transition-all font-mono focus:outline-none focus:border-ring focus:shadow-[0_0_0_3px_rgba(var(--ring)_/_0.2)]", errors[prop.name] && "border-destructive focus:shadow-[0_0_0_3px_rgba(var(--destructive)_/_0.2)]")}
 							placeholder={getPlaceholder(prop.type)}

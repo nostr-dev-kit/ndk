@@ -35,55 +35,85 @@
         name: 'Article.Root',
         title: 'Article.Root',
         description: 'Context provider that manages article data and provides it to child components. Required wrapper for all Article primitives.',
-        apiDocs: [
-          { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
-          { name: 'article', type: 'NDKArticle', default: 'required', description: 'Article event instance' },
-          { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Click handler for the root element' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
-        ]
+        apiDocs: [{
+          name: 'Article.Root',
+          description: 'Context provider that manages article data and provides it to child components. Required wrapper for all Article primitives.',
+          importPath: '$lib/registry/ui/article',
+          props: [
+            { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance' },
+            { name: 'article', type: 'NDKArticle', default: 'required', description: 'Article event instance' },
+            { name: 'onclick', type: '(e: MouseEvent) => void', default: 'optional', description: 'Click handler for the root element' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'children', type: 'Snippet', default: 'required', description: 'Child components' }
+          ]
+        }]
       },
       {
         name: 'Article.Title',
         title: 'Article.Title',
         description: 'Displays the article title from the title tag in the event.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Article.Title',
+          description: 'Displays the article title from the title tag in the event.',
+          importPath: '$lib/registry/ui/article',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Article.Summary',
         title: 'Article.Summary',
         description: 'Displays the article summary/description from the summary tag. Automatically handles missing summaries gracefully.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Article.Summary',
+          description: 'Displays the article summary/description from the summary tag. Automatically handles missing summaries gracefully.',
+          importPath: '$lib/registry/ui/article',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Article.Image',
         title: 'Article.Image',
         description: 'Displays the article cover image from the image tag in the event metadata.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
-          { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if cover image is missing' }
-        ]
+        apiDocs: [{
+          name: 'Article.Image',
+          description: 'Displays the article cover image from the image tag in the event metadata.',
+          importPath: '$lib/registry/ui/article',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' },
+            { name: 'fallback', type: 'string', default: 'undefined', description: 'Fallback image URL if cover image is missing' }
+          ]
+        }]
       },
       {
         name: 'Article.ReadingTime',
         title: 'Article.ReadingTime',
         description: 'Calculates and displays estimated reading time based on article word count. Assumes average reading speed of 200 words per minute.',
-        apiDocs: [
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Article.ReadingTime',
+          description: 'Calculates and displays estimated reading time based on article word count. Assumes average reading speed of 200 words per minute.',
+          importPath: '$lib/registry/ui/article',
+          props: [
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       },
       {
         name: 'Article.PublishedAt',
         title: 'Article.PublishedAt',
         description: 'Displays the article publication date from the published_at tag. Uses createTimeAgo for relative time display.',
-        apiDocs: [
-          { name: 'format', type: "'relative' | 'absolute'", default: "'relative'", description: 'Display format: relative ("2 days ago") or absolute date' },
-          { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
-        ]
+        apiDocs: [{
+          name: 'Article.PublishedAt',
+          description: 'Displays the article publication date from the published_at tag. Uses createTimeAgo for relative time display.',
+          importPath: '$lib/registry/ui/article',
+          props: [
+            { name: 'format', type: "'relative' | 'absolute'", default: "'relative'", description: 'Display format: relative ("2 days ago") or absolute date' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [

@@ -92,43 +92,47 @@
 
 {#snippet anatomy()}
 	<ComponentAPI
-		components={[
-			{
-				name: 'ImageCardInstagram',
-				description: 'Instagram-style image card with user header, square image, caption, and action buttons.',
-				importPath: "import ImageCardInstagram from '$lib/registry/components/image/cards/basic/image-card-instagram.svelte'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
-					{ name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu button' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			},
-			{
-				name: 'ImageCardHero',
-				description: 'Fullbleed immersive display with caption and author info anchored at bottom.',
-				importPath: "import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
-					{ name: 'height', type: 'string', default: 'h-[500px]', description: 'Custom height class' },
-					{ name: 'showFollow', type: 'boolean', default: 'true', description: 'Show follow button for author' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			},
-			{
-				name: 'ImageCard',
-				description: 'General purpose image card combining EventCard primitives with ImageContent.',
-				importPath: "import ImageCard from '$lib/registry/components/image/cards/basic/image-card.svelte'",
-				props: [
-					{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-					{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
-					{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
-					{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable to navigate' },
-					{ name: 'class', type: 'string', description: 'Additional CSS classes' }
-				]
-			}
-		]}
+		component={{
+			name: 'ImageCardInstagram',
+			description: 'Instagram-style image card with user header, square image, caption, and action buttons.',
+			importPath: "import ImageCardInstagram from '$lib/registry/components/image/cards/basic/image-card-instagram.svelte'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+				{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+				{ name: 'showDropdown', type: 'boolean', default: 'true', description: 'Show dropdown menu button' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'ImageCardHero',
+			description: 'Fullbleed immersive display with caption and author info anchored at bottom.',
+			importPath: "import ImageCardHero from '$lib/registry/components/image/cards/hero/image-card-hero.svelte'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+				{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+				{ name: 'height', type: 'string', default: 'h-[500px]', description: 'Custom height class' },
+				{ name: 'showFollow', type: 'boolean', default: 'true', description: 'Show follow button for author' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}}
+	/>
+
+	<ComponentAPI
+		component={{
+			name: 'ImageCard',
+			description: 'General purpose image card combining EventCard primitives with ImageContent.',
+			importPath: "import ImageCard from '$lib/registry/components/image/cards/basic/image-card.svelte'",
+			props: [
+				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
+				{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
+				{ name: 'threading', type: 'ThreadingMetadata', description: 'Threading metadata for thread views' },
+				{ name: 'interactive', type: 'boolean', default: 'false', description: 'Make card clickable to navigate' },
+				{ name: 'class', type: 'string', description: 'Additional CSS classes' }
+			]
+		}}
 	/>
 {/snippet}
 

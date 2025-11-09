@@ -184,205 +184,221 @@
 
   <!-- Component API -->
   <ComponentAPI
-    components={[
-      {
-        name: 'HighlightCard.Root',
-        description:
-          'Root container that provides context to child components. Uses createHighlight builder internally.',
-        importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description:
-              'NDK instance. Optional if NDK is available in Svelte context (from parent components).',
-            required: false
-          },
-          {
-            name: 'event',
-            type: 'NDKEvent',
-            description: 'The highlight event (kind 9802) to display',
-            required: true
-          }
-        ]
-      },
-      {
-        name: 'HighlightCard.Content',
-        description: 'Display highlighted text with context.',
-        importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
-        props: [
-          {
-            name: 'fontSize',
-            type: 'string',
-            default: '"text-base"',
-            description: 'Tailwind classes for font size',
-            required: false
-          },
-          {
-            name: 'class',
-            type: 'string',
-            description: 'Additional CSS classes',
-            required: false
-          }
-        ]
-      },
-      {
-        name: 'HighlightCard.Source',
-        description: 'Display source reference badge.',
-        importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
-        props: [
-          {
-            name: 'position',
-            type: '"top-right" | "bottom-right" | "inline"',
-            default: '"inline"',
-            description: 'Source badge position',
-            required: false
-          },
-          {
-            name: 'class',
-            type: 'string',
-            description: 'Additional CSS classes',
-            required: false
-          }
-        ]
-      },
-      {
-        name: 'HighlightCardFeed',
-        description:
-          'Preset: Full-width feed layout with header, book-style text, and actions. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardFeed } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance',
-            required: true
-          },
-          {
-            name: 'event',
-            type: 'NDKEvent',
-            description: 'The highlight event to display',
-            required: true
-          },
-          {
-            name: 'showHeader',
-            type: 'boolean',
-            default: 'true',
-            description: 'Show author header',
-            required: false
-          },
-          {
-            name: 'showActions',
-            type: 'boolean',
-            default: 'true',
-            description: 'Show action buttons',
-            required: false
-          }
-        ]
-      },
-      {
-        name: 'HighlightCardElegant',
-        description:
-          'Preset: Square elegant card with gradient background. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardElegant } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance',
-            required: true
-          },
-          {
-            name: 'event',
-            type: 'NDKEvent',
-            description: 'The highlight event to display',
-            required: true
-          },
-          {
-            name: 'width',
-            type: 'string',
-            default: '"w-[320px]"',
-            description: 'Card width (Tailwind classes)',
-            required: false
-          },
-          {
-            name: 'height',
-            type: 'string',
-            default: '"h-[320px]"',
-            description: 'Card height (Tailwind classes)',
-            required: false
-          }
-        ]
-      },
-      {
-        name: 'HighlightCardCompact',
-        description:
-          'Preset: Compact horizontal card. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardCompact } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance',
-            required: true
-          },
-          {
-            name: 'event',
-            type: 'NDKEvent',
-            description: 'The highlight event to display',
-            required: true
-          },
-          {
-            name: 'showAuthor',
-            type: 'boolean',
-            default: 'true',
-            description: 'Show author name',
-            required: false
-          },
-          {
-            name: 'showTimestamp',
-            type: 'boolean',
-            default: 'true',
-            description: 'Show timestamp',
-            required: false
-          },
-          {
-            name: 'showSource',
-            type: 'boolean',
-            default: 'true',
-            description: 'Show source info',
-            required: false
-          }
-        ]
-      },
-      {
-        name: 'HighlightCardGrid',
-        description:
-          'Preset: Square card for grid layouts. Import from $lib/ndk/blocks.',
-        importPath: "import { HighlightCardGrid } from '$lib/registry/blocks'",
-        props: [
-          {
-            name: 'ndk',
-            type: 'NDKSvelte',
-            description: 'NDK instance',
-            required: true
-          },
-          {
-            name: 'event',
-            type: 'NDKEvent',
-            description: 'The highlight event to display',
-            required: true
-          },
-          {
-            name: 'showAuthor',
-            type: 'boolean',
-            default: 'true',
-            description: 'Show author info below card',
-            required: false
-          }
-        ]
-      }
-    ]}
+    component={{
+      name: 'HighlightCard.Root',
+      description:
+        'Root container that provides context to child components. Uses createHighlight builder internally.',
+      importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description:
+            'NDK instance. Optional if NDK is available in Svelte context (from parent components).',
+          required: false
+        },
+        {
+          name: 'event',
+          type: 'NDKEvent',
+          description: 'The highlight event (kind 9802) to display',
+          required: true
+        }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'HighlightCard.Content',
+      description: 'Display highlighted text with context.',
+      importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
+      props: [
+        {
+          name: 'fontSize',
+          type: 'string',
+          default: '"text-base"',
+          description: 'Tailwind classes for font size',
+          required: false
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes',
+          required: false
+        }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'HighlightCard.Source',
+      description: 'Display source reference badge.',
+      importPath: "import { Highlight as HighlightCard } from '$lib/registry/ui/highlight'",
+      props: [
+        {
+          name: 'position',
+          type: '"top-right" | "bottom-right" | "inline"',
+          default: '"inline"',
+          description: 'Source badge position',
+          required: false
+        },
+        {
+          name: 'class',
+          type: 'string',
+          description: 'Additional CSS classes',
+          required: false
+        }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'HighlightCardFeed',
+      description:
+        'Preset: Full-width feed layout with header, book-style text, and actions. Import from $lib/ndk/blocks.',
+      importPath: "import { HighlightCardFeed } from '$lib/registry/blocks'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance',
+          required: true
+        },
+        {
+          name: 'event',
+          type: 'NDKEvent',
+          description: 'The highlight event to display',
+          required: true
+        },
+        {
+          name: 'showHeader',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show author header',
+          required: false
+        },
+        {
+          name: 'showActions',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show action buttons',
+          required: false
+        }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'HighlightCardElegant',
+      description:
+        'Preset: Square elegant card with gradient background. Import from $lib/ndk/blocks.',
+      importPath: "import { HighlightCardElegant } from '$lib/registry/blocks'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance',
+          required: true
+        },
+        {
+          name: 'event',
+          type: 'NDKEvent',
+          description: 'The highlight event to display',
+          required: true
+        },
+        {
+          name: 'width',
+          type: 'string',
+          default: '"w-[320px]"',
+          description: 'Card width (Tailwind classes)',
+          required: false
+        },
+        {
+          name: 'height',
+          type: 'string',
+          default: '"h-[320px]"',
+          description: 'Card height (Tailwind classes)',
+          required: false
+        }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'HighlightCardCompact',
+      description:
+        'Preset: Compact horizontal card. Import from $lib/ndk/blocks.',
+      importPath: "import { HighlightCardCompact } from '$lib/registry/blocks'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance',
+          required: true
+        },
+        {
+          name: 'event',
+          type: 'NDKEvent',
+          description: 'The highlight event to display',
+          required: true
+        },
+        {
+          name: 'showAuthor',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show author name',
+          required: false
+        },
+        {
+          name: 'showTimestamp',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show timestamp',
+          required: false
+        },
+        {
+          name: 'showSource',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show source info',
+          required: false
+        }
+      ]
+    }}
+  />
+
+  <ComponentAPI
+    component={{
+      name: 'HighlightCardGrid',
+      description:
+        'Preset: Square card for grid layouts. Import from $lib/ndk/blocks.',
+      importPath: "import { HighlightCardGrid } from '$lib/registry/blocks'",
+      props: [
+        {
+          name: 'ndk',
+          type: 'NDKSvelte',
+          description: 'NDK instance',
+          required: true
+        },
+        {
+          name: 'event',
+          type: 'NDKEvent',
+          description: 'The highlight event to display',
+          required: true
+        },
+        {
+          name: 'showAuthor',
+          type: 'boolean',
+          default: 'true',
+          description: 'Show author info below card',
+          required: false
+        }
+      ]
+    }}
   />
 {/snippet}
 

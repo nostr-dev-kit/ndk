@@ -12,7 +12,7 @@
 		show: boolean;
 		props: PropDefinition[];
 		onClose: () => void;
-		onApply: (name: string, value: NDKUser | NDKEvent | NDKArticle | string) => void;
+		onApply: (name: string, value: NDKUser | NDKEvent | NDKArticle | string | number | boolean) => void;
 	}
 
 	let { show = $bindable(), props, onClose, onApply }: Props = $props();

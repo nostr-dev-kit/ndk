@@ -7,7 +7,7 @@
 
 	interface Props {
 		type: PropType;
-		value: NDKUser | NDKEvent | NDKArticle | string;
+		value: NDKUser | NDKEvent | NDKArticle | string | number | boolean;
 	}
 
 	let { type, value }: Props = $props();

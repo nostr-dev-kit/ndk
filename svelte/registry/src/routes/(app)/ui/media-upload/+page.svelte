@@ -193,7 +193,11 @@
             {/each}
           </div>
           <ComponentAnatomy.Layer id="carousel" label="MediaUpload.Carousel">
-            <MediaUpload.Carousel class="mt-4 border border-border rounded-lg overflow-hidden" />
+            <MediaUpload.Carousel class="mt-4 border border-border rounded-lg overflow-hidden">
+              {#each mockUploads as upload}
+                <MediaUpload.Preview {upload} class="w-32 h-32" />
+              {/each}
+            </MediaUpload.Carousel>
           </ComponentAnatomy.Layer>
         </div>
       </ComponentAnatomy.Layer>

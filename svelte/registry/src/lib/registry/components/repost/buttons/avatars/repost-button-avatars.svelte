@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createRepostAction } from '../../../../builders/repost-action.svelte.js';
   import { getContext } from 'svelte';
-  import { SvelteSet } from 'svelte/reactivity';
   import { cn } from '../../../../utils/cn';
   import AvatarGroup from '../../../avatar-group/avatar-group.svelte';
   import RepostIcon from '../../../../icons/repost.svelte';
@@ -34,35 +34,19 @@
   const ndkContext = getContext<NDKSvelte>('ndk');
   const ndk = ndkProp || ndkContext;
 
-  const pubkeySet = new SvelteSet<string>();
+  const repostAction = createRepostAction(() => ({ event }), ndk);
 
-  const repostAuthorPubkeys = $derived(Array.from(pubkeySet));
-  const totalReposts = $derived(repostAuthorPubkeys.length);
-
-  $effect(() => {
-    if (!ndk || !event?.id) return;
-
-    // Fetch reposts (kind 6) and generic reposts (kind 16)
-    const filter = {
-      kinds: [6, 16],
-      '#e': [event.id]
-    };
-
-    const sub = ndk.subscribe(filter, { closeOnEose: false });
-
-    sub.on('event', (repostEvent) => {
-      if (repostEvent.pubkey) {
-        pubkeySet.add(repostEvent.pubkey);
+  async function handleClick() {
+    if (onclick) {
+      onclick();
+    } else {
+      if (!ndk?.$currentPubkey) return;
+      try {
+        await repostAction.repost();
+      } catch (error) {
+        console.error('Failed to repost:', error);
       }
-    });
-
-    return () => {
-      sub.stop();
-    };
-  });
-
-  function handleClick() {
-    onclick?.();
+    }
   }
 </script>
 
@@ -79,22 +63,22 @@
     variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
     className
   )}
-  aria-label={`${totalReposts} ${totalReposts === 1 ? 'repost' : 'reposts'}`}
+  aria-label={`${repostAction.count} ${repostAction.count === 1 ? 'repost' : 'reposts'}`}
 >
   <RepostIcon size={16} class="flex-shrink-0" />
-  {#if repostAuthorPubkeys.length > 0}
+  {#if repostAction.pubkeys.length > 0}
     <AvatarGroup
       {ndk}
-      pubkeys={repostAuthorPubkeys}
+      pubkeys={repostAction.pubkeys}
       {max}
       size={avatarSize}
       {spacing}
       overflowVariant="none"
       skipCurrentUser={false}
     />
-    {#if showCount && totalReposts > 0}
+    {#if showCount && repostAction.count > 0}
       <span class="text-sm font-medium text-muted-foreground">
-        {totalReposts}
+        {repostAction.count}
       </span>
     {/if}
   {:else}

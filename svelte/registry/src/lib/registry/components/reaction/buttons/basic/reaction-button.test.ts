@@ -24,7 +24,7 @@ describe("ReactionButton", () => {
     });
 
     afterEach(() => {
-        vi.clearAllMocks();
+        vi.restoreAllMocks();
     });
 
     describe("rendering", () => {

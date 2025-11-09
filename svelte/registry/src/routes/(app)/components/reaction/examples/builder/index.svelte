@@ -16,7 +16,7 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

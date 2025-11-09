@@ -1,6 +1,6 @@
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../../resolve-ndk.svelte.js';
+import { resolveNDK } from '../../resolve-ndk/index.svelte.js';
 
 export interface FetchEventState {
     event: NDKEvent | null;

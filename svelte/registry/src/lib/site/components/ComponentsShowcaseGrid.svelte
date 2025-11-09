@@ -15,7 +15,7 @@
     <div
       class={cn(
         'flex flex-col items-center justify-center px-8 py-12 min-h-[280px] border-border transition-colors group relative  overflow-clip',
-        index % 3 !== 2 && 'md:border-r',
+        (index % 3 !== 2 && index !== components.length-1) && 'md:border-r',
         index >= 3 && 'border-t',
         component.cellClass
       )}

@@ -16,47 +16,45 @@
     "engagement",
     "feedback"
   ],
-  "apiDocs": [
-    {
-      "name": "ReactionButtonSlack",
-      "description": "Slack-style reaction button with horizontal or vertical layout",
-      "importPath": "import { ReactionButtonSlack } from '$lib/registry/components/reaction/buttons/slack'",
-      "props": [
-        {
-          "name": "ndk",
-          "type": "NDKSvelte",
-          "required": true,
-          "description": "NDK instance"
-        },
-        {
-          "name": "event",
-          "type": "NDKEvent",
-          "required": true,
-          "description": "Event to show reactions for"
-        },
-        {
-          "name": "variant",
-          "type": "'horizontal' | 'vertical'",
-          "default": "'horizontal'",
-          "description": "Layout variant"
-        },
-        {
-          "name": "showAvatars",
-          "type": "boolean",
-          "default": "true",
-          "description": "Show user avatars (in tooltip for horizontal, inline for vertical)"
-        },
-        {
-          "name": "delayed",
-          "type": "number",
-          "description": "Delay in seconds before publishing (for cancellable reactions)"
-        },
-        {
-          "name": "class",
-          "type": "string",
-          "description": "Additional CSS classes"
-        }
-      ]
-    }
-  ]
+  "apiDoc": {
+    "name": "ReactionButtonSlack",
+    "description": "Slack-style reaction button with horizontal or vertical layout",
+    "importPath": "import { ReactionButtonSlack } from '$lib/registry/components/reaction/buttons/slack'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to show reactions for"
+      },
+      {
+        "name": "variant",
+        "type": "'horizontal' | 'vertical'",
+        "default": "'horizontal'",
+        "description": "Layout variant"
+      },
+      {
+        "name": "showAvatars",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show user avatars (in tooltip for horizontal, inline for vertical)"
+      },
+      {
+        "name": "delayed",
+        "type": "number",
+        "description": "Delay in seconds before publishing (for cancellable reactions)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
 }

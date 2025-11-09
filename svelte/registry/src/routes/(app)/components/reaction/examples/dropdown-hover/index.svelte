@@ -18,7 +18,7 @@
 <script lang="ts">
   import { EmojiPicker } from '$lib/registry/components/emoji-picker';
   import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
-  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 

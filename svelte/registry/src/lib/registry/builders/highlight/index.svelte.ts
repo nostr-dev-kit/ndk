@@ -6,7 +6,7 @@
 import type { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
 import { NDKArticle as NDKArticleClass } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../resolve-ndk.svelte.js';
+import { resolveNDK } from '../resolve-ndk/index.svelte.js';
 
 export interface UrlMetadata {
     title?: string;

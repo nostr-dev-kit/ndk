@@ -1,7 +1,7 @@
 import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import { SvelteMap } from 'svelte/reactivity';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../resolve-ndk.svelte.js';
+import { resolveNDK } from '../resolve-ndk/index.svelte.js';
 
 // Track in-flight profile fetch requests to prevent duplicate fetches
 const inFlightRequests = new SvelteMap<string, Promise<NDKUserProfile | null>>();

@@ -12,18 +12,12 @@
     metadata,
     ndk: propNdk,
     showcaseComponents = [],
-    overview,
-    components,
-    componentsTitle,
-    componentsDescription,
-    componentsSection,
-    beforeShowcase,
-    afterComponents,
-    recipes,
-    primitives,
-    customSections,
-    showcaseControls,
     emptyState,
+    overview,
+    componentsSection,
+    recipes,
+    anatomy,
+    primitives,
     children
   }: ComponentPageTemplateProps = $props();
 
@@ -38,91 +32,70 @@
   {/if}
 </PageTitle>
 
-<!-- Before Showcase Extension Point -->
-{#if beforeShowcase}
-  {@render beforeShowcase()}
-{/if}
-
-<!-- Showcase Section or Empty State -->
-{#if showcaseComponents.length > 0}
-  {#if showcaseComponents.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
-    <!-- Use ComponentsShowcase if orientations are specified -->
-    <ComponentsShowcase
-      class="-mx-8 px-8"
-      components={showcaseComponents}
-    />
-  {:else}
-    <!-- Default to ComponentsShowcaseGrid -->
-    <ComponentsShowcaseGrid components={showcaseComponents} />
+<div class="flex flex-col w-full divide-y divide-border">
+  <!-- Showcase Section -->
+  {#if showcaseComponents.length > 0}
+    {#if showcaseComponents.some(c => c.orientation === 'vertical' || c.orientation === 'horizontal')}
+      <ComponentsShowcase
+        class="-mx-8 px-8"
+        components={showcaseComponents}
+      />
+    {:else}
+      <ComponentsShowcaseGrid components={showcaseComponents} />
+    {/if}
+  {:else if emptyState}
+    {@render emptyState()}
   {/if}
-{:else if emptyState}
-  {@render emptyState()}
-{/if}
 
-<!-- Overview Section -->
-{#if overview}
-  <section class="py-12">
-    {@render overview()}
-  </section>
-{/if}
+  <!-- Overview Section -->
+  {#if overview}
+    <section class="py-8">
+      <SectionTitle title="Overview" />
+      {@render overview()}
+    </section>
+  {/if}
 
-<!-- Components Section (new simplified pattern) -->
-{#if components}
-  <SectionTitle
-    title={componentsTitle || 'Components'}
-    description={componentsDescription || 'Explore each variant in detail'}
-  />
+  <!-- Components Section -->
+  {#if componentsSection?.cards.length}
+    <section class="py-8">
+      <SectionTitle title="Components" />
+      {#each componentsSection.cards as cardData (cardData.name)}
+        <ComponentCard data={cardData}>
+          {#snippet preview()}
+            {#if componentsSection.previews?.[cardData.name]}
+              {@render componentsSection.previews[cardData.name]()}
+            {:else}
+              <div class="text-muted-foreground">
+                Preview not defined for {cardData.name}
+              </div>
+            {/if}
+          {/snippet}
+        </ComponentCard>
+      {/each}
+    </section>
+  {/if}
 
-  <section class="py-12 space-y-16">
-    {@render components()}
-  </section>
-{:else if componentsSection && componentsSection.cards.length > 0}
-  <!-- Components Section (old pattern - backward compatibility) -->
-  <SectionTitle
-    title={componentsSection.title || 'Components'}
-    description={componentsSection.description || 'Explore all components in detail'}
-  />
+  <!-- Recipes Section -->
+  {#if recipes}
+    <section class="py-8">
+      <SectionTitle title="Recipes" />
+      {@render recipes()}
+    </section>
+  {/if}
 
-  <section class="py-12 space-y-16">
-    {#each componentsSection.cards as cardData, index (cardData.name)}
-      <ComponentCard data={cardData}>
-        {#snippet preview()}
-          {#if componentsSection.previews?.[cardData.name]}
-            {@render componentsSection.previews[cardData.name]()}
-          {:else}
-            <div class="text-muted-foreground">
-              Preview not defined for {cardData.name}
-            </div>
-          {/if}
-        {/snippet}
-      </ComponentCard>
-    {/each}
-  </section>
-{/if}
+  <!-- Anatomy Section -->
+  {#if anatomy}
+    <section class="py-8">
+      <SectionTitle title="Anatomy" />
+      {@render anatomy()}
+    </section>
+  {/if}
 
-<!-- After Components Extension Point -->
-{#if afterComponents}
-  {@render afterComponents()}
-{/if}
-
-<!-- Recipes Section -->
-{#if recipes}
-  <SectionTitle
-    title="Recipes"
-    description="Common patterns and combinations using these components"
-  />
-
-  <section class="py-12 space-y-8">
-    {@render recipes()}
-  </section>
-{/if}
-
-<!-- Primitives Section -->
-{#if primitives}
-  {@render primitives()}
-{/if}
-
-<!-- Custom Sections (Anatomy, etc.) -->
-{#if customSections}
-  {@render customSections()}
-{/if}
+  <!-- Primitives Section -->
+  {#if primitives}
+    <section class="py-8">
+      <SectionTitle title="Primitives" />
+      {@render primitives()}
+    </section>
+  {/if}
+</div>

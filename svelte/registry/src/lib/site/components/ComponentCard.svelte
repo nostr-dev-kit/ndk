@@ -23,7 +23,7 @@
 		}>;
 		events?: Array<{ name: string; description: string }>;
 		slots?: Array<{ name: string; description: string }>;
-		importPath?: string;
+		importPath: string;
 	}
 
 	export interface RelatedComponent {
@@ -41,7 +41,7 @@
 		command: string;
 		dependencies?: string[];
 		registryDependencies?: string[];
-		apiDocs: ComponentDoc[];
+		apiDoc?: ComponentDoc;
 		relatedComponents?: RelatedComponent[];
 		version?: string;
 		updatedAt?: string;
@@ -165,14 +165,13 @@
 				</section>
 
 				<section class="flex flex-col gap-4">
-					{#if data.apiDocs && data.apiDocs.length > 0}
-						<ComponentAPI components={data.apiDocs} />
+					{#if data.apiDoc}
+						<ComponentAPI components={[data.apiDoc]} />
 					{:else}
 						<div class="p-8 border border-destructive rounded-lg bg-destructive/10">
 							<h4 class="text-lg font-semibold text-destructive mb-2">⚠️ Missing API Documentation</h4>
 							<p class="text-sm text-destructive/90">
-								This component is missing API documentation. The <code class="px-1 py-0.5 bg-destructive/20 rounded">apiDocs</code> array must not be empty.
-								Please add component documentation including props, events, and usage information.
+								This component is missing API documentation. Please add an <code class="px-1 py-0.5 bg-destructive/20 rounded">apiDoc</code> object including props, events, and usage information.
 							</p>
 						</div>
 					{/if}

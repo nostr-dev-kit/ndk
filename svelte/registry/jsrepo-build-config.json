@@ -15,6 +15,16 @@
 	"includeBlocks": [],
 	"includeCategories": [],
 	"includeFiles": [],
+	"excludeFiles": [
+		"**/*.test.ts",
+		"**/*.test.js",
+		"**/*.spec.ts",
+		"**/*.spec.js",
+		"**/__screenshots__/**",
+		"**/__tests__/**",
+		"**/test-results/**",
+		"**/playwright-report/**"
+	],
 	"excludeBlocks": [],
 	"excludeCategories": [],
 	"preview": false,

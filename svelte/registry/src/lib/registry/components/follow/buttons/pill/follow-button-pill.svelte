@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createFollowAction } from '../../../../builders/follow-action.svelte.js';
+  import { createFollowAction } from '../../../../builders/follow-action/index.svelte.js';
   import { getContext } from 'svelte';
   import { cn } from '../../../../utils/cn';
   import HashtagIcon from '../../../../icons/hashtag.svelte';

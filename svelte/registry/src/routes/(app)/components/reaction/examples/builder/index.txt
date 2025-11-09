@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createReactionAction } from '$lib/registry/builders/reaction-action.svelte.js';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
 
   let { ndk, event } = $props();
 

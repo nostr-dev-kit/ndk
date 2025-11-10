@@ -1,8 +1,14 @@
+<script lang="ts" module>
+  import type { Component } from 'svelte';
+  import UserCardClassic from '../user-card-classic/user-card-classic.svelte';
+
+  export let hoverComponent: Component = UserCardClassic;
+</script>
+
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
-  import UserCardClassic from '../user-card-classic/user-card-classic.svelte';
   import { Popover } from 'bits-ui';
   import { cn } from '../../utils/cn';
 
@@ -69,7 +75,8 @@
       onmouseenter={handleMouseEnter}
       onmouseleave={handleMouseLeave}
     >
-      <UserCardClassic {ndk} {pubkey} />
+      {@const HoverCard = hoverComponent}
+      <HoverCard {ndk} {pubkey} />
     </Popover.Content>
   </Popover.Root>
 {/if}

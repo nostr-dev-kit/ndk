@@ -5,6 +5,7 @@ Used in component documentation pages to show both the visual output and source 
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import CodeSnippet from './code-snippet.svelte';
+    import { cn } from '$lib/registry/utils/cn';
 
 	interface Props {
 		title?: string;
@@ -18,13 +19,17 @@ Used in component documentation pages to show both the visual output and source 
 </script>
 
 <section class="flex flex-col gap-4 {className}">
-	<div class="flex flex-col w-full border border-border rounded-lg">
+	<div class="flex flex-col w-full rounded-lg divide-y divide-border border border-border overflow-clip">
 		{#if title}
 			<h3 class="text-xl font-semibold text-foreground m-0 p-4">{title}</h3>
 		{/if}
 
-		<div class="min-h-[433px] flex flex-col items-center bg-zinc-50 dark:bg-neutral-900/50 justify-center max-h-[600px] overflow-y-auto border-y border-border {previewAreaClass}">
-			<div class="p-8 flex justify-center items-center">
+		<div class={cn(
+			"min-h-[433px] flex flex-col items-center justify-center max-h-[600px] overflow-y-auto",
+			"bg-linear-to-r from-zinc-50 to-zinc-100 dark:from-neutral-900 dark:to-neutral-900/50",
+			previewAreaClass
+		)}>
+			<div class="m-8 flex justify-center items-center shadow-xl">
 				{@render children()}
 			</div>
 		</div>

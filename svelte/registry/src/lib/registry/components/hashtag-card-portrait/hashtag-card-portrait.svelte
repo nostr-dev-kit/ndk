@@ -4,7 +4,6 @@
   import { createHashtagStats } from '../../builders/hashtag/stats.svelte.js';
   import { hashtagGradient, formatHashtag } from '../../utils/hashtag.js';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
-  import { User } from '../../ui/user/index.js';
   import FollowButtonPill from '../follow-button-pill/follow-button-pill.svelte';
 
   interface Props {
@@ -46,7 +45,7 @@
 )}>
   <!-- Gradient header -->
   <div
-    class="w-full h-24 -mx-6 -mt-6 mb-2 flex items-center justify-center relative overflow-hidden"
+    class="h-24 -mx-6 -mt-6 mb-2 flex items-center justify-center relative overflow-hidden"
     style="background: {gradient}"
   >
     <div class="absolute inset-0 bg-gradient-to-b from-transparent to-card"></div>
@@ -91,23 +90,9 @@
     </div>
   {/if}
 
-  <!-- Top contributor -->
-  {#if stats.topContributor}
-    <div class="flex items-center gap-2 justify-center text-sm">
-      <span class="text-muted-foreground">Top contributor:</span>
-      <User.Root {ndk} pubkey={stats.topContributor}>
-        <div class="flex items-center gap-2">
-          <User.Avatar class="w-6 h-6" />
-          <User.Name class="font-medium text-foreground" />
-        </div>
-      </User.Root>
-    </div>
-  {/if}
-
   <!-- Avatar group -->
   {#if pubkeyArray.length > 0}
     <div class="flex flex-col items-center gap-2">
-      <span class="text-xs text-muted-foreground">Contributors</span>
       <AvatarGroup
         {ndk}
         pubkeys={pubkeyArray}

@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { Hashtag } from '$lib/registry/components/hashtag';
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+
+  // Hashtag component auto-registers with the content renderer
+  import '$lib/registry/components/hashtag';
+
+  let { ndk, event } = $props();
 </script>
 
-<div class="flex flex-col gap-4">
-  <p class="text-sm text-muted-foreground">
-    Inline hashtag in text: Check out <Hashtag tag="nostr" /> and <Hashtag tag="bitcoin" /> for great content!
-  </p>
-
-  <p class="text-sm text-muted-foreground">
-    Another example: Trending topics include <Hashtag tag="grownostr" /> and <Hashtag tag="plebchain" />.
-  </p>
+<div class="w-full max-w-2xl">
+  {#if event}
+    <EventContent {ndk} {event} />
+  {/if}
 </div>

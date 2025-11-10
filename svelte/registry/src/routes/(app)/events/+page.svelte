@@ -116,6 +116,39 @@
 		</div>
 	</section>
 
+	<!-- Chromes -->
+	<section class="mb-16">
+		<h2 class="text-3xl font-bold mb-4">Specialized Chrome Components</h2>
+		<p class="text-muted-foreground mb-6">
+			Chrome components provide the visual container and structure for events. The registry includes specialized chromes for handling specific scenarios.
+		</p>
+
+		<div class="grid gap-6">
+			<div class="p-6 border border-border rounded-lg bg-card">
+				<div class="flex items-start justify-between mb-3">
+					<div>
+						<h3 class="text-lg font-semibold mb-1">Generic Event Card</h3>
+						<a href="/events/cards/generic-card" class="text-sm text-primary hover:underline">
+							View component →
+						</a>
+					</div>
+					<span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded font-semibold">
+						Chrome
+					</span>
+				</div>
+				<p class="text-sm text-muted-foreground mb-4">
+					A fallback card for displaying any event kind. Automatically discovers and displays NIP-89 app handler recommendations for unknown event types. Shows event's alt tag (NIP-31) and provides links to recommended handlers with URL template replacement. Ideal for debugging or displaying events without specific renderers.
+				</p>
+				<div class="flex flex-wrap gap-2">
+					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">NIP-31: Alt Tag</span>
+					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">NIP-89: App Handlers</span>
+					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">Unknown Events</span>
+					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">Fallback Display</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<!-- Learn More -->
 	<section class="mb-16">
 		<h2 class="text-3xl font-bold mb-4">Learn More</h2>
@@ -133,7 +166,7 @@
 					>
 				</div>
 				<p class="text-sm text-muted-foreground mb-4">
-					EventCard primitives and specialized card components for different event kinds.
+					EventCard primitives and specialized card components. See specialized chromes above for fallback cards like Generic Event Card.
 				</p>
 				<div class="text-sm text-primary group-hover:underline">View Cards Documentation →</div>
 			</a>

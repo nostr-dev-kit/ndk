@@ -1,0 +1,44 @@
+{
+  "name": "event-card-compact",
+  "title": "Event Card Compact",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "compact",
+  "oneLiner": "A compact vertical event card with header on top and content below",
+  "command": "npx jsrepo add event-card-compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "compact-layouts",
+    "grid-views",
+    "quoted-events",
+    "content-renderer",
+    "minimal-ui"
+  ],
+  "apiDoc": {
+    "name": "EventCardCompact",
+    "description": "A compact, vertical event card designed for space-efficient layouts. Header on top shows avatar, author name, and timestamp. Content below with 3-line clamp. Features a subtle muted background with hover effects. Automatically registered with the content renderer for kinds 1 and 1111 with priority 5. Perfect for displaying events in grids or compact feeds.",
+    "importPath": "import { EventCardCompact } from '$lib/registry/components/event-card-compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

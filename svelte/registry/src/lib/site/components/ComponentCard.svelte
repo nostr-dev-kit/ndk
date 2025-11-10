@@ -70,22 +70,24 @@
 		<div class="flex flex-col gap-8 border border-border p-8">
 			<div class="mb-0 border-b border-border -mx-8 pb-4 px-8">
 				<div class="flex flex-row items-end justify-start gap-2">
-					<div class="flex flex-col items-start gap-2 flex-1">
-						<h1 class="text-3xl">{data.title}</h1>
-						<div class="m-0">
+					<div class="flex flex-col items-start gap-0 flex-1">
+						<div class="flex flex-row gap-4 items-end">
+							<h1 class="text-3xl">{data.title}</h1>
 							<User.Root {ndk} pubkey="fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52">
-								<div class="flex items-center gap-3">
-									<User.Avatar class="w-6 h-6" />
+								<div class="flex items-center gap-2">
+									<User.Avatar class="w-5 h-5" />
 									<div class="text-xs">
 										<span class="text-muted-foreground font-normal">by</span>
-										<User.Name class="text-sm text-foreground font-semibold" />
+										<User.Name class="text-xs text-foreground font-semibold" />
 									</div>
 								</div>
 							</User.Root>
 						</div>
-						{#if data.oneLiner}
-							<p class="text-muted-foreground mt-2">{data.oneLiner}</p>
-						{/if}
+						<div class="m-0">
+							{#if data.oneLiner}
+								<p class="text-muted-foreground">{data.oneLiner}</p>
+							{/if}
+						</div>
 					</div>
 					<Tabs.List class="">
 						<Tabs.Trigger value="about">About</Tabs.Trigger>
@@ -110,7 +112,7 @@
 				{/if}
 
 				{#if data.documentation}
-					<section class="flex flex-col gap-4 prose prose-sm max-w-none dark:prose-invert">
+					<section class="prose prose-sm max-w-none dark:prose-invert">
 						{@html marked.parse(data.documentation)}
 					</section>
 				{/if}

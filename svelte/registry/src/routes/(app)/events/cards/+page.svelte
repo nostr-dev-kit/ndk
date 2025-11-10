@@ -4,20 +4,26 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte';
 	import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
+	import { EventCardInline } from '$lib/registry/components/event-card-inline';
+	import { EventCardCompact } from '$lib/registry/components/event-card-compact';
 	import { EventCard } from '$lib/registry/components/event-card';
 	import { EditProps } from '$lib/site/components/edit-props';
-	import PageTitle from '$lib/site/components/PageTitle.svelte';
-	import ComponentsShowcase from '$site-components/ComponentsShowcase.svelte';
-	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
+	import Preview from '$site-components/preview.svelte';
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
+
+	// Import example code
+	import inlineReplyCode from './examples/inline-reply/index.txt?raw';
+	import InlineReplyExample from './examples/inline-reply/index.svelte';
 
 	// Import registry metadata
 	import eventCardClassicCard from '$lib/registry/components/event-card-classic/metadata.json';
 	import eventCardBasicCard from '$lib/registry/components/event-card-basic/metadata.json';
+	import eventCardInlineCard from '$lib/registry/components/event-card-inline/metadata.json';
+	import eventCardCompactCard from '$lib/registry/components/event-card-compact/metadata.json';
 
-	const eventCardCards = [eventCardClassicCard, eventCardBasicCard];
+	const eventCardCards = [eventCardClassicCard, eventCardBasicCard, eventCardInlineCard, eventCardCompactCard];
 
   // Get page data
   let { data } = $props();
@@ -52,6 +58,18 @@
       id: 'event-card-basic',
       cardData: eventCardBasicCard,
       preview: basicPreview,
+      orientation: 'horizontal',
+    },
+    {
+      id: 'event-card-inline',
+      cardData: eventCardInlineCard,
+      preview: inlinePreview,
+      orientation: 'horizontal',
+    },
+    {
+      id: 'event-card-compact',
+      cardData: eventCardCompactCard,
+      preview: compactPreview,
       orientation: 'horizontal',
     }
   ];
@@ -136,33 +154,7 @@
 {#snippet classicPreview()}
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
-			{#if showClassicContent}
-				<EventCardClassic {ndk} event={sampleEvent} />
-			{:else}
-				<EventCard.Root {ndk} event={sampleEvent} class="p-4 rounded-lg border border-border bg-card">
-					<div class="flex items-start justify-between gap-2">
-						<EventCard.Header />
-						<EventCard.Dropdown />
-					</div>
-
-					<div class="my-4 p-8 border-2 border-dashed border-muted-foreground/20 rounded-md bg-muted/10">
-						<p class="text-sm text-muted-foreground/60 text-center italic">Content area</p>
-					</div>
-
-					<EventCard.Actions>
-						<div class="flex gap-4 text-muted-foreground/40">
-							<div class="flex items-center gap-1">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-								<span class="text-xs">0</span>
-							</div>
-							<div class="flex items-center gap-1">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-								<span class="text-xs">0</span>
-							</div>
-						</div>
-					</EventCard.Actions>
-				</EventCard.Root>
-			{/if}
+			<EventCardClassic {ndk} event={sampleEvent} />
 		</div>
 	{/if}
 {/snippet}
@@ -210,6 +202,38 @@
 	{#if sampleEvent}
 		<div class="max-w-2xl mx-auto">
 			<EventCardBasic {ndk} event={sampleEvent} />
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet inlinePreview()}
+	{#if sampleEvent}
+		<div class="max-w-2xl mx-auto">
+			<EventCardInline {ndk} event={sampleEvent} />
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet inlineComponentPreview()}
+	{#if sampleEvent}
+		<div class="max-w-2xl mx-auto">
+			<EventCardInline {ndk} event={sampleEvent} />
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet compactPreview()}
+	{#if sampleEvent}
+		<div class="max-w-2xl mx-auto">
+			<EventCardCompact {ndk} event={sampleEvent} />
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet compactComponentPreview()}
+	{#if sampleEvent}
+		<div class="max-w-2xl mx-auto">
+			<EventCardCompact {ndk} event={sampleEvent} />
 		</div>
 	{/if}
 {/snippet}
@@ -330,6 +354,41 @@
 	/>
 {/snippet}
 
+{#snippet recipes()}
+	<section>
+		<h2 class="text-2xl font-bold mb-4">Reply Composition</h2>
+		<p class="text-muted-foreground mb-6">
+			Instead of just showing "Replying to @user", you can use any other card, like EventCardInline to display something else.
+		</p>
+
+		<Preview code={inlineReplyCode}>
+			{#if sampleEvent}
+				<InlineReplyExample {ndk} event={sampleEvent} />
+			{/if}
+		</Preview>
+
+		<div class="mt-6 p-4 bg-muted/30 border border-border rounded-lg">
+			<h3 class="text-lg font-semibold mb-2">How it works</h3>
+			<ul class="space-y-2 text-sm text-muted-foreground">
+				<li class="flex items-start gap-2">
+					<span class="text-primary">•</span>
+					<span>
+						<code class="px-1.5 py-0.5 bg-muted rounded text-xs">EventCard.ReplyIndicator</code> accepts a
+						<code class="px-1.5 py-0.5 bg-muted rounded text-xs">children</code> snippet that receives the replied-to event
+					</span>
+				</li>
+				<li class="flex items-start gap-2">
+					<span class="text-primary">•</span>
+					<span>
+						The snippet receives <code class="px-1.5 py-0.5 bg-muted rounded text-xs">{'{ event, loading }'}</code> —
+						render EventCardInline when the event is loaded
+					</span>
+				</li>
+			</ul>
+		</div>
+	</section>
+{/snippet}
+
 <!-- Toast notification -->
 {#if showToast}
 	<div class="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 fade-in duration-300">
@@ -339,40 +398,27 @@
 	</div>
 {/if}
 
-{#if sampleEvent}
-	<ComponentPageTemplate
-		metadata={metadata}
-		{ndk}
-		{showcaseComponents}
-		{overview}
-		componentsSection={{
-			cards: eventCardCards,
-			previews: {
-				'event-card-classic': classicComponentPreview,
-				'event-card-basic': basicComponentPreview
-			}
-		}}
-		{anatomy}
-	>
-		<EditProps.Prop
-			name="Sample Event"
-			type="event"
-			bind:value={sampleEvent}
-			default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-		/>
-	</ComponentPageTemplate>
-{:else}
-	<div class="px-8">
-		<PageTitle title={metadata.title} subtitle={metadata.oneLiner}>
-			<EditProps.Prop
-				name="Sample Event"
-				type="event"
-				bind:value={sampleEvent}
-				default="nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n"
-			/>
-		</PageTitle>
-		<div class="py-16 text-center text-muted-foreground">
-			Loading sample event...
-		</div>
-	</div>
-{/if}
+<ComponentPageTemplate
+	metadata={metadata}
+	{ndk}
+	{showcaseComponents}
+	{overview}
+	componentsSection={{
+		cards: eventCardCards,
+		previews: {
+			'event-card-classic': classicComponentPreview,
+			'event-card-basic': basicComponentPreview,
+			'event-card-inline': inlineComponentPreview,
+			'event-card-compact': compactComponentPreview
+		}
+	}}
+	{recipes}
+	{anatomy}
+>
+	<EditProps.Prop
+		name="Sample Event"
+		type="event"
+		bind:value={sampleEvent}
+		default="nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycpzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqyrn4zsz2k54283whepmvmnkgxfqg4rwf2vgvmhlffvmsy8t8kk0hzgy4uh8"
+	/>
+</ComponentPageTemplate>

@@ -1,0 +1,31 @@
+// MyCustomLink.svelte
+<script lang="ts">
+	import { LinkIcon } from '$lib/registry/ui/icons';
+
+	let { url, class: className = '' } = $props();
+	const urls = Array.isArray(url) ? url : [url];
+</script>
+
+<div class="flex flex-col gap-2 {className}">
+	{#each urls as linkUrl (linkUrl)}
+		<a
+			href={linkUrl}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="inline-flex items-center gap-1.5 text-orange-500 no-underline px-2 py-1 rounded-md transition-all hover:bg-orange-500/10 hover:underline break-all"
+		>
+			<LinkIcon size={14} class="flex-shrink-0" />
+			<span class="text-sm">{linkUrl}</span>
+		</a>
+	{/each}
+</div>
+
+// index.ts
+import { defaultContentRenderer } from '$lib/registry/ui/content-renderer';
+import MyCustomLink from './MyCustomLink.svelte';
+
+// Register with priority 10 to override defaults
+defaultContentRenderer.setLinkComponent(MyCustomLink, 10);
+
+export { MyCustomLink };
+export default MyCustomLink;

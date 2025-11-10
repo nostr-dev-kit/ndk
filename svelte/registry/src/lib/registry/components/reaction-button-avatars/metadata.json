@@ -15,9 +15,27 @@
     "engagement",
     "feedback"
   ],
+  "examples": [
+    {
+      "title": "Basic heart reaction button",
+      "code": "<ReactionButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Show reactions from all users",
+      "code": "<ReactionButtonAvatars {ndk} {event} onlyFollows={false} />"
+    },
+    {
+      "title": "Custom emoji with more avatars",
+      "code": "<ReactionButtonAvatars\n  {ndk}\n  {event}\n  emoji=\"🔥\"\n  max={5}\n  onlyFollows={true}\n/>"
+    },
+    {
+      "title": "Track specific emoji count",
+      "code": "<ReactionButtonAvatars\n  {ndk}\n  {event}\n  emoji=\"👍\"\n  countMode=\"emoji\"\n  variant=\"pill\"\n/>"
+    }
+  ],
   "apiDoc": {
     "name": "ReactionButtonAvatars",
-    "description": "Reaction button displaying avatars of reactors",
+    "description": "A reaction button that displays avatars of users who have reacted to an event. By default, it shows only avatars from followed users when logged in (onlyFollows=true), helping reduce noise and highlight reactions from your social graph. Supports custom emojis, multiple visual variants, and configurable avatar display limits. The button is interactive and triggers reactions when clicked.",
     "importPath": "import { ReactionButtonAvatars } from '$lib/registry/components/reaction/buttons/avatars'",
     "props": [
       {
@@ -72,6 +90,12 @@
         "type": "'total' | 'emoji'",
         "default": "'total'",
         "description": "Whether to show total count of all reactions or just count for the specific emoji"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
       },
       {
         "name": "onclick",

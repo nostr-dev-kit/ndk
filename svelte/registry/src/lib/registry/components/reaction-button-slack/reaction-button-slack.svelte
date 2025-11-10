@@ -12,6 +12,7 @@
     event: NDKEvent;
     variant?: 'horizontal' | 'vertical';
     showAvatars?: boolean;
+    onlyFollows?: boolean;
     delayed?: number;
     class?: string;
   }
@@ -21,6 +22,7 @@
     event,
     variant = 'horizontal',
     showAvatars = true,
+    onlyFollows = true,
     delayed,
     class: className = ''
   }: Props = $props();
@@ -73,6 +75,7 @@
               max={5}
               size={24}
               spacing="tight"
+              {onlyFollows}
             />
           </Tooltip.Content>
         </Tooltip.Root>
@@ -101,6 +104,7 @@
           max={15}
           size={20}
           spacing="tight"
+          {onlyFollows}
         />
       </button>
     {/each}

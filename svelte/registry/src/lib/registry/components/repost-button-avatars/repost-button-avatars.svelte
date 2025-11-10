@@ -15,6 +15,7 @@
     avatarSize?: number;
     spacing?: 'tight' | 'normal' | 'loose';
     showCount?: boolean;
+    onlyFollows?: boolean;
     onclick?: () => void;
     class?: string;
   }
@@ -27,6 +28,7 @@
     avatarSize = 24,
     spacing = 'tight',
     showCount = true,
+    onlyFollows = true,
     onclick,
     class: className = ''
   }: Props = $props();
@@ -75,6 +77,7 @@
       {spacing}
       overflowVariant="none"
       skipCurrentUser={false}
+      {onlyFollows}
     />
     {#if showCount && repostAction.count > 0}
       <span class="text-sm font-medium text-muted-foreground">

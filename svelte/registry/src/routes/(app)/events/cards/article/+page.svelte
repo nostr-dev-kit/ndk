@@ -13,6 +13,7 @@
 	import SectionTitle from '$site-components/SectionTitle.svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
+	import CodeBlock from '$site-components/CodeBlock.svelte';
 
 	// Import registry metadata
 	import articleCardPortraitCard from '$lib/registry/components/article-card-portrait/metadata.json';
@@ -246,6 +247,136 @@
 	</ScrollArea>
 {/snippet}
 
+{#snippet overview()}
+	<div class="space-y-8">
+		<section>
+			<h3 class="text-xl font-semibold mb-3">What are Article Cards?</h3>
+			<p class="text-muted-foreground leading-relaxed mb-4">
+				Article cards display NIP-23 long-form content (kind 30023) with rich, visually appealing layouts.
+				Multiple variants are available—Portrait, Hero, Medium, and Neon—each optimized for different
+				contexts like feeds, featured content, or discovery pages.
+			</p>
+			<p class="text-muted-foreground leading-relaxed">
+				All article cards are built from composable <code class="text-sm font-mono px-1.5 py-0.5 bg-muted rounded">Article</code> primitives
+				(Root, Title, Image, Summary, ReadingTime) which can also be used independently to create custom article layouts.
+			</p>
+		</section>
+
+		<section>
+			<h3 class="text-xl font-semibold mb-3">Two Primary Use Cases</h3>
+
+			<div class="space-y-6">
+				<div class="border border-border rounded-lg p-6 bg-card">
+					<h4 class="font-semibold mb-2">1. Standalone Article Display</h4>
+					<ul class="text-sm text-muted-foreground space-y-2 ml-4 list-disc">
+						<li>Show full article cards in dedicated article feeds or discovery pages</li>
+						<li>Browse and navigate long-form content from Nostr</li>
+						<li>Click to read the full article</li>
+					</ul>
+				</div>
+
+				<div class="border border-border rounded-lg p-6 bg-card">
+					<h4 class="font-semibold mb-2">2. Embedded Article Mentions (Content Rendering System)</h4>
+					<p class="text-sm text-muted-foreground mb-3">
+						When users mention articles in notes using <code class="text-xs font-mono px-1.5 py-0.5 bg-muted rounded">nostr:naddr1...</code>,
+						these cards automatically render inline—powered by the <code class="text-xs font-mono px-1.5 py-0.5 bg-muted rounded">ContentRenderer</code> system.
+					</p>
+					<div class="mt-4 p-4 bg-muted/50 rounded border border-border">
+						<p class="text-xs font-semibold mb-2 text-muted-foreground">Example Flow:</p>
+						<ol class="text-xs text-muted-foreground space-y-1.5 ml-4 list-decimal">
+							<li>User writes: "Check out this article: nostr:naddr1..."</li>
+							<li>ContentRenderer detects the article reference</li>
+							<li>Registered article card component renders a rich preview inline</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section>
+			<h3 class="text-xl font-semibold mb-3">Content Rendering Integration</h3>
+			<p class="text-muted-foreground leading-relaxed mb-4">
+				Register article cards with the ContentRenderer to control how article mentions appear throughout your app.
+				When <code class="text-sm font-mono px-1.5 py-0.5 bg-muted rounded">EventContent</code> encounters an article reference,
+				it automatically renders using your registered card component instead of showing raw text.
+			</p>
+
+			<div class="bg-muted rounded-lg overflow-hidden border border-border">
+				<CodeBlock
+					lang="typescript"
+					code={`import { defaultContentRenderer } from '$lib/registry/ui/content-renderer';
+import { NDKArticle } from '@nostr-dev-kit/ndk';
+import ArticleCardPortrait from '$lib/registry/components/article-card-portrait';
+
+// Register article card for embedded mentions
+defaultContentRenderer.addKind(NDKArticle, ArticleCardPortrait, 10);
+
+// Now all article mentions in EventContent render as cards
+// "Check out nostr:naddr1..." → [Rich Article Card Preview]`}
+				/>
+			</div>
+		</section>
+
+		<section>
+			<h3 class="text-xl font-semibold mb-3">Progressive Enhancement Pattern</h3>
+			<p class="text-muted-foreground leading-relaxed mb-4">
+				Use the priority system to display articles differently based on context:
+			</p>
+
+			<div class="space-y-3">
+				<div class="p-4 bg-card border border-border rounded-lg">
+					<div class="flex items-center justify-between mb-2">
+						<span class="font-semibold text-sm">Compact Cards (Priority 5)</span>
+						<span class="text-xs text-muted-foreground font-mono">For inline embeds</span>
+					</div>
+					<p class="text-xs text-muted-foreground">Minimal layout for article mentions within event content</p>
+				</div>
+
+				<div class="p-4 bg-card border border-border rounded-lg">
+					<div class="flex items-center justify-between mb-2">
+						<span class="font-semibold text-sm">Enhanced Cards (Priority 10)</span>
+						<span class="text-xs text-muted-foreground font-mono">For standalone display</span>
+					</div>
+					<p class="text-xs text-muted-foreground">Rich, full-featured layouts for dedicated article feeds</p>
+				</div>
+			</div>
+
+			<div class="mt-4 p-4 bg-primary/5 border-l-4 border-primary rounded">
+				<p class="text-sm text-muted-foreground">
+					<strong class="text-foreground">Key benefit:</strong> Higher priority components automatically override
+					lower ones, enabling context-aware rendering without manual switching logic.
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<h3 class="text-xl font-semibold mb-3">Available Variants</h3>
+			<p class="text-muted-foreground leading-relaxed mb-4">
+				Each variant is designed for specific use cases and layout contexts:
+			</p>
+
+			<div class="grid gap-3 md:grid-cols-2">
+				<div class="p-4 border border-border rounded-lg bg-card">
+					<h4 class="font-semibold mb-1 text-sm">Portrait</h4>
+					<p class="text-xs text-muted-foreground">Vertical layout, ideal for horizontal scrolling feeds</p>
+				</div>
+				<div class="p-4 border border-border rounded-lg bg-card">
+					<h4 class="font-semibold mb-1 text-sm">Hero</h4>
+					<p class="text-xs text-muted-foreground">Large, featured display for prominent articles</p>
+				</div>
+				<div class="p-4 border border-border rounded-lg bg-card">
+					<h4 class="font-semibold mb-1 text-sm">Medium (Basic)</h4>
+					<p class="text-xs text-muted-foreground">Balanced layout for standard article lists</p>
+				</div>
+				<div class="p-4 border border-border rounded-lg bg-card">
+					<h4 class="font-semibold mb-1 text-sm">Neon</h4>
+					<p class="text-xs text-muted-foreground">Eye-catching design with vibrant styling</p>
+				</div>
+			</div>
+		</section>
+	</div>
+{/snippet}
+
 {#snippet anatomy()}
 	{#if !loading}
 		<!-- Anatomy Section -->
@@ -334,7 +465,9 @@
 	<ComponentPageTemplate
 		metadata={metadata}
 		{ndk}
-		{showcaseComponents}componentsSection={{
+		{showcaseComponents}
+		{overview}
+		componentsSection={{
 			cards: articleCardCards,
 			previews: {
 				'article-card-portrait': portraitComponentPreview,

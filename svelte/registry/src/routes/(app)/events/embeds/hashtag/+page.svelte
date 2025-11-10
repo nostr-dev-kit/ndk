@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
@@ -10,9 +11,11 @@
   import cardCompactCode from './examples/card-compact/index.txt?raw';
   import cardPortraitCode from './examples/card-portrait/index.txt?raw';
 
-  // Import components
-  import { Hashtag } from '$lib/registry/components/hashtag';
-  import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
+  // Import example components
+  import BasicExample from './examples/basic/index.svelte';
+  import ModernExample from './examples/modern/index.svelte';
+
+  // Import standalone card components
   import { HashtagCardCompact } from '$lib/registry/components/hashtag-card-compact';
   import { HashtagCardPortrait } from '$lib/registry/components/hashtag-card-portrait';
 
@@ -30,6 +33,7 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
+  let sampleEvent = $state<NDKEvent | undefined>();
   let tag = $state<string>('nostr');
 
   // Components section configuration
@@ -53,19 +57,11 @@
 
 <!-- Preview snippets for showcase -->
 {#snippet basicPreview()}
-  <div class="flex flex-col gap-4">
-    <p class="text-sm text-muted-foreground">
-      Inline hashtag in text: Check out <Hashtag {tag} /> for great content!
-    </p>
-  </div>
+  <BasicExample {ndk} event={sampleEvent} />
 {/snippet}
 
 {#snippet modernPreview()}
-  <div class="flex flex-col gap-4">
-    <p class="text-sm">
-      Hover over hashtag: Check out <HashtagModern {ndk} {tag} /> for great content!
-    </p>
-  </div>
+  <ModernExample {ndk} event={sampleEvent} />
 {/snippet}
 
 {#snippet cardCompactPreview()}
@@ -144,7 +140,14 @@
   {componentsSection}
 >
   <EditProps.Prop
-    name="Hashtag"
+    name="Sample Event"
+    type="event"
+    default="nevent1qqsvn8wrmh4sjmlym3ku55fernarwjvnfsjysxvwux3gjnhzm2mzy2ccx56px"
+    bind:value={sampleEvent}
+  />
+
+  <EditProps.Prop
+    name="Hashtag (for cards)"
     type="string"
     default="nostr"
     bind:value={tag}

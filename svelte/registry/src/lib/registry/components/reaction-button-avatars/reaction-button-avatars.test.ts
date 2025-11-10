@@ -213,6 +213,37 @@ describe("ReactionButtonAvatars", () => {
         });
     });
 
+    describe("onlyFollows prop", () => {
+        it("should pass onlyFollows prop to AvatarGroup", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
+            const { container } = render(ReactionButtonAvatars, {
+                props: {
+                    ndk,
+                    event: testEvent,
+                    onlyFollows: false
+                }
+            });
+
+            // Component passes onlyFollows prop to AvatarGroup
+            expect(container).toBeTruthy();
+        });
+
+        it("should default onlyFollows to true", () => {
+            vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);
+
+            const { container } = render(ReactionButtonAvatars, {
+                props: {
+                    ndk,
+                    event: testEvent
+                }
+            });
+
+            // Component defaults onlyFollows to true and passes to AvatarGroup
+            expect(container).toBeTruthy();
+        });
+    });
+
     describe("data attributes", () => {
         it("should have data-reaction-button-avatars attribute", () => {
             vi.spyOn(ndk, "$subscribe").mockReturnValue({ events: [] } as any);

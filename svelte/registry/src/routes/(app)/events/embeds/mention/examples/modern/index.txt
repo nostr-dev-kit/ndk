@@ -1,0 +1,15 @@
+<script lang="ts">
+  import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
+
+  let { ndk } = $props();
+</script>
+
+<div class="flex flex-col gap-4 max-w-2xl">
+  <p class="text-sm text-muted-foreground">
+    Hover over this mention: Thanks to <MentionModern {ndk} bech32="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" /> for the work!
+  </p>
+
+  <p class="text-sm text-muted-foreground">
+    Another example: Big shoutout to <MentionModern {ndk} bech32="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" /> for their contribution.
+  </p>
+</div>

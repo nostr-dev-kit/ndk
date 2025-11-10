@@ -10,6 +10,9 @@ export interface AvatarGroupConfig {
 
     /** Whether to skip the current user from the list */
     skipCurrentUser?: boolean;
+
+    /** When true and user is logged in, only displays avatars from users the current user follows */
+    onlyFollows?: boolean;
 }
 
 /**
@@ -30,14 +33,15 @@ export interface AvatarGroupState {
  * Creates an avatar group with smart ordering based on follows.
  *
  * Prioritizes showing users that the current user follows first.
- * Optionally filters out the current user.
+ * Optionally filters out the current user or only shows followed users.
  *
  * @example
  * ```svelte
  * <script>
  *   const avatarGroup = createAvatarGroup(() => ({
  *     pubkeys: ['pubkey1', 'pubkey2', 'pubkey3'],
- *     skipCurrentUser: true
+ *     skipCurrentUser: true,
+ *     onlyFollows: true  // Only show avatars from followed users
  *   }), ndk);
  * </script>
  *
@@ -50,7 +54,7 @@ export function createAvatarGroup(
     config: () => AvatarGroupConfig,
     ndk?: NDKSvelte
 ): AvatarGroupState {
-    const { pubkeys, skipCurrentUser = false } = $derived(config());
+    const { pubkeys, skipCurrentUser = false, onlyFollows = false } = $derived(config());
 
     // Get current user's follows
     const follows = $derived(ndk?.$follows || new Set<string>());
@@ -64,7 +68,12 @@ export function createAvatarGroup(
 
         // Skip current user if requested
         if (skipCurrentUser && currentPubkey) {
-            filteredPubkeys = pubkeys.filter(pk => pk !== currentPubkey);
+            filteredPubkeys = filteredPubkeys.filter(pk => pk !== currentPubkey);
+        }
+
+        // Filter to only followed users if requested and user is logged in
+        if (onlyFollows && currentPubkey && follows.size > 0) {
+            filteredPubkeys = filteredPubkeys.filter(pk => follows.has(pk));
         }
 
         return filteredPubkeys.map(pubkey => ndk.getUser({ pubkey }));

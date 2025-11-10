@@ -6,7 +6,7 @@
   2. index.svelte = Full implementation (with TypeScript interfaces, all imports, complete styling)
   3. index.txt = Simplified documentation version with these changes:
      - Remove TypeScript interface definitions
-     - Use inline prop destructuring: let { ndk, relay } = $props();
+     - Use inline prop destructuring: let { ndk, event } = $props();
      - Keep only essential imports (remove type imports unless needed)
      - Keep inline classes (class="...") but remove <style> blocks
      - Focus on showing component API usage, not implementation details
@@ -17,15 +17,23 @@
 -->
 
 <script lang="ts">
-  import { Hashtag } from '$lib/registry/components/hashtag';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+
+  // Hashtag component auto-registers with the content renderer
+  import '$lib/registry/components/hashtag';
+
+  interface Props {
+    ndk: NDKSvelte;
+    event?: NDKEvent;
+  }
+
+  let { ndk, event }: Props = $props();
 </script>
 
-<div class="flex flex-col gap-4">
-  <p class="text-sm text-muted-foreground">
-    Inline hashtag in text: Check out <Hashtag tag="nostr" /> and <Hashtag tag="bitcoin" /> for great content!
-  </p>
-
-  <p class="text-sm text-muted-foreground">
-    Another example: Trending topics include <Hashtag tag="grownostr" /> and <Hashtag tag="plebchain" />.
-  </p>
+<div class="w-full max-w-2xl">
+  {#if event}
+    <EventContent {ndk} {event} />
+  {/if}
 </div>

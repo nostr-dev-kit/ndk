@@ -96,6 +96,12 @@ export type MediaComponent = Component<{
  */
 export class ContentRenderer {
 	/**
+	 * Global configuration for NSFW content blocking
+	 * When true, content with content-warning tags will be blurred by default
+	 */
+	blockNsfw: boolean = true;
+
+	/**
 	 * Component for rendering npub/nprofile mentions
 	 * If null, renders raw bech32 string
 	 */

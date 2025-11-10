@@ -1,0 +1,44 @@
+{
+  "name": "event-card-inline",
+  "title": "Event Card Inline",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "inline",
+  "oneLiner": "A compact horizontal event card for inline embedding in content",
+  "command": "npx jsrepo add event-card-inline",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "inline-embedding",
+    "compact-layouts",
+    "quoted-events",
+    "content-renderer",
+    "minimal-ui"
+  ],
+  "apiDoc": {
+    "name": "EventCardInline",
+    "description": "A compact, horizontal event card designed for inline embedding within content. Shows avatar, author name, timestamp, and truncated content on a single line. Automatically registered with the content renderer for kinds 1 and 1111 with high priority (10). Features a subtle muted background with hover effects. Perfect for displaying quoted notes or replies within other content.",
+    "importPath": "import { EventCardInline } from '$lib/registry/components/event-card-inline'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

@@ -51,7 +51,7 @@
   const variantStyles = $derived(
     variant === 'solid'
       ? followAction.isFollowing
-        ? 'bg-muted text-foreground hover:bg-primary hover:text-white'
+        ? 'bg-muted text-foreground hover:bg-primary hover:text-primary-foreground'
         : 'bg-background border border-border text-foreground hover:bg-background/90'
       : followAction.isFollowing
         ? 'bg-transparent border text-muted-foreground hover:border-border hover:text-foreground'

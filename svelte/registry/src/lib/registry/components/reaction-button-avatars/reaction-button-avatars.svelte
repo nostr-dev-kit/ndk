@@ -16,6 +16,7 @@
     spacing?: 'tight' | 'normal' | 'loose';
     showCount?: boolean;
     countMode?: 'total' | 'emoji';
+    onlyFollows?: boolean;
     onclick?: () => void;
     class?: string;
   }
@@ -30,6 +31,7 @@
     spacing = 'tight',
     showCount = true,
     countMode = 'total',
+    onlyFollows = true,
     onclick,
     class: className = ''
   }: Props = $props();
@@ -86,6 +88,7 @@
       {spacing}
       overflowVariant="none"
       skipCurrentUser={false}
+      {onlyFollows}
     />
     {#if showCount && displayCount > 0}
       <span class="text-sm font-medium text-muted-foreground">

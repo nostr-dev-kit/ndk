@@ -1,105 +1,124 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import ComponentAPI from '$site-components/component-api.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-  import ComponentCard from '$site-components/ComponentCard.svelte';
-  import Preview from '$site-components/preview.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-
-  // Import examples
-  import BasicExample from './basic.example.svelte';
-  import ModernExample from './modern.example.svelte';
+  import Preview from '$lib/site/components/preview.svelte';
 
   // Import code examples
-  import basicCode from './basic.example.svelte?raw';
-  import modernCode from './modern.example.svelte?raw';
+  import basicCode from './examples/basic/index.txt?raw';
+  import modernCode from './examples/modern/index.txt?raw';
+  import customHoverCardCode from './examples/custom-hover-card/index.txt?raw';
 
-  // Import registry metadata for actual installable component
-  import mentionRegistryCard from '$lib/registry/components/mention/metadata.json';
+  // Import components
+  import { Mention } from '$lib/registry/components/mention';
+  import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
+  import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
+
+  // Import registry metadata
+  import mentionCard from '$lib/registry/components/mention/metadata.json';
+  import mentionModernCard from '$lib/registry/components/mention-modern/metadata.json';
+
+  // Page metadata
+  const metadata = {
+    title: 'Mention Embeds',
+    description: 'Display inline user mentions in Nostr events with different styles'
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Event with mentions
-  let event = $state<NDKEvent | undefined>();
+  // Sample bech32 identifiers for previews
+  const sampleBech32 = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
+
+  // Components section configuration
+  const componentsSection = {
+    title: 'Components',
+    description: 'Explore each variant in detail',
+    cards: [
+      {...mentionCard, code: basicCode},
+      {...mentionModernCard, code: modernCode}
+    ],
+    previews: {
+      'mention': mentionComponentPreview,
+      'mention-modern': mentionModernComponentPreview
+    }
+  };
 </script>
 
-<!-- Snippet for showcase preview -->
-{#snippet basicShowcasePreview()}
-  {#if event}
-    <BasicExample {ndk} {event} />
-  {/if}
+<!-- Preview snippets for showcase -->
+{#snippet basicPreview()}
+  <div class="flex flex-col gap-4 max-w-2xl">
+    <p class="text-sm text-muted-foreground">
+      Hey <Mention {ndk} bech32={sampleBech32} />, check this out!
+    </p>
+  </div>
 {/snippet}
 
-<!-- Anatomy section -->
-{#snippet anatomy()}
-  <section class="mt-16">
-    <h2 class="text-3xl font-bold mb-4">Variants</h2>
-    <p class="text-muted-foreground mb-6">
-      This example shows a modern variant with avatar and hover card.
-      This is a teaching example, not an installable component.
+{#snippet modernPreview()}
+  <div class="flex flex-col gap-4 max-w-2xl">
+    <p class="text-sm text-muted-foreground">
+      Hover over this mention: Thanks to <MentionModern {ndk} bech32={sampleBech32} /> for the work!
+    </p>
+  </div>
+{/snippet}
+
+<!-- Component previews for components section -->
+{#snippet mentionComponentPreview()}
+  {@render basicPreview()}
+{/snippet}
+
+{#snippet mentionModernComponentPreview()}
+  {@render modernPreview()}
+{/snippet}
+
+<!-- Overview section -->
+{#snippet overview()}
+  <div class="text-lg text-muted-foreground space-y-4">
+    <p>
+      Mention components enable inline user references in Nostr content. From simple text mentions to interactive previews with avatars and user information.
     </p>
 
-    <div>
-      <h3 class="text-xl font-semibold mb-3">Modern Variant</h3>
-      <p class="text-muted-foreground mb-4">Inline mention with avatar and user card popover on hover.</p>
-      {#if event}
-        <Preview code={modernCode}>
-          <ModernExample {ndk} {event} />
-        </Preview>
-      {/if}
-    </div>
-  </section>
+    <p>
+      The basic Mention component provides a clean inline display with user name and primary color styling. MentionModern enhances this with an avatar and hover-activated popover showing a detailed user card.
+    </p>
 
-  <ComponentAPI
-    component={{
-      name: 'Mention',
-      description: 'Basic inline mention component with automatic profile fetching',
-      importPath: "import Mention from '$lib/registry/components/mention/mention.svelte'",
-      props: [
-        { name: 'ndk', type: 'NDKSvelte', required: true, description: 'NDK instance' },
-        { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
-        { name: 'class', type: 'string', description: 'Additional CSS classes' }
-      ]
-    }}
-  />
-
-  <ComponentAPI
-    component={{
-      name: 'MentionModern',
-      description: 'Modern inline mention with avatar and user card popover on hover (not installable - teaching example)',
-      importPath: "import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte'",
-      props: [
-        { name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
-        { name: 'bech32', type: 'string', required: true, description: 'Bech32-encoded user identifier (npub or nprofile)' },
-        { name: 'class', type: 'string', description: 'Additional CSS classes' }
-      ]
-    }}
-  />
+    <p>
+      Both components automatically fetch user profiles from the network and handle loading states gracefully. They support keyboard navigation and maintain accessibility standards.
+    </p>
+  </div>
 {/snippet}
 
-<!-- Page metadata -->
+<!-- Recipes section -->
+{#snippet recipes()}
+  {(() => { MentionModern.hoverComponent = UserCardCompact; return null; })()}
+  <Preview title="Custom Hover Card" code={customHoverCardCode}>
+    <div class="flex flex-col gap-4 max-w-2xl">
+      <p class="text-sm text-muted-foreground">
+        Hover over this mention to see the compact user card: Thanks to <MentionModern {ndk} bech32={sampleBech32} /> for the work!
+      </p>
+    </div>
+  </Preview>
+{/snippet}
+
+<!-- Use the template -->
 <ComponentPageTemplate
-  metadata={{
-    title: 'Mention Embeds',
-    description: 'Display inline user mentions in Nostr events with different styles'
-  }}
+  {metadata}
   {ndk}
+  {overview}
   showcaseComponents={[
     {
-      id: 'mention-basic',
-      cardData: mentionRegistryCard,
-      preview: basicShowcasePreview,
-      orientation: 'vertical'
+      id: "mention",
+      cardData: { ...mentionCard, title: "Basic Inline" },
+      preview: basicPreview,
+      orientation: 'horizontal'
+    },
+    {
+      id: "mention-modern",
+      cardData: { ...mentionModernCard, title: "Modern with Hover Card" },
+      preview: modernPreview,
+      orientation: 'horizontal'
     }
   ]}
-  {anatomy}
->
-  <EditProps.Prop
-    name="Event with mentions"
-    type="event"
-    bind:value={event}
-    default="nevent1qqsxh2z42kgf2hc7yqh0jz0vxzxw9mxwqvqzqyqzqyqzqyqzqyqzqyqpzamhxue69uhhyetvv9ujumn0wd68ytnzv9hxgtcpzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqyq8wumn8ghj7un9d3shjtnwdaehgu3wvfskueqpz4mhxue69uhhyetvv9ujuerpd46hxtnfduhsz9thwden5te0v4jx2m3wdehhxarj9ekxzmny9uq3xamnwvaz7tm0venxx6rpd9hzuur4vghsz9thwden5te0wfjkccte9ejxzmt4wvhxjme0qy88wumn8ghj7mn0wvhxcmmv9uqsuamnwvaz7tmwdaejumr0dshsz9mhwden5te0dehhxarj9emkjmn99uqsuamnwvaz7tmwdaejumr0dshs6q9vqx"
-  />
-</ComponentPageTemplate>
+  {componentsSection}
+  {recipes}
+/>

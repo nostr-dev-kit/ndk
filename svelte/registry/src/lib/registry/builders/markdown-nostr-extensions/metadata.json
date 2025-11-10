@@ -2,7 +2,6 @@
   "name": "createNostrMarkdownExtensions",
   "title": "Nostr Markdown Extensions",
   "oneLiner": "Marked.js extensions for rendering Nostr-specific content like mentions, event references, custom emojis, and hashtags",
-  "description": "A collection of Marked.js extensions that add Nostr protocol awareness to markdown rendering. These extensions parse and tokenize Nostr-specific patterns including:\n\n- **Mentions** (nostr:npub..., nostr:nprofile...) - Renders user mentions as linkable elements\n- **Event References** (nostr:note..., nostr:nevent..., nostr:naddr...) - Renders event links and embeds\n- **Custom Emojis** (:shortcode: with NIP-30 emoji tags) - Renders custom emoji images\n- **Hashtags** (#topic) - Renders hashtags as linkable topics\n\nEach extension returns placeholder HTML with data attributes that your components can hydrate. For example, mentions render as `<span class=\"nostr-mention\" data-bech32=\"...\" data-type=\"...\"></span>` which your User component can then replace with rich user cards.\n\nThese extensions integrate seamlessly with the marked library and work with the MarkdownEventContent component.",
   "importPath": "import { createNostrMarkdownExtensions } from '$lib/registry/builders/markdown-nostr-extensions';",
   "command": "npx jsrepo add builders/markdown-nostr-extensions",
   "dependencies": [

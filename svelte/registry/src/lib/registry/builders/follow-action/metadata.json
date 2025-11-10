@@ -2,7 +2,6 @@
   "name": "createFollowAction",
   "title": "Follow Action Builder",
   "oneLiner": "Reactive state manager for following/unfollowing Nostr users and hashtags",
-  "description": "The Follow Action builder provides a reactive interface for managing follow/unfollow actions on Nostr. It handles both user follows (NIP-02 contact lists) and topic/hashtag follows (NIP-51 interest lists) through a unified API.\n\nThe builder automatically syncs follow state across all connected relays and provides reactive updates when the follow state changes. It accepts either NDKUser objects for following users or string values for following hashtags and topics.\n\nWhen you call the follow() method, it intelligently toggles the state - if you're not following, it publishes a follow event; if you're already following, it publishes an unfollow event. The isFollowing property reactively updates to reflect the current state.",
   "importPath": "import { createFollowAction } from '$lib/registry/builders/follow-action';",
   "command": "npx jsrepo add builders/follow-action",
   "dependencies": [

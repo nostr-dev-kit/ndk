@@ -2,7 +2,6 @@
   "name": "createReactionAction",
   "title": "Reaction Action Builder",
   "oneLiner": "Reactive state manager for emoji reactions on Nostr events with NIP-30 custom emoji support",
-  "description": "The Reaction Action builder provides a comprehensive reactive interface for managing emoji reactions on Nostr events. It handles both standard emoji reactions (NIP-25) and custom emoji reactions (NIP-30) through a unified API.\n\nThe builder automatically subscribes to reactions for the specified event and provides reactive updates when reactions are added or removed. It groups reactions by emoji, tracks reaction counts, and identifies whether the current user has reacted with each emoji.\n\nReactions can be configured with delayed publishing - when enabled, reactions show immediately (optimistic update) but don't publish for X seconds. Clicking again within that window cancels the pending reaction. This is useful for implementing features like Slack-style reaction animations.\n\nThe builder handles all the complexity of reaction management including: grouping by emoji, counting reactions per emoji, tracking which pubkeys reacted, detecting user reactions, supporting custom emoji with shortcodes and URLs, and managing delayed/cancellable reactions.",
   "importPath": "import { createReactionAction } from '$lib/registry/builders/reaction-action';",
   "command": "npx jsrepo add builders/reaction-action",
   "dependencies": [

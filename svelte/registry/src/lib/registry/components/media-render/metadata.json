@@ -1,0 +1,52 @@
+{
+  "name": "media-render",
+  "title": "Media Render",
+  "category": "media",
+  "subcategory": "content",
+  "variant": "basic",
+  "oneLiner": "Smart media renderer with NSFW and follows-based content filtering",
+  "documentation": "The Media Render component provides intelligent media filtering for Nostr events. It automatically blurs content that contains NIP-36 content-warning tags or comes from users you don't follow, with a click-to-reveal interface.\n\n## Features\n\n- **NSFW Content Detection**: Automatically detects and blurs content with `content-warning` tags (NIP-36)\n- **Follows-based Filtering**: Blurs media from users you don't follow (when logged in)\n- **Click-to-Reveal**: Simple interaction to show blurred content\n- **Global Configuration**: Control NSFW blocking via ContentRenderer\n- **Media Type Support**: Handles images, videos, and YouTube embeds\n\n## Related Components\n\nFor different layouts with the same filtering capabilities:\n\n- `MediaRenderCarousel` - For carousel navigation through multiple media items\n- `MediaRenderBentoGrid` - For bento grid layout with multiple media items",
+  "command": "npx jsrepo add media-render",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk",
+    "@hugeicons/svelte",
+    "svelte-motion"
+  ],
+  "useCases": [
+    "media",
+    "nsfw",
+    "content-warning",
+    "follows",
+    "filtering",
+    "images",
+    "videos",
+    "youtube",
+    "blur",
+    "reveal",
+    "sensitive-content",
+    "nip-36"
+  ],
+  "apiDoc": {
+    "props": [
+      {
+        "name": "url",
+        "type": "string | string[]",
+        "description": "Media URL(s) to render",
+        "required": true
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "description": "Optional Nostr event for checking author and tags",
+        "required": false
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes",
+        "required": false
+      }
+    ]
+  }
+}

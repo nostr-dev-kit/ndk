@@ -3,6 +3,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { Snippet } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
+  import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
   import { Event } from '../../ui/event';
 
   interface Props {
@@ -24,8 +25,10 @@
     throw new Error('EventCard.ReplyIndicator must be used within EventCard.Root');
   }
 
+  const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
+
   // Use onclick prop if provided, otherwise fall back to context callback
-  const handleClick = $derived(onclick ?? context.onEventClick);
+  const handleClick = $derived(onclick ?? entityClickContext?.onEventClick);
 </script>
 
 <Event.ReplyIndicator

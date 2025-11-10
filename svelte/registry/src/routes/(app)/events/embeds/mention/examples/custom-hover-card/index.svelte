@@ -27,8 +27,8 @@
 
   let { ndk }: Props = $props();
 
-  // Customize hover card globally
-  MentionModern.hoverComponent = UserCardCompact;
+  // Note: To customize the hover card component, modify the hoverComponent
+  // export in mention-modern.svelte directly
 
   const sampleBech32 = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
 </script>

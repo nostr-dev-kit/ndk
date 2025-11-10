@@ -92,7 +92,7 @@ describe("createZapSendAction", () => {
         it("should create NDKZapper with correct parameters", async () => {
             let zapState: ReturnType<typeof createZapSendAction> | undefined;
 
-            const zapSpy = vi.spyOn(NDKZapper.prototype, "zap").mockResolvedValue(undefined);
+            const zapSpy = vi.spyOn(NDKZapper.prototype, "zap").mockResolvedValue(new Map());
 
             cleanup = $effect.root(() => {
                 zapState = createZapSendAction(() => ({ target: testEvent }), ndk);
@@ -113,6 +113,7 @@ describe("createZapSendAction", () => {
             // Mock zap with delay
             vi.spyOn(NDKZapper.prototype, "zap").mockImplementation(async () => {
                 await new Promise(resolve => setTimeout(resolve, 10));
+                return new Map();
             });
 
             cleanup = $effect.root(() => {
@@ -171,7 +172,7 @@ describe("createZapSendAction", () => {
 
             const zapSpy = vi.spyOn(NDKZapper.prototype, "zap")
                 .mockRejectedValueOnce(new Error("First error"))
-                .mockResolvedValueOnce(undefined);
+                .mockResolvedValueOnce(new Map());
 
             cleanup = $effect.root(() => {
                 zapState = createZapSendAction(() => ({ target: testEvent }), ndk);

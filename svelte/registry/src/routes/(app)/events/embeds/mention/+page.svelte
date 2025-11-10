@@ -90,7 +90,6 @@
 
 <!-- Recipes section -->
 {#snippet recipes()}
-  {(() => { MentionModern.hoverComponent = UserCardCompact; return null; })()}
   <Preview title="Custom Hover Card" code={customHoverCardCode}>
     <div class="flex flex-col gap-4 max-w-2xl">
       <p class="text-sm text-muted-foreground">

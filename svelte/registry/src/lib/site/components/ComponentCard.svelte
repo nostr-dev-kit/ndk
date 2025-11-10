@@ -57,12 +57,6 @@
 	let { data, preview }: Props = $props();
 
 	const ndk = getContext<NDKSvelte>('ndk');
-
-	// Configure marked for safe rendering
-	marked.setOptions({
-		breaks: true,
-		gfm: true
-	});
 </script>
 
 {#if data}
@@ -113,7 +107,7 @@
 
 				{#if data.documentation}
 					<section class="prose prose-sm max-w-none dark:prose-invert">
-						{@html marked.parse(data.documentation)}
+						{@html marked.parse(data.documentation, { breaks: true, gfm: true })}
 					</section>
 				{/if}
 

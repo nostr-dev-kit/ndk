@@ -1,0 +1,7 @@
+<script lang="ts">
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+
+  let { ndk, event, renderer } = $props();
+</script>
+
+<EventContent {ndk} {event} {renderer} />

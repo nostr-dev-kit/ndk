@@ -87,7 +87,7 @@
   <EventCard.Actions>
     {#if withAvatars}
       <ReplyButtonAvatars {ndk} {event} onlyFollows={true} onclick={() => onReplyIntent?.(event)} />
-      <RepostButtonAvatars {ndk} {event} onlyFollows={true} onquote={() => onQuoteIntent?.(event)} />
+      <RepostButtonAvatars {ndk} {event} onlyFollows={true} />
       <ReactionButtonAvatars {ndk} {event} onlyFollows={true} />
       <ZapButtonAvatars {ndk} {event} onlyFollows={true} onclick={(zapFn) => onZapIntent?.(event, zapFn)} />
     {:else}

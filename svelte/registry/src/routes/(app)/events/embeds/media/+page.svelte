@@ -106,7 +106,7 @@ import MediaRender from '$lib/registry/components/media-render';
 			</p>
 			<ComponentCard data={mediaRenderCardData}>
 				{#snippet preview()}
-					<MediaRenderExample />
+					<MediaRenderExample {ndk} />
 				{/snippet}
 			</ComponentCard>
 

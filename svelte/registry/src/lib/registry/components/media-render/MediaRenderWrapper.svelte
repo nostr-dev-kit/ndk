@@ -112,7 +112,7 @@
 				onkeypress={handleKeyPress}
 				aria-label="Reveal media content"
 			>
-				<HugeiconsIcon icon={ViewOffIcon} class="w-12 h-12 text-white/80 mb-2 group-hover:scale-110 transition-transform" />
+				<HugeiconsIcon icon={ViewOffIcon} className="w-12 h-12 text-white/80 mb-2 group-hover:scale-110 transition-transform" />
 				<span class="text-white font-medium text-lg mb-1">Click to view</span>
 				<span class="text-white/70 text-sm px-4 text-center">
 					{blurReason}

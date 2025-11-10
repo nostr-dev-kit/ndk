@@ -72,7 +72,7 @@ export function createAvatarGroup(
         }
 
         // Filter to only followed users if requested and user is logged in
-        if (onlyFollows && currentPubkey && follows.size > 0) {
+        if (onlyFollows && currentPubkey) {
             filteredPubkeys = filteredPubkeys.filter(pk => follows.has(pk));
         }
 

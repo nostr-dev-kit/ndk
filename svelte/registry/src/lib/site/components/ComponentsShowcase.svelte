@@ -167,13 +167,13 @@
 						class={cn(
 							"scroll-smooth scrollbar-hide",
 							component.orientation === 'horizontal'
-								? "overflow-x-auto pl-8 !pr-0 py-8"
+								? "overflow-x-auto pl-8 !pr-0 py-8 w-full"
 								: "overflow-y-auto px-8"
 						)}
 					>
 						<div
 							class={cn(
-								component.orientation === 'horizontal' ? "px-8" : "py-8"
+								component.orientation === 'horizontal' ? "px-8 w-full" : "py-8"
 							)}
 							onclick={(e) => e.stopPropagation()}
 							onkeydown={(e) => e.stopPropagation()}

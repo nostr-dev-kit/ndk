@@ -1,0 +1,22 @@
+<script lang="ts">
+  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
+
+  let { ndk, pubkeys } = $props();
+  let lastAction = $state<string>('');
+</script>
+
+<div class="flex flex-col gap-4">
+  <div>
+    <p class="text-sm text-muted-foreground mb-2">Interactive avatar group with click handlers</p>
+    <AvatarGroup
+      {ndk}
+      {pubkeys}
+      max={3}
+      onAvatarClick={(user) => lastAction = `Clicked: ${user.profile?.name}`}
+      onOverflowClick={() => lastAction = 'Clicked overflow'}
+    />
+    {#if lastAction}
+      <p class="text-xs text-muted-foreground mt-2">{lastAction}</p>
+    {/if}
+  </div>
+</div>

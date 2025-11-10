@@ -1,0 +1,15 @@
+<script lang="ts">
+	import MediaRender from '$lib/registry/components/media-render';
+
+	let { event } = $props();
+
+	// Sample image URL (from unfollowed user)
+	const imageUrl = 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&h=600';
+</script>
+
+<div class="w-full max-w-2xl">
+	<div class="mb-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-lg text-sm">
+		👤 This example simulates content from an unfollowed user
+	</div>
+	<MediaRender url={imageUrl} {event} />
+</div>

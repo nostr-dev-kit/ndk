@@ -1,0 +1,10 @@
+<script lang="ts">
+	import EventContent from '$lib/registry/ui/event-content.svelte';
+
+	// Auto-registers as link handler (priority 1)
+	import '$lib/registry/components/link-inline-basic';
+
+	let { ndk, event } = $props();
+</script>
+
+<EventContent {ndk} {event} />

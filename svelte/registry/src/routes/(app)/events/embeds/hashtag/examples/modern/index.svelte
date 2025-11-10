@@ -6,7 +6,7 @@
   2. index.svelte = Full implementation (with TypeScript interfaces, all imports, complete styling)
   3. index.txt = Simplified documentation version with these changes:
      - Remove TypeScript interface definitions
-     - Use inline prop destructuring: let { ndk, relay } = $props();
+     - Use inline prop destructuring: let { ndk, event } = $props();
      - Keep only essential imports (remove type imports unless needed)
      - Keep inline classes (class="...") but remove <style> blocks
      - Focus on showing component API usage, not implementation details
@@ -18,21 +18,25 @@
 
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+  import { ContentRenderer } from '$lib/registry/ui/content-renderer';
   import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
 
   interface Props {
     ndk: NDKSvelte;
+    event?: NDKEvent;
   }
 
-  let { ndk }: Props = $props();
+  let { ndk, event }: Props = $props();
+
+  // Create a custom renderer with modern hashtag component
+  const modernRenderer = new ContentRenderer();
+  modernRenderer.hashtagComponent = HashtagModern;
 </script>
 
-<div class="flex flex-col gap-4">
-  <p class="text-sm">
-    Hover over hashtags: Check out <HashtagModern {ndk} tag="nostr" /> and <HashtagModern {ndk} tag="bitcoin" /> for great content!
-  </p>
-
-  <p class="text-sm text-muted-foreground">
-    Explore trending: <HashtagModern {ndk} tag="grownostr" /> and <HashtagModern {ndk} tag="plebchain" />
-  </p>
+<div class="w-full max-w-2xl">
+  {#if event}
+    <EventContent {ndk} {event} renderer={modernRenderer} />
+  {/if}
 </div>

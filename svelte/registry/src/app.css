@@ -234,3 +234,8 @@ html {
   font-size: 0.875em;
 }
 
+/* Remove top margin from first child in prose to prevent excessive spacing */
+.prose > :first-child {
+  margin-top: 0 !important;
+}
+

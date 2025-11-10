@@ -85,21 +85,25 @@ export type { FollowPackContext } from './follow-pack.context.js';
 **Directory Structure**:
 ```
 src/lib/registry/components/
-└── {category}/          # e.g., "follow", "zap", "relay", "user"
-    └── {subcategory}/   # e.g., "packs", "buttons", "cards", "inputs"
-        └── {variant}/   # e.g., "hero", "classic", "modern", "basic"
-            ├── {component-name}.svelte
-            ├── index.ts
-            └── metadata.json
+└── {component-name-variant}/   # e.g., "mention-modern", "relay-card-compact", "zap-button-pill"
+    ├── {component-name-variant}.svelte
+    ├── index.ts
+    └── metadata.json
 ```
 
 **Example**:
 ```
-components/follow/packs/hero/
-├── follow-pack-hero.svelte
+components/mention-modern/
+├── mention-modern.svelte
 ├── index.ts
 └── metadata.json
 ```
+
+**Naming Convention**: Use kebab-case with descriptive names that include the variant when applicable:
+- `mention-modern` (component type + variant)
+- `relay-card-compact` (entity + component type + variant)
+- `zap-button-pill` (action + component type + variant)
+- `event-card-classic` (entity + component type + variant)
 
 ---
 
@@ -110,12 +114,17 @@ components/follow/packs/hero/
 **Decision Tree**:
 1. **Is this a headless/composable UI primitive?** → `src/lib/registry/ui/{name}/`
 2. **Is this pure state/business logic with no UI?** → `src/lib/registry/builders/{name}.svelte.ts`
-3. **Is this a complete, ready-to-use component?** → `src/lib/registry/components/{category}/{subcategory}/{variant}/`
+3. **Is this a complete, ready-to-use component?** → `src/lib/registry/components/{component-name-variant}/`
 
-**Naming Conventions**:
-- **Category**: Entity type (`follow/`, `zap/`, `relay/`, `user/`, `event/`)
-- **Subcategory**: Component type (`packs/`, `buttons/`, `cards/`, `inputs/`, `send/`)
-- **Variant**: Style variant (`hero/`, `classic/`, `modern/`, `basic/`, `portrait/`, `compact/`)
+**Naming Conventions for Components**:
+Use descriptive kebab-case names that combine the component purpose and variant:
+- **Pattern**: `{entity/action}-{type}-{variant}` or `{type}-{variant}`
+- **Examples**:
+  - `mention-modern` (entity + variant)
+  - `relay-card-compact` (entity + type + variant)
+  - `zap-button-pill` (action + type + variant)
+  - `event-card-classic` (entity + type + variant)
+  - `follow-button-pill` (action + type + variant)
 
 ### Step 2: Create Component Files
 
@@ -165,12 +174,10 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
   "name": "relay-input-basic",
   "title": "Relay Input Basic",
   "category": "relay",
-  "subcategory": "inputs",
-  "variant": "basic",
   "oneLiner": "A basic input field for relay URLs with validation and autocomplete",
   "description": "A basic input field for relay URLs with validation and autocomplete",
   "documentation": "# Relay Input\n\n## Overview\n\nThe Relay Input component provides a user-friendly way to input and validate Nostr relay URLs. It includes autocomplete functionality and real-time validation.\n\n## Features\n\n- URL validation for wss:// and ws:// protocols\n- Autocomplete from known relay lists\n- Visual feedback for valid/invalid URLs\n- Keyboard navigation support\n\n## Usage\n\nBest used in settings pages, relay configuration forms, or anywhere users need to add or manage relay connections.\n\n## Best Practices\n\n1. Always validate relay connectivity after input\n2. Provide visual feedback during connection testing\n3. Consider showing relay metadata (name, description) when available",
-  "command": "npx jsrepo add relay/inputs/basic",
+  "command": "npx jsrepo add components/relay-input-basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
@@ -186,18 +193,16 @@ export { default as RelayInputBasic } from './relay-input-basic.svelte';
 ```
 
 **metadata.json Fields**:
-- `name` (required): kebab-case identifier
-- `title` (required): Display name
-- `category` (required): Top-level category
-- `subcategory` (optional): Second-level grouping
-- `variant` (optional): Style/behavior variant
+- `name` (required): kebab-case identifier matching the directory name (e.g., "relay-input-basic")
+- `title` (required): Display name (e.g., "Relay Input Basic")
+- `category` (required): Top-level category for grouping (e.g., "relay", "user", "event", "zap")
 - `oneLiner` (optional): Short one-line description shown under the title
 - `description` (required): Short description
 - `documentation` (optional): Detailed markdown documentation explaining component behavior, use cases, features, and best practices
-- `command` (required): Installation command for jsrepo
+- `command` (required): Installation command for jsrepo (format: `npx jsrepo add {component-name}`)
 - `dependencies` (required): NPM dependencies array
 - `useCases` (required): Keywords for search/discovery
-- `apiDoc` (required): Component API documentation object with props, events, and slots
+- `apiDoc` (optional): Component API documentation object with props, events, and slots
 
 ---
 
@@ -319,8 +324,8 @@ The `ComponentPageTemplate` automatically renders builders using the `BuilderCar
 
 **How it works**:
 1. Recursively scans `src/lib/registry/components/`
-2. Finds all 3-level directory structures: `{category}/{subcategory}/{variant}/`
-3. Auto-generates metadata from directory names
+2. Finds all component directories containing `.svelte` files
+3. Auto-generates metadata from directory and file names
 4. Creates `metadata.json` only if it doesn't already exist (won't overwrite)
 
 **Run it**:
@@ -350,7 +355,7 @@ node scripts/update-root-registry.js
 **Recommended Approach**:
 ```bash
 # 1. Create component files in correct directory structure
-mkdir -p src/lib/registry/components/relay/inputs/basic/
+mkdir -p src/lib/registry/components/relay-input-basic/
 
 # 2. Auto-generate metadata.json (if it doesn't exist)
 node scripts/create-all-registry-json.js
@@ -1293,8 +1298,8 @@ Use for component identification and testing:
 ### ✅ Phase 1: Component Creation
 
 - [ ] Determine correct location (UI primitive, builder, or component)
-- [ ] Create component directory: `components/{category}/{subcategory}/{variant}/`
-- [ ] Create `{component-name}.svelte`:
+- [ ] Create component directory: `components/{component-name-variant}/`
+- [ ] Create `{component-name-variant}.svelte`:
   - [ ] TypeScript `Props` interface
   - [ ] `$props()` destructuring
   - [ ] Tailwind classes only (no `<style>` blocks)
@@ -1428,7 +1433,7 @@ For each example:
 **Solution**: Use decision tree in section 2.1:
 - UI primitives → `ui/`
 - Builders → `builders/`
-- Complete components → `components/{category}/{subcategory}/{variant}/`
+- Complete components → `components/{component-name-variant}/`
 
 ### Pitfall 7: Forgetting to Run Registry Scripts
 
@@ -1471,7 +1476,7 @@ npm run dev
 
 | File | Purpose |
 |------|---------|
-| `src/lib/registry/components/{cat}/{subcat}/{var}/` | Component location |
+| `src/lib/registry/components/{component-name-variant}/` | Component location |
 | `src/lib/site/navigation.ts` | **MANUAL navigation config** |
 | `src/lib/site/templates/ComponentPageTemplate.svelte` | **MANDATORY page template** |
 | `src/routes/(app)/components/{name}/+page.svelte` | Documentation page |

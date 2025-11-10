@@ -10,6 +10,7 @@
   import type { ReplyIntentCallback } from '../../builders/reply-action/index.js';
   import type { QuoteIntentCallback } from '../../builders/repost-action/index.js';
   import type { ZapIntentCallback } from '../../builders/zap-action/index.js';
+    import EventCardReplyIndicator from '../event-card/event-card-reply-indicator.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -52,6 +53,7 @@
     <EventCard.Header />
     <EventCard.Dropdown />
   </div>
+  <EventCard.ReplyIndicator />
 
   <EventCard.Content {truncate} class="wrap-break-word" />
 

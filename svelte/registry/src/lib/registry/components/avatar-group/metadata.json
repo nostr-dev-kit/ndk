@@ -4,7 +4,7 @@
   "category": "displays",
   "subcategory": "avatars",
   "variant": "avatar-group",
-  "oneLiner": "Display a group of user avatars with overflow handling",
+  "oneLiner": "Display a group of user avatars with intelligent follow filtering and overflow handling",
   "command": "npx jsrepo add avatar-group",
   "dependencies": [
     "@nostr-dev-kit/svelte",
@@ -14,11 +14,31 @@
     "user-groups",
     "follower-display",
     "reaction-authors",
-    "participant-lists"
+    "participant-lists",
+    "social-proof",
+    "engagement-display"
+  ],
+  "examples": [
+    {
+      "title": "Basic usage",
+      "code": "<AvatarGroup {ndk} pubkeys={['pubkey1', 'pubkey2', 'pubkey3']} />"
+    },
+    {
+      "title": "Show only followed users",
+      "code": "<AvatarGroup {ndk} {pubkeys} onlyFollows={true} max={5} />"
+    },
+    {
+      "title": "Interactive with click handlers",
+      "code": "<AvatarGroup\n  {ndk}\n  {pubkeys}\n  onlyFollows={true}\n  onAvatarClick={(user) => goto(`/profile/${user.npub}`)}\n  onOverflowClick={() => showAllUsers()}\n/>"
+    },
+    {
+      "title": "Vertical layout with tight spacing",
+      "code": "<AvatarGroup {ndk} {pubkeys} direction=\"vertical\" spacing=\"tight\" size={24} />"
+    }
   ],
   "apiDoc": {
     "name": "AvatarGroup",
-    "description": "Displays a stacked group of user avatars with customizable layout, spacing, and overflow handling. Supports horizontal/vertical orientation, configurable maximum display count, and optional click handlers for avatars and overflow indicator. Can skip current user and provides custom overflow snippet support.",
+    "description": "Displays a stacked group of user avatars with intelligent prioritization based on follow relationships. Features include customizable layout (horizontal/vertical), configurable spacing, overflow handling, and optional filtering to show only followed users. The component automatically prioritizes followed users first and can filter out non-followed users when onlyFollows is enabled. Supports click handlers for both individual avatars and the overflow indicator.",
     "importPath": "import { AvatarGroup } from '$lib/registry/components/avatar-group'",
     "props": [
       {
@@ -38,6 +58,12 @@
         "type": "boolean",
         "default": "false",
         "description": "Skip displaying the current user's avatar"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "false",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
       },
       {
         "name": "max",

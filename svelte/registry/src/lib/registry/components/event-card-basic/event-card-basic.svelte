@@ -60,6 +60,8 @@
     <EventCard.Dropdown />
   </div>
 
+  <EventCard.ReplyIndicator />
+
   <EventCard.Content {truncate} class="wrap-break-word" />
 
   <EventCard.Actions>

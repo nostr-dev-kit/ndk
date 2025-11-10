@@ -76,7 +76,7 @@
       src={imageUrl}
       {alt}
       class={cn(
-        "rounded-full object-cover block w-full h-full absolute inset-0",
+        "rounded-full object-cover block w-full h-full absolute inset-0 bg-background",
         imageLoaded ? "opacity-100" : "opacity-0"
       )}
       onload={handleImageLoad}

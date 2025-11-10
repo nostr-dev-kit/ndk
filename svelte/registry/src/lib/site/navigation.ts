@@ -76,6 +76,7 @@ export const eventCategories: NavCategory[] = [
     title: 'Chromes (Cards)',
     items: [
       { name: 'EventCard', path: '/events/cards', icon: Calendar01Icon, title: 'EventCard Primitives', description: 'Composable primitives for displaying any NDKEvent type with flexible layouts and interactions.' },
+      { name: 'Generic Card', path: '/events/cards/generic-card', icon: Calendar01Icon, title: 'Generic Event Card', description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery.' },
       { name: 'Article', path: '/events/cards/article', icon: NewsIcon, title: 'ArticleCard', description: 'Composable article card components for displaying NDKArticle content with customizable layouts.', nip: 'NIP-23' },
       { name: 'Highlight', path: '/events/cards/highlight', icon: HighlighterIcon, title: 'HighlightCard', description: 'Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable layouts.', nip: 'NIP-84' },
       { name: 'Image', path: '/events/cards/image', icon: Image02Icon, title: 'ImageCard', description: 'Composable image card components for displaying NIP-68 image events (kind 20) with customizable layouts.', nip: 'NIP-68' },
@@ -137,12 +138,6 @@ export const componentCategories: NavCategory[] = [
       { name: 'Notification', path: '/components/notification', icon: Chat01Icon, title: 'Notification', description: 'Real-time notification feed using $metaSubscription. Groups interactions by target event and provides composable primitives for custom layouts.' },
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
       { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
-    ]
-  },
-  {
-    title: 'Event',
-    items: [
-      { name: 'Generic Card', path: '/components/generic-card', icon: Calendar01Icon, title: 'Generic Event Card', description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery.' },
     ]
   },
   {

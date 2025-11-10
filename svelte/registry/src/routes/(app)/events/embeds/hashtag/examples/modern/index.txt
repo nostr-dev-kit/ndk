@@ -1,15 +1,17 @@
 <script lang="ts">
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+  import { ContentRenderer } from '$lib/registry/ui/content-renderer';
   import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
 
-  let { ndk } = $props();
+  let { ndk, event } = $props();
+
+  // Create a custom renderer with modern hashtag component
+  const modernRenderer = new ContentRenderer();
+  modernRenderer.hashtagComponent = HashtagModern;
 </script>
 
-<div class="flex flex-col gap-4">
-  <p class="text-sm">
-    Hover over hashtags: Check out <HashtagModern {ndk} tag="nostr" /> and <HashtagModern {ndk} tag="bitcoin" /> for great content!
-  </p>
-
-  <p class="text-sm text-muted-foreground">
-    Explore trending: <HashtagModern {ndk} tag="grownostr" /> and <HashtagModern {ndk} tag="plebchain" />
-  </p>
+<div class="w-full max-w-2xl">
+  {#if event}
+    <EventContent {ndk} {event} renderer={modernRenderer} />
+  {/if}
 </div>

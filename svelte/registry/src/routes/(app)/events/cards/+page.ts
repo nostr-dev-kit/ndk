@@ -1,8 +1,10 @@
-import metadata from '$lib/registry/components/note-card/metadata.json';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = () => {
   return {
-    metadata
+    metadata: {
+      title: 'Event Cards',
+      oneLiner: 'Composable card components for displaying Nostr events'
+    }
   };
 };

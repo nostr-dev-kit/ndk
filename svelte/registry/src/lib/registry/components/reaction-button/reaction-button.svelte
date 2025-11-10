@@ -42,7 +42,7 @@
     variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
     variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
     variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-    stats.hasReacted && 'text-primary',
+    stats.hasReacted && 'text-red-500',
     className
   )}
   aria-label={`React (${displayCount})`}

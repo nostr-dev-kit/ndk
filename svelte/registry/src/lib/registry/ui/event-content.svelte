@@ -72,36 +72,14 @@
 				{@const Component = renderer.linkComponent}
 				<Component url={segment.content} />
 			{:else}
-				<!-- svelte-ignore a11y_invalid_attribute -->
-				<a href={segment.content} target="_blank" rel="noopener noreferrer" class="text-primary underline break-all hover:opacity-80">
-					{segment.content}
-				</a>
+				{segment.content}
 			{/if}
 		{:else if segment.type === 'media'}
 			{#if renderer.mediaComponent}
 				{@const Component = renderer.mediaComponent}
-				<Component url={segment.content} />
+				<Component url={segment.content} {event} />
 			{:else}
-				{#if segment.content.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
-					<img src={segment.content} alt="" class="max-w-full h-auto rounded-lg my-2" />
-				{:else if segment.content.match(/\.(mp4|webm|mov)(\?|$)/i)}
-					<!-- svelte-ignore a11y_media_has_caption -->
-					<video src={segment.content} controls class="max-w-full rounded-lg my-2"></video>
-				{:else if segment.content.match(/youtube\.com|youtu\.be/i)}
-					{@const videoId = segment.content.match(
-						/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
-					)?.[1]}
-					{#if videoId}
-						<iframe
-							src="https://www.youtube.com/embed/{videoId}"
-							title="YouTube video"
-							class="w-full aspect-video rounded-lg my-2"
-							frameborder="0"
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-							allowfullscreen
-						></iframe>
-					{/if}
-				{/if}
+				{segment.content}
 			{/if}
 		{:else if segment.type === 'emoji'}
 			{#if typeof segment.data === 'string'}
@@ -111,13 +89,11 @@
 			{#if segment.data && Array.isArray(segment.data)}
 				{#if renderer.mediaComponent}
 					{@const Component = renderer.mediaComponent}
-					<Component url={segment.data} />
+					<Component url={segment.data} {event} />
 				{:else}
-					<div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 my-2">
-						{#each segment.data as url, j (j)}
-							<img src={url} alt="" class="w-full h-auto object-cover rounded-lg aspect-square" />
-						{/each}
-					</div>
+					{#each segment.data as url, j (j)}
+						<img src={url} alt="" class="w-full h-auto object-cover rounded-lg aspect-square" />
+					{/each}
 				{/if}
 			{/if}
 		{:else if segment.type === 'link-group'}
@@ -126,14 +102,9 @@
 					{@const Component = renderer.linkComponent}
 					<Component url={segment.data} />
 				{:else}
-					<div class="flex flex-col gap-1 my-2">
 						{#each segment.data as url, j (j)}
-							<!-- svelte-ignore a11y_invalid_attribute -->
-							<a href={url} target="_blank" rel="noopener noreferrer" class="text-primary underline break-all hover:opacity-80">
 								{url}
-							</a>
 						{/each}
-					</div>
 				{/if}
 			{/if}
 		{/if}

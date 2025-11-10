@@ -1,0 +1,12 @@
+<script lang="ts">
+  import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
+
+  let { ndk, pubkeys } = $props();
+</script>
+
+<div class="flex flex-col gap-4">
+  <div>
+    <p class="text-sm text-muted-foreground mb-2">Text overflow shows "+N" count</p>
+    <AvatarGroup {ndk} {pubkeys} max={3} overflowVariant="text" />
+  </div>
+</div>

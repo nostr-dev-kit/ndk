@@ -17,9 +17,27 @@
     "nostr",
     "social"
   ],
+  "examples": [
+    {
+      "title": "Basic repost button",
+      "code": "<RepostButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Show all reposters",
+      "code": "<RepostButtonAvatars {ndk} {event} onlyFollows={false} max={10} />"
+    },
+    {
+      "title": "Custom click handler",
+      "code": "<RepostButtonAvatars\n  {ndk}\n  {event}\n  onclick={() => showRepostModal()}\n  variant=\"outline\"\n/>"
+    },
+    {
+      "title": "Compact display",
+      "code": "<RepostButtonAvatars\n  {ndk}\n  {event}\n  max={2}\n  avatarSize={20}\n  spacing=\"tight\"\n  showCount={false}\n/>"
+    }
+  ],
   "apiDoc": {
     "name": "RepostButtonAvatars",
-    "description": "Repost button with avatar group display. When clicked without custom onclick handler, it toggles the repost state. Shows avatars of users who have reposted the content.",
+    "description": "A repost button that displays avatars of users who have reposted the content. By default, filters to show only avatars from followed users (onlyFollows=true) to highlight reposts from your social circle. When clicked without a custom handler, it toggles the repost state. Supports multiple visual variants and customizable avatar display with intelligent overflow handling.",
     "importPath": "import { RepostButtonAvatars } from '$lib/registry/components/repost/buttons/avatars'",
     "props": [
       {
@@ -62,6 +80,12 @@
         "type": "boolean",
         "default": "true",
         "description": "Whether to show repost count alongside avatars"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
       },
       {
         "name": "onclick",

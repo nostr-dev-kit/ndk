@@ -53,8 +53,8 @@
       {...relayCardListCard, code: ListExampleRaw}
     ],
     previews: {
-      'relay-card-portrait': portraitComponentPreview,
-      'relay-card-compact': compactComponentPreview,
+      'relay-portrait': portraitComponentPreview,
+      'relay-compact': compactComponentPreview,
       'relay-card-list': listComponentPreview
     }
   };

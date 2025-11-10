@@ -12,7 +12,7 @@
 	// Import registry metadata
 	import articleContentBasicCardBase from '$lib/registry/components/article-content/metadata.json';
 
-	const articleContentBasicCard = { ...articleContentBasicCardBase };
+	const articleContentBasicCard = { ...articleContentBasicCardBase, name: 'article-content-basic' };
 	const articleContentCard = { ...articleContentBasicCardBase, name: 'article-content', title: 'Article Content' };
 
   // Get page data

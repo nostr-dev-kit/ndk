@@ -45,7 +45,7 @@
     ],
     previews: {
       'reaction': reactionButtonComponentPreview,
-      'reaction-button-avatars': reactionButtonAvatarsComponentPreview,
+      'reaction-avatars': reactionButtonAvatarsComponentPreview,
       'reaction-button-slack-horizontal': reactionSlackHorizontalComponentPreview,
       'reaction-button-slack-vertical': reactionSlackVerticalComponentPreview
     }

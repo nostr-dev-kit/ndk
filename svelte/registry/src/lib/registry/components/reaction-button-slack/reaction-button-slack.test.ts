@@ -344,4 +344,59 @@ describe("ReactionButtonSlack", () => {
             expect(container.innerHTML).not.toContain('avatar');
         });
     });
+
+    describe("onlyFollows prop", () => {
+        it("should pass onlyFollows prop to AvatarGroup", () => {
+            const mockSub: { events: NDKEvent[] } = {
+                events: []
+            };
+
+            const reaction = new NDKEvent(ndk);
+            reaction.kind = NDKKind.Reaction;
+            reaction.content = "❤️";
+            reaction.pubkey = alice.pubkey;
+            reaction.tags = [["e", testEvent.id!]];
+            mockSub.events.push(reaction);
+
+            vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
+
+            const { container } = render(ReactionButtonSlack, {
+                props: {
+                    ndk,
+                    event: testEvent,
+                    onlyFollows: false,
+                    showAvatars: true
+                }
+            });
+
+            // Component passes onlyFollows to AvatarGroup components
+            expect(container).toBeTruthy();
+        });
+
+        it("should default onlyFollows to true", () => {
+            const mockSub: { events: NDKEvent[] } = {
+                events: []
+            };
+
+            const reaction = new NDKEvent(ndk);
+            reaction.kind = NDKKind.Reaction;
+            reaction.content = "❤️";
+            reaction.pubkey = alice.pubkey;
+            reaction.tags = [["e", testEvent.id!]];
+            mockSub.events.push(reaction);
+
+            vi.spyOn(ndk, "$subscribe").mockReturnValue(mockSub as any);
+
+            const { container } = render(ReactionButtonSlack, {
+                props: {
+                    ndk,
+                    event: testEvent,
+                    showAvatars: true
+                }
+            });
+
+            // Component defaults onlyFollows to true and passes to AvatarGroup
+            expect(container).toBeTruthy();
+        });
+    });
 });

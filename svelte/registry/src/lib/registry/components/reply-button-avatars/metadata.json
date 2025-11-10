@@ -17,9 +17,27 @@
     "nostr",
     "social"
   ],
+  "examples": [
+    {
+      "title": "Basic reply button",
+      "code": "<ReplyButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Show all repliers",
+      "code": "<ReplyButtonAvatars {ndk} {event} onlyFollows={false} />"
+    },
+    {
+      "title": "Open reply composer",
+      "code": "<ReplyButtonAvatars\n  {ndk}\n  {event}\n  onclick={() => openReplyComposer(event)}\n/>"
+    },
+    {
+      "title": "Minimal display",
+      "code": "<ReplyButtonAvatars\n  {ndk}\n  {event}\n  max={2}\n  showCount={false}\n  variant=\"ghost\"\n/>"
+    }
+  ],
   "apiDoc": {
     "name": "ReplyButtonAvatars",
-    "description": "Reply button with avatar display showing who replied",
+    "description": "A reply button that displays avatars of users who have replied to an event. By default, shows only avatars from followed users (onlyFollows=true) to emphasize replies from your network. Typically used with a custom onclick handler to open a reply composer. Includes reply count and supports various visual styles.",
     "importPath": "import { ReplyButtonAvatars } from '$lib/registry/components/reply/buttons/avatars';",
     "props": [
       {
@@ -62,6 +80,12 @@
         "type": "boolean",
         "default": "true",
         "description": "Whether to show reply count"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
       },
       {
         "name": "onclick",

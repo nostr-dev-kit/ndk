@@ -1,5 +1,6 @@
 import Root from './event-card-root.svelte';
 import Header from './event-card-header.svelte';
+import ReplyIndicator from './event-card-reply-indicator.svelte';
 import Content from './event-card-content.svelte';
 import Actions from './event-card-actions.svelte';
 import Dropdown from './event-card-dropdown.svelte';
@@ -7,6 +8,7 @@ import Dropdown from './event-card-dropdown.svelte';
 export const EventCard = {
 	Root,
 	Header,
+	ReplyIndicator,
 	Content,
 	Actions,
 	Dropdown

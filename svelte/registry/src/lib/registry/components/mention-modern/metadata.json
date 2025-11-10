@@ -1,0 +1,46 @@
+{
+  "name": "mention-modern",
+  "title": "Mention Modern",
+  "category": "mention",
+  "subcategory": "displays",
+  "variant": "modern",
+  "oneLiner": "Modern inline mention with avatar and hover card popover",
+  "command": "npx jsrepo add mention-modern",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk",
+    "bits-ui"
+  ],
+  "useCases": [
+    "user-mentions",
+    "inline-profiles",
+    "hover-cards",
+    "social-references",
+    "popover-profiles"
+  ],
+  "apiDoc": {
+    "name": "MentionModern",
+    "description": "Modern inline mention component with avatar and user card popover on hover. Displays user avatar and name inline with primary color styling. Shows detailed user card on hover with 200ms delay. Features smooth transitions, hover states, and keyboard navigation support. Uses User builder pattern and Popover from bits-ui for interaction.",
+    "importPath": "import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for user fetching"
+      },
+      {
+        "name": "bech32",
+        "type": "string",
+        "required": true,
+        "description": "Bech32 user identifier (npub/nprofile)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  },
+  "documentation": "# Mention Modern\n\n## Overview\n\nThe Mention Modern component displays user mentions inline with their avatar and name. On hover, it shows a detailed user card in a popover after a 200ms delay for a smooth, non-intrusive user experience.\n\n## Features\n\n- Inline display with avatar and username\n- Hover card popover with configurable delay\n- Smooth transitions and hover states\n- Keyboard navigation support\n- Customizable hover card component\n\n## Customizing the Hover Card\n\nBy default, MentionModern displays `UserCardClassic` in the hover popover. You can globally customize which component is used for all mentions throughout your application by setting the `hoverComponent` module-level export.\n\nYour custom component must accept `ndk: NDKSvelte` and `pubkey: string` props. This allows you to maintain consistent user card styling across your entire application while using the mention component.\n\n## Best Practices\n\n1. Use for inline user mentions in text content\n2. Customize the hover card once at app initialization to maintain consistency\n3. The 200ms hover delay prevents accidental popover triggers\n4. Pair with other user components for cohesive user profiles"
+}

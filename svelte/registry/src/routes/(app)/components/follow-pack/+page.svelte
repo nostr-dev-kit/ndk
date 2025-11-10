@@ -4,7 +4,6 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
-  import PageTitle from '$lib/site/components/PageTitle.svelte';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
@@ -82,34 +81,34 @@
       {...followPackListItemCard, code: followPackListItemCode}
     ],
     previews: {
-      'follow-pack-hero': heroComponentPreview,
-      'follow-pack-portrait': portraitComponentPreview,
-      'follow-pack-compact': compactComponentPreview,
-      'follow-pack-list-item': listItemComponentPreview
+      'follow-pack-hero': heroPreview,
+      'follow-pack-portrait': portraitPreview,
+      'follow-pack-compact': compactPreview,
+      'follow-pack-list-item': listItemPreview
     }
   };
 
   const showcaseComponents: ShowcaseComponent[] = [
     {
-      id: "followPackHeroCard",
+      id: "follow-pack-hero",
       cardData: followPackHeroCard,
       preview: heroPreview,
       orientation: 'horizontal'
     },
     {
-      id: "followPackPortraitCard",
+      id: "follow-pack-portrait",
       cardData: followPackPortraitCard,
       preview: portraitPreview,
       orientation: 'vertical'
     },
     {
-      id: "followPackCompactCard",
+      id: "follow-pack-compact",
       cardData: followPackCompactCard,
       preview: compactPreview,
       orientation: 'horizontal'
     },
     {
-      id: "followPackListItemCard",
+      id: "follow-pack-list-item",
       cardData: followPackListItemCard,
       preview: listItemPreview,
       orientation: 'vertical'
@@ -148,23 +147,6 @@
   </div>
 {/snippet}
 
-<!-- Component preview snippets for componentsSection -->
-{#snippet heroComponentPreview()}
-  {@render heroPreview()}
-{/snippet}
-
-{#snippet portraitComponentPreview()}
-  {@render portraitPreview()}
-{/snippet}
-
-{#snippet compactComponentPreview()}
-  {@render compactPreview()}
-{/snippet}
-
-{#snippet listItemComponentPreview()}
-  {@render listItemPreview()}
-{/snippet}
-
 <!-- Overview section -->
 {#snippet overview()}
   <div class="text-lg text-muted-foreground space-y-4">
@@ -182,66 +164,72 @@
   </div>
 {/snippet}
 
-<!-- Anatomy section -->
-{#snippet anatomy()}
+<!-- Primitives section (includes anatomy) -->
+{#snippet primitives()}
   {#if displayPacks.length > 0}
-    <ComponentAnatomy.Root>
-      <ComponentAnatomy.Preview>
-        <div class="relative bg-card border border-border rounded-xl overflow-hidden">
-          <FollowPack.Root {ndk} followPack={pack1!}>
-            <ComponentAnatomy.Layer id="image" label="FollowPack.Image" class="h-48 overflow-hidden" absolute={true}>
-              <FollowPack.Image class="w-full h-full object-cover" />
-            </ComponentAnatomy.Layer>
+    <section class="mt-16">
+      <h2 class="text-3xl font-bold mb-4">Component Anatomy</h2>
+      <p class="text-muted-foreground mb-6">
+        Understanding the composable building blocks of follow pack components using UI primitives.
+      </p>
 
-            <div class="p-4 space-y-3">
-              <ComponentAnatomy.Layer id="title" label="FollowPack.Title">
-                <FollowPack.Title class="text-lg font-semibold" />
+      <ComponentAnatomy.Root>
+        <ComponentAnatomy.Preview>
+          <div class="relative bg-card border border-border rounded-xl overflow-hidden">
+            <FollowPack.Root {ndk} followPack={pack1}>
+              <ComponentAnatomy.Layer
+                id={followPackAnatomyLayers.image.id}
+                label={followPackAnatomyLayers.image.label}
+                class="h-48 overflow-hidden"
+                absolute={true}
+              >
+                <FollowPack.Image class="w-full h-full object-cover" />
               </ComponentAnatomy.Layer>
 
-              <ComponentAnatomy.Layer id="description" label="FollowPack.Description">
-                <FollowPack.Description class="text-sm text-muted-foreground" maxLength={100} />
-              </ComponentAnatomy.Layer>
+              <div class="p-4 space-y-3">
+                <ComponentAnatomy.Layer
+                  id={followPackAnatomyLayers.title.id}
+                  label={followPackAnatomyLayers.title.label}
+                >
+                  <FollowPack.Title class="text-lg font-semibold" />
+                </ComponentAnatomy.Layer>
 
-              <ComponentAnatomy.Layer id="memberCount" label="FollowPack.MemberCount" class="w-fit">
-                <FollowPack.MemberCount class="text-xs text-muted-foreground" format="long" />
-              </ComponentAnatomy.Layer>
-            </div>
-          </FollowPack.Root>
-        </div>
-      </ComponentAnatomy.Preview>
+                <ComponentAnatomy.Layer
+                  id={followPackAnatomyLayers.description.id}
+                  label={followPackAnatomyLayers.description.label}
+                >
+                  <FollowPack.Description class="text-sm text-muted-foreground" maxLength={100} />
+                </ComponentAnatomy.Layer>
 
-      <ComponentAnatomy.DetailPanel layers={followPackAnatomyLayers} />
-    </ComponentAnatomy.Root>
+                <ComponentAnatomy.Layer
+                  id={followPackAnatomyLayers.memberCount.id}
+                  label={followPackAnatomyLayers.memberCount.label}
+                  class="w-fit"
+                >
+                  <FollowPack.MemberCount class="text-xs text-muted-foreground" format="long" />
+                </ComponentAnatomy.Layer>
+              </div>
+            </FollowPack.Root>
+          </div>
+        </ComponentAnatomy.Preview>
+
+        <ComponentAnatomy.DetailPanel layers={followPackAnatomyLayers} />
+      </ComponentAnatomy.Root>
+    </section>
   {/if}
 {/snippet}
 
-<!-- Conditional rendering -->
-{#if displayPacks.length > 0}
-  <ComponentPageTemplate
-    {metadata}
-    {ndk}
-    {overview}
-    {showcaseComponents}
-    {componentsSection}
-    {anatomy}
-  >
-    <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-    <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-    <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-    <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-    <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-  </ComponentPageTemplate>
-{:else}
-  <div class="px-8">
-    <PageTitle title={metadata.title}>
-      <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} />
-      <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} />
-      <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} />
-      <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} />
-      <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} />
-    </PageTitle>
-    <div class="flex items-center justify-center py-12">
-      <div class="text-muted-foreground">Loading follow packs...</div>
-    </div>
-  </div>
-{/if}
+<ComponentPageTemplate
+  {metadata}
+  {ndk}
+  {overview}
+  {showcaseComponents}
+  {componentsSection}
+  {primitives}
+>
+  <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} default="naddr1qvzqqqyckypzp7gpv9hspf3lf7w83qw5sudq8heafnh89y02l4ade0h20j2utr38qythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qqvdajx2mn2duexudfcxfhs0c040z" />
+  <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} default="naddr1qvzqqqyckypzpw9fm7ppszzwfyxc3q6z482g3d70p7eqkxseh93mantga44ttjaaqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qqvd5env7t4ddcxgdttw3esjyw7cr" />
+  <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} default="naddr1qvzqqqyckypzqlrkt4q86w5at6s30juts6vk9ptq0plupp9qca404fzfh773y8vyqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqx8gupedph8zurwvd3kxmcu58dse" />
+  <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} default="naddr1qvzqqqyckypzpm0yzdfrja6cz4z3g9ytysgjxzxwm9k3yy3fkrn2v679526qcqlvqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqdhxarjv4sk6etjwdrx7mrvdam4qctrdd5rsjm6xdgryugz7ju6m" />
+  <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} default="naddr1qvzqqqyckypzpaf8e7tsecnquapxzg2t7cfw3a66t8d3sd0d0eq9xvnv8aj7yvhwqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxxyumzxscxka3edemhydq4wdqvs" />
+</ComponentPageTemplate>

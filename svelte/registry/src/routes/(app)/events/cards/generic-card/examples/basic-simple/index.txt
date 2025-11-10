@@ -1,0 +1,19 @@
+<script lang="ts">
+  import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { GenericEventBasic } from '$lib/registry/components/generic-event-basic';
+
+  let { ndk } = $props();
+
+  // Create a sample unknown event (kind 9999)
+  const sampleEvent = new NDKEvent(ndk, {
+    kind: 30023,
+    content: 'This is a sample event of an unknown kind.',
+    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [
+      ['alt', 'A sample event demonstrating the generic fallback handler']
+    ]
+  } as any);
+</script>
+
+<GenericEventBasic {ndk} event={sampleEvent} />

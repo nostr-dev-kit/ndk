@@ -86,7 +86,7 @@ describe("ZapButtonAvatars", () => {
 
             // Create mock zap receipt events
             const zapReceipt1 = new NDKEvent(ndk);
-            zapReceipt1.kind = NDKKind.ZapReceipt;
+            zapReceipt1.kind = 9735; // Zap receipt
             zapReceipt1.pubkey = alice.pubkey;
             zapReceipt1.tags = [
                 ["e", testEvent.id!],
@@ -100,7 +100,7 @@ describe("ZapButtonAvatars", () => {
             ];
 
             const zapReceipt2 = new NDKEvent(ndk);
-            zapReceipt2.kind = NDKKind.ZapReceipt;
+            zapReceipt2.kind = 9735; // Zap receipt
             zapReceipt2.pubkey = bob.pubkey;
             zapReceipt2.tags = [
                 ["e", testEvent.id!],
@@ -180,7 +180,7 @@ describe("ZapButtonAvatars", () => {
 
             // Create zap receipts from multiple users
             const zapReceipt1 = new NDKEvent(ndk);
-            zapReceipt1.kind = NDKKind.ZapReceipt;
+            zapReceipt1.kind = 9735; // Zap receipt
             zapReceipt1.pubkey = alice.pubkey;
             zapReceipt1.tags = [
                 ["e", testEvent.id!],
@@ -189,7 +189,7 @@ describe("ZapButtonAvatars", () => {
             ];
 
             const zapReceipt2 = new NDKEvent(ndk);
-            zapReceipt2.kind = NDKKind.ZapReceipt;
+            zapReceipt2.kind = 9735; // Zap receipt
             zapReceipt2.pubkey = bob.pubkey;
             zapReceipt2.tags = [
                 ["e", testEvent.id!],
@@ -198,7 +198,7 @@ describe("ZapButtonAvatars", () => {
             ];
 
             const zapReceipt3 = new NDKEvent(ndk);
-            zapReceipt3.kind = NDKKind.ZapReceipt;
+            zapReceipt3.kind = 9735; // Zap receipt
             zapReceipt3.pubkey = carol.pubkey;
             zapReceipt3.tags = [
                 ["e", testEvent.id!],
@@ -241,7 +241,7 @@ describe("ZapButtonAvatars", () => {
             };
 
             const zapReceipt = new NDKEvent(ndk);
-            zapReceipt.kind = NDKKind.ZapReceipt;
+            zapReceipt.kind = 9735; // Zap receipt
             zapReceipt.pubkey = alice.pubkey;
             zapReceipt.tags = [
                 ["e", testEvent.id!],
@@ -270,7 +270,7 @@ describe("ZapButtonAvatars", () => {
             };
 
             const zapReceipt = new NDKEvent(ndk);
-            zapReceipt.kind = NDKKind.ZapReceipt;
+            zapReceipt.kind = 9735; // Zap receipt
             zapReceipt.pubkey = alice.pubkey;
             zapReceipt.tags = [
                 ["e", testEvent.id!],

@@ -176,7 +176,7 @@
       <ComponentAnatomy.Root>
         <ComponentAnatomy.Preview>
           <div class="relative bg-card border border-border rounded-xl overflow-hidden">
-            <FollowPack.Root {ndk} followPack={pack1}>
+            <FollowPack.Root {ndk} followPack={pack1!}>
               <ComponentAnatomy.Layer
                 id={followPackAnatomyLayers.image.id}
                 label={followPackAnatomyLayers.image.label}

@@ -22,19 +22,19 @@
 
 	// Create three renderers with different priority configurations
 	const basicRenderer = new ContentRenderer();
-	basicRenderer.setMentionComponent(BasicMention, 1); // Priority 1
+	basicRenderer.setMentionComponent(BasicMention as any, 1); // Priority 1
 
 	const compactRenderer = new ContentRenderer();
-	compactRenderer.setMentionComponent(BasicMention, 1); // Priority 1 first
-	compactRenderer.setMentionComponent(CompactMention, 5); // Priority 5 wins!
+	compactRenderer.setMentionComponent(BasicMention as any, 1); // Priority 1 first
+	compactRenderer.setMentionComponent(CompactMention as any, 5); // Priority 5 wins!
 
 	const enhancedRenderer = new ContentRenderer();
-	enhancedRenderer.setMentionComponent(BasicMention, 1); // Priority 1 first
-	enhancedRenderer.setMentionComponent(CompactMention, 5); // Priority 5 next
-	enhancedRenderer.setMentionComponent(EnhancedMention, 10); // Priority 10 wins!
+	enhancedRenderer.setMentionComponent(BasicMention as any, 1); // Priority 1 first
+	enhancedRenderer.setMentionComponent(CompactMention as any, 5); // Priority 5 next
+	enhancedRenderer.setMentionComponent(EnhancedMention as any, 10); // Priority 10 wins!
 
 	// Also try to register a lower priority after - it should be ignored
-	enhancedRenderer.setMentionComponent(BasicMention, 3); // Priority 3 - ignored!
+	enhancedRenderer.setMentionComponent(BasicMention as any, 3); // Priority 3 - ignored!
 
 	// Sample event with mention
 	const event = new NDKEvent(ndk, {

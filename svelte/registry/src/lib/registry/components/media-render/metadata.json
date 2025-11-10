@@ -28,6 +28,9 @@
     "nip-36"
   ],
   "apiDoc": {
+    "name": "MediaRender",
+    "description": "Smart media renderer with NSFW and follows-based content filtering",
+    "importPath": "$lib/registry/components/media-render",
     "props": [
       {
         "name": "url",

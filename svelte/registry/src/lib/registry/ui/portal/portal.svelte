@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { mount, unmount } from 'svelte';
   import type { Snippet } from 'svelte';
 
   interface Props {

@@ -17,7 +17,8 @@
 -->
 
 <script lang="ts">
-  import type { NDKSvelte, NDKUser } from '@nostr-dev-kit/svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKUser } from '@nostr-dev-kit/ndk';
   import { AvatarGroup } from '$lib/registry/components/avatar-group/index.js';
 
   interface Props {

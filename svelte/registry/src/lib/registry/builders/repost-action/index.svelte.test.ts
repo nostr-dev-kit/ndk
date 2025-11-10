@@ -367,7 +367,9 @@ describe("createRepostAction", () => {
             userRepost.tags = [["e", testEvent.id!]];
             userRepost.id = generateTestEventId("user-repost");
 
-            const deleteSpy = vi.spyOn(userRepost, "delete").mockResolvedValue(new Set());
+            const deletionEvent = new NDKEvent(ndk);
+            deletionEvent.kind = NDKKind.EventDeletion;
+            const deleteSpy = vi.spyOn(userRepost, "delete").mockResolvedValue(deletionEvent);
 
             mockSub.events.push(userRepost);
             flushSync();

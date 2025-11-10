@@ -5,14 +5,17 @@
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
 
-  // Import code example
+  // Import code examples
   import genericCardCode from './examples/basic/index.txt?raw';
+  import basicSimpleCode from './examples/basic-simple/index.txt?raw';
 
-  // Import component
+  // Import components
   import GenericCard from '$lib/registry/components/event-card-generic/generic-card.svelte';
+  import { GenericEventBasic } from '$lib/registry/components/generic-event-basic';
 
   // Import registry metadata
   import genericCardMetadata from '$lib/registry/components/event-card-generic/metadata.json';
+  import basicSimpleMetadata from '$lib/registry/components/generic-event-basic/metadata.json';
 
   // Page metadata
   const metadata = {
@@ -23,7 +26,7 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Create a sample unknown event (kind 9999)
-  let eventKind = $state<number>(9999);
+  let eventKind = $state<number>(10002);
   let eventContent = $state<string>('This is a sample event of an unknown kind.');
   let altTag = $state<string>('A sample event demonstrating the generic fallback handler');
 
@@ -41,6 +44,12 @@
       cardData: genericCardMetadata,
       preview: genericPreview,
       orientation: 'vertical' as const
+    },
+    {
+      id: 'generic-event-basic',
+      cardData: basicSimpleMetadata,
+      preview: basicSimplePreview,
+      orientation: 'vertical' as const
     }
   ];
 
@@ -49,10 +58,12 @@
     title: 'Components',
     description: 'Explore each variant in detail',
     cards: [
-      {...genericCardMetadata, code: genericCardCode}
+      {...genericCardMetadata, code: genericCardCode},
+      {...basicSimpleMetadata, code: basicSimpleCode}
     ],
     previews: {
-      'generic-card': genericCardComponentPreview
+      'generic-card': genericCardComponentPreview,
+      'generic-event-basic': basicSimpleComponentPreview
     }
   };
 </script>
@@ -66,6 +77,16 @@
 
 {#snippet genericCardComponentPreview()}
   {@render genericPreview()}
+{/snippet}
+
+{#snippet basicSimplePreview()}
+  <div class="max-w-lg">
+    <GenericEventBasic {ndk} event={sampleEvent} />
+  </div>
+{/snippet}
+
+{#snippet basicSimpleComponentPreview()}
+  {@render basicSimplePreview()}
 {/snippet}
 
 <!-- Overview section -->
@@ -97,7 +118,7 @@
     name="Event Kind"
     type="kind"
     bind:value={eventKind}
-    default={9999}
+    default={10002}
   />
   <EditProps.Prop
     name="Event Content"

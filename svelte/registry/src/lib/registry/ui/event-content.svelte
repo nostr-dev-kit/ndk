@@ -77,7 +77,7 @@
 		{:else if segment.type === 'media'}
 			{#if renderer.mediaComponent}
 				{@const Component = renderer.mediaComponent}
-				<Component url={segment.content} {event} />
+				<Component url={segment.content} />
 			{:else}
 				{segment.content}
 			{/if}
@@ -89,7 +89,7 @@
 			{#if segment.data && Array.isArray(segment.data)}
 				{#if renderer.mediaComponent}
 					{@const Component = renderer.mediaComponent}
-					<Component url={segment.data} {event} />
+					<Component url={segment.data} />
 				{:else}
 					{#each segment.data as url, j (j)}
 						<img src={url} alt="" class="w-full h-auto object-cover rounded-lg aspect-square" />

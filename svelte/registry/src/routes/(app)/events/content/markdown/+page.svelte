@@ -6,7 +6,7 @@
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import ComponentAPI from '$site-components/component-api.svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
-	import BasicSimpleExample from './examples/basic-simple.example.svelte';
+	import BasicSimpleExample from './examples/basic-simple/index.svelte';
 	import BasicExample from './examples/basic.example.svelte';
 
 	// Import registry metadata
@@ -72,8 +72,8 @@
 {/snippet}
 
 {#snippet articleContentBasicPreview()}
-	{#if testArticle}
-		<BasicSimpleExample article={testArticle} />
+	{#if article}
+		<!-- <BasicSimpleExample article={article} /> -->
 	{/if}
 {/snippet}
 
@@ -124,7 +124,7 @@
 		name="Real Article"
 		type="article"
 		bind:value={article}
-		default="naddr1qvzqqqr4gupzpv3hez4ctpnahwghs5jeh2zvyrggw5s4e5p2ct0407l6v58kv87dqyvhwumn8ghj7urjv4kkjatd9ec8y6tdv9kzumn9wshsq9fdfppksd62fpm5zdrntfyywjr4ge0454zx353ujx"
+		default="naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxnzd3cx5urjd35xg6rwwpee39928"
 	/>
 <EditProps.Prop
 		name="Test Article"

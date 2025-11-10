@@ -1,12 +1,12 @@
 <script lang="ts" module>
   import type { Component } from 'svelte';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import UserCardClassic from '../user-card-classic/user-card-classic.svelte';
 
-  export let hoverComponent: Component = UserCardClassic;
+  export let hoverComponent: Component<{ ndk: NDKSvelte; pubkey: string; class?: string; }> = UserCardClassic;
 </script>
 
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
@@ -49,7 +49,7 @@
     }, 150);
   }
 
-  function handleClick(e: MouseEvent) {
+  function handleClick(e: MouseEvent | KeyboardEvent) {
     if (entityClickContext?.onUserClick && pubkey) {
       e.stopPropagation();
       entityClickContext.onUserClick(pubkey);

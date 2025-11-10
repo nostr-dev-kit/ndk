@@ -68,7 +68,7 @@
 	);
 
 	// Handle click on embedded event
-	function handleClick(e: MouseEvent) {
+	function handleClick(e: MouseEvent | KeyboardEvent) {
 		if (entityClickContext?.onEventClick && wrappedEvent) {
 			e.stopPropagation();
 			entityClickContext.onEventClick(wrappedEvent);

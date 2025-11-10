@@ -32,6 +32,9 @@
     "collage"
   ],
   "apiDoc": {
+    "name": "MediaRenderBentoGrid",
+    "description": "Bento grid media renderer with NSFW and follows-based content filtering",
+    "importPath": "$lib/registry/components/media-render-bento-grid",
     "props": [
       {
         "name": "url",

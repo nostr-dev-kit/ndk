@@ -148,7 +148,7 @@
 
   <EditProps.Prop
     name="Hashtag (for cards)"
-    type="string"
+    type="text"
     default="nostr"
     bind:value={tag}
   />

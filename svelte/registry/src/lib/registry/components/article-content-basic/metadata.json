@@ -1,0 +1,48 @@
+{
+  "name": "article-content-basic",
+  "title": "Article Content Basic",
+  "category": "article",
+  "subcategory": "content",
+  "variant": "basic",
+  "oneLiner": "Lightweight renderer for NIP-23 long-form articles with markdown and typography",
+  "command": "npx jsrepo add article-content-basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "article-pages",
+    "blog-posts",
+    "content-display",
+    "reading-view",
+    "markdown-rendering"
+  ],
+  "apiDoc": {
+    "name": "ArticleContentBasic",
+    "description": "Lightweight article content renderer with markdown formatting and beautiful typography. Displays NIP-23 long-form articles with prose typography including responsive headings, lists, blockquotes, and code blocks. No highlighting or interactive features.",
+    "importPath": "import { ArticleContentBasic } from '$lib/registry/components/article-content-basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "article",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to render"
+      },
+      {
+        "name": "renderer",
+        "type": "ContentRenderer",
+        "description": "Custom content renderer (uses context or default if not provided)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

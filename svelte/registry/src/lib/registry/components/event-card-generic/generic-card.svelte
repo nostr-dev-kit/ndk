@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { NDKEvent } from '@nostr-dev-kit/ndk';
+	import type { NDKEvent, NDKFilter } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '../event-card';
 	import {
-		createAppHandlerRecommendations,
-		createAppHandlerInfo,
 		replaceUrlTemplate,
-		type AppHandlerInfo
+		type AppHandlerInfo,
+		type HandlerPlatform
 	} from '../../builders/app-handlers';
 
 	interface Props {
@@ -20,32 +18,65 @@
 	// NIP-31: Extract alt tag
 	let altTag = $derived(event.tagValue('alt'));
 
-	// NIP-89: Fetch handler recommendations
-	const recommendations = createAppHandlerRecommendations(() => ({ kind: event.kind || 0 }), ndk);
-
-	// Store fetched handler info
-	let handlers = $state<AppHandlerInfo[]>([]);
-	let loadingHandlers = $state(false);
-
-	$effect(() => {
-		if (event?.kind) loadHandlers(event.kind);
+	// Subscribe to kind 31990 events that support this kind
+	const handlerSubscription = ndk.$subscribe(() => {
+		if (!event?.kind) return undefined;
+		return {
+			filters: {
+				kinds: [31990],
+				'#k': [event.kind.toString()]
+			},
+			closeOnEose: true
+		};
 	});
 
-	async function loadHandlers(kind: number) {
-		loadingHandlers = true;
-		await recommendations.load();
+	// Parse handler events into AppHandlerInfo
+	const handlers = $derived.by(() => {
+		const handlerMap = new Map<string, AppHandlerInfo>();
 
-		// Fetch handler info for each recommendation
-		const handlerPromises = recommendations.handlers.map(async (address) => {
-			const handlerInfoBuilder = createAppHandlerInfo(() => ({ address }), ndk);
-			await handlerInfoBuilder.load();
-			return handlerInfoBuilder.info;
-		});
+		for (const handlerEvent of handlerSubscription.events) {
+			const platforms: HandlerPlatform[] = [];
 
-		const results = await Promise.all(handlerPromises);
-		handlers = results.filter((h): h is AppHandlerInfo => h !== null);
-		loadingHandlers = false;
-	}
+			// Extract platform URLs
+			const webTags = handlerEvent.getMatchingTags('web');
+			const iosTags = handlerEvent.getMatchingTags('ios');
+			const androidTags = handlerEvent.getMatchingTags('android');
+
+			if (webTags.length > 0 && webTags[0][1]) {
+				platforms.push({ platform: 'web', url: webTags[0][1] });
+			}
+			if (iosTags.length > 0 && iosTags[0][1]) {
+				platforms.push({ platform: 'ios', url: iosTags[0][1] });
+			}
+			if (androidTags.length > 0 && androidTags[0][1]) {
+				platforms.push({ platform: 'android', url: androidTags[0][1] });
+			}
+
+			// Extract metadata from content (JSON)
+			let name: string | undefined;
+			let about: string | undefined;
+			let picture: string | undefined;
+
+			try {
+				const content = JSON.parse(handlerEvent.content);
+				name = content.name;
+				about = content.about;
+				picture = content.picture;
+			} catch {
+				// Content is not JSON or empty, skip metadata
+			}
+
+			handlerMap.set(handlerEvent.pubkey, {
+				pubkey: handlerEvent.pubkey,
+				name,
+				about,
+				picture,
+				platforms
+			});
+		}
+
+		return Array.from(handlerMap.values());
+	});
 
 	function getHandlerUrl(platform: { url: string }): string {
 		return replaceUrlTemplate(platform.url, event.encode());
@@ -99,13 +130,8 @@
 		/>
 
 		<!-- NIP-89: App Handler Discovery -->
-		<div class="mt-4 pt-4 border-t border-border">
-			{#if loadingHandlers}
-				<div class="flex items-center gap-2 text-sm text-muted-foreground">
-					<div class="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-					<span>Discovering compatible apps with {event.kind}...</span>
-				</div>
-			{:else if handlers.length > 0}
+		{#if handlers.length > 0}
+			<div class="mt-4 pt-4 border-t border-border">
 				<div class="text-sm font-semibold text-foreground mb-3">Open in compatible app:</div>
 				<div class="flex flex-col gap-3">
 					{#each handlers as handler (handler.pubkey)}
@@ -137,12 +163,8 @@
 						</div>
 					{/each}
 				</div>
-			{:else if !loadingHandlers && recommendations.error}
-				<div class="text-sm text-destructive p-2 bg-destructive/10 rounded">
-					<span>⚠️ Failed to discover compatible apps</span>
-				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</EventCard.Root>
 </div>
 

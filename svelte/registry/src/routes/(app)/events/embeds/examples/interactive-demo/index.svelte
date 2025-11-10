@@ -68,7 +68,7 @@
 
     <!-- Variant Selector -->
     <div>
-      <label class="block text-sm font-medium mb-2">Variant</label>
+      <div class="block text-sm font-medium mb-2" role="heading" aria-level="4">Variant</div>
       <div class="flex gap-2">
         {#each ['card', 'inline', 'compact'] as variant (variant)}
           <button

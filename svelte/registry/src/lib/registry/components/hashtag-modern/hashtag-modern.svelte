@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { getContext } from 'svelte';
   import { cn } from '../../utils/cn';
   import { hashtagGradient, formatHashtag } from '../../utils/hashtag.js';
   import HashtagCardCompact from '../hashtag-card-compact/hashtag-card-compact.svelte';
   import { Popover } from 'bits-ui';
+  import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
 
   interface Props {
     ndk: NDKSvelte;
@@ -21,6 +23,8 @@
     onclick,
     class: className = ''
   }: Props = $props();
+
+  const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
 
   const formattedHashtag = $derived(formatHashtag(tag));
   const gradient = $derived(hashtagGradient(tag));
@@ -43,8 +47,10 @@
   }
 
   function handleClick() {
-    if (onclick) {
-      onclick(tag);
+    // Use onclick prop if provided, otherwise fall back to context callback
+    const callback = onclick ?? entityClickContext?.onHashtagClick;
+    if (callback) {
+      callback(tag);
     }
   }
 </script>

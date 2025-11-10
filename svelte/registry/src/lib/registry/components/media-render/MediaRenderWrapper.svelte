@@ -6,6 +6,7 @@
 	import { defaultContentRenderer } from '$lib/registry/ui/content-renderer';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ViewOffIcon } from '@hugeicons/core-free-icons';
+	import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
 
 	interface Props {
 		url: string | string[];
@@ -23,6 +24,11 @@
 
 	// Get NDK from context if available
 	const ndk = getContext<NDKSvelte | undefined>('ndk');
+
+	// Get entity click context for potential media click handling
+	// Note: This component receives onMediaClick but doesn't call it
+	// as it handles clicks internally for lightbox/reveal functionality
+	const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
 
 	// State for blur/reveal
 	let showMedia = $state(false);

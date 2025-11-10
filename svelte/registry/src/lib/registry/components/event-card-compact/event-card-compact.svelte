@@ -1,60 +1,57 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { createTimeAgo } from '../../utils/time-ago';
-  import { User } from '../../ui/user';
-  import { Event } from '../../ui/event';
+  import { EventCard } from '../event-card/index.js';
   import { cn } from '../../utils/cn';
 
   interface Props {
     ndk: NDKSvelte;
     event: NDKEvent;
+    onUserClick?: (pubkey: string) => void;
+    onEventClick?: (event: NDKEvent) => void;
+    onHashtagClick?: (tag: string) => void;
+    onLinkClick?: (url: string) => void;
+    onMediaClick?: (url: string | string[]) => void;
     class?: string;
   }
 
-  let { ndk, event, class: className = '' }: Props = $props();
-
-  // Fetch author profile
-  const profileFetcher = createProfileFetcher(() => ({ user: event.author }), ndk);
-
-  // Create reactive time ago string
-  const timeAgo = createTimeAgo(event.created_at);
+  let {
+    ndk,
+    event,
+    onUserClick,
+    onEventClick,
+    onHashtagClick,
+    onLinkClick,
+    onMediaClick,
+    class: className = ''
+  }: Props = $props();
 
   // Extract text content from event
   const content = $derived(event.content?.trim() || '');
 </script>
 
-<article
+<EventCard.Root
   data-event-card-compact=""
+  {ndk}
+  {event}
+  {onUserClick}
+  {onEventClick}
+  {onHashtagClick}
+  {onLinkClick}
+  {onMediaClick}
   class={cn(
-    'flex flex-col gap-2 p-3 bg-background rounded-md border border-border/50',
+    'p-3 bg-background rounded-md border border-border/50',
     className
   )}
 >
-    <div class="flex flex-row w-full gap-4">
-  <User.Root {ndk} user={event.author} profile={profileFetcher.profile ?? undefined}>
-    <!-- Header: Avatar, name, and timestamp -->
-    <div class="flex items-center gap-2">
-      <User.Avatar class="w-8 h-8 flex-shrink-0" />
-
-      <div class="flex items-center gap-1.5 text-sm flex-1 min-w-0">
-        <User.Name
-          field="displayName"
-          class="font-semibold text-foreground truncate"
-        />
-        <span class="text-muted-foreground flex-shrink-0">·</span>
-        <time
-          datetime={new Date(event.created_at * 1000).toISOString()}
-          class="text-muted-foreground flex-shrink-0"
-        >
-          {timeAgo}
-        </time>
-      </div>
-    </div>
-  </User.Root>
-
-  <Event.ReplyIndicator {ndk} {event} />
+  <div class="flex flex-row w-full gap-4">
+    <EventCard.Header
+      variant="compact"
+      showAvatar={true}
+      showTimestamp={true}
+      avatarSize="sm"
+    />
+    <EventCard.ReplyIndicator />
   </div>
 
   <!-- Content - allows wrapping -->
@@ -63,4 +60,4 @@
       {content}
     </div>
   {/if}
-</article>
+</EventCard.Root>

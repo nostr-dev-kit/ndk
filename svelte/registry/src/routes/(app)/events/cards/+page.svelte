@@ -160,7 +160,7 @@
 {/snippet}
 
 {#snippet fullControl()}
-	<div class="flex gap-2" onclick={(e) => e.stopPropagation()}>
+	<div class="flex gap-2" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
 		<button
 			class="px-3 py-1.5 text-xs rounded-md transition-colors {!showFullContent ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}"
 			onclick={() => showFullContent = false}

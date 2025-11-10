@@ -18,7 +18,7 @@
     },
     "blossom": {
       "name": "@nostr-dev-kit/blossom",
-      "version": "8.0.0-beta.44",
+      "version": "8.0.0-beta.45",
       "devDependencies": {
         "@types/node": "^24.10.0",
         "rimraf": "^5.0.0",
@@ -31,9 +31,9 @@
     },
     "cache-dexie": {
       "name": "@nostr-dev-kit/cache-dexie",
-      "version": "2.7.8-beta.44",
+      "version": "2.7.8-beta.45",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
         "debug": "^4.3.7",
         "dexie": "^4.0.8",
         "nostr-tools": "^2.17.2",
@@ -53,9 +53,9 @@
     },
     "cache-memory": {
       "name": "@nostr-dev-kit/cache-memory",
-      "version": "2.7.8-beta.44",
+      "version": "2.7.8-beta.45",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
         "debug": "^4.3.7",
         "nostr-tools": "^2.17.2",
         "typescript-lru-cache": "^2.0.0",
@@ -73,9 +73,9 @@
     },
     "cache-nostr": {
       "name": "@nostr-dev-kit/cache-nostr",
-      "version": "0.1.66-beta.44",
+      "version": "0.1.66-beta.45",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
         "debug": "^4.3.7",
         "typescript": "^5.9.3",
         "websocket-polyfill": "^0.0.3",
@@ -89,7 +89,7 @@
     },
     "cache-redis": {
       "name": "@nostr-dev-kit/cache-redis",
-      "version": "0.1.52-beta.44",
+      "version": "0.1.52-beta.45",
       "dependencies": {
         "@nostr-dev-kit/ndk": "3.0.0-beta.44",
         "ioredis": "^5.0.0",
@@ -103,29 +103,29 @@
     },
     "cache-sqlite": {
       "name": "@nostr-dev-kit/cache-sqlite",
-      "version": "8.0.0-beta.44",
+      "version": "8.0.0-beta.45",
       "dependencies": {
         "better-sqlite3": "^12.4.1",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
         "@types/better-sqlite3": "^7.6.8",
         "tsup": "^8.4.0",
         "typescript": "^5.9.3",
         "vitest": "^4.0.7",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
       },
     },
     "cache-sqlite-wasm": {
       "name": "@nostr-dev-kit/cache-sqlite-wasm",
-      "version": "1.0.0-beta.44",
+      "version": "1.0.0-beta.45",
       "dependencies": {
         "sql.js": "^1.8.0",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
         "@types/node": "^24.10.0",
         "@types/sql.js": "^1.4.9",
         "jsdom": "^27.0.1",
@@ -135,7 +135,7 @@
     },
     "core": {
       "name": "@nostr-dev-kit/ndk",
-      "version": "3.0.0-beta.44",
+      "version": "3.0.0-beta.45",
       "dependencies": {
         "@codesandbox/sandpack-client": "^2.19.8",
         "@noble/curves": "^1.6.0",
@@ -169,7 +169,7 @@
     },
     "messages": {
       "name": "@nostr-dev-kit/messages",
-      "version": "2.0.0-beta.44",
+      "version": "2.0.0-beta.45",
       "dependencies": {
         "eventemitter3": "^5.0.1",
       },
@@ -186,7 +186,7 @@
     },
     "mobile": {
       "name": "@nostr-dev-kit/mobile",
-      "version": "0.9.3-beta.44",
+      "version": "0.9.3-beta.45",
       "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@nostr-dev-kit/ndk": "3.0.0-beta.39",
@@ -216,7 +216,7 @@
     },
     "react": {
       "name": "@nostr-dev-kit/react",
-      "version": "1.3.13-beta.44",
+      "version": "1.3.13-beta.45",
       "dependencies": {
         "@nostr-dev-kit/ndk": "3.0.0-beta.44",
         "@nostr-dev-kit/wallet": "0.8.11-beta.44",
@@ -241,24 +241,25 @@
     },
     "sessions": {
       "name": "@nostr-dev-kit/sessions",
-      "version": "0.6.4-beta.44",
+      "version": "0.6.4-beta.45",
       "dependencies": {
         "zustand": "^5.0.3",
       },
       "devDependencies": {
+        "@types/node": "^22.10.5",
         "tsup": "^8.4.0",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
         "vitest": "^4.0.7",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
-        "@nostr-dev-kit/wallet": "0.8.11-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
+        "@nostr-dev-kit/wallet": "0.8.11-beta.45",
       },
     },
     "svelte": {
       "name": "@nostr-dev-kit/svelte",
-      "version": "4.0.0-beta.44",
+      "version": "4.0.0-beta.45",
       "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",
         "@sveltejs/adapter-vercel": "^6.0.0",
@@ -297,27 +298,28 @@
     },
     "sync": {
       "name": "@nostr-dev-kit/sync",
-      "version": "0.4.0-beta.44",
+      "version": "0.4.0-beta.45",
       "dependencies": {
         "nostr-tools": "^2.17.2",
         "tseep": "^1.3.1",
       },
       "devDependencies": {
-        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.44",
-        "@nostr-dev-kit/cache-memory": "2.7.8-beta.44",
-        "@nostr-dev-kit/cache-nostr": "0.1.66-beta.44",
+        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.45",
+        "@nostr-dev-kit/cache-memory": "2.7.8-beta.45",
+        "@nostr-dev-kit/cache-nostr": "0.1.66-beta.45",
+        "@types/node": "^22.10.5",
         "tsup": "^8.4.0",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
         "vitest": "^4.0.7",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
       },
     },
     "wallet": {
       "name": "@nostr-dev-kit/wallet",
-      "version": "0.8.11-beta.44",
+      "version": "0.8.11-beta.45",
       "dependencies": {
         "debug": "^4.3.7",
         "light-bolt11-decoder": "^3.2.0",
@@ -338,13 +340,13 @@
       "peerDependencies": {
         "@cashu/cashu-ts": "^2.1",
         "@cashu/crypto": "*",
-        "@nostr-dev-kit/ndk": "3.0.0-beta.44",
-        "@nostr-dev-kit/sync": "0.4.0-beta.44",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.45",
+        "@nostr-dev-kit/sync": "0.4.0-beta.45",
       },
     },
     "wot": {
       "name": "@nostr-dev-kit/wot",
-      "version": "0.3.7-beta.44",
+      "version": "0.3.7-beta.45",
       "dependencies": {
         "debug": "^4.3.7",
         "typescript": "^5.9.3",
@@ -3453,6 +3455,10 @@
 
     "@mermaid-js/mermaid-mindmap/@braintree/sanitize-url": ["@braintree/sanitize-url@6.0.4", "", {}, ""],
 
+    "@nostr-dev-kit/sessions/@types/node": ["@types/node@22.19.0", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-xpr/lmLPQEj+TUnHmR+Ab91/glhJvsqcjB+yY0Ix9GO70H6Lb4FHH5GeqdOE5btAx7eIMwuHkp4H2MSkLcqWbA=="],
+
+    "@nostr-dev-kit/sync/@types/node": ["@types/node@22.19.0", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-xpr/lmLPQEj+TUnHmR+Ab91/glhJvsqcjB+yY0Ix9GO70H6Lb4FHH5GeqdOE5btAx7eIMwuHkp4H2MSkLcqWbA=="],
+
     "@react-native-community/cli/chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
 
     "@react-native-community/cli/commander": ["commander@9.5.0", "", {}, "sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ=="],
@@ -4048,6 +4054,10 @@
     "@jest/transform/write-file-atomic/signal-exit": ["signal-exit@3.0.7", "", {}, ""],
 
     "@jest/types/@types/node/undici-types": ["undici-types@7.14.0", "", {}, ""],
+
+    "@nostr-dev-kit/sessions/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
+
+    "@nostr-dev-kit/sync/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "@react-native-community/cli-clean/execa/cross-spawn": ["cross-spawn@6.0.6", "", { "dependencies": { "nice-try": "^1.0.4", "path-key": "^2.0.1", "semver": "^5.5.0", "shebang-command": "^1.2.0", "which": "^1.2.9" } }, ""],
 

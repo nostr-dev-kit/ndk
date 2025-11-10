@@ -3,7 +3,9 @@ import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 /**
- * Context shared between EventCard components
+ * Context shared between EventCard components.
+ * Contains structural data about the event card.
+ * For behavioral callbacks (entity clicks), use EntityClickContext from ui/ layer.
  */
 export interface EventCardContext {
     /** NDK instance */

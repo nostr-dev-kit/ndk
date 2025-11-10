@@ -23,12 +23,15 @@
   if (!context) {
     throw new Error('EventCard.ReplyIndicator must be used within EventCard.Root');
   }
+
+  // Use onclick prop if provided, otherwise fall back to context callback
+  const handleClick = $derived(onclick ?? context.onEventClick);
 </script>
 
 <Event.ReplyIndicator
   ndk={context.ndk}
   event={context.event}
   class={className}
-  {onclick}
+  onclick={handleClick}
   {children}
 />

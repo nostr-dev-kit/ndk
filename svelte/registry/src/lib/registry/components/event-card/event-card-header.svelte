@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
+  import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/cn';
   import { createTimeAgo } from '../../utils/time-ago';
@@ -35,15 +36,20 @@
     throw new Error('EventCard.Header must be used within EventCard.Root');
   }
 
+  const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
+
   // Fetch author profile directly
   const profileFetcher = createProfileFetcher(() => ({ user: context.event.author }), context.ndk);
 
   // Create reactive time ago string
   const timeAgo = createTimeAgo(context.event.created_at);
 
-  // Stop propagation on interactive elements
-  function stopPropagation(e: Event) {
-    e.stopPropagation();
+  // Handle user click
+  function handleUserClick(e: Event) {
+    if (entityClickContext?.onUserClick) {
+      e.stopPropagation();
+      entityClickContext.onUserClick(context.event.pubkey);
+    }
   }
 </script>
 
@@ -57,11 +63,20 @@
 >
   <!-- Avatar and Author Info -->
   <User.Root ndk={context.ndk} user={context.event.author} profile={profileFetcher.profile ?? undefined}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
     <div
-      class="flex items-center gap-3 flex-1 min-w-0"
-      onclick={stopPropagation}
-      onkeydown={(e) => e.stopPropagation()}
-      role="presentation"
+      class={cn(
+        'flex items-center gap-3 flex-1 min-w-0',
+        entityClickContext?.onUserClick && 'cursor-pointer'
+      )}
+      onclick={handleUserClick}
+      onkeydown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleUserClick(e);
+        }
+      }}
+      role={entityClickContext?.onUserClick ? "button" : "presentation"}
+      tabindex={entityClickContext?.onUserClick ? 0 : undefined}
     >
       {#if showAvatar}
         <User.Avatar

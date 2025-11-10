@@ -224,7 +224,7 @@
 {/snippet}
 
 {#snippet glassControlNew()}
-  <div onclick={(e) => e.stopPropagation()}>
+  <div onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
     <Tabs.Root bind:value={glassVariant}>
       <Tabs.List>
         <Tabs.Trigger value="gradient">Gradient</Tabs.Trigger>
@@ -426,8 +426,14 @@
   <div
     class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
     onclick={closePrimitiveDrawer}
+    onkeydown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        closePrimitiveDrawer();
+      }
+    }}
     role="button"
-    tabindex="-1"
+    tabindex="0"
   ></div>
   <div
     class="fixed right-0 top-0 bottom-0 w-full md:w-[480px] bg-card border-l border-border shadow-2xl z-50 overflow-y-auto animate-in slide-in-from-right duration-300"

@@ -2,7 +2,9 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
+  import { getContext } from 'svelte';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../entity-click-context.js';
   import { User } from '../user/index.js';
 
   interface Props {
@@ -26,6 +28,10 @@
   }: Props = $props();
 
   const ndk = getNDKFromContext(providedNdk);
+  const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
+
+  // Use onclick prop if provided, otherwise fall back to context callback
+  const handleClick = $derived(onclick ?? entityClickContext?.onEventClick);
 
   let replyToEvent = $state<NDKEvent | null>(null);
   let loading = $state(true);
@@ -88,10 +94,10 @@
     <div class="flex items-center gap-1 text-sm text-muted-foreground {className}">
       <span>Replying to</span>
       <User.Root {ndk} user={replyToEvent.author}>
-        {#if onclick}
+        {#if handleClick}
           <button
             type="button"
-            onclick={() => {replyToEvent && onclick(replyToEvent)}}
+            onclick={() => {replyToEvent && handleClick(replyToEvent)}}
             class="font-medium no-underline bg-transparent border-none p-0 cursor-pointer hover:underline"
           >
             @<User.Name class="inline" field="name" />

@@ -4,6 +4,7 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer/content-renderer.context.js';
+	import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from './entity-click-context.js';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;
@@ -22,6 +23,9 @@
 	// Use renderer from prop, or from context, or fallback to default
 	const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 	const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
+
+	// Get entity click context for click handling
+	const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
 
 	// Set renderer in context so nested components can access it
 	setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return renderer } });
@@ -62,6 +66,14 @@
 			? handlerInfo.wrapper.from(embedded.event)
 			: embedded.event
 	);
+
+	// Handle click on embedded event
+	function handleClick(e: MouseEvent) {
+		if (entityClickContext?.onEventClick && wrappedEvent) {
+			e.stopPropagation();
+			entityClickContext.onEventClick(wrappedEvent);
+		}
+	}
 </script>
 
 {#if embedded.loading}
@@ -75,11 +87,27 @@
 	</div>
 {:else if KindHandler && wrappedEvent}
 	<!-- Kind-specific handler -->
-	<KindHandler {ndk} event={wrappedEvent} />
+	{#if entityClickContext?.onEventClick}
+		<div onclick={handleClick} onkeydown={(e) => e.key === 'Enter' && handleClick(e)} role="button" tabindex="0" class="cursor-pointer">
+			<KindHandler {ndk} event={wrappedEvent} />
+		</div>
+	{:else}
+		<KindHandler {ndk} event={wrappedEvent} />
+	{/if}
 {:else if FallbackHandler && wrappedEvent}
 	<!-- Fallback handler - no variant -->
-	<FallbackHandler {ndk} event={wrappedEvent} class={className} />
+	{#if entityClickContext?.onEventClick}
+		<div onclick={handleClick} onkeydown={(e) => e.key === 'Enter' && handleClick(e)} role="button" tabindex="0" class="cursor-pointer">
+			<FallbackHandler {ndk} event={wrappedEvent} class={className} />
+		</div>
+	{:else}
+		<FallbackHandler {ndk} event={wrappedEvent} class={className} />
+	{/if}
 {:else if wrappedEvent}
 	<!-- NO HANDLER: Show raw bech32. Users can register generic-embedded if they want it. -->
-	<code>{bech32}</code>
+	{#if entityClickContext?.onEventClick}
+		<button onclick={handleClick} class="cursor-pointer font-mono text-sm bg-transparent border-none p-0 m-0 inline text-inherit">{bech32}</button>
+	{:else}
+		<code>{bech32}</code>
+	{/if}
 {/if}

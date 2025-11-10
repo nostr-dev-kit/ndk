@@ -1,0 +1,14 @@
+import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+import EventContent from '$lib/registry/ui/event-content.svelte';
+
+// Create renderers with different priority configurations
+const basicRenderer = new ContentRenderer();
+basicRenderer.setMentionComponent(BasicMention, 1); // Priority 1
+
+const enhancedRenderer = new ContentRenderer();
+enhancedRenderer.setMentionComponent(BasicMention, 1);     // Priority 1 first
+enhancedRenderer.setMentionComponent(CompactMention, 5);   // Priority 5 next
+enhancedRenderer.setMentionComponent(EnhancedMention, 10); // Priority 10 wins!
+
+// Attempt to register lower priority after - ignored!
+enhancedRenderer.setMentionComponent(BasicMention, 3); // Ignored (3 < 10)

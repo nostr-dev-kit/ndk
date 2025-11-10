@@ -19,6 +19,7 @@ export type HandlerInfo = {
 		event: NDKEvent;
 	}>;
 	wrapper: NDKWrapper | null;
+	priority: number;
 };
 
 /**
@@ -98,42 +99,51 @@ export class ContentRenderer {
 	 * Component for rendering npub/nprofile mentions
 	 * If null, renders raw bech32 string
 	 */
-	mentionComponent = $state<MentionComponent | null>(null);
+	mentionComponent: MentionComponent | null = null;
 
 	/**
 	 * Component for rendering hashtags
 	 * If null, renders raw #tag
 	 */
-	hashtagComponent = $state<HashtagComponent | null>(null);
+	hashtagComponent: HashtagComponent | null = null;
 
 	/**
 	 * Component for rendering links
 	 * If null, renders raw URL
 	 */
-	linkComponent = $state<LinkComponent | null>(null);
+	linkComponent: LinkComponent | null = null;
 
 	/**
 	 * Component for rendering media (images, videos)
 	 * If null, renders raw URL
 	 */
-	mediaComponent = $state<MediaComponent | null>(null);
+	mediaComponent: MediaComponent | null = null;
 
 	/**
 	 * Fallback component for rendering embedded events with no registered kind handler
 	 * If null, renders raw bech32 string
 	 * Users can register generic-embedded or any other component as the fallback
 	 */
-	fallbackComponent = $state<Component<{
+	fallbackComponent: Component<{
 		ndk: NDKSvelte;
 		event: NDKEvent;
 		class?: string;
-	}> | null>(null);
+	}> | null = null;
 
 	/**
 	 * Registry of embedded event kind handlers
-	 * Maps event kind → { component, wrapper }
+	 * Maps event kind → { component, wrapper, priority }
 	 */
 	private handlers = new Map<number, HandlerInfo>();
+
+	/**
+	 * Priority tracking for inline components
+	 */
+	private mentionPriority = 0;
+	private hashtagPriority = 0;
+	private linkPriority = 0;
+	private mediaPriority = 0;
+	private fallbackPriority = 0;
 
 	/**
 	 * Register a handler for one or more event kinds
@@ -144,13 +154,14 @@ export class ContentRenderer {
 	 *
 	 * @param target - NDK wrapper class (with .kinds and .from()) or array of kind numbers
 	 * @param component - Svelte component to render this kind
+	 * @param priority - Priority for this handler (default: 1). Higher priority handlers replace lower ones.
 	 *
 	 * @example With NDK wrapper class:
 	 * ```ts
 	 * import { NDKArticle } from '@nostr-dev-kit/ndk';
 	 * import ArticleEmbedded from './article-embedded.svelte';
 	 *
-	 * defaultContentRenderer.addKind(NDKArticle, ArticleEmbedded);
+	 * defaultContentRenderer.addKind(NDKArticle, ArticleEmbedded, 10);
 	 * // Auto-registers kind 30023, wraps with NDKArticle.from()
 	 * ```
 	 *
@@ -158,15 +169,18 @@ export class ContentRenderer {
 	 * ```ts
 	 * import NoteEmbedded from './note-embedded.svelte';
 	 *
-	 * defaultContentRenderer.addKind([1, 1111], NoteEmbedded);
+	 * defaultContentRenderer.addKind([1, 1111], NoteEmbedded, 5);
 	 * // Registers kinds 1 and 1111 without wrapping
 	 * ```
 	 */
-	addKind(target: NDKWrapper | number[], component: Component<any>): void {
+	addKind(target: NDKWrapper | number[], component: Component<any>, priority: number = 1): void {
 		if (Array.isArray(target)) {
 			// Manual kind numbers - no wrapper
 			for (const kind of target) {
-				this.handlers.set(kind, { component, wrapper: null });
+				const existing = this.handlers.get(kind);
+				if (!existing || priority >= existing.priority) {
+					this.handlers.set(kind, { component, wrapper: null, priority });
+				}
 			}
 		} else {
 			// NDK wrapper class
@@ -174,8 +188,71 @@ export class ContentRenderer {
 			const wrapper = target.from ? target : null;
 
 			for (const kind of kinds) {
-				this.handlers.set(kind, { component, wrapper });
+				const existing = this.handlers.get(kind);
+				if (!existing || priority >= existing.priority) {
+					this.handlers.set(kind, { component, wrapper, priority });
+				}
 			}
+		}
+	}
+
+	/**
+	 * Set the mention component with priority
+	 * @param component - Component to render mentions
+	 * @param priority - Priority for this component (default: 1)
+	 */
+	setMentionComponent(component: MentionComponent | null, priority: number = 1): void {
+		if (priority >= this.mentionPriority) {
+			this.mentionComponent = component;
+			this.mentionPriority = priority;
+		}
+	}
+
+	/**
+	 * Set the hashtag component with priority
+	 * @param component - Component to render hashtags
+	 * @param priority - Priority for this component (default: 1)
+	 */
+	setHashtagComponent(component: HashtagComponent | null, priority: number = 1): void {
+		if (priority >= this.hashtagPriority) {
+			this.hashtagComponent = component;
+			this.hashtagPriority = priority;
+		}
+	}
+
+	/**
+	 * Set the link component with priority
+	 * @param component - Component to render links
+	 * @param priority - Priority for this component (default: 1)
+	 */
+	setLinkComponent(component: LinkComponent | null, priority: number = 1): void {
+		if (priority >= this.linkPriority) {
+			this.linkComponent = component;
+			this.linkPriority = priority;
+		}
+	}
+
+	/**
+	 * Set the media component with priority
+	 * @param component - Component to render media
+	 * @param priority - Priority for this component (default: 1)
+	 */
+	setMediaComponent(component: MediaComponent | null, priority: number = 1): void {
+		if (priority >= this.mediaPriority) {
+			this.mediaComponent = component;
+			this.mediaPriority = priority;
+		}
+	}
+
+	/**
+	 * Set the fallback component with priority
+	 * @param component - Component to render unhandled events
+	 * @param priority - Priority for this component (default: 1)
+	 */
+	setFallbackComponent(component: Component<any> | null, priority: number = 1): void {
+		if (priority >= this.fallbackPriority) {
+			this.fallbackComponent = component;
+			this.fallbackPriority = priority;
 		}
 	}
 
@@ -210,6 +287,34 @@ export class ContentRenderer {
 	}
 
 	/**
+	 * Get current priorities for inline components (for debugging)
+	 *
+	 * @returns Object with component names and their priorities
+	 */
+	getInlinePriorities(): Record<string, number> {
+		return {
+			mention: this.mentionPriority,
+			hashtag: this.hashtagPriority,
+			link: this.linkPriority,
+			media: this.mediaPriority,
+			fallback: this.fallbackPriority
+		};
+	}
+
+	/**
+	 * Get current priorities for event kind handlers (for debugging)
+	 *
+	 * @returns Map of kind numbers to their priorities
+	 */
+	getKindPriorities(): Map<number, number> {
+		const priorities = new Map<number, number>();
+		for (const [kind, info] of this.handlers) {
+			priorities.set(kind, info.priority);
+		}
+		return priorities;
+	}
+
+	/**
 	 * Clear all registered handlers (useful for testing)
 	 */
 	clear(): void {
@@ -219,6 +324,11 @@ export class ContentRenderer {
 		this.linkComponent = null;
 		this.mediaComponent = null;
 		this.fallbackComponent = null;
+		this.mentionPriority = 0;
+		this.hashtagPriority = 0;
+		this.linkPriority = 0;
+		this.mediaPriority = 0;
+		this.fallbackPriority = 0;
 	}
 }
 

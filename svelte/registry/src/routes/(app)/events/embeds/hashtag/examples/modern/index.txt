@@ -1,12 +1,7 @@
 <script lang="ts">
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
 
-  interface Props {
-    ndk: NDKSvelte;
-  }
-
-  let { ndk }: Props = $props();
+  let { ndk } = $props();
 </script>
 
 <div class="flex flex-col gap-4">

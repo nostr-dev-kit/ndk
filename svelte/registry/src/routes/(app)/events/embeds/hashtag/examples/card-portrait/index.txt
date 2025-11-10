@@ -1,0 +1,7 @@
+<script lang="ts">
+  import { HashtagCardPortrait } from '$lib/registry/components/hashtag-card-portrait';
+
+  let { ndk, tag = 'nostr' } = $props();
+</script>
+
+<HashtagCardPortrait {ndk} hashtag={tag} />

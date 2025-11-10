@@ -1,0 +1,45 @@
+{
+  "name": "hashtag-card-compact",
+  "title": "Hashtag Card Compact",
+  "category": "hashtag",
+  "subcategory": "cards",
+  "variant": "compact",
+  "oneLiner": "Compact hashtag card with stats, contributors, and follow button",
+  "description": "A compact card displaying hashtag information including note count, top contributors (shown as avatar group), and a follow button. Features a unique gradient indicator and real-time stats from the past 7 days.",
+  "command": "npx jsrepo add hashtag-card-compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "hashtag-display",
+    "topic-cards",
+    "hashtag-stats",
+    "trending-topics",
+    "content-discovery"
+  ],
+  "apiDoc": {
+    "name": "HashtagCardCompact",
+    "description": "Compact card displaying hashtag statistics with gradient indicator, note count, contributor avatars, and follow button. Shows data from the past 7 days.",
+    "importPath": "import { HashtagCardCompact } from '$lib/registry/components/hashtag-card-compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching hashtag stats"
+      },
+      {
+        "name": "hashtag",
+        "type": "string",
+        "required": true,
+        "description": "Hashtag text (with or without # prefix)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

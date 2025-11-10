@@ -1,0 +1,46 @@
+{
+  "name": "hashtag-card-portrait",
+  "title": "Hashtag Card Portrait",
+  "category": "hashtag",
+  "subcategory": "cards",
+  "variant": "portrait",
+  "oneLiner": "Portrait-oriented hashtag card with gradient header, activity chart, and detailed stats",
+  "description": "A detailed portrait card displaying comprehensive hashtag information including a gradient header, 7-day activity bar chart, most recent note, top contributor, contributor avatars, and follow button. Perfect for showcasing hashtag analytics and engagement.",
+  "command": "npx jsrepo add hashtag-card-portrait",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "hashtag-display",
+    "topic-cards",
+    "hashtag-analytics",
+    "trending-topics",
+    "content-discovery",
+    "hashtag-dashboard"
+  ],
+  "apiDoc": {
+    "name": "HashtagCardPortrait",
+    "description": "Detailed portrait card with gradient header, 7-day activity visualization, recent note preview, top contributor display, and contributor avatars. Shows comprehensive hashtag analytics.",
+    "importPath": "import { HashtagCardPortrait } from '$lib/registry/components/hashtag-card-portrait'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching hashtag stats"
+      },
+      {
+        "name": "hashtag",
+        "type": "string",
+        "required": true,
+        "description": "Hashtag text (with or without # prefix)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

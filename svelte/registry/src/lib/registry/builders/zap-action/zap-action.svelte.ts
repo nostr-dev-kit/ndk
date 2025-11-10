@@ -12,6 +12,9 @@ export interface ZapActionConfig {
     target: NDKEvent | NDKUser | undefined;
 }
 
+export type ZapFunction = (amount: number, comment?: string) => Promise<void>;
+export type ZapIntentCallback = (event: NDKEvent, zapFn: ZapFunction) => void;
+
 /**
  * Creates a reactive zap action state manager
  *

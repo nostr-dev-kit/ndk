@@ -1,26 +1,26 @@
 {
-  "name": "event-card-classic",
-  "title": "Event Card Classic",
+  "name": "event-card-basic",
+  "title": "Event Card Basic",
   "category": "event",
   "subcategory": "cards",
-  "variant": "classic",
-  "oneLiner": "A classic styled event card with rounded corners and card background",
-  "command": "npx jsrepo add event-card-classic",
+  "variant": "basic",
+  "oneLiner": "A minimal event card with flat design and subtle hover effects",
+  "command": "npx jsrepo add event-card-basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
   ],
   "useCases": [
-    "traditional-feeds",
-    "forums",
-    "comment-sections",
-    "card-layouts",
-    "elevated-designs"
+    "minimal-feeds",
+    "dense-layouts",
+    "clean-ui",
+    "flat-design",
+    "modern-interfaces"
   ],
   "apiDoc": {
-    "name": "EventCardClassic",
-    "description": "A classic styled event card with rounded corners, card background, and hover effects. Always shows dropdown menu and all action buttons (reply, repost, reaction, zap). Supports callbacks for user interactions (reply, quote, zap) while reaction and repost are auto-handled.",
-    "importPath": "import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte'",
+    "name": "EventCardBasic",
+    "description": "A minimal event card with flat design, no rounded corners, and subtle hover effects. Features a clean background color that transitions to muted on hover. Always shows dropdown menu and all action buttons (reply, repost, reaction, zap). Supports callbacks for user interactions (reply, quote, zap) while reaction and repost are auto-handled. Optional avatar variants show who engaged with the event.",
+    "importPath": "import { EventCardBasic } from '$lib/registry/components/event/cards/basic'",
     "props": [
       {
         "name": "ndk",
@@ -38,6 +38,12 @@
         "name": "truncate",
         "type": "number",
         "description": "Character limit for truncating content"
+      },
+      {
+        "name": "withAvatars",
+        "type": "boolean",
+        "default": "false",
+        "description": "Use avatar button variants showing who engaged with the event (filtered to only show follows)"
       },
       {
         "name": "onReplyIntent",

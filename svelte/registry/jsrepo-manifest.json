@@ -1,7 +1,28 @@
 {
 	"name": "@ndk/svelte",
-	"version": "0.0.15",
+	"version": "0.0.22",
 	"categories": [
+		{
+			"name": ".claude",
+			"blocks": [
+				{
+					"name": "settings.local",
+					"directory": "src/lib/registry/.claude",
+					"category": ".claude",
+					"tests": false,
+					"docs": false,
+					"subdirectory": false,
+					"list": true,
+					"files": [
+						"settings.local.json"
+					],
+					"localDependencies": [],
+					"_imports_": {},
+					"dependencies": [],
+					"devDependencies": []
+				}
+			]
+		},
 		{
 			"name": "blocks",
 			"blocks": [
@@ -23,8 +44,8 @@
 						"../utils/cn.js": "{{utils/cn}}.js"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -49,8 +70,8 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -69,14 +90,14 @@
 						"session-switcher-compact.svelte"
 					],
 					"localDependencies": [
-						"components/session"
+						"components/session-switcher"
 					],
 					"_imports_": {
-						"../components/session/switchers/compound": "{{components/session}}/switchers/compound"
+						"../components/session-switcher": "{{components/session-switcher}}"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/sessions@0.6.4-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/sessions@0.6.4-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -92,14 +113,14 @@
 						"session-switcher.svelte"
 					],
 					"localDependencies": [
-						"components/session"
+						"components/session-switcher"
 					],
 					"_imports_": {
-						"../components/session/switchers/compound": "{{components/session}}/switchers/compound"
+						"../components/session-switcher": "{{components/session-switcher}}"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/sessions@0.6.4-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/sessions@0.6.4-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -123,8 +144,8 @@
 						"../ui/media-upload/createMediaUpload.svelte.js": "{{ui/media-upload}}/createMediaUpload.svelte.js"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -141,20 +162,20 @@
 					],
 					"localDependencies": [
 						"builders/event",
-						"components/event",
-						"components/reaction",
+						"components/event-card",
+						"components/reaction-button",
 						"ui/user",
-						"components/repost"
+						"components/repost-button"
 					],
 					"_imports_": {
 						"../builders/event/thread/types.js": "{{builders/event}}/thread/types.js",
-						"../components/event/cards/compound/index.js": "{{components/event}}/cards/compound/index.js",
-						"../components/reaction/buttons/basic/reaction-button.svelte": "{{components/reaction}}/buttons/basic/reaction-button.svelte",
+						"../components/event-card/index.js": "{{components/event-card}}/index.js",
+						"../components/reaction-button/reaction-button.svelte": "{{components/reaction-button}}/reaction-button.svelte",
 						"../ui/user/index.js": "{{ui/user}}/index.js",
-						"../components/repost/buttons/basic/repost-button.svelte": "{{components/repost}}/buttons/basic/repost-button.svelte"
+						"../components/repost-button/repost-button.svelte": "{{components/repost-button}}/repost-button.svelte"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": []
 				}
@@ -177,8 +198,8 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -192,12 +213,13 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"index.svelte.ts"
+						"index.svelte.ts",
+						"index.ts"
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -216,8 +238,8 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -232,14 +254,15 @@
 					"list": true,
 					"files": [
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -256,6 +279,7 @@
 					"list": true,
 					"files": [
 						"fetch/index.svelte.ts",
+						"index.ts",
 						"thread/README.md",
 						"thread/index.svelte.ts",
 						"thread/types.ts",
@@ -265,8 +289,8 @@
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -288,8 +312,8 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -305,14 +329,15 @@
 					"files": [
 						"index.svelte.test.ts",
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -328,12 +353,13 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"stats.svelte.ts"
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -347,14 +373,15 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"index.svelte.ts"
+						"index.svelte.ts",
+						"index.ts"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -388,20 +415,23 @@
 					"name": "mute-action",
 					"directory": "src/lib/registry/builders/mute-action",
 					"category": "builders",
-					"tests": false,
+					"tests": true,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
+						"__screenshots__/index.svelte.test.ts",
+						"index.svelte.test.ts",
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -422,9 +452,9 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/sync@0.4.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/sync@0.4.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -438,14 +468,15 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"index.svelte.ts"
+						"index.svelte.ts",
+						"index.ts"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -461,14 +492,15 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"index.svelte.ts"
+						"index.svelte.ts",
+						"index.ts"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -486,14 +518,15 @@
 					"files": [
 						"index.svelte.test.ts",
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -510,14 +543,15 @@
 					"list": true,
 					"files": [
 						"bookmarks.svelte.ts",
+						"index.ts",
 						"info.svelte.ts"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -528,20 +562,23 @@
 					"name": "reply-action",
 					"directory": "src/lib/registry/builders/reply-action",
 					"category": "builders",
-					"tests": false,
+					"tests": true,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
+						"__screenshots__/index.svelte.test.ts",
+						"index.svelte.test.ts",
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -552,20 +589,22 @@
 					"name": "repost-action",
 					"directory": "src/lib/registry/builders/repost-action",
 					"category": "builders",
-					"tests": false,
+					"tests": true,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.svelte.test.ts",
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -582,11 +621,12 @@
 					"list": true,
 					"files": [
 						"index.svelte.ts",
+						"index.ts",
 						"metadata.json"
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -600,12 +640,13 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"stats.svelte.ts"
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -626,8 +667,8 @@
 						"builders/resolve-ndk"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -648,8 +689,8 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -658,17 +699,20 @@
 					"name": "zap-send",
 					"directory": "src/lib/registry/builders/zap-send",
 					"category": "builders",
-					"tests": false,
+					"tests": true,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"index.svelte.ts"
+						"__screenshots__/index.svelte.test.ts",
+						"index.svelte.test.ts",
+						"index.svelte.ts",
+						"index.ts"
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -679,79 +723,234 @@
 			"name": "components",
 			"blocks": [
 				{
-					"name": "article",
-					"directory": "src/lib/registry/components/article",
+					"name": "article-card",
+					"directory": "src/lib/registry/components/article-card",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/basic/article-card-medium.svelte",
-						"cards/basic/index.ts",
-						"cards/basic/metadata.json",
-						"cards/compact/article-card-compact.svelte",
-						"cards/compact/index.ts",
-						"cards/compact/metadata.json",
-						"cards/hero/article-card-hero.svelte",
-						"cards/hero/index.ts",
-						"cards/hero/metadata.json",
-						"cards/inline/article-card-inline.svelte",
-						"cards/inline/index.ts",
-						"cards/inline/metadata.json",
-						"cards/neon/article-card-neon.svelte",
-						"cards/neon/index.ts",
-						"cards/neon/metadata.json",
-						"cards/portrait/article-card-portrait.svelte",
-						"cards/portrait/index.ts",
-						"cards/portrait/metadata.json",
-						"content/basic/article-content.svelte",
-						"content/basic/highlight-toolbar.svelte",
-						"content/basic/index.ts",
-						"content/basic/metadata.json"
+						"article-card-medium.svelte",
+						"index.ts",
+						"metadata.json"
 					],
 					"localDependencies": [
 						"ui/article",
-						"utils/cn",
-						"ui/content-renderer",
-						"ui/user",
-						"utils/time-ago",
-						"utils/ndk-context.svelte",
-						"ui/markdown-event-content"
+						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/article/article-root.svelte": "{{ui/article}}/article-root.svelte",
-						"../../../../ui/article/article-image.svelte": "{{ui/article}}/article-image.svelte",
-						"../../../../ui/article/article-title.svelte": "{{ui/article}}/article-title.svelte",
-						"../../../../ui/article/article-summary.svelte": "{{ui/article}}/article-summary.svelte",
-						"../../../../ui/article/article-reading-time.svelte": "{{ui/article}}/article-reading-time.svelte",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../ui/article": "{{ui/article}}",
-						"../../../../ui/content-renderer": "{{ui/content-renderer}}",
-						"../../../../ui/user": "{{ui/user}}",
-						"../../../../ui/article/article.context.js": "{{ui/article}}/article.context.js",
-						"../../../../utils/time-ago": "{{utils/time-ago}}",
-						"../../../../ui/user/index.js": "{{ui/user}}/index.js",
-						"../../../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
-						"../../../../ui/content-renderer/content-renderer.context.js": "{{ui/content-renderer}}/content-renderer.context.js",
-						"../../../../ui/markdown-event-content": "{{ui/markdown-event-content}}"
+						"../../ui/article/article-root.svelte": "{{ui/article}}/article-root.svelte",
+						"../../ui/article/article-image.svelte": "{{ui/article}}/article-image.svelte",
+						"../../ui/article/article-title.svelte": "{{ui/article}}/article-title.svelte",
+						"../../ui/article/article-summary.svelte": "{{ui/article}}/article-summary.svelte",
+						"../../ui/article/article-reading-time.svelte": "{{ui/article}}/article-reading-time.svelte",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "article-card-compact",
+					"directory": "src/lib/registry/components/article-card-compact",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"article-card-compact.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/article",
+						"ui/content-renderer"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/article": "{{ui/article}}",
+						"../../ui/content-renderer": "{{ui/content-renderer}}"
+					}
+				},
+				{
+					"name": "article-card-hero",
+					"directory": "src/lib/registry/components/article-card-hero",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"article-card-hero.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/article",
+						"ui/user",
+						"utils/cn",
+						"utils/time-ago"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/article/article-root.svelte": "{{ui/article}}/article-root.svelte",
+						"../../ui/article/article-title.svelte": "{{ui/article}}/article-title.svelte",
+						"../../ui/article/article-summary.svelte": "{{ui/article}}/article-summary.svelte",
+						"../../ui/article/article-reading-time.svelte": "{{ui/article}}/article-reading-time.svelte",
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/article/article.context.js": "{{ui/article}}/article.context.js",
+						"../../utils/time-ago": "{{utils/time-ago}}"
+					}
+				},
+				{
+					"name": "article-card-inline",
+					"directory": "src/lib/registry/components/article-card-inline",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"article-card-inline.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/article",
+						"ui/content-renderer"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/article": "{{ui/article}}",
+						"../../ui/content-renderer": "{{ui/content-renderer}}"
+					}
+				},
+				{
+					"name": "article-card-neon",
+					"directory": "src/lib/registry/components/article-card-neon",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"article-card-neon.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/article",
+						"ui/user",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/article/article-root.svelte": "{{ui/article}}/article-root.svelte",
+						"../../ui/article/article-title.svelte": "{{ui/article}}/article-title.svelte",
+						"../../ui/article/article-summary.svelte": "{{ui/article}}/article-summary.svelte",
+						"../../ui/article/article-reading-time.svelte": "{{ui/article}}/article-reading-time.svelte",
+						"../../ui/user/index.js": "{{ui/user}}/index.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/article/article.context.js": "{{ui/article}}/article.context.js"
+					}
+				},
+				{
+					"name": "article-card-portrait",
+					"directory": "src/lib/registry/components/article-card-portrait",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"article-card-portrait.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/article",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/article/article-root.svelte": "{{ui/article}}/article-root.svelte",
+						"../../ui/article/article-image.svelte": "{{ui/article}}/article-image.svelte",
+						"../../ui/article/article-title.svelte": "{{ui/article}}/article-title.svelte",
+						"../../ui/article/article-summary.svelte": "{{ui/article}}/article-summary.svelte",
+						"../../ui/article/article-reading-time.svelte": "{{ui/article}}/article-reading-time.svelte",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "article-content",
+					"directory": "src/lib/registry/components/article-content",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"article-content.svelte",
+						"highlight-toolbar.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"utils/ndk-context.svelte",
+						"ui/content-renderer",
+						"ui/user",
+						"ui/markdown-event-content"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
+						"../../ui/content-renderer": "{{ui/content-renderer}}",
+						"../../ui/content-renderer/content-renderer.context.js": "{{ui/content-renderer}}/content-renderer.context.js",
+						"../../ui/user": "{{ui/user}}",
+						"../../ui/markdown-event-content": "{{ui/markdown-event-content}}"
 					}
 				},
 				{
 					"name": "avatar-group",
 					"directory": "src/lib/registry/components/avatar-group",
 					"category": "components",
-					"tests": false,
+					"tests": true,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
+						"__screenshots__/avatar-group.test.ts",
 						"avatar-group.svelte",
+						"avatar-group.test.ts",
 						"index.ts",
 						"metadata.json"
 					],
@@ -761,8 +960,8 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -790,8 +989,8 @@
 						"utils/kind-label"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -824,8 +1023,8 @@
 						"utils/merge-props"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
 						"bits-ui@^2.14.2"
 					],
 					"devDependencies": [],
@@ -837,100 +1036,234 @@
 					}
 				},
 				{
-					"name": "event",
-					"directory": "src/lib/registry/components/event",
+					"name": "event-card",
+					"directory": "src/lib/registry/components/event-card",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/classic/event-card-classic.svelte",
-						"cards/classic/index.ts",
-						"cards/classic/metadata.json",
-						"cards/compound/event-card-actions.svelte",
-						"cards/compound/event-card-content.svelte",
-						"cards/compound/event-card-dropdown.svelte",
-						"cards/compound/event-card-header.svelte",
-						"cards/compound/event-card-reply-indicator.svelte",
-						"cards/compound/event-card-root.svelte",
-						"cards/compound/event-card.context.ts",
-						"cards/compound/event-dropdown.svelte",
-						"cards/compound/index.ts",
-						"cards/compound/metadata.json",
-						"cards/generic/generic-card.svelte",
-						"cards/generic/index.ts",
-						"cards/generic/metadata.json"
+						"event-card-actions.svelte",
+						"event-card-content.svelte",
+						"event-card-dropdown.svelte",
+						"event-card-header.svelte",
+						"event-card-reply-indicator.svelte",
+						"event-card-root.svelte",
+						"event-card.context.ts",
+						"event-dropdown.svelte",
+						"index.ts",
+						"metadata.json"
 					],
 					"localDependencies": [
-						"components/reaction",
-						"components/repost",
 						"utils/cn",
 						"ui/event-content",
 						"ui/content-renderer",
 						"utils/time-ago",
 						"ui/user",
 						"ui/event",
-						"utils/ndk-context.svelte",
-						"builders/app-handlers"
+						"utils/ndk-context.svelte"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
 						"bits-ui@^2.14.2"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../reaction/buttons/basic/reaction-button.svelte": "{{components/reaction}}/buttons/basic/reaction-button.svelte",
-						"../../../repost/buttons/basic/repost-button.svelte": "{{components/repost}}/buttons/basic/repost-button.svelte",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../ui/event-content.svelte": "{{ui/event-content}}.svelte",
-						"../../../../ui/content-renderer/content-renderer.context.js": "{{ui/content-renderer}}/content-renderer.context.js",
-						"../../../../utils/time-ago": "{{utils/time-ago}}",
-						"../../../../ui/user": "{{ui/user}}",
-						"../../../../ui/event": "{{ui/event}}",
-						"../../../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
-						"../../../../builders/app-handlers": "{{builders/app-handlers}}",
-						"../../../../ui/content-renderer": "{{ui/content-renderer}}"
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/event-content.svelte": "{{ui/event-content}}.svelte",
+						"../../ui/content-renderer/content-renderer.context.js": "{{ui/content-renderer}}/content-renderer.context.js",
+						"../../utils/time-ago": "{{utils/time-ago}}",
+						"../../ui/user": "{{ui/user}}",
+						"../../ui/event": "{{ui/event}}",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
 					}
 				},
 				{
-					"name": "follow",
-					"directory": "src/lib/registry/components/follow",
+					"name": "event-card-basic",
+					"directory": "src/lib/registry/components/event-card-basic",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"event-card-basic.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"components/event-card",
+						"components/reply-button",
+						"components/reaction-button",
+						"components/repost-button",
+						"components/zap-button",
+						"components/reply-button-avatars",
+						"components/reaction-button-avatars",
+						"components/repost-button-avatars",
+						"components/zap-button-avatars",
+						"utils/cn",
+						"builders/reply-action",
+						"builders/repost-action",
+						"builders/zap-action"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../event-card/index.js": "{{components/event-card}}/index.js",
+						"../reply-button/reply-button.svelte": "{{components/reply-button}}/reply-button.svelte",
+						"../reaction-button/reaction-button.svelte": "{{components/reaction-button}}/reaction-button.svelte",
+						"../repost-button/repost-button.svelte": "{{components/repost-button}}/repost-button.svelte",
+						"../zap-button/zap-button.svelte": "{{components/zap-button}}/zap-button.svelte",
+						"../reply-button-avatars/reply-button-avatars.svelte": "{{components/reply-button-avatars}}/reply-button-avatars.svelte",
+						"../reaction-button-avatars/reaction-button-avatars.svelte": "{{components/reaction-button-avatars}}/reaction-button-avatars.svelte",
+						"../repost-button-avatars/repost-button-avatars.svelte": "{{components/repost-button-avatars}}/repost-button-avatars.svelte",
+						"../zap-button-avatars/zap-button-avatars.svelte": "{{components/zap-button-avatars}}/zap-button-avatars.svelte",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/reply-action/index.js": "{{builders/reply-action}}/index.js",
+						"../../builders/repost-action/index.js": "{{builders/repost-action}}/index.js",
+						"../../builders/zap-action/index.js": "{{builders/zap-action}}/index.js"
+					}
+				},
+				{
+					"name": "event-card-classic",
+					"directory": "src/lib/registry/components/event-card-classic",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"event-card-classic.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"components/event-card",
+						"components/reply-button",
+						"components/reaction-button",
+						"components/repost-button",
+						"components/zap-button",
+						"utils/cn",
+						"builders/reply-action",
+						"builders/repost-action",
+						"builders/zap-action"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../event-card/index.js": "{{components/event-card}}/index.js",
+						"../reply-button/reply-button.svelte": "{{components/reply-button}}/reply-button.svelte",
+						"../reaction-button/reaction-button.svelte": "{{components/reaction-button}}/reaction-button.svelte",
+						"../repost-button/repost-button.svelte": "{{components/repost-button}}/repost-button.svelte",
+						"../zap-button/zap-button.svelte": "{{components/zap-button}}/zap-button.svelte",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/reply-action/index.js": "{{builders/reply-action}}/index.js",
+						"../../builders/repost-action/index.js": "{{builders/repost-action}}/index.js",
+						"../../builders/zap-action/index.js": "{{builders/zap-action}}/index.js"
+					}
+				},
+				{
+					"name": "event-card-generic",
+					"directory": "src/lib/registry/components/event-card-generic",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"generic-card.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"components/event-card",
+						"builders/app-handlers",
+						"ui/content-renderer"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../event-card": "{{components/event-card}}",
+						"../../builders/app-handlers": "{{builders/app-handlers}}",
+						"../../ui/content-renderer": "{{ui/content-renderer}}"
+					}
+				},
+				{
+					"name": "follow-button",
+					"directory": "src/lib/registry/components/follow-button",
 					"category": "components",
 					"tests": true,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"buttons/basic/follow-button.svelte",
-						"buttons/basic/follow-button.test.ts",
-						"buttons/basic/index.ts",
-						"buttons/basic/metadata.json",
-						"buttons/pill/follow-button-pill.svelte",
-						"buttons/pill/index.ts",
-						"buttons/pill/metadata.json"
+						"follow-button.svelte",
+						"follow-button.test.ts",
+						"index.ts",
+						"metadata.json"
 					],
 					"localDependencies": [
 						"builders/follow-action",
 						"utils/cn",
 						"icons/user-add",
-						"ui/user",
-						"icons/hashtag",
-						"icons/user-following"
+						"ui/user"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../builders/follow-action/index.svelte.js": "{{builders/follow-action}}/index.svelte.js",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../icons/user-add.svelte": "{{icons/user-add}}.svelte",
-						"../../../../ui/user/index.js": "{{ui/user}}/index.js",
-						"../../../../icons/hashtag.svelte": "{{icons/hashtag}}.svelte",
-						"../../../../icons/user-following.svelte": "{{icons/user-following}}.svelte"
+						"../../builders/follow-action/index.svelte.js": "{{builders/follow-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../icons/user-add/user-add.svelte": "{{icons/user-add}}/user-add.svelte",
+						"../../ui/user/index.js": "{{ui/user}}/index.js"
+					}
+				},
+				{
+					"name": "follow-button-pill",
+					"directory": "src/lib/registry/components/follow-button-pill",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"follow-button-pill.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"builders/follow-action",
+						"utils/cn",
+						"icons/hashtag",
+						"icons/user-add",
+						"icons/user-following",
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/follow-action/index.svelte.js": "{{builders/follow-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../icons/hashtag/hashtag.svelte": "{{icons/hashtag}}/hashtag.svelte",
+						"../../icons/user-add/user-add.svelte": "{{icons/user-add}}/user-add.svelte",
+						"../../icons/user-following/user-following.svelte": "{{icons/user-following}}/user-following.svelte",
+						"../../ui/user/index.js": "{{ui/user}}/index.js"
 					}
 				},
 				{
@@ -942,38 +1275,144 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"basic/follow-pack-list-item.svelte",
-						"basic/index.ts",
-						"basic/metadata.json",
-						"compact/follow-pack-compact.svelte",
-						"compact/index.ts",
-						"compact/metadata.json",
-						"hero/follow-pack-hero.svelte",
-						"hero/index.ts",
-						"hero/metadata.json",
-						"modern/follow-pack-modern-portrait.svelte",
-						"modern/index.ts",
-						"modern/metadata.json",
-						"portrait/follow-pack-portrait.svelte",
-						"portrait/index.ts",
-						"portrait/metadata.json"
+						"follow-pack-list-item.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/follow-pack",
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/follow-pack": "{{ui/follow-pack}}",
+						"../../ui/user": "{{ui/user}}"
+					}
+				},
+				{
+					"name": "follow-pack-compact",
+					"directory": "src/lib/registry/components/follow-pack-compact",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"follow-pack-compact.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/follow-pack",
+						"components/avatar-group",
+						"ui/user",
+						"utils/ndk-context.svelte"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/follow-pack": "{{ui/follow-pack}}",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
+					}
+				},
+				{
+					"name": "follow-pack-hero",
+					"directory": "src/lib/registry/components/follow-pack-hero",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"follow-pack-hero.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/follow-pack",
+						"components/avatar-group",
+						"ui/user",
+						"utils/ndk-context.svelte"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/follow-pack": "{{ui/follow-pack}}",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
+					}
+				},
+				{
+					"name": "follow-pack-modern",
+					"directory": "src/lib/registry/components/follow-pack-modern",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"follow-pack-modern-portrait.svelte",
+						"index.ts",
+						"metadata.json"
 					],
 					"localDependencies": [
 						"ui/follow-pack",
 						"ui/user",
-						"components/avatar-group",
 						"utils/ndk-context.svelte"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../ui/follow-pack": "{{ui/follow-pack}}",
-						"../../../ui/user": "{{ui/user}}",
-						"../../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
-						"../../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
+						"../../ui/follow-pack": "{{ui/follow-pack}}",
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
+					}
+				},
+				{
+					"name": "follow-pack-portrait",
+					"directory": "src/lib/registry/components/follow-pack-portrait",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"follow-pack-portrait.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/follow-pack",
+						"components/avatar-group",
+						"ui/user",
+						"utils/ndk-context.svelte"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/follow-pack": "{{ui/follow-pack}}",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
 					}
 				},
 				{
@@ -985,13 +1424,29 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/compact/hashtag-card-compact.svelte",
-						"cards/compact/index.ts",
-						"cards/portrait/hashtag-card-portrait.svelte",
-						"cards/portrait/index.ts",
-						"displays/modern/hashtag-modern.svelte",
-						"displays/modern/index.ts",
 						"hashtag.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/content-renderer"
+					],
+					"dependencies": [],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/content-renderer": "{{ui/content-renderer}}"
+					}
+				},
+				{
+					"name": "hashtag-card-compact",
+					"directory": "src/lib/registry/components/hashtag-card-compact",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"hashtag-card-compact.svelte",
 						"index.ts",
 						"metadata.json"
 					],
@@ -1000,115 +1455,272 @@
 						"builders/hashtag",
 						"utils/hashtag",
 						"components/avatar-group",
-						"components/follow",
+						"components/follow-button"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/hashtag/stats.svelte.js": "{{builders/hashtag}}/stats.svelte.js",
+						"../../utils/hashtag.js": "{{utils/hashtag}}.js",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../follow-button/follow-button.svelte": "{{components/follow-button}}/follow-button.svelte"
+					}
+				},
+				{
+					"name": "hashtag-card-portrait",
+					"directory": "src/lib/registry/components/hashtag-card-portrait",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"hashtag-card-portrait.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"builders/hashtag",
+						"utils/hashtag",
+						"components/avatar-group",
 						"ui/user",
+						"components/follow-button-pill"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/hashtag/stats.svelte.js": "{{builders/hashtag}}/stats.svelte.js",
+						"../../utils/hashtag.js": "{{utils/hashtag}}.js",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../ui/user/index.js": "{{ui/user}}/index.js",
+						"../follow-button-pill/follow-button-pill.svelte": "{{components/follow-button-pill}}/follow-button-pill.svelte"
+					}
+				},
+				{
+					"name": "hashtag-modern",
+					"directory": "src/lib/registry/components/hashtag-modern",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"hashtag-modern.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"utils/hashtag",
+						"components/hashtag-card-compact",
 						"ui/content-renderer"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
 						"bits-ui@^2.14.2"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../builders/hashtag/stats.svelte.js": "{{builders/hashtag}}/stats.svelte.js",
-						"../../../../utils/hashtag.js": "{{utils/hashtag}}.js",
-						"../../../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
-						"../../../follow/buttons/basic/follow-button.svelte": "{{components/follow}}/buttons/basic/follow-button.svelte",
-						"../../../../ui/user/index.js": "{{ui/user}}/index.js",
-						"../../../follow/buttons/pill/follow-button-pill.svelte": "{{components/follow}}/buttons/pill/follow-button-pill.svelte",
-						"../../../../ui/content-renderer": "{{ui/content-renderer}}",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../utils/hashtag.js": "{{utils/hashtag}}.js",
+						"../hashtag-card-compact/hashtag-card-compact.svelte": "{{components/hashtag-card-compact}}/hashtag-card-compact.svelte",
 						"../../ui/content-renderer": "{{ui/content-renderer}}"
 					}
 				},
 				{
-					"name": "highlight",
-					"directory": "src/lib/registry/components/highlight",
+					"name": "highlight-card",
+					"directory": "src/lib/registry/components/highlight-card",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/basic/highlight-card-elegant.svelte",
-						"cards/basic/highlight-card-feed.svelte",
-						"cards/basic/highlight-card-grid.svelte",
-						"cards/basic/index.ts",
-						"cards/basic/metadata.json",
-						"cards/compact/highlight-card-compact.svelte",
-						"cards/compact/index.ts",
-						"cards/compact/metadata.json",
-						"cards/inline/highlight-card-inline.svelte",
-						"cards/inline/index.ts",
-						"cards/inline/metadata.json"
+						"highlight-card-elegant.svelte",
+						"highlight-card-feed.svelte",
+						"highlight-card-grid.svelte",
+						"index.ts",
+						"metadata.json"
 					],
 					"localDependencies": [
 						"utils/cn",
 						"ui/highlight",
-						"components/event",
-						"ui/user",
-						"utils/time-ago",
-						"ui/content-renderer"
+						"components/event-card",
+						"ui/user"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../ui/highlight/index.js": "{{ui/highlight}}/index.js",
-						"../../../../ui/highlight/highlight.context.js": "{{ui/highlight}}/highlight.context.js",
-						"../../../event/cards/compound/index.js": "{{components/event}}/cards/compound/index.js",
-						"../../../../ui/user": "{{ui/user}}",
-						"../../../../utils/time-ago": "{{utils/time-ago}}",
-						"../../../../ui/content-renderer": "{{ui/content-renderer}}"
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/highlight/index.js": "{{ui/highlight}}/index.js",
+						"../../ui/highlight/highlight.context.js": "{{ui/highlight}}/highlight.context.js",
+						"../event-card/index.js": "{{components/event-card}}/index.js",
+						"../../ui/user": "{{ui/user}}"
 					}
 				},
 				{
-					"name": "image",
-					"directory": "src/lib/registry/components/image",
+					"name": "highlight-card-compact",
+					"directory": "src/lib/registry/components/highlight-card-compact",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/basic/image-card-instagram.svelte",
-						"cards/basic/image-card.svelte",
-						"cards/basic/index.ts",
-						"cards/basic/metadata.json",
-						"cards/hero/image-card-hero.svelte",
-						"cards/hero/index.ts",
-						"cards/hero/metadata.json",
-						"content/basic/image-content.svelte",
-						"content/basic/index.ts",
-						"content/basic/metadata.json"
+						"highlight-card-compact.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"ui/highlight",
+						"ui/user",
+						"utils/time-ago"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/highlight/index.js": "{{ui/highlight}}/index.js",
+						"../../ui/user": "{{ui/user}}",
+						"../../ui/highlight/highlight.context.js": "{{ui/highlight}}/highlight.context.js",
+						"../../utils/time-ago": "{{utils/time-ago}}"
+					}
+				},
+				{
+					"name": "highlight-card-inline",
+					"directory": "src/lib/registry/components/highlight-card-inline",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"highlight-card-inline.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/highlight",
+						"ui/content-renderer"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/highlight/index.js": "{{ui/highlight}}/index.js",
+						"../../ui/content-renderer": "{{ui/content-renderer}}"
+					}
+				},
+				{
+					"name": "image-card",
+					"directory": "src/lib/registry/components/image-card",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"image-card-instagram.svelte",
+						"image-card.svelte",
+						"index.ts",
+						"metadata.json"
 					],
 					"localDependencies": [
 						"ui/user",
 						"utils/ndk-context.svelte",
-						"components/repost",
-						"components/reaction",
+						"components/repost-button",
+						"components/reaction-button",
 						"utils/cn",
-						"components/event",
-						"components/follow"
+						"components/event-card",
+						"components/image-content"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
+						"../repost-button/repost-button.svelte": "{{components/repost-button}}/repost-button.svelte",
+						"../reaction-button/reaction-button.svelte": "{{components/reaction-button}}/reaction-button.svelte",
+						"../../utils/cn": "{{utils/cn}}",
+						"../event-card/index.js": "{{components/event-card}}/index.js",
+						"../image-content/index.js": "{{components/image-content}}/index.js"
+					}
+				},
+				{
+					"name": "image-card-hero",
+					"directory": "src/lib/registry/components/image-card-hero",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"image-card-hero.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/user",
+						"components/follow-button",
+						"utils/ndk-context.svelte",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/user": "{{ui/user}}",
+						"../follow-button/follow-button.svelte": "{{components/follow-button}}/follow-button.svelte",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "image-content",
+					"directory": "src/lib/registry/components/image-content",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"image-content.svelte",
+						"index.ts",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"utils/ndk-context.svelte"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
 						"@hugeicons/core-free-icons@^1.2.1",
 						"@hugeicons/svelte@^1.0.2"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/user": "{{ui/user}}",
-						"../../../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
-						"../../../repost/buttons/basic/repost-button.svelte": "{{components/repost}}/buttons/basic/repost-button.svelte",
-						"../../../reaction/buttons/basic/reaction-button.svelte": "{{components/reaction}}/buttons/basic/reaction-button.svelte",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../event/cards/compound/index.js": "{{components/event}}/cards/compound/index.js",
-						"../../../follow/buttons/basic/follow-button.svelte": "{{components/follow}}/buttons/basic/follow-button.svelte"
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
 					}
 				},
 				{
@@ -1140,31 +1752,143 @@
 					}
 				},
 				{
-					"name": "media",
-					"directory": "src/lib/registry/components/media",
+					"name": "media-render",
+					"directory": "src/lib/registry/components/media-render",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"upload/button/index.ts",
-						"upload/button/metadata.json",
-						"upload/button/upload-button.svelte",
-						"upload/carousel/index.ts",
-						"upload/carousel/media-upload-carousel.svelte",
-						"upload/carousel/metadata.json"
+						"index.ts",
+						"layouts/media-bento.svelte",
+						"layouts/media-carousel.svelte",
+						"layouts/media-simple.svelte",
+						"media-render.svelte",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/content-renderer"
+					],
+					"dependencies": [
+						"svelte-motion@^0.12.2",
+						"@hugeicons/core-free-icons@^1.2.1",
+						"@hugeicons/svelte@^1.0.2",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/content-renderer": "{{ui/content-renderer}}",
+						"$lib/registry/ui/content-renderer": "{{ui/content-renderer}}"
+					}
+				},
+				{
+					"name": "media-render-bento-grid",
+					"directory": "src/lib/registry/components/media-render-bento-grid",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"media-render-bento-grid.svelte",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/content-renderer",
+						"components/media-render"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@hugeicons/svelte@^1.0.2",
+						"@hugeicons/core-free-icons@^1.2.1"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"$lib/registry/ui/content-renderer": "{{ui/content-renderer}}",
+						"../media-render/layouts/media-bento.svelte": "{{components/media-render}}/layouts/media-bento.svelte"
+					}
+				},
+				{
+					"name": "media-render-carousel",
+					"directory": "src/lib/registry/components/media-render-carousel",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"media-render-carousel.svelte",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/content-renderer",
+						"components/media-render"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@hugeicons/svelte@^1.0.2",
+						"@hugeicons/core-free-icons@^1.2.1"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"$lib/registry/ui/content-renderer": "{{ui/content-renderer}}",
+						"../media-render/layouts/media-carousel.svelte": "{{components/media-render}}/layouts/media-carousel.svelte"
+					}
+				},
+				{
+					"name": "media-upload-button",
+					"directory": "src/lib/registry/components/media-upload-button",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"upload-button.svelte"
 					],
 					"localDependencies": [
 						"ui/media-upload"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/media-upload/createMediaUpload.svelte": "{{ui/media-upload}}/createMediaUpload.svelte",
-						"../../../../ui/media-upload/index.js": "{{ui/media-upload}}/index.js"
+						"../../ui/media-upload/createMediaUpload.svelte": "{{ui/media-upload}}/createMediaUpload.svelte",
+						"../../ui/media-upload/index.js": "{{ui/media-upload}}/index.js"
+					}
+				},
+				{
+					"name": "media-upload-carousel",
+					"directory": "src/lib/registry/components/media-upload-carousel",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"media-upload-carousel.svelte",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/media-upload"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/media-upload/createMediaUpload.svelte": "{{ui/media-upload}}/createMediaUpload.svelte",
+						"../../ui/media-upload/index.js": "{{ui/media-upload}}/index.js"
 					}
 				},
 				{
@@ -1176,45 +1900,67 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"displays/modern/index.ts",
-						"displays/modern/mention-modern.svelte",
 						"index.ts",
 						"mention.svelte",
 						"metadata.json"
 					],
 					"localDependencies": [
 						"ui/content-renderer",
-						"ui/user",
-						"components/user",
-						"utils/cn"
+						"ui/user"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"bits-ui@^2.14.2",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/content-renderer": "{{ui/content-renderer}}",
-						"../../../../ui/user": "{{ui/user}}",
-						"../../../user/cards/classic/user-card-classic.svelte": "{{components/user}}/cards/classic/user-card-classic.svelte",
-						"../../../../utils/cn": "{{utils/cn}}",
 						"../../ui/content-renderer": "{{ui/content-renderer}}",
 						"../../ui/user": "{{ui/user}}"
 					}
 				},
 				{
-					"name": "mute",
-					"directory": "src/lib/registry/components/mute",
+					"name": "mention-modern",
+					"directory": "src/lib/registry/components/mention-modern",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"buttons/basic/index.ts",
-						"buttons/basic/metadata.json",
-						"buttons/basic/mute-button.svelte"
+						"index.ts",
+						"mention-modern.svelte",
+						"metadata.json"
+					],
+					"localDependencies": [
+						"ui/content-renderer",
+						"ui/user",
+						"components/user-card-classic",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"bits-ui@^2.14.2"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/content-renderer": "{{ui/content-renderer}}",
+						"../../ui/user": "{{ui/user}}",
+						"../user-card-classic/user-card-classic.svelte": "{{components/user-card-classic}}/user-card-classic.svelte",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "mute-button",
+					"directory": "src/lib/registry/components/mute-button",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"mute-button.svelte"
 					],
 					"localDependencies": [
 						"builders/mute-action",
@@ -1222,31 +1968,28 @@
 						"ui/user"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../builders/mute-action/index.svelte.js": "{{builders/mute-action}}/index.svelte.js",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../ui/user/index.js": "{{ui/user}}/index.js"
+						"../../builders/mute-action/index.svelte.js": "{{builders/mute-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user/index.js": "{{ui/user}}/index.js"
 					}
 				},
 				{
-					"name": "negentropy-sync",
-					"directory": "src/lib/registry/components/negentropy-sync",
+					"name": "negentropy-sync-animated",
+					"directory": "src/lib/registry/components/negentropy-sync-animated",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"progress/animated/metadata.json",
-						"progress/animated/negentropy-sync-progress-animated.svelte",
-						"progress/detailed/metadata.json",
-						"progress/detailed/negentropy-sync-progress-detailed.svelte",
-						"progress/minimal/metadata.json",
-						"progress/minimal/negentropy-sync-progress-minimal.svelte"
+						"index.ts",
+						"metadata.json",
+						"negentropy-sync-progress-animated.svelte"
 					],
 					"localDependencies": [
 						"ui/negentropy-sync",
@@ -1255,42 +1998,138 @@
 					"dependencies": [],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/negentropy-sync": "{{ui/negentropy-sync}}",
-						"../../../../builders/negentropy-sync/index.js": "{{builders/negentropy-sync}}/index.js",
-						"../../../../ui/negentropy-sync/negentropy-sync.context.js": "{{ui/negentropy-sync}}/negentropy-sync.context.js"
+						"../../ui/negentropy-sync": "{{ui/negentropy-sync}}",
+						"../../builders/negentropy-sync/index.js": "{{builders/negentropy-sync}}/index.js",
+						"../../ui/negentropy-sync/negentropy-sync.context.js": "{{ui/negentropy-sync}}/negentropy-sync.context.js"
 					}
 				},
 				{
-					"name": "note",
-					"directory": "src/lib/registry/components/note",
+					"name": "negentropy-sync-detailed",
+					"directory": "src/lib/registry/components/negentropy-sync-detailed",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/basic/index.ts",
-						"cards/basic/metadata.json",
-						"cards/basic/note-card.svelte",
-						"cards/compact/index.ts",
-						"cards/compact/metadata.json",
-						"cards/compact/note-card-compact.svelte",
-						"cards/inline/index.ts",
-						"cards/inline/metadata.json",
-						"cards/inline/note-card-inline.svelte"
+						"index.ts",
+						"metadata.json",
+						"negentropy-sync-progress-detailed.svelte"
+					],
+					"localDependencies": [
+						"ui/negentropy-sync",
+						"builders/negentropy-sync"
+					],
+					"dependencies": [],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/negentropy-sync": "{{ui/negentropy-sync}}",
+						"../../builders/negentropy-sync/index.js": "{{builders/negentropy-sync}}/index.js"
+					}
+				},
+				{
+					"name": "negentropy-sync-minimal",
+					"directory": "src/lib/registry/components/negentropy-sync-minimal",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"negentropy-sync-progress-minimal.svelte"
+					],
+					"localDependencies": [
+						"ui/negentropy-sync",
+						"builders/negentropy-sync"
+					],
+					"dependencies": [],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/negentropy-sync": "{{ui/negentropy-sync}}",
+						"../../builders/negentropy-sync/index.js": "{{builders/negentropy-sync}}/index.js"
+					}
+				},
+				{
+					"name": "note-card",
+					"directory": "src/lib/registry/components/note-card",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"note-card.svelte"
 					],
 					"localDependencies": [
 						"ui/content-renderer",
-						"components/event"
+						"components/event-card"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/content-renderer": "{{ui/content-renderer}}",
-						"../../../event/cards/compound": "{{components/event}}/cards/compound"
+						"../../ui/content-renderer": "{{ui/content-renderer}}",
+						"../event-card": "{{components/event-card}}"
+					}
+				},
+				{
+					"name": "note-card-compact",
+					"directory": "src/lib/registry/components/note-card-compact",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"note-card-compact.svelte"
+					],
+					"localDependencies": [
+						"ui/content-renderer",
+						"components/event-card"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/content-renderer": "{{ui/content-renderer}}",
+						"../event-card": "{{components/event-card}}"
+					}
+				},
+				{
+					"name": "note-card-inline",
+					"directory": "src/lib/registry/components/note-card-inline",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"note-card-inline.svelte"
+					],
+					"localDependencies": [
+						"ui/content-renderer",
+						"components/event-card"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/content-renderer": "{{ui/content-renderer}}",
+						"../event-card": "{{components/event-card}}"
 					}
 				},
 				{
@@ -1302,19 +2141,19 @@
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"composers/compound/createNoteComposer.svelte.ts",
-						"composers/compound/index.ts",
-						"composers/compound/metadata.json",
-						"composers/compound/note-composer-card.svelte",
-						"composers/compound/note-composer-inline.svelte",
-						"composers/compound/note-composer-media.svelte",
-						"composers/compound/note-composer-mention-input.svelte",
-						"composers/compound/note-composer-minimal.svelte",
-						"composers/compound/note-composer-modal.svelte",
-						"composers/compound/note-composer-root.svelte",
-						"composers/compound/note-composer-submit.svelte",
-						"composers/compound/note-composer-textarea.svelte",
-						"composers/compound/note-composer.context.ts"
+						"createNoteComposer.svelte.ts",
+						"index.ts",
+						"metadata.json",
+						"note-composer-card.svelte",
+						"note-composer-inline.svelte",
+						"note-composer-media.svelte",
+						"note-composer-mention-input.svelte",
+						"note-composer-minimal.svelte",
+						"note-composer-modal.svelte",
+						"note-composer-root.svelte",
+						"note-composer-submit.svelte",
+						"note-composer-textarea.svelte",
+						"note-composer.context.ts"
 					],
 					"localDependencies": [
 						"ui/media-upload",
@@ -1326,37 +2165,34 @@
 						"icons/loading"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
 						"bits-ui@^2.14.2"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/media-upload/createMediaUpload.svelte": "{{ui/media-upload}}/createMediaUpload.svelte",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../ui/media-upload": "{{ui/media-upload}}",
-						"../../../../icons/image-add.svelte": "{{icons/image-add}}.svelte",
-						"../../../../ui/user-input/index.js": "{{ui/user-input}}/index.js",
-						"../../../../ui/user/index.js": "{{ui/user}}/index.js",
-						"../../../../icons/cancel.svelte": "{{icons/cancel}}.svelte",
-						"../../../../icons/loading.svelte": "{{icons/loading}}.svelte"
+						"../../ui/media-upload/createMediaUpload.svelte": "{{ui/media-upload}}/createMediaUpload.svelte",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/media-upload": "{{ui/media-upload}}",
+						"../../icons/image-add/image-add.svelte": "{{icons/image-add}}/image-add.svelte",
+						"../../ui/user-input/index.js": "{{ui/user-input}}/index.js",
+						"../../ui/user/index.js": "{{ui/user}}/index.js",
+						"../../icons/cancel/cancel.svelte": "{{icons/cancel}}/cancel.svelte",
+						"../../icons/loading/loading.svelte": "{{icons/loading}}/loading.svelte"
 					}
 				},
 				{
-					"name": "notification",
-					"directory": "src/lib/registry/components/notification",
+					"name": "notification-compact",
+					"directory": "src/lib/registry/components/notification-compact",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"items/compact/index.ts",
-						"items/compact/metadata.json",
-						"items/compact/notification-item-compact.svelte",
-						"items/expanded/index.ts",
-						"items/expanded/metadata.json",
-						"items/expanded/notification-item-expanded.svelte"
+						"index.ts",
+						"metadata.json",
+						"notification-item-compact.svelte"
 					],
 					"localDependencies": [
 						"builders/notification",
@@ -1364,77 +2200,150 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../builders/notification/index.svelte.js": "{{builders/notification}}/index.svelte.js",
-						"../../../../ui/notification": "{{ui/notification}}",
-						"../../../../utils/cn": "{{utils/cn}}"
+						"../../builders/notification/index.svelte.js": "{{builders/notification}}/index.svelte.js",
+						"../../ui/notification": "{{ui/notification}}",
+						"../../utils/cn": "{{utils/cn}}"
 					}
 				},
 				{
-					"name": "reaction",
-					"directory": "src/lib/registry/components/reaction",
-					"category": "components",
-					"tests": true,
-					"docs": false,
-					"subdirectory": true,
-					"list": true,
-					"files": [
-						"buttons/avatars/metadata.json",
-						"buttons/avatars/reaction-button-avatars.svelte",
-						"buttons/avatars/reaction-button-avatars.test.ts",
-						"buttons/basic/metadata.json",
-						"buttons/basic/reaction-button.svelte",
-						"buttons/basic/reaction-button.test.ts",
-						"buttons/slack/metadata.json",
-						"buttons/slack/reaction-button-slack.svelte",
-						"buttons/slack/reaction-button-slack.test.ts"
-					],
-					"localDependencies": [
-						"builders/reaction-action",
-						"utils/cn",
-						"components/avatar-group",
-						"ui/reaction"
-					],
-					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"bits-ui@^2.14.2"
-					],
-					"devDependencies": [],
-					"_imports_": {
-						"../../../../builders/reaction-action/index.svelte.js": "{{builders/reaction-action}}/index.svelte.js",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
-						"../../../../ui/reaction": "{{ui/reaction}}",
-						"../../../../utils/cn.js": "{{utils/cn}}.js"
-					}
-				},
-				{
-					"name": "relay",
-					"directory": "src/lib/registry/components/relay",
+					"name": "notification-expanded",
+					"directory": "src/lib/registry/components/notification-expanded",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cards/basic/index.ts",
-						"cards/basic/metadata.json",
-						"cards/basic/relay-card-list.svelte",
-						"cards/basic/relay-card.svelte",
-						"cards/compact/index.ts",
-						"cards/compact/metadata.json",
-						"cards/compact/relay-card-compact.svelte",
-						"cards/portrait/index.ts",
-						"cards/portrait/metadata.json",
-						"cards/portrait/relay-card-portrait.svelte",
-						"inputs/basic/index.ts",
-						"inputs/basic/metadata.json",
-						"inputs/basic/relay-input.svelte",
-						"status/connection/metadata.json"
+						"index.ts",
+						"metadata.json",
+						"notification-item-expanded.svelte"
+					],
+					"localDependencies": [
+						"builders/notification",
+						"ui/notification",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/notification/index.svelte.js": "{{builders/notification}}/index.svelte.js",
+						"../../ui/notification": "{{ui/notification}}",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "reaction-button",
+					"directory": "src/lib/registry/components/reaction-button",
+					"category": "components",
+					"tests": true,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"__screenshots__/reaction-button.test.ts",
+						"index.ts",
+						"metadata.json",
+						"reaction-button.svelte",
+						"reaction-button.test.ts"
+					],
+					"localDependencies": [
+						"builders/reaction-action",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/reaction-action/index.svelte.js": "{{builders/reaction-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "reaction-button-avatars",
+					"directory": "src/lib/registry/components/reaction-button-avatars",
+					"category": "components",
+					"tests": true,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"__screenshots__/reaction-button-avatars.test.ts",
+						"index.ts",
+						"metadata.json",
+						"reaction-button-avatars.svelte",
+						"reaction-button-avatars.test.ts"
+					],
+					"localDependencies": [
+						"builders/reaction-action",
+						"utils/cn",
+						"components/avatar-group"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/reaction-action/index.svelte.js": "{{builders/reaction-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte"
+					}
+				},
+				{
+					"name": "reaction-button-slack",
+					"directory": "src/lib/registry/components/reaction-button-slack",
+					"category": "components",
+					"tests": true,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"__screenshots__/reaction-button-slack.test.ts",
+						"index.ts",
+						"metadata.json",
+						"reaction-button-slack.svelte",
+						"reaction-button-slack.test.ts"
+					],
+					"localDependencies": [
+						"builders/reaction-action",
+						"components/avatar-group",
+						"ui/reaction",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"bits-ui@^2.14.2"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/reaction-action/index.svelte.js": "{{builders/reaction-action}}/index.svelte.js",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../ui/reaction": "{{ui/reaction}}",
+						"../../utils/cn.js": "{{utils/cn}}.js"
+					}
+				},
+				{
+					"name": "relay-card",
+					"directory": "src/lib/registry/components/relay-card",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"relay-card-list.svelte",
+						"relay-card.svelte"
 					],
 					"localDependencies": [
 						"builders/relay",
@@ -1442,39 +2351,155 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../builders/relay/bookmarks.svelte.js": "{{builders/relay}}/bookmarks.svelte.js",
-						"../../../../ui/relay/relay-root.svelte": "{{ui/relay}}/relay-root.svelte",
-						"../../../../ui/relay/relay-icon.svelte": "{{ui/relay}}/relay-icon.svelte",
-						"../../../../ui/relay/relay-name.svelte": "{{ui/relay}}/relay-name.svelte",
-						"../../../../ui/relay/relay-url.svelte": "{{ui/relay}}/relay-url.svelte",
-						"../../../../ui/relay/relay-description.svelte": "{{ui/relay}}/relay-description.svelte",
-						"../../../../ui/relay/relay-bookmark-button.svelte": "{{ui/relay}}/relay-bookmark-button.svelte",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../builders/relay/bookmarks.svelte": "{{builders/relay}}/bookmarks.svelte",
-						"../../../../ui/relay": "{{ui/relay}}",
-						"../../../../ui/relay/relay.context.js": "{{ui/relay}}/relay.context.js",
-						"../../../../ui/relay/index.js": "{{ui/relay}}/index.js"
+						"../../builders/relay/bookmarks.svelte.js": "{{builders/relay}}/bookmarks.svelte.js",
+						"../../ui/relay/relay-root.svelte": "{{ui/relay}}/relay-root.svelte",
+						"../../ui/relay/relay-icon.svelte": "{{ui/relay}}/relay-icon.svelte",
+						"../../ui/relay/relay-name.svelte": "{{ui/relay}}/relay-name.svelte",
+						"../../ui/relay/relay-url.svelte": "{{ui/relay}}/relay-url.svelte",
+						"../../ui/relay/relay-description.svelte": "{{ui/relay}}/relay-description.svelte",
+						"../../ui/relay/relay-bookmark-button.svelte": "{{ui/relay}}/relay-bookmark-button.svelte",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/relay/bookmarks.svelte": "{{builders/relay}}/bookmarks.svelte",
+						"../../ui/relay": "{{ui/relay}}"
 					}
 				},
 				{
-					"name": "reply",
-					"directory": "src/lib/registry/components/reply",
+					"name": "relay-card-compact",
+					"directory": "src/lib/registry/components/relay-card-compact",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"buttons/avatars/index.ts",
-						"buttons/avatars/metadata.json",
-						"buttons/avatars/reply-button-avatars.svelte",
-						"buttons/basic/index.ts",
-						"buttons/basic/metadata.json",
-						"buttons/basic/reply-button.svelte"
+						"index.ts",
+						"metadata.json",
+						"relay-card-compact.svelte"
+					],
+					"localDependencies": [
+						"builders/relay",
+						"ui/relay",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/relay/bookmarks.svelte.js": "{{builders/relay}}/bookmarks.svelte.js",
+						"../../ui/relay/relay-root.svelte": "{{ui/relay}}/relay-root.svelte",
+						"../../ui/relay/relay-icon.svelte": "{{ui/relay}}/relay-icon.svelte",
+						"../../ui/relay/relay-name.svelte": "{{ui/relay}}/relay-name.svelte",
+						"../../ui/relay/relay-bookmark-button.svelte": "{{ui/relay}}/relay-bookmark-button.svelte",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "relay-card-portrait",
+					"directory": "src/lib/registry/components/relay-card-portrait",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"relay-card-portrait.svelte"
+					],
+					"localDependencies": [
+						"builders/relay",
+						"ui/relay",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/relay/bookmarks.svelte.js": "{{builders/relay}}/bookmarks.svelte.js",
+						"../../ui/relay/relay.context.js": "{{ui/relay}}/relay.context.js",
+						"../../ui/relay/relay-root.svelte": "{{ui/relay}}/relay-root.svelte",
+						"../../ui/relay/relay-icon.svelte": "{{ui/relay}}/relay-icon.svelte",
+						"../../ui/relay/relay-name.svelte": "{{ui/relay}}/relay-name.svelte",
+						"../../ui/relay/relay-url.svelte": "{{ui/relay}}/relay-url.svelte",
+						"../../ui/relay/relay-description.svelte": "{{ui/relay}}/relay-description.svelte",
+						"../../ui/relay/relay-bookmark-button.svelte": "{{ui/relay}}/relay-bookmark-button.svelte",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "relay-input",
+					"directory": "src/lib/registry/components/relay-input",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"relay-input.svelte"
+					],
+					"localDependencies": [
+						"ui/relay",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/relay/index.js": "{{ui/relay}}/index.js",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "reply-button",
+					"directory": "src/lib/registry/components/reply-button",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"reply-button.svelte"
+					],
+					"localDependencies": [
+						"builders/reply-action",
+						"utils/cn",
+						"icons/reply"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/reply-action/index.svelte.js": "{{builders/reply-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../icons/reply/reply.svelte": "{{icons/reply}}/reply.svelte"
+					}
+				},
+				{
+					"name": "reply-button-avatars",
+					"directory": "src/lib/registry/components/reply-button-avatars",
+					"category": "components",
+					"tests": true,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"reply-button-avatars.svelte",
+						"reply-button-avatars.test.ts"
 					],
 					"localDependencies": [
 						"builders/reply-action",
@@ -1483,32 +2508,60 @@
 						"icons/reply"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../builders/reply-action/index.svelte.js": "{{builders/reply-action}}/index.svelte.js",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
-						"../../../../icons/reply.svelte": "{{icons/reply}}.svelte"
+						"../../builders/reply-action/index.svelte.js": "{{builders/reply-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../icons/reply/reply.svelte": "{{icons/reply}}/reply.svelte"
 					}
 				},
 				{
-					"name": "repost",
-					"directory": "src/lib/registry/components/repost",
+					"name": "repost-button",
+					"directory": "src/lib/registry/components/repost-button",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"buttons/avatars/index.ts",
-						"buttons/avatars/metadata.json",
-						"buttons/avatars/repost-button-avatars.svelte",
-						"buttons/basic/index.ts",
-						"buttons/basic/metadata.json",
-						"buttons/basic/repost-button.svelte"
+						"index.ts",
+						"metadata.json",
+						"repost-button.svelte"
+					],
+					"localDependencies": [
+						"builders/repost-action",
+						"utils/cn",
+						"icons/repost"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"bits-ui@^2.14.2"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/repost-action/index.svelte.js": "{{builders/repost-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../icons/repost/repost.svelte": "{{icons/repost}}/repost.svelte"
+					}
+				},
+				{
+					"name": "repost-button-avatars",
+					"directory": "src/lib/registry/components/repost-button-avatars",
+					"category": "components",
+					"tests": true,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"repost-button-avatars.svelte",
+						"repost-button-avatars.test.ts"
 					],
 					"localDependencies": [
 						"builders/repost-action",
@@ -1517,171 +2570,494 @@
 						"icons/repost"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"bits-ui@^2.14.2"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../builders/repost-action/index.svelte.js": "{{builders/repost-action}}/index.svelte.js",
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
-						"../../../../icons/repost.svelte": "{{icons/repost}}.svelte"
+						"../../builders/repost-action/index.svelte.js": "{{builders/repost-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../icons/repost/repost.svelte": "{{icons/repost}}/repost.svelte"
 					}
 				},
 				{
-					"name": "session",
-					"directory": "src/lib/registry/components/session",
+					"name": "session-switcher",
+					"directory": "src/lib/registry/components/session-switcher",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"switchers/compound/index.ts",
-						"switchers/compound/metadata.json",
-						"switchers/compound/session-switcher-action.svelte",
-						"switchers/compound/session-switcher-content.svelte",
-						"switchers/compound/session-switcher-item.svelte",
-						"switchers/compound/session-switcher-root.svelte",
-						"switchers/compound/session-switcher-section.svelte",
-						"switchers/compound/session-switcher-separator.svelte",
-						"switchers/compound/session-switcher-trigger.svelte",
-						"switchers/compound/session-switcher.context.ts"
+						"index.ts",
+						"metadata.json",
+						"session-switcher-action.svelte",
+						"session-switcher-content.svelte",
+						"session-switcher-item.svelte",
+						"session-switcher-root.svelte",
+						"session-switcher-section.svelte",
+						"session-switcher-separator.svelte",
+						"session-switcher-trigger.svelte",
+						"session-switcher.context.ts"
 					],
 					"localDependencies": [
 						"ui/user"
 					],
 					"dependencies": [
 						"bits-ui@^2.14.2",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../ui/user": "{{ui/user}}"
+						"../../ui/user": "{{ui/user}}"
 					}
 				},
 				{
-					"name": "user",
-					"directory": "src/lib/registry/components/user",
-					"category": "components",
-					"tests": false,
-					"docs": true,
-					"subdirectory": true,
-					"list": true,
-					"files": [
-						"cards/classic/index.ts",
-						"cards/classic/metadata.json",
-						"cards/classic/user-card-classic.svelte",
-						"cards/compact/index.ts",
-						"cards/compact/metadata.json",
-						"cards/compact/user-card-compact.svelte",
-						"cards/glass/index.ts",
-						"cards/glass/metadata.json",
-						"cards/glass/user-card-glass.svelte",
-						"cards/landscape/index.ts",
-						"cards/landscape/metadata.json",
-						"cards/landscape/user-card-landscape.svelte",
-						"cards/neon/index.ts",
-						"cards/neon/metadata.json",
-						"cards/neon/user-card-neon.svelte",
-						"cards/portrait/index.ts",
-						"cards/portrait/metadata.json",
-						"cards/portrait/user-card-portrait.svelte",
-						"displays/avatar-name/index.ts",
-						"displays/avatar-name/metadata.json",
-						"displays/avatar-name/user-avatar-name.svelte",
-						"displays/list-item/index.ts",
-						"displays/list-item/metadata.json",
-						"displays/list-item/user-list-item.svelte",
-						"displays/profile/index.ts",
-						"displays/profile/metadata.json",
-						"displays/profile/user-profile-examples.md",
-						"displays/profile/user-profile.svelte",
-						"displays/profile-hero/index.ts",
-						"displays/profile-hero/metadata.json",
-						"displays/profile-hero/user-profile-hero.svelte",
-						"inputs/search/index.ts",
-						"inputs/search/metadata.json",
-						"inputs/search/user-search-combobox.svelte"
-					],
-					"localDependencies": [
-						"utils/cn",
-						"ui/user",
-						"components/follow",
-						"builders/user",
-						"builders/follow-action",
-						"utils/ndk-context.svelte",
-						"builders/user-input"
-					],
-					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"bits-ui@^2.14.2"
-					],
-					"devDependencies": [],
-					"_imports_": {
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../ui/user": "{{ui/user}}",
-						"../../../follow/buttons/basic/follow-button.svelte": "{{components/follow}}/buttons/basic/follow-button.svelte",
-						"../../../../ui/user/user.context.js": "{{ui/user}}/user.context.js",
-						"../../../follow/buttons/pill/follow-button-pill.svelte": "{{components/follow}}/buttons/pill/follow-button-pill.svelte",
-						"../../../../ui/user/index.js": "{{ui/user}}/index.js",
-						"../../../../builders/user/stats.svelte.js": "{{builders/user}}/stats.svelte.js",
-						"../../../../builders/follow-action/index.svelte.js": "{{builders/follow-action}}/index.svelte.js",
-						"../../../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js",
-						"../../../../builders/user-input/index.svelte.js": "{{builders/user-input}}/index.svelte.js"
-					}
-				},
-				{
-					"name": "zap",
-					"directory": "src/lib/registry/components/zap",
+					"name": "user-avatar-name",
+					"directory": "src/lib/registry/components/user-avatar-name",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"buttons/avatars/index.ts",
-						"buttons/avatars/metadata.json",
-						"buttons/avatars/zap-button-avatars.svelte",
-						"buttons/basic/index.ts",
-						"buttons/basic/metadata.json",
-						"buttons/basic/zap-button.svelte",
-						"displays/list/index.ts",
-						"displays/list/metadata.json",
-						"displays/list/utils.ts",
-						"displays/list/zaps-root.svelte",
-						"displays/list/zaps.context.ts",
-						"send/basic/index.ts",
-						"send/basic/metadata.json",
-						"send/basic/zap-send-root.svelte",
-						"send/basic/zap-send-splits.svelte",
-						"send/basic/zap-send.context.ts",
-						"send/classic/index.ts",
-						"send/classic/metadata.json",
-						"send/classic/zap-send-classic.svelte"
+						"index.ts",
+						"metadata.json",
+						"user-avatar-name.svelte"
+					],
+					"localDependencies": [
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/user": "{{ui/user}}"
+					}
+				},
+				{
+					"name": "user-card-classic",
+					"directory": "src/lib/registry/components/user-card-classic",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-card-classic.svelte"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}"
+					}
+				},
+				{
+					"name": "user-card-compact",
+					"directory": "src/lib/registry/components/user-card-compact",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-card-compact.svelte"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"ui/user",
+						"components/follow-button"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}",
+						"../follow-button/follow-button.svelte": "{{components/follow-button}}/follow-button.svelte"
+					}
+				},
+				{
+					"name": "user-card-glass",
+					"directory": "src/lib/registry/components/user-card-glass",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-card-glass.svelte"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}",
+						"../../ui/user/user.context.js": "{{ui/user}}/user.context.js"
+					}
+				},
+				{
+					"name": "user-card-landscape",
+					"directory": "src/lib/registry/components/user-card-landscape",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-card-landscape.svelte"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"ui/user",
+						"components/follow-button-pill"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}",
+						"../follow-button-pill/follow-button-pill.svelte": "{{components/follow-button-pill}}/follow-button-pill.svelte"
+					}
+				},
+				{
+					"name": "user-card-neon",
+					"directory": "src/lib/registry/components/user-card-neon",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-card-neon.svelte"
+					],
+					"localDependencies": [
+						"ui/user",
+						"utils/cn",
+						"components/follow-button",
+						"builders/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/user/index.js": "{{ui/user}}/index.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user/user.context.js": "{{ui/user}}/user.context.js",
+						"../follow-button/follow-button.svelte": "{{components/follow-button}}/follow-button.svelte",
+						"../../builders/user/stats.svelte.js": "{{builders/user}}/stats.svelte.js"
+					}
+				},
+				{
+					"name": "user-card-portrait",
+					"directory": "src/lib/registry/components/user-card-portrait",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-card-portrait.svelte"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"ui/user",
+						"components/follow-button-pill",
+						"builders/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}",
+						"../follow-button-pill/follow-button-pill.svelte": "{{components/follow-button-pill}}/follow-button-pill.svelte",
+						"../../builders/user/stats.svelte.js": "{{builders/user}}/stats.svelte.js"
+					}
+				},
+				{
+					"name": "user-list-item",
+					"directory": "src/lib/registry/components/user-list-item",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-list-item.svelte"
+					],
+					"localDependencies": [
+						"builders/follow-action",
+						"utils/cn",
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/follow-action/index.svelte.js": "{{builders/follow-action}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}"
+					}
+				},
+				{
+					"name": "user-profile",
+					"directory": "src/lib/registry/components/user-profile",
+					"category": "components",
+					"tests": false,
+					"docs": true,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-profile-examples.md",
+						"user-profile.svelte"
+					],
+					"localDependencies": [
+						"ui/user",
+						"utils/cn"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/user": "{{ui/user}}",
+						"../../utils/cn": "{{utils/cn}}"
+					}
+				},
+				{
+					"name": "user-profile-hero",
+					"directory": "src/lib/registry/components/user-profile-hero",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-profile-hero.svelte"
+					],
+					"localDependencies": [
+						"ui/user",
+						"components/follow-button-pill",
+						"utils/ndk-context.svelte"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../ui/user": "{{ui/user}}",
+						"../follow-button-pill/follow-button-pill.svelte": "{{components/follow-button-pill}}/follow-button-pill.svelte",
+						"../../utils/ndk-context.svelte.js": "{{utils/ndk-context.svelte}}.js"
+					}
+				},
+				{
+					"name": "user-search",
+					"directory": "src/lib/registry/components/user-search",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"user-search-combobox.svelte"
+					],
+					"localDependencies": [
+						"builders/user-input",
+						"utils/cn",
+						"ui/user"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"bits-ui@^2.14.2"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/user-input/index.svelte.js": "{{builders/user-input}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}"
+					}
+				},
+				{
+					"name": "zap-button",
+					"directory": "src/lib/registry/components/zap-button",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"zap-button.svelte"
+					],
+					"localDependencies": [
+						"utils/cn",
+						"builders/zap-action",
+						"icons/zap"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/zap-action/zap-action.svelte.js": "{{builders/zap-action}}/zap-action.svelte.js",
+						"../../icons/zap/zap.svelte": "{{icons/zap}}/zap.svelte"
+					}
+				},
+				{
+					"name": "zap-button-avatars",
+					"directory": "src/lib/registry/components/zap-button-avatars",
+					"category": "components",
+					"tests": true,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"zap-button-avatars.svelte",
+						"zap-button-avatars.test.ts"
 					],
 					"localDependencies": [
 						"utils/cn",
 						"builders/zap-action",
 						"components/avatar-group",
-						"icons/zap",
-						"builders/zap-send",
-						"ui/user"
+						"icons/zap"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../../../utils/cn": "{{utils/cn}}",
-						"../../../../builders/zap-action/zap-action.svelte.js": "{{builders/zap-action}}/zap-action.svelte.js",
-						"../../../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
-						"../../../../icons/zap.svelte": "{{icons/zap}}.svelte",
-						"../../../../builders/zap-send/index.svelte.js": "{{builders/zap-send}}/index.svelte.js",
-						"../../../../ui/user": "{{ui/user}}"
+						"../../utils/cn": "{{utils/cn}}",
+						"../../builders/zap-action/zap-action.svelte.js": "{{builders/zap-action}}/zap-action.svelte.js",
+						"../avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
+						"../../icons/zap/zap.svelte": "{{icons/zap}}/zap.svelte"
+					}
+				},
+				{
+					"name": "zap-list",
+					"directory": "src/lib/registry/components/zap-list",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"utils.ts",
+						"zaps-root.svelte",
+						"zaps.context.ts"
+					],
+					"localDependencies": [],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {}
+				},
+				{
+					"name": "zap-send",
+					"directory": "src/lib/registry/components/zap-send",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"zap-send-root.svelte",
+						"zap-send-splits.svelte",
+						"zap-send.context.ts"
+					],
+					"localDependencies": [],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {}
+				},
+				{
+					"name": "zap-send-classic",
+					"directory": "src/lib/registry/components/zap-send-classic",
+					"category": "components",
+					"tests": false,
+					"docs": false,
+					"subdirectory": true,
+					"list": true,
+					"files": [
+						"index.ts",
+						"metadata.json",
+						"zap-send-classic.svelte"
+					],
+					"localDependencies": [
+						"builders/zap-send",
+						"utils/cn",
+						"ui/user",
+						"icons/zap"
+					],
+					"dependencies": [
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
+					],
+					"devDependencies": [],
+					"_imports_": {
+						"../../builders/zap-send/index.svelte.js": "{{builders/zap-send}}/index.svelte.js",
+						"../../utils/cn": "{{utils/cn}}",
+						"../../ui/user": "{{ui/user}}",
+						"../../icons/zap/zap.svelte": "{{icons/zap}}/zap.svelte"
 					}
 				}
 			]
@@ -1691,271 +3067,287 @@
 			"blocks": [
 				{
 					"name": "bookmark",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/bookmark",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"bookmark.svelte"
+						"bookmark.svelte",
+						"index.ts"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "calendar",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/calendar",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"calendar.svelte"
+						"calendar.svelte",
+						"index.ts"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "cancel",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/cancel",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"cancel.svelte"
+						"cancel.svelte",
+						"index.ts"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "file",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/file",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"file.svelte"
+						"file.svelte",
+						"index.ts"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "hashtag",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/hashtag",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"hashtag.svelte"
+						"hashtag.svelte",
+						"index.ts"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "heart",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/heart",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"heart.svelte"
+						"heart.svelte",
+						"index.ts"
 					],
 					"localDependencies": [
 						"utils/cn"
 					],
-					"_imports_": {
-						"../utils/cn.js": "{{utils/cn}}.js"
-					},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn.js": "{{utils/cn}}.js"
+					}
 				},
 				{
 					"name": "image-add",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/image-add",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
-						"image-add.svelte"
+						"image-add.svelte",
+						"index.ts"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "link",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/link",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"link.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "loading",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/loading",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"loading.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "pause",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/pause",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"pause.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "play",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/play",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"play.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "reply",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/reply",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"reply.svelte"
 					],
 					"localDependencies": [
 						"utils/cn"
 					],
-					"_imports_": {
-						"../utils/cn.js": "{{utils/cn}}.js"
-					},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn.js": "{{utils/cn}}.js"
+					}
 				},
 				{
 					"name": "repost",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/repost",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"repost.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "user-add",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/user-add",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"user-add.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "user-following",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/user-following",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"user-following.svelte"
 					],
 					"localDependencies": [],
-					"_imports_": {},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {}
 				},
 				{
 					"name": "zap",
-					"directory": "src/lib/registry/icons",
+					"directory": "src/lib/registry/icons/zap",
 					"category": "icons",
 					"tests": false,
 					"docs": false,
-					"subdirectory": false,
+					"subdirectory": true,
 					"list": true,
 					"files": [
+						"index.ts",
 						"zap.svelte"
 					],
 					"localDependencies": [
 						"utils/cn"
 					],
-					"_imports_": {
-						"../utils/cn.js": "{{utils/cn}}.js"
-					},
 					"dependencies": [],
-					"devDependencies": []
+					"devDependencies": [],
+					"_imports_": {
+						"../../utils/cn.js": "{{utils/cn}}.js"
+					}
 				}
 			]
 		},
@@ -1984,8 +3376,8 @@
 						"utils/ndk-context.svelte"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2008,8 +3400,8 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -2033,8 +3425,8 @@
 						"./content-renderer/content-renderer.context.js": "{{ui/content-renderer}}/content-renderer.context.js"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -2058,8 +3450,8 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2092,8 +3484,8 @@
 						"./embedded-event.svelte": "{{ui/embedded-event}}.svelte"
 					},
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -2118,8 +3510,8 @@
 						"utils/ndk-context.svelte"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2148,8 +3540,8 @@
 						"utils/merge-props"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2199,7 +3591,7 @@
 						"ui/content-renderer"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
 						"marked@^16.4.1"
 					],
 					"devDependencies": [],
@@ -2231,8 +3623,8 @@
 						"utils/merge-props"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/blossom@8.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/blossom@8.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2291,32 +3683,32 @@
 						"components/avatar-group",
 						"ui/embedded-event",
 						"ui/content-renderer",
-						"components/note",
-						"components/article",
-						"components/highlight",
-						"components/mention",
+						"components/note-card-compact",
+						"components/article-card",
+						"components/highlight-card",
+						"components/mention-modern",
 						"utils/cn",
 						"builders/notification",
 						"utils/time-ago"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
-						"../../icons/heart.svelte": "{{icons/heart}}.svelte",
-						"../../icons/zap.svelte": "{{icons/zap}}.svelte",
-						"../../icons/repost.svelte": "{{icons/repost}}.svelte",
-						"../../icons/reply.svelte": "{{icons/reply}}.svelte",
+						"../../icons/heart/heart.svelte": "{{icons/heart}}/heart.svelte",
+						"../../icons/zap/zap.svelte": "{{icons/zap}}/zap.svelte",
+						"../../icons/repost/repost.svelte": "{{icons/repost}}/repost.svelte",
+						"../../icons/reply/reply.svelte": "{{icons/reply}}/reply.svelte",
 						"../../components/avatar-group/avatar-group.svelte": "{{components/avatar-group}}/avatar-group.svelte",
 						"../embedded-event.svelte": "{{ui/embedded-event}}.svelte",
 						"../content-renderer": "{{ui/content-renderer}}",
 						"../content-renderer/content-renderer.context": "{{ui/content-renderer}}/content-renderer.context",
-						"../../components/note/cards/compact/note-card-compact.svelte": "{{components/note}}/cards/compact/note-card-compact.svelte",
-						"../../components/article/cards/basic/article-card-medium.svelte": "{{components/article}}/cards/basic/article-card-medium.svelte",
-						"../../components/highlight/cards/basic/highlight-card-feed.svelte": "{{components/highlight}}/cards/basic/highlight-card-feed.svelte",
-						"../../components/mention/displays/modern/mention-modern.svelte": "{{components/mention}}/displays/modern/mention-modern.svelte",
+						"../../components/note-card-compact/note-card-compact.svelte": "{{components/note-card-compact}}/note-card-compact.svelte",
+						"../../components/article-card/article-card-medium.svelte": "{{components/article-card}}/article-card-medium.svelte",
+						"../../components/highlight-card/highlight-card-feed.svelte": "{{components/highlight-card}}/highlight-card-feed.svelte",
+						"../../components/mention-modern/mention-modern.svelte": "{{components/mention-modern}}/mention-modern.svelte",
 						"../../utils/cn": "{{utils/cn}}",
 						"../../builders/notification/index.svelte.js": "{{builders/notification}}/index.svelte.js",
 						"../../utils/cn.js": "{{utils/cn}}.js",
@@ -2358,7 +3750,7 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2394,7 +3786,7 @@
 						"ui/input"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2427,7 +3819,7 @@
 						"utils/ndk-context.svelte"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
 						"bits-ui@^2.14.2"
 					],
 					"devDependencies": [],
@@ -2461,8 +3853,8 @@
 						"utils/cn"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48",
-						"@nostr-dev-kit/ndk@3.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44",
+						"@nostr-dev-kit/ndk@3.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2491,8 +3883,8 @@
 						"utils/ndk-context.svelte"
 					],
 					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.48",
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/ndk@3.0.0-beta.44",
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {
@@ -2517,7 +3909,7 @@
 					],
 					"localDependencies": [],
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": [],
 					"_imports_": {}
@@ -2576,7 +3968,7 @@
 					"localDependencies": [],
 					"_imports_": {},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": []
 				},
@@ -2626,7 +4018,7 @@
 					"localDependencies": [],
 					"_imports_": {},
 					"dependencies": [
-						"@nostr-dev-kit/svelte@4.0.0-beta.48"
+						"@nostr-dev-kit/svelte@4.0.0-beta.44"
 					],
 					"devDependencies": []
 				},

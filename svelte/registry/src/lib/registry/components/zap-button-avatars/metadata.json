@@ -15,9 +15,31 @@
     "top-zappers",
     "payment-display"
   ],
+  "examples": [
+    {
+      "title": "Basic zap button for event",
+      "code": "<ZapButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Zap button for user profile",
+      "code": "<ZapButtonAvatars {ndk} {user} />"
+    },
+    {
+      "title": "Show all zappers",
+      "code": "<ZapButtonAvatars\n  {ndk}\n  {event}\n  onlyFollows={false}\n  max={10}\n/>"
+    },
+    {
+      "title": "Open zap modal",
+      "code": "<ZapButtonAvatars\n  {ndk}\n  {event}\n  onclick={() => openZapModal(event)}\n  variant=\"pill\"\n/>"
+    },
+    {
+      "title": "Compact zap display",
+      "code": "<ZapButtonAvatars\n  {ndk}\n  {event}\n  max={3}\n  avatarSize={20}\n  spacing=\"tight\"\n/>"
+    }
+  ],
   "apiDoc": {
     "name": "ZapButtonAvatars",
-    "description": "Zap button showing avatars of users who sent zaps with total amount and count. Displays zapper avatars in an avatar group and shows both sats count and total amount. Supports both event and user targets with multiple visual variants.",
+    "description": "A zap button that displays avatars of users who have sent zaps (Bitcoin Lightning payments). Provides the zap function via callback instead of auto-zapping. By default, shows only zappers from your follows (onlyFollows=true) to highlight support from your network. Displays the total sats amount prominently and supports both event and user profile zaps. Use the onclick callback to show a UI for collecting zap amount and comment, then call the provided zapFn.",
     "importPath": "import { ZapButtonAvatars } from '$lib/registry/components/zap/buttons/avatars'",
     "props": [
       {
@@ -66,9 +88,15 @@
         "description": "Show zap count"
       },
       {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
+      },
+      {
         "name": "onclick",
-        "type": "() => void",
-        "description": "Click handler callback"
+        "type": "(zapFn: (amount: number, comment?: string) => Promise<void>) => void",
+        "description": "Callback when button is clicked, receives the zap function to call after collecting amount/comment from user"
       },
       {
         "name": "class",

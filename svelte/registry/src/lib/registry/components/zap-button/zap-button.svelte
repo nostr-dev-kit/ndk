@@ -12,12 +12,11 @@
     user?: NDKUser;
     variant?: 'ghost' | 'outline' | 'pill' | 'solid';
     showCount?: boolean;
-    amount?: number;
-    onclick?: () => void;
+    onclick?: (zapFn: (amount: number, comment?: string) => Promise<void>) => void;
     class?: string;
   }
 
-  let { ndk: ndkProp, event, user, variant = 'ghost', showCount = true, amount = 1000, onclick, class: className = '' }: Props = $props();
+  let { ndk: ndkProp, event, user, variant = 'ghost', showCount = true, onclick, class: className = '' }: Props = $props();
 
   const EVENT_CARD_CONTEXT_KEY = Symbol.for('event-card');
   const ctx = getContext<any>(EVENT_CARD_CONTEXT_KEY);
@@ -28,18 +27,8 @@
 
   const zapAction = createZapAction(() => ({ target }), ndk);
 
-  async function handleClick() {
-    if (!ndk?.$currentPubkey || !target) {
-      console.error('User must be logged in to zap');
-      return;
-    }
-
-    try {
-      await zapAction.zap(amount);
-      onclick?.();
-    } catch (error) {
-      console.error('Failed to zap:', error);
-    }
+  function handleClick() {
+    onclick?.(zapAction.zap);
   }
 </script>
 
@@ -55,10 +44,10 @@
       variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
       variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
       variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-      zapAction.hasZapped && 'text-amber-500',
+      zapAction.hasZapped && 'text-accent',
       className
     )}
-    aria-label={`Zap (${zapAction.totalAmount} sats)`}
+    aria-label={`Zap`}
   >
     <ZapIcon size={16} filled={zapAction.hasZapped} class="flex-shrink-0" />
     {#if showCount && zapAction.totalAmount > 0}

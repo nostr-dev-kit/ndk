@@ -2,7 +2,6 @@
   "name": "createReplyAction",
   "title": "Reply Action Builder",
   "oneLiner": "Reactive state manager for tracking and creating replies to Nostr events",
-  "description": "The Reply Action builder provides a reactive interface for managing replies on Nostr events. It automatically subscribes to replies (both kind 1 and kind 1111 Generic Reply) for a given event and provides real-time statistics about the reply count and whether the current user has replied.\n\nThe builder uses NDK's built-in eventIsReply utility to accurately filter actual replies from all events that reference the target event. This ensures only true replies (not quotes or other references) are counted.\n\nWhen creating a reply, the builder uses NDK's reply() method which automatically handles the proper tag structure (e-tags for event references, p-tags for mentions, etc.) according to Nostr specifications.",
   "importPath": "import { createReplyAction } from '$lib/registry/builders/reply-action';",
   "command": "npx jsrepo add builders/reply-action",
   "dependencies": [

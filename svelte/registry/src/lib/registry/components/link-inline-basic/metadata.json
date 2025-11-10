@@ -1,0 +1,35 @@
+{
+  "name": "link-inline-basic",
+  "title": "Link Inline Basic",
+  "category": "link",
+  "subcategory": "inline",
+  "variant": "basic",
+  "oneLiner": "Simple inline link renderer with icon for EventContent",
+  "documentation": "# Link Inline Basic\n\n## Overview\n\nA simple inline link renderer that displays URLs as clickable links with icons. Auto-registers with ContentRenderer when imported.\n\n## Features\n\n- Auto-registration with ContentRenderer (priority 1)\n- Icon support using registry icons (no external dependencies)\n- Handles both single URLs and arrays of grouped URLs\n- Opens links in new tab with proper security attributes",
+  "command": "npx jsrepo add link-inline-basic",
+  "dependencies": [],
+  "useCases": [
+    "inline-links",
+    "event-content",
+    "content-rendering",
+    "url-display"
+  ],
+  "apiDoc": {
+    "name": "LinkInlineBasic",
+    "description": "Simple inline link component that auto-registers with ContentRenderer. Displays URLs as clickable links with icons.",
+    "importPath": "import '$lib/registry/components/link-inline-basic'",
+    "props": [
+      {
+        "name": "url",
+        "type": "string | string[]",
+        "required": true,
+        "description": "URL(s) to display - single string or array of grouped URLs"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

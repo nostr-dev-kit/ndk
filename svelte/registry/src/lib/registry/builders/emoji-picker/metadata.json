@@ -2,7 +2,6 @@
   "name": "createEmojiPicker",
   "title": "Emoji Picker Builder",
   "oneLiner": "Reactive emoji aggregator from user preferences and specified pubkeys with NIP-30 custom emoji support",
-  "description": "The Emoji Picker builder creates a reactive emoji list aggregated from multiple sources in priority order:\n\n1. User's preferred emojis (NIP-51 kind 10030 Emoji Lists) - shown first\n2. Aggregated emojis from specified pubkeys sorted by frequency - shown second  \n3. Default emojis provided in config - shown last\n\nThis allows building context-aware emoji pickers that show the most relevant emojis based on the user's preferences and usage patterns from other users. The builder automatically fetches emoji lists, deduplicates entries, and supports both standard Unicode emojis and custom emojis with shortcodes and image URLs (NIP-30).\n\nPerfect for reaction pickers, comment interfaces, or any UI needing smart emoji suggestions.",
   "importPath": "import { createEmojiPicker } from '$lib/registry/builders/emoji-picker';",
   "command": "npx jsrepo add builders/emoji-picker",
   "dependencies": [

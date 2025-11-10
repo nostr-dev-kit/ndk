@@ -2,7 +2,6 @@
   "name": "createMuteAction",
   "title": "Mute Action Builder",
   "oneLiner": "Reactive state manager for muting/unmuting Nostr users",
-  "description": "The Mute Action builder provides a simple reactive interface for managing user mutes on Nostr. It integrates with NDK's mute list functionality to provide real-time mute state tracking.\n\nThe builder accepts either an NDKUser object or a pubkey string as the target, making it flexible for different use cases. It automatically syncs with the user's mute list and reactively updates when mutes are added or removed.\n\nWhen calling the mute() function, it intelligently toggles the state - if the user is not muted, it adds them to the mute list; if already muted, it removes them. All mute changes are automatically published to relays.",
   "importPath": "import { createMuteAction } from '$lib/registry/builders/mute-action';",
   "command": "npx jsrepo add builders/mute-action",
   "dependencies": [

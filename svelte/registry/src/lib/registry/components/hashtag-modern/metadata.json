@@ -5,7 +5,6 @@
   "subcategory": "displays",
   "variant": "modern",
   "oneLiner": "Modern inline hashtag with stats card popover on hover",
-  "description": "An enhanced inline hashtag component that displays a colored indicator and shows a popover with hashtag statistics when hovered. Features gradient colors unique to each hashtag and integrates with HashtagCardCompact for detailed stats display.",
   "command": "npx jsrepo add hashtag-modern",
   "dependencies": [
     "@nostr-dev-kit/svelte",

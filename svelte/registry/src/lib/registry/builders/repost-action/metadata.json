@@ -2,7 +2,6 @@
   "name": "createRepostAction",
   "title": "Repost Action Builder",
   "oneLiner": "Reactive state manager for tracking and creating reposts and quote posts on Nostr",
-  "description": "The Repost Action builder provides a reactive interface for managing both regular reposts (`kind:6` and `kind:16`) and quote posts (`kind:1` with `q` tag) on Nostr events.\n\nThe builder automatically subscribes to both regular reposts and quote posts for a given event, providing real-time statistics about the repost count and whether the current user has reposted. It counts unique pubkeys (not individual repost events) to avoid inflating counts from multiple reposts by the same user.\n\nWhen reposting, the builder intelligently toggles the state - if you haven't reposted, it creates a new repost; if you've already reposted, it deletes your existing repost. Quote posts allow adding commentary while referencing the original event using the #q tag marker.",
   "importPath": "import { createRepostAction } from '$lib/registry/builders/repost-action';",
   "command": "npx jsrepo add builders/repost-action",
   "dependencies": [

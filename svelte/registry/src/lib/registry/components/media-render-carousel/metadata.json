@@ -1,0 +1,54 @@
+{
+  "name": "media-render-carousel",
+  "title": "Media Render Carousel",
+  "category": "media",
+  "subcategory": "content",
+  "variant": "carousel",
+  "oneLiner": "Carousel media renderer with NSFW and follows-based content filtering",
+  "documentation": "MediaRenderCarousel combines carousel navigation with intelligent media filtering. It automatically blurs content with NIP-36 content-warning tags or from users you don't follow, with a click-to-reveal interface.\n\n## Features\n\n- **Carousel Navigation**: Navigate through multiple images/videos with arrow controls and dots\n- **NSFW Content Detection**: Automatically detects and blurs content with `content-warning` tags (NIP-36)\n- **Follows-based Filtering**: Blurs media from users you don't follow (when logged in)\n- **Click-to-Reveal**: Simple interaction to show blurred content\n- **Keyboard Support**: Navigate with arrow keys\n- **Touch Gestures**: Swipe support on mobile devices",
+  "command": "npx jsrepo add media-render-carousel",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk",
+    "@hugeicons/svelte",
+    "svelte-motion"
+  ],
+  "useCases": [
+    "media",
+    "carousel",
+    "gallery",
+    "nsfw",
+    "content-warning",
+    "follows",
+    "filtering",
+    "images",
+    "videos",
+    "slideshow",
+    "blur",
+    "reveal",
+    "sensitive-content",
+    "nip-36"
+  ],
+  "apiDoc": {
+    "props": [
+      {
+        "name": "url",
+        "type": "string | string[]",
+        "description": "Media URL(s) to render in carousel",
+        "required": true
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "description": "Optional Nostr event for checking author and tags",
+        "required": false
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes",
+        "required": false
+      }
+    ]
+  }
+}

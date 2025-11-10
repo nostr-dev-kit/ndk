@@ -5,7 +5,6 @@
   "subcategory": "cards",
   "variant": "portrait",
   "oneLiner": "Portrait-oriented hashtag card with gradient header, activity chart, and detailed stats",
-  "description": "A detailed portrait card displaying comprehensive hashtag information including a gradient header, 7-day activity bar chart, most recent note, top contributor, contributor avatars, and follow button. Perfect for showcasing hashtag analytics and engagement.",
   "command": "npx jsrepo add hashtag-card-portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",

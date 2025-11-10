@@ -85,6 +85,7 @@
 				type="button"
 				onclick={() => openLightbox(i)}
 				class="block w-full mb-2 cursor-pointer hover:opacity-90 transition-opacity"
+				aria-label="Open YouTube video in lightbox"
 			>
 				<iframe
 					src="https://www.youtube.com/embed/{videoId}"

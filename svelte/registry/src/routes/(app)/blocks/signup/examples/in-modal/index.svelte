@@ -33,8 +33,13 @@
 <button onclick={() => showModal = true}>Create Account</button>
 
 {#if showModal}
-  <div class="modal-overlay" onclick={() => showModal = false}>
-    <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+  <div class="modal-overlay" onclick={() => showModal = false} onkeydown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showModal = false;
+    }
+  }} role="button" tabindex="0">
+    <div class="modal-content" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
       <SignupBlock {ndk} onSuccess={handleSignupSuccess} />
     </div>
   </div>

@@ -25,6 +25,16 @@
 
     onZapIntent?: ZapIntentCallback;
 
+    onUserClick?: (pubkey: string) => void;
+
+    onEventClick?: (event: NDKEvent) => void;
+
+    onHashtagClick?: (tag: string) => void;
+
+    onLinkClick?: (url: string) => void;
+
+    onMediaClick?: (url: string | string[]) => void;
+
     class?: string;
   }
 
@@ -35,6 +45,11 @@
     onReplyIntent,
     onQuoteIntent,
     onZapIntent,
+    onUserClick,
+    onEventClick,
+    onHashtagClick,
+    onLinkClick,
+    onMediaClick,
     class: className = ''
   }: Props = $props();
 </script>
@@ -43,6 +58,11 @@
     data-event-card-classic=""
   {ndk}
   {event}
+  {onUserClick}
+  {onEventClick}
+  {onHashtagClick}
+  {onLinkClick}
+  {onMediaClick}
   class={cn(
     'p-4 rounded-lg border border-border bg-card w-full',
     'hover:bg-accent/50 transition-colors',

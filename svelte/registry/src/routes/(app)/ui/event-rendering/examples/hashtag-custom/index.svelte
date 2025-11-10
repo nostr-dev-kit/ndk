@@ -25,7 +25,12 @@
   let { tag, onclick, class: className = '' }: Props = $props();
 </script>
 
-<span class="custom-hashtag {className}" onclick={() => onclick?.(tag)}>
+<span class="custom-hashtag {className}" onclick={() => onclick?.(tag)} onkeydown={(e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    onclick?.(tag);
+  }
+}} role="button" tabindex="0">
   #{tag}
 </span>
 

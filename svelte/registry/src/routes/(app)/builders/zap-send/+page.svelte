@@ -64,7 +64,7 @@
 
           <!-- Amount input - bindable! -->
           <div class="form-group">
-            <label>Amount (sats)</label>
+            <label for="zap-amount-input">Amount (sats)</label>
             <div class="amount-controls">
               <button onclick={() => zap.amount = 21} class="preset-btn">
                 ⚡ 21
@@ -76,6 +76,7 @@
                 🚀 1K
               </button>
               <input
+                id="zap-amount-input"
                 type="number"
                 bind:value={zap.amount}
                 min="1"
@@ -86,7 +87,7 @@
 
           <!-- Splits display - auto-updates when amount changes -->
           <div class="form-group">
-            <label>Recipients ({zap.splits.length})</label>
+            <div class="label-text" role="heading" aria-level="4">Recipients ({zap.splits.length})</div>
             <div class="splits-list">
               {#each zap.splits as split}
                 <div class="split-item">
@@ -109,13 +110,14 @@
 
           <!-- Comment input - bindable! -->
           <div class="form-group">
-            <label>Comment (optional)</label>
+            <label for="zap-comment-input">Comment (optional)</label>
             <textarea
+              id="zap-comment-input"
               bind:value={zap.comment}
               placeholder="Say something nice..."
               rows="3"
               class="comment-input"
-            />
+            ></textarea>
           </div>
 
           <!-- Send button -->

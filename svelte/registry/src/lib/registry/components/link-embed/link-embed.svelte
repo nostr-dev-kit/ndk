@@ -1,11 +1,15 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { LinkIcon } from '../../ui/icons';
 	import { cn } from '../../utils/cn.js';
+	import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
 
 	interface Props {
 		url: string | string[];
 		class?: string;
 	}
+
+	const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
 
 	interface LinkMetadata {
 		title?: string;
@@ -91,6 +95,14 @@
 			}
 		}
 	});
+
+	function handleLinkClick(e: MouseEvent, linkUrl: string) {
+		if (entityClickContext?.onLinkClick) {
+			e.preventDefault();
+			e.stopPropagation();
+			entityClickContext.onLinkClick(linkUrl);
+		}
+	}
 </script>
 
 <div class={cn('flex flex-col gap-3 my-3', className)}>
@@ -102,6 +114,7 @@
 			href={linkUrl}
 			target="_blank"
 			rel="noopener noreferrer"
+			onclick={(e) => handleLinkClick(e, linkUrl)}
 			class="block border border-border rounded-xl overflow-hidden no-underline transition-all bg-background hover:border-primary hover:shadow-lg hover:-translate-y-0.5"
 		>
 			{#if loading}

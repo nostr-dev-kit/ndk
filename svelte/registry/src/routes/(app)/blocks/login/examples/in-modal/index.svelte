@@ -28,8 +28,13 @@
 </script>
 
 {#if showLoginModal}
-  <div class="modal-backdrop" onclick={() => showLoginModal = false}>
-    <div onclick={(e) => e.stopPropagation()}>
+  <div class="modal-backdrop" onclick={() => showLoginModal = false} onkeydown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showLoginModal = false;
+    }
+  }} role="button" tabindex="0">
+    <div onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
       <LoginCompact {ndk} onSuccess={handleSuccess} />
     </div>
   </div>

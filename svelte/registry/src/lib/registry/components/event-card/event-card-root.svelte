@@ -3,6 +3,14 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
+  import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
+  import type {
+    UserClickCallback,
+    EventClickCallback,
+    HashtagClickCallback,
+    LinkClickCallback,
+    MediaClickCallback
+  } from '../../ui/entity-click-types.js';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import { cn } from '../../utils/cn';
   import type { Snippet } from 'svelte';
@@ -13,6 +21,16 @@
     event: NDKEvent;
 
     onclick?: (e: MouseEvent) => void;
+
+    onUserClick?: UserClickCallback;
+
+    onEventClick?: EventClickCallback;
+
+    onHashtagClick?: HashtagClickCallback;
+
+    onLinkClick?: LinkClickCallback;
+
+    onMediaClick?: MediaClickCallback;
 
     class?: string;
 
@@ -25,6 +43,11 @@
     ndk: providedNdk,
     event,
     onclick,
+    onUserClick,
+    onEventClick,
+    onHashtagClick,
+    onLinkClick,
+    onMediaClick,
     class: className = '',
     children,
     ...restProps
@@ -32,7 +55,7 @@
 
   const ndk = getNDKFromContext(providedNdk);
 
-  // Create a reactive context object that updates when props change
+  // EventCardContext: structural data about the card
   const context: EventCardContext = {
     get ndk() { return ndk; },
     get event() { return event; },
@@ -40,6 +63,18 @@
   };
 
   setContext(EVENT_CARD_CONTEXT_KEY, context);
+
+  // EntityClickContext: behavioral callbacks for entity interactions
+  // This is separate to prevent circular dependency between ui/ and components/event-card/
+  const entityClickContext: EntityClickContext = {
+    get onUserClick() { return onUserClick; },
+    get onEventClick() { return onEventClick; },
+    get onHashtagClick() { return onHashtagClick; },
+    get onLinkClick() { return onLinkClick; },
+    get onMediaClick() { return onMediaClick; }
+  };
+
+  setContext(ENTITY_CLICK_CONTEXT_KEY, entityClickContext);
 
   // Determine if we should show as clickable
   const isClickable = $derived(!!onclick);

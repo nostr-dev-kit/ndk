@@ -14,6 +14,8 @@ export interface RepostActionConfig {
     event: NDKEvent | undefined;
 }
 
+export type QuoteIntentCallback = (event: NDKEvent) => void;
+
 /**
  * Creates a reactive repost action state manager
  *

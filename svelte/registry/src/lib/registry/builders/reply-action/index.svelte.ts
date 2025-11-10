@@ -12,6 +12,8 @@ export interface ReplyActionConfig {
     event: NDKEvent | undefined;
 }
 
+export type ReplyIntentCallback = (event: NDKEvent) => void;
+
 /**
  * Creates a reactive reply action state manager
  *

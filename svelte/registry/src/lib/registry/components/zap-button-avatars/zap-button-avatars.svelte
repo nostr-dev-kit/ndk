@@ -17,7 +17,8 @@
     avatarSize?: number;
     spacing?: 'tight' | 'normal' | 'loose';
     showCount?: boolean;
-    onclick?: () => void;
+    onlyFollows?: boolean;
+    onclick?: (zapFn: (amount: number, comment?: string) => Promise<void>) => void;
     class?: string;
   }
 
@@ -30,6 +31,7 @@
     avatarSize = 24,
     spacing = 'tight',
     showCount = true,
+    onlyFollows = true,
     onclick,
     class: className = ''
   }: Props = $props();
@@ -56,7 +58,7 @@
   );
 
   function handleClick() {
-    onclick?.();
+    onclick?.(zapAction.zap);
   }
 </script>
 
@@ -85,6 +87,7 @@
       {spacing}
       overflowVariant="none"
       skipCurrentUser={false}
+      {onlyFollows}
     />
     {#if showCount && zapAction.totalAmount > 0}
       <span class="text-sm font-medium text-amber-500">

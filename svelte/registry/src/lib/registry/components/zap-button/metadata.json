@@ -17,7 +17,7 @@
   ],
   "apiDoc": {
     "name": "ZapButton",
-    "description": "Zap button component",
+    "description": "Lightning zap button that provides the zap function via callback instead of auto-zapping. Shows zap count and visual state. Use the onclick callback to show a UI for collecting zap amount and comment, then call the provided zapFn.",
     "importPath": "import { ZapButton } from '$lib/registry/components/zap/buttons/basic'",
     "props": [
       {
@@ -31,10 +31,26 @@
         "description": "Event to zap"
       },
       {
-        "name": "defaultAmount",
-        "type": "number",
-        "default": "21",
-        "description": "Default zap amount in sats"
+        "name": "user",
+        "type": "NDKUser",
+        "description": "User to zap (alternative to event)"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Button visual variant"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show total zap amount"
+      },
+      {
+        "name": "onclick",
+        "type": "(zapFn: (amount: number, comment?: string) => Promise<void>) => void",
+        "description": "Callback when button is clicked, receives the zap function to call after collecting amount/comment from user"
       },
       {
         "name": "class",

@@ -23,6 +23,8 @@
   import CustomRendererLinkEmbedRaw from './examples/custom-renderer-link-embed/index.txt?raw';
   import Variants from './examples/variants/index.svelte';
   import VariantsRaw from './examples/variants/index.txt?raw';
+  import PrioritySystem from './examples/priority-system/index.svelte';
+  import PrioritySystemRaw from './examples/priority-system/index.txt?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -105,7 +107,14 @@
             { name: 'linkComponent', type: 'Component', default: 'default link', description: 'Component for rendering links and link groups' },
             { name: 'mediaComponent', type: 'Component', default: 'default media', description: 'Component for rendering media and image grids' },
             { name: 'fallbackComponent', type: 'Component', default: 'default card', description: 'Fallback component for unknown event kinds' },
-            { name: 'addKind', type: '(kinds: number[] | NDKClass, component: Component) => void', default: 'method', description: 'Register component for specific event kinds' }
+            { name: 'addKind', type: '(kinds: number[] | NDKClass, component: Component, priority?: number) => void', default: 'method', description: 'Register component for specific event kinds with optional priority (default: 1)' },
+            { name: 'setMentionComponent', type: '(component: Component, priority?: number) => void', default: 'method', description: 'Set mention component with optional priority (default: 1)' },
+            { name: 'setHashtagComponent', type: '(component: Component, priority?: number) => void', default: 'method', description: 'Set hashtag component with optional priority (default: 1)' },
+            { name: 'setLinkComponent', type: '(component: Component, priority?: number) => void', default: 'method', description: 'Set link component with optional priority (default: 1)' },
+            { name: 'setMediaComponent', type: '(component: Component, priority?: number) => void', default: 'method', description: 'Set media component with optional priority (default: 1)' },
+            { name: 'setFallbackComponent', type: '(component: Component, priority?: number) => void', default: 'method', description: 'Set fallback component with optional priority (default: 1)' },
+            { name: 'getInlinePriorities', type: '() => Record<string, number>', default: 'method', description: 'Get current priorities for inline components (debugging)' },
+            { name: 'getKindPriorities', type: '() => Map<number, number>', default: 'method', description: 'Get current priorities for event kind handlers (debugging)' }
           ]
         }]
       }
@@ -214,6 +223,20 @@
     </div>
 
     <div>
+      <h3 class="text-xl font-semibold mb-3">Priority System</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        See how the priority system enables progressive enhancement. Components with higher
+        priorities automatically override lower priority ones.
+      </p>
+      <Preview
+        title="Priority System Demo"
+        code={PrioritySystemRaw}
+      >
+        <PrioritySystem />
+      </Preview>
+    </div>
+
+    <div>
       <h3 class="text-xl font-semibold mb-3">Carousel Media Component</h3>
       <p class="leading-relaxed text-muted-foreground mb-4">
         Display grouped media in an elegant carousel with navigation controls. Media separated only by whitespace
@@ -297,16 +320,20 @@
 
 const renderer = new ContentRenderer();
 
-// Set custom inline element handlers (direct property assignment)
-renderer.mentionComponent = MyCustomMention;
-renderer.hashtagComponent = MyCustomHashtag;
-renderer.linkComponent = MyCustomLink;
-renderer.mediaComponent = MyCustomMedia;
-renderer.fallbackComponent = MyGenericCard;
+// Set custom inline element handlers with priority
+// Higher priority components override lower ones
+renderer.setMentionComponent(MyCustomMention, 10);  // Priority 10 (enhanced)
+renderer.setHashtagComponent(MyCustomHashtag, 10);  // Priority 10 (enhanced)
+renderer.setLinkComponent(MyCustomLink, 5);         // Priority 5 (compact)
+renderer.setMediaComponent(MyCustomMedia, 10);      // Priority 10 (enhanced)
+renderer.setFallbackComponent(MyGenericCard, 1);    // Priority 1 (basic)
 
-// Register embedded event handlers by kind
-renderer.addKind([1, 1111], MyNoteComponent);
-renderer.addKind([30023], MyArticleComponent);`}
+// Register embedded event handlers by kind with priority
+renderer.addKind([1, 1111], MyNoteComponent, 10);    // Priority 10 (full/standard)
+renderer.addKind([30023], MyArticleComponent, 5);    // Priority 5 (compact)
+
+// Components with higher priority automatically override lower priority ones
+// Default priority is 1 if not specified`}
         />
       </div>
 
@@ -366,6 +393,78 @@ test('custom rendering', () => {
             When you pass a renderer via prop, that component automatically sets it in context for its children.
             This means nested embeds inherit the overridden renderer without you passing it explicitly.
           </p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold mt-8 mb-4">Priority System</h3>
+      <p class="leading-relaxed text-muted-foreground mb-4">
+        ContentRenderer uses a priority system to enable progressive enhancement and component competition.
+        Components with higher priorities automatically override those with lower priorities.
+      </p>
+
+      <div class="space-y-4">
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">Priority Scale</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Components use numeric priorities (typically 1-10) to determine which component wins when multiple are registered:
+          </p>
+          <ul class="text-sm text-muted-foreground space-y-1 ml-4 list-disc">
+            <li><strong class="font-semibold">Priority 1:</strong> Basic/inline components (minimal rendering)</li>
+            <li><strong class="font-semibold">Priority 5:</strong> Compact components (moderate features)</li>
+            <li><strong class="font-semibold">Priority 10:</strong> Full/enhanced components (rich features)</li>
+          </ul>
+        </div>
+
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">How It Works</h4>
+          <ul class="text-sm text-muted-foreground space-y-2">
+            <li>• When registering a component, specify a priority (default: 1)</li>
+            <li>• Higher priority components automatically replace lower priority ones</li>
+            <li>• Equal priority allows replacement (last registration wins)</li>
+            <li>• Lower priority registrations are silently ignored</li>
+          </ul>
+        </div>
+
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">Progressive Enhancement Pattern</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Use priorities to build progressive enhancement into your app:
+          </p>
+          <div class="bg-muted rounded-lg overflow-hidden">
+            <CodeBlock
+              lang="typescript"
+              code={`// Basic components load first (priority 1)
+import '$lib/components/mention';        // Basic mention, priority 1
+import '$lib/components/note-card-inline';  // Inline note, priority 1
+
+// Enhanced components load later and override
+import '$lib/components/mention-modern';    // Modern mention, priority 10
+import '$lib/components/note-card';         // Full note card, priority 10
+
+// The enhanced components automatically win due to higher priority`}
+            />
+          </div>
+        </div>
+
+        <div class="p-4 border border-border rounded-lg bg-card">
+          <h4 class="font-semibold mb-2">Debugging Priorities</h4>
+          <p class="text-sm text-muted-foreground mb-3">
+            Use the debug methods to inspect current priorities:
+          </p>
+          <div class="bg-muted rounded-lg overflow-hidden">
+            <CodeBlock
+              lang="typescript"
+              code={`// Get priorities for inline components
+const inlinePriorities = renderer.getInlinePriorities();
+console.log(inlinePriorities);
+// { mention: 10, hashtag: 10, link: 5, media: 10, fallback: 1 }
+
+// Get priorities for event kind handlers
+const kindPriorities = renderer.getKindPriorities();
+console.log(kindPriorities);
+// Map { 1 => 10, 1111 => 10, 30023 => 5 }`}
+            />
+          </div>
         </div>
       </div>
 

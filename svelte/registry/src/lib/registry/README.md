@@ -243,6 +243,27 @@ The registry includes a unified content rendering system (`ui/content-renderer.s
 - Media (images, videos)
 - Embedded events (articles, highlights, notes)
 
+### Priority-Based Registration
+
+The ContentRenderer uses a priority system for progressive enhancement:
+
+```typescript
+// Basic components (priority 1)
+renderer.setMentionComponent(BasicMention, 1);
+renderer.addKind([1, 1111], BasicNoteCard, 1);
+
+// Enhanced components (priority 10) override basic ones
+renderer.setMentionComponent(ModernMention, 10);
+renderer.addKind([1, 1111], FullNoteCard, 10);
+```
+
+**Priority Scale:**
+- **Priority 1:** Basic/inline components (minimal features)
+- **Priority 5:** Compact components (moderate features)
+- **Priority 10:** Full/enhanced components (rich features)
+
+Components with higher priorities automatically override lower priority ones, enabling clean progressive enhancement patterns.
+
 All components use this system for consistent content rendering across the registry.
 
 ---

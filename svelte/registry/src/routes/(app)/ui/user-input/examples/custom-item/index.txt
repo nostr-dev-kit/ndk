@@ -13,8 +13,11 @@
 
 <div class="border border-border rounded-xl p-6 bg-card">
   {#if selectedUser}
+    {#snippet npubByline()}
+      {selectedUser.npub.slice(0, 16)}...
+    {/snippet}
     <div class="mb-4 p-4 bg-primary rounded-lg text-primary-foreground">
-      <UserProfile {ndk} user={selectedUser} size="sm" byline={selectedUser.npub.slice(0, 16) + '...'} />
+      <UserProfile {ndk} user={selectedUser} size="sm" byline={npubByline} />
     </div>
   {/if}
 
@@ -22,10 +25,13 @@
     <UserInput.Search placeholder="Search users..." />
     <UserInput.Results>
       {#snippet children(result)}
+        {#snippet nip05Byline()}
+          {result.user.profile?.nip05 ?? ''}
+        {/snippet}
         <UserInput.Item {result}>
           {#snippet child({ props })}
             <div {...props} class="p-3 rounded-md cursor-pointer transition-colors hover:bg-muted">
-              <UserProfile {ndk} user={result.user} byline={result.user.profile?.nip05} />
+              <UserProfile {ndk} user={result.user} byline={nip05Byline} />
             </div>
           {/snippet}
         </UserInput.Item>

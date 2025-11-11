@@ -52,38 +52,36 @@
 <UserProfile {ndk} {user} size="lg" />
 ```
 
-## With String Byline
+## With Byline Snippet
 
+The `byline` prop accepts a Snippet, giving you full control over the content displayed below the user's name.
+
+### Simple Text Byline
 ```svelte
-<UserProfile {ndk} {user} byline="Journalist" />
-<UserProfile {ndk} {user} byline="Developer" size="lg" />
+{#snippet jobTitle()}
+  Journalist
+{/snippet}
+
+<UserProfile {ndk} {user} byline={jobTitle} />
 ```
 
-## With Component Byline
-
+### Using User Components
 ```svelte
 <script>
   import { User } from '$lib/registry/ui/user';
 </script>
 
-<UserProfile {ndk} {user} byline={User.Nip05} />
-<UserProfile {ndk} {user} byline={User.Handle} />
+{#snippet nip05Byline()}
+  <User.Nip05 />
+{/snippet}
+
+<UserProfile {ndk} {user} byline={nip05Byline} />
 ```
 
-## With Snippet Byline (Advanced)
-
+### Complex Byline with Multiple Elements
 ```svelte
 <script>
   import { User } from '$lib/registry/ui/user';
-
-  const customByline = () => {
-    return {
-      render: () => `<div class="flex items-center gap-2">
-        <User.Nip05 />
-        <span>• 2h ago</span>
-      </div>`
-    };
-  };
 </script>
 
 {#snippet customByline()}
@@ -99,19 +97,27 @@
 ## Without Avatar
 
 ```svelte
-<UserProfile {ndk} {user} showAvatar={false} byline="Journalist" />
+{#snippet role()}
+  Journalist
+{/snippet}
+
+<UserProfile {ndk} {user} showAvatar={false} byline={role} />
 ```
 
 ## Complete Example with All Options
 
 ```svelte
+{#snippet developerRole()}
+  Lead Developer
+{/snippet}
+
 <UserProfile
   {ndk}
   {user}
   variant="stacked"
   size="lg"
   showAvatar={true}
-  byline="Lead Developer"
+  byline={developerRole}
   class="border rounded-lg p-4"
 />
 ```
@@ -120,34 +126,56 @@
 
 ### Comment Header
 ```svelte
+<script>
+  import { formatRelativeTime } from '$lib/utils';
+
+  let createdAt = $state(event.created_at);
+</script>
+
+{#snippet timeByline()}
+  {formatRelativeTime(createdAt)}
+{/snippet}
+
 <UserProfile
   {ndk}
   {user}
   variant="inline"
   size="sm"
-  byline={customTimeSnippet}
+  byline={timeByline}
 />
 ```
 
 ### User List Item
 ```svelte
+<script>
+  import { User } from '$lib/registry/ui/user';
+</script>
+
+{#snippet nip05()}
+  <User.Nip05 />
+{/snippet}
+
 <UserProfile
   {ndk}
   {user}
   variant="horizontal"
   size="md"
-  byline={User.Nip05}
+  byline={nip05}
 />
 ```
 
 ### Profile Card
 ```svelte
+{#snippet title()}
+  Bitcoin Developer
+{/snippet}
+
 <UserProfile
   {ndk}
   {user}
   variant="stacked"
   size="lg"
-  byline="Bitcoin Developer"
+  byline={title}
   class="text-center"
 />
 ```

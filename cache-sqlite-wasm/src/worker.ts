@@ -6,6 +6,7 @@ import { setEventSync } from "./functions/setEvent";
 import { encodeEvents, type EventForEncoding } from "./binary/encoder";
 import type { CacheStats } from "./functions/getCacheStats";
 import { PACKAGE_VERSION, PROTOCOL_NAME } from "./version";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 // Helper function for getting cache stats within worker
 function getCacheStatsSync(db: Database): CacheStats {
@@ -286,10 +287,22 @@ self.onmessage = async (event: MessageEvent) => {
             }
             case "addUnpublishedEvent": {
                 const { id, event, relays } = payload;
+
+                // Store in unpublished_events table for retry tracking
                 db.run(
                     "INSERT OR REPLACE INTO unpublished_events (id, event, relays) VALUES (?, ?, ?)",
                     [id, event, relays]
                 );
+
+                // Also store in main events table with relay_url = NULL
+                // so it's queryable by subscriptions
+                try {
+                    const ndkEvent = new NDKEvent(undefined, JSON.parse(event));
+                    setEventSync(db, ndkEvent, undefined);
+                } catch (e) {
+                    console.error('[addUnpublishedEvent] Failed to store event in main table:', e);
+                }
+
                 result = undefined;
                 break;
             }

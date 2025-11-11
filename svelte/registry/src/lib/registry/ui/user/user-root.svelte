@@ -12,6 +12,8 @@
 
     user?: NDKUser;
 
+    npub?: string;
+
     pubkey?: string;
 
     profile?: NDKUserProfile;
@@ -27,6 +29,7 @@
     ndk,
     user,
     pubkey,
+    npub,
     profile: propProfile,
     onclick,
     class: className = '',
@@ -36,13 +39,8 @@
   // Resolve NDKUser from either user prop or pubkey
   const ndkUser = $derived.by(() => {
     if (user) return user;
-    if (pubkey) {
-      try {
-        return ndk.getUser({ pubkey });
-      } catch {
-        return null;
-      }
-    }
+    if (npub) { try { return ndk.getUser({ npub }); } catch { return null; } }
+    if (pubkey) { try { return ndk.getUser({ pubkey }); } catch { return null; } }
     return null;
   });
 

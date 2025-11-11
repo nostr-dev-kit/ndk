@@ -70,6 +70,7 @@ export const eventCategories: NavCategory[] = [
     title: 'Introduction',
     items: [
       { name: 'Overview', path: '/events', icon: Calendar01Icon, title: 'Event Rendering', description: 'The three-layer model: Chrome, Content, and Embeds' },
+      { name: 'Basics', path: '/events/basics', icon: Book02Icon, title: 'Getting Started', description: 'Configure the content renderer in your app layout' },
     ]
   },
   {
@@ -138,6 +139,7 @@ export const componentCategories: NavCategory[] = [
       { name: 'Notification', path: '/components/notification', icon: Chat01Icon, title: 'Notification', description: 'Real-time notification feed using $metaSubscription. Groups interactions by target event and provides composable primitives for custom layouts.' },
       { name: 'Content Tab', path: '/components/content-tab', icon: Layers01Icon, title: 'ContentTab', description: 'Conditionally display tabs based on the types of content a user actually publishes. Automatically samples content and shows only relevant tabs.' },
       { name: 'Emoji Picker', path: '/components/emoji-picker', icon: FavouriteIcon, title: 'Emoji Picker', description: 'Pick emojis from your custom NIP-51 emoji sets and defaults with search and categories.' },
+      { name: 'Unpublished Events', path: '/components/unpublished-events', icon: CloudUploadIcon, title: 'Unpublished Events', description: 'Track and retry events that failed to publish to Nostr relays. Displays badge with count and popover with retry/discard actions.' },
     ]
   },
   {

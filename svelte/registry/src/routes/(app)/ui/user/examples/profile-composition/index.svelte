@@ -31,7 +31,7 @@
 <User.Root {ndk} pubkey={userPubkey} class="flex items-center gap-3">
   <User.Avatar class="rounded-full w-10 h-10" />
   <div>
-    <div class="font-medium">Avatar with Root</div>
-    <div class="text-sm text-gray-500">Minimal wrapper for context</div>
+    <User.Name class="font-medium" />
+    <User.Bio class="text-sm text-muted-foreground" />
   </div>
 </User.Root>

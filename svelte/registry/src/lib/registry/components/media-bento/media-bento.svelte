@@ -142,7 +142,7 @@
 						<img src={mediaUrl} alt="" class="w-full h-full object-cover pointer-events-none" />
 					{:else if mediaUrl.match(/\.(mp4|webm|mov)(\?|$)/i)}
 						<!-- svelte-ignore a11y_media_has_caption -->
-						<video src={mediaUrl} class="w-full h-full object-cover pointer-events-none"></video>
+						<video controls src={mediaUrl} class="w-full h-full object-cover"></video>
 					{:else if mediaUrl.match(/youtube\.com|youtu\.be/i)}
 						{@const videoId = mediaUrl.match(
 							/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/

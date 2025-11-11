@@ -55,7 +55,7 @@
       highlight.content = selectedText.trim();
       highlight.article = article;
 
-      await highlight.publish();
+      highlight.publish();
       onCreated();
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to create highlight';

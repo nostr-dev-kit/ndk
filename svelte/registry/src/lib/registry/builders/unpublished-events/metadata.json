@@ -1,0 +1,43 @@
+{
+  "name": "createUnpublishedEvents",
+  "title": "Unpublished Events Builder",
+  "oneLiner": "Reactive state manager for tracking and retrying events that failed to publish",
+  "description": "Manages the state of events that failed to publish to Nostr relays. Automatically tracks new failures, removes successfully published events, and provides methods to retry or discard unpublished events.\n\n## Features\n\n- **Automatic Tracking**: Automatically fetches unpublished events from NDK cache adapter\n- **Real-time Updates**: Listens for new publish failures and successful publishes\n- **Retry Logic**: Provides method to retry publishing with original relay set\n- **Manual Discard**: Allows permanently removing events from unpublished queue\n- **Reactive State**: Returns reactive state that updates automatically\n\n## Use Cases\n\n- Display unpublished events to users\n- Build retry UI for failed publishes\n- Monitor publish success rates\n- Debug publishing issues\n- Implement outbox queue visualization",
+  "importPath": "import { createUnpublishedEvents } from '$lib/registry/builders/unpublished-events';",
+  "command": "npx jsrepo add builders/unpublished-events",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "parameters": [
+    {
+      "name": "ndk",
+      "type": "NDKSvelte",
+      "description": "NDK instance with cache adapter that supports unpublished event tracking",
+      "required": true
+    }
+  ],
+  "returns": [
+    {
+      "name": "events",
+      "type": "UnpublishedEventEntry[]",
+      "description": "Reactive array of unpublished events with metadata"
+    },
+    {
+      "name": "retry",
+      "type": "(event: NDKEvent) => Promise<void>",
+      "description": "Retry publishing an event with its original relay set"
+    },
+    {
+      "name": "discard",
+      "type": "(eventId: string) => Promise<void>",
+      "description": "Permanently remove an event from unpublished queue"
+    },
+    {
+      "name": "refresh",
+      "type": "() => Promise<void>",
+      "description": "Manually refresh unpublished events from cache"
+    }
+  ],
+  "usageExample": "const unpublishedState = createUnpublishedEvents(ndk);\n\n// Access reactive state\nunpublishedState.events // Array of unpublished events\n\n// Retry publishing an event\nawait unpublishedState.retry(event);\n\n// Discard an event\nawait unpublishedState.discard(eventId);\n\n// Manually refresh\nawait unpublishedState.refresh();"
+}

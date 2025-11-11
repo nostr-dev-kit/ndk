@@ -1,5 +1,8 @@
-<script>
+<script lang="ts">
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKUser } from '@nostr-dev-kit/ndk';
   import { UserInput } from '$lib/registry/ui/user-input';
+  import UserProfile from '$lib/registry/components/user-profile/user-profile.svelte';
 
   let { ndk } = $props();
 
@@ -10,23 +13,23 @@
   }
 </script>
 
-<div class="border border-border rounded-lg p-4 bg-card">
+<div class="">
   {#if selectedUser}
     <div class="mb-4 p-3 bg-muted rounded-md text-sm">
-      <strong class="font-semibold">Selected:</strong> {selectedUser.profile?.name || selectedUser.npub}
+      <UserProfile {ndk} user={selectedUser} variant="compact" />
     </div>
   {/if}
 
-  <UserInput.Root {ndk} onSelect={handleSelect}>
-    <UserInput.Search placeholder="Search by name, NIP-05, or npub..." class="w-full px-3 py-2 border border-border rounded-md bg-background" />
-    <UserInput.Results class="mt-2 border border-border rounded-md bg-card overflow-hidden">
-      {#snippet children(result)}
-        <UserInput.Item {result} class="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0">
-          <div class="text-sm font-medium text-foreground truncate">
-            {result.user.profile?.name || result.user.npub}
-          </div>
+  <UserInput.Root {ndk} onSelect={handleSelect} class="flex flex-col gap-4">
+    <div class="bg-background p-2 rounded-lg flex flex-col">
+      <UserInput.Search placeholder="Search by name, NIP-05, or npub..." class="w-48 px-3 py-2" />
+      <UserInput.Results class="mt-2 -mx-2 w-92 h-48 overflow-hidden flex flex-col items-stretch">
+        {#snippet children(result)}
+        <UserInput.Item {result} class="p-2">
+          <UserProfile {ndk} user={result.user} class="text-sm text-foreground" size="xs" />
         </UserInput.Item>
-      {/snippet}
-    </UserInput.Results>
-  </UserInput.Root>
+        {/snippet}
+      </UserInput.Results>
+    </div>
+    </UserInput.Root>
 </div>

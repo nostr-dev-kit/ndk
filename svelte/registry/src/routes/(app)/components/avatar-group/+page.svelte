@@ -67,16 +67,16 @@
 
 <!-- Showcase preview -->
 {#snippet showcasePreview()}
-  <div class="flex flex-col gap-6 items-center">
-    <div class="flex flex-col gap-2 items-center">
+  <div class="flex flex-col gap-6 items-start">
+    <div class="flex flex-col gap-2 items-start">
       <span class="text-xs text-muted-foreground">Default</span>
       <AvatarGroup {ndk} pubkeys={examplePubkeys.slice(0, 5)} />
     </div>
-    <div class="flex flex-col gap-2 items-center">
+    <div class="flex flex-col gap-2 items-start">
       <span class="text-xs text-muted-foreground">With Overflow (max: 3)</span>
       <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} />
     </div>
-    <div class="flex flex-col gap-2 items-center">
+    <div class="flex flex-col gap-2 items-start">
       <span class="text-xs text-muted-foreground">Text Overflow</span>
       <AvatarGroup {ndk} pubkeys={examplePubkeys} max={3} overflowVariant="text" />
     </div>

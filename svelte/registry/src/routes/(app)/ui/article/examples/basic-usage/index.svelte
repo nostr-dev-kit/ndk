@@ -38,10 +38,10 @@
 </script>
 
 {#if article}
-  <Article.Root {ndk} {article}>
+  <Article.Root {ndk} {article} class="flex flex-col items-start">
     <Article.Title class="text-2xl font-bold mb-2" />
-    <Article.Summary class="text-gray-600 mb-4" />
-    <Article.ReadingTime class="text-sm text-gray-500" />
+    <Article.Summary class="text-muted-foreground mb-4" />
+    <Article.ReadingTime class="text-sm text-muted-foreground" />
   </Article.Root>
 {:else}
   <div class="text-gray-500">Loading article...</div>

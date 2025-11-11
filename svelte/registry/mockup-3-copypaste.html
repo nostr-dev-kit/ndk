@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy & Paste, Not Dependency Hell | @nostr/svelte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 100px 0 80px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        .hero .subtitle {
+            font-size: 22px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 48px;
+        }
+        .hero .terminal {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 24px;
+            border-radius: 8px;
+            font-family: 'Monaco', monospace;
+            font-size: 15px;
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        }
+        .hero .terminal .prompt {
+            color: #888;
+        }
+
+        /* Philosophy */
+        .philosophy {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .philosophy h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .philosophy-item {
+            text-align: center;
+        }
+        .philosophy-item .icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+        .philosophy-item h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        .philosophy-item p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 0;
+        }
+        .how-it-works h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+        .step {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        .step .number {
+            width: 100px;
+            height: 100px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+        }
+        .step-content h3 {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        .step-content p {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+        .step-content .code {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .step-content .code .comment {
+            color: #888;
+        }
+        .step-content .file-tree {
+            background: #f5f5f5;
+            border: 1px solid #e5e5e5;
+            padding: 20px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* Benefits Grid */
+        .benefits {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .benefits h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+        .benefit-card {
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            padding: 36px;
+            border-radius: 8px;
+        }
+        .benefit-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .benefit-card p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .benefit-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .benefit-card li {
+            padding-left: 28px;
+            position: relative;
+            color: #666;
+        }
+        .benefit-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* Comparison */
+        .comparison {
+            padding: 100px 0;
+        }
+        .comparison h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .comparison-card {
+            border: 2px solid #e5e5e5;
+            padding: 40px;
+            border-radius: 8px;
+        }
+        .comparison-card.bad {
+            background: #f9f9f9;
+        }
+        .comparison-card.good {
+            background: #fff;
+            border-color: #1a1a1a;
+        }
+        .comparison-card h3 {
+            font-size: 26px;
+            margin-bottom: 32px;
+        }
+        .comparison-card .scenario {
+            margin-bottom: 24px;
+        }
+        .comparison-card .scenario-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .comparison-card .scenario-text {
+            color: #666;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            background: #1a1a1a;
+            color: #fff;
+            text-align: center;
+        }
+        .cta h2 {
+            font-size: 40px;
+            margin-bottom: 24px;
+        }
+        .cta p {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+        .cta .commands {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .cta .command {
+            background: #000;
+            padding: 16px 24px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Copy & Paste,<br>Not Dependency Hell</h1>
+            <p class="subtitle">
+                Own your code. See what you're using. Customize without limits.
+                No black boxes. No bloated node_modules.
+            </p>
+            <div class="terminal">
+                <span class="prompt">$</span> npx jsrepo add components/user-card<br>
+                <span style="color: #0f0;">✓</span> Copied to src/lib/components/user-card.svelte<br>
+                <span style="color: #888;">→ It's yours now. Edit freely.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="philosophy">
+        <div class="container">
+            <h2>A Better Way To Share Components</h2>
+
+            <div class="philosophy-grid">
+                <div class="philosophy-item">
+                    <div class="icon">👁️</div>
+                    <h3>Full Visibility</h3>
+                    <p>
+                        Every line of code lives in your project.
+                        No hidden abstractions. No mystery packages.
+                        You see exactly what's running.
+                    </p>
+                </div>
+
+                <div class="philosophy-item">
+                    <div class="icon">✂️</div>
+                    <h3>True Ownership</h3>
+                    <p>
+                        Once copied, it's yours. Modify styles,
+                        change behavior, strip unused features.
+                        No forks. No waiting for PRs.
+                    </p>
+                </div>
+
+                <div class="philosophy-item">
+                    <div class="icon">🎯</div>
+                    <h3>Zero Bloat</h3>
+                    <p>
+                        Install only what you use. Need 3 components?
+                        Get 3 components. Not 87 plus their dependencies.
+                        Your bundle thanks you.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="number">1</div>
+                    <div class="step-content">
+                        <h3>Browse The Registry</h3>
+                        <p>
+                            Explore 87 components, 25 builders, and 6 complete blocks.
+                            Each with live demos and real Nostr data. Find exactly what you need.
+                        </p>
+                        <div class="code">
+<span class="comment"># See what's available</span>
+npx jsrepo list
+
+<span class="comment"># Output:</span>
+components/user-card (7 variants)
+components/event-card (15 variants)
+builders/create-follow-action
+blocks/progressive-reveal-auth
+...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="number">2</div>
+                    <div class="step-content">
+                        <h3>Copy To Your Project</h3>
+                        <p>
+                            Run one command. The component, its dependencies, types, and styles
+                            are copied directly into your codebase. No npm install. No package.json pollution.
+                        </p>
+                        <div class="code">
+<span class="comment"># Copy the component you want</span>
+npx jsrepo add components/user-card
+
+<span class="comment"># That's it. It's now in your project:</span>
+src/lib/components/user-card.svelte
+src/lib/components/user-card.types.ts
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="number">3</div>
+                    <div class="step-content">
+                        <h3>Files Appear In Your Repo</h3>
+                        <p>
+                            Components are copied with full source code. You can read every line,
+                            trace every import, understand every decision.
+                        </p>
+                        <div class="file-tree">
+src/lib/
+├── components/
+│   └── user-card.svelte          <span style="color: #0a0;">← Full source code</span>
+├── ui/
+│   ├── user/
+│   │   ├── user.root.svelte
+│   │   ├── user.avatar.svelte
+│   │   └── user.name.svelte       <span style="color: #0a0;">← Composable primitives</span>
+└── utils/
+    └── cn.ts                       <span style="color: #0a0;">← Utility functions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="number">4</div>
+                    <div class="step-content">
+                        <h3>Customize Without Limits</h3>
+                        <p>
+                            It's your code now. Change colors, refactor logic, strip features,
+                            add new props. No ejecting. No workarounds. Just edit and save.
+                        </p>
+                        <div class="code">
+<span class="comment">// Edit src/lib/components/user-card.svelte directly</span>
+
+<span class="comment">// Change styles</span>
+class="p-4 bg-blue-500 rounded-lg"
+
+<span class="comment">// Add custom behavior</span>
+on:click={() => router.push(`/user/${user.pubkey}`)}
+
+<span class="comment">// Remove unused features</span>
+<span class="comment">// Delete the NIP-05 badge if you don't need it</span>
+
+<span class="comment">// It's your component now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="benefits">
+        <div class="container">
+            <h2>Why This Beats npm Packages</h2>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h3>🔍 Complete Transparency</h3>
+                    <p>
+                        With npm packages, you're trusting code you can't easily inspect.
+                        With jsrepo, every line is visible in your editor.
+                    </p>
+                    <ul>
+                        <li>Read the full implementation</li>
+                        <li>Understand dependencies instantly</li>
+                        <li>No hidden magic or side effects</li>
+                        <li>Audit for security with confidence</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <h3>⚡ Instant Customization</h3>
+                    <p>
+                        Need to change something? Edit the file. Done.
+                        No configuration gymnastics, no theme overrides, no CSS specificity wars.
+                    </p>
+                    <ul>
+                        <li>Change markup directly</li>
+                        <li>Modify styles without !important</li>
+                        <li>Add props you actually need</li>
+                        <li>Remove features you don't</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <h3>📦 Minimal Bundles</h3>
+                    <p>
+                        Only pay for what you use. Each component brings just its essentials.
+                        Your bundle size is determined by what you install, not what the package offers.
+                    </p>
+                    <ul>
+                        <li>No tree-shaking concerns</li>
+                        <li>No unused code in production</li>
+                        <li>Add 1 component, get 1 component</li>
+                        <li>Your bundle, your control</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <h3>🔓 No Lock-In</h3>
+                    <p>
+                        The code is in your repo. If we disappear tomorrow, you're fine.
+                        If you outgrow the library, just keep the code.
+                    </p>
+                    <ul>
+                        <li>No dependency on registry uptime</li>
+                        <li>No breaking updates forced on you</li>
+                        <li>No migration required to leave</li>
+                        <li>True code ownership</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="comparison">
+        <div class="container">
+            <h2>Real Scenarios</h2>
+
+            <div class="comparison-cards">
+                <div class="comparison-card bad">
+                    <h3>❌ Traditional npm Package</h3>
+
+                    <div class="scenario">
+                        <div class="scenario-title">Scenario: You need to change button color</div>
+                        <div class="scenario-text">
+                            Install package → Read docs → Find theme config → Create override file →
+                            Import theme → Discover CSS specificity issues → Add !important →
+                            Works in dev, breaks in production → Debug for hours → Give up and use inline styles
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-title">Scenario: You want to add a feature</div>
+                        <div class="scenario-text">
+                            Open GitHub issue → Wait for maintainer response → Explain use case →
+                            Maintainer says "not in scope" → Fork the repo → Set up dev environment →
+                            Make changes → Maintain your fork forever → Miss upstream updates → Regret everything
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-title">Scenario: Security audit required</div>
+                        <div class="scenario-text">
+                            Check package.json → 47 transitive dependencies → Audit each one →
+                            Find vulnerability in sub-sub-dependency → Wait for cascading updates →
+                            File doesn't pass audit → Project blocked
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-card good">
+                    <h3>✓ jsrepo Copy & Paste</h3>
+
+                    <div class="scenario">
+                        <div class="scenario-title">Scenario: You need to change button color</div>
+                        <div class="scenario-text">
+                            Open src/lib/components/button.svelte → Change class="bg-gray-500"
+                            to class="bg-blue-500" → Save → Done. 15 seconds.
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-title">Scenario: You want to add a feature</div>
+                        <div class="scenario-text">
+                            Open the component file → Add your feature → Save → Test → Ship.
+                            It's your code. No permission needed.
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-title">Scenario: Security audit required</div>
+                        <div class="scenario-text">
+                            Read the copied file → Check its imports → Everything is visible in your repo →
+                            Audit completes in minutes → Project approved
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Try It In 30 Seconds</h2>
+            <p>Copy your first component. See the code. Make it yours.</p>
+
+            <div class="commands">
+                <div class="command">
+                    npx jsrepo add components/user-card
+                </div>
+                <div class="command">
+                    npx jsrepo add builders/create-follow-action
+                </div>
+                <div class="command">
+                    npx jsrepo add blocks/progressive-reveal-auth
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

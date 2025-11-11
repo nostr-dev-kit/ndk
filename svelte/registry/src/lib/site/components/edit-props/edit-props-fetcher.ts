@@ -1,5 +1,5 @@
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { NDKArticle, NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
+import { NDKArticle, NDKEvent, NDKSubscriptionCacheUsage, NDKUser } from '@nostr-dev-kit/ndk';
 import { nip19 } from 'nostr-tools';
 import type { PropType } from './edit-props-context.svelte';
 
@@ -132,7 +132,7 @@ export async function fetchFromIdentifier(
 					return { success: false, error: 'Article must be naddr1...' };
 				}
 
-				const event = await ndk.fetchEvent(identifier);
+				const event = await ndk.fetchEvent(identifier, { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE});
 				const article = event ? NDKArticle.from(event) : undefined;
 				return { success: true, value: article };
 			}

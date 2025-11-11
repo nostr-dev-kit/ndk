@@ -69,7 +69,7 @@
               class={`
                 flex items-center gap-2 rounded-md transition-all duration-150 text-[0.85rem] font-medium
                 hover:bg-accent/50 hover:text-foreground
-                ${sidebar.collapsed && !isHovering ? 'p-2 w-auto' : 'py-1 px-3 flex-1'}
+                ${sidebar.collapsed && !isHovering ? 'p-2 w-auto' : 'py-1 px-3'}
                 ${active ? 'bg-muted text-foreground font-semibold' : 'text-muted-foreground'}
               `}
             >

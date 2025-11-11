@@ -23,6 +23,7 @@
 		data-follow-pack-compact=""
 		type="button"
 		class="group flex items-center gap-4 w-full p-4 rounded-xl bg-card hover:bg-muted transition-colors {className}"
+		onclick={onclick}
 	>
 		<FollowPack.Image class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden" />
 

@@ -5,7 +5,7 @@
   import { Tooltip } from 'bits-ui';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
   import { Reaction } from '../../ui/reaction';
-  import { cn } from '../../utils/cn.js';
+  import { tv } from 'tailwind-variants';
 
   interface Props {
     ndk: NDKSvelte;
@@ -29,6 +29,42 @@
 
   const reactionState = createReactionAction(() => ({ event, delayed }), ndk);
 
+  const containerStyles = tv({
+    base: 'flex',
+    variants: {
+      variant: {
+        horizontal: 'flex-row flex-wrap gap-2',
+        vertical: 'flex-col gap-1.5'
+      }
+    }
+  });
+
+  const buttonStyles = tv({
+    base: 'inline-flex items-center cursor-pointer transition-all',
+    variants: {
+      variant: {
+        horizontal: 'gap-1.5 px-3 py-1.5 rounded-full border hover:scale-105',
+        vertical: 'gap-2 px-3 py-1.5 rounded-lg transition-colors'
+      },
+      active: {
+        true: 'bg-primary/10 text-primary',
+        false: 'bg-background hover:bg-accent'
+      }
+    },
+    compoundVariants: [
+      {
+        variant: 'horizontal',
+        active: true,
+        class: 'border-primary'
+      },
+      {
+        variant: 'horizontal',
+        active: false,
+        class: 'border-border'
+      }
+    ]
+  });
+
   async function reactWith(emoji: string) {
     await reactionState.react(emoji);
   }
@@ -37,11 +73,7 @@
 <div
   data-reaction-button-slack=""
   data-variant={variant}
-  class={cn(
-    'flex',
-    variant === 'vertical' ? 'flex-col gap-1.5' : 'flex-row flex-wrap gap-2',
-    className
-  )}
+  class={containerStyles({ variant, class: className })}
 >
   {#if showAvatars && variant === 'horizontal'}
     <!-- Horizontal with popover avatars -->
@@ -52,13 +84,7 @@
             <button
               data-reaction-item=""
               data-reacted={reaction.hasReacted || undefined}
-              class={cn(
-                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full',
-                'border transition-all hover:scale-105',
-                reaction.hasReacted
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-background hover:bg-accent'
-              )}
+              class={buttonStyles({ variant: 'horizontal', active: reaction.hasReacted })}
               onclick={() => reactWith(reaction.emoji)}
             >
               <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} class="text-lg w-[18px] h-[18px]" />
@@ -87,13 +113,7 @@
       <button
         data-reaction-item=""
         data-reacted={reaction.hasReacted || undefined}
-        class={cn(
-          'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg',
-          'transition-colors cursor-pointer',
-          reaction.hasReacted
-            ? 'bg-primary/10 text-primary'
-            : 'bg-background hover:bg-accent'
-        )}
+        class={buttonStyles({ variant: 'vertical', active: reaction.hasReacted })}
         onclick={() => reactWith(reaction.emoji)}
       >
         <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} class="text-lg w-[18px] h-[18px]" />
@@ -114,13 +134,7 @@
       <button
         data-reaction-item=""
         data-reacted={reaction.hasReacted || undefined}
-        class={cn(
-          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full',
-          'border transition-all hover:scale-105',
-          reaction.hasReacted
-            ? 'border-primary bg-primary/10 text-primary'
-            : 'border-border bg-background hover:bg-accent'
-        )}
+        class={buttonStyles({ variant: 'horizontal', active: reaction.hasReacted })}
         onclick={() => reactWith(reaction.emoji)}
       >
         <Reaction.Display emoji={reaction.emoji} url={reaction.url} shortcode={reaction.shortcode} class="text-lg w-[18px] h-[18px]" />

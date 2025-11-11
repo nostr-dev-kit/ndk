@@ -20,9 +20,9 @@
   // Page metadata
   const metadata = {
     title: 'Relay',
-    description: 'Headless, composable primitives for displaying relay information (NIP-11), connection status, and bookmark functionality (NIP-65).',
+    description: 'Headless, composable primitives for displaying relay information (NIP-11), connection status, and bookmark functionality (NIP-51).',
     importPath: 'ui/relay',
-    nips: ['11', '65'],
+    nips: ['11', '51'],
     primitives: [
       {
         name: 'Relay.Root',
@@ -110,10 +110,10 @@
       {
         name: 'Relay.BookmarkButton',
         title: 'Relay.BookmarkButton',
-        description: 'Toggle bookmark status for the relay. Uses NIP-65 relay lists to add/remove bookmarks.',
+        description: 'Toggle bookmark status for the relay. Uses NIP-51 relay lists to add/remove bookmarks.',
         apiDocs: [{
           name: 'Relay.BookmarkButton',
-          description: 'Toggle bookmark status for the relay. Uses NIP-65 relay lists to add/remove bookmarks.',
+          description: 'Toggle bookmark status for the relay. Uses NIP-51 relay lists to add/remove bookmarks.',
           importPath: '$lib/registry/ui/relay',
           props: [
             { name: 'bookmarks', type: 'BookmarkedRelayList', default: 'undefined', description: 'Bookmarked relay list builder instance' },
@@ -192,7 +192,7 @@
       {
         id: 'bookmark-button',
         label: 'Relay.BookmarkButton',
-        description: 'Bookmark toggle button (NIP-65).',
+        description: 'Bookmark toggle button (NIP-51).',
         props: ['bookmarks', 'class']
       },
       {
@@ -228,7 +228,7 @@
       <h2 class="text-2xl font-semibold mb-4">Overview</h2>
       <p class="text-lg leading-relaxed text-muted-foreground mb-8">
         Relay primitives provide headless components for displaying relay information, connection status,
-        and bookmark functionality. They automatically fetch NIP-11 metadata and support NIP-65 relay bookmarks.
+        and bookmark functionality. They automatically fetch NIP-11 metadata and support NIP-51 relay bookmarks.
       </p>
 
       <h3 class="text-xl font-semibold mt-8 mb-4">When You Need These</h3>
@@ -239,7 +239,7 @@
         <li class="leading-relaxed">Display relay information and metadata</li>
         <li class="leading-relaxed">Show connection status with live updates</li>
         <li class="leading-relaxed">Build relay directories or browsers</li>
-        <li class="leading-relaxed">Create bookmark/favorite relay lists (NIP-65)</li>
+        <li class="leading-relaxed">Create bookmark/favorite relay lists (NIP-51)</li>
         <li class="leading-relaxed">Build relay selection interfaces</li>
       </ul>
       <p class="leading-relaxed mt-4 text-muted-foreground">
@@ -344,9 +344,9 @@
     </div>
 
     <div>
-      <h3 class="text-xl font-semibold mb-3">NIP-65 Bookmarks</h3>
+      <h3 class="text-xl font-semibold mb-3">NIP-51 Bookmarks</h3>
       <p class="leading-relaxed text-muted-foreground mb-4">
-        Use Relay.BookmarkButton to add/remove relays from user's NIP-65 relay list:
+        Use Relay.BookmarkButton to add/remove relays from user's NIP-51 relay list:
       </p>
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock

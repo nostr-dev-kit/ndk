@@ -2,10 +2,9 @@
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
   import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '../../utils/cn';
-  import { createTimeAgo } from '../../utils/time-ago';
   import { User } from '../../ui/user';
+  import { Event } from '../../ui/event';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -15,7 +14,7 @@
 
     showTimestamp?: boolean;
 
-    avatarSize?: 'sm' | 'md' | 'lg';
+    avatarSize?: 'xs' | 'sm' | 'md' | 'lg';
 
     class?: string;
 
@@ -38,12 +37,6 @@
 
   const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
 
-  // Fetch author profile directly
-  const profileFetcher = createProfileFetcher(() => ({ user: context.event.author }), context.ndk);
-
-  // Create reactive time ago string
-  const timeAgo = createTimeAgo(context.event.created_at);
-
   // Handle user click
   function handleUserClick(e: Event) {
     if (entityClickContext?.onUserClick) {
@@ -62,7 +55,7 @@
   )}
 >
   <!-- Avatar and Author Info -->
-  <User.Root ndk={context.ndk} user={context.event.author} profile={profileFetcher.profile ?? undefined}>
+  <User.Root ndk={context.ndk} user={context.event.author}>
     <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
     <div
       class={cn(
@@ -82,7 +75,7 @@
         <User.Avatar
           class={cn(
             'flex-shrink-0',
-            avatarSize === 'sm' ? 'w-6 h-6' : avatarSize === 'md' ? 'w-10 h-10' : 'w-12 h-12'
+            avatarSize === 'xs' ? 'w-4 h-4' : avatarSize == 'sm' ? 'w-6 h-6' : avatarSize === 'md' ? 'w-10 h-10' : 'w-12 h-12'
           )}
         />
       {/if}
@@ -121,12 +114,7 @@
   <!-- Timestamp and Custom Actions -->
   <div class="flex items-center gap-3">
     {#if showTimestamp && context.event.created_at}
-      <time
-        datetime={new Date(context.event.created_at * 1000).toISOString()}
-        class="text-sm text-muted-foreground/70"
-      >
-        {timeAgo}
-      </time>
+      <Event.Time event={context.event} class="text-sm text-muted-foreground/70" />
     {/if}
 
     {#if children}

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import EventContent from '$lib/registry/ui/event-content.svelte';
 
-	// MediaRender auto-registers with the content renderer
-	import '$lib/registry/components/media-render';
+	// MediaCarousel auto-registers with the content renderer (highest priority)
+	import '$lib/registry/components/media-carousel';
 
 	let { ndk, event } = $props();
 </script>

@@ -55,7 +55,7 @@
   });
 </script>
 
-<div class={cn("rounded-full relative w-12 h-12", className)}>
+<div data-user-avatar="" class={cn("rounded-full relative w-12 h-12", className)}>
   <!-- Fallback layer (always visible until image loads) -->
   {#if !imageLoaded || !imageUrl}
     {#if customFallback}
@@ -73,6 +73,7 @@
   <!-- Image layer (only visible when loaded) -->
   {#if imageUrl}
     <img
+      data-user-avatar--img=""
       src={imageUrl}
       {alt}
       class={cn(

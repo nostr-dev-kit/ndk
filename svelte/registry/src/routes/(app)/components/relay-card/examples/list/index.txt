@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RelayCardList from '$lib/registry/components/relay/cards/basic/relay-card-list.svelte';
+  import RelayCardList from '$lib/registry/components/relay-card-list/relay-card-list.svelte';
 
   let { ndk, relayUrl = 'wss://relay.damus.io' } = $props();
 </script>

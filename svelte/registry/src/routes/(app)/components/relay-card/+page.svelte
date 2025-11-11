@@ -8,7 +8,7 @@
   // Import components
   import RelayCardPortrait from '$lib/registry/components/relay-card-portrait/relay-card-portrait.svelte';
   import RelayCardCompact from '$lib/registry/components/relay-card-compact/relay-card-compact.svelte';
-  import RelayCardList from '$lib/registry/components/relay-card/relay-card-list.svelte';
+  import RelayCardList from '$lib/registry/components/relay-card-list/relay-card-list.svelte';
 
   // Import example components
   import PortraitExampleRaw from './examples/portrait/index.txt?raw';
@@ -22,7 +22,7 @@
   // Import registry metadata
   import relayCardPortraitCard from '$lib/registry/components/relay-card-portrait/metadata.json';
   import relayCardCompactCard from '$lib/registry/components/relay-card-compact/metadata.json';
-  import relayCardListCard from '$lib/registry/components/relay-card/metadata.json';
+  import relayCardListCard from '$lib/registry/components/relay-card-list/metadata.json';
 
   // Page metadata
   const metadata = {

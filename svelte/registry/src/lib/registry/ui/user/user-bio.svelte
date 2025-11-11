@@ -20,7 +20,7 @@
 </script>
 
 {#if bio}
-  <p class={cn(className)}>
+  <p data-user-bio="" class={cn(className)}>
     {bio}
   </p>
 {/if}

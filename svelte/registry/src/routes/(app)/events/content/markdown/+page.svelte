@@ -73,7 +73,7 @@
 
 {#snippet articleContentBasicPreview()}
 	{#if article}
-		<!-- <BasicSimpleExample article={article} /> -->
+		<BasicSimpleExample article={article} />
 	{/if}
 {/snippet}
 

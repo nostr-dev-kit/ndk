@@ -13,6 +13,7 @@
   import { Popover } from 'bits-ui';
   import { cn } from '../../utils/cn';
   import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
+  import Portal from '../../ui/portal/portal.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -86,14 +87,16 @@
         </span>
       </User.Root>
     </Popover.Trigger>
-    <Popover.Content
-      class="z-50"
-      sideOffset={8}
-      onmouseenter={handleMouseEnter}
-      onmouseleave={handleMouseLeave}
-    >
-      {@const HoverCard = hoverComponent}
-      <HoverCard {ndk} {pubkey} />
-    </Popover.Content>
+    <Portal>
+      <Popover.Content
+        class="z-50"
+        sideOffset={8}
+        onmouseenter={handleMouseEnter}
+        onmouseleave={handleMouseLeave}
+      >
+        {@const HoverCard = hoverComponent}
+        <HoverCard {ndk} {pubkey} />
+      </Popover.Content>
+    </Portal>
   </Popover.Root>
 {/if}

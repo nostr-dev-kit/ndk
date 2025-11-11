@@ -21,7 +21,7 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventContent from '$lib/registry/ui/event-content.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
-	import MediaRenderCarousel from '$lib/registry/components/media-render-carousel';
+	import MediaCarousel from '$lib/registry/components/media-carousel';
 
 	interface Props {
 		ndk: NDKSvelte;
@@ -32,7 +32,7 @@
 
 	// Create a custom renderer with carousel layout
 	const carouselRenderer = new ContentRenderer();
-	carouselRenderer.mediaComponent = MediaRenderCarousel;
+	carouselRenderer.mediaComponent = MediaCarousel;
 </script>
 
 <div class="w-full max-w-2xl">

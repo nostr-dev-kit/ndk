@@ -51,6 +51,7 @@
 </script>
 
 <div
+  data-user-banner=""
   class="relative w-full h-48 {className}"
   style="{backgroundStyle}"
 >

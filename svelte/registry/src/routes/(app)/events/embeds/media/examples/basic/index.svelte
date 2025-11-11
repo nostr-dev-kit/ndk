@@ -21,8 +21,8 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventContent from '$lib/registry/ui/event-content.svelte';
 
-	// MediaRender auto-registers with the content renderer
-	import '$lib/registry/components/media-render';
+	// MediaCarousel auto-registers with the content renderer (highest priority)
+	import '$lib/registry/components/media-carousel';
 
 	interface Props {
 		ndk: NDKSvelte;

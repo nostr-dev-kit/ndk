@@ -9,7 +9,7 @@
 	import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer/content-renderer.context';
 	import NoteEmbeddedCompact from '../../components/note-card-compact/note-card-compact.svelte';
 	import ArticleEmbedded from '../../components/article-card/article-card-medium.svelte';
-	import HighlightEmbedded from '../../components/highlight-card/highlight-card-feed.svelte';
+	import HighlightEmbedded from '../../components/highlight-card-feed/highlight-card-feed.svelte';
 	import { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
     import MentionModern from '../../components/mention-modern/mention-modern.svelte';
     import { cn } from '../../utils/cn';

@@ -1,0 +1,47 @@
+{
+  "name": "media-bento",
+  "title": "Media Bento Grid",
+  "category": "media",
+  "variant": "bento",
+  "oneLiner": "Bento grid layout with smart content filtering",
+  "command": "npx jsrepo add components/media-bento",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "media",
+    "grid",
+    "bento",
+    "nsfw",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "MediaBento",
+    "description": "Asymmetric bento grid layout with NSFW filtering",
+    "importPath": "import MediaBento from '$lib/registry/components/media-bento'",
+    "props": [
+      {
+        "name": "url",
+        "type": "string | string[]",
+        "description": "Single media URL or array of URLs for grouped media"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "description": "Nostr event for checking author and content-warning tags"
+      },
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

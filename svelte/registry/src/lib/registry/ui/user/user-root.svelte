@@ -73,6 +73,6 @@
   setContext(USER_CONTEXT_KEY, context);
 </script>
 
-<div class={cn("contents", className)}>
+<div data-user-root="" class={cn("contents", className)}>
   {@render children()}
 </div>

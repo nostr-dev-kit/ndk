@@ -23,6 +23,7 @@ export class FollowsProxy {
     async add(pubkey: Hexpubkey): Promise<boolean> {
         const user = this.#store.currentUser;
         if (!user) throw new Error("No active user");
+        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return await user.follow(pubkey, this.#followSet);
     }
 
@@ -35,6 +36,7 @@ export class FollowsProxy {
     async remove(pubkey: Hexpubkey): Promise<Set<NDKRelay> | boolean> {
         const user = this.#store.currentUser;
         if (!user) throw new Error("No active user");
+        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return await user.unfollow(pubkey, this.#followSet);
     }
 

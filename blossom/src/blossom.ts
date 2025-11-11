@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKBlossomList, NDKEvent, type NDKImetaTag, NDKKind, type NDKUser, wrapEvent } from "@nostr-dev-kit/ndk";
+import { NDKBlossomList, NDKEvent, type NDKImetaTag, NDKKind, type NDKSigner, type NDKUser, wrapEvent } from "@nostr-dev-kit/ndk";
 import { fixUrl, getBlobUrlByHash } from "./healing/url-healing";
 import type {
     BlossomOptimizationOptions,
@@ -27,6 +27,7 @@ import { defaultSHA256Calculator } from "./utils/sha256";
  */
 export class NDKBlossom {
     public ndk: NDK;
+    public signer?: NDKSigner;
     private serverConfigs: Map<string, BlossomServerConfig> = new Map();
     private retryOptions: BlossomRetryOptions;
     private debugMode: boolean = false;
@@ -60,9 +61,11 @@ export class NDKBlossom {
     /**
      * Constructor for NDKBlossom
      * @param ndk NDK instance
+     * @param signer Optional signer to use for authentication (falls back to ndk.signer)
      */
-    constructor(ndk: NDK) {
+    constructor(ndk: NDK, signer?: NDKSigner) {
         this.ndk = ndk;
+        this.signer = signer;
         this.retryOptions = DEFAULT_RETRY_OPTIONS;
         this.logger = new DebugLogger();
         this.sha256Calculator = defaultSHA256Calculator;
@@ -160,6 +163,11 @@ export class NDKBlossom {
             // Set the SHA256 calculator if not provided in options
             if (!options.sha256Calculator) {
                 options.sha256Calculator = this.getSHA256Calculator();
+            }
+
+            // Set the signer if not provided in options
+            if (!options.signer) {
+                options.signer = this.signer;
             }
 
             // Upload the file
@@ -297,12 +305,13 @@ export class NDKBlossom {
      * @returns True if successful
      */
     public async deleteBlob(hash: string): Promise<boolean> {
-        if (!this.ndk.signer) {
+        const signer = this.signer ?? this.ndk.signer;
+        if (!signer) {
             throw new NDKBlossomAuthError("No signer available to delete blob", "NO_SIGNER");
         }
 
         // Get user's pubkey
-        const pubkey = (await this.ndk.signer.user()).pubkey;
+        const pubkey = (await signer.user()).pubkey;
 
         // Get user's server list
         const filter = { kinds: [NDKKind.BlossomList], authors: [pubkey] };
@@ -336,6 +345,7 @@ export class NDKBlossom {
                 const options = await createAuthenticatedFetchOptions(this.ndk, "delete", {
                     sha256: hash,
                     content: `Delete blob ${hash}`,
+                    signer: signer,
                     fetchOptions: {
                         method: "DELETE",
                     },
@@ -528,6 +538,7 @@ async function createAuthenticatedFetchOptions(
         content?: string;
         expirationSeconds?: number;
         fetchOptions?: RequestInit;
+        signer?: NDKSigner;
     } = {},
 ): Promise<RequestInit> {
     // Import the auth utility here to avoid circular dependencies

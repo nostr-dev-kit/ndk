@@ -82,7 +82,7 @@
   </Popover.Trigger>
   <Portal>
     <Popover.Content
-      class="z-50"
+      class="z-50 bg-background"
       sideOffset={8}
       onmouseenter={handleMouseEnter}
       onmouseleave={handleMouseLeave}

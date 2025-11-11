@@ -22,9 +22,6 @@
     primitives,
     children
   }: ComponentPageTemplateProps = $props();
-
-  // Get NDK from context if not provided as prop
-  const ndk = propNdk || getContext<NDKSvelte>('ndk');
 </script>
 
 <!-- Header Section -->

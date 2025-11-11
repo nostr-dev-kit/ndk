@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createRepostAction } from '../../builders/repost-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn';
+  import { tv } from 'tailwind-variants';
   import RepostIcon from '../../icons/repost/repost.svelte';
   import { LinkPreview } from 'bits-ui';
 
@@ -40,6 +40,22 @@
 
   const hasDropdown = $derived(!!onquote);
 
+  const buttonStyles = tv({
+    base: 'inline-flex items-center gap-2 cursor-pointer font-medium text-sm transition-all rounded-md outline-none disabled:pointer-events-none disabled:opacity-50',
+    variants: {
+      variant: {
+        ghost: 'px-3 py-2 hover:bg-accent hover:text-accent-foreground',
+        outline: 'px-3 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border',
+        pill: 'px-4 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border rounded-full',
+        solid: 'px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90'
+      },
+      active: {
+        true: 'text-green-500',
+        false: ''
+      }
+    }
+  });
+
   async function handleRepost() {
     if (!ndk?.$currentPubkey) return;
     try {
@@ -71,15 +87,7 @@
       data-reposted={repostState.hasReposted ? '' : undefined}
       data-variant={variant}
       data-dropdown=""
-      class={cn(
-        'inline-flex items-center gap-2 cursor-pointer transition-all',
-        variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
-        variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
-        variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
-        variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-        repostState.hasReposted && 'text-green-500',
-        className
-      )}
+      class={buttonStyles({ variant, active: repostState.hasReposted, class: className })}
       aria-label={`Repost (${repostState.count})`}
     >
       <RepostIcon size={16} class="flex-shrink-0" />
@@ -128,15 +136,7 @@
     data-reposted={repostState.hasReposted ? '' : undefined}
     data-variant={variant}
     onclick={handleClick}
-    class={cn(
-      'inline-flex items-center gap-2 cursor-pointer transition-all',
-      variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
-      variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
-      variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
-      variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-      repostState.hasReposted && 'text-green-500',
-      className
-    )}
+    class={buttonStyles({ variant, active: repostState.hasReposted, class: className })}
     aria-label={`Repost (${repostState.count})`}
   >
     <RepostIcon size={16} class="flex-shrink-0" />

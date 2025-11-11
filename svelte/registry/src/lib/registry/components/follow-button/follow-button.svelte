@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '../../builders/follow-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn';
+  import { tv } from 'tailwind-variants';
   import UserAddIcon from '../../icons/user-add/user-add.svelte';
   import { User } from '../../ui/user/index.js';
 
@@ -33,6 +33,29 @@
 
   const followAction = createFollowAction(() => ({ target }), ndk);
 
+  const buttonStyles = tv({
+    base: 'inline-flex items-center gap-2 cursor-pointer font-medium text-sm transition-all rounded-md outline-none disabled:pointer-events-none disabled:opacity-50',
+    variants: {
+      variant: {
+        ghost: 'px-3 py-2 hover:bg-accent hover:text-accent-foreground',
+        outline: 'px-3 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border',
+        pill: 'px-4 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border rounded-full',
+        solid: 'px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90'
+      },
+      following: {
+        true: 'text-muted-foreground hover:text-foreground',
+        false: 'text-primary'
+      }
+    },
+    compoundVariants: [
+      {
+        variant: 'solid',
+        following: true,
+        class: 'bg-muted text-foreground hover:bg-muted/80'
+      }
+    ]
+  });
+
   async function handleToggle() {
     if (!ndk?.$currentPubkey) return;
     try {
@@ -51,15 +74,7 @@
     data-variant={variant}
     type="button"
     onclick={handleToggle}
-    class={cn(
-      'inline-flex items-center gap-2 cursor-pointer transition-all',
-      variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
-      variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
-      variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
-      variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-      followAction.isFollowing ? 'text-muted-foreground hover:text-foreground' : 'text-primary',
-      className
-    )}
+    class={buttonStyles({ variant, following: followAction.isFollowing, class: className })}
     aria-label={followAction.isFollowing
       ? isHashtag
         ? `Unfollow #${target}`

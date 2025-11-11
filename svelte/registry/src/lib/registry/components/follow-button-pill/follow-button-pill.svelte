@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction } from '../../builders/follow-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn';
+  import { tv } from 'tailwind-variants';
   import HashtagIcon from '../../icons/hashtag/hashtag.svelte';
   import UserAddIcon from '../../icons/user-add/user-add.svelte';
   import UserFollowingIcon from '../../icons/user-following/user-following.svelte';
@@ -48,15 +48,55 @@
 
   const buttonLabel = $derived(followAction.isFollowing ? 'Following' : 'Follow');
 
-  const variantStyles = $derived(
-    variant === 'solid'
-      ? followAction.isFollowing
-        ? 'bg-muted text-foreground hover:bg-primary hover:text-primary-foreground'
-        : 'bg-background border border-border text-foreground hover:bg-background/90'
-      : followAction.isFollowing
-        ? 'bg-transparent border text-muted-foreground hover:border-border hover:text-foreground'
-        : 'bg-transparent border border-border text-foreground hover:bg-background hover:text-foreground'
-  );
+  const buttonStyles = tv({
+    base: 'inline-flex items-center cursor-pointer font-medium text-sm rounded-full transition-all duration-200',
+    variants: {
+      variant: {
+        solid: '',
+        outline: 'bg-transparent border'
+      },
+      following: {
+        true: '',
+        false: ''
+      },
+      compact: {
+        true: 'w-auto h-10 px-3 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50 transition-all duration-300',
+        false: 'gap-2 px-4 py-2'
+      }
+    },
+    compoundVariants: [
+      {
+        variant: 'solid',
+        following: true,
+        class: 'bg-muted text-foreground hover:bg-primary hover:text-primary-foreground'
+      },
+      {
+        variant: 'solid',
+        following: false,
+        class: 'bg-background border border-border text-foreground hover:bg-background/90'
+      },
+      {
+        variant: 'outline',
+        following: true,
+        class: 'text-muted-foreground hover:border-border hover:text-foreground'
+      },
+      {
+        variant: 'outline',
+        following: false,
+        class: 'border-border text-foreground hover:bg-background hover:text-foreground'
+      }
+    ]
+  });
+
+  const badgeStyles = tv({
+    base: 'absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold leading-none transition-opacity duration-300 z-10 shadow-sm pointer-events-none bg-primary text-primary-foreground',
+    variants: {
+      following: {
+        true: 'opacity-0 group-hover:opacity-100',
+        false: 'opacity-100'
+      }
+    }
+  });
 
   const ariaLabel = $derived(
     followAction.isFollowing
@@ -77,15 +117,7 @@
 {#if !isOwnProfile && ndk?.$currentUser}
   <div class={compact ? 'inline-block w-10 h-10 relative group' : 'inline-block'}>
     {#if compact}
-      <span
-        class={cn(
-          'absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold leading-none transition-opacity duration-300 z-10',
-          followAction.isFollowing
-            ? 'bg-primary text-primary-foreground opacity-0 group-hover:opacity-100'
-            : 'bg-primary text-primary-foreground',
-          'shadow-sm pointer-events-none'
-        )}
-      >
+      <span class={badgeStyles({ following: followAction.isFollowing })}>
         {followAction.isFollowing ? '−' : '+'}
       </span>
     {/if}
@@ -97,16 +129,7 @@
       data-compact={compact ? '' : undefined}
       type="button"
       onclick={handleToggle}
-      class={cn(
-        'inline-flex items-center cursor-pointer font-medium text-sm rounded-full',
-        compact
-          ? showTarget && !isHashtag
-            ? 'w-auto h-10 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50 transition-all duration-300'
-            : 'w-auto h-10 px-3 justify-center group overflow-hidden hover:absolute hover:w-auto hover:pr-4 hover:justify-start hover:z-50 transition-all duration-300'
-          : 'gap-2 px-4 py-2 transition-all duration-200',
-        variantStyles,
-        className
-      )}
+      class={buttonStyles({ variant, following: followAction.isFollowing, compact, class: className })}
       aria-label={ariaLabel}
     >
     {#if showTarget && !compact}

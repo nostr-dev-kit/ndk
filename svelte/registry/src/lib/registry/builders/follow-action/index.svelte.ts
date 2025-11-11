@@ -10,18 +10,21 @@ export interface FollowActionConfig {
 /**
  * Creates a reactive follow action state manager
  *
- * @param config - Function returning configuration with target
+ * @param config - Function returning configuration with target (NDKUser, pubkey hex string, or hashtag)
  * @param ndk - Optional NDK instance (uses context if not provided)
  * @returns Object with isFollowing state and follow function
  *
  * @example
  * ```svelte
  * <script>
- *   // NDK from context
+ *   // Follow a user
  *   const followAction = createFollowAction(() => ({ target: user }));
  *
- *   // Or with explicit NDK
- *   const followAction = createFollowAction(() => ({ target: user }), ndk);
+ *   // Follow by pubkey (64 hex chars)
+ *   const followAction = createFollowAction(() => ({ target: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52' }));
+ *
+ *   // Follow a hashtag
+ *   const followAction = createFollowAction(() => ({ target: 'nostr' }));
  * </script>
  *
  * <button onclick={followAction.follow}>
@@ -42,14 +45,20 @@ export function createFollowAction(
     }
 
     const isFollowing = $derived.by(() => {
-        const { target } = config();
+        let { target } = config();
         if (!target) return false;
 
-        // String = hashtag
+        // String = pubkey (64 hex chars) or hashtag
         if (typeof target === 'string') {
-            const interestList = resolvedNDK.$sessionEvent(NDKInterestList, { create: true }) as NDKInterestList | undefined;
-            if (!interestList) return false;
-            return interestList.hasInterest(target.toLowerCase());
+            // If it's a 64-character hex string, treat it as a pubkey
+            if (/^[0-9a-f]{64}$/i.test(target)) {
+                target = resolvedNDK.getUser({ pubkey: target });
+            } else {
+                // Otherwise it's a hashtag
+                const interestList = resolvedNDK.$sessionEvent(NDKInterestList, { create: true }) as NDKInterestList | undefined;
+                if (!interestList) return false;
+                return interestList.hasInterest(target.toLowerCase());
+            }
         }
 
         // NDKUser = user
@@ -63,23 +72,29 @@ export function createFollowAction(
     });
 
     async function follow(): Promise<void> {
-        const { target } = config();
+        let { target } = config();
         if (!target) return;
 
-        // String = hashtag
+        // String = pubkey (64 hex chars) or hashtag
         if (typeof target === 'string') {
-            const interestList = resolvedNDK.$sessionEvent(NDKInterestList, { create: true }) as NDKInterestList | undefined;
-            if (!interestList) return;
-
-            const hashtag = target.toLowerCase();
-            if (isFollowing) {
-                interestList.removeInterest(hashtag);
+            // If it's a 64-character hex string, treat it as a pubkey
+            if (/^[0-9a-f]{64}$/i.test(target)) {
+                target = resolvedNDK.getUser({ pubkey: target });
             } else {
-                interestList.addInterest(hashtag);
-            }
+                // Otherwise it's a hashtag
+                const interestList = resolvedNDK.$sessionEvent(NDKInterestList, { create: true }) as NDKInterestList | undefined;
+                if (!interestList) return;
 
-            await interestList.publishReplaceable();
-            return;
+                const hashtag = target.toLowerCase();
+                if (isFollowing) {
+                    interestList.removeInterest(hashtag);
+                } else {
+                    interestList.addInterest(hashtag);
+                }
+
+                await interestList.publishReplaceable();
+                return;
+            }
         }
 
         // NDKUser = user

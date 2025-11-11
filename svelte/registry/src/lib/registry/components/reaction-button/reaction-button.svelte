@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReactionAction } from '../../builders/reaction-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn';
+  import { tv } from 'tailwind-variants';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -25,6 +25,32 @@
   const stats = $derived(reactionState?.get(emoji) ?? { count: 0, hasReacted: false, pubkeys: [], emoji });
   const displayCount = $derived(countMode === 'total' ? reactionState.totalCount : stats.count);
 
+  const buttonStyles = tv({
+    base: 'inline-flex items-center gap-2 cursor-pointer font-medium text-sm transition-all rounded-md outline-none disabled:pointer-events-none disabled:opacity-50',
+    variants: {
+      variant: {
+        ghost: 'px-3 py-2 hover:bg-accent hover:text-accent-foreground',
+        outline: 'px-3 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border',
+        pill: 'px-4 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border rounded-full',
+        solid: 'px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90'
+      },
+      active: {
+        true: 'text-red-500',
+        false: ''
+      }
+    }
+  });
+
+  const iconStyles = tv({
+    base: 'flex-shrink-0',
+    variants: {
+      active: {
+        true: 'animate-[heartbeat_0.3s_ease-in-out]',
+        false: ''
+      }
+    }
+  });
+
   function handleClick() {
     reactionState.react(emoji);
     onclick?.();
@@ -36,22 +62,11 @@
   data-reacted={stats.hasReacted ? '' : undefined}
   data-variant={variant}
   onclick={handleClick}
-  class={cn(
-    'inline-flex items-center gap-2 cursor-pointer transition-all',
-    variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
-    variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
-    variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
-    variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-    stats.hasReacted && 'text-red-500',
-    className
-  )}
+  class={buttonStyles({ variant, active: stats.hasReacted, class: className })}
   aria-label={`React (${displayCount})`}
 >
   <svg
-    class={cn(
-      'flex-shrink-0',
-      stats.hasReacted && 'animate-[heartbeat_0.3s_ease-in-out]'
-    )}
+    class={iconStyles({ active: stats.hasReacted })}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="16"

@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReplyAction } from '../../builders/reply-action/index.svelte.js';
   import { getContext } from 'svelte';
-  import { cn } from '../../utils/cn';
+  import { tv } from 'tailwind-variants';
   import AvatarGroup from '../avatar-group/avatar-group.svelte';
   import ReplyIcon from '../../icons/reply/reply.svelte';
 
@@ -38,6 +38,18 @@
 
   const replyAction = createReplyAction(() => ({ event }), ndk);
 
+  const buttonStyles = tv({
+    base: 'inline-flex items-center gap-2 cursor-pointer font-medium text-sm transition-all rounded-md outline-none disabled:pointer-events-none disabled:opacity-50',
+    variants: {
+      variant: {
+        ghost: 'px-3 py-2 hover:bg-accent hover:text-accent-foreground',
+        outline: 'px-3 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border',
+        pill: 'px-4 py-2 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground border border-border rounded-full',
+        solid: 'px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90'
+      }
+    }
+  });
+
   function handleClick() {
     onclick?.();
   }
@@ -48,14 +60,7 @@
   data-variant={variant}
   type="button"
   onclick={handleClick}
-  class={cn(
-    'inline-flex items-center gap-2 cursor-pointer transition-all',
-    variant === 'ghost' && 'p-2 bg-transparent border-none hover:bg-accent',
-    variant === 'outline' && 'px-3 py-2 bg-transparent border border-border rounded-md hover:bg-accent',
-    variant === 'pill' && 'px-4 py-2 bg-transparent border border-border rounded-full hover:bg-accent',
-    variant === 'solid' && 'px-4 py-2 bg-muted border border-border rounded-md hover:bg-accent',
-    className
-  )}
+  class={buttonStyles({ variant, class: className })}
   aria-label={`${replyAction.count} ${replyAction.count === 1 ? 'reply' : 'replies'}`}
 >
   <ReplyIcon size={16} class="flex-shrink-0" />
@@ -75,7 +80,5 @@
         {replyAction.count}
       </span>
     {/if}
-  {:else}
-    <span class="text-sm text-muted-foreground">No replies</span>
   {/if}
 </button>

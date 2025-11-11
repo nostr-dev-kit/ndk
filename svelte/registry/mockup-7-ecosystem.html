@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Feed to Payments in One Component | @nostr/svelte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+        }
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        .hero .subtitle {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero .flow-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            font-size: 48px;
+            margin-top: 40px;
+        }
+
+        /* Complete Flow */
+        .complete-flow {
+            padding: 100px 0;
+        }
+        .complete-flow h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 60px;
+        }
+        .flow-step {
+            flex: 1;
+            text-align: center;
+        }
+        .flow-step .icon-circle {
+            width: 100px;
+            height: 100px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+        .flow-step h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .flow-step p {
+            color: #666;
+            font-size: 14px;
+        }
+        .flow-arrow {
+            font-size: 32px;
+            color: #ccc;
+            margin: 0 16px;
+        }
+
+        /* Visual Demo */
+        .visual-demo {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .visual-demo h2 {
+            font-size: 40px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .visual-demo .intro {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 60px;
+        }
+        .demo-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .demo-card .card-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .demo-card .avatar {
+            width: 56px;
+            height: 56px;
+            background: #ccc;
+            border-radius: 50%;
+        }
+        .demo-card .user-info {
+            flex: 1;
+        }
+        .demo-card .user-name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .demo-card .user-handle {
+            font-size: 14px;
+            color: #666;
+        }
+        .demo-card .card-content {
+            padding: 24px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        .demo-card .card-actions {
+            padding: 20px;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            gap: 24px;
+        }
+        .demo-card .action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+        }
+        .demo-card .action:hover {
+            background: #f0f0f0;
+        }
+        .demo-card .action .icon {
+            font-size: 20px;
+        }
+        .demo-card .action .label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .demo-card .action .count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Components Breakdown */
+        .components-breakdown {
+            padding: 100px 0;
+        }
+        .components-breakdown h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+        .breakdown-card {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            padding: 40px;
+            border-radius: 8px;
+        }
+        .breakdown-card .component-name {
+            font-family: 'Monaco', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .breakdown-card .description {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.8;
+        }
+        .breakdown-card .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .breakdown-card .feature-item {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+        }
+        .breakdown-card .feature-item .check {
+            width: 20px;
+            height: 20px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .breakdown-card .feature-item span {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Integration */
+        .integration {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .integration h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .integration-showcase {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            padding: 40px;
+            border-radius: 8px;
+        }
+        .integration-showcase h3 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+        .code-example {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 24px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.9;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        .code-example .comment {
+            color: #888;
+        }
+        .code-example .keyword {
+            color: #ff79c6;
+        }
+        .code-example .string {
+            color: #50fa7b;
+        }
+        .integration-benefits {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .integration-benefit {
+            text-align: center;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 4px;
+        }
+        .integration-benefit .value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .integration-benefit .label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Real Use Cases */
+        .use-cases {
+            padding: 100px 0;
+        }
+        .use-cases h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .use-case-card {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            padding: 32px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .use-case-card .emoji {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+        .use-case-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .use-case-card p {
+            color: #666;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* Power Features */
+        .power-features {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .power-features h2 {
+            font-size: 40px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 32px;
+            border-radius: 8px;
+        }
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+        .feature-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            background: #1a1a1a;
+            color: #fff;
+            text-align: center;
+        }
+        .cta h2 {
+            font-size: 40px;
+            margin-bottom: 24px;
+        }
+        .cta p {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+        .cta .install-commands {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .cta .install-command {
+            background: #000;
+            padding: 16px 24px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>From Feed to Payments<br>In One Component</h1>
+            <p class="subtitle">
+                Not just UI components. A complete social ecosystem. Read events, react with emojis,
+                send Lightning zaps. All integrated. All reactive. All in your app.
+            </p>
+            <div class="flow-preview">
+                <span>📖</span>
+                <span>→</span>
+                <span>❤️</span>
+                <span>→</span>
+                <span>⚡</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete Flow -->
+    <section class="complete-flow">
+        <div class="container">
+            <h2>The Complete User Journey</h2>
+
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="icon-circle">📱</div>
+                    <h3>View Content</h3>
+                    <p>
+                        User sees events in their feed.
+                        Articles, notes, highlights, images.
+                    </p>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="icon-circle">💬</div>
+                    <h3>Engage</h3>
+                    <p>
+                        React with emojis, reply to threads,
+                        repost to their followers.
+                    </p>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="icon-circle">⚡</div>
+                    <h3>Support Creators</h3>
+                    <p>
+                        Send Lightning zaps (sats) to
+                        reward great content.
+                    </p>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="icon-circle">🔄</div>
+                    <h3>See Updates</h3>
+                    <p>
+                        Everything syncs in real-time.
+                        Reactions appear, zaps confirmed.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Demo -->
+    <section class="visual-demo">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <p class="intro">
+                This is what a complete event card looks like with all interaction components.
+            </p>
+
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="avatar"></div>
+                    <div class="user-info">
+                        <div class="user-name">Pablo Fernandez</div>
+                        <div class="user-handle">@pablo · 2 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    Just shipped @nostr/svelte v3.0! 🚀<br><br>
+
+                    87 production-ready components, 25 reactive builders, and 6 complete blocks.
+                    All built with Svelte 5 runes. All Nostr-native. All copy & paste.<br><br>
+
+                    Build your Nostr app in hours, not months.
+                </div>
+
+                <div class="card-actions">
+                    <div class="action">
+                        <div class="icon">💬</div>
+                        <div class="label">Reply</div>
+                        <div class="count">12</div>
+                    </div>
+
+                    <div class="action">
+                        <div class="icon">🔄</div>
+                        <div class="label">Repost</div>
+                        <div class="count">8</div>
+                    </div>
+
+                    <div class="action">
+                        <div class="icon">❤️</div>
+                        <div class="label">React</div>
+                        <div class="count">45</div>
+                    </div>
+
+                    <div class="action">
+                        <div class="icon">⚡</div>
+                        <div class="label">Zap</div>
+                        <div class="count">2.1k sats</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Components Breakdown -->
+    <section class="components-breakdown">
+        <div class="container">
+            <h2>Every Piece Works Together</h2>
+
+            <div class="breakdown-grid">
+                <div class="breakdown-card">
+                    <div class="component-name">EventCard</div>
+                    <div class="description">
+                        Display any Nostr event with proper formatting, metadata, and user info.
+                        15+ variants for different layouts.
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Auto-detects event kind</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Markdown rendering</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Media embeds (images, videos)</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Link previews</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Reply indicators</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <div class="component-name">ReactionButton + createReactionAction</div>
+                    <div class="description">
+                        Let users react with emojis. Shows reaction counts and who reacted.
+                        NIP-25 compliant.
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Emoji picker integration</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Popular reactions shown</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Avatar display of reactors</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Real-time reaction counts</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Slack-style reaction UI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <div class="component-name">ReplyButton + createReplyAction</div>
+                    <div class="description">
+                        Enable threaded conversations. Reconstructs reply chains like Twitter.
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Thread reconstruction</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Reply count display</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Avatar stacks of repliers</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Depth indicators</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Collapse/expand threads</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <div class="component-name">ZapButton + createZapAction</div>
+                    <div class="description">
+                        Send Lightning payments to reward content. Full NIP-57 implementation.
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Lightning invoice generation</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Zap splits (multiple recipients)</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Custom amount input</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Payment verification</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Total zaps display</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <div class="component-name">RepostButton + createRepostAction</div>
+                    <div class="description">
+                        Share content to followers. Shows repost counts and who reposted.
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Quote repost option</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Repost attribution</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Repost counts</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Avatar list of reposters</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Real-time updates</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card">
+                    <div class="component-name">FollowButton + createFollowAction</div>
+                    <div class="description">
+                        Follow users directly from any component. Syncs with NDK follows store.
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Auto-detects follow status</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Follow/unfollow toggle</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Follower count display</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Mutual follows indicator</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="check">✓</div>
+                            <span>Hashtag follows support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration -->
+    <section class="integration">
+        <div class="container">
+            <h2>Build The Complete Flow</h2>
+
+            <div class="integration-showcase">
+                <h3>Wire up a full social feed in 30 lines</h3>
+
+                <div class="code-example">
+<span class="comment">// Install the components you need</span>
+npx jsrepo add components/event-card
+npx jsrepo add components/reaction-button
+npx jsrepo add components/zap-button
+npx jsrepo add builders/create-reaction-action
+npx jsrepo add builders/create-zap-action
+
+<span class="comment">// Use them in your app</span>
+&lt;script lang="ts"&gt;
+  import { EventCard, ReactionButton, ZapButton } from '$lib/components';
+  import { createReactionAction, createZapAction } from '$lib/builders';
+
+  <span class="comment">// Create reactive actions</span>
+  const reactionAction = createReactionAction(() => ({
+    target: event
+  }));
+
+  const zapAction = createZapAction(() => ({
+    target: event
+  }));
+&lt;/script&gt;
+
+<span class="comment">// Render complete event with all interactions</span>
+&lt;EventCard.Classic {event}&gt;
+  &lt;EventCard.Header {event} /&gt;
+  &lt;EventCard.Content {event} /&gt;
+  &lt;EventCard.Actions&gt;
+    &lt;ReactionButton {reactionAction} /&gt;
+    &lt;ZapButton {zapAction} /&gt;
+  &lt;/EventCard.Actions&gt;
+&lt;/EventCard.Classic&gt;
+
+<span class="comment">// That's it. Complete social interactions in 30 lines.</span>
+                </div>
+
+                <div class="integration-benefits">
+                    <div class="integration-benefit">
+                        <div class="value">30</div>
+                        <div class="label">Lines of code</div>
+                    </div>
+                    <div class="integration-benefit">
+                        <div class="value">6</div>
+                        <div class="label">Components used</div>
+                    </div>
+                    <div class="integration-benefit">
+                        <div class="value">100%</div>
+                        <div class="label">Functional</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="use-cases">
+        <div class="container">
+            <h2>Real-World Use Cases</h2>
+
+            <div class="use-cases-grid">
+                <div class="use-case-card">
+                    <div class="emoji">📰</div>
+                    <h3>Social Media Apps</h3>
+                    <p>
+                        Build Twitter-like feeds with reactions, reposts, and threaded conversations.
+                        Complete social graph interactions.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="emoji">📝</div>
+                    <h3>Publishing Platforms</h3>
+                    <p>
+                        Long-form articles with zap support. Readers can tip writers directly
+                        with Lightning payments.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="emoji">🎨</div>
+                    <h3>Creator Portfolios</h3>
+                    <p>
+                        Showcase work with built-in monetization. Artists receive zaps
+                        for their creations.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="emoji">💬</div>
+                    <h3>Community Forums</h3>
+                    <p>
+                        Discussion threads with upvotes (reactions) and rewards (zaps).
+                        Incentivize quality contributions.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="emoji">🎓</div>
+                    <h3>Educational Content</h3>
+                    <p>
+                        Share knowledge with tip jars. Students can zap helpful
+                        tutorials and guides.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="emoji">🎵</div>
+                    <h3>Music Platforms</h3>
+                    <p>
+                        Showcase tracks with zap buttons. Fans support artists
+                        directly with micropayments.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Power Features -->
+    <section class="power-features">
+        <div class="container">
+            <h2>Built For The Full Experience</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Real-Time Everything</h3>
+                    <p>
+                        All interactions sync in real-time across components. React on one device,
+                        see it update on another. Zap from mobile, confirmation appears on desktop.
+                        NDK keeps everything in sync automatically.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Composable Actions</h3>
+                    <p>
+                        Mix and match components however you need. Add zaps to user cards, reactions
+                        to articles, reposts to highlights. Every component works with every builder.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Smart State Management</h3>
+                    <p>
+                        Builders handle all the complex state. Follow status, reaction counts,
+                        zap totals—all reactive and automatically synced. You just wire up the UI.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>Lightning Integration</h3>
+                    <p>
+                        Full NIP-57 zap implementation. Invoice generation, payment verification,
+                        zap splits, and receipts. Turn your app into a monetization platform.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Build The Complete Experience</h2>
+            <p>From reading content to sending payments. All in your app. All integrated. All today.</p>
+
+            <div class="install-commands">
+                <div class="install-command">
+                    npx jsrepo@latest add components/event-card
+                </div>
+                <div class="install-command">
+                    npx jsrepo@latest add components/reaction-button
+                </div>
+                <div class="install-command">
+                    npx jsrepo@latest add components/zap-button
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

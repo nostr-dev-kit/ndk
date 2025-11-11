@@ -31,7 +31,7 @@
   });
 </script>
 
-<nav class="fixed top-0 left-0 right-0 h-14 bg-background border-b border-border z-[1000]">
+<nav class="fixed top-0 left-0 right-0 h-14 border-border z-[1000] bg-background">
   <div class="flex items-center justify-between h-full max-w-full px-6">
     <!-- Left section: Logo + Navigation Links -->
     <div class="flex items-center gap-8">

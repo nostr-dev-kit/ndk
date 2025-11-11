@@ -37,25 +37,8 @@
   let contentElement: HTMLDivElement;
   let mountedComponents: Array<{ target: Element; unmount: () => void }> = [];
 
-  // Detect if content has markdown patterns
-  const hasMarkdown = $derived.by(() => {
-    const markdownPatterns = [
-      /^#{1,6}\s/m,           // Headers
-      /\*\*[^*]+\*\*/,        // Bold
-      /\*[^*]+\*/,            // Italic
-      /\[([^\]]+)\]\([^)]+\)/, // Links
-      /!\[([^\]]*)\]\([^)]+\)/, // Images
-      /^[-*+]\s/m,            // Unordered lists
-      /^>\s/m,                // Blockquotes
-      /```[\s\S]*?```/,       // Code blocks
-      /^\d+\.\s/m,            // Ordered lists
-    ];
-    return markdownPatterns.some(pattern => pattern.test(content));
-  });
-
   // Parse markdown with Nostr extensions
   const htmlContent = $derived.by(() => {
-    if (hasMarkdown) {
       const nostrExtensions = createNostrMarkdownExtensions({
         emojiTags
       });
@@ -64,8 +47,6 @@
       markedInstance.use({ extensions: nostrExtensions });
 
       return markedInstance.parse(content) as string;
-    }
-    return content;
   });
 
   // Hydrate Nostr components after render

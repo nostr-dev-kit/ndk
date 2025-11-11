@@ -312,7 +312,7 @@
     <div>
       <h3 class="text-xl font-semibold mb-3">Custom Verification Status</h3>
       <p class="leading-relaxed text-muted-foreground mb-4">
-        Demonstrates the <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">verificationSnippet</code> prop on User.Nip05. Instead of the default ✓/✗ symbols, you can provide custom markup (text labels, SVG icons, badges) that receives the verification status and loading state.
+        Instead of the default ✓/✗ symbols, you can provide custom markup (text labels, SVG icons, badges) that receives the verification status and loading state.
       </p>
       <Preview
         title="NIP-05 Verification with Custom Status"

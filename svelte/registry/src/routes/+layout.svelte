@@ -78,7 +78,7 @@
     </div>
   </div>
 {:else}
-  <div class="flex min-h-screen bg-background">
+  <div class="flex min-h-screen">
     <Navbar
       onLoginClick={() => showLoginModal = true}
       onLogoutClick={handleLogout}

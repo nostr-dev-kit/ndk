@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostr Native, Not Bolted-On | @nostr/svelte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .hero .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #666;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        .hero .subtitle {
+            font-size: 24px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Problem Statement */
+        .problem {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .problem h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+        .problem-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 32px;
+            border-radius: 4px;
+        }
+        .problem-card h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #999;
+        }
+        .problem-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Protocol Understanding */
+        .protocol {
+            padding: 100px 0;
+        }
+        .protocol h2 {
+            font-size: 42px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .protocol .intro {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .protocol-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            margin-top: 60px;
+        }
+        .protocol-feature {
+            border-left: 4px solid #1a1a1a;
+            padding-left: 24px;
+        }
+        .protocol-feature h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .protocol-feature p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        .protocol-feature .code-snippet {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 16px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .protocol-feature .code-snippet .key {
+            color: #888;
+        }
+
+        /* Event Kinds */
+        .event-kinds {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .event-kinds h2 {
+            font-size: 42px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .event-kinds .intro {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 60px;
+        }
+        .kinds-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .kind-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 24px;
+            border-radius: 4px;
+        }
+        .kind-card .kind-number {
+            font-size: 14px;
+            color: #666;
+            font-family: 'Monaco', monospace;
+            margin-bottom: 8px;
+        }
+        .kind-card .kind-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .kind-card .kind-component {
+            font-size: 13px;
+            color: #666;
+            font-family: 'Monaco', monospace;
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        /* NDK Integration */
+        .ndk-integration {
+            padding: 100px 0;
+        }
+        .ndk-integration h2 {
+            font-size: 42px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .integration-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        .flow-item {
+            flex: 1;
+            text-align: center;
+        }
+        .flow-item .icon {
+            width: 80px;
+            height: 80px;
+            background: #1a1a1a;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #fff;
+        }
+        .flow-item h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        .flow-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        .flow-arrow {
+            font-size: 24px;
+            color: #ccc;
+        }
+        .code-example {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 32px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .code-example .comment {
+            color: #888;
+        }
+
+        /* Comparison Table */
+        .comparison {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        .comparison h2 {
+            font-size: 42px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .comparison-table {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .comparison-table .header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            background: #1a1a1a;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-table .header > div {
+            padding: 20px 24px;
+        }
+        .comparison-table .row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .comparison-table .row:last-child {
+            border-bottom: none;
+        }
+        .comparison-table .row > div {
+            padding: 20px 24px;
+        }
+        .comparison-table .row .feature {
+            font-weight: 500;
+        }
+        .comparison-table .row .check {
+            text-align: center;
+            font-size: 20px;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+        }
+        .cta h2 {
+            font-size: 42px;
+            margin-bottom: 24px;
+        }
+        .cta p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .cta .install-code {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            display: inline-block;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="label">@nostr/svelte</div>
+            <h1>Nostr Native,<br>Not Bolted-On</h1>
+            <p class="subtitle">
+                The only Svelte component library built from the ground up for the Nostr protocol.
+                Not a Twitter clone. Not generic social UI. Purpose-built for Nostr.
+            </p>
+        </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="problem">
+        <div class="container">
+            <h2>The Generic UI Problem</h2>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3>❌ Generic Social Libraries</h3>
+                    <p>
+                        Most component libraries are designed for traditional social networks. They understand
+                        "posts", "likes", and "followers" but have no concept of event kinds, NIPs, or
+                        relay pools. You end up fighting the abstractions, writing endless adapters, and
+                        compromising on features unique to Nostr.
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <h3>❌ Wrapped Twitter Clones</h3>
+                    <p>
+                        Some libraries just clone Twitter's UI and call it "decentralized". But Nostr isn't
+                        Twitter. It supports articles (kind 30023), highlights (kind 9802), live events
+                        (kind 30311), badges, and 50+ other event kinds. Your app is limited to what
+                        Twitter could do in 2015.
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <h3>❌ No Protocol Understanding</h3>
+                    <p>
+                        Generic libraries don't know about NIP-05 verification, parameterized replaceable
+                        events, relay hints, or zap splits. Every advanced Nostr feature requires custom
+                        code. You're not building on Nostr—you're building despite your UI library.
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <h3>✓ @nostr/svelte Is Different</h3>
+                    <p>
+                        Built specifically for Nostr from day one. Every component understands event kinds,
+                        every builder knows about NIPs, every hook is protocol-aware. We speak Nostr
+                        fluently so you can focus on your app, not protocol translation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protocol Understanding -->
+    <section class="protocol">
+        <div class="container">
+            <h2>Deep Protocol Integration</h2>
+            <p class="intro">
+                We don't just render data—we understand Nostr at the protocol level.
+                NIPs, event kinds, relay management, and signing are first-class concepts.
+            </p>
+
+            <div class="protocol-features">
+                <div class="protocol-feature">
+                    <h3>1. Event Kind Awareness</h3>
+                    <p>
+                        Components automatically adapt based on event kind. Pass a kind 1 (note), kind 30023
+                        (article), or kind 9802 (highlight) and get the correct layout, metadata display,
+                        and interaction patterns.
+                    </p>
+                    <div class="code-snippet">
+<span class="key">// Same component, different kinds</span>
+&lt;EventCard event={noteEvent} /&gt;
+&lt;EventCard event={articleEvent} /&gt;
+&lt;EventCard event={highlightEvent} /&gt;
+
+<span class="key">// Renders correctly for each type</span>
+                    </div>
+                </div>
+
+                <div class="protocol-feature">
+                    <h3>2. NIP Implementation Support</h3>
+                    <p>
+                        Built-in support for NIP-05 verification badges, NIP-57 zaps, NIP-25 reactions,
+                        NIP-65 relay lists, and more. Components show verification status, handle relay
+                        hints, and respect event tags automatically.
+                    </p>
+                    <div class="code-snippet">
+<span class="key">// NIP-05 verification auto-displayed</span>
+&lt;User.Name user={user} /&gt;
+&lt;User.Nip05 user={user} /&gt;
+
+<span class="key">// NIP-57 zaps with splits</span>
+&lt;ZapButton target={user} splits={[...]} /&gt;
+                    </div>
+                </div>
+
+                <div class="protocol-feature">
+                    <h3>3. Relay Management</h3>
+                    <p>
+                        Components understand relay pools, handle relay hints from 'e' and 'p' tags,
+                        and let users select preferred relays. Built-in relay health indicators and
+                        connection status.
+                    </p>
+                    <div class="code-snippet">
+<span class="key">// Relay selector with hints</span>
+&lt;RelaySelector
+  relays={userRelays}
+  hints={eventRelayHints}
+/&gt;
+                    </div>
+                </div>
+
+                <div class="protocol-feature">
+                    <h3>4. Negentropy Sync</h3>
+                    <p>
+                        First-class support for Negentropy set-reconciliation protocol. Efficiently sync
+                        large datasets from relays with animated progress indicators and smart batching.
+                    </p>
+                    <div class="code-snippet">
+<span class="key">// Efficient data sync visualization</span>
+const sync = createNegentropySyncManager({
+  filter: { kinds: [1], authors: [...] }
+});
+
+&lt;NegentropySyncAnimated manager={sync} /&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Kinds -->
+    <section class="event-kinds">
+        <div class="container">
+            <h2>Built For Every Event Kind</h2>
+            <p class="intro">
+                Not just notes. Components and builders for articles, highlights, images,
+                live events, badges, and more.
+            </p>
+
+            <div class="kinds-grid">
+                <div class="kind-card">
+                    <div class="kind-number">kind: 1</div>
+                    <div class="kind-name">Short Text Note</div>
+                    <div class="kind-component">EventCard.Compact</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 30023</div>
+                    <div class="kind-name">Long-form Article</div>
+                    <div class="kind-component">ArticleCard.Hero</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 9802</div>
+                    <div class="kind-name">Highlight</div>
+                    <div class="kind-component">HighlightCard.Elegant</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 1063</div>
+                    <div class="kind-name">File Metadata</div>
+                    <div class="kind-component">ImageCard.Hero</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 3</div>
+                    <div class="kind-name">Contact List</div>
+                    <div class="kind-component">FollowPack.Hero</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 0</div>
+                    <div class="kind-name">Profile Metadata</div>
+                    <div class="kind-component">UserProfile.Hero</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 7</div>
+                    <div class="kind-name">Reaction</div>
+                    <div class="kind-component">ReactionButton</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 9735</div>
+                    <div class="kind-name">Zap Receipt</div>
+                    <div class="kind-component">ZapButton</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 6</div>
+                    <div class="kind-name">Repost</div>
+                    <div class="kind-component">RepostButton</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 10002</div>
+                    <div class="kind-name">Relay List</div>
+                    <div class="kind-component">RelayCard.List</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 30008</div>
+                    <div class="kind-name">Profile Badges</div>
+                    <div class="kind-component">User.Field</div>
+                </div>
+
+                <div class="kind-card">
+                    <div class="kind-number">kind: 30311</div>
+                    <div class="kind-name">Live Event</div>
+                    <div class="kind-component">EventCard.Neon</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NDK Integration -->
+    <section class="ndk-integration">
+        <div class="container">
+            <h2>Powered By NDK</h2>
+
+            <div class="integration-flow">
+                <div class="flow-item">
+                    <div class="icon">🔌</div>
+                    <h3>NDK Core</h3>
+                    <p>Full NDK integration for signing, publishing, and relay management</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-item">
+                    <div class="icon">⚡</div>
+                    <h3>Reactive State</h3>
+                    <p>Svelte 5 runes sync with NDK stores automatically</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-item">
+                    <div class="icon">🎨</div>
+                    <h3>UI Components</h3>
+                    <p>Components receive live data and update in real-time</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+<span class="comment">// Components are NDK-aware from the start</span>
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
+import { createFollowAction } from '@nostr/svelte/builders';
+
+const ndk = new NDKSvelte({ explicitRelayUrls: [...] });
+
+<span class="comment">// Builders automatically use NDK context</span>
+const followAction = createFollowAction(() => ({
+  target: user,
+  <span class="comment">// ndk instance auto-injected via context</span>
+}));
+
+<span class="comment">// Check if already following (from NDK $follows store)</span>
+$: isFollowing = followAction.isFollowing;
+
+<span class="comment">// Publish follow event to relays</span>
+followAction.execute();
+
+<span class="comment">// All components reactive to NDK state changes</span>
+&lt;FollowButton {followAction} /&gt;
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="comparison">
+        <div class="container">
+            <h2>Why Protocol-Aware Matters</h2>
+
+            <div class="comparison-table">
+                <div class="header">
+                    <div>Feature</div>
+                    <div>Generic UI Lib</div>
+                    <div>@nostr/svelte</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Understands event kinds</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">NIP-05 verification badges</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Relay hints from tags</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Parameterized replaceable events</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Zap splits (NIP-57)</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Negentropy sync</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Hashtag follows (separate from users)</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Event thread reconstruction</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Markdown with Nostr extensions</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+                <div class="row">
+                    <div class="feature">Multi-session support</div>
+                    <div class="check">❌</div>
+                    <div class="check">✓</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Build With The Protocol, Not Against It</h2>
+            <p>Start using protocol-aware components today.</p>
+            <div class="install-code">
+                npx jsrepo@latest add components/event-card
+            </div>
+        </div>
+    </section>
+</body>
+</html>

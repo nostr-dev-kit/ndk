@@ -84,6 +84,7 @@ export class ReactiveWalletStore {
             }
 
             // Sync wallet from event
+            // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
             this.#syncWallet(walletEvent, activePubkey);
         });
     }
@@ -95,6 +96,7 @@ export class ReactiveWalletStore {
         this.#syncing = true;
         try {
             // Instantiate wallet from event
+            // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
             const wallet = await NDKCashuWallet.from(walletEvent);
 
             if (wallet) {
@@ -129,6 +131,7 @@ export class ReactiveWalletStore {
         this.status = wallet.status;
 
         // Register wallet with NDK so its payment methods are available to NDKZapper
+        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         this.#ndk.wallet = wallet;
 
         // Subscribe to balance updates
@@ -273,6 +276,7 @@ export class ReactiveWalletStore {
     get relaySet(): NDKRelaySet | undefined {
         const wallet = this.#wallet;
         if (!(wallet instanceof NDKCashuWallet)) return undefined;
+        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return wallet.relaySet;
     }
 
@@ -346,17 +350,20 @@ export class ReactiveWalletStore {
             const session = this.#sessionManager.activePubkey;
             if (!session) throw new Error("No active session");
 
+            // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
             const newWallet = await NDKCashuWallet.create(this.#ndk, config.mints, config.relays);
             await newWallet.start({ pubkey: session });
             this.set(newWallet);
             wallet = newWallet;
         } else {
             // Update existing wallet
+            // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
             await wallet.update(config);
         }
 
         // Publish CashuMintList (kind 10019) for nutzap reception
         if (wallet instanceof NDKCashuWallet) {
+            // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
             await wallet.publishMintList();
         }
     }

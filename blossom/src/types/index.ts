@@ -1,4 +1,4 @@
-import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKSigner } from "@nostr-dev-kit/ndk";
 
 // Blob Descriptor returned from server
 export interface BlossomBlobDescriptor {
@@ -66,6 +66,11 @@ export interface BlossomUploadOptions {
      * Custom SHA256 calculator implementation
      */
     sha256Calculator?: SHA256Calculator;
+
+    /**
+     * Optional signer to use for authentication (falls back to ndk.signer)
+     */
+    signer?: NDKSigner;
 }
 
 // Options for media optimization

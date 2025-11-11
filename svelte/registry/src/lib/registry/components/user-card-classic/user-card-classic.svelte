@@ -20,7 +20,7 @@
   // Subscribe to user's notes count
   const notesSubscription = ndk.$subscribe(
     () => pubkey ? ({
-      filters: [{ kinds: [1], authors: [pubkey], limit: 100 }],
+      filters: [{ kinds: [1], authors: [pubkey]}],
       bufferMs: 100,
     }) : undefined
   );
@@ -28,7 +28,7 @@
   // Subscribe to contact list for following count
   const contactListSubscription = ndk.$subscribe(
     () => pubkey ? ({
-      filters: [{ kinds: [3], authors: [pubkey], limit: 1 }],
+      filters: [{ kinds: [3], authors: [pubkey] }],
       bufferMs: 100,
     }) : undefined
   );

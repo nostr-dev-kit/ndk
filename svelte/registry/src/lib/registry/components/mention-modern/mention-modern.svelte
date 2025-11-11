@@ -8,7 +8,7 @@
 
 <script lang="ts">
   import { getContext } from 'svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
+  import { createProfileFetcher } from '../../builders/profile/index.svelte.js';
   import { User } from '../../ui/user';
   import { Popover } from 'bits-ui';
   import { cn } from '../../utils/cn';

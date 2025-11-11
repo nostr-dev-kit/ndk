@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKSigner } from "@nostr-dev-kit/ndk";
 import { ErrorCodes } from "../types";
 import { BLOSSOM_AUTH_EVENT_KIND } from "./constants";
 import { NDKBlossomAuthError } from "./errors";
@@ -22,12 +22,9 @@ export async function createAuthEvent(
         sha256?: string | string[];
         content?: string;
         expirationSeconds?: number;
+        signer?: NDKSigner;
     } = {},
 ): Promise<NDKEvent> {
-    // Check if NDK has a signer
-    if (!ndk.signer) {
-        throw new NDKBlossomAuthError("No signer available to create authentication event", ErrorCodes.NO_SIGNER);
-    }
 
     try {
         // Create the authentication event (kind 24242)
@@ -58,8 +55,9 @@ export async function createAuthEvent(
 
         authEvent.tags = tags;
 
-        // Sign the event
-        await authEvent.sign();
+        // Sign the event using provided signer or ndk.signer
+        const signer = options.signer ?? ndk.signer;
+        await authEvent.sign(signer);
         logger.debug(`Created Blossom auth event for action: ${action}`);
 
         return authEvent;
@@ -111,10 +109,16 @@ export async function createAuthenticatedFetchOptions(
         content?: string;
         expirationSeconds?: number;
         fetchOptions?: RequestInit;
+        signer?: NDKSigner;
     } = {},
 ): Promise<RequestInit> {
     // Create auth event
-    const authEvent = await createAuthEvent(ndk, action, options);
+    const authEvent = await createAuthEvent(ndk, action, {
+        sha256: options.sha256,
+        content: options.content,
+        expirationSeconds: options.expirationSeconds,
+        signer: options.signer,
+    });
 
     // Add auth headers
     const headers = addAuthHeaders((options.fetchOptions?.headers as Record<string, string>) || {}, authEvent);

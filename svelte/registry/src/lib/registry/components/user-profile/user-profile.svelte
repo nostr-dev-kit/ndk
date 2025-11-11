@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { Component } from 'svelte';
+  import type { Snippet } from 'svelte';
   import { User } from '../../ui/user';
   import { cn } from '../../utils/cn';
 
@@ -20,7 +20,7 @@
 
     showAvatar?: boolean;
 
-    byline?: string | Component;
+    byline?: Snippet;
 
     onclick?: (e: MouseEvent) => void;
 
@@ -123,14 +123,9 @@
     <div class={cn(variantClasses.info, 'min-w-0')}>
       <User.Name class={cn(sizeClasses.name, 'truncate')} />
 
-      {#if typeof byline === 'string'}
-        <div class={cn(sizeClasses.byline, 'text-muted-foreground truncate')}>
-          {byline}
-        </div>
-      {:else if byline}
-        {@const BylineComponent = byline}
+      {#if byline}
         <div class={cn(sizeClasses.byline, 'text-muted-foreground')}>
-          <BylineComponent />
+          {@render byline()}
         </div>
       {/if}
     </div>

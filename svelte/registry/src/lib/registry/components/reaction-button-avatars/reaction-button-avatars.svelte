@@ -110,7 +110,5 @@
         {displayCount}
       </span>
     {/if}
-  {:else if displayCount > 0}
-    <span class="text-sm text-muted-foreground">{displayCount} {displayCount === 1 ? 'reaction' : 'reactions'}</span>
   {/if}
 </button>

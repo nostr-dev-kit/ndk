@@ -1,0 +1,61 @@
+{
+  "name": "highlight-card-elegant",
+  "title": "Highlight Card Elegant",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "elegant",
+  "oneLiner": "An elegant card for highlight content with refined styling",
+  "command": "npx jsrepo add highlight-card-elegant",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "elegant",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "HighlightCardElegant",
+    "description": "An elegant card for displaying text highlights (NIP-84) with refined styling and visual elements. Features book page-style design with optional author header, source information, and custom action buttons.",
+    "importPath": "import { HighlightCardElegant } from '$lib/registry/components/highlight-card-elegant'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Highlight event to display"
+      },
+      {
+        "name": "showHeader",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show author header with avatar and timestamp"
+      },
+      {
+        "name": "showActions",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show actions area below highlight"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "actions",
+        "type": "Snippet",
+        "description": "Custom Svelte 5 snippet for actions area"
+      }
+    ]
+  }
+}

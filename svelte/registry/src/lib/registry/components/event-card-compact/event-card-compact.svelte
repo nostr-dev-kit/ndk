@@ -57,7 +57,7 @@
   <!-- Content - allows wrapping -->
   {#if content}
     <div class="text-sm text-muted-foreground line-clamp-3">
-      {content}
+      <EventCard.Content />
     </div>
   {/if}
 </EventCard.Root>

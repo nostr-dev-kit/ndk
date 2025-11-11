@@ -163,8 +163,8 @@ export class CacheModuleStorage implements StorageAdapter {
         return userConversations.map((conv) => ({
             id: conv.id,
             participants: conv.participants,
+            protocol: conv.protocol,
             name: conv.name,
-            avatar: conv.avatar,
             lastMessageAt: conv.lastMessageAt,
             unreadCount: conv.unreadCount,
         }));
@@ -178,10 +178,9 @@ export class CacheModuleStorage implements StorageAdapter {
             id: conversation.id,
             participants: conversation.participants,
             name: conversation.name,
-            avatar: conversation.avatar,
             lastMessageAt: conversation.lastMessageAt,
             unreadCount: conversation.unreadCount,
-            protocol: "nip17", // Default for now
+            protocol: conversation.protocol,
         };
 
         await this.conversationsCollection.save(cachedConversation);

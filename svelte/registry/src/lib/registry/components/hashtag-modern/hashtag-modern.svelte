@@ -6,6 +6,7 @@
   import HashtagCardCompact from '../hashtag-card-compact/hashtag-card-compact.svelte';
   import { Popover } from 'bits-ui';
   import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
+  import Portal from '../../ui/portal/portal.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -79,12 +80,14 @@
       <span>{formattedHashtag}</span>
     </span>
   </Popover.Trigger>
-  <Popover.Content
-    class="z-50"
-    sideOffset={8}
-    onmouseenter={handleMouseEnter}
-    onmouseleave={handleMouseLeave}
-  >
-    <HashtagCardCompact {ndk} hashtag={tag} />
-  </Popover.Content>
+  <Portal>
+    <Popover.Content
+      class="z-50"
+      sideOffset={8}
+      onmouseenter={handleMouseEnter}
+      onmouseleave={handleMouseLeave}
+    >
+      <HashtagCardCompact {ndk} hashtag={tag} />
+    </Popover.Content>
+  </Portal>
 </Popover.Root>

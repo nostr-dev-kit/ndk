@@ -67,16 +67,6 @@ export {
 } from "./builders/event/fetch/index.svelte.js";
 
 // ============================================================================
-// Profile Builder
-// ============================================================================
-
-export {
-    createProfileFetcher,
-    type ProfileFetcherConfig,
-    type ProfileFetcherState,
-} from "./builders/profile/index.svelte.js";
-
-// ============================================================================
 // Relay Builders
 // ============================================================================
 

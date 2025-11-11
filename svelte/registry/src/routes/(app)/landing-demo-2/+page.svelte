@@ -8,7 +8,7 @@
 	import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
 	import RelayCardCompact from '$lib/registry/components/relay-card-compact/relay-card-compact.svelte';
 	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
-	import HighlightCardElegant from '$lib/registry/components/highlight-card/highlight-card-elegant.svelte';
+	import HighlightCardElegant from '$lib/registry/components/highlight-card-elegant/highlight-card-elegant.svelte';
 	import FollowButton from '$lib/registry/components/follow-button/follow-button.svelte';
 
 	let mounted = $state(false);

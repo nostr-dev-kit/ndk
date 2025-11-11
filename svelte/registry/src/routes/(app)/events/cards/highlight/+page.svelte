@@ -3,10 +3,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import { Highlight as HighlightCard } from '$lib/registry/ui/highlight';
-  import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
-  import HighlightCardElegant from '$lib/registry/components/highlight-card/highlight-card-elegant.svelte';
+  import HighlightCardFeed from '$lib/registry/components/highlight-card-feed/highlight-card-feed.svelte';
+  import HighlightCardElegant from '$lib/registry/components/highlight-card-elegant/highlight-card-elegant.svelte';
   import HighlightCardCompact from '$lib/registry/components/highlight-card-compact/highlight-card-compact.svelte';
-  import HighlightCardGrid from '$lib/registry/components/highlight-card/highlight-card-grid.svelte';
+  import HighlightCardGrid from '$lib/registry/components/highlight-card-grid/highlight-card-grid.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import ComponentAPI from '$site-components/component-api.svelte';
@@ -15,20 +15,18 @@
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
   // Import registry metadata
-  import highlightCardBasicCard from '$lib/registry/components/highlight-card/metadata.json';
-  import highlightCardCompactCardBase from '$lib/registry/components/highlight-card-compact/metadata.json';
-
-  // Create variant cards from base registry
-  const highlightCardFeedCard = { ...highlightCardBasicCard, name: 'highlight-card-feed', title: 'Highlight Card Feed', variant: 'feed' };
-  const highlightCardElegantCard = { ...highlightCardBasicCard, name: 'highlight-card-elegant', title: 'Highlight Card Elegant', variant: 'elegant' };
-  const highlightCardGridCard = { ...highlightCardBasicCard, name: 'highlight-card-grid', title: 'Highlight Card Grid', variant: 'grid' };
-  const highlightCardCompactCard = { ...highlightCardCompactCardBase, name: 'highlight-card-compact', title: 'Highlight Card Compact' };
+  import highlightCardFeedCard from '$lib/registry/components/highlight-card-feed/metadata.json';
+  import highlightCardElegantCard from '$lib/registry/components/highlight-card-elegant/metadata.json';
+  import highlightCardGridCard from '$lib/registry/components/highlight-card-grid/metadata.json';
+  import highlightCardCompactCard from '$lib/registry/components/highlight-card-compact/metadata.json';
 
   const highlightCardCards = [highlightCardFeedCard, highlightCardElegantCard, highlightCardGridCard, highlightCardCompactCard];
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const metadata = {
+    title: 'Highlight Cards',
+    description: 'Highlight card components for displaying text highlights (NIP-84)'
+  };
 
   const ndk = getContext<NDKSvelte>('ndk');
 

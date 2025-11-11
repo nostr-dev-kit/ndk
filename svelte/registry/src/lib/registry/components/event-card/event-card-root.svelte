@@ -85,7 +85,7 @@
     data-event-card-root=""
     data-interactive=""
     class={cn(
-      'relative flex flex-col gap-2 cursor-pointer w-full text-left bg-transparent border-none p-0',
+      'relative flex flex-col gap-2 cursor-pointer w-full text-left bg-transparent border-0 p-0',
       className
     )}
     {onclick}

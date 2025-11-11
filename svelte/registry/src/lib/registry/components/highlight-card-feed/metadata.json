@@ -1,0 +1,61 @@
+{
+  "name": "highlight-card-feed",
+  "title": "Highlight Card Feed",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "feed",
+  "oneLiner": "A feed-optimized card for highlight content",
+  "command": "npx jsrepo add highlight-card-feed",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "feed",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "HighlightCardFeed",
+    "description": "A card for displaying text highlights (NIP-84) in feed layouts. Features book page-style design with optional author header, source information, and custom action buttons. Includes hover effects and supports custom snippet for actions area.",
+    "importPath": "import { HighlightCardFeed } from '$lib/registry/components/highlight-card-feed'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Highlight event to display"
+      },
+      {
+        "name": "showHeader",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show author header with avatar and timestamp"
+      },
+      {
+        "name": "showActions",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show actions area below highlight"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "actions",
+        "type": "Snippet",
+        "description": "Custom Svelte 5 snippet for actions area"
+      }
+    ]
+  }
+}

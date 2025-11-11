@@ -47,6 +47,6 @@
   });
 </script>
 
-<span class={cn(className)}>
+<span data-user-name="" class={cn(className)}>
   {displayText}
 </span>

@@ -235,7 +235,7 @@
 		{#if selectedEmbed}
 			<div>
 				<h3 class="font-semibold mb-2 text-sm uppercase tracking-wide text-muted-foreground">
-					Available Variants
+					Available Components
 				</h3>
 				<div class="space-y-2">
 					{#if selectedEmbed === 'chrome'}

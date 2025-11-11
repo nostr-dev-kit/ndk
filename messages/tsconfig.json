@@ -3,7 +3,7 @@
         "target": "ES2022",
         "module": "ESNext",
         "lib": ["ES2022"],
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "rootDir": "src",
         "outDir": "dist",
         "declaration": true,
@@ -13,8 +13,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "composite": true
+        "resolveJsonModule": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]

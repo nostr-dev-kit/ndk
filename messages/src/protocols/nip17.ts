@@ -83,7 +83,14 @@ export class NIP17Protocol {
     rumorToMessage(rumor: NostrEvent, myPubkey: string): NDKMessage {
         // Compute ID if not present
         if (!rumor.id) {
-            rumor.id = getEventHash(rumor);
+            rumor.id = getEventHash({
+                ...rumor,
+                kind: rumor.kind ?? 0,
+                created_at: rumor.created_at ?? 0,
+                tags: rumor.tags ?? [],
+                content: rumor.content ?? "",
+                pubkey: rumor.pubkey ?? "",
+            });
         }
 
         // Determine if this is incoming or outgoing
@@ -94,7 +101,7 @@ export class NIP17Protocol {
         const conversationId = [myPubkey, otherPubkey].sort().join(":");
 
         return {
-            id: rumor.id,
+            id: rumor.id || "",
             content: rumor.content || "",
             sender: new NDKUser({ pubkey: rumor.pubkey }),
             recipient: isOutgoing ? new NDKUser({ pubkey: otherPubkey }) : new NDKUser({ pubkey: myPubkey }),

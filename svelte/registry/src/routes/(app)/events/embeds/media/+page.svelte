@@ -7,11 +7,15 @@
 	import ApiTable from '$site-components/api-table.svelte';
 	import { EditProps } from '$lib/site/components/edit-props';
 
-	// Import MediaRender components and metadata
-	import '$lib/registry/components/media-render'; // Auto-registers with ContentRenderer
-	import mediaRenderMeta from '$lib/registry/components/media-render/metadata.json';
-	import mediaRenderCarouselMeta from '$lib/registry/components/media-render-carousel/metadata.json';
-	import mediaRenderBentoGridMeta from '$lib/registry/components/media-render-bento-grid/metadata.json';
+	// Import media components
+	import '$lib/registry/components/media-basic'; // Auto-registers with ContentRenderer
+	import '$lib/registry/components/media-carousel';
+	import '$lib/registry/components/media-bento';
+
+	// Import registry metadata
+	import mediaRenderMeta from '$lib/registry/components/media-basic/metadata.json';
+	import mediaRenderCarouselMeta from '$lib/registry/components/media-carousel/metadata.json';
+	import mediaRenderBentoGridMeta from '$lib/registry/components/media-bento/metadata.json';
 
 	// Import examples
 	import MediaRenderExample from './examples/basic/index.svelte';
@@ -29,23 +33,23 @@
 		title: 'Media Components',
 		description:
 			'Smart media rendering with NSFW filtering, follows-based content control, and elegant layouts',
-		showcaseTitle: 'MediaRender - Intelligent Media Filtering',
+		showcaseTitle: 'Media Components - Intelligent Media Filtering',
 		showcaseDescription:
-			'MediaRender provides automatic NSFW detection (NIP-36) and follows-based filtering, with multiple layout options for grouped media.'
+			'Media components provide automatic NSFW detection (NIP-36) and follows-based filtering, with multiple layout options: carousel (default), bento grid, and basic stacked layouts.'
 	};
 
 	// Component card data for primitives section
 	const mediaRenderCardData = {
 		...mediaRenderMeta,
-		code: `import '$lib/registry/components/media-render';
+		code: `import '$lib/registry/components/media-basic';
 
-// MediaRender auto-registers with ContentRenderer
-// Now all EventContent components will use MediaRender for media
+// MediaBasic auto-registers with ContentRenderer
+// Now all EventContent components will use MediaBasic for media
 
 // Or use directly:
-import MediaRender from '$lib/registry/components/media-render';
+import MediaBasic from '$lib/registry/components/media-basic';
 
-<MediaRender
+<MediaBasic
   url={mediaUrls}
   event={nostrEvent}
 />`
@@ -55,23 +59,13 @@ import MediaRender from '$lib/registry/components/media-render';
 	const componentsSection = {
 		cards: [
 			{...mediaRenderMeta, code: MediaRenderCode},
-			{
-				...mediaRenderCarouselMeta,
-				code: CarouselCode,
-				title: 'Media Render Carousel',
-				richDescription: 'Carousel layout with NSFW and follows-based filtering'
-			},
-			{
-				...mediaRenderBentoGridMeta,
-				code: BentoCode,
-				title: 'Media Render Bento Grid',
-				richDescription: 'Bento grid layout with smart content filtering'
-			}
+			{...mediaRenderCarouselMeta, code: CarouselCode},
+			{...mediaRenderBentoGridMeta, code: BentoCode}
 		],
 		previews: {
-			'media-render': mediaRenderPreview,
-			'media-render-carousel': carouselPreview,
-			'media-render-bento-grid': bentoPreview
+			'media-basic': mediaRenderPreview,
+			'media-carousel': carouselPreview,
+			'media-bento': bentoPreview
 		}
 	};
 </script>
@@ -97,12 +91,12 @@ import MediaRender from '$lib/registry/components/media-render';
 {/snippet}
 
 {#snippet primitives()}
-		<!-- MediaRender Component -->
+		<!-- Media Components -->
 		<section class="mt-16">
-			<h2 class="text-3xl font-bold mb-4">MediaRender - Smart Media Filtering</h2>
+			<h2 class="text-3xl font-bold mb-4">Media Components - Smart Filtering</h2>
 			<p class="text-muted-foreground mb-4">
-				MediaRender is the primary media component that automatically handles NSFW content and follows-based filtering.
-				It integrates seamlessly with the ContentRenderer system. For different layouts, use MediaRenderCarousel or MediaRenderBentoGrid components.
+				All media components automatically handle NSFW content and follows-based filtering using the createMediaRender builder.
+				Choose between MediaCarousel (default), MediaBento (grid), or MediaBasic (stacked) layouts.
 			</p>
 			<ComponentCard data={mediaRenderCardData}>
 				{#snippet preview()}
@@ -149,11 +143,11 @@ All from the same trip!"
 			</div>
 		</section>
 
-		<!-- MediaComponent Interface -->
+		<!-- Media Component Interface -->
 		<section class="mt-16">
-			<h2 class="text-3xl font-bold mb-4">MediaRender Component API</h2>
+			<h2 class="text-3xl font-bold mb-4">Media Component API</h2>
 			<p class="text-muted-foreground mb-4">
-				MediaRender accepts the following props for intelligent media filtering and display:
+				All media components accept the following props for intelligent media filtering and display:
 			</p>
 			<ApiTable
 				rows={[
@@ -181,13 +175,14 @@ All from the same trip!"
 				<pre class="text-sm font-mono leading-relaxed"><code>interface Props &#123;
   url: string | string[];
   event?: NDKEvent;         // For NSFW and follows checking
+  ndk?: NDKSvelte;          // NDK instance (uses context if not provided)
   class?: string;
 &#125;
 
-// MediaRender handles filtering automatically:
+// All media components handle filtering automatically:
 // - Blurs NSFW content (NIP-36 content-warning tags)
 // - Blurs content from unfollowed users when logged in
-// - Provides click-to-reveal interface</code></pre>
+// - Provides click-to-reveal interface with keyboard support</code></pre>
 			</div>
 		</section>
 
@@ -195,33 +190,33 @@ All from the same trip!"
 		<section class="mt-16">
 			<h2 class="text-3xl font-bold mb-4">Usage</h2>
 			<p class="text-muted-foreground mb-4">
-				MediaRender auto-registers with ContentRenderer on import:
+				Media components auto-register with ContentRenderer on import:
 			</p>
 			<div class="bg-muted rounded-lg p-4 overflow-x-auto">
 				<pre class="text-sm font-mono leading-relaxed"><code>// Option 1: Auto-registration (recommended)
-import '$lib/registry/components/media-render';
-// Now all EventContent components use MediaRender automatically
+import '$lib/registry/components/media-carousel';
+// Now all EventContent components use MediaCarousel automatically
 
 // Option 2: Manual registration
 import &#123; ContentRenderer &#125; from '$lib/registry/ui/content-renderer';
-import MediaRender from '$lib/registry/components/media-render';
+import MediaBasic from '$lib/registry/components/media-basic';
 
 const renderer = new ContentRenderer();
-renderer.mediaComponent = MediaRender;
+renderer.mediaComponent = MediaBasic;
 
 // Option 3: Direct usage with different layouts
-import MediaRender from '$lib/registry/components/media-render';
-import MediaRenderCarousel from '$lib/registry/components/media-render-carousel';
-import MediaRenderBentoGrid from '$lib/registry/components/media-render-bento-grid';
+import MediaBasic from '$lib/registry/components/media-basic';
+import MediaCarousel from '$lib/registry/components/media-carousel';
+import MediaBento from '$lib/registry/components/media-bento';
 
 // Simple layout
-&lt;MediaRender url=&#123;mediaUrls&#125; event=&#123;nostrEvent&#125; /&gt;
+&lt;MediaBasic url=&#123;mediaUrls&#125; event=&#123;nostrEvent&#125; /&gt;
 
 // Carousel layout with filtering
-&lt;MediaRenderCarousel url=&#123;mediaUrls&#125; event=&#123;nostrEvent&#125; /&gt;
+&lt;MediaCarousel url=&#123;mediaUrls&#125; event=&#123;nostrEvent&#125; /&gt;
 
 // Bento grid layout with filtering
-&lt;MediaRenderBentoGrid url=&#123;mediaUrls&#125; event=&#123;nostrEvent&#125; /&gt;</code></pre>
+&lt;MediaBento url=&#123;mediaUrls&#125; event=&#123;nostrEvent&#125; /&gt;</code></pre>
 			</div>
 
 			<h3 class="text-xl font-semibold mt-6 mb-3">Global Configuration</h3>
@@ -299,10 +294,10 @@ defaultContentRenderer.blockNsfw = true;  // Re-enable (default)</code></pre>
 			<h2 class="text-3xl font-bold mb-4">Related</h2>
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 				<a
-					href="/components/media-render"
+					href="/events/embeds/media"
 					class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5"
 				>
-					<strong class="font-semibold text-foreground">MediaRender Docs</strong>
+					<strong class="font-semibold text-foreground">Media Components Docs</strong>
 					<span class="text-sm text-muted-foreground"
 						>Full documentation and examples</span
 					>
@@ -339,16 +334,7 @@ defaultContentRenderer.blockNsfw = true;  // Re-enable (default)</code></pre>
 	{ndk}
 	showcaseComponents={[
 		{
-			id: 'media-render',
-			cardData: {
-				...mediaRenderMeta,
-				code: MediaRenderCode
-			},
-			orientation: 'vertical',
-			preview: mediaRenderPreview
-		},
-		{
-			id: 'carousel-media-renderer',
+			id: 'media-carousel',
 			cardData: {
 				...mediaRenderCarouselMeta,
 				code: CarouselCode
@@ -357,13 +343,22 @@ defaultContentRenderer.blockNsfw = true;  // Re-enable (default)</code></pre>
 			preview: carouselPreview
 		},
 		{
-			id: 'bento-media-renderer',
+			id: 'media-bento',
 			cardData: {
 				...mediaRenderBentoGridMeta,
 				code: BentoCode
 			},
 			orientation: 'vertical',
 			preview: bentoPreview
+		},
+		{
+			id: 'media-basic',
+			cardData: {
+				...mediaRenderMeta,
+				code: MediaRenderCode
+			},
+			orientation: 'vertical',
+			preview: mediaRenderPreview
 		}
 	]}
 	{componentsSection}

@@ -32,6 +32,6 @@
   const displayText = $derived(showAt ? `@${handle}` : handle);
 </script>
 
-<span class={cn(className)}>
+<span data-user-handle="" class={cn(className)}>
   {displayText}
 </span>

@@ -320,9 +320,9 @@ defaultContentRenderer.addKind(NDKArticle, ArticleCardPortrait, 10);
 		</section>
 
 		<section>
-			<h3 class="text-xl font-semibold mb-3">Available Variants</h3>
+			<h3 class="text-xl font-semibold mb-3">Available Components</h3>
 			<p class="text-muted-foreground leading-relaxed mb-4">
-				Each variant is designed for specific use cases and layout contexts:
+				Each components is designed for specific use cases and layout contexts:
 			</p>
 
 			<div class="grid gap-3 md:grid-cols-2">

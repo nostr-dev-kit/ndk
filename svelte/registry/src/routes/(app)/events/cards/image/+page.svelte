@@ -2,8 +2,8 @@
 	import { getContext } from 'svelte';
 	import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import ImageCard from '$lib/registry/components/image-card/image-card.svelte';
-	import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte';
+	import ImageCardBase from '$lib/registry/components/image-card-base/image-card-base.svelte';
+	import ImageCardInstagram from '$lib/registry/components/image-card-instagram/image-card-instagram.svelte';
 	import ImageCardHero from '$lib/registry/components/image-card-hero/image-card-hero.svelte';
 	import { EditProps } from '$lib/site/components/edit-props';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
@@ -12,19 +12,17 @@
 	import ComponentAPI from '$site-components/component-api.svelte';
 
 	// Import registry metadata
-	import imageCardBasicCard from '$lib/registry/components/image-card/metadata.json';
-	import imageCardHeroCardBase from '$lib/registry/components/image-card-hero/metadata.json';
+	import imageCardBaseCard from '$lib/registry/components/image-card-base/metadata.json';
+	import imageCardInstagramCard from '$lib/registry/components/image-card-instagram/metadata.json';
+	import imageCardHeroCard from '$lib/registry/components/image-card-hero/metadata.json';
 
-	// Create variant cards
-	const imageCardCard = { ...imageCardBasicCard, name: 'image-card', title: 'Image Card' };
-	const imageCardInstagramCard = { ...imageCardBasicCard, name: 'image-card-instagram', title: 'Image Card Instagram', variant: 'instagram' };
-	const imageCardHeroCard = { ...imageCardHeroCardBase, name: 'image-card-hero', title: 'Image Card Hero' };
+	const imageCardCards = [imageCardBaseCard, imageCardInstagramCard, imageCardHeroCard];
 
-	const imageCardCards = [imageCardCard, imageCardInstagramCard, imageCardHeroCard];
-
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+  // Page metadata
+  const metadata = {
+    title: 'Image Cards',
+    description: 'Image card components for displaying image events (NIP-94)'
+  };
 
 	const ndk = getContext<NDKSvelte>('ndk');
 	let sampleImage = $state<NDKImage | undefined>();
@@ -62,7 +60,7 @@
     },
     {
       id: 'image-card-basic',
-      cardData: imageCardCard,
+      cardData: imageCardBaseCard,
       preview: imageCardPreview,
       orientation: 'vertical'
     }
@@ -86,7 +84,7 @@
 
 {#snippet imageCardPreview()}
 	{#if sampleImage}
-		<ImageCard {ndk} image={sampleImage} />
+		<ImageCardBase {ndk} image={sampleImage} />
 	{/if}
 {/snippet}
 
@@ -95,7 +93,7 @@
 		component={{
 			name: 'ImageCardInstagram',
 			description: 'Instagram-style image card with user header, square image, caption, and action buttons.',
-			importPath: "import ImageCardInstagram from '$lib/registry/components/image-card/image-card-instagram.svelte'",
+			importPath: "import ImageCardInstagram from '$lib/registry/components/image-card-instagram/image-card-instagram.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },
@@ -122,9 +120,9 @@
 
 	<ComponentAPI
 		component={{
-			name: 'ImageCard',
+			name: 'ImageCardBase',
 			description: 'General purpose image card combining EventCard primitives with ImageContent.',
-			importPath: "import ImageCard from '$lib/registry/components/image-card/image-card.svelte'",
+			importPath: "import ImageCardBase from '$lib/registry/components/image-card-base/image-card-base.svelte'",
 			props: [
 				{ name: 'ndk', type: 'NDKSvelte', description: 'NDK instance (optional if provided via context)' },
 				{ name: 'image', type: 'NDKImage', required: true, description: 'The image event to display' },

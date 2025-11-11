@@ -18,7 +18,7 @@
 
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-	import MediaRender from '$lib/registry/components/media-render';
+	import MediaBasic from '$lib/registry/components/media-basic';
 
 	interface Props {
 		event?: NDKEvent;
@@ -34,5 +34,5 @@
 	<div class="mb-2 px-3 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg text-sm">
 		⚠️ This example simulates NSFW content with a content-warning tag
 	</div>
-	<MediaRender url={imageUrl} {event} />
+	<MediaBasic url={imageUrl} {event} />
 </div>

@@ -21,7 +21,7 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventContent from '$lib/registry/ui/event-content.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
-	import MediaRenderBentoGrid from '$lib/registry/components/media-render-bento-grid';
+	import MediaBento from '$lib/registry/components/media-bento';
 
 	interface Props {
 		ndk: NDKSvelte;
@@ -32,7 +32,7 @@
 
 	// Create a custom renderer with bento grid layout
 	const bentoRenderer = new ContentRenderer();
-	bentoRenderer.mediaComponent = MediaRenderBentoGrid;
+	bentoRenderer.mediaComponent = MediaBento;
 </script>
 
 <div class="w-full max-w-3xl">

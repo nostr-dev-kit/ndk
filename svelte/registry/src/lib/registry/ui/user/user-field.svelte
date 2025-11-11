@@ -27,7 +27,7 @@
 {#if field === 'about'}
   <Bio class={cn(className)} />
 {:else if fieldValue}
-  <span class={cn(className)}>
+  <span data-user-field="" class={cn(className)}>
     {fieldValue}
   </span>
 {/if}

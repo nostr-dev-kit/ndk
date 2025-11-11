@@ -14,7 +14,7 @@
 	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
 	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
 	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
-	import HighlightCardFeed from '$lib/registry/components/highlight-card/highlight-card-feed.svelte';
+	import HighlightCardFeed from '$lib/registry/components/highlight-card-feed/highlight-card-feed.svelte';
 	import HighlightCardInline from '$lib/registry/components/highlight-card-inline/highlight-card-inline.svelte';
 	import HighlightCardCompact from '$lib/registry/components/highlight-card-compact/highlight-card-compact.svelte';
 	import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';

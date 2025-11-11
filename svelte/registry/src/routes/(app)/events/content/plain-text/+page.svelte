@@ -12,7 +12,7 @@
   import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
   import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
   import LinkInlineBasic from '$lib/registry/components/link-inline-basic/link-inline-basic.svelte';
-  import MediaRender from '$lib/registry/components/media-render/media-render.svelte';
+  import MediaCarousel from '$lib/registry/components/media-carousel';
 
   import BasicExample from './examples/basic/index.svelte';
   import CustomSnippetsExample from './examples/custom-snippets/index.svelte';
@@ -44,7 +44,7 @@
     renderer.setMentionComponent(MentionModern, 1);
     renderer.setHashtagComponent(HashtagModern, 1);
     renderer.setLinkComponent(LinkInlineBasic, 1);
-    renderer.setMediaComponent(MediaRender, 1);
+    renderer.setMediaComponent(MediaCarousel, 1);
     return renderer;
   });
 
@@ -138,7 +138,7 @@
         name: 'plain-text',
         title: 'Plain Text Content',
         description: 'Toggle between raw text and enhanced rendering',
-        command: 'npx jsrepo add event-content',
+        command: 'npx jsrepo add ui/event-content',
         apiDoc: {
           name: 'EventContent',
           description: 'Renders event content with optional plain text mode',

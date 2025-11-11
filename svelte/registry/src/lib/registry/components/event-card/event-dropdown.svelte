@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { Popover } from 'bits-ui';
   import { cn } from '../../utils/cn';
+  import Portal from '../../ui/portal/portal.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -100,19 +101,20 @@
     </Popover.Trigger>
   </div>
 
-  <Popover.Content
-    class={cn(
-      'w-72',
-      'bg-popover border border-border rounded-lg',
-      'shadow-lg',
-      'z-[9999] max-h-96 overflow-y-auto'
-    )}
-    side="bottom"
-    align="end"
-    sideOffset={4}
-    onclick={(e: MouseEvent) => e.stopPropagation()}
-    onkeydown={(e: KeyboardEvent) => e.stopPropagation()}
-  >
+  <Portal>
+    <Popover.Content
+      class={cn(
+        'w-72',
+        'bg-popover border border-border rounded-lg',
+        'shadow-lg',
+        'z-[9999] max-h-96 overflow-y-auto'
+      )}
+      side="bottom"
+      align="end"
+      sideOffset={4}
+      onclick={(e: MouseEvent) => e.stopPropagation()}
+      onkeydown={(e: KeyboardEvent) => e.stopPropagation()}
+    >
     <!-- Mute button -->
     <button
       onclick={toggleMute}
@@ -232,7 +234,8 @@
         </div>
       {/if}
     {/if}
-  </Popover.Content>
+    </Popover.Content>
+  </Portal>
 </Popover.Root>
 
 <!-- Raw Event Modal -->

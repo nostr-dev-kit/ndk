@@ -38,10 +38,14 @@
     "url": "https://github.com/nostr-dev-kit/ndk/issues"
   },
   "homepage": "https://github.com/nostr-dev-kit/ndk#readme",
+  "dependencies": {
+    "debug": "^4.3.7"
+  },
   "peerDependencies": {
     "@nostr-dev-kit/ndk": "3.0.0-beta.50"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "@types/node": "^24.10.0",
     "rimraf": "^5.0.0",
     "typescript": "^5.9.3",

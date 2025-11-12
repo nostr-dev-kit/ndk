@@ -57,6 +57,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.12",
     "tsup": "^8.4.0"
   }
 }

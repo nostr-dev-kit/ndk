@@ -20,7 +20,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { UnpublishedEventsButtonPopover } from '$lib/registry/components/unpublished-events-button-popover';
-	import { NDKKind } from '@nostr-dev-kit/ndk';
+	import { kindLabel } from '$lib/registry/utils/kind-label';
 
 	interface Props {
 		ndk: NDKSvelte;
@@ -43,18 +43,6 @@
 			retrying = retrying;
 		}
 	}
-
-	function getKindName(kind: number): string {
-		const kindNames: Record<number, string> = {
-			[NDKKind.Text]: 'Note',
-			[NDKKind.Metadata]: 'Profile',
-			[NDKKind.Contacts]: 'Contacts',
-			[NDKKind.Repost]: 'Repost',
-			[NDKKind.Reaction]: 'Reaction',
-			[NDKKind.Zap]: 'Zap'
-		};
-		return kindNames[kind] || `Kind ${kind}`;
-	}
 </script>
 
 <UnpublishedEventsButtonPopover {ndk}>
@@ -63,7 +51,7 @@
 			<div class="flex items-start justify-between gap-2">
 				<div class="flex-1 min-w-0">
 					<div class="text-sm font-medium text-card-foreground">
-						{getKindName(event.kind!)}
+						{kindLabel(event.kind!)}
 					</div>
 					{#if event.content}
 						<div class="text-xs text-muted-foreground truncate mt-1">

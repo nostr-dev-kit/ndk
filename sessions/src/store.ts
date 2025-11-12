@@ -389,18 +389,11 @@ export function createSessionStore() {
                 return;
             }
 
-            console.log(`[session-store] updateSession called for pubkey=${pubkey}`, {
-                hasEventsUpdate: !!data.events,
-                oldEventsMapId: session.events ? `Map@${(session.events as any).__id || 'unknown'}` : 'none',
-                newEventsMapId: data.events ? `Map@${(data.events as any).__id || 'unknown'}` : 'none'
-            });
-
             const updatedSession = { ...session, ...data };
             const newSessions = new Map(state.sessions);
             newSessions.set(pubkey, updatedSession);
 
             set({ sessions: newSessions });
-            console.log(`[session-store] updateSession completed, Zustand set() called`);
         },
 
         updatePreferences: (pubkey: Hexpubkey, preferences: Partial<import("./types").SessionPreferences>) => {
@@ -460,11 +453,8 @@ function handleIncomingEvent(
     constructorMap: Map<NDKKind, import("./types").NDKEventConstructor>,
     getState: () => SessionStore,
 ): void {
-    console.log(`[session-store] handleIncomingEvent: kind=${event.kind}, id=${event.id}, pubkey=${pubkey}`);
-
     const currentSession = getState().sessions.get(pubkey);
     if (!currentSession) {
-        console.log(`[session-store] No session found for pubkey=${pubkey}`);
         return;
     }
 
@@ -632,21 +622,14 @@ function handleReplaceableEvent(
 ): void {
     if (event.kind === undefined) return;
 
-    console.log(`[session-store] handleReplaceableEvent: kind=${event.kind}, id=${event.id}`);
-
     const existingEvent = session.events.get(event.kind);
 
     // Skip if we already have this exact event or a newer one
     if (existingEvent) {
-        console.log(`[session-store] Existing event: id=${existingEvent.id}, created_at=${existingEvent.created_at}`);
-        console.log(`[session-store] New event: id=${event.id}, created_at=${event.created_at}`);
-
         if (existingEvent.id === event.id) {
-            console.log(`[session-store] Skipping: same event ID`);
             return;
         }
         if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) {
-            console.log(`[session-store] Skipping: existing event is newer`);
             return;
         }
     }
@@ -655,8 +638,6 @@ function handleReplaceableEvent(
     const eventConstructor = constructorMap.get(event.kind);
     const wrappedEvent = eventConstructor && typeof eventConstructor.from === "function" ? eventConstructor.from(event) : event;
 
-    console.log(`[session-store] Updating session with new event`);
     session.events.set(event.kind, wrappedEvent);
     getState().updateSession(pubkey, { events: new Map(session.events) });
-    console.log(`[session-store] Session updated, new events Map created`);
 }

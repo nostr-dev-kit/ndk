@@ -58,6 +58,7 @@
     "debug": "^4.3.7",
     "dexie": "^4.0.8",
     "nostr-tools": "^2.17.2",
+    "typescript": "^5.9.3",
     "typescript-lru-cache": "^2.0.0"
   }
 }

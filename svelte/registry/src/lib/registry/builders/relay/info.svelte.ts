@@ -16,6 +16,15 @@ const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 // Track in-flight requests to prevent duplicates
 const inFlightRequests = new Map<string, Promise<NDKRelayInformation>>();
 
+/**
+ * Clear the relay info cache (for testing purposes)
+ * @internal
+ */
+export function clearRelayInfoCache() {
+    relayInfoCache.clear();
+    inFlightRequests.clear();
+}
+
 async function fetchRelayInfo(relayUrl: string, signal?: AbortSignal): Promise<NDKRelayInformation> {
     // Check cache first
     const cached = relayInfoCache.get(relayUrl);

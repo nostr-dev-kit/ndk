@@ -6,7 +6,7 @@
   import { defaultContentRenderer, type ContentRenderer } from '../content-renderer';
   import { onMount, mount } from 'svelte';
   import { getContext, setContext } from 'svelte';
-  import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer/content-renderer.context.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../content-renderer/content-renderer.context.js';
 
   // Component handlers are registered via ContentRenderer
   // No need to import them here as they're passed via the renderer prop
@@ -27,12 +27,19 @@
     class: className = ''
   }: Props = $props();
 
-  // Use renderer from prop, or from context, or fallback to default
-  const rendererContext = getContext<any>(CONTENT_RENDERER_CONTEXT_KEY);
-  const renderer = $derived(providedRenderer ?? rendererContext?.renderer ?? defaultContentRenderer);
+  // Get parent context for renderer and callbacks
+  const parentContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
+  const renderer = $derived(providedRenderer ?? parentContext?.renderer ?? defaultContentRenderer);
 
-  // Set renderer in context so nested components can access it
-  setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return renderer } });
+  // Set ContentRendererContext for nested components (propagate callbacks)
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, {
+    get renderer() { return renderer; },
+    get onUserClick() { return parentContext?.onUserClick; },
+    get onEventClick() { return parentContext?.onEventClick; },
+    get onHashtagClick() { return parentContext?.onHashtagClick; },
+    get onLinkClick() { return parentContext?.onLinkClick; },
+    get onMediaClick() { return parentContext?.onMediaClick; }
+  });
 
   let contentElement: HTMLDivElement;
   let mountedComponents: Array<{ target: Element; unmount: () => void }> = [];
@@ -66,7 +73,11 @@
       if (renderer.mentionComponent) {
         const mounted = mount(renderer.mentionComponent, {
           target: placeholder,
-          props: { ndk, bech32 }
+          props: {
+            ndk,
+            bech32,
+            onclick: parentContext?.onUserClick
+          }
         });
         mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
       } else {
@@ -83,7 +94,12 @@
 
       const mounted = mount(EmbeddedEvent, {
         target: placeholder,
-        props: { ndk, bech32, renderer }
+        props: {
+          ndk,
+          bech32,
+          renderer,
+          onclick: parentContext?.onEventClick
+        }
       });
       mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
     });
@@ -97,7 +113,11 @@
       if (renderer.hashtagComponent) {
         const mounted = mount(renderer.hashtagComponent, {
           target: placeholder,
-          props: { ndk, tag }
+          props: {
+            ndk,
+            tag,
+            onclick: parentContext?.onHashtagClick
+          }
         });
         mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
       } else {

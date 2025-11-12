@@ -4,12 +4,12 @@
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer/content-renderer.context.js';
-	import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from './entity-click-context.js';
 
 	interface EmbeddedEventProps {
 		ndk: NDKSvelte;
 		bech32: string;
 		renderer?: ContentRenderer;
+		onclick?: (event: NDKEvent) => void;
 		class?: string;
 	}
 
@@ -17,18 +17,25 @@
 		ndk,
 		bech32,
 		renderer: rendererProp,
+		onclick,
 		class: className = ''
 	}: EmbeddedEventProps = $props();
 
+	// Get parent context
+	const parentContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
+
 	// Use renderer from prop, or from context, or fallback to default
-	const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
-	const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
+	const renderer = $derived(rendererProp ?? parentContext?.renderer ?? defaultContentRenderer);
 
-	// Get entity click context for click handling
-	const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
-
-	// Set renderer in context so nested components can access it
-	setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return renderer } });
+	// Set ContentRendererContext for nested components (propagate callbacks from parent)
+	setContext(CONTENT_RENDERER_CONTEXT_KEY, {
+		get renderer() { return renderer; },
+		get onUserClick() { return parentContext?.onUserClick; },
+		get onEventClick() { return onclick ?? parentContext?.onEventClick; },
+		get onHashtagClick() { return parentContext?.onHashtagClick; },
+		get onLinkClick() { return parentContext?.onLinkClick; },
+		get onMediaClick() { return parentContext?.onMediaClick; }
+	});
 
 	// Fetch event from bech32
 	let event = $state<NDKEvent | undefined>(undefined);
@@ -69,9 +76,9 @@
 
 	// Handle click on embedded event
 	function handleClick(e: MouseEvent | KeyboardEvent) {
-		if (entityClickContext?.onEventClick && wrappedEvent) {
+		if (onclick && wrappedEvent) {
 			e.stopPropagation();
-			entityClickContext.onEventClick(wrappedEvent);
+			onclick(wrappedEvent);
 		}
 	}
 </script>
@@ -87,7 +94,7 @@
 	</div>
 {:else if KindHandler && wrappedEvent}
 	<!-- Kind-specific handler -->
-	{#if entityClickContext?.onEventClick}
+	{#if onclick}
 		<div onclick={handleClick} onkeydown={(e) => e.key === 'Enter' && handleClick(e)} role="button" tabindex="0" class="cursor-pointer">
 			<KindHandler {ndk} event={wrappedEvent} />
 		</div>
@@ -96,7 +103,7 @@
 	{/if}
 {:else if FallbackHandler && wrappedEvent}
 	<!-- Fallback handler - no variant -->
-	{#if entityClickContext?.onEventClick}
+	{#if onclick}
 		<div onclick={handleClick} onkeydown={(e) => e.key === 'Enter' && handleClick(e)} role="button" tabindex="0" class="cursor-pointer">
 			<FallbackHandler {ndk} event={wrappedEvent} class={className} />
 		</div>
@@ -105,7 +112,7 @@
 	{/if}
 {:else if wrappedEvent}
 	<!-- NO HANDLER: Show raw bech32. Users can register generic-embedded if they want it. -->
-	{#if entityClickContext?.onEventClick}
+	{#if onclick}
 		<button onclick={handleClick} class="cursor-pointer font-mono text-sm bg-transparent border-none p-0 m-0 inline text-inherit">{bech32}</button>
 	{:else}
 		<code>{bech32}</code>

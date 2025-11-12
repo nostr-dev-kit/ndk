@@ -1,24 +1,22 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { LinkIcon } from '../../ui/icons';
 	import { cn } from '../../utils/cn.js';
-	import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
 
 	interface Props {
 		url: string | string[];
+		onclick?: (url: string) => void;
 		class?: string;
 	}
 
-	let { url, class: className = '' }: Props = $props();
+	let { url, onclick, class: className = '' }: Props = $props();
 
-	const entityClickContext = getContext<EntityClickContext | undefined>(ENTITY_CLICK_CONTEXT_KEY);
 	const urls = $derived(Array.isArray(url) ? url : [url]);
 
 	function handleLinkClick(e: MouseEvent, linkUrl: string) {
-		if (entityClickContext?.onLinkClick) {
+		if (onclick) {
 			e.preventDefault();
 			e.stopPropagation();
-			entityClickContext.onLinkClick(linkUrl);
+			onclick(linkUrl);
 		}
 	}
 </script>

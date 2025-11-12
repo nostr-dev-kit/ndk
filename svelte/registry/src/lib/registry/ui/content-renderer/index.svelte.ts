@@ -61,6 +61,15 @@ export type MediaComponent = Component<{
 }>;
 
 /**
+ * Entity click callback types
+ */
+export type UserClickCallback = (pubkey: string) => void;
+export type EventClickCallback = (event: NDKEvent) => void;
+export type HashtagClickCallback = (tag: string) => void;
+export type LinkClickCallback = (url: string) => void;
+export type MediaClickCallback = (url: string | string[]) => void;
+
+/**
  * ContentRenderer - Unified system for customizing content rendering
  *
  * A single, cohesive system for all content customization.

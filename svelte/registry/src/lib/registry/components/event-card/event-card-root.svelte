@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { setContext } from 'svelte';
+  import { getContext, setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
-  import { ENTITY_CLICK_CONTEXT_KEY, type EntityClickContext } from '../../ui/entity-click-context.js';
+  import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../ui/content-renderer/content-renderer.context.js';
   import type {
     UserClickCallback,
     EventClickCallback,
     HashtagClickCallback,
     LinkClickCallback,
     MediaClickCallback
-  } from '../../ui/entity-click-types.js';
+  } from '../../ui/content-renderer/index.svelte.js';
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import { cn } from '../../utils/cn';
   import type { Snippet } from 'svelte';
@@ -64,17 +64,20 @@
 
   setContext(EVENT_CARD_CONTEXT_KEY, context);
 
-  // EntityClickContext: behavioral callbacks for entity interactions
-  // This is separate to prevent circular dependency between ui/ and components/event-card/
-  const entityClickContext: EntityClickContext = {
-    get onUserClick() { return onUserClick; },
-    get onEventClick() { return onEventClick; },
-    get onHashtagClick() { return onHashtagClick; },
-    get onLinkClick() { return onLinkClick; },
-    get onMediaClick() { return onMediaClick; }
+  // Get parent ContentRendererContext if it exists
+  const parentRendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
+
+  // ContentRendererContext: includes renderer + behavioral callbacks for entity interactions
+  const rendererContext: ContentRendererContext = {
+    get renderer() { return parentRendererContext?.renderer ?? {} as any; },
+    get onUserClick() { return onUserClick ?? parentRendererContext?.onUserClick; },
+    get onEventClick() { return onEventClick ?? parentRendererContext?.onEventClick; },
+    get onHashtagClick() { return onHashtagClick ?? parentRendererContext?.onHashtagClick; },
+    get onLinkClick() { return onLinkClick ?? parentRendererContext?.onLinkClick; },
+    get onMediaClick() { return onMediaClick ?? parentRendererContext?.onMediaClick; }
   };
 
-  setContext(ENTITY_CLICK_CONTEXT_KEY, entityClickContext);
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, rendererContext);
 
   // Determine if we should show as clickable
   const isClickable = $derived(!!onclick);

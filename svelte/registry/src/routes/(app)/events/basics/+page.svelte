@@ -106,7 +106,7 @@ Here's a cool image to go with it:
 https://image.nostr.build/example.jpg
 
 And here's a note worth checking out:
-nostr:note1qvzqqqqqqypzq0mgmm0gz4yuczzyltl99rc4wj63uz27wjglg69aj6ylsamehwqqs`;
+nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uhkummn9ekx7mp0qqsq3zms08nzx3a72cgc0jtsd0g0g9fdx0f9jvp69kp05peuvmrpj5g0w639m`;
     event.pubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
     event.created_at = Math.floor(Date.now() / 1000);
     event.id = "sample_event_id";

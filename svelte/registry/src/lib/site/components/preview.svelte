@@ -25,11 +25,11 @@ Used in component documentation pages to show both the visual output and source 
 		{/if}
 
 		<div class={cn(
-			"min-h-[433px] flex flex-col items-center justify-center max-h-[600px] overflow-y-auto",
+			"min-h-[300px] md:min-h-[433px] flex flex-col items-center justify-center max-h-[400px] md:max-h-[600px] overflow-y-auto",
 			"bg-linear-to-r from-zinc-50 to-zinc-100 dark:from-neutral-900 dark:to-neutral-900/50",
 			previewAreaClass
 		)}>
-			<div class="m-8 flex justify-center items-center shadow-xl">
+			<div class="m-4 md:m-8 flex justify-center items-center shadow-xl">
 				{@render children()}
 			</div>
 		</div>

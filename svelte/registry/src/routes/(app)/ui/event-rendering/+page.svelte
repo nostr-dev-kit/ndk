@@ -39,7 +39,7 @@
   const metadata = {
     title: 'Event Rendering',
     description: 'Complete event rendering system combining content parsing, embedded event loading, and markdown support. Parse and display Nostr event content with automatic detection of mentions, hashtags, links, media, custom emojis (NIP-30), and embedded events. Fully customizable with pluggable renderers.',
-    importPath: 'ui/event-rendering',
+    importPath: 'ui/event-content',
     nips: ['30'],
     primitives: [
       {
@@ -49,7 +49,7 @@
         apiDocs: [{
           name: 'EventContent',
           description: 'Parses and renders event content with support for various Nostr content types. Automatically detects mentions, hashtags, links, media, and custom emojis.',
-          importPath: '$lib/registry/ui/event-rendering',
+          importPath: '$lib/registry/ui/event-content.svelte',
           props: [
             { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
             { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
@@ -67,7 +67,7 @@
         apiDocs: [{
           name: 'EmbeddedEvent',
           description: 'Loads an event from a bech32 reference and renders it using registered handlers from ContentRenderer.',
-          importPath: '$lib/registry/ui/event-rendering',
+          importPath: '$lib/registry/ui/embedded-event.svelte',
           props: [
             { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for fetching the event' },
             { name: 'bech32', type: 'string', default: 'required', description: 'Event reference (nevent, note1, naddr)' },
@@ -83,7 +83,7 @@
         apiDocs: [{
           name: 'MarkdownEventContent',
           description: 'Renders markdown content with Nostr-specific extensions for mentions, event references, and custom emojis.',
-          importPath: '$lib/registry/ui/event-rendering',
+          importPath: '$lib/registry/ui/markdown-event-content',
           props: [
             { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance for loading embedded content' },
             { name: 'event', type: 'NDKEvent', default: 'optional', description: 'Event object (uses event.content and event.tags)' },
@@ -100,7 +100,7 @@
         apiDocs: [{
           name: 'ContentRenderer',
           description: 'Pluggable registry system for customizing all rendering behavior. Allows registration of custom components for inline elements (mentions, hashtags, links, media) and event kinds.',
-          importPath: '$lib/registry/ui/event-rendering',
+          importPath: '$lib/registry/ui/content-renderer',
           props: [
             { name: 'mentionComponent', type: 'Component', default: 'default mention', description: 'Component for rendering user mentions (npub, nprofile)' },
             { name: 'hashtagComponent', type: 'Component', default: 'default hashtag', description: 'Component for rendering hashtags' },
@@ -316,7 +316,7 @@
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { ContentRenderer } from '$lib/registry/ui/event-rendering';
+          code={`import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 
 const renderer = new ContentRenderer();
 
@@ -351,7 +351,7 @@ renderer.addKind([30023], MyArticleComponent, 5);    // Priority 5 (compact)
             <CodeBlock
               lang="svelte"
               code={`import { setContext } from 'svelte';
-import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/event-rendering';
+import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer';
 
 // At app/page level
 setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer: myRenderer });
@@ -566,7 +566,7 @@ https://njump.me
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { ContentRenderer } from '$lib/registry/ui/event-rendering';
+          code={`import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 import NoteCard from './NoteCard.svelte';
 import ArticleCard from './ArticleCard.svelte';
 import { NDKArticle } from '@nostr-dev-kit/ndk';
@@ -689,9 +689,9 @@ interface LinkMediaProps {
           <strong class="font-semibold text-foreground">Event Card Component</strong>
           <span class="text-sm text-muted-foreground">Complete event display with header and content</span>
         </a>
-        <a href="/builders/event-rendering" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">Event Content Builder</strong>
-          <span class="text-sm text-muted-foreground">Low-level parsing utilities</span>
+        <a href="/events/content/plain-text" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Plain Text Content Guide</strong>
+          <span class="text-sm text-muted-foreground">Step-by-step EventContent usage and customization</span>
         </a>
       </div>
     </section>

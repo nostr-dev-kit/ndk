@@ -42,7 +42,7 @@
     "debug": "^4.3.7"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.50"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.51"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",

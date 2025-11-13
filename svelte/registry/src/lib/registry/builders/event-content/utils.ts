@@ -92,11 +92,11 @@ export function decodeNostrUri(uri: string): ParsedSegment {
 // ============================================================================
 
 export function isImage(url: string): boolean {
-    return /\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url);
+    return /\.(jpg|jpeg|png|gif|webp|svg)(\?|#|$)/i.test(url);
 }
 
 export function isVideo(url: string): boolean {
-    return /\.(mp4|webm|mov)(\?|$)/i.test(url);
+    return /\.(mp4|webm|mov)(\?|#|$)/i.test(url);
 }
 
 export function isYouTube(url: string): boolean {

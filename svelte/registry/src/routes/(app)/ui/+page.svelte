@@ -1,6 +1,7 @@
 <script lang="ts">
   import { PaintBoardIcon, CodeIcon, Layers01Icon, PackageIcon } from '@hugeicons/core-free-icons';
   import { HugeiconsIcon } from '@hugeicons/svelte';
+  import PageTitle from '$lib/site/components/PageTitle.svelte';
 </script>
 
 <svelte:head>
@@ -8,596 +9,270 @@
   <meta name="description" content="Headless, composable UI primitives for building Nostr interfaces." />
 </svelte:head>
 
-<div class="ui-page">
-  <header class="page-header">
-    <div class="header-icon">
-      <HugeiconsIcon icon={PaintBoardIcon} size={48} strokeWidth={2} />
-    </div>
-    <h1 class="page-title">UI Primitives</h1>
-    <p class="page-description">
-      Headless, composable building blocks for creating Nostr interfaces. UI primitives are unstyled,
-      accessible components that give you complete control over styling and behavior.
-    </p>
-  </header>
+<div class="max-w-7xl mx-auto px-8 pb-8">
+  <PageTitle
+    title="UI Primitives"
+    subtitle="Headless, composable building blocks for creating Nostr interfaces. UI primitives are unstyled, accessible components that give you complete control over styling and behavior."
+  />
 
-  <section class="philosophy-section">
-    <h2 class="section-title">What are UI Primitives?</h2>
-    <div class="philosophy-grid">
-      <div class="philosophy-card">
-        <div class="card-icon">
+  <section class="mb-12">
+    <h2 class="text-[1.75rem] font-bold mb-6">What are UI Primitives?</h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
+      <div class="p-8 border border-border rounded-xl bg-card">
+        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-primary/10 text-primary">
           <HugeiconsIcon icon={PaintBoardIcon} size={24} strokeWidth={2} />
         </div>
-        <h3>Headless & Unstyled</h3>
-        <p>No opinions about appearance. Bring your own styles, design system, or CSS framework.</p>
+        <h3 class="text-lg font-semibold mb-2">Headless & Unstyled</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">No opinions about appearance. Bring your own styles, design system, or CSS framework.</p>
       </div>
 
-      <div class="philosophy-card">
-        <div class="card-icon">
+      <div class="p-8 border border-border rounded-xl bg-card">
+        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-primary/10 text-primary">
           <HugeiconsIcon icon={PackageIcon} size={24} strokeWidth={2} />
         </div>
-        <h3>Composable</h3>
-        <p>Mix and match primitives to build exactly what you need. Full control over structure and layout.</p>
+        <h3 class="text-lg font-semibold mb-2">Composable</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">Mix and match primitives to build exactly what you need. Full control over structure and layout.</p>
       </div>
 
-      <div class="philosophy-card">
-        <div class="card-icon">
+      <div class="p-8 border border-border rounded-xl bg-card">
+        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-primary/10 text-primary">
           <HugeiconsIcon icon={CodeIcon} size={24} strokeWidth={2} />
         </div>
-        <h3>Reactive</h3>
-        <p>Built with Svelte 5 runes and NDK's reactive builders. Automatically updates when data changes.</p>
+        <h3 class="text-lg font-semibold mb-2">Reactive</h3>
+        <p class="text-muted-foreground text-sm leading-relaxed">Built with Svelte 5 runes and NDK's reactive builders. Automatically updates when data changes.</p>
       </div>
     </div>
   </section>
 
-  <section class="architecture-section">
-    <h2 class="section-title">Architecture Layers</h2>
-    <p class="section-intro">
+  <section class="mb-12">
+    <h2 class="text-[1.75rem] font-bold mb-3">Architecture Layers</h2>
+    <p class="text-muted-foreground mb-8 text-[1.05rem]">
       NDK Svelte provides three architectural layers. Each serves a specific purpose:
     </p>
 
-    <div class="layers-grid">
-      <div class="layer-card ui-layer">
-        <div class="layer-header">
-          <div class="layer-icon">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
+      <div class="p-6 border-2 border-primary rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
             <HugeiconsIcon icon={PaintBoardIcon} size={20} strokeWidth={2} />
           </div>
-          <div class="layer-badge">You are here</div>
+          <span class="px-3 py-1 rounded-full bg-primary text-white text-xs font-semibold">You are here</span>
         </div>
-        <h3 class="layer-title">UI Primitives</h3>
-        <p class="layer-path">/ui/*</p>
-        <p class="layer-description">
+        <h3 class="text-lg font-semibold mb-1">UI Primitives</h3>
+        <p class="font-mono text-sm text-primary mb-3">/ui/*</p>
+        <p class="text-muted-foreground text-sm leading-relaxed mb-4">
           Headless, composable building blocks. Complete control over styling and layout.
           Use these when you need maximum flexibility.
         </p>
-        <div class="layer-examples">
-          <code>&lt;Article.Root&gt;</code>
-          <code>&lt;User.Avatar /&gt;</code>
-          <code>&lt;Relay.Icon /&gt;</code>
+        <div class="flex flex-wrap gap-2">
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;Article.Root&gt;</code>
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;User.Avatar /&gt;</code>
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;Relay.Icon /&gt;</code>
         </div>
       </div>
 
-      <div class="layer-card components-layer">
-        <div class="layer-header">
-          <div class="layer-icon">
+      <div class="p-6 border border-border rounded-xl bg-card">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
             <HugeiconsIcon icon={CodeIcon} size={20} strokeWidth={2} />
           </div>
         </div>
-        <h3 class="layer-title">Components</h3>
-        <p class="layer-path">/components/*</p>
-        <p class="layer-description">
+        <h3 class="text-lg font-semibold mb-1">Components</h3>
+        <p class="font-mono text-sm text-primary mb-3">/components/*</p>
+        <p class="text-muted-foreground text-sm leading-relaxed mb-4">
           Styled, opinionated components for specific use cases. Good defaults with customization options.
         </p>
-        <div class="layer-examples">
-          <code>&lt;EventContent /&gt;</code>
-          <code>&lt;NoteComposer /&gt;</code>
+        <div class="flex flex-wrap gap-2">
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;EventContent /&gt;</code>
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;NoteComposer /&gt;</code>
         </div>
       </div>
 
-      <div class="layer-card blocks-layer">
-        <div class="layer-header">
-          <div class="layer-icon">
+      <div class="p-6 border border-border rounded-xl bg-card">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
             <HugeiconsIcon icon={Layers01Icon} size={20} strokeWidth={2} />
           </div>
         </div>
-        <h3 class="layer-title">Blocks</h3>
-        <p class="layer-path">/blocks/*</p>
-        <p class="layer-description">
+        <h3 class="text-lg font-semibold mb-1">Blocks</h3>
+        <p class="font-mono text-sm text-primary mb-3">/blocks/*</p>
+        <p class="text-muted-foreground text-sm leading-relaxed mb-4">
           Pre-built, ready-to-use layouts composed from primitives. Drop-in solutions for common patterns.
         </p>
-        <div class="layer-examples">
-          <code>&lt;ArticleCardHero /&gt;</code>
-          <code>&lt;UserCardPortrait /&gt;</code>
+        <div class="flex flex-wrap gap-2">
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;ArticleCardHero /&gt;</code>
+          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;UserCardPortrait /&gt;</code>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="primitives-section">
-    <h2 class="section-title">Available Primitives</h2>
-    <p class="section-intro">
+  <section class="mb-12">
+    <h2 class="text-[1.75rem] font-bold mb-3">Available Primitives</h2>
+    <p class="text-muted-foreground mb-8 text-[1.05rem]">
       Browse all available UI primitives. Each provides a set of composable components for building custom interfaces.
     </p>
 
-    <div class="primitives-grid">
-      <a href="/ui/article" class="primitive-card">
-        <h3>Article</h3>
-        <p>Display long-form articles (NIP-23)</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Image</span>
-          <span>Title</span>
-          <span>Summary</span>
-          <span>+3</span>
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+      <a href="/ui/article" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Article</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display long-form articles (NIP-23)</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Image</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Title</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Summary</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">+3</span>
         </div>
       </a>
 
-      <a href="/ui/user" class="primitive-card">
-        <h3>User</h3>
-        <p>Display user profiles and metadata</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Avatar</span>
-          <span>Name</span>
-          <span>Bio</span>
-          <span>+6</span>
+      <a href="/ui/user" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">User</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display user profiles and metadata</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Avatar</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Name</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Bio</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">+6</span>
         </div>
       </a>
 
-      <a href="/ui/highlight" class="primitive-card">
-        <h3>Highlight</h3>
-        <p>Display text highlights (NIP-84)</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Content</span>
-          <span>Source</span>
+      <a href="/ui/highlight" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Highlight</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display text highlights (NIP-84)</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Content</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Source</span>
         </div>
       </a>
 
-      <a href="/ui/relay" class="primitive-card">
-        <h3>Relay</h3>
-        <p>Display relay information and controls</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Icon</span>
-          <span>Name</span>
-          <span>Description</span>
-          <span>+6</span>
+      <a href="/ui/relay" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Relay</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display relay information and controls</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Icon</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Name</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Description</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">+6</span>
         </div>
       </a>
 
-      <a href="/components/emoji-picker" class="primitive-card">
-        <h3>Emoji Picker</h3>
-        <p>Select emojis from custom sets</p>
-        <div class="primitive-components">
-          <span>List</span>
-          <span>Content</span>
-          <span>Item</span>
+      <a href="/components/emoji-picker" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Emoji Picker</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Select emojis from custom sets</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">List</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Content</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Item</span>
         </div>
       </a>
 
-      <a href="/ui/media-upload" class="primitive-card">
-        <h3>Media Upload</h3>
-        <p>Upload files to Blossom servers</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Button</span>
-          <span>Preview</span>
-          <span>+2</span>
+      <a href="/ui/media-upload" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Media Upload</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Upload files to Blossom servers</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Button</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Preview</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">+2</span>
         </div>
       </a>
 
-      <a href="/ui/reaction" class="primitive-card">
-        <h3>Reaction</h3>
-        <p>Display event reactions</p>
-        <div class="primitive-components">
-          <span>Display</span>
+      <a href="/ui/reaction" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Reaction</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display event reactions</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Display</span>
         </div>
       </a>
 
-      <a href="/ui/event" class="primitive-card">
-        <h3>Event</h3>
-        <p>Display event metadata and relationships</p>
-        <div class="primitive-components">
-          <span>ReplyIndicator</span>
+      <a href="/ui/event" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Event</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display event metadata and relationships</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">ReplyIndicator</span>
         </div>
       </a>
 
-      <a href="/ui/follow-pack" class="primitive-card">
-        <h3>Follow Pack</h3>
-        <p>Display curated user lists</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Image</span>
-          <span>Title</span>
-          <span>+2</span>
+      <a href="/ui/follow-pack" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Follow Pack</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display curated user lists</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Image</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Title</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">+2</span>
         </div>
       </a>
 
-      <a href="/ui/user-input" class="primitive-card">
-        <h3>User Input</h3>
-        <p>Search and select users</p>
-        <div class="primitive-components">
-          <span>Root</span>
-          <span>Textarea</span>
-          <span>Actions</span>
+      <a href="/ui/user-input" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">User Input</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Search and select users</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Textarea</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Actions</span>
         </div>
       </a>
 
-      <a href="/ui/zap" class="primitive-card">
-        <h3>Zap</h3>
-        <p>Display lightning payments</p>
-        <div class="primitive-components">
-          <span>Amount</span>
-          <span>Content</span>
+      <a href="/ui/zap" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Zap</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Display lightning payments</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Amount</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Content</span>
         </div>
       </a>
 
-      <a href="/ui/event-rendering" class="primitive-card">
-        <h3>Event Content</h3>
-        <p>Render event content with rich formatting</p>
-        <div class="primitive-components">
-          <span>Standalone</span>
+      <a href="/ui/event-rendering" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Event Content</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Render event content with rich formatting</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Standalone</span>
         </div>
       </a>
 
-      <a href="/ui/embedded-event" class="primitive-card">
-        <h3>Embedded Event</h3>
-        <p>Load and display embedded events</p>
-        <div class="primitive-components">
-          <span>Standalone</span>
+      <a href="/ui/embedded-event" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
+        <h3 class="text-lg font-semibold m-0">Embedded Event</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Load and display embedded events</p>
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Standalone</span>
         </div>
       </a>
     </div>
   </section>
 
-  <section class="getting-started-section">
-    <h2 class="section-title">Getting Started</h2>
-    <div class="getting-started-content">
-      <div class="code-example">
-        <div class="code-header">
-          <span>Import primitives from /ui</span>
+  <section class="mb-12">
+    <h2 class="text-[1.75rem] font-bold mb-6">Getting Started</h2>
+    <div class="flex flex-col gap-6">
+      <div class="border border-border rounded-lg overflow-hidden">
+        <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
+          Import primitives from /ui
         </div>
-        <pre><code>import &#123; Article, User &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
+        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">import &#123; Article, User &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
       </div>
 
-      <div class="code-example">
-        <div class="code-header">
-          <span>Compose your own layouts</span>
+      <div class="border border-border rounded-lg overflow-hidden">
+        <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
+          Compose your own layouts
         </div>
-        <pre><code>&lt;Article.Root &#123;ndk&#125; &#123;article&#125;&gt;
+        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">&lt;Article.Root &#123;ndk&#125; &#123;article&#125;&gt;
   &lt;Article.Image /&gt;
   &lt;Article.Title /&gt;
   &lt;Article.Summary /&gt;
 &lt;/Article.Root&gt;</code></pre>
       </div>
 
-      <div class="code-example">
-        <div class="code-header">
-          <span>Style with your own CSS</span>
+      <div class="border border-border rounded-lg overflow-hidden">
+        <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
+          Style with your own CSS
         </div>
-        <pre><code>&lt;Article.Title class="text-3xl font-bold" /&gt;
+        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">&lt;Article.Title class="text-3xl font-bold" /&gt;
 &lt;Article.Summary class="text-gray-600" /&gt;</code></pre>
       </div>
     </div>
   </section>
 </div>
-
-<style>
-  .ui-page {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  .page-header {
-    text-align: center;
-    margin-bottom: 4rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .header-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 5rem;
-    height: 5rem;
-    margin: 0 auto 1.5rem;
-    border-radius: 1rem;
-    background: linear-gradient(135deg,
-      color-mix(in srgb, var(--primary) 10%, transparent),
-      color-mix(in srgb, var(--primary) 5%, transparent)
-    );
-    color: var(--primary);
-  }
-
-  .page-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-description {
-    font-size: 1.25rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .philosophy-section,
-  .architecture-section,
-  .primitives-section,
-  .getting-started-section {
-    margin-bottom: 4rem;
-  }
-
-  .section-title {
-    font-size: 2rem;
-    font-weight: 600;
-    margin: 0 0 1rem 0;
-    color: var(--foreground);
-  }
-
-  .section-intro {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--muted-foreground);
-    margin: 0 0 2rem 0;
-  }
-
-  .philosophy-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .philosophy-card {
-    padding: 2rem;
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    background: var(--background);
-  }
-
-  .philosophy-card .card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
-  }
-
-  .philosophy-card h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: var(--foreground);
-  }
-
-  .philosophy-card p {
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .layers-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  .layer-card {
-    padding: 1.5rem;
-    border: 2px solid var(--border);
-    border-radius: 0.75rem;
-    background: var(--background);
-    position: relative;
-  }
-
-  .layer-card.ui-layer {
-    border-color: var(--primary);
-    background: linear-gradient(135deg,
-      color-mix(in srgb, var(--primary) 3%, var(--background)),
-      var(--background) 50%
-    );
-  }
-
-  .layer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .layer-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.375rem;
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
-  }
-
-  .layer-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background: var(--primary);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  .layer-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 0.25rem 0;
-    color: var(--foreground);
-  }
-
-  .layer-path {
-    font-family: monospace;
-    font-size: 0.875rem;
-    color: var(--primary);
-    margin: 0 0 0.75rem 0;
-  }
-
-  .layer-description {
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--muted-foreground);
-    margin: 0 0 1rem 0;
-  }
-
-  .layer-examples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .layer-examples code {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    background: var(--muted);
-    font-family: monospace;
-    font-size: 0.8125rem;
-    color: var(--foreground);
-  }
-
-  .primitives-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-
-  .primitive-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--background);
-    text-decoration: none;
-    transition: all 0.2s ease-in-out;
-  }
-
-  .primitive-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--primary) 20%, transparent);
-  }
-
-  .primitive-card h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--foreground);
-  }
-
-  .primitive-card p {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-    margin: 0;
-  }
-
-  .primitive-components {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
-    margin-top: auto;
-  }
-
-  .primitive-components span {
-    padding: 0.125rem 0.5rem;
-    border-radius: 0.25rem;
-    background: var(--muted);
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-  }
-
-  .getting-started-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .code-example {
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    overflow: hidden;
-  }
-
-  .code-header {
-    padding: 0.75rem 1rem;
-    background: var(--muted);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-  }
-
-  .code-example pre {
-    margin: 0;
-    padding: 1rem;
-    background: var(--background);
-    overflow-x: auto;
-  }
-
-  .code-example code {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--foreground);
-  }
-
-  @media (max-width: 768px) {
-    .ui-page {
-      padding: 1.5rem;
-    }
-
-    .page-header {
-      margin-bottom: 3rem;
-    }
-
-    .page-title {
-      font-size: 2.5rem;
-    }
-
-    .page-description {
-      font-size: 1rem;
-    }
-
-    .philosophy-section,
-    .architecture-section,
-    .primitives-section,
-    .getting-started-section {
-      margin-bottom: 3rem;
-    }
-
-    .section-title {
-      font-size: 1.5rem;
-    }
-
-    .primitives-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .layers-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

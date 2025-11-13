@@ -142,7 +142,7 @@
         apiDoc: {
           name: 'EventContent',
           description: 'Renders event content with optional plain text mode',
-          importPath: '$lib/registry/ui/event-content',
+          importPath: '$lib/registry/ui/event-content.svelte',
           props: [
             {
               name: 'ndk',

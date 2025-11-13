@@ -160,10 +160,10 @@ setContext(CONTENT_RENDERER_CONTEXT_KEY, &#123; renderer &#125;);
         </div>
       </a>
 
-      <a href="/components/fallback-card" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
-        <h3 class="text-lg font-semibold mb-2">Fallback Card</h3>
+      <a href="/events/cards/fallback-card" class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors">
+        <h3 class="text-lg font-semibold mb-2">Fallback Event Card</h3>
         <p class="text-sm text-muted-foreground mb-4">
-          Fallback component for unknown event kinds
+          Fallback chrome for unknown event kinds
         </p>
         <div class="text-sm text-primary group-hover:underline">
           View documentation →

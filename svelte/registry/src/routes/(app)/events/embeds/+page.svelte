@@ -26,7 +26,7 @@
 
     <div class="p-6 bg-muted rounded-lg max-w-3xl">
       <h3 class="text-lg font-semibold mb-3">Basic Usage</h3>
-      <pre class="text-sm bg-card p-4 rounded overflow-x-auto"><code>import &#123; ContentRenderer &#125; from '$lib/ui/event-rendering';
+      <pre class="text-sm bg-card p-4 rounded overflow-x-auto"><code>import &#123; ContentRenderer &#125; from '$lib/ui/content-renderer';
 import MyCustomMention from './MyCustomMention.svelte';
 
 const renderer = new ContentRenderer();
@@ -123,7 +123,7 @@ renderer.mentionComponent = MyCustomMention;
           Set once at app/page level, all nested components inherit automatically:
         </p>
         <pre class="text-xs bg-muted p-3 rounded overflow-x-auto"><code>import &#123; setContext &#125; from 'svelte';
-import &#123; CONTENT_RENDERER_CONTEXT_KEY &#125; from '$lib/ui/event-rendering';
+import &#123; CONTENT_RENDERER_CONTEXT_KEY &#125; from '$lib/ui/content-renderer';
 
 setContext(CONTENT_RENDERER_CONTEXT_KEY, &#123; renderer &#125;);
 

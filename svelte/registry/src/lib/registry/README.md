@@ -60,10 +60,9 @@ export const User = {
 - `Highlight` - Text highlight primitives
 - `Event` - Event display utilities
 - `Relay` - Relay information primitives
-- `VoiceMessage` - Voice message player primitives
 - `UserInput` - User search/input primitives
 - `MediaUpload` - Media upload primitives
-- `NegentrophySync` - Sync status primitives
+- `NegentropySync` - Sync status primitives
 - `FollowPack` - Follow pack display primitives
 
 ---
@@ -117,7 +116,6 @@ export { default as UserCardNeon } from './user-card-neon.svelte';
 - **Image Cards** - `ImageCard`, `ImageCardHero`, `ImageCardInstagram`
 - **Follow Packs** - `FollowPackHero`, `FollowPackCompact`, `FollowPackPortrait`, `FollowPackModernPortrait`
 - **Relay Cards** - `RelayCard`, `RelayCardCompact`, `RelayCardPortrait`, `RelayCardList`
-- **Voice Message Cards** - `VoiceMessageCardCompact`, `VoiceMessageCardExpanded`
 - **Actions** - `FollowButton`, `FollowButtonPill`, `FollowButtonAnimated`, `MuteButton`, `RepostButton`, `UploadButton`
 - **Reactions** - `Reaction`, `ReactionButton`, `ReactionEmojiButton`, `ReactionSlack`
 - **Zap** - `ZapButton`, `ZapSend.Root`, `ZapSend.Splits`

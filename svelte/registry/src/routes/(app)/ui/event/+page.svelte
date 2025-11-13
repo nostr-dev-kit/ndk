@@ -29,7 +29,7 @@
   const metadata = {
     title: 'Event',
     description: 'Headless primitives for displaying event metadata and relationships. Automatically detects and displays event relationships like replies, with support for NIP-10 reply markers.',
-    importPath: 'ui/embedded-event',
+    importPath: 'ui/event',
     nips: ['10'],
     primitives: [
       {
@@ -39,7 +39,7 @@
         apiDocs: [{
           name: 'Event.ReplyIndicator',
           description: 'Displays a "Replying to @user" indicator when an event is a reply. Automatically detects reply relationships using NIP-10 markers and reactively fetches the parent event and user profile.',
-          importPath: '$lib/registry/ui/embedded-event',
+          importPath: '$lib/registry/ui/event',
           props: [
             { name: 'ndk', type: 'NDKSvelte', default: 'from context', description: 'NDK instance (optional, falls back to context)' },
             { name: 'event', type: 'NDKEvent', default: 'required', description: 'The event to check for reply relationship' },
@@ -176,7 +176,7 @@
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="svelte"
-          code={`import { Event } from '$lib/registry/ui/embedded-event';
+          code={`import { Event } from '$lib/registry/ui/event';
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 let events: NDKEvent[] = $state([...]);

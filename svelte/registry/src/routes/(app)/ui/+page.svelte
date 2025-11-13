@@ -228,16 +228,8 @@
       </a>
 
       <a href="/ui/event-rendering" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
-        <h3 class="text-lg font-semibold m-0">Event Content</h3>
-        <p class="text-sm text-muted-foreground leading-relaxed m-0">Render event content with rich formatting</p>
-        <div class="flex flex-wrap gap-1.5 mt-auto">
-          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Standalone</span>
-        </div>
-      </a>
-
-      <a href="/ui/embedded-event" class="flex flex-col gap-3 p-6 border border-border rounded-lg bg-card hover:border-primary hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20 transition-all no-underline">
-        <h3 class="text-lg font-semibold m-0">Embedded Event</h3>
-        <p class="text-sm text-muted-foreground leading-relaxed m-0">Load and display embedded events</p>
+        <h3 class="text-lg font-semibold m-0">Event Rendering</h3>
+        <p class="text-sm text-muted-foreground leading-relaxed m-0">Parse inline content and embedded events with one renderer</p>
         <div class="flex flex-wrap gap-1.5 mt-auto">
           <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Standalone</span>
         </div>
@@ -252,7 +244,8 @@
         <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
           Import primitives from /ui
         </div>
-        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">import &#123; Article, User &#125; from '$lib/registry/ui/embedded-event.svelte';</code></pre>
+        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">import &#123; Article &#125; from '$lib/registry/ui/article';
+import &#123; User &#125; from '$lib/registry/ui/user';</code></pre>
       </div>
 
       <div class="border border-border rounded-lg overflow-hidden">

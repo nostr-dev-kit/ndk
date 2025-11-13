@@ -153,8 +153,32 @@
             {
               name: 'event',
               type: 'NDKEvent',
-              required: true,
-              description: 'Event to render'
+              required: false,
+              description: 'Event to render (optional when passing raw content)'
+            },
+            {
+              name: 'content',
+              type: 'string',
+              required: false,
+              description: 'Raw content string to parse instead of providing an event'
+            },
+            {
+              name: 'emojiTags',
+              type: 'string[][]',
+              required: false,
+              description: 'Custom emoji tag tuples for NIP-30 reactions'
+            },
+            {
+              name: 'renderer',
+              type: 'ContentRenderer',
+              required: false,
+              description: 'Override inline/link/media handlers for this instance'
+            },
+            {
+              name: 'class',
+              type: 'string',
+              required: false,
+              description: 'Additional Tailwind/CSS classes for the wrapper'
             }
           ]
         }

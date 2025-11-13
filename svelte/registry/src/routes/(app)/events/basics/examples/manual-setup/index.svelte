@@ -25,7 +25,7 @@
   import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
   import LinkInlineBasic from '$lib/registry/components/link-inline-basic/link-inline-basic.svelte';
   import MediaCarousel from '$lib/registry/components/media-carousel/media-carousel.svelte';
-  import NoteCard from '$lib/registry/components/note-card/note-card.svelte';
+  import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
 
   import { ContentRenderer, CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer';
 
@@ -46,7 +46,7 @@
     renderer.setMediaComponent(MediaCarousel, 1);
 
     // Manually register event kind handlers
-    renderer.addKind([1, 1111], NoteCard, 10);
+    renderer.addKind([1, 1111], EventCardBasic, 10);
 
     // Configure options
     renderer.blockNsfw = false;

@@ -9,7 +9,7 @@
 	interface Props {
 		ndk?: NDKSvelte;
 
-		image: NDKImage;
+		event: NDKImage;
 
 		height?: string;
 
@@ -20,7 +20,7 @@
 
 	let {
 		ndk: providedNdk,
-		image,
+		event: image,
 		height = 'h-[500px]',
 		showFollow = true,
 		class: className = ''

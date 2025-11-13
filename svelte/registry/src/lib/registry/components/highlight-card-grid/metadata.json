@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 6,
+    "wrapper": "NDKHighlight"
+  },
   "apiDoc": {
     "name": "HighlightCardGrid",
     "description": "A card for displaying text highlights (NIP-84) in grid layouts. Features compact design optimized for grid displays with optional author header, source information, and custom action buttons.",

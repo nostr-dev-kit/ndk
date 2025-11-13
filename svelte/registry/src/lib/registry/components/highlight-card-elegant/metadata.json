@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 8,
+    "wrapper": "NDKHighlight"
+  },
   "apiDoc": {
     "name": "HighlightCardElegant",
     "description": "An elegant card for displaying text highlights (NIP-84) with refined styling and visual elements. Features book page-style design with optional author header, source information, and custom action buttons.",

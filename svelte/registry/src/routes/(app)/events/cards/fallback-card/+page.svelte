@@ -6,20 +6,20 @@
   import { EditProps } from '$lib/site/components/edit-props';
 
   // Import code examples
-  import genericCardCode from './examples/basic/index.txt?raw';
+  import fallbackCardCode from './examples/basic/index.txt?raw';
   import basicSimpleCode from './examples/basic-simple/index.txt?raw';
 
   // Import components
-  import GenericCard from '$lib/registry/components/event-card-generic/generic-card.svelte';
-  import { GenericEventBasic } from '$lib/registry/components/generic-event-basic';
+  import FallbackCard from '$lib/registry/components/event-card-fallback/fallback-card.svelte';
+  import { FallbackEventBasic } from '$lib/registry/components/fallback-event-basic';
 
   // Import registry metadata
-  import genericCardMetadata from '$lib/registry/components/event-card-generic/metadata.json';
-  import basicSimpleMetadata from '$lib/registry/components/generic-event-basic/metadata.json';
+  import fallbackCardMetadata from '$lib/registry/components/event-card-fallback/metadata.json';
+  import basicSimpleMetadata from '$lib/registry/components/fallback-event-basic/metadata.json';
 
   // Page metadata
   const metadata = {
-    title: 'Generic Event Card',
+    title: 'Fallback Event Card',
     description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery'
   };
 
@@ -28,7 +28,7 @@
   // Create a sample unknown event (kind 9999)
   let eventKind = $state<number>(10002);
   let eventContent = $state<string>('This is a sample event of an unknown kind.');
-  let altTag = $state<string>('A sample event demonstrating the generic fallback handler');
+  let altTag = $state<string>('A sample event demonstrating the fallback handler');
 
   const sampleEvent = $derived(new NDKEvent(ndk, {
     kind: eventKind,
@@ -40,13 +40,13 @@
 
   const showcaseComponents = [
     {
-      id: 'generic-card',
-      cardData: genericCardMetadata,
-      preview: genericPreview,
+      id: 'fallback-card',
+      cardData: fallbackCardMetadata,
+      preview: fallbackPreview,
       orientation: 'vertical' as const
     },
     {
-      id: 'generic-event-basic',
+      id: 'fallback-event-basic',
       cardData: basicSimpleMetadata,
       preview: basicSimplePreview,
       orientation: 'vertical' as const
@@ -58,30 +58,30 @@
     title: 'Components',
     description: 'Explore each variant in detail',
     cards: [
-      {...genericCardMetadata, code: genericCardCode},
+      {...fallbackCardMetadata, code: fallbackCardCode},
       {...basicSimpleMetadata, code: basicSimpleCode}
     ],
     previews: {
-      'generic-card': genericCardComponentPreview,
-      'generic-event-basic': basicSimpleComponentPreview
+      'fallback-card': fallbackCardComponentPreview,
+      'fallback-event-basic': basicSimpleComponentPreview
     }
   };
 </script>
 
 <!-- Preview snippets for showcase -->
-{#snippet genericPreview()}
+{#snippet fallbackPreview()}
   <div class="max-w-lg">
-    <GenericCard {ndk} event={sampleEvent} />
+    <FallbackCard {ndk} event={sampleEvent} />
   </div>
 {/snippet}
 
-{#snippet genericCardComponentPreview()}
-  {@render genericPreview()}
+{#snippet fallbackCardComponentPreview()}
+  {@render fallbackPreview()}
 {/snippet}
 
 {#snippet basicSimplePreview()}
   <div class="max-w-lg">
-    <GenericEventBasic {ndk} event={sampleEvent} />
+    <FallbackEventBasic {ndk} event={sampleEvent} />
   </div>
 {/snippet}
 
@@ -93,7 +93,7 @@
 {#snippet overview()}
   <div class="text-lg text-muted-foreground space-y-4">
     <p>
-      The Generic Event Card provides a fallback UI for displaying unknown or unsupported Nostr event kinds. It intelligently handles events that don't have dedicated card components, showing the event content with metadata and discovery options.
+      The Fallback Event Card provides a fallback UI for displaying unknown or unsupported Nostr event kinds. It intelligently handles events that don't have dedicated card components, showing the event content with metadata and discovery options.
     </p>
 
     <p>
@@ -130,6 +130,6 @@
     name="Alt Tag (NIP-31)"
     type="text"
     bind:value={altTag}
-    default="A sample event demonstrating the generic fallback handler"
+    default="A sample event demonstrating the fallback handler"
   />
 </ComponentPageTemplate>

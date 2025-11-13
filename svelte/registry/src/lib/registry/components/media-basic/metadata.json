@@ -16,6 +16,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 6,
+    "type": "media"
+  },
   "apiDoc": {
     "name": "MediaBasic",
     "description": "Basic stacked media layout with NSFW and follows-based filtering",

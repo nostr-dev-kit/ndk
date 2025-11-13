@@ -1,8 +1,18 @@
-import { defaultContentRenderer } from '../../ui/content-renderer';
 import LinkEmbed from './link-embed.svelte';
+import { defaultContentRenderer } from '../../ui/content-renderer';
+import type { ContentRenderer } from '../../ui/content-renderer';
+import metadata from './metadata.json';
 
-// Self-register with priority 5 (higher than basic, overrides link-inline-basic)
-defaultContentRenderer.setLinkComponent(LinkEmbed, 5);
+// Export registration metadata
+export const registration = metadata.registration;
+
+// Export register function
+export function register(renderer: ContentRenderer = defaultContentRenderer) {
+	renderer.setLinkComponent(LinkEmbed, registration.priority);
+}
+
+// Auto-register on import
+register();
 
 export { LinkEmbed };
 export default LinkEmbed;

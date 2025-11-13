@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 8,
+    "type": "media"
+  },
   "apiDoc": {
     "name": "MediaBento",
     "description": "Asymmetric bento grid layout with NSFW filtering",

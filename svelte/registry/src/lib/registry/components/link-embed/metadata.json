@@ -16,6 +16,11 @@
     "content-rendering",
     "rich-links"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "type": "link"
+  },
   "apiDoc": {
     "name": "LinkEmbed",
     "description": "Rich link embed component that auto-registers with ContentRenderer. Fetches and displays OpenGraph metadata in card format.",

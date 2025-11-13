@@ -27,18 +27,13 @@
     class: className = ''
   }: Props = $props();
 
-  // Get parent context for renderer and callbacks
+  // Get parent context for renderer
   const parentContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
   const renderer = $derived(providedRenderer ?? parentContext?.renderer ?? defaultContentRenderer);
 
-  // Set ContentRendererContext for nested components (propagate callbacks)
+  // Set ContentRendererContext for nested components
   setContext(CONTENT_RENDERER_CONTEXT_KEY, {
-    get renderer() { return renderer; },
-    get onUserClick() { return parentContext?.onUserClick; },
-    get onEventClick() { return parentContext?.onEventClick; },
-    get onHashtagClick() { return parentContext?.onHashtagClick; },
-    get onLinkClick() { return parentContext?.onLinkClick; },
-    get onMediaClick() { return parentContext?.onMediaClick; }
+    get renderer() { return renderer; }
   });
 
   let contentElement: HTMLDivElement;
@@ -76,7 +71,7 @@
           props: {
             ndk,
             bech32,
-            onclick: parentContext?.onUserClick
+            onclick: renderer.onUserClick
           }
         });
         mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
@@ -98,7 +93,7 @@
           ndk,
           bech32,
           renderer,
-          onclick: parentContext?.onEventClick
+          onclick: renderer.onEventClick
         }
       });
       mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });
@@ -116,7 +111,7 @@
           props: {
             ndk,
             tag,
-            onclick: parentContext?.onHashtagClick
+            onclick: renderer.onHashtagClick
           }
         });
         mountedComponents.push({ target: placeholder, unmount: (mounted as any).unmount });

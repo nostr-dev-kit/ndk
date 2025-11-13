@@ -17,6 +17,11 @@
     "social",
     "nostr"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 8,
+    "wrapper": "NDKImage"
+  },
   "apiDoc": {
     "name": "ImageCardInstagram",
     "description": "An Instagram-style card for displaying image events (NIP-94) with a social media inspired layout. Features header with author info, full-width image display, interaction buttons, and caption area.",

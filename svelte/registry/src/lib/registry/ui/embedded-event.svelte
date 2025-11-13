@@ -27,14 +27,9 @@
 	// Use renderer from prop, or from context, or fallback to default
 	const renderer = $derived(rendererProp ?? parentContext?.renderer ?? defaultContentRenderer);
 
-	// Set ContentRendererContext for nested components (propagate callbacks from parent)
+	// Set ContentRendererContext for nested components
 	setContext(CONTENT_RENDERER_CONTEXT_KEY, {
-		get renderer() { return renderer; },
-		get onUserClick() { return parentContext?.onUserClick; },
-		get onEventClick() { return onclick ?? parentContext?.onEventClick; },
-		get onHashtagClick() { return parentContext?.onHashtagClick; },
-		get onLinkClick() { return parentContext?.onLinkClick; },
-		get onMediaClick() { return parentContext?.onMediaClick; }
+		get renderer() { return renderer; }
 	});
 
 	// Fetch event from bech32

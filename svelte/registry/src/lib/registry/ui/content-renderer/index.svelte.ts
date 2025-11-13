@@ -137,13 +137,23 @@ export class ContentRenderer {
 	/**
 	 * Fallback component for rendering embedded events with no registered kind handler
 	 * If null, renders raw bech32 string
-	 * Users can register generic-embedded or any other component as the fallback
+	 * Users can register fallback-embedded or any other component as the fallback
 	 */
 	fallbackComponent: Component<{
 		ndk: NDKSvelte;
 		event: NDKEvent;
 		class?: string;
 	}> | null = null;
+
+	/**
+	 * Click callbacks for interactive content
+	 * These are passed to components as onclick props
+	 */
+	onUserClick?: UserClickCallback;
+	onEventClick?: EventClickCallback;
+	onHashtagClick?: HashtagClickCallback;
+	onLinkClick?: LinkClickCallback;
+	onMediaClick?: MediaClickCallback;
 
 	/**
 	 * Registry of embedded event kind handlers
@@ -339,6 +349,11 @@ export class ContentRenderer {
 		this.linkComponent = null;
 		this.mediaComponent = null;
 		this.fallbackComponent = null;
+		this.onUserClick = undefined;
+		this.onEventClick = undefined;
+		this.onHashtagClick = undefined;
+		this.onLinkClick = undefined;
+		this.onMediaClick = undefined;
 		this.mentionPriority = 0;
 		this.hashtagPriority = 0;
 		this.linkPriority = 0;

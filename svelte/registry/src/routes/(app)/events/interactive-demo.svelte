@@ -6,7 +6,7 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import ClickableMention from './clickable-mention.svelte';
 	import ClickableHashtag from './clickable-hashtag.svelte';
-	import GenericCard from '$lib/registry/components/event-card-generic/generic-card.svelte';
+	import FallbackCard from '$lib/registry/components/event-card-fallback/fallback-card.svelte';
 	import { setContext } from 'svelte';
 
 	interface Props {
@@ -98,7 +98,7 @@
 				: selectedEmbed === 'embedded-highlight'
 					? 'Highlight'
 					: selectedEmbed === 'embedded-generic'
-						? 'Generic'
+						? 'Fallback'
 						: null;
 
 		if (!componentPrefix) return embeddedVariants;
@@ -126,7 +126,7 @@
 	const customRenderer = new ContentRenderer();
 	customRenderer.mentionComponent = ClickableMention as any;
 	customRenderer.hashtagComponent = ClickableHashtag as any;
-	customRenderer.fallbackComponent = GenericCard;
+	customRenderer.fallbackComponent = FallbackCard;
 
 	// Set context so child components can access the interactive state
 	setContext('interactive-demo', {

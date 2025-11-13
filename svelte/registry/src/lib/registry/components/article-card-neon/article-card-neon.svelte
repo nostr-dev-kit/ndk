@@ -13,7 +13,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    article: NDKArticle;
+    event: NDKArticle;
 
     width?: string;
 
@@ -26,7 +26,7 @@
 
   let {
     ndk,
-    article,
+    event: article,
     width = 'w-[320px]',
     height = 'h-[480px]',
     onclick,

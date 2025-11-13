@@ -14,6 +14,11 @@
     "content-rendering",
     "url-display"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "type": "link"
+  },
   "apiDoc": {
     "name": "LinkInlineBasic",
     "description": "Simple inline link component that auto-registers with ContentRenderer. Displays URLs as clickable links with icons.",

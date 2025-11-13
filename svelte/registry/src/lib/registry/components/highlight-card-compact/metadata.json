@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "wrapper": "NDKHighlight"
+  },
   "apiDoc": {
     "name": "HighlightCardCompact",
     "description": "A compact highlight card with vertical accent line and minimal layout. Features highlighted text with optional author, timestamp, and source information. Includes hover background transition and group hover effects. Ideal for dense lists or sidebar displays of highlights.",

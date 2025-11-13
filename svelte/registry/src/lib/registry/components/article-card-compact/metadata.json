@@ -16,6 +16,11 @@
     "recent-posts",
     "related-articles"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "wrapper": "NDKArticle"
+  },
   "apiDoc": {
     "name": "ArticleCardCompact",
     "description": "A compact article card displaying article image, title, summary, and reading time in a horizontal layout. Optimized for sidebars and article lists with minimal vertical space.",

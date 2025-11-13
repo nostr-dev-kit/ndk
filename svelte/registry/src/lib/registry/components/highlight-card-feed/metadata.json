@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "wrapper": "NDKHighlight"
+  },
   "apiDoc": {
     "name": "HighlightCardFeed",
     "description": "A card for displaying text highlights (NIP-84) in feed layouts. Features book page-style design with optional author header, source information, and custom action buttons. Includes hover effects and supports custom snippet for actions area.",

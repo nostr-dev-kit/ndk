@@ -25,18 +25,13 @@
 		class: className = ''
 	}: EventContentProps = $props();
 
-	// Get parent context for renderer and callbacks
+	// Get parent context for renderer
 	const parentContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 	const renderer = $derived(rendererProp ?? parentContext?.renderer ?? defaultContentRenderer);
 
-	// Set ContentRendererContext for nested components (propagate callbacks)
+	// Set ContentRendererContext for nested components
 	setContext(CONTENT_RENDERER_CONTEXT_KEY, {
-		get renderer() { return renderer; },
-		get onUserClick() { return parentContext?.onUserClick; },
-		get onEventClick() { return parentContext?.onEventClick; },
-		get onHashtagClick() { return parentContext?.onHashtagClick; },
-		get onLinkClick() { return parentContext?.onLinkClick; },
-		get onMediaClick() { return parentContext?.onMediaClick; }
+		get renderer() { return renderer; }
 	});
 
 	const parsed = createEventContent(
@@ -48,7 +43,7 @@
 	);
 </script>
 
-<div class="whitespace-pre-wrap wrap-break-words leading-relaxed {className}">
+<div class="whitespace-pre-wrap wrap-break-all break-all  leading-relaxed {className}">
 	{#each parsed.segments as segment, i (i)}
 		{#if segment.type === 'text'}
 			{segment.content}
@@ -56,20 +51,20 @@
 			{#if segment.data && typeof segment.data === 'string'}
 				{#if renderer.mentionComponent}
 					{@const Component = renderer.mentionComponent}
-					<Component {ndk} bech32={segment.data} onclick={parentContext?.onUserClick} />
+					<Component {ndk} bech32={segment.data} onclick={renderer.onUserClick} />
 				{:else}
 					{segment.content}
 				{/if}
 			{/if}
 		{:else if segment.type === 'event-ref'}
 			{#if segment.data && typeof segment.data === 'string'}
-				<EmbeddedEvent {ndk} bech32={segment.data} onclick={parentContext?.onEventClick} />
+				<EmbeddedEvent {ndk} bech32={segment.data} onclick={renderer.onEventClick} />
 			{/if}
 		{:else if segment.type === 'hashtag'}
 			{#if segment.data && typeof segment.data === 'string'}
 				{#if renderer.hashtagComponent}
 					{@const Component = renderer.hashtagComponent}
-					<Component {ndk} tag={segment.data} onclick={parentContext?.onHashtagClick} />
+					<Component {ndk} tag={segment.data} onclick={renderer.onHashtagClick} />
 				{:else}
 					#{segment.data}
 				{/if}
@@ -77,14 +72,14 @@
 		{:else if segment.type === 'link'}
 			{#if renderer.linkComponent}
 				{@const Component = renderer.linkComponent}
-				<Component url={segment.content} onclick={parentContext?.onLinkClick} />
+				<Component url={segment.content} onclick={renderer.onLinkClick} />
 			{:else}
 				{segment.content}
 			{/if}
 		{:else if segment.type === 'media'}
 			{#if renderer.mediaComponent}
 				{@const Component = renderer.mediaComponent}
-				<Component url={segment.content} onclick={parentContext?.onMediaClick} />
+				<Component url={segment.content} onclick={renderer.onMediaClick} />
 			{:else}
 				{segment.content}
 			{/if}
@@ -96,7 +91,7 @@
 			{#if segment.data && Array.isArray(segment.data)}
 				{#if renderer.mediaComponent}
 					{@const Component = renderer.mediaComponent}
-					<Component url={segment.data} onclick={parentContext?.onMediaClick} />
+					<Component url={segment.data} onclick={renderer.onMediaClick} />
 				{:else}
 					{#each segment.data as url, j (j)}
 						<img src={url} alt="" class="w-full h-auto object-cover rounded-lg aspect-square" />
@@ -107,7 +102,7 @@
 			{#if segment.data && Array.isArray(segment.data)}
 				{#if renderer.linkComponent}
 					{@const Component = renderer.linkComponent}
-					<Component url={segment.data} onclick={parentContext?.onLinkClick} />
+					<Component url={segment.data} onclick={renderer.onLinkClick} />
 				{:else}
 						{#each segment.data as url, j (j)}
 								{url}

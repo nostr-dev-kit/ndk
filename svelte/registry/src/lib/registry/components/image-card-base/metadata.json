@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "wrapper": "NDKImage"
+  },
   "apiDoc": {
     "name": "ImageCardBase",
     "description": "A card for displaying image events (NIP-94) with header, image content, metadata, and optional actions. Features customizable image height, interactive mode, and toggleable image metadata display. Includes reaction and repost buttons. Uses EventCard builder pattern with ImageContent component for NIP-94 imeta tag support.",

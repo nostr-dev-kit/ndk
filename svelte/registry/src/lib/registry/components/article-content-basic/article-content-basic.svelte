@@ -5,7 +5,7 @@
   import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
   import {
     defaultContentRenderer,
-    type ContentRenderer,
+    ContentRenderer,
     type UserClickCallback,
     type EventClickCallback,
     type HashtagClickCallback,
@@ -45,16 +45,36 @@
   const parentContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 
   // Use renderer from prop, or from context, or fallback to default
-  const renderer = $derived(providedRenderer ?? parentContext?.renderer ?? defaultContentRenderer);
+  const renderer = $derived.by(() => {
+    const base = providedRenderer ?? parentContext?.renderer ?? defaultContentRenderer;
 
-  // Set ContentRendererContext for nested components (with callbacks)
+    // If custom callbacks are provided as props, create a new renderer with those callbacks
+    if (onUserClick || onEventClick || onHashtagClick || onLinkClick || onMediaClick) {
+      const customRenderer = new ContentRenderer();
+      // Copy all properties from base renderer
+      customRenderer.mentionComponent = base.mentionComponent;
+      customRenderer.hashtagComponent = base.hashtagComponent;
+      customRenderer.linkComponent = base.linkComponent;
+      customRenderer.mediaComponent = base.mediaComponent;
+      customRenderer.fallbackComponent = base.fallbackComponent;
+      customRenderer.blockNsfw = base.blockNsfw;
+
+      // Set custom callbacks or fall back to base renderer callbacks
+      customRenderer.onUserClick = onUserClick ?? base.onUserClick;
+      customRenderer.onEventClick = onEventClick ?? base.onEventClick;
+      customRenderer.onHashtagClick = onHashtagClick ?? base.onHashtagClick;
+      customRenderer.onLinkClick = onLinkClick ?? base.onLinkClick;
+      customRenderer.onMediaClick = onMediaClick ?? base.onMediaClick;
+
+      return customRenderer;
+    }
+
+    return base;
+  });
+
+  // Set ContentRendererContext for nested components
   setContext(CONTENT_RENDERER_CONTEXT_KEY, {
-    get renderer() { return renderer; },
-    get onUserClick() { return onUserClick ?? parentContext?.onUserClick; },
-    get onEventClick() { return onEventClick ?? parentContext?.onEventClick; },
-    get onHashtagClick() { return onHashtagClick ?? parentContext?.onHashtagClick; },
-    get onLinkClick() { return onLinkClick ?? parentContext?.onLinkClick; },
-    get onMediaClick() { return onMediaClick ?? parentContext?.onMediaClick; }
+    get renderer() { return renderer; }
   });
 
 </script>

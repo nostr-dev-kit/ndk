@@ -11,7 +11,7 @@
 	interface Props {
 		ndk?: NDKSvelte;
 
-		image: NDKImage;
+		event: NDKImage;
 
 		showDropdown?: boolean;
 
@@ -20,7 +20,7 @@
 
 	let {
 		ndk: providedNdk,
-		image,
+		event: image,
 		showDropdown = true,
 		class: className = ''
 	}: Props = $props();

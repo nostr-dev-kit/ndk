@@ -17,6 +17,11 @@
     "content-renderer",
     "minimal-ui"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "kinds": [1, 1111]
+  },
   "apiDoc": {
     "name": "EventCardCompact",
     "description": "A compact, vertical event card designed for space-efficient layouts. Header on top shows avatar, author name, and timestamp. Content below with 3-line clamp. Features a subtle muted background with hover effects. Automatically registered with the content renderer for kinds 1 and 1111 with priority 5. Perfect for displaying events in grids or compact feeds.",

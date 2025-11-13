@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "wrapper": "NDKHighlight"
+  },
   "apiDoc": {
     "name": "HighlightCardInline",
     "description": "An inline highlight card for embedding highlights within content. Features centered layout with max-width constraint, highlight content, and floating source badge. Perfect for quote displays, embedded references, or highlight previews in text content.",

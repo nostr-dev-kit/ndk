@@ -120,7 +120,7 @@ export { default as UserCardNeon } from './user-card-neon.svelte';
 - **Reactions** - `Reaction`, `ReactionButton`, `ReactionEmojiButton`, `ReactionSlack`
 - **Zap** - `ZapButton`, `ZapSend.Root`, `ZapSend.Splits`
 - **Composers** - `NoteComposer` namespace with `Root`, `Textarea`, `Submit`, `Media`
-- **Selectors** - `RelaySelector`, `RelaySelectorPopover`, `UserSearchCombobox`
+- **Selectors** - `UserSearchCombobox`
 - **Embedded Events** - `NoteEmbedded`, `ArticleEmbedded`, `HighlightEmbedded`
 - **Content Display** - `ArticleContent`, `ImageContent`, `Hashtag`, `Mention`
 - **Negentropy Sync** - `NegentropySyncProgressCompact`, `NegentropySyncProgressAnimated`, `NegentropySyncProgressDetailed`

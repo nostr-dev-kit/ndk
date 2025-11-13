@@ -57,10 +57,12 @@
 	};
 
 	const openLightbox = (index: number) => {
-		// Call onclick callback if provided
+		// If onclick callback is provided, call it and skip lightbox
 		if (onclick) {
 			onclick(url);
+			return;
 		}
+		// Otherwise, open lightbox
 		lightboxIndex = index;
 		lightboxOpen = true;
 	};

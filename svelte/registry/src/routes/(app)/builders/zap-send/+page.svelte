@@ -290,13 +290,13 @@
   <section class="info">
     <h2>Related</h2>
     <div class="related-grid">
-      <a href="/builders/zap-action" class="related-card">
-        <strong>createZapAction</strong>
-        <span>Read received zaps</span>
-      </a>
       <a href="/components/zap" class="related-card">
         <strong>Zap Components</strong>
-        <span>Pre-built zap UI</span>
+        <span>Buttons and reaction displays</span>
+      </a>
+      <a href="/components/zap-send-classic" class="related-card">
+        <strong>Zap Send Classic</strong>
+        <span>Full-screen zap composer UI</span>
       </a>
     </div>
   </section>

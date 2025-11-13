@@ -10,10 +10,11 @@
 		url: string | string[];
 		event?: NDKEvent;
 		ndk?: NDKSvelte;
+		onclick?: (url: string | string[]) => void;
 		class?: string;
 	}
 
-	let { url, event, ndk, class: className = '' }: Props = $props();
+	let { url, event, ndk, onclick, class: className = '' }: Props = $props();
 
 	let lightboxOpen = $state(false);
 	let selectedIndex = $state(0);
@@ -60,6 +61,10 @@
 	};
 
 	function openLightbox(index: number) {
+		// Call onclick callback if provided
+		if (onclick) {
+			onclick(url);
+		}
 		selectedIndex = index;
 		lightboxOpen = true;
 	}

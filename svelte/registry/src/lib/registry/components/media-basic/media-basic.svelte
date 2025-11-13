@@ -11,10 +11,11 @@
 		event?: NDKEvent;
 		ndk?: NDKSvelte;
 		type?: string;
+		onclick?: (url: string | string[]) => void;
 		class?: string;
 	}
 
-	let { url, event, ndk, type, class: className = '' }: Props = $props();
+	let { url, event, ndk, type, onclick, class: className = '' }: Props = $props();
 
 	// Convert to array for consistent handling
 	const mediaUrls = $derived(Array.isArray(url) ? url : [url]);
@@ -57,6 +58,10 @@
 	);
 
 	function openLightbox(index: number) {
+		// Call onclick callback if provided
+		if (onclick) {
+			onclick(url);
+		}
 		lightboxIndex = index;
 		lightboxOpen = true;
 	}

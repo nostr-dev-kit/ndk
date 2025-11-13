@@ -12,10 +12,11 @@
 		url: string | string[];
 		event?: NDKEvent;
 		ndk?: NDKSvelte;
+		onclick?: (url: string | string[]) => void;
 		class?: string;
 	}
 
-	let { url, event, ndk, class: className = '' }: Props = $props();
+	let { url, event, ndk, onclick, class: className = '' }: Props = $props();
 
 	// Normalize to array
 	const urls = $derived(Array.isArray(url) ? url : [url]);
@@ -56,6 +57,10 @@
 	};
 
 	const openLightbox = (index: number) => {
+		// Call onclick callback if provided
+		if (onclick) {
+			onclick(url);
+		}
 		lightboxIndex = index;
 		lightboxOpen = true;
 	};

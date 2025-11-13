@@ -338,128 +338,99 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
       exactly what you need in your <code class="text-xs bg-muted px-2 py-1 rounded">+layout.svelte</code>.
     </p>
 
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Left: Configuration Controls (1/3) -->
-      <div class="md:col-span-1 space-y-4">
-        <h3 class="text-lg font-semibold mb-2">Configure Components</h3>
+    <div class="w-full grid grid-cols-1 md:grid-cols-5 gap-6">
+      <!-- Left: Configuration Controls (narrower) -->
+      <div class="md:col-span-1 space-y-3">
+        <h3 class="text-lg font-semibold mb-3">Configure</h3>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <!-- Mentions -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="mention-select" class="text-sm text-muted-foreground">Mentions</label>
-            <select id="mention-select" bind:value={selectedMention} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="basic">Basic (P1)</option>
-              <option value="modern">Modern (P10)</option>
-            </select>
-          </div>
+          <select id="mention-select" bind:value={selectedMention} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Mentions: None</option>
+            <option value="basic">Mentions: Basic</option>
+            <option value="modern">Mentions: Modern</option>
+          </select>
 
           <!-- Hashtags -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="hashtag-select" class="text-sm text-muted-foreground">Hashtags</label>
-            <select id="hashtag-select" bind:value={selectedHashtag} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="basic">Basic (P1)</option>
-              <option value="modern">Modern (P10)</option>
-            </select>
-          </div>
+          <select id="hashtag-select" bind:value={selectedHashtag} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Hashtags: None</option>
+            <option value="basic">Hashtags: Basic</option>
+            <option value="modern">Hashtags: Modern</option>
+          </select>
 
           <!-- Links -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="link-select" class="text-sm text-muted-foreground">Links</label>
-            <select id="link-select" bind:value={selectedLink} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="basic">Basic (P1)</option>
-              <option value="embed">Embed (P5)</option>
-            </select>
-          </div>
+          <select id="link-select" bind:value={selectedLink} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Links: None</option>
+            <option value="basic">Links: Basic</option>
+            <option value="embed">Links: Embed</option>
+          </select>
 
           <!-- Media -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="media-select" class="text-sm text-muted-foreground">Media</label>
-            <select id="media-select" bind:value={selectedMedia} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="basic">Basic (P6)</option>
-              <option value="bento">Bento (P8)</option>
-              <option value="carousel">Carousel (P10)</option>
-            </select>
-          </div>
+          <select id="media-select" bind:value={selectedMedia} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Media: None</option>
+            <option value="basic">Media: Basic</option>
+            <option value="bento">Media: Bento</option>
+            <option value="carousel">Media: Carousel</option>
+          </select>
         </div>
 
         <!-- Event Cards -->
-        <div class="pt-3 border-t border-border space-y-2">
-          <div class="text-sm font-medium mb-2">Event Cards</div>
-
+        <div class="pt-3 border-t border-border space-y-1.5">
           <!-- Note Cards -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="note-card-select" class="text-sm text-muted-foreground">Notes</label>
-            <select id="note-card-select" bind:value={selectedNoteCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="event-card-inline">Inline (P10)</option>
-              <option value="event-card-compact">Compact (P5)</option>
-              <option value="event-card-basic">Basic (P1)</option>
-            </select>
-          </div>
+          <select id="note-card-select" bind:value={selectedNoteCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Notes: None</option>
+            <option value="event-card-inline">Notes: Inline</option>
+            <option value="event-card-compact">Notes: Compact</option>
+            <option value="event-card-basic">Notes: Basic</option>
+          </select>
 
           <!-- Article Cards -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="article-card-select" class="text-sm text-muted-foreground">Articles</label>
-            <select id="article-card-select" bind:value={selectedArticleCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="article-card-inline">Inline (P1)</option>
-              <option value="article-card-compact">Compact (P5)</option>
-              <option value="article-card-portrait">Portrait (P6)</option>
-              <option value="article-card">Medium (P7)</option>
-              <option value="article-card-neon">Neon (P8)</option>
-              <option value="article-card-hero">Hero (P10)</option>
-            </select>
-          </div>
+          <select id="article-card-select" bind:value={selectedArticleCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Articles: None</option>
+            <option value="article-card-inline">Articles: Inline</option>
+            <option value="article-card-compact">Articles: Compact</option>
+            <option value="article-card-portrait">Articles: Portrait</option>
+            <option value="article-card">Articles: Medium</option>
+            <option value="article-card-neon">Articles: Neon</option>
+            <option value="article-card-hero">Articles: Hero</option>
+          </select>
 
           <!-- Highlight Cards -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="highlight-card-select" class="text-sm text-muted-foreground">Highlights</label>
-            <select id="highlight-card-select" bind:value={selectedHighlightCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="highlight-card-inline">Inline (P1)</option>
-              <option value="highlight-card-compact">Compact (P5)</option>
-              <option value="highlight-card-grid">Grid (P6)</option>
-              <option value="highlight-card-elegant">Elegant (P8)</option>
-              <option value="highlight-card-feed">Feed (P10)</option>
-            </select>
-          </div>
+          <select id="highlight-card-select" bind:value={selectedHighlightCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Highlights: None</option>
+            <option value="highlight-card-inline">Highlights: Inline</option>
+            <option value="highlight-card-compact">Highlights: Compact</option>
+            <option value="highlight-card-grid">Highlights: Grid</option>
+            <option value="highlight-card-elegant">Highlights: Elegant</option>
+            <option value="highlight-card-feed">Highlights: Feed</option>
+          </select>
 
           <!-- Image Cards -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="image-card-select" class="text-sm text-muted-foreground">Images</label>
-            <select id="image-card-select" bind:value={selectedImageCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value="none">None</option>
-              <option value="image-card-base">Base (P5)</option>
-              <option value="image-card-instagram">Instagram (P8)</option>
-              <option value="image-card-hero">Hero (P10)</option>
-            </select>
-          </div>
+          <select id="image-card-select" bind:value={selectedImageCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value="none">Images: None</option>
+            <option value="image-card-base">Images: Base</option>
+            <option value="image-card-instagram">Images: Instagram</option>
+            <option value="image-card-hero">Images: Hero</option>
+          </select>
 
           <!-- Generic Fallback -->
-          <div class="flex items-center justify-between gap-3">
-            <label for="fallback-select" class="text-sm text-muted-foreground">Fallback</label>
-            <select id="fallback-select" bind:value={enableGenericFallback} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
-              <option value={false}>None</option>
-              <option value={true}>Fallback (P1)</option>
-            </select>
-          </div>
+          <select id="fallback-select" bind:value={enableGenericFallback} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+            <option value={false}>Fallback: None</option>
+            <option value={true}>Fallback: Generic</option>
+          </select>
         </div>
 
         <!-- Options -->
         <div class="pt-3 border-t border-border">
-          <label class="flex items-center justify-between gap-3 cursor-pointer group">
-            <span class="text-sm text-muted-foreground">Block NSFW</span>
+          <label class="flex items-center gap-2 cursor-pointer group">
             <input type="checkbox" bind:checked={blockNsfw} class="w-4 h-4 rounded border-input cursor-pointer" />
+            <span class="text-sm text-muted-foreground">Block NSFW</span>
           </label>
         </div>
       </div>
 
-      <!-- Right: Live Preview (2/3) -->
-      <div class="md:col-span-2 space-y-4">
+      <!-- Right: Live Preview (wider) -->
+      <div class="md:col-span-4 space-y-4">
         <Preview code={generatedCode} previewAreaClass="min-h-[400px]">
           <div class="w-full max-w-3xl bg-card border border-border rounded-lg p-4">
             <EventContent {ndk} event={sampleEvent} renderer={dynamicRenderer} />

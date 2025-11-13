@@ -213,8 +213,8 @@
         <p class="text-sm text-muted-foreground leading-relaxed m-0">Search and select users</p>
         <div class="flex flex-wrap gap-1.5 mt-auto">
           <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Root</span>
-          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Textarea</span>
-          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Actions</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Search</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Results</span>
         </div>
       </a>
 

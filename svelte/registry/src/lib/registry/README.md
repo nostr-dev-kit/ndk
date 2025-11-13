@@ -111,7 +111,7 @@ export { default as UserCardNeon } from './user-card-neon.svelte';
 **Available components:**
 - **User Cards** - `UserCardPortrait`, `UserCardLandscape`, `UserCardCompact`, `UserCardNeon`, `UserCardGlass`, `UserCardClassic`
 - **Article Cards** - `ArticleCardHero`, `ArticleCardMedium`, `ArticleCardPortrait`, `ArticleCardNeon`
-- **Highlight Cards** - `HighlightCardCompact`, `HighlightCardElegant`, `HighlightCardFeed`, `HighlightCardGrid`
+- **Highlight Cards** - `HighlightCardCompact`, `HighlightCardElegant`, `HighlightCardFeed`, `HighlightCardGrid`, `HighlightCardInline`
 - **Event Cards** - `EventCard` namespace with `Root`, `Header`, `Content`, `Actions`
 - **Image Cards** - `ImageCard`, `ImageCardHero`, `ImageCardInstagram`
 - **Follow Packs** - `FollowPackHero`, `FollowPackCompact`, `FollowPackPortrait`, `FollowPackModernPortrait`

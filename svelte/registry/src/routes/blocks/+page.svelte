@@ -5,7 +5,7 @@
 <section class="max-w-[1400px] mx-auto py-24 px-8 pb-16 text-center relative overflow-hidden">
   <div class="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[1400px] h-[500px] opacity-50 pointer-events-none z-0" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwMCIgaGVpZ2h0PSI1MDAiIHZpZXdCb3g9IjAgMCAxNDAwIDUwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZDEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmY5YWE4O3N0b3Atb3BhY2l0eTowLjMiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojYTNjNGY4O3N0b3Atb3BhY2l0eTowLjMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJibHVyIj4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNDAiLz4KICAgIDwvZmlsdGVyPgogIDwvZGVmcz4KICA8cGF0aCBkPSJNMjAwIDEwMEw0MDAgMzAwTDYwMCAxNTBMODAwIDM1MEwxMDAwIDIwMEwxMjAwIDMwMCIgc3Ryb2tlPSJ1cmwoI2dyYWQxKSIgc3Ryb2tlLXdpZHRoPSIxMjAiIGZpbGw9Im5vbmUiIGZpbHRlcj0idXJsKCNibHVyKSIgb3BhY2l0eT0iMC42Ii8+CiAgPHBhdGggZD0iTTEwMCAyMDBMNDAwIDEwMEw3MDAgMzUwTDkwMCAxNTBMMTEwMCAzMDBMMTMwMCAxNTAiIHN0cm9rZT0idXJsKCNncmFkMSkiIHN0cm9rZS13aWR0aD0iMTAwIiBmaWxsPSJub25lIiBmaWx0ZXI9InVybCgjYmx1cikiIG9wYWNpdHk9IjAuNCIvPgogIDxwYXRoIGQ9Ik0zMDAgNTBMNjAwIDI1MEw5MDAgODBMMTEwMCAyODAiIHN0cm9rZT0iIzhmYTNmYiIgc3Ryb2tlLXdpZHRoPSI4MCIgZmlsbD0ibm9uZSIgZmlsdGVyPSJ1cmwoI2JsdXIpIiBvcGFjaXR5PSIwLjMiLz4KPC9zdmc+'); background-size: contain; background-repeat: no-repeat; background-position: center top;"></div>
   <div class="relative z-10">
-    <h1 class="text-6xl font-bold -tracking-[0.03em] mb-6" style="background: linear-gradient(135deg, var(--foreground) 0%, color-mix(in srgb, var(--foreground) 80%, transparent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Building Blocks for Nostr</h1>
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold -tracking-[0.03em] mb-6" style="background: linear-gradient(135deg, var(--foreground) 0%, color-mix(in srgb, var(--foreground) 80%, transparent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Building Blocks for Nostr</h1>
     <p class="text-[1.375rem] text-muted-foreground max-w-[600px] mx-auto mb-12">
       Production-ready components that help you build Nostr apps faster. Copy, paste, ship.
     </p>
@@ -34,7 +34,7 @@
       <span class="text-muted-foreground text-sm">4 blocks</span>
     </div>
 
-    <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6 mb-16">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
       <BlockCard
         title="Login"
         description="Smart login component with adaptive UI - supports nsec, ncryptsec, browser extensions, bunker signers, and NIP-05."
@@ -97,7 +97,7 @@
       <span class="text-muted-foreground text-sm">4 blocks</span>
     </div>
 
-    <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <BlockCard
         title="Timeline Feeds"
         description="Infinite scroll feeds with real-time updates, filtering, and multiple layout options."
@@ -145,7 +145,7 @@
       <span class="text-muted-foreground text-sm">1 block</span>
     </div>
 
-    <div class="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <BlockCard
         title="Note Composer"
         description="Composable note and reply composer with mentions, media uploads, and multiple layout options."

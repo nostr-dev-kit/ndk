@@ -31,8 +31,8 @@
 </EditProps.Root>
 
 <section class="border-b border-border min-h-screen w-full flex items-center justify-center bg-linear-to-b from-background to-muted-foreground/5 -mt-16">
-    <div class="flex flex-col items-center gap-6 py-16 text-center md:py-24 lg:py-32 lg:gap-8">
-      <h1 class="max-w-3xl text-7xl font-black leading-tight tracking-tight text-foreground m-0 xl:tracking-tighter" style="text-wrap: balance;">
+    <div class="flex flex-col items-center gap-6 py-16 text-center md:py-24 lg:py-32 lg:gap-8 px-4">
+      <h1 class="max-w-3xl text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight text-foreground m-0 xl:tracking-tighter" style="text-wrap: balance;">
         Nostr apps, with <span class="aurora-text">taste</span>.
       </h1>
 

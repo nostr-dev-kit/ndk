@@ -26,19 +26,19 @@
   <section class="explore-section">
     <h2>Explore Components</h2>
     <div class="component-links">
-      <a href="/components/event-card" class="component-link">
-        <h3>Event Card</h3>
-        <p>See how to display events with engagement metrics</p>
+      <a href="/events/cards" class="component-link">
+        <h3>Event Cards</h3>
+        <p>Learn how to display events with reactions and actions</p>
       </a>
-      <a href="/components/article-card" class="component-link">
-        <h3>Article Card</h3>
-        <p>Display long-form articles with rich previews</p>
+      <a href="/events/cards/article" class="component-link">
+        <h3>Article Cards</h3>
+        <p>Display long-form articles with rich media previews</p>
       </a>
-      <a href="/components/user-profile" class="component-link">
-        <h3>User Profile</h3>
-        <p>Show user profiles with avatars and bios</p>
+      <a href="/components/user-card" class="component-link">
+        <h3>User Cards</h3>
+        <p>Show user profiles with avatars, bios, and stats</p>
       </a>
-      <a href="/components/follow-button" class="component-link">
+      <a href="/components/follow" class="component-link">
         <h3>Follow Button</h3>
         <p>Interactive follow/unfollow functionality</p>
       </a>

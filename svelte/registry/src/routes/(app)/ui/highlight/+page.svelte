@@ -193,13 +193,13 @@ const context = getContext<HighlightContext>(HIGHLIGHT_CONTEXT_KEY);
     <section>
       <h2 class="text-2xl font-semibold mb-4">Related</h2>
       <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-        <a href="/components/cards/highlight" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">Highlight Blocks</strong>
-          <span class="text-sm text-muted-foreground">Pre-styled highlight card layouts</span>
+        <a href="/events/cards/highlight" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Highlight Cards</strong>
+          <span class="text-sm text-muted-foreground">Pre-styled highlight layouts</span>
         </a>
-        <a href="/components/previews/highlights" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">Highlight Embedded</strong>
-          <span class="text-sm text-muted-foreground">For embedding highlights in content</span>
+        <a href="/events/embeds" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover-border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Embedded Content</strong>
+          <span class="text-sm text-muted-foreground">Customize inline highlight rendering</span>
         </a>
         <a href="/ui/article" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
           <strong class="font-semibold text-foreground">Article Primitives</strong>

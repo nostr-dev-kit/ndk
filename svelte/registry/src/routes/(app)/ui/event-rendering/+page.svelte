@@ -685,9 +685,9 @@ interface LinkMediaProps {
     <section>
       <h2 class="text-2xl font-semibold mb-4">Related</h2>
       <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-        <a href="/components/event-card" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">Event Card Component</strong>
-          <span class="text-sm text-muted-foreground">Complete event display with header and content</span>
+        <a href="/events/cards" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Event Cards</strong>
+          <span class="text-sm text-muted-foreground">Composable chromes for displaying events</span>
         </a>
         <a href="/events/content/plain-text" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
           <strong class="font-semibold text-foreground">Plain Text Content Guide</strong>

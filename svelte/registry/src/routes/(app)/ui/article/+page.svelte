@@ -408,7 +408,7 @@ context.onclick  // Click handler`}
     <section>
       <h2 class="text-2xl font-semibold mb-4">Related</h2>
       <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-        <a href="/components/cards/article" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+        <a href="/events/cards/article" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
           <strong class="font-semibold text-foreground">Article Cards</strong>
           <span class="text-sm text-muted-foreground">Pre-styled article card layouts</span>
         </a>
@@ -416,8 +416,8 @@ context.onclick  // Click handler`}
           <strong class="font-semibold text-foreground">User Primitives</strong>
           <span class="text-sm text-muted-foreground">For displaying article authors</span>
         </a>
-        <a href="/components/content/article" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">Article Content</strong>
+        <a href="/events/content/markdown" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Markdown Content</strong>
           <span class="text-sm text-muted-foreground">Render article content with markdown</span>
         </a>
       </div>

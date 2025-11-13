@@ -470,10 +470,6 @@ context.ndk        // NDKSvelte instance`}
           <strong class="font-semibold text-foreground">Relay Input Component</strong>
           <span class="text-sm text-muted-foreground">Styled relay URL input</span>
         </a>
-        <a href="/components/relay-selector" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">Relay Selector Component</strong>
-          <span class="text-sm text-muted-foreground">Styled relay dropdown selector</span>
-        </a>
       </div>
     </section>
   {/snippet}

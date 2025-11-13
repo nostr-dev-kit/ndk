@@ -105,9 +105,9 @@
         <h3>Guides</h3>
         <p>Build real features with builders and components</p>
       </a>
-      <a href="/components/event-card" class="next-card">
-        <h3>Browse Components</h3>
-        <p>See all available registry components</p>
+      <a href="/events/cards" class="next-card">
+        <h3>Event Cards</h3>
+        <p>Explore event chromes and layouts</p>
       </a>
     </div>
   </section>

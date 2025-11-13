@@ -348,9 +348,9 @@ const context = getContext<UserContext>(USER_CONTEXT_KEY);
           <strong class="font-semibold text-foreground">User Card Blocks</strong>
           <span class="text-sm text-muted-foreground">Pre-styled user card layouts</span>
         </a>
-        <a href="/components/user-profile" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
-          <strong class="font-semibold text-foreground">User Profile</strong>
-          <span class="text-sm text-muted-foreground">Full profile display components</span>
+        <a href="/components/avatar-group" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover-border-primary hover:-translate-y-0.5">
+          <strong class="font-semibold text-foreground">Avatar Group</strong>
+          <span class="text-sm text-muted-foreground">Display follower avatars and lists</span>
         </a>
         <a href="/ui/article" class="flex flex-col gap-1 p-4 border border-border rounded-lg no-underline transition-all hover:border-primary hover:-translate-y-0.5">
           <strong class="font-semibold text-foreground">Article Primitives</strong>

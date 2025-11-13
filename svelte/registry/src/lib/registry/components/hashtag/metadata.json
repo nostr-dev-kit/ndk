@@ -16,6 +16,11 @@
     "topic-links",
     "content-categorization"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "type": "hashtag"
+  },
   "apiDoc": {
     "name": "Hashtag",
     "description": "Simple inline hashtag display component with primary color styling, hover underline effect, and keyboard navigation support. Renders hashtag with # prefix and optional click handler for tag interaction.",

@@ -1,8 +1,18 @@
-export { default as EventCardInline } from './event-card-inline.svelte';
-
-import { defaultContentRenderer } from '../../ui/content-renderer/index.js';
 import EventCardInline from './event-card-inline.svelte';
+import { defaultContentRenderer } from '../../ui/content-renderer';
+import type { ContentRenderer } from '../../ui/content-renderer';
+import metadata from './metadata.json';
 
-// Register with content renderer for kinds 1 and 1111 with high priority (10)
-// This ensures it takes precedence over other event card components
-defaultContentRenderer.addKind([1, 1111], EventCardInline, 10);
+// Export registration metadata
+export const registration = metadata.registration;
+
+// Export register function
+export function register(renderer: ContentRenderer = defaultContentRenderer) {
+	renderer.addKind(registration.kinds, EventCardInline, registration.priority);
+}
+
+// Auto-register on import
+register();
+
+export { EventCardInline };
+export default EventCardInline;

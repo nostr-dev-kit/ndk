@@ -24,7 +24,7 @@
 </script>
 
 <div
-	data-generic-event-basic=""
+	data-fallback-event-basic=""
 	class="border border-border rounded-lg bg-card p-4"
 >
 	<EventCard.Root {ndk} {event}>

@@ -4,6 +4,7 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import PageTitle from '$lib/site/components/PageTitle.svelte';
   import CodeBlock from '$lib/site/components/CodeBlock.svelte';
+  import Preview from '$lib/site/components/preview.svelte';
 
   // Import all renderer components
   import Mention from '$lib/registry/components/mention/mention.svelte';
@@ -15,10 +16,35 @@
   import MediaBasic from '$lib/registry/components/media-basic/media-basic.svelte';
   import MediaBento from '$lib/registry/components/media-bento/media-bento.svelte';
   import MediaCarousel from '$lib/registry/components/media-carousel/media-carousel.svelte';
-  import NoteCard from '$lib/registry/components/note-card/note-card.svelte';
+
+  // Import event card registration modules
+  import * as EventCardInline from '$lib/registry/components/event-card-inline';
+  import * as EventCardCompact from '$lib/registry/components/event-card-compact';
+  import * as EventCardBasic from '$lib/registry/components/event-card-basic';
+
+  import * as ArticleCardInline from '$lib/registry/components/article-card-inline';
+  import * as ArticleCardCompact from '$lib/registry/components/article-card-compact';
+  import * as ArticleCardPortrait from '$lib/registry/components/article-card-portrait';
+  import * as ArticleCardMedium from '$lib/registry/components/article-card';
+  import * as ArticleCardNeon from '$lib/registry/components/article-card-neon';
+  import * as ArticleCardHero from '$lib/registry/components/article-card-hero';
+
+  import * as HighlightCardInline from '$lib/registry/components/highlight-card-inline';
+  import * as HighlightCardCompact from '$lib/registry/components/highlight-card-compact';
+  import * as HighlightCardGrid from '$lib/registry/components/highlight-card-grid';
+  import * as HighlightCardElegant from '$lib/registry/components/highlight-card-elegant';
+  import * as HighlightCardFeed from '$lib/registry/components/highlight-card-feed';
+
+  import * as ImageCardBase from '$lib/registry/components/image-card-base';
+  import * as ImageCardInstagram from '$lib/registry/components/image-card-instagram';
+  import * as ImageCardHero from '$lib/registry/components/image-card-hero';
+
+  import * as EventCardFallback from '$lib/registry/components/event-card-fallback';
 
   import { ContentRenderer } from '$lib/registry/ui/content-renderer';
   import EventContent from '$lib/registry/ui/event-content.svelte';
+  import { toast } from 'svelte-sonner';
+  import { Toaster } from 'svelte-sonner';
 
   // Import example code
   import basicSetupCode from './examples/basic-setup/index.txt?raw';
@@ -37,21 +63,44 @@
   let selectedLink = $state<'none' | 'basic' | 'embed'>('none');
   let selectedMedia = $state<'none' | 'basic' | 'bento' | 'carousel'>('none');
 
-  // Event cards by category (multi-select)
-  let selectedNoteCards = $state<string[]>([]);
-  let selectedArticleCards = $state<string[]>([]);
-  let selectedHighlightCards = $state<string[]>([]);
-  let selectedImageCards = $state<string[]>([]);
+  // Event cards by category (single-select)
+  let selectedNoteCard = $state<'none' | string>('none');
+  let selectedArticleCard = $state<'none' | string>('none');
+  let selectedHighlightCard = $state<'none' | string>('none');
+  let selectedImageCard = $state<'none' | string>('none');
   let enableGenericFallback = $state(false);
 
   let blockNsfw = $state(true);
-  let advancedMode = $state(false);
 
-  // Create dynamic renderer based on selections
-  const dynamicRenderer = $derived.by(() => {
+  // Create dynamic renderer and update it when selections change
+  let dynamicRenderer = $state(new ContentRenderer());
+
+  // Component registry mapping
+  const componentRegistry = {
+    'event-card-inline': EventCardInline,
+    'event-card-compact': EventCardCompact,
+    'event-card-basic': EventCardBasic,
+    'article-card-inline': ArticleCardInline,
+    'article-card-compact': ArticleCardCompact,
+    'article-card-portrait': ArticleCardPortrait,
+    'article-card': ArticleCardMedium,
+    'article-card-neon': ArticleCardNeon,
+    'article-card-hero': ArticleCardHero,
+    'highlight-card-inline': HighlightCardInline,
+    'highlight-card-compact': HighlightCardCompact,
+    'highlight-card-grid': HighlightCardGrid,
+    'highlight-card-elegant': HighlightCardElegant,
+    'highlight-card-feed': HighlightCardFeed,
+    'image-card-base': ImageCardBase,
+    'image-card-instagram': ImageCardInstagram,
+    'image-card-hero': ImageCardHero,
+    'event-card-fallback': EventCardFallback
+  };
+
+  $effect(() => {
     const renderer = new ContentRenderer();
 
-    // Apply inline content handlers
+    // Apply inline content handlers (synchronous)
     if (selectedMention === 'basic') renderer.setMentionComponent(Mention, 1);
     else if (selectedMention === 'modern') renderer.setMentionComponent(MentionModern, 10);
 
@@ -65,12 +114,45 @@
     else if (selectedMedia === 'bento') renderer.setMediaComponent(MediaBento, 8);
     else if (selectedMedia === 'carousel') renderer.setMediaComponent(MediaCarousel, 10);
 
-    // Event cards (simplified for now - just showing note cards)
-    if (selectedNoteCards.includes('note-card')) renderer.addKind([1, 1111], NoteCard, 10);
+    // Event cards - register selected components
+    if (selectedNoteCard !== 'none' && componentRegistry[selectedNoteCard]) {
+      componentRegistry[selectedNoteCard].register(renderer);
+    }
+    if (selectedArticleCard !== 'none' && componentRegistry[selectedArticleCard]) {
+      componentRegistry[selectedArticleCard].register(renderer);
+    }
+    if (selectedHighlightCard !== 'none' && componentRegistry[selectedHighlightCard]) {
+      componentRegistry[selectedHighlightCard].register(renderer);
+    }
+    if (selectedImageCard !== 'none' && componentRegistry[selectedImageCard]) {
+      componentRegistry[selectedImageCard].register(renderer);
+    }
+    if (enableGenericFallback) {
+      EventCardFallback.register(renderer);
+    }
 
+    // Configure renderer
     renderer.blockNsfw = blockNsfw;
 
-    return renderer;
+    // Set up callbacks for demonstration
+    renderer.onUserClick = (pubkey) => {
+      toast.info(`User clicked: ${pubkey.slice(0, 16)}...`);
+    };
+    renderer.onEventClick = (event) => {
+      toast.info(`Event kind ${event.kind} clicked`);
+    };
+    renderer.onHashtagClick = (tag) => {
+      toast.info(`Hashtag clicked: #${tag}`);
+    };
+    renderer.onLinkClick = (url) => {
+      toast.info(`Link clicked: ${url.slice(0, 40)}...`);
+    };
+    renderer.onMediaClick = (url) => {
+      const urlStr = Array.isArray(url) ? `${url.length} items` : url.toString().slice(0, 40) + '...';
+      toast.info(`Media clicked: ${urlStr}`);
+    };
+
+    dynamicRenderer = renderer;
   });
 
   // Component name mapping
@@ -105,24 +187,24 @@
     }
 
     // Event cards
-    if (selectedNoteCards.length > 0) {
-      selectedNoteCards.forEach(card => componentImports.push(`import '$lib/registry/components/${card}';`));
+    if (selectedNoteCard !== 'none') {
+      componentImports.push(`import '$lib/registry/components/${selectedNoteCard}';`);
       hasAnySelection = true;
     }
-    if (selectedArticleCards.length > 0) {
-      selectedArticleCards.forEach(card => componentImports.push(`import '$lib/registry/components/${card}';`));
+    if (selectedArticleCard !== 'none') {
+      componentImports.push(`import '$lib/registry/components/${selectedArticleCard}';`);
       hasAnySelection = true;
     }
-    if (selectedHighlightCards.length > 0) {
-      selectedHighlightCards.forEach(card => componentImports.push(`import '$lib/registry/components/${card}';`));
+    if (selectedHighlightCard !== 'none') {
+      componentImports.push(`import '$lib/registry/components/${selectedHighlightCard}';`);
       hasAnySelection = true;
     }
-    if (selectedImageCards.length > 0) {
-      selectedImageCards.forEach(card => componentImports.push(`import '$lib/registry/components/${card}';`));
+    if (selectedImageCard !== 'none') {
+      componentImports.push(`import '$lib/registry/components/${selectedImageCard}';`);
       hasAnySelection = true;
     }
     if (enableGenericFallback) {
-      componentImports.push(`import '$lib/registry/components/event-card-generic';`);
+      componentImports.push(`import '$lib/registry/components/event-card-fallback';`);
       hasAnySelection = true;
     }
 
@@ -130,62 +212,72 @@
       componentImports.push("// No components selected - content will render as plain text");
     }
 
-    if (advancedMode) {
-      // Advanced mode with context and callbacks
-      const imports = [
-        "import { setContext } from 'svelte';",
-        "",
-        "// Import components to auto-register with defaultContentRenderer",
-        ...componentImports,
-        "",
-        "import { CONTENT_RENDERER_CONTEXT_KEY, defaultContentRenderer } from '$lib/registry/ui/content-renderer';",
-        "",
-        "let { children } = $props();"
-      ];
+    // Generate code with imports and callbacks
+    const imports = [
+      "// Import components to auto-register with defaultContentRenderer",
+      ...componentImports,
+      "",
+      "import { defaultContentRenderer } from '$lib/registry/ui/content-renderer';",
+      "",
+      "let { children } = $props();"
+    ];
 
-      if (!blockNsfw) {
-        imports.push("", "// Configure NSFW blocking", "defaultContentRenderer.blockNsfw = false;");
-      }
-
-      imports.push(
-        "",
-        "// Set renderer in context with optional callbacks",
-        "setContext(CONTENT_RENDERER_CONTEXT_KEY, {",
-        "  renderer: defaultContentRenderer,",
-        "  // Optional: Add click callbacks",
-        "  // onUserClick: (pubkey) => goto(`/user/${pubkey}`),",
-        "  // onEventClick: (event) => goto(`/event/${event.id}`),",
-        "  // onHashtagClick: (tag) => goto(`/search?q=${tag}`),",
-        "});"
-      );
-
-      const scriptOpen = '<' + 'script lang="ts">';
-      const scriptClose = '<' + '/script>';
-      return scriptOpen + '\n' + imports.join('\n') + '\n' + scriptClose + '\n\n{@render children()}';
-    } else {
-      // Minimal mode - just imports
-      const imports = [
-        "// Import components to auto-register",
-        ...componentImports
-      ];
-
-      if (!blockNsfw) {
-        imports.push(
-          "",
-          "import { defaultContentRenderer } from '$lib/registry/ui/content-renderer';",
-          "defaultContentRenderer.blockNsfw = false;"
-        );
-      }
-
-      imports.push(
-        "",
-        "let { children } = $props();"
-      );
-
-      const scriptOpen = '<' + 'script lang="ts">';
-      const scriptClose = '<' + '/script>';
-      return scriptOpen + '\n' + imports.join('\n') + '\n' + scriptClose + '\n\n{@render children()}';
+    // Add NSFW configuration if needed
+    if (!blockNsfw) {
+      imports.push("", "// Configure NSFW blocking", "defaultContentRenderer.blockNsfw = false;");
     }
+
+    // Add toast imports
+    imports.push(
+      "",
+      "import { toast, Toaster } from 'svelte-sonner';"
+    );
+
+    // Add callback handlers
+    imports.push(
+      "",
+      "// Set up click handlers for interactive content",
+      "defaultContentRenderer.onUserClick = (pubkey) => {",
+      "  toast.info(`User clicked: ${pubkey.slice(0, 16)}...`);",
+      "  // Example: goto(`/user/${pubkey}`)",
+      "};",
+      "",
+      "defaultContentRenderer.onEventClick = (event) => {",
+      "  toast.info(`Event kind ${event.kind} clicked`);",
+      "  // Example: goto(`/event/${event.id}`)",
+      "};",
+      "",
+      "defaultContentRenderer.onHashtagClick = (tag) => {",
+      "  toast.info(`Hashtag clicked: #${tag}`);",
+      "  // Example: goto(`/search?q=${tag}`)",
+      "};",
+      "",
+      "defaultContentRenderer.onLinkClick = (url) => {",
+      "  toast.info(`Link clicked: ${url.slice(0, 40)}...`);",
+      "  // Example: window.open(url, '_blank')",
+      "};",
+      "",
+      "defaultContentRenderer.onMediaClick = (url) => {",
+      "  const urlStr = Array.isArray(url) ? `${url.length} items` : url.slice(0, 40) + '...';",
+      "  toast.info(`Media clicked: ${urlStr}`);",
+      "  // Example: openLightbox(url)",
+      "};"
+    );
+
+    const scriptOpen = '<' + 'script lang="ts">';
+    const scriptClose = '<' + '/script>';
+    const htmlContent = [
+      scriptOpen,
+      imports.join('\n'),
+      scriptClose,
+      '',
+      '{@render children()}',
+      '',
+      '<!-- Add the Toaster component to show toast notifications -->',
+      '<Toaster position="bottom-right" />'
+    ].join('\n');
+
+    return '<!-- Install svelte-sonner: bun add svelte-sonner -->\n\n' + htmlContent;
   });
 
   // Create a rich sample event for demonstration
@@ -194,14 +286,17 @@
     event.kind = 1;
     event.content = `Just discovered this amazing Nostr library! 🚀
 
-Check out the docs at https://nostr-dev-kit.com for more info.
+Check out the docs at https://ndk.fyi for more info.
 
 Special thanks to nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft for building this!
 
 #nostr #bitcoin #decentralized
 
 Here's a cool image to go with it:
-https://image.nostr.build/example.jpg
+https://r2a.primal.net/uploads2/d/f3/bd/df3bdd118f7db2cdf57821f958033db07dfd9de72248e6869734cbb9e2e8c130.png
+
+This is an article:
+nostr:naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxnzd3cx5urjd35xg6rwwpee39928
 
 And here's a note worth checking out:
 nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uhkummn9ekx7mp0qqsq3zms08nzx3a72cgc0jtsd0g0g9fdx0f9jvp69kp05peuvmrpj5g0w639m`;
@@ -236,207 +331,149 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
   </section>
 
   <!-- Interactive Configuration -->
-  <section class="mb-12">
+  <section class="mb-12 w-full">
     <h2 class="text-3xl font-bold mb-4">Interactive Configuration</h2>
     <p class="text-muted-foreground mb-6">
       Toggle features below to see how they transform the content. The code updates automatically to show
       exactly what you need in your <code class="text-xs bg-muted px-2 py-1 rounded">+layout.svelte</code>.
     </p>
 
-    <!-- Configuration Controls -->
-    <div class="space-y-6">
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold">Configure Components</h3>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" bind:checked={advancedMode} class="w-4 h-4 rounded border-input" />
-            <span class="text-sm text-muted-foreground">Advanced mode</span>
-          </label>
-        </div>
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Left: Configuration Controls (1/3) -->
+      <div class="md:col-span-1 space-y-4">
+        <h3 class="text-lg font-semibold mb-2">Configure Components</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="space-y-2">
           <!-- Mentions -->
-          <div class="space-y-2">
-            <label for="mention-select" class="font-medium text-sm">
-              Mentions <span class="text-xs text-muted-foreground">(nostr:npub...)</span>
-            </label>
-            <select id="mention-select" bind:value={selectedMention} class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background">
-              <option value="none">None - Plain text</option>
-              <option value="basic">Basic - P1 - Simple clickable</option>
-              <option value="modern">Modern - P10 - Avatar + popover</option>
+          <div class="flex items-center justify-between gap-3">
+            <label for="mention-select" class="text-sm text-muted-foreground">Mentions</label>
+            <select id="mention-select" bind:value={selectedMention} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="basic">Basic (P1)</option>
+              <option value="modern">Modern (P10)</option>
             </select>
           </div>
 
           <!-- Hashtags -->
-          <div class="space-y-2">
-            <label for="hashtag-select" class="font-medium text-sm">
-              Hashtags <span class="text-xs text-muted-foreground">(#tags)</span>
-            </label>
-            <select id="hashtag-select" bind:value={selectedHashtag} class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background">
-              <option value="none">None - Plain text</option>
-              <option value="basic">Basic - P1 - Simple styled</option>
-              <option value="modern">Modern - P10 - Gradient + popover</option>
+          <div class="flex items-center justify-between gap-3">
+            <label for="hashtag-select" class="text-sm text-muted-foreground">Hashtags</label>
+            <select id="hashtag-select" bind:value={selectedHashtag} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="basic">Basic (P1)</option>
+              <option value="modern">Modern (P10)</option>
             </select>
           </div>
 
           <!-- Links -->
-          <div class="space-y-2">
-            <label for="link-select" class="font-medium text-sm">
-              Links <span class="text-xs text-muted-foreground">(https://...)</span>
-            </label>
-            <select id="link-select" bind:value={selectedLink} class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background">
-              <option value="none">None - Plain text</option>
-              <option value="basic">Basic - P1 - Simple link</option>
-              <option value="embed">Embed - P5 - Rich preview</option>
+          <div class="flex items-center justify-between gap-3">
+            <label for="link-select" class="text-sm text-muted-foreground">Links</label>
+            <select id="link-select" bind:value={selectedLink} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="basic">Basic (P1)</option>
+              <option value="embed">Embed (P5)</option>
             </select>
           </div>
 
           <!-- Media -->
-          <div class="space-y-2">
-            <label for="media-select" class="font-medium text-sm">
-              Media <span class="text-xs text-muted-foreground">(images/videos)</span>
-            </label>
-            <select id="media-select" bind:value={selectedMedia} class="w-full px-3 py-2 text-sm border border-border rounded-md bg-background">
-              <option value="none">None - Plain text</option>
-              <option value="basic">Basic - P6 - Simple display</option>
-              <option value="bento">Bento - P8 - Grid layout</option>
-              <option value="carousel">Carousel - P10 - Swipeable</option>
+          <div class="flex items-center justify-between gap-3">
+            <label for="media-select" class="text-sm text-muted-foreground">Media</label>
+            <select id="media-select" bind:value={selectedMedia} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="basic">Basic (P6)</option>
+              <option value="bento">Bento (P8)</option>
+              <option value="carousel">Carousel (P10)</option>
             </select>
           </div>
         </div>
 
         <!-- Event Cards -->
-        <div class="mt-6 pt-6 border-t border-border">
-          <div class="font-medium text-sm mb-3">Event Cards <span class="text-xs text-muted-foreground">(embedded events)</span></div>
+        <div class="pt-3 border-t border-border space-y-2">
+          <div class="text-sm font-medium mb-2">Event Cards</div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Note Cards -->
-            <div class="space-y-2">
-              <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Notes (kind 1, 1111)</div>
-              <div class="space-y-1 pl-2">
-                {#each [{ value: 'note-card-inline', label: 'Inline', priority: 'P1' }, { value: 'note-card-compact', label: 'Compact', priority: 'P5' }, { value: 'note-card', label: 'Full', priority: 'P10' }] as card}
-                  <label class="flex items-center gap-2 cursor-pointer group text-sm">
-                    <input type="checkbox" bind:group={selectedNoteCards} value={card.value} class="w-3.5 h-3.5 rounded" />
-                    <span class="group-hover:text-primary transition-colors">{card.label}</span>
-                    <span class="text-xs text-muted-foreground">({card.priority})</span>
-                  </label>
-                {/each}
-              </div>
-            </div>
+          <!-- Note Cards -->
+          <div class="flex items-center justify-between gap-3">
+            <label for="note-card-select" class="text-sm text-muted-foreground">Notes</label>
+            <select id="note-card-select" bind:value={selectedNoteCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="event-card-inline">Inline (P10)</option>
+              <option value="event-card-compact">Compact (P5)</option>
+              <option value="event-card-basic">Basic (P1)</option>
+            </select>
+          </div>
 
-            <!-- Article Cards -->
-            <div class="space-y-2">
-              <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Articles (kind 30023)</div>
-              <div class="space-y-1 pl-2">
-                {#each [
-                  { value: 'article-card-inline', label: 'Inline', priority: 'P1' },
-                  { value: 'article-card-compact', label: 'Compact', priority: 'P5' },
-                  { value: 'article-card-portrait', label: 'Portrait', priority: 'P6' },
-                  { value: 'article-card', label: 'Medium', priority: 'P7' },
-                  { value: 'article-card-neon', label: 'Neon', priority: 'P8' },
-                  { value: 'article-card-hero', label: 'Hero', priority: 'P10' }
-                ] as card}
-                  <label class="flex items-center gap-2 cursor-pointer group text-sm">
-                    <input type="checkbox" bind:group={selectedArticleCards} value={card.value} class="w-3.5 h-3.5 rounded" />
-                    <span class="group-hover:text-primary transition-colors">{card.label}</span>
-                    <span class="text-xs text-muted-foreground">({card.priority})</span>
-                  </label>
-                {/each}
-              </div>
-            </div>
+          <!-- Article Cards -->
+          <div class="flex items-center justify-between gap-3">
+            <label for="article-card-select" class="text-sm text-muted-foreground">Articles</label>
+            <select id="article-card-select" bind:value={selectedArticleCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="article-card-inline">Inline (P1)</option>
+              <option value="article-card-compact">Compact (P5)</option>
+              <option value="article-card-portrait">Portrait (P6)</option>
+              <option value="article-card">Medium (P7)</option>
+              <option value="article-card-neon">Neon (P8)</option>
+              <option value="article-card-hero">Hero (P10)</option>
+            </select>
+          </div>
 
-            <!-- Highlight Cards -->
-            <div class="space-y-2">
-              <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Highlights (kind 9802)</div>
-              <div class="space-y-1 pl-2">
-                {#each [
-                  { value: 'highlight-card-inline', label: 'Inline', priority: 'P1' },
-                  { value: 'highlight-card-compact', label: 'Compact', priority: 'P5' },
-                  { value: 'highlight-card-grid', label: 'Grid', priority: 'P6' },
-                  { value: 'highlight-card-elegant', label: 'Elegant', priority: 'P8' },
-                  { value: 'highlight-card-feed', label: 'Feed', priority: 'P10' }
-                ] as card}
-                  <label class="flex items-center gap-2 cursor-pointer group text-sm">
-                    <input type="checkbox" bind:group={selectedHighlightCards} value={card.value} class="w-3.5 h-3.5 rounded" />
-                    <span class="group-hover:text-primary transition-colors">{card.label}</span>
-                    <span class="text-xs text-muted-foreground">({card.priority})</span>
-                  </label>
-                {/each}
-              </div>
-            </div>
+          <!-- Highlight Cards -->
+          <div class="flex items-center justify-between gap-3">
+            <label for="highlight-card-select" class="text-sm text-muted-foreground">Highlights</label>
+            <select id="highlight-card-select" bind:value={selectedHighlightCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="highlight-card-inline">Inline (P1)</option>
+              <option value="highlight-card-compact">Compact (P5)</option>
+              <option value="highlight-card-grid">Grid (P6)</option>
+              <option value="highlight-card-elegant">Elegant (P8)</option>
+              <option value="highlight-card-feed">Feed (P10)</option>
+            </select>
+          </div>
 
-            <!-- Image Cards -->
-            <div class="space-y-2">
-              <div class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Images (kind 20)</div>
-              <div class="space-y-1 pl-2">
-                {#each [
-                  { value: 'image-card-base', label: 'Base', priority: 'P5' },
-                  { value: 'image-card-instagram', label: 'Instagram', priority: 'P8' },
-                  { value: 'image-card-hero', label: 'Hero', priority: 'P10' }
-                ] as card}
-                  <label class="flex items-center gap-2 cursor-pointer group text-sm">
-                    <input type="checkbox" bind:group={selectedImageCards} value={card.value} class="w-3.5 h-3.5 rounded" />
-                    <span class="group-hover:text-primary transition-colors">{card.label}</span>
-                    <span class="text-xs text-muted-foreground">({card.priority})</span>
-                  </label>
-                {/each}
-              </div>
-            </div>
+          <!-- Image Cards -->
+          <div class="flex items-center justify-between gap-3">
+            <label for="image-card-select" class="text-sm text-muted-foreground">Images</label>
+            <select id="image-card-select" bind:value={selectedImageCard} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value="none">None</option>
+              <option value="image-card-base">Base (P5)</option>
+              <option value="image-card-instagram">Instagram (P8)</option>
+              <option value="image-card-hero">Hero (P10)</option>
+            </select>
           </div>
 
           <!-- Generic Fallback -->
-          <div class="mt-4 pt-4 border-t border-border/50">
-            <label class="flex items-center gap-2 cursor-pointer group text-sm">
-              <input type="checkbox" bind:checked={enableGenericFallback} class="w-3.5 h-3.5 rounded" />
-              <span class="group-hover:text-primary transition-colors">Generic fallback</span>
-              <span class="text-xs text-muted-foreground">(P1 - for unknown event kinds)</span>
-            </label>
+          <div class="flex items-center justify-between gap-3">
+            <label for="fallback-select" class="text-sm text-muted-foreground">Fallback</label>
+            <select id="fallback-select" bind:value={enableGenericFallback} class="px-2 py-1 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+              <option value={false}>None</option>
+              <option value={true}>Fallback (P1)</option>
+            </select>
           </div>
         </div>
 
         <!-- Options -->
-        <div class="mt-6 pt-6 border-t border-border">
-          <label class="flex items-start gap-3 cursor-pointer group">
-            <input type="checkbox" bind:checked={blockNsfw} class="mt-0.5 w-4 h-4 rounded border-input" />
-            <div>
-              <div class="font-medium text-sm group-hover:text-primary transition-colors">Block NSFW</div>
-              <div class="text-xs text-muted-foreground">Automatically blur NSFW content</div>
-            </div>
+        <div class="pt-3 border-t border-border">
+          <label class="flex items-center justify-between gap-3 cursor-pointer group">
+            <span class="text-sm text-muted-foreground">Block NSFW</span>
+            <input type="checkbox" bind:checked={blockNsfw} class="w-4 h-4 rounded border-input cursor-pointer" />
           </label>
         </div>
       </div>
 
-      <!-- Preview with Code -->
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <div class="mb-4">
-          <h3 class="text-lg font-semibold mb-2">Live Preview</h3>
-          <div class="text-sm text-muted-foreground">
-            {#if selectedMention === 'none' && selectedHashtag === 'none' && selectedLink === 'none' && selectedMedia === 'none' && selectedNoteCards.length === 0 && selectedArticleCards.length === 0 && selectedHighlightCards.length === 0 && selectedImageCards.length === 0 && !enableGenericFallback}
-              No components selected - content renders as plain text
-            {:else}
-              Content with selected components:
-            {/if}
+      <!-- Right: Live Preview (2/3) -->
+      <div class="md:col-span-2 space-y-4">
+        <Preview code={generatedCode} previewAreaClass="min-h-[400px]">
+          <div class="w-full max-w-3xl bg-card border border-border rounded-lg p-4">
+            <EventContent {ndk} event={sampleEvent} renderer={dynamicRenderer} />
           </div>
-        </div>
+        </Preview>
 
-        <div class="border border-border rounded-lg p-4 bg-background mb-6">
-          <EventContent {ndk} event={sampleEvent} renderer={dynamicRenderer} />
-        </div>
-
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
-            <h4 class="text-sm font-semibold">Your +layout.svelte</h4>
-            {#if !advancedMode}
-              <span class="text-xs text-muted-foreground">Minimal mode (imports only)</span>
-            {:else}
-              <span class="text-xs text-muted-foreground">Advanced mode (with callbacks)</span>
-            {/if}
+        <!-- Tips -->
+        <div class="flex flex-col gap-2">
+          <div class="p-2 border-l-2 border-primary bg-primary/5 rounded-r text-xs text-muted-foreground">
+            <strong>💡 Tip:</strong> Higher priority (P10) components provide richer experiences than lower priority ones (P1).
           </div>
-          <pre class="text-xs bg-muted p-4 rounded overflow-x-auto max-h-96 border border-border"><code>{generatedCode}</code></pre>
-        </div>
-
-        <div class="mt-4 p-3 border-l-2 border-primary bg-primary/5 rounded-r text-xs text-muted-foreground">
-          <strong>💡 Tip:</strong> Higher priority components override lower ones. Import multiple to enable progressive enhancement!
+          <div class="p-2 border-l-2 border-accent bg-accent/5 rounded-r text-xs text-muted-foreground">
+            <strong>🎯 Click handlers:</strong> Try clicking on mentions, hashtags, links, or events in the preview to see toast notifications! Replace with your navigation logic (e.g., <code>goto()</code>).
+          </div>
         </div>
       </div>
     </div>
@@ -601,3 +638,5 @@ defaultContentRenderer.blockNsfw = false; // Disable</code></pre>
     </div>
   </section>
 </div>
+
+<Toaster position="bottom-right" />

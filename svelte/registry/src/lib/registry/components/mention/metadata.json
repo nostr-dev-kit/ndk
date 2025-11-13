@@ -16,6 +16,11 @@
     "social-references",
     "content-attribution"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "type": "mention"
+  },
   "apiDoc": {
     "name": "Mention",
     "description": "Inline user mention component displaying @name with primary color styling and hover effects. Fetches user by bech32 identifier (npub/nprofile) and renders name inline. Features underline, cursor pointer, and keyboard navigation support. Uses User builder pattern for data fetching and display.",

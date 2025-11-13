@@ -15,6 +15,11 @@
     "magazine-layouts",
     "content-grids"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 6,
+    "wrapper": "NDKArticle"
+  },
   "apiDoc": {
     "name": "ArticleCardPortrait",
     "description": "A vertical portrait-oriented article card with prominent cover image, title, summary, and reading time. Features hover effects with scale and shadow transitions. Ideal for magazine-style layouts and content grids.",

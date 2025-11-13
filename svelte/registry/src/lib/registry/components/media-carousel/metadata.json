@@ -16,6 +16,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "type": "media"
+  },
   "apiDoc": {
     "name": "MediaCarousel",
     "description": "Carousel/slider layout with navigation and NSFW filtering",

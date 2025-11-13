@@ -67,17 +67,10 @@
   // Get parent ContentRendererContext if it exists
   const parentRendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 
-  // ContentRendererContext: includes renderer + behavioral callbacks for entity interactions
-  const rendererContext: ContentRendererContext = {
-    get renderer() { return parentRendererContext?.renderer ?? {} as any; },
-    get onUserClick() { return onUserClick ?? parentRendererContext?.onUserClick; },
-    get onEventClick() { return onEventClick ?? parentRendererContext?.onEventClick; },
-    get onHashtagClick() { return onHashtagClick ?? parentRendererContext?.onHashtagClick; },
-    get onLinkClick() { return onLinkClick ?? parentRendererContext?.onLinkClick; },
-    get onMediaClick() { return onMediaClick ?? parentRendererContext?.onMediaClick; }
-  };
-
-  setContext(CONTENT_RENDERER_CONTEXT_KEY, rendererContext);
+  // ContentRendererContext: just the renderer (callbacks live on the renderer now)
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, {
+    get renderer() { return parentRendererContext?.renderer ?? {} as any; }
+  });
 
   // Determine if we should show as clickable
   const isClickable = $derived(!!onclick);

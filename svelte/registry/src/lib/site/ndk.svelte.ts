@@ -3,7 +3,7 @@ import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
 import { LocalStorage } from '@nostr-dev-kit/sessions';
 import { NDKInterestList, NDKRelayFeedList } from '@nostr-dev-kit/ndk';
 
-import "$lib/registry/components/event-card-generic";
+import "$lib/registry/components/event-card-fallback";
 
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({
   dbName: 'ndk-registry',

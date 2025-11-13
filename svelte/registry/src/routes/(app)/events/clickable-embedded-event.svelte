@@ -5,9 +5,9 @@
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import { createFetchEvent } from '@nostr-dev-kit/svelte';
 	import { getContext } from 'svelte';
-	import NoteCard from '$lib/registry/components/note-card/note-card.svelte';
-	import NoteCardInline from '$lib/registry/components/note-card-inline/note-card-inline.svelte';
-	import NoteCardCompact from '$lib/registry/components/note-card-compact/note-card-compact.svelte';
+	import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
+	import EventCardInline from '$lib/registry/components/event-card-inline/event-card-inline.svelte';
+	import EventCardCompact from '$lib/registry/components/event-card-compact/event-card-compact.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
 	import ArticleCardInline from '$lib/registry/components/article-card-inline/article-card-inline.svelte';
 	import ArticleCardCompact from '$lib/registry/components/article-card-compact/article-card-compact.svelte';
@@ -83,11 +83,11 @@
 	{:else if fetcher.event}
 		{#if embedType === 'embedded-note'}
 			{#if variant === 'card'}
-				<NoteCard {ndk} event={fetcher.event} />
+				<EventCardBasic {ndk} event={fetcher.event} />
 			{:else if variant === 'inline'}
-				<NoteCardInline {ndk} event={fetcher.event} />
+				<EventCardInline {ndk} event={fetcher.event} />
 			{:else if variant === 'compact'}
-				<NoteCardCompact {ndk} event={fetcher.event} />
+				<EventCardCompact {ndk} event={fetcher.event} />
 			{/if}
 		{:else if embedType === 'embedded-article' && asArticle}
 			{#if variant === 'inline'}

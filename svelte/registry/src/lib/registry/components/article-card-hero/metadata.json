@@ -15,6 +15,11 @@
     "featured-content",
     "landing-pages"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "wrapper": "NDKArticle"
+  },
   "apiDoc": {
     "name": "ArticleCardHero",
     "description": "A large hero article card with full-width background image, gradient overlay, and prominent typography. Features article title, summary, author details with avatar, publication time, and reading time. Ideal for featured content and landing pages.",

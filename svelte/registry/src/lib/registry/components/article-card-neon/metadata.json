@@ -15,6 +15,11 @@
     "gaming-sites",
     "tech-blogs"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 8,
+    "wrapper": "NDKArticle"
+  },
   "apiDoc": {
     "name": "ArticleCardNeon",
     "description": "A futuristic neon-styled article card with full background image, glossy neon border effect, and gradient overlays. Features article title, summary, author name, and reading time with modern dark aesthetics. Perfect for gaming sites and tech blogs.",

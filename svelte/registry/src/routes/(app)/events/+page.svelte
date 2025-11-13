@@ -127,8 +127,8 @@
 			<div class="p-6 border border-border rounded-lg bg-card">
 				<div class="flex items-start justify-between mb-3">
 					<div>
-						<h3 class="text-lg font-semibold mb-1">Generic Event Card</h3>
-						<a href="/events/cards/generic-card" class="text-sm text-primary hover:underline">
+						<h3 class="text-lg font-semibold mb-1">Fallback Event Card</h3>
+						<a href="/events/cards/fallback-card" class="text-sm text-primary hover:underline">
 							View component →
 						</a>
 					</div>
@@ -166,7 +166,7 @@
 					>
 				</div>
 				<p class="text-sm text-muted-foreground mb-4">
-					EventCard primitives and specialized card components. See specialized chromes above for fallback cards like Generic Event Card.
+					EventCard primitives and specialized card components. See specialized chromes above for fallback cards like Fallback Event Card.
 				</p>
 				<div class="text-sm text-primary group-hover:underline">View Cards Documentation →</div>
 			</a>

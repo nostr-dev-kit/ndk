@@ -1,8 +1,18 @@
-import { defaultContentRenderer } from '../../ui/content-renderer';
 import MediaBasic from './media-basic.svelte';
+import { defaultContentRenderer } from '../../ui/content-renderer';
+import type { ContentRenderer } from '../../ui/content-renderer';
+import metadata from './metadata.json';
 
-// Self-register with priority 6 (basic variant - lowest priority)
-defaultContentRenderer.setMediaComponent(MediaBasic, 6);
+// Export registration metadata
+export const registration = metadata.registration;
+
+// Export register function
+export function register(renderer: ContentRenderer = defaultContentRenderer) {
+	renderer.setMediaComponent(MediaBasic, registration.priority);
+}
+
+// Auto-register on import
+register();
 
 export { MediaBasic };
 export default MediaBasic;

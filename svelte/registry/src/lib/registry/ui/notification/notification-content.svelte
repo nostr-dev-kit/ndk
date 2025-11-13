@@ -7,7 +7,7 @@
 	import EmbeddedEvent from '../embedded-event.svelte';
 	import { ContentRenderer } from '../content-renderer';
 	import { CONTENT_RENDERER_CONTEXT_KEY } from '../content-renderer/content-renderer.context';
-	import NoteEmbeddedCompact from '../../components/note-card-compact/note-card-compact.svelte';
+	import EventCardCompact from '../../components/event-card-compact/event-card-compact.svelte';
 	import ArticleEmbedded from '../../components/article-card/article-card-medium.svelte';
 	import HighlightEmbedded from '../../components/highlight-card-feed/highlight-card-feed.svelte';
 	import { NDKArticle, NDKHighlight } from '@nostr-dev-kit/ndk';
@@ -27,7 +27,7 @@
 	// Create notification-specific renderer with compact variants
 	const defaultRenderer = $derived.by(() => {
 		const r = new ContentRenderer();
-		r.addKind([1, 1111], NoteEmbeddedCompact);
+		r.addKind([1, 1111], EventCardCompact);
 		r.addKind(NDKArticle, ArticleEmbedded);
 		r.addKind(NDKHighlight, HighlightEmbedded);
 		r.mentionComponent = MentionModern

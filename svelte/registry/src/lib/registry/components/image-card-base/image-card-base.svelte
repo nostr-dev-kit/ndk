@@ -10,7 +10,7 @@
 	interface Props {
 		ndk: NDKSvelte;
 
-		image: NDKImage;
+		event: NDKImage;
 
 		interactive?: boolean;
 
@@ -29,7 +29,7 @@
 
 	let {
 		ndk,
-		image,
+		event: image,
 		interactive = false,
 		showActions = true,
 		showDropdown = true,

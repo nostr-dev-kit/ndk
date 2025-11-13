@@ -1,8 +1,18 @@
-export { default as EventCardCompact } from './event-card-compact.svelte';
-
-import { defaultContentRenderer } from '../../ui/content-renderer/index.js';
 import EventCardCompact from './event-card-compact.svelte';
+import { defaultContentRenderer } from '../../ui/content-renderer';
+import type { ContentRenderer } from '../../ui/content-renderer';
+import metadata from './metadata.json';
 
-// Register with content renderer for kinds 1 and 1111 with priority 5
-// Lower than inline (10) but still available as an option
-defaultContentRenderer.addKind([1, 1111], EventCardCompact, 5);
+// Export registration metadata
+export const registration = metadata.registration;
+
+// Export register function
+export function register(renderer: ContentRenderer = defaultContentRenderer) {
+	renderer.addKind(registration.kinds, EventCardCompact, registration.priority);
+}
+
+// Auto-register on import
+register();
+
+export { EventCardCompact };
+export default EventCardCompact;

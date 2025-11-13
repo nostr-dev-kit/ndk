@@ -326,7 +326,7 @@ renderer.setMentionComponent(MyCustomMention, 10);  // Priority 10 (enhanced)
 renderer.setHashtagComponent(MyCustomHashtag, 10);  // Priority 10 (enhanced)
 renderer.setLinkComponent(MyCustomLink, 5);         // Priority 5 (compact)
 renderer.setMediaComponent(MyCustomMedia, 10);      // Priority 10 (enhanced)
-renderer.setFallbackComponent(MyGenericCard, 1);    // Priority 1 (basic)
+renderer.setFallbackComponent(MyFallbackCard, 1);    // Priority 1 (basic)
 
 // Register embedded event handlers by kind with priority
 renderer.addKind([1, 1111], MyNoteComponent, 10);    // Priority 10 (full/standard)
@@ -435,11 +435,11 @@ test('custom rendering', () => {
               lang="typescript"
               code={`// Basic components load first (priority 1)
 import '$lib/components/mention';        // Basic mention, priority 1
-import '$lib/components/note-card-inline';  // Inline note, priority 1
+import '$lib/components/event-card-basic';  // Basic event card, priority 1
 
 // Enhanced components load later and override
 import '$lib/components/mention-modern';    // Modern mention, priority 10
-import '$lib/components/note-card';         // Full note card, priority 10
+import '$lib/components/event-card-inline'; // Inline event card, priority 10
 
 // The enhanced components automatically win due to higher priority`}
             />

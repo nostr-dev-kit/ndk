@@ -18,7 +18,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
-  import GenericCard from '$lib/registry/components/event-card-generic/generic-card.svelte';
+  import FallbackCard from '$lib/registry/components/event-card-fallback/fallback-card.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -38,4 +38,4 @@
   } as any);
 </script>
 
-<GenericCard {ndk} event={sampleEvent} />
+<FallbackCard {ndk} event={sampleEvent} />

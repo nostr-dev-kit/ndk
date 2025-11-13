@@ -1256,15 +1256,15 @@
 					}
 				},
 				{
-					"name": "event-card-generic",
-					"directory": "src/lib/registry/components/event-card-generic",
+					"name": "event-card-fallback",
+					"directory": "src/lib/registry/components/event-card-fallback",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"generic-card.svelte",
+						"fallback-card.svelte",
 						"index.ts",
 						"metadata.json"
 					],
@@ -1530,15 +1530,15 @@
 					}
 				},
 				{
-					"name": "generic-event-basic",
-					"directory": "src/lib/registry/components/generic-event-basic",
+					"name": "fallback-event-basic",
+					"directory": "src/lib/registry/components/fallback-event-basic",
 					"category": "components",
 					"tests": false,
 					"docs": false,
 					"subdirectory": true,
 					"list": true,
 					"files": [
-						"generic-event-basic.svelte",
+						"fallback-event-basic.svelte",
 						"index.ts",
 						"metadata.json"
 					],
@@ -2332,87 +2332,6 @@
 					"_imports_": {
 						"../../ui/negentropy-sync": "{{ui/negentropy-sync}}",
 						"../../builders/negentropy-sync/index.js": "{{builders/negentropy-sync}}/index.js"
-					}
-				},
-				{
-					"name": "note-card",
-					"directory": "src/lib/registry/components/note-card",
-					"category": "components",
-					"tests": false,
-					"docs": false,
-					"subdirectory": true,
-					"list": true,
-					"files": [
-						"index.ts",
-						"metadata.json",
-						"note-card.svelte"
-					],
-					"localDependencies": [
-						"ui/content-renderer",
-						"components/event-card"
-					],
-					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.47",
-						"@nostr-dev-kit/svelte@4.0.0-beta.47"
-					],
-					"devDependencies": [],
-					"_imports_": {
-						"../../ui/content-renderer": "{{ui/content-renderer}}",
-						"../event-card": "{{components/event-card}}"
-					}
-				},
-				{
-					"name": "note-card-compact",
-					"directory": "src/lib/registry/components/note-card-compact",
-					"category": "components",
-					"tests": false,
-					"docs": false,
-					"subdirectory": true,
-					"list": true,
-					"files": [
-						"index.ts",
-						"metadata.json",
-						"note-card-compact.svelte"
-					],
-					"localDependencies": [
-						"ui/content-renderer",
-						"components/event-card"
-					],
-					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.47",
-						"@nostr-dev-kit/svelte@4.0.0-beta.47"
-					],
-					"devDependencies": [],
-					"_imports_": {
-						"../../ui/content-renderer": "{{ui/content-renderer}}",
-						"../event-card": "{{components/event-card}}"
-					}
-				},
-				{
-					"name": "note-card-inline",
-					"directory": "src/lib/registry/components/note-card-inline",
-					"category": "components",
-					"tests": false,
-					"docs": false,
-					"subdirectory": true,
-					"list": true,
-					"files": [
-						"index.ts",
-						"metadata.json",
-						"note-card-inline.svelte"
-					],
-					"localDependencies": [
-						"ui/content-renderer",
-						"components/event-card"
-					],
-					"dependencies": [
-						"@nostr-dev-kit/ndk@3.0.0-beta.47",
-						"@nostr-dev-kit/svelte@4.0.0-beta.47"
-					],
-					"devDependencies": [],
-					"_imports_": {
-						"../../ui/content-renderer": "{{ui/content-renderer}}",
-						"../event-card": "{{components/event-card}}"
 					}
 				},
 				{

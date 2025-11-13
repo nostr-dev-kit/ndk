@@ -97,7 +97,7 @@
 </script>
 
 <div
-	data-generic-card=""
+	data-fallback-card=""
 	class="border border-border rounded-lg bg-card p-3"
 >
 	<EventCard.Root {ndk} {event}>

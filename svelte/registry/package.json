@@ -3,17 +3,15 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "bun@1.1.38",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json 2>&1 | grep -E -v '(/examples/|[.]example[.]svelte)' || true",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "check": "svelte-kit sync && bun run scripts/run-svelte-check.ts",
+    "check:watch": "svelte-kit sync && bun run scripts/run-svelte-check.ts --watch",
     "check:all": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "ndk:check": "bun run scripts/scan-and-upgrade.ts",
-    "ndk:upgrade": "bun run scripts/scan-and-upgrade.ts --yes",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
@@ -65,6 +63,7 @@
     "html5-qrcode": "^2.3.8",
     "marked": "^16.4.1",
     "shiki": "^3.15.0",
-    "svelte-motion": "^0.12.2"
+    "svelte-motion": "^0.12.2",
+    "svelte-sonner": "^1.0.6"
   }
 }

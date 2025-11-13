@@ -16,6 +16,11 @@
     "blog-layouts",
     "news-sites"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 7,
+    "wrapper": "NDKArticle"
+  },
   "apiDoc": {
     "name": "ArticleCard",
     "description": "Article card component",

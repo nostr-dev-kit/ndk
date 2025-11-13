@@ -11,7 +11,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    article: NDKArticle;
+    event: NDKArticle;
 
     imageSize?: 'small' | 'medium' | 'large';
 
@@ -22,7 +22,7 @@
 
   let {
     ndk,
-    article,
+    event: article,
     imageSize = 'medium',
     onclick,
     class: className = ''

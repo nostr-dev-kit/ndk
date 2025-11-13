@@ -47,6 +47,13 @@
 		version?: string;
 		updatedAt?: string;
 		code?: string;
+		registration?: {
+			autoRegister: boolean;
+			priority: number;
+			type?: string;
+			kinds?: number[];
+			wrapper?: string;
+		};
 	}
 
 	interface Props {
@@ -77,9 +84,40 @@
 								</div>
 							</User.Root>
 						</div>
-						<div class="m-0">
+						<div class="m-0 flex flex-col gap-2">
 							{#if data.oneLiner}
 								<p class="text-muted-foreground">{data.oneLiner}</p>
+							{/if}
+							{#if data.registration}
+								<div class="flex flex-wrap gap-2 items-center">
+									<span class="text-xs px-2 py-1 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded-md font-mono">
+										Auto-register
+									</span>
+									<span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-md font-mono">
+										Priority: {data.registration.priority}
+									</span>
+									<span class="text-xs px-2 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-md font-mono">
+										{#if data.registration.type}
+											{#if data.registration.type === 'fallback'}
+												Fallback handler
+											{:else if data.registration.type === 'mention'}
+												Mentions
+											{:else if data.registration.type === 'hashtag'}
+												Hashtags
+											{:else if data.registration.type === 'link'}
+												Links
+											{:else if data.registration.type === 'media'}
+												Media
+											{:else}
+												{data.registration.type}
+											{/if}
+										{:else if data.registration.kinds}
+											Kind {data.registration.kinds.join(', ')}
+										{:else if data.registration.wrapper}
+											{data.registration.wrapper}
+										{/if}
+									</span>
+								</div>
 							{/if}
 						</div>
 					</div>

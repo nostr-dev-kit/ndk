@@ -18,6 +18,11 @@
     "social-references",
     "popover-profiles"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "type": "mention"
+  },
   "apiDoc": {
     "name": "MentionModern",
     "description": "Modern inline mention component with avatar and user card popover on hover. Displays user avatar and name inline with primary color styling. Shows detailed user card on hover with 200ms delay. Features smooth transitions, hover states, and keyboard navigation support. Uses User builder pattern and Popover from bits-ui for interaction.",

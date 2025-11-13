@@ -263,11 +263,11 @@
       ],
       "registryDependencies": []
     },
-    "generic-preview": {
+    "fallback-preview": {
       "version": "0.7.0",
       "lastModified": "2025-10-30T07:19:17.000Z",
       "type": "registry:component",
-      "title": "Generic Preview",
+      "title": "Fallback Preview",
       "dependencies": [
         "@nostr-dev-kit/ndk",
         "@nostr-dev-kit/svelte"

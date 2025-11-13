@@ -17,6 +17,11 @@
     "nostr",
     "social"
   ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "wrapper": "NDKImage"
+  },
   "apiDoc": {
     "name": "ImageCardHero",
     "description": "A hero-style image card with full-bleed layout and gradient overlay. Features user profile display with avatar and follow button over the image. Perfect for showcasing photography or featured images with dramatic presentation. Uses first imeta tag for image display.",

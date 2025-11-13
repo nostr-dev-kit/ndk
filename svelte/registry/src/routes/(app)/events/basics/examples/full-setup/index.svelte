@@ -27,7 +27,7 @@
   import '$lib/registry/components/media-carousel';
 
   // Import event kind handlers (auto-registers with priority)
-  import '$lib/registry/components/note-card';
+  import '$lib/registry/components/event-card-inline';
   import '$lib/registry/components/article-card';
   import '$lib/registry/components/highlight-card';
 

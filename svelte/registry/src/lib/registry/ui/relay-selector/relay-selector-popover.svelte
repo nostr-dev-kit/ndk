@@ -147,7 +147,7 @@
 						</div>
 
 						<div class="mb-4 space-y-1">
-							{#each context.connectedRelays as relay (relay)}
+							{#each context.connectedRelays as relay, index (index)}
 								<div
 									class={cn(
 										'relative cursor-pointer transition-colors p-2 rounded-md',

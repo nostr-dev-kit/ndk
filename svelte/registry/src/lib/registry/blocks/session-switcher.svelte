@@ -49,7 +49,7 @@
 					</SessionSwitcher.Action>
 				{/if}
 
-				{#each actions as action (action.label)}
+				{#each actions as action, index (index)}
 					<SessionSwitcher.Action onclick={action.onclick} variant={action.variant}>
 						{#if action.icon}
 							{#snippet icon()}

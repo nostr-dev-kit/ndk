@@ -22,7 +22,7 @@
 </script>
 
 <div class={cn('flex flex-col gap-2 my-2', className)}>
-	{#each urls as linkUrl (linkUrl)}
+	{#each urls as linkUrl, index (index)}
 		<a
 			href={linkUrl}
 			target="_blank"

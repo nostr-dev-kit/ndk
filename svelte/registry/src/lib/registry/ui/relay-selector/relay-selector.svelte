@@ -52,7 +52,7 @@
 			<div class="space-y-4">
 				{#if showSelectedChips && context.hasSelection}
 					<div class="flex flex-wrap gap-2">
-						{#each context.selected as relay (relay)}
+						{#each context.selected as relay, index (index)}
 							<div
 								class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-full"
 							>
@@ -102,7 +102,7 @@
 
 				<div class="border rounded-md overflow-hidden">
 					<div class="space-y-1 p-2">
-						{#each context.connectedRelays as relay (relay)}
+						{#each context.connectedRelays as relay, index (index)}
 							<div
 								class={cn(
 									'relative cursor-pointer transition-colors rounded-md',

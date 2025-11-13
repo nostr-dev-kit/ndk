@@ -56,10 +56,6 @@
 </section>
 
 <style>
-  .text-success {
-    color: var(--success);
-  }
-  
   .aurora-text {
 		background: linear-gradient(
 			90deg,

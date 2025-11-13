@@ -145,7 +145,7 @@
 									<div class="text-[0.8125rem] text-muted-foreground mb-2 line-clamp-2">{handler.about}</div>
 								{/if}
 								<div class="flex gap-2 flex-wrap">
-									{#each handler.platforms as platform (platform.platform)}
+									{#each handler.platforms as platform, index (index)}
 										<a
 											href={getHandlerUrl(platform)}
 											target="_blank"

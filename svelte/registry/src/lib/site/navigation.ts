@@ -117,8 +117,7 @@ export const componentCategories: NavCategory[] = [
       { name: 'User Input', path: '/ui/user-input', icon: Search01Icon, title: 'User Input Primitives', description: 'Headless primitives for searching and selecting users.' },
       { name: 'Zap', path: '/ui/zap', icon: ZapIcon, title: 'Zap Primitives', description: 'Headless primitives for displaying lightning payments.' },
       { name: 'Notification', path: '/ui/notification', icon: Chat01Icon, title: 'Notification Primitives', description: 'Composable primitives for building notification UIs with grouped interactions.' },
-      { name: 'Event Content', path: '/ui/event-content', icon: File01Icon, title: 'Event Content Primitive', description: 'Render event content with rich formatting, mentions, and embedded media.' },
-      { name: 'Embedded Event', path: '/ui/embedded-event', icon: ViewIcon, title: 'Embedded Event Primitive', description: 'Load and display embedded Nostr events.' },
+      { name: 'Event Rendering', path: '/ui/event-rendering', icon: File01Icon, title: 'Event Rendering Primitives', description: 'Render rich event content, embedded events, and markdown with one renderer.' },
     ]
   },
   {
@@ -177,4 +176,3 @@ export const componentCategories: NavCategory[] = [
     ]
   },
 ];
-

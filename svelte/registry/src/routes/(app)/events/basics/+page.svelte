@@ -147,10 +147,6 @@
     renderer.onLinkClick = (url) => {
       toast.info(`Link clicked: ${url.slice(0, 40)}...`);
     };
-    renderer.onMediaClick = (url) => {
-      const urlStr = Array.isArray(url) ? `${url.length} items` : url.toString().slice(0, 40) + '...';
-      toast.info(`Media clicked: ${urlStr}`);
-    };
 
     dynamicRenderer = renderer;
   });
@@ -255,12 +251,6 @@
       "defaultContentRenderer.onLinkClick = (url) => {",
       "  toast.info(`Link clicked: ${url.slice(0, 40)}...`);",
       "  // Example: window.open(url, '_blank')",
-      "};",
-      "",
-      "defaultContentRenderer.onMediaClick = (url) => {",
-      "  const urlStr = Array.isArray(url) ? `${url.length} items` : url.slice(0, 40) + '...';",
-      "  toast.info(`Media clicked: ${urlStr}`);",
-      "  // Example: openLightbox(url)",
       "};"
     );
 

@@ -28,26 +28,26 @@ export function createMuteAction(
     config: () => MuteActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
 
     const isMuted = $derived.by(() => {
         const { target } = config();
         if (!target) return false;
 
         const pubkey = typeof target === 'string' ? target : target.pubkey;
-        return resolvedNDK.$mutes?.has(pubkey) ?? false;
+        return ndk.$mutes?.has(pubkey) ?? false;
     });
 
     async function mute(): Promise<void> {
         const { target } = config();
         if (!target) return;
 
-        if (!resolvedNDK.$currentPubkey) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to mute");
         }
 
         const pubkey = typeof target === 'string' ? target : target.pubkey;
-        await resolvedNDK.$mutes?.toggle(pubkey);
+        await ndk.$mutes?.toggle(pubkey);
     }
 
     return {

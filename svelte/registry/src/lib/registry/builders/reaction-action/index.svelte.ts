@@ -64,7 +64,7 @@ export function createReactionAction(
     config: () => ReactionActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
     // Subscribe to reactions for this event
     let reactionsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
@@ -78,7 +78,7 @@ export function createReactionAction(
             return;
         }
 
-        reactionsSub = resolvedNDK.$subscribe(() => ({
+        reactionsSub = ndk.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Reaction],
                 ...event.filter()
@@ -110,7 +110,7 @@ export function createReactionAction(
                 data.pubkeys.push(reaction.pubkey);
             }
 
-            if (reaction.pubkey === resolvedNDK.$currentPubkey) {
+            if (reaction.pubkey === ndk.$currentPubkey) {
                 data.hasReacted = true;
                 data.userReaction = reaction;
             }
@@ -133,8 +133,8 @@ export function createReactionAction(
             if (!data.hasReacted) {
                 data.count++;
                 data.hasReacted = true;
-                if (!data.pubkeys.includes(resolvedNDK.$currentPubkey!)) {
-                    data.pubkeys.push(resolvedNDK.$currentPubkey!);
+                if (!data.pubkeys.includes(ndk.$currentPubkey!)) {
+                    data.pubkeys.push(ndk.$currentPubkey!);
                 }
                 data.userReaction = pendingEvent;
             }
@@ -155,7 +155,7 @@ export function createReactionAction(
             throw new Error("No event to react to");
         }
 
-        if (!resolvedNDK.$currentPubkey) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to react");
         }
 

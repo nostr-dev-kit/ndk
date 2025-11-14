@@ -113,7 +113,7 @@ export function createHighlight(
     config: () => HighlightConfig,
     ndk?: NDKSvelte
 ): HighlightState {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
 
     const state = $state({
         content: '',
@@ -200,7 +200,7 @@ export function createHighlight(
                 const [kind, pubkey, dTag] = parts;
 
                 state.loading = true;
-                resolvedNDK
+                ndk
                     .guardrailOff()
                     .fetchEvent({
                         kinds: [parseInt(kind)],

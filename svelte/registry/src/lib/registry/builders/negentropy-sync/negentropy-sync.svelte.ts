@@ -1,7 +1,7 @@
 import { NDKRelaySet, type NDKFilter, type NDKRelay, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { NDKSync } from "@nostr-dev-kit/sync";
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { getContext } from 'svelte';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface NegentropySyncConfig {
     filters: NDKFilter | NDKFilter[];
@@ -79,7 +79,7 @@ export function createNegentropySync(
     config: () => NegentropySyncConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = ndk || getContext<NDKSvelte>('ndk');
+    const ndk = getNDK(ndk);
 
     const state = $state({
         syncing: false,
@@ -145,7 +145,7 @@ export function createNegentropySync(
 
     async function startSync(): Promise<NDKSubscription> {
         const { filters, relayUrls } = config();
-        const sync = new NDKSync(resolvedNDK);
+        const sync = new NDKSync(ndk);
 
         // Unwrap any Svelte Proxies by creating plain objects with JSON round-trip
         // Proxies can't be cloned by structured clone algorithm used by postMessage to workers
@@ -164,12 +164,12 @@ export function createNegentropySync(
         // Determine relays to sync
         let relaySet;
         if (relayUrls) {
-            relaySet = NDKRelaySet.fromRelayUrls(relayUrls, resolvedNDK);
+            relaySet = NDKRelaySet.fromRelayUrls(relayUrls, ndk);
         }
 
         const allRelays = relaySet
             ? Array.from(relaySet.relays)
-            : Array.from(resolvedNDK.pool?.relays?.values() || []);
+            : Array.from(ndk.pool?.relays?.values() || []);
 
         state.totalRelays = allRelays.length;
 

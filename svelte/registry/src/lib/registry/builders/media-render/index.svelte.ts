@@ -63,7 +63,7 @@ export function createMediaRender(
 	config: () => MediaRenderConfig,
 	ndk?: NDKSvelte
 ): MediaRenderState {
-	const resolvedNDK = getNDK(ndk);
+	const ndk = getNDK(ndk);
 
 	const state = $state({
 		showMedia: false
@@ -82,10 +82,10 @@ export function createMediaRender(
 	// Check if user follows the event author
 	const isFollowing = $derived.by(() => {
 		const { event } = config();
-		if (!event || !resolvedNDK) return true; // Show by default if no context
+		if (!event || !ndk) return true; // Show by default if no context
 
-		const follows = resolvedNDK.$follows;
-		const currentUser = resolvedNDK.$currentUser;
+		const follows = ndk.$follows;
+		const currentUser = ndk.$currentUser;
 
 		// If user not logged in, don't filter by follows
 		if (!currentUser?.pubkey || !follows) return true;
@@ -102,7 +102,7 @@ export function createMediaRender(
 		}
 
 		// Check follows (only blur if user is logged in and doesn't follow)
-		if (!isFollowing && resolvedNDK?.$currentUser?.pubkey) {
+		if (!isFollowing && ndk?.$currentUser?.pubkey) {
 			return true;
 		}
 

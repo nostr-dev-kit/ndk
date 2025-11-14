@@ -41,7 +41,7 @@ export function createRepostAction(
     config: () => RepostActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
 
     // Subscribe to reposts and quotes for this event
     let repostsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
@@ -53,7 +53,7 @@ export function createRepostAction(
             return;
         }
 
-        repostsSub = resolvedNDK.$subscribe(() => ({
+        repostsSub = ndk.$subscribe(() => ({
             filters: [
                 // Regular reposts (kind 6 & 16) - use e.filter() for correct tag handling
                 {
@@ -82,7 +82,7 @@ export function createRepostAction(
         // Collect all unique pubkeys and check if user has reposted
         for (const r of reposts) {
             uniquePubkeys.add(r.pubkey);
-            if (resolvedNDK.$currentPubkey && r.pubkey === resolvedNDK.$currentPubkey) {
+            if (ndk.$currentPubkey && r.pubkey === ndk.$currentPubkey) {
                 userRepost = r;
             }
         }
@@ -104,7 +104,7 @@ export function createRepostAction(
             throw new Error("No event to repost");
         }
 
-        if (!resolvedNDK.$currentPubkey) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to repost");
         }
 
@@ -126,7 +126,7 @@ export function createRepostAction(
             throw new Error("No event to quote");
         }
 
-        if (!resolvedNDK.$currentPubkey) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to quote");
         }
 

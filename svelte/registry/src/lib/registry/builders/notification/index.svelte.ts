@@ -92,13 +92,13 @@ export interface NotificationFeedState {
  */
 export function createNotificationFeed(
     config: () => NotificationFeedConfig,
-    ndkParam?: NDKSvelte
+    ndk?: NDKSvelte
 ): NotificationFeedState {
-    const ndk = getNDK(ndkParam);
+    const ndk = getNDK(ndk);
 
     // $metaSubscribe handles its own reactivity - the function we pass
     // will be re-evaluated when config() changes
-    const metaSub = ndk?.$metaSubscribe?.(() => {
+    const metaSub = ndk.$metaSubscribe(() => {
         const {
             pubkey,
             kinds = [7, 9735, 6, 16, 1, 1111], // reactions, zaps, reposts, boost, replies, generic replies

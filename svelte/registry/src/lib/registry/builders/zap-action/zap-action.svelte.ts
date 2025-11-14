@@ -1,6 +1,6 @@
 import { NDKEvent, NDKKind, NDKZapper, zapInvoiceFromEvent, type NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { getContext } from 'svelte';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface ZapStats {
     count: number;
@@ -34,7 +34,7 @@ export type ZapIntentCallback = (event: NDKEvent, zapFn: ZapFunction) => void;
  * ```
  */
 export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) {
-    const resolvedNDK = ndk || getContext<NDKSvelte>('ndk');
+    const ndk = getNDK(ndk);
 
     // Subscribe to zaps
     let zapsSub = $state<ReturnType<NDKSvelte['$subscribe']> | null>(null);
@@ -46,7 +46,7 @@ export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) 
             return;
         }
 
-        zapsSub = resolvedNDK.$subscribe(() => ({
+        zapsSub = ndk.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Zap],
                 ...target.filter(),
@@ -62,8 +62,8 @@ export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) 
         const zaps = Array.from(sub.events);
         const zapInvoices = zaps.map(zapInvoiceFromEvent).filter(Boolean);
         const totalAmount = zapInvoices.reduce((sum, invoice) => sum + (invoice?.amount || 0), 0);
-        const hasZapped = resolvedNDK.$currentPubkey
-            ? zapInvoices.some(invoice => invoice?.zapper === resolvedNDK.$currentPubkey)
+        const hasZapped = ndk.$currentPubkey
+            ? zapInvoices.some(invoice => invoice?.zapper === ndk.$currentPubkey)
             : false;
 
         return {
@@ -79,7 +79,7 @@ export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) 
             throw new Error("No target to zap");
         }
 
-        if (!resolvedNDK.$currentPubkey) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to zap");
         }
 

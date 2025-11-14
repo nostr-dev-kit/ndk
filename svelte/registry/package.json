@@ -61,7 +61,7 @@
     "@nostr-dev-kit/wot": "0.3.7-beta.51",
     "bits-ui": "^2.14.3",
     "html5-qrcode": "^2.3.8",
-    "marked": "^16.4.1",
+    "marked": "^17.0.0",
     "shiki": "^3.15.0",
     "svelte-motion": "^0.12.2",
     "svelte-sonner": "^1.0.6"

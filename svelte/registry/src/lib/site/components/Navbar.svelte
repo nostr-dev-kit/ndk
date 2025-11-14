@@ -99,7 +99,11 @@
           {#if showUserDropdown}
             <div class="absolute right-0 top-[calc(100%_+_0.5rem)] min-w-64 bg-popover border border-border rounded-lg shadow-[0_10px_15px_-3px_rgba(var(--foreground)_/_0.1)] overflow-hidden" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="presentation">
               <div class="p-3 px-4">
-                <UserProfile {ndk} pubkey={ndk.$currentPubkey} variant="horizontal" size="md" byline={User.Handle} />
+                <UserProfile {ndk} pubkey={ndk.$currentPubkey} variant="horizontal" size="md">
+                  {#snippet byline()}
+                    <User.Handle />
+                  {/snippet}
+                </UserProfile>
               </div>
               <div class="border-t border-border"></div>
               <button

@@ -71,20 +71,20 @@
 {#snippet instagramPreview()}
 	{#if sampleImage}
 		<div class="max-w-md mx-auto">
-			<ImageCardInstagram {ndk} image={sampleImage} />
+			<ImageCardInstagram {ndk} event={sampleImage} />
 		</div>
 	{/if}
 {/snippet}
 
 {#snippet heroPreview()}
 	{#if sampleImage}
-		<ImageCardHero {ndk} image={sampleImage} />
+		<ImageCardHero {ndk} event={sampleImage} />
 	{/if}
 {/snippet}
 
 {#snippet imageCardPreview()}
 	{#if sampleImage}
-		<ImageCardBase {ndk} image={sampleImage} />
+		<ImageCardBase {ndk} event={sampleImage} />
 	{/if}
 {/snippet}
 
@@ -153,7 +153,7 @@
 	</ComponentPageTemplate>
 {:else}
 	<div class="px-8">
-		<PageTitle title={metadata.title} subtitle={metadata.oneLiner}>
+		<PageTitle title={metadata.title} subtitle={metadata.description}>
 			<EditProps.Prop name="Sample Image" type="event" bind:value={sampleImage} />
 		</PageTitle>
 		<div class="flex items-center justify-center py-12">

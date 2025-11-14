@@ -77,7 +77,7 @@
   let dynamicRenderer = $state(new ContentRenderer());
 
   // Component registry mapping
-  const componentRegistry = {
+  const componentRegistry: Record<string, any> = {
     'event-card-inline': EventCardInline,
     'event-card-compact': EventCardCompact,
     'event-card-basic': EventCardBasic,
@@ -427,7 +427,7 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
           <!-- Generic Fallback -->
           <select id="fallback-select" bind:value={enableGenericFallback} class={cn(
             "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
-            enableGenericFallback === 'none' ? 'text-muted-foreground' : ''
+            !enableGenericFallback ? 'text-muted-foreground' : ''
           )}>
             <option value={false}>Fallback: None</option>
             <option value={true}>Fallback: Generic</option>

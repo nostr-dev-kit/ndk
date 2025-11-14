@@ -83,6 +83,7 @@
 	{ndk}
 	showcaseComponents={[
 		{
+			id: 'unpublished-events-button-popover',
 			cardData: unpublishedEventsButtonPopoverMetadata,
 			preview: basicPreview,
 			orientation: 'horizontal'

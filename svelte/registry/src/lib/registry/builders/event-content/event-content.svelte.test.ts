@@ -41,7 +41,7 @@ describe("createEventContent", () => {
 
         it("should extract content from event when provided", () => {
             let contentState: ReturnType<typeof createEventContent> | undefined;
-            const mockEvent = { content: "Event content", tags: [] } as NDKEvent;
+            const mockEvent = { content: "Event content", tags: [] } as unknown as NDKEvent;
 
             cleanup = $effect.root(() => {
                 contentState = createEventContent(() => ({ event: mockEvent }));
@@ -53,7 +53,7 @@ describe("createEventContent", () => {
 
         it("should prefer event content over explicit content parameter", () => {
             let contentState: ReturnType<typeof createEventContent> | undefined;
-            const mockEvent = { content: "Event content", tags: [] } as NDKEvent;
+            const mockEvent = { content: "Event content", tags: [] } as unknown as NDKEvent;
 
             cleanup = $effect.root(() => {
                 contentState = createEventContent(() => ({

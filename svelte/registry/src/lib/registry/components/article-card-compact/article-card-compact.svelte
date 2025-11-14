@@ -5,10 +5,10 @@
 
   interface Props {
     ndk: NDKSvelte;
-    event: NDKArticle;
+    article: NDKArticle;
   }
 
-  let { ndk, event: article }: Props = $props();
+  let { ndk, article }: Props = $props();
 </script>
 
 <div data-article-card-compact="" class="rounded-lg overflow-hidden border border-border bg-card">

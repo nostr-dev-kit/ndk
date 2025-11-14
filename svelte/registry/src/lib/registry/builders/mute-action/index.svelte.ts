@@ -26,9 +26,9 @@ export interface MuteActionConfig {
  */
 export function createMuteAction(
     config: () => MuteActionConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ) {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
 
     const isMuted = $derived.by(() => {
         const { target } = config();

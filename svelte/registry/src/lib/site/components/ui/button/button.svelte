@@ -120,7 +120,7 @@
 	{#if type !== undefined && loading}
 		<div class="absolute flex size-full place-items-center justify-center bg-inherit">
 			<div class="flex animate-spin place-items-center justify-center">
-				<HugeiconsIcon icon={Loading03Icon} class="size-4" />
+				<HugeiconsIcon icon={Loading03Icon} {...({ class: "size-4" } as any)} />
 			</div>
 		</div>
 		<span class="sr-only">Loading</span>

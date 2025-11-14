@@ -11,7 +11,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    event: NDKArticle;
+    article: NDKArticle;
 
     width?: string;
 
@@ -26,7 +26,7 @@
 
   let {
     ndk,
-    event: article,
+    article,
     width = 'w-[320px]',
     height = 'h-[420px]',
     imageHeight = 'h-56',

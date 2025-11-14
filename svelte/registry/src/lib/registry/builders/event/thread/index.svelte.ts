@@ -68,9 +68,9 @@ export interface ThreadViewConfig {
  */
 export function createThreadView(
     config: () => ThreadViewConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ): ThreadView {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
     const { focusedEvent, maxDepth = 20, kinds = [NDKKind.Text, 9802] } = config();
     // Internal reactive state
     let _events = $state<ThreadNode[]>([]);

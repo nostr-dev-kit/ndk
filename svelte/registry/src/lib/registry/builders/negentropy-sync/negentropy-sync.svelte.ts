@@ -77,9 +77,9 @@ export interface RelayProgress {
  */
 export function createNegentropySync(
     config: () => NegentropySyncConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ) {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
 
     const state = $state({
         syncing: false,

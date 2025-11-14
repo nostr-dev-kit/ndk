@@ -111,9 +111,9 @@ function calculatePosition(content: string, context: string): HighlightPosition 
  */
 export function createHighlight(
     config: () => HighlightConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ): HighlightState {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
 
     const state = $state({
         content: '',

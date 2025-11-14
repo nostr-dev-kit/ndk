@@ -34,9 +34,9 @@ export type ReplyIntentCallback = (event: NDKEvent) => void;
  */
 export function createReplyAction(
     config: () => ReplyActionConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ) {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
     // Subscribe to replies for this event
     let repliesSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 

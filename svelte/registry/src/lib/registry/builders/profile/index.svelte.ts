@@ -46,7 +46,7 @@ export function createProfileFetcher(
     config: () => ProfileFetcherConfig,
     ndk?: NDKSvelte
 ): ProfileFetcherState {
-    const ndk = getNDK(ndk);
+    const ndkInstance = getNDK(ndk);
     const state = $state<{ profile: NDKUserProfile | null; user: NDKUser | null; loading: boolean }>({
         profile: null,
         user: null,
@@ -58,7 +58,7 @@ export function createProfileFetcher(
 
         try {
             const ndkUser = typeof payload === 'string'
-                ? await ndk.fetchUser(payload)
+                ? await ndkInstance.fetchUser(payload)
                 : payload;
 
             if (!ndkUser) {

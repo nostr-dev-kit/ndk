@@ -34,9 +34,9 @@ export interface FollowActionConfig {
  */
 export function createFollowAction(
     config: () => FollowActionConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ) {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
 
     // Ensure NDKInterestList is monitored if we have sessions
     // This is needed for hashtag follows

@@ -62,9 +62,9 @@ export interface CustomEmojiData {
  */
 export function createReactionAction(
     config: () => ReactionActionConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ) {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
     // Subscribe to reactions for this event
     let reactionsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 

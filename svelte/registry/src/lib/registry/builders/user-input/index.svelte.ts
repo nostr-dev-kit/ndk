@@ -47,7 +47,7 @@ const NPUB_PATTERN = /^(npub1|nprofile1)[a-z0-9]{20,}/i;
  */
 export function createUserInput(
     config: () => UserInputConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ): {
     readonly results: UserInputResult[];
     readonly selectedUser: NDKUser | null;
@@ -55,7 +55,7 @@ export function createUserInput(
     selectUser: (user: NDKUser) => void;
     clear: () => void;
 } {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
 
     let results = $state<UserInputResult[]>([]);
     let selectedUser = $state<NDKUser | null>(null);

@@ -34,11 +34,12 @@
 
 <div class="border border-border rounded-xl p-6 bg-card">
   {#if selectedUser}
+    {@const user = selectedUser}
     {#snippet npubByline()}
-      {selectedUser.npub.slice(0, 16)}...
+      {user.npub.slice(0, 16)}...
     {/snippet}
     <div class="mb-4 p-4 bg-primary rounded-lg text-primary-foreground">
-      <UserProfile {ndk} user={selectedUser} size="sm" byline={npubByline} />
+      <UserProfile {ndk} {user} size="sm" byline={npubByline} />
     </div>
   {/if}
 

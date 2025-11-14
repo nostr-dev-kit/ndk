@@ -26,7 +26,7 @@
 
 <PageTitle
 	title="Installation"
-	subtitle="Complete guide to installing and configuring the @nostr/svelte component registry in your SvelteKit project."
+  subtitle="Complete guide to installing and configuring the @nostr-dev-kit/svelte component registry in your SvelteKit project."
 />
 
 <div class="docs-page">
@@ -68,7 +68,7 @@
 		<h2>Step 2: Install Tailwind CSS v4</h2>
 
 	<p>
-		Tailwind CSS v4 provides the styling foundation for @nostr/svelte components. Install the
+    Tailwind CSS v4 provides the styling foundation for @nostr-dev-kit/svelte components. Install the
 		Vite plugin:
 	</p>
 
@@ -106,7 +106,7 @@
 	<section>
 		<h2>Step 3: Install NDK Dependencies</h2>
 
-	<p>Install the core NDK packages that power @nostr/svelte components:</p>
+<p>Install the core NDK packages that power @nostr-dev-kit/svelte components:</p>
 
 	<CodeBlock
 		lang="bash"
@@ -149,7 +149,7 @@
 		<h2>Step 5: Install jsrepo CLI</h2>
 
 	<p>
-		jsrepo is the package manager for @nostr/svelte components. Install it globally to use across
+    jsrepo is the package manager for @nostr-dev-kit/svelte components. Install it globally to use across
 		projects:
 	</p>
 
@@ -318,7 +318,7 @@
 	<section>
 		<h2>Next Steps</h2>
 
-	<p>Now that you have @nostr/svelte installed, explore:</p>
+<p>Now that you have @nostr-dev-kit/svelte installed, explore:</p>
 
 	<ul>
 		<li>

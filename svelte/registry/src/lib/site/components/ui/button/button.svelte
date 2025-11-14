@@ -67,7 +67,8 @@
 
 <script lang="ts">
 	import { cn } from '$lib/registry/utils/cn.js';
-	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
+	import { Loading03Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 
 	let {
 		ref = $bindable(null),
@@ -119,7 +120,7 @@
 	{#if type !== undefined && loading}
 		<div class="absolute flex size-full place-items-center justify-center bg-inherit">
 			<div class="flex animate-spin place-items-center justify-center">
-				<LoaderCircleIcon class="size-4" />
+				<HugeiconsIcon icon={Loading03Icon} class="size-4" />
 			</div>
 		</div>
 		<span class="sr-only">Loading</span>

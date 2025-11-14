@@ -5,9 +5,8 @@
 <script lang="ts">
 	import { Button } from '$lib/site/components/ui/button';
 	import { cn } from '$lib/registry/utils/cn.js';
-	import CheckIcon from '@lucide/svelte/icons/check';
-	import CopyIcon from '@lucide/svelte/icons/copy';
-	import XIcon from '@lucide/svelte/icons/x';
+	import { Tick02Icon, Copy01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { scale } from 'svelte/transition';
 	import type { CopyButtonProps } from './types';
 
@@ -63,12 +62,12 @@
 >
 	{#if status === 'success'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
-			<CheckIcon tabindex={-1} />
+			<HugeiconsIcon icon={Tick02Icon} tabindex={-1} />
 			<span class="sr-only">Copied</span>
 		</div>
 	{:else if status === 'failure'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
-			<XIcon tabindex={-1} />
+			<HugeiconsIcon icon={Cancel01Icon} tabindex={-1} />
 			<span class="sr-only">Failed to copy</span>
 		</div>
 	{:else}
@@ -76,7 +75,7 @@
 			{#if icon}
 				{@render icon()}
 			{:else}
-				<CopyIcon tabindex={-1} />
+				<HugeiconsIcon icon={Copy01Icon} tabindex={-1} />
 			{/if}
 			<span class="sr-only">Copy</span>
 		</div>

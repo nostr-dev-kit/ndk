@@ -32,8 +32,8 @@
 	import type { Command, Agent } from 'package-manager-detector';
 	import { resolveCommand } from 'package-manager-detector/commands';
 	import CopyButton from '$lib/site/components/ui/copy-button/copy-button.svelte';
-	import ClipboardIcon from '@lucide/svelte/icons/clipboard';
-	import TerminalIcon from '@lucide/svelte/icons/terminal';
+	import { ClipboardIcon, ComputerTerminal01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import * as Tooltip from '$lib/site/components/ui/tooltip';
 	import * as Tabs from '$lib/site/components/ui/tabs';
 
@@ -55,7 +55,7 @@
 	<div class="border-border flex place-items-center justify-between gap-2 border-b py-1 pr-2">
 		<div class="flex place-items-center gap-2 px-2">
 			<div class="bg-foreground flex size-4 place-items-center justify-center opacity-50">
-				<TerminalIcon class="text-background size-3" />
+				<HugeiconsIcon icon={ComputerTerminal01Icon} class="text-background size-3" />
 			</div>
 			<Tabs.Root bind:value={agent}>
 				<Tabs.List class="h-auto bg-transparent p-0">
@@ -73,7 +73,7 @@
 					{#snippet child({ props })}
 						<CopyButton {...props} text={commandText} class="size-6 [&_svg]:size-3">
 							{#snippet icon()}
-								<ClipboardIcon />
+								<HugeiconsIcon icon={ClipboardIcon} />
 							{/snippet}
 						</CopyButton>
 					{/snippet}

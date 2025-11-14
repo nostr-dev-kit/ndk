@@ -48,6 +48,20 @@
             { name: 'children', type: 'Snippet<[{ event: NDKEvent | null, loading: boolean }]>', default: 'optional', description: 'Custom rendering snippet receiving event and loading state' }
           ]
         }]
+      },
+      {
+        name: 'Event.Time',
+        title: 'Event.Time',
+        description: 'Accessible <time> element that renders relative timestamps using createTimeAgo. Props mirror the standard HTML time element so you can drop it anywhere you need consistent formatting.',
+        apiDocs: [{
+          name: 'Event.Time',
+          description: 'Accessible <time> element that renders relative timestamps using createTimeAgo. Props mirror the standard HTML time element so you can drop it anywhere you need consistent formatting.',
+          importPath: '$lib/registry/ui/event',
+          props: [
+            { name: 'event', type: 'NDKEvent', default: 'required', description: 'Event whose created_at value should be displayed' },
+            { name: 'class', type: 'string', default: "''", description: 'Additional CSS classes' }
+          ]
+        }]
       }
     ],
     anatomyLayers: [
@@ -56,6 +70,12 @@
         label: 'Event.ReplyIndicator',
         description: 'Reply indicator showing who is being replied to with automatic event fetching.',
         props: ['ndk', 'event', 'onclick', 'class', 'children']
+      },
+      {
+        id: 'time',
+        label: 'Event.Time',
+        description: 'Relative timestamp rendered inside a semantic <time> element.',
+        props: ['event', 'class']
       }
     ]
   };
@@ -91,16 +111,25 @@
         <li class="leading-relaxed">Build thread views with reply context</li>
         <li class="leading-relaxed">Automatically fetch and display parent events</li>
         <li class="leading-relaxed">Handle NIP-10 reply markers correctly</li>
+        <li class="leading-relaxed">Render accessible relative timestamps for events</li>
       </ul>
     </section>
   {/snippet}
 
   {#snippet anatomyPreview()}
-    <ComponentAnatomy.Layer id="reply-indicator" label="Event.ReplyIndicator">
-      <div class="flex items-center gap-2 p-4 border border-border rounded-lg bg-card max-w-md">
-        <Event.ReplyIndicator {ndk} event={mockReplyEvent} class="text-sm text-muted-foreground" />
-      </div>
-    </ComponentAnatomy.Layer>
+    <div class="space-y-4">
+      <ComponentAnatomy.Layer id="reply-indicator" label="Event.ReplyIndicator">
+        <div class="flex items-center gap-2 p-4 border border-border rounded-lg bg-card max-w-md">
+          <Event.ReplyIndicator {ndk} event={mockReplyEvent} class="text-sm text-muted-foreground" />
+        </div>
+      </ComponentAnatomy.Layer>
+      <ComponentAnatomy.Layer id="time" label="Event.Time">
+        <div class="flex items-center gap-4 p-4 border border-border rounded-lg bg-card max-w-md">
+          <label class="text-sm text-muted-foreground">Posted</label>
+          <Event.Time event={mockReplyEvent} class="text-sm font-medium" />
+        </div>
+      </ComponentAnatomy.Layer>
+    </div>
   {/snippet}
 
   {#snippet examples()}

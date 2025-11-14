@@ -57,7 +57,7 @@ export const mainNav: NavItem[] = [
 
 export const docs: NavItem[] = [
   { name: 'Introduction', path: '/docs', icon: Book02Icon, title: 'Introduction', description: 'Get started with NDK Svelte components and utilities' },
-  { name: 'Installation', path: '/docs/installation', icon: Download01Icon, title: 'Installation', description: 'Complete guide to installing and configuring @nostr/svelte in your project' },
+  { name: 'Installation', path: '/docs/installation', icon: Download01Icon, title: 'Installation', description: 'Complete guide to installing and configuring @nostr-dev-kit/svelte in your project' },
   { name: 'Architecture', path: '/docs/architecture', icon: Building01Icon, title: 'Architecture', description: 'Understand the reactive architecture and state management patterns' },
   { name: 'Builders', path: '/docs/builders', icon: Layers01Icon, title: 'Builders', description: 'Reactive state factories for managing Nostr data' },
   { name: 'Meta Subscriptions', path: '/docs/subscriptions', icon: RepeatIcon, title: 'Meta Subscriptions', description: 'Reactive meta-subscriptions that automatically track relationships between events' },

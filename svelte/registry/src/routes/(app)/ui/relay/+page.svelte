@@ -446,14 +446,14 @@ context.ndk        // NDKSvelte instance`}
         />
       </div>
 
-      <h3 class="text-xl font-semibold mt-8 mb-4">Relay Selector Components</h3>
+      <h3 class="text-xl font-semibold mt-8 mb-4">Relay Selector Primitives</h3>
       <p class="leading-relaxed text-muted-foreground mb-4">
-        The Relay.Selector namespace provides components for building relay selection UIs:
+        Use the Relay.Selector namespace for building fully custom selectors, or drop in the prebuilt popover component:
       </p>
       <ul class="ml-6 list-disc space-y-2 text-muted-foreground">
-        <li><code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">Relay.Selector.Root</code> - Dropdown root with relay list state management</li>
-        <li><code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">Relay.Selector.List</code> - List of selectable relays with filtering</li>
-        <li><code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">Relay.Selector.Item</code> - Individual relay list item with selection handling</li>
+        <li><code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">Relay.Selector.Root</code> – Manages selection state, filtering, multiple selection, and exposes helpers via snippets.</li>
+        <li><code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">Relay.Selector.Trigger</code> – Headless trigger primitive for wiring your own buttons or popovers.</li>
+        <li><code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">RelaySelector / RelaySelectorPopover</code> – Prebuilt components that wrap the primitives with ready-to-use UI.</li>
       </ul>
     </section>
   {/snippet}

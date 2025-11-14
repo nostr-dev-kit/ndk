@@ -194,6 +194,7 @@
         <p class="text-sm text-muted-foreground leading-relaxed m-0">Display event metadata and relationships</p>
         <div class="flex flex-wrap gap-1.5 mt-auto">
           <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">ReplyIndicator</span>
+          <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Time</span>
         </div>
       </a>
 

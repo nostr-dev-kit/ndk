@@ -304,17 +304,27 @@
           lang="svelte"
           code={`import { Relay } from '$lib/registry/ui/relay';
 
-<Relay.Selector.Root {ndk}>
-  <Relay.Selector.List class="relay-dropdown">
-    {#snippet item(relay)}
-      <Relay.Selector.Item {relay}>
-        <Relay.Root {ndk} relayUrl={relay.url}>
-          <Relay.Icon class="w-6 h-6" />
-          <Relay.Name />
-        </Relay.Root>
-      </Relay.Selector.Item>
-    {/snippet}
-  </Relay.Selector.List>
+<Relay.Selector.Root {ndk} bind:selected>
+  {#snippet children(context)}
+    <div class="relay-dropdown">
+      {#each context.connectedRelays as relayUrl (relayUrl)}
+        <button
+          type="button"
+          class="relay-item"
+          data-selected={context.isSelected(relayUrl) ? '' : undefined}
+          onclick={() => context.toggleRelay(relayUrl)}
+        >
+          <Relay.Root {ndk} relayUrl={relayUrl}>
+            <Relay.Icon class="w-6 h-6" />
+            <div class="flex flex-col text-left">
+              <Relay.Name />
+              <Relay.Description class="text-xs text-muted-foreground line-clamp-1" />
+            </div>
+          </Relay.Root>
+        </button>
+      {/each}
+    </div>
+  {/snippet}
 </Relay.Selector.Root>`}
         />
       </div>

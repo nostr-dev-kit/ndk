@@ -82,9 +82,8 @@
       <ul class="ml-6 mb-4 list-disc space-y-2">
         <li class="leading-relaxed">Display emoji reactions on posts, comments, or other content</li>
         <li class="leading-relaxed">Support both standard Unicode emojis and custom emoji images</li>
-        <li class="leading-relaxed">Build reaction buttons with counts and interactive states</li>
         <li class="leading-relaxed">Automatically extract and display reactions from kind:7 events</li>
-        <li class="leading-relaxed">Create custom emoji pickers integrated with reaction systems</li>
+        <li class="leading-relaxed">Style inline reactions to match your typography and spacing system</li>
       </ul>
     </section>
   {/snippet}

@@ -50,6 +50,7 @@
   import basicSetupCode from './examples/basic-setup/index.txt?raw';
   import fullSetupCode from './examples/full-setup/index.txt?raw';
   import manualSetupCode from './examples/manual-setup/index.txt?raw';
+    import { cn } from '$lib/registry/utils/cn';
 
   // Get page data
   let { data } = $props();
@@ -234,22 +235,18 @@
       "",
       "// Set up click handlers for interactive content",
       "defaultContentRenderer.onUserClick = (pubkey) => {",
-      "  toast.info(`User clicked: ${pubkey.slice(0, 16)}...`);",
       "  // Example: goto(`/user/${pubkey}`)",
       "};",
       "",
       "defaultContentRenderer.onEventClick = (event) => {",
-      "  toast.info(`Event kind ${event.kind} clicked`);",
       "  // Example: goto(`/event/${event.id}`)",
       "};",
       "",
       "defaultContentRenderer.onHashtagClick = (tag) => {",
-      "  toast.info(`Hashtag clicked: #${tag}`);",
       "  // Example: goto(`/search?q=${tag}`)",
       "};",
       "",
       "defaultContentRenderer.onLinkClick = (url) => {",
-      "  toast.info(`Link clicked: ${url.slice(0, 40)}...`);",
       "  // Example: window.open(url, '_blank')",
       "};"
     );
@@ -267,7 +264,7 @@
       '<Toaster position="bottom-right" />'
     ].join('\n');
 
-    return '<!-- Install svelte-sonner: bun add svelte-sonner -->\n\n' + htmlContent;
+    return htmlContent;
   });
 
   // Create a rich sample event for demonstration
@@ -321,42 +318,54 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
   </section>
 
   <!-- Interactive Configuration -->
-  <section class="mb-12 w-full">
+  <section class="mb-12 w-full relative">
     <h2 class="text-3xl font-bold mb-4">Interactive Configuration</h2>
     <p class="text-muted-foreground mb-6">
       Toggle features below to see how they transform the content. The code updates automatically to show
       exactly what you need in your <code class="text-xs bg-muted px-2 py-1 rounded">+layout.svelte</code>.
     </p>
 
-    <div class="w-full grid grid-cols-1 md:grid-cols-5 gap-6">
+    <div class="w-full grid grid-cols-1 md:grid-cols-5 gap-6 sticky top-0">
       <!-- Left: Configuration Controls (narrower) -->
-      <div class="md:col-span-1 space-y-3">
+      <div class="md:col-span-1 space-y-3 sticky top-0">
         <h3 class="text-lg font-semibold mb-3">Configure</h3>
 
         <div class="space-y-1.5">
           <!-- Mentions -->
-          <select id="mention-select" bind:value={selectedMention} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="mention-select" bind:value={selectedMention} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedMention === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Mentions: None</option>
             <option value="basic">Mentions: Basic</option>
             <option value="modern">Mentions: Modern</option>
           </select>
 
           <!-- Hashtags -->
-          <select id="hashtag-select" bind:value={selectedHashtag} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="hashtag-select" bind:value={selectedHashtag} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedHashtag === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Hashtags: None</option>
             <option value="basic">Hashtags: Basic</option>
             <option value="modern">Hashtags: Modern</option>
           </select>
 
           <!-- Links -->
-          <select id="link-select" bind:value={selectedLink} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="link-select" bind:value={selectedLink} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedLink === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Links: None</option>
             <option value="basic">Links: Basic</option>
             <option value="embed">Links: Embed</option>
           </select>
 
           <!-- Media -->
-          <select id="media-select" bind:value={selectedMedia} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="media-select" bind:value={selectedMedia} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedMedia === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Media: None</option>
             <option value="basic">Media: Basic</option>
             <option value="bento">Media: Bento</option>
@@ -367,7 +376,10 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
         <!-- Event Cards -->
         <div class="pt-3 border-t border-border space-y-1.5">
           <!-- Note Cards -->
-          <select id="note-card-select" bind:value={selectedNoteCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="note-card-select" bind:value={selectedNoteCard} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedNoteCard === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Notes: None</option>
             <option value="event-card-inline">Notes: Inline</option>
             <option value="event-card-compact">Notes: Compact</option>
@@ -375,7 +387,10 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
           </select>
 
           <!-- Article Cards -->
-          <select id="article-card-select" bind:value={selectedArticleCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="article-card-select" bind:value={selectedArticleCard} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedArticleCard === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Articles: None</option>
             <option value="article-card-inline">Articles: Inline</option>
             <option value="article-card-compact">Articles: Compact</option>
@@ -386,7 +401,10 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
           </select>
 
           <!-- Highlight Cards -->
-          <select id="highlight-card-select" bind:value={selectedHighlightCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="highlight-card-select" bind:value={selectedHighlightCard} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedHighlightCard === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Highlights: None</option>
             <option value="highlight-card-inline">Highlights: Inline</option>
             <option value="highlight-card-compact">Highlights: Compact</option>
@@ -396,7 +414,10 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
           </select>
 
           <!-- Image Cards -->
-          <select id="image-card-select" bind:value={selectedImageCard} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="image-card-select" bind:value={selectedImageCard} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            selectedImageCard === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value="none">Images: None</option>
             <option value="image-card-base">Images: Base</option>
             <option value="image-card-instagram">Images: Instagram</option>
@@ -404,7 +425,10 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
           </select>
 
           <!-- Generic Fallback -->
-          <select id="fallback-select" bind:value={enableGenericFallback} class="w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer">
+          <select id="fallback-select" bind:value={enableGenericFallback} class={cn(
+            "w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer",
+            enableGenericFallback === 'none' ? 'text-muted-foreground' : ''
+          )}>
             <option value={false}>Fallback: None</option>
             <option value={true}>Fallback: Generic</option>
           </select>

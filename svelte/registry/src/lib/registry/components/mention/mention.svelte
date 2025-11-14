@@ -3,7 +3,7 @@
 	import { User } from '../../ui/user';
     import { NDKUser } from '@nostr-dev-kit/ndk';
 
-	interface MentionProps {
+	export interface MentionProps {
 		ndk: NDKSvelte;
 		bech32: string;
 		onclick?: (pubkey: string) => void;

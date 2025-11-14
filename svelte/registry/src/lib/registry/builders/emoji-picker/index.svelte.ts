@@ -48,8 +48,8 @@ export interface EmojiPickerConfig {
  * {/each}
  * ```
  */
-export function createEmojiPicker(config: () => EmojiPickerConfig, ndk?: NDKSvelte) {
-    const ndk = getNDK(ndk);
+export function createEmojiPicker(config: () => EmojiPickerConfig, ndkParam?: NDKSvelte) {
+    const ndk = getNDK(ndkParam);
 
     const emojiEvents = ndk.$subscribe(() => {
         const cfg = config();

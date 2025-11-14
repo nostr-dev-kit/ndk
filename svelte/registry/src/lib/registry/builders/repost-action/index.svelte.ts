@@ -39,9 +39,9 @@ export type QuoteIntentCallback = (event: NDKEvent) => void;
  */
 export function createRepostAction(
     config: () => RepostActionConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ) {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
 
     // Subscribe to reposts and quotes for this event
     let repostsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);

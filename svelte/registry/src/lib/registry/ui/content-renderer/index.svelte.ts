@@ -28,6 +28,7 @@ export type HandlerInfo = {
 export type MentionComponent = Component<{
 	ndk: NDKSvelte;
 	bech32: string;
+	onclick?: (pubkey: string) => void;
 	class?: string;
 }>;
 
@@ -47,6 +48,7 @@ export type HashtagComponent = Component<{
  */
 export type LinkComponent = Component<{
 	url: string | string[];
+	onclick?: (url: string | string[]) => void;
 	class?: string;
 }>;
 
@@ -57,6 +59,7 @@ export type LinkComponent = Component<{
 export type MediaComponent = Component<{
 	url: string | string[];
 	type?: string;
+	onclick?: (url: string | string[]) => void;
 	class?: string;
 }>;
 
@@ -66,7 +69,7 @@ export type MediaComponent = Component<{
 export type UserClickCallback = (pubkey: string) => void;
 export type EventClickCallback = (event: NDKEvent) => void;
 export type HashtagClickCallback = (tag: string) => void;
-export type LinkClickCallback = (url: string) => void;
+export type LinkClickCallback = (url: string | string[]) => void;
 export type MediaClickCallback = (url: string | string[]) => void;
 
 /**

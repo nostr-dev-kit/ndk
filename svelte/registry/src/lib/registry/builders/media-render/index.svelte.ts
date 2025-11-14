@@ -61,9 +61,9 @@ export interface MediaRenderConfig {
  */
 export function createMediaRender(
 	config: () => MediaRenderConfig,
-	ndk?: NDKSvelte
+	ndkParam?: NDKSvelte
 ): MediaRenderState {
-	const ndk = getNDK(ndk);
+	const ndk = getNDK(ndkParam);
 
 	const state = $state({
 		showMedia: false

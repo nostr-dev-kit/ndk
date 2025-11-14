@@ -5,7 +5,7 @@
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer/content-renderer.context.js';
 
-	interface EmbeddedEventProps {
+	export interface EmbeddedEventProps {
 		ndk: NDKSvelte;
 		bech32: string;
 		renderer?: ContentRenderer;

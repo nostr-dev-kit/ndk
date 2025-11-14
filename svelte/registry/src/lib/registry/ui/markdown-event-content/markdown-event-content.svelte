@@ -11,13 +11,15 @@
   // Component handlers are registered via ContentRenderer
   // No need to import them here as they're passed via the renderer prop
 
-  interface Props {
+  export interface MarkdownEventContentProps {
     ndk?: NDKSvelte;
     content: string;
     emojiTags?: string[][];
     renderer?: ContentRenderer;
     class?: string;
   }
+
+  type Props = MarkdownEventContentProps;
 
   let {
     ndk = getContext<NDKSvelte>('ndk'),

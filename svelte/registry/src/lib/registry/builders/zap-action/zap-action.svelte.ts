@@ -33,8 +33,8 @@ export type ZapIntentCallback = (event: NDKEvent, zapFn: ZapFunction) => void;
  * </button>
  * ```
  */
-export function createZapAction(config: () => ZapActionConfig, ndk?: NDKSvelte) {
-    const ndk = getNDK(ndk);
+export function createZapAction(config: () => ZapActionConfig, ndkParam?: NDKSvelte) {
+    const ndk = getNDK(ndkParam);
 
     // Subscribe to zaps
     let zapsSub = $state<ReturnType<NDKSvelte['$subscribe']> | null>(null);

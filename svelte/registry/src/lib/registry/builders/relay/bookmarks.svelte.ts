@@ -78,9 +78,9 @@ export interface BookmarkedRelayListConfig {
  */
 export function createBookmarkedRelayList(
     config: () => BookmarkedRelayListConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ): BookmarkedRelayListState {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
     // Merge current user into authors list if enabled
     const effectiveAuthors = $derived.by(() => {
         const { authors: authorsList, includeCurrentUser = true } = config();

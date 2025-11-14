@@ -14,7 +14,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    event: NDKArticle;
+    article: NDKArticle;
 
     height?: string;
 
@@ -27,7 +27,7 @@
 
   let {
     ndk,
-    event: article,
+    article,
     height = 'h-[500px]',
     badgeText,
     onclick,

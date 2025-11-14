@@ -1,5 +1,5 @@
-import type { NDKEvent, NDKSvelte } from '@nostr-dev-kit/svelte';
-import { NDKRelaySet } from '@nostr-dev-kit/ndk';
+import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+import { NDKRelaySet, type NDKEvent } from '@nostr-dev-kit/ndk';
 import { untrack } from 'svelte';
 
 export interface UnpublishedEventEntry {

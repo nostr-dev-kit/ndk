@@ -62,12 +62,12 @@
 >
 	{#if status === 'success'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
-			<HugeiconsIcon icon={Tick02Icon} tabindex={-1} />
+			<HugeiconsIcon icon={Tick02Icon} {...({ tabindex: -1 } as any)} />
 			<span class="sr-only">Copied</span>
 		</div>
 	{:else if status === 'failure'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
-			<HugeiconsIcon icon={Cancel01Icon} tabindex={-1} />
+			<HugeiconsIcon icon={Cancel01Icon} {...({ tabindex: -1 } as any)} />
 			<span class="sr-only">Failed to copy</span>
 		</div>
 	{:else}
@@ -75,7 +75,7 @@
 			{#if icon}
 				{@render icon()}
 			{:else}
-				<HugeiconsIcon icon={Copy01Icon} tabindex={-1} />
+				<HugeiconsIcon icon={Copy01Icon} {...({ tabindex: -1 } as any)} />
 			{/if}
 			<span class="sr-only">Copy</span>
 		</div>

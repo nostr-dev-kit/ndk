@@ -45,9 +45,9 @@ export interface FetchEventConfig {
  */
 export function createFetchEvent(
     config: () => FetchEventConfig,
-    ndk?: NDKSvelte
+    ndkParam?: NDKSvelte
 ): FetchEventState {
-    const ndk = getNDK(ndk);
+    const ndk = getNDK(ndkParam);
     let fetchedEvent = $state<NDKEvent | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);

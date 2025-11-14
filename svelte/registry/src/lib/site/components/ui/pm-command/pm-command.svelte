@@ -55,7 +55,7 @@
 	<div class="border-border flex place-items-center justify-between gap-2 border-b py-1 pr-2">
 		<div class="flex place-items-center gap-2 px-2">
 			<div class="bg-foreground flex size-4 place-items-center justify-center opacity-50">
-				<HugeiconsIcon icon={ComputerTerminal01Icon} class="text-background size-3" />
+				<HugeiconsIcon icon={ComputerTerminal01Icon} {...({ class: "text-background size-3" } as any)} />
 			</div>
 			<Tabs.Root bind:value={agent}>
 				<Tabs.List class="h-auto bg-transparent p-0">

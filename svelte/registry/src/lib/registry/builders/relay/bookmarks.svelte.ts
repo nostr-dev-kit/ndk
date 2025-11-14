@@ -80,31 +80,31 @@ export function createBookmarkedRelayList(
     config: () => BookmarkedRelayListConfig,
     ndk?: NDKSvelte
 ): BookmarkedRelayListState {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
     // Merge current user into authors list if enabled
     const effectiveAuthors = $derived.by(() => {
         const { authors: authorsList, includeCurrentUser = true } = config();
 
-        if (!includeCurrentUser || !resolvedNDK.$currentPubkey) {
+        if (!includeCurrentUser || !ndk.$currentPubkey) {
             return authorsList;
         }
 
         // Add current user if not already in the list
         const authorsSet = new SvelteSet(authorsList);
-        if (!authorsSet.has(resolvedNDK.$currentPubkey)) {
-            return [...authorsList, resolvedNDK.$currentPubkey];
+        if (!authorsSet.has(ndk.$currentPubkey)) {
+            return [...authorsList, ndk.$currentPubkey];
         }
         return authorsList;
     });
 
     const includesCurrentUser = $derived(
-        config().includeCurrentUser !== false && resolvedNDK.$currentPubkey
-            ? effectiveAuthors.includes(resolvedNDK.$currentPubkey)
+        config().includeCurrentUser !== false && ndk.$currentPubkey
+            ? effectiveAuthors.includes(ndk.$currentPubkey)
             : false
     );
 
     // Subscribe to kind 10012 (NDKRelayFeedList) from all authors
-    const subscription = resolvedNDK.$subscribe<NDKRelayFeedList>(() => {
+    const subscription = ndk.$subscribe<NDKRelayFeedList>(() => {
         if (effectiveAuthors.length === 0) return undefined;
 
         return {
@@ -115,11 +115,11 @@ export function createBookmarkedRelayList(
 
     // Get current user's relay feed list from subscription events
     const currentUserList = $derived.by(() => {
-        if (!includesCurrentUser || !resolvedNDK.$currentPubkey) return null;
+        if (!includesCurrentUser || !ndk.$currentPubkey) return null;
 
         // Find the current user's kind 10012 event in the subscription
         const userEvent = subscription.events.find(
-            event => event.pubkey === resolvedNDK.$currentPubkey
+            event => event.pubkey === ndk.$currentPubkey
         );
 
         return userEvent as NDKRelayFeedList | null;
@@ -161,8 +161,8 @@ export function createBookmarkedRelayList(
                 url,
                 count: data.count,
                 pubkeys: Array.from(data.pubkeys),
-                isBookmarkedByCurrentUser: includesCurrentUser && resolvedNDK.$currentUser?.pubkey
-                    ? data.pubkeys.has(resolvedNDK.$currentUser.pubkey)
+                isBookmarkedByCurrentUser: includesCurrentUser && ndk.$currentUser?.pubkey
+                    ? data.pubkeys.has(ndk.$currentUser.pubkey)
                     : false
             }))
             .sort((a, b) => b.count - a.count);
@@ -180,7 +180,7 @@ export function createBookmarkedRelayList(
     }
 
     async function toggleBookmark(relayUrl: string): Promise<void> {
-        if (!includesCurrentUser || !resolvedNDK.$currentUser) {
+        if (!includesCurrentUser || !ndk.$currentUser) {
             throw new Error('Cannot toggle bookmark: current user not in authors list');
         }
 
@@ -190,10 +190,10 @@ export function createBookmarkedRelayList(
         let list: NDKRelayFeedList;
         if (currentUserList) {
             // Clone the existing event to preserve all existing bookmarks
-            list = new NDKRelayFeedList(resolvedNDK);
+            list = new NDKRelayFeedList(ndk);
             list.tags = [...currentUserList.tags];
         } else {
-            list = new NDKRelayFeedList(resolvedNDK);
+            list = new NDKRelayFeedList(ndk);
         }
 
         const isCurrentlyBookmarked = isBookmarked(normalized);

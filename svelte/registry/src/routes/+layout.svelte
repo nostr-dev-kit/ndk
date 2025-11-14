@@ -7,6 +7,7 @@
   import LoginModal from '$site-components/LoginModal.svelte';
   import { nip19 } from 'nostr-tools';
   import type { Snippet } from 'svelte';
+  import { NDK_CONTEXT_KEY } from '$lib/registry/utils/ndk';
 
   let { children }: { children: Snippet } = $props();
 
@@ -14,7 +15,7 @@
   let isInitialized = $state(false);
   let showLoginModal = $state(false);
 
-  setContext('ndk', ndk);
+  setContext(NDK_CONTEXT_KEY, ndk);
 
   async function autoCreateAccount() {
     const sourceNpub = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';

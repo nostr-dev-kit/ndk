@@ -8,7 +8,7 @@ import type { NDKSvelte } from '@nostr-dev-kit/svelte';
  * setContext(NDK_CONTEXT_KEY, ndk);
  * ```
  */
-export const NDK_CONTEXT_KEY = 'ndk';
+export const NDK_CONTEXT_KEY = Symbol.for('ndk');
 
 /**
  * Retrieves NDK instance from either explicit parameter or Svelte context
@@ -49,6 +49,6 @@ export function getNDK(providedNDK?: NDKSvelte): NDKSvelte {
     throw new Error(
         `NDK not found. Either:
 1. Provide as parameter: getNDK(ndk)
-2. Set in Svelte context: setContext('${NDK_CONTEXT_KEY}', ndk)`
+2. Set in Svelte context: setContext(NDK_CONTEXT_KEY, ndk)`
     );
 }

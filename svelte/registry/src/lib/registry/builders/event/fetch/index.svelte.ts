@@ -47,7 +47,7 @@ export function createFetchEvent(
     config: () => FetchEventConfig,
     ndk?: NDKSvelte
 ): FetchEventState {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
     let fetchedEvent = $state<NDKEvent | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);
@@ -59,7 +59,7 @@ export function createFetchEvent(
         loading = true;
         error = null;
 
-        resolvedNDK.fetchEvent(currentBech32)
+        ndk.fetchEvent(currentBech32)
             .then(event => {
                 if (event) {
                     fetchedEvent = event;

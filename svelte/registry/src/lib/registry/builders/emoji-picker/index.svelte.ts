@@ -49,11 +49,11 @@ export interface EmojiPickerConfig {
  * ```
  */
 export function createEmojiPicker(config: () => EmojiPickerConfig, ndk?: NDKSvelte) {
-    const resolvedNDK = getNDK(ndk);
+    const ndk = getNDK(ndk);
 
-    const emojiEvents = resolvedNDK.$subscribe(() => {
+    const emojiEvents = ndk.$subscribe(() => {
         const cfg = config();
-        if (!cfg.from && !resolvedNDK.$currentPubkey) return;
+        if (!cfg.from && !ndk.$currentPubkey) return;
 
         const authors = cfg.from ?? [ndk?.$currentPubkey];
 
@@ -77,7 +77,7 @@ export function createEmojiPicker(config: () => EmojiPickerConfig, ndk?: NDKSvel
         const otherEvents = [];
 
         for (const e of emojiEvents.events) {
-            if (e.pubkey === resolvedNDK.$currentPubkey) {
+            if (e.pubkey === ndk.$currentPubkey) {
                 userEvent = e;
             } else {
                 otherEvents.push(e);

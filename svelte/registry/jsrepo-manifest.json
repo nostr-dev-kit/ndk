@@ -459,14 +459,18 @@
 						"index.ts",
 						"negentropy-sync.svelte.ts"
 					],
-					"localDependencies": [],
+					"localDependencies": [
+						"utils/ndk"
+					],
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.51",
 						"@nostr-dev-kit/sync@0.4.0-beta.51",
 						"@nostr-dev-kit/svelte@4.0.0-beta.51"
 					],
 					"devDependencies": [],
-					"_imports_": {}
+					"_imports_": {
+						"../../utils/ndk/index.svelte.js": "{{utils/ndk}}/index.svelte.js"
+					}
 				},
 				{
 					"name": "notification",
@@ -699,13 +703,17 @@
 						"index.ts",
 						"zap-action.svelte.ts"
 					],
-					"localDependencies": [],
+					"localDependencies": [
+						"utils/ndk"
+					],
 					"dependencies": [
 						"@nostr-dev-kit/ndk@3.0.0-beta.51",
 						"@nostr-dev-kit/svelte@4.0.0-beta.51"
 					],
 					"devDependencies": [],
-					"_imports_": {}
+					"_imports_": {
+						"../../utils/ndk/index.svelte.js": "{{utils/ndk}}/index.svelte.js"
+					}
 				},
 				{
 					"name": "zap-send",

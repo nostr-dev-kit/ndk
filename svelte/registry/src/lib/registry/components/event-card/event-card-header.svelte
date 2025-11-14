@@ -39,9 +39,9 @@
 
   // Handle user click
   function handleUserClick(e: Event) {
-    if (rendererContext?.onUserClick) {
+    if (rendererContext?.renderer.onUserClick) {
       e.stopPropagation();
-      rendererContext.onUserClick(context.event.pubkey);
+      rendererContext.renderer.onUserClick(context.event.pubkey);
     }
   }
 </script>
@@ -60,7 +60,7 @@
     <div
       class={cn(
         'flex items-center gap-3 flex-1 min-w-0',
-        rendererContext?.onUserClick && 'cursor-pointer'
+        rendererContext?.renderer.onUserClick && 'cursor-pointer'
       )}
       onclick={handleUserClick}
       onkeydown={(e) => {
@@ -68,8 +68,8 @@
           handleUserClick(e);
         }
       }}
-      role={rendererContext?.onUserClick ? "button" : "presentation"}
-      tabindex={rendererContext?.onUserClick ? 0 : undefined}
+      role={rendererContext?.renderer.onUserClick ? "button" : "presentation"}
+      tabindex={rendererContext?.renderer.onUserClick ? 0 : undefined}
     >
       {#if showAvatar}
         <User.Avatar

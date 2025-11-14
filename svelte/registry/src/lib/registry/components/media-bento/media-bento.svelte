@@ -7,10 +7,10 @@
 	import { ViewOffIcon } from '@hugeicons/core-free-icons';
 
 	interface Props {
-		url: string | string[];
+		url: string[];
 		event?: NDKEvent;
 		ndk?: NDKSvelte;
-		onclick?: (url: string | string[]) => void;
+		onclick?: (urls: string[], clickedIndex: number) => void;
 		class?: string;
 	}
 
@@ -22,8 +22,8 @@
 	// Use media render builder for blur/NSFW logic
 	const mediaState = createMediaRender(() => ({ event }), ndk);
 
-	// Normalize to array
-	const urls = $derived(Array.isArray(url) ? url : [url]);
+	// url is always an array now
+	const urls = $derived(url);
 	const count = $derived(urls.length);
 
 	// Parse media items for lightbox
@@ -63,7 +63,7 @@
 	function openLightbox(index: number) {
 		// If onclick callback is provided, call it and skip lightbox
 		if (onclick) {
-			onclick(url);
+			onclick(urls, index);
 			return;
 		}
 		// Otherwise, open lightbox

@@ -11,7 +11,7 @@
     onEventClick?: (event: NDKEvent) => void;
     onHashtagClick?: (tag: string) => void;
     onLinkClick?: (url: string) => void;
-    onMediaClick?: (url: string | string[]) => void;
+    onMediaClick?: (urls: string[], clickedIndex: number) => void;
     class?: string;
   }
 

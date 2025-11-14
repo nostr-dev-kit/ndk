@@ -79,7 +79,7 @@
 		{:else if segment.type === 'media'}
 			{#if renderer.mediaComponent}
 				{@const Component = renderer.mediaComponent}
-				<Component url={segment.content} onclick={renderer.onMediaClick} />
+				<Component url={[segment.content]} onclick={renderer.onMediaClick} />
 			{:else}
 				{segment.content}
 			{/if}
@@ -102,11 +102,13 @@
 			{#if segment.data && Array.isArray(segment.data)}
 				{#if renderer.linkComponent}
 					{@const Component = renderer.linkComponent}
-					<Component url={segment.data} onclick={renderer.onLinkClick} />
+					{#each segment.data as url, j (j)}
+						<Component {url} onclick={renderer.onLinkClick} />
+					{/each}
 				{:else}
-						{#each segment.data as url, j (j)}
-								{url}
-						{/each}
+					{#each segment.data as url, j (j)}
+						{url}
+					{/each}
 				{/if}
 			{/if}
 		{/if}

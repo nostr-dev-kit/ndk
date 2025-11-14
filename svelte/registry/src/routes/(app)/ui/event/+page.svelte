@@ -125,7 +125,7 @@
       </ComponentAnatomy.Layer>
       <ComponentAnatomy.Layer id="time" label="Event.Time">
         <div class="flex items-center gap-4 p-4 border border-border rounded-lg bg-card max-w-md">
-          <label class="text-sm text-muted-foreground">Posted</label>
+          <span class="text-sm text-muted-foreground">Posted</span>
           <Event.Time event={mockReplyEvent} class="text-sm font-medium" />
         </div>
       </ComponentAnatomy.Layer>

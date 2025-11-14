@@ -54,8 +54,8 @@
     return renderer;
   });
 
-  // Set the custom renderer in context
-  setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer: customRenderer });
+  // Set the custom renderer in context with getter to track reactivity
+  setContext(CONTENT_RENDERER_CONTEXT_KEY, { get renderer() { return customRenderer; } });
 </script>
 
 {@render children()}

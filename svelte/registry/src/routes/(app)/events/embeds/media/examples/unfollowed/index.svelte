@@ -34,5 +34,5 @@
 	<div class="mb-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-lg text-sm">
 		👤 This example simulates content from an unfollowed user
 	</div>
-	<MediaBasic url={imageUrl} {event} />
+	<MediaBasic url={[imageUrl]} {event} />
 </div>

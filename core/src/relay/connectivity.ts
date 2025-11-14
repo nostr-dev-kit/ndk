@@ -346,11 +346,46 @@ export class NDKRelayConnectivity {
      *
      * @param event - The MessageEvent containing the received message data.
      */
+    /**
+     * Fast extraction of event ID from JSON string without parsing.
+     * Returns event ID if message is EVENT type, null otherwise.
+     * This optimization avoids expensive JSON.parse() for duplicate events.
+     */
+    private getEventIdFromMessage(msg: string): string | null {
+        // Fast check: msg[2] === 'E' && msg[3] === 'V' (EVENT message)
+        // Format: ["EVENT","subId",{...}]
+        if (msg.charCodeAt(2) !== 69 || msg.charCodeAt(3) !== 86) {
+            return null;
+        }
+        const idPos = msg.indexOf('"id":"');
+        if (idPos === -1) {
+            return null;
+        }
+        // Extract 64 chars after "id":"
+        // Event IDs are always 64 hex chars. If not valid, LRU lookup will fail
+        // and we'll parse normally - no harm done.
+        return msg.substring(idPos + 6, idPos + 70);
+    }
+
     private onMessage(event: MessageEvent): void {
         this.netDebug?.(event.data, this.ndkRelay, "recv");
 
         // Record any activity from relay
         this.keepalive?.recordActivity();
+
+        // Early exit for duplicate events before JSON.parse
+        // This optimization can save significant CPU on busy relays where
+        // the same events are broadcast to multiple subscriptions
+        const msg = event.data as string;
+        const eventId = this.getEventIdFromMessage(msg);
+        if (eventId && this.ndk) {
+            const seenRelays = this.ndk.subManager.seenEvents.get(eventId);
+            if (seenRelays && seenRelays.length > 0) {
+                // Already processed from any relay, just track this relay saw it
+                this.ndk.subManager.seenEvent(eventId, this.ndkRelay);
+                return;
+            }
+        }
 
         try {
             const data = JSON.parse(event.data);

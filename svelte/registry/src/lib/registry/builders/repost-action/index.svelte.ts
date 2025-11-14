@@ -1,6 +1,6 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface RepostStats {
     count: number;
@@ -41,7 +41,7 @@ export function createRepostAction(
     config: () => RepostActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
 
     // Subscribe to reposts and quotes for this event
     let repostsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);

@@ -3,7 +3,7 @@
   import type { EmojiData } from './createEmojiPicker.svelte.js';
   import { createEmojiPicker } from './createEmojiPicker.svelte.js';
   import { cn } from '../../utils/cn';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
   import List from './emoji-picker-list.svelte';
 
   interface Props {
@@ -20,7 +20,7 @@
 
   let { ndk: providedNdk, onSelect, defaults, columns = 6, class: className = '' }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
 
   // Hardcoded defaults - same as original emoji picker
   const hardcodedDefaults: EmojiData[] = [

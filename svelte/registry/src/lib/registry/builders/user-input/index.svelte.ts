@@ -1,7 +1,7 @@
 import type { NDKUser, NDKSubscription } from '@nostr-dev-kit/ndk';
 import { NDKRelaySet } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface UserInputResult {
     user: NDKUser;
@@ -55,7 +55,7 @@ export function createUserInput(
     selectUser: (user: NDKUser) => void;
     clear: () => void;
 } {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
 
     let results = $state<UserInputResult[]>([]);
     let selectedUser = $state<NDKUser | null>(null);

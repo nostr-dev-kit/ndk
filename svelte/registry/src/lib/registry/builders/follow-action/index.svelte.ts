@@ -1,7 +1,7 @@
 import type { NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKInterestList } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { resolveNDK } from "../resolve-ndk/index.svelte";
+import { getNDK } from "../../utils/ndk/index.svelte.js";
 
 export interface FollowActionConfig {
     target: NDKUser | string | undefined;
@@ -36,7 +36,7 @@ export function createFollowAction(
     config: () => FollowActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
 
     // Ensure NDKInterestList is monitored if we have sessions
     // This is needed for hashtag follows

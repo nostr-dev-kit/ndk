@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createRelayInfo } from '@nostr-dev-kit/svelte';
   import { RELAY_CONTEXT_KEY, type RelayContext } from './relay.context.js';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -26,7 +26,7 @@
     children
   }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
 
   // Fetch relay info (NIP-11) - reactive to relayUrl changes
   const relayInfo = createRelayInfo(() => ({ relayUrl }), ndk);

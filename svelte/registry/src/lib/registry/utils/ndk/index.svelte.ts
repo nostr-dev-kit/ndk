@@ -11,9 +11,9 @@ import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 export const NDK_CONTEXT_KEY = 'ndk';
 
 /**
- * Resolves NDK from explicit parameter or Svelte context
+ * Retrieves NDK instance from either explicit parameter or Svelte context
  *
- * This allows builders to work without explicitly passing NDK everywhere:
+ * This allows components and builders to work without explicitly passing NDK everywhere:
  * - If `ndk` parameter provided, use it (for testing, custom instances)
  * - Otherwise, try to get from Svelte context
  * - Throw helpful error if neither available
@@ -25,13 +25,13 @@ export const NDK_CONTEXT_KEY = 'ndk';
  * @example
  * ```ts
  * // Most common - NDK from context
- * const card = createEventCard(() => ({ event }));
+ * const ndk = getNDK();
  *
  * // Override with explicit NDK
- * const card = createEventCard(() => ({ event }), customNDK);
+ * const ndk = getNDK(customNDK);
  * ```
  */
-export function resolveNDK(providedNDK?: NDKSvelte): NDKSvelte {
+export function getNDK(providedNDK?: NDKSvelte): NDKSvelte {
     // Explicit NDK takes precedence
     if (providedNDK) return providedNDK;
 
@@ -48,7 +48,7 @@ export function resolveNDK(providedNDK?: NDKSvelte): NDKSvelte {
 
     throw new Error(
         `NDK not found. Either:
-1. Provide as second parameter: createBuilder(() => config, ndk)
+1. Provide as parameter: getNDK(ndk)
 2. Set in Svelte context: setContext('${NDK_CONTEXT_KEY}', ndk)`
     );
 }

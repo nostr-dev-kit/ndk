@@ -5,7 +5,7 @@
 
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 import { defaultContentRenderer } from '../../ui/content-renderer/index.js';
 
 export interface MediaRenderState {
@@ -63,7 +63,7 @@ export function createMediaRender(
 	config: () => MediaRenderConfig,
 	ndk?: NDKSvelte
 ): MediaRenderState {
-	const resolvedNDK = resolveNDK(ndk);
+	const resolvedNDK = getNDK(ndk);
 
 	const state = $state({
 		showMedia: false

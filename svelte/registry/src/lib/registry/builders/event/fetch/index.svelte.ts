@@ -1,6 +1,6 @@
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../../utils/ndk/index.svelte.js';
 
 export interface FetchEventState {
     event: NDKEvent | null;
@@ -47,7 +47,7 @@ export function createFetchEvent(
     config: () => FetchEventConfig,
     ndk?: NDKSvelte
 ): FetchEventState {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
     let fetchedEvent = $state<NDKEvent | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);

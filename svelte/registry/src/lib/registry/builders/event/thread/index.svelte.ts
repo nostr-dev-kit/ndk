@@ -2,7 +2,7 @@ import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { resolveNDK } from "../../resolve-ndk/index.svelte.js";
+import { getNDK } from "../../../utils/ndk/index.svelte.js";
 import type { ThreadView, ThreadNode } from "./types.js";
 import {
     findRootId,
@@ -70,7 +70,7 @@ export function createThreadView(
     config: () => ThreadViewConfig,
     ndk?: NDKSvelte
 ): ThreadView {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
     const { focusedEvent, maxDepth = 20, kinds = [NDKKind.Text, 9802] } = config();
     // Internal reactive state
     let _events = $state<ThreadNode[]>([]);

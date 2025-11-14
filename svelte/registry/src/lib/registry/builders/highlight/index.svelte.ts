@@ -6,7 +6,7 @@
 import type { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
 import { NDKArticle as NDKArticleClass } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface UrlMetadata {
     title?: string;
@@ -113,7 +113,7 @@ export function createHighlight(
     config: () => HighlightConfig,
     ndk?: NDKSvelte
 ): HighlightState {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
 
     const state = $state({
         content: '',

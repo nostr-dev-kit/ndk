@@ -3,7 +3,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../../ui/user';
 	import FollowButton from '../follow-button/follow-button.svelte';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { getNDK } from '../../utils/ndk';
 	import { cn } from '../../utils/cn';
 
 	interface Props {
@@ -26,7 +26,7 @@
 		class: className = ''
 	}: Props = $props();
 
-	const ndk = getNDKFromContext(providedNdk);
+	const ndk = getNDK(providedNdk);
 
 	// Get first imeta image
 	const imeta = $derived(image.imetas[0]);

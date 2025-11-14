@@ -1,5 +1,5 @@
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 import { NDKRelayFeedList, normalizeRelayUrl } from '@nostr-dev-kit/ndk';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
@@ -80,7 +80,7 @@ export function createBookmarkedRelayList(
     config: () => BookmarkedRelayListConfig,
     ndk?: NDKSvelte
 ): BookmarkedRelayListState {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
     // Merge current user into authors list if enabled
     const effectiveAuthors = $derived.by(() => {
         const { authors: authorsList, includeCurrentUser = true } = config();

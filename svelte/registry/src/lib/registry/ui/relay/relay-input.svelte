@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createRelayInfo } from '@nostr-dev-kit/svelte';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { getNDK } from '../../utils/ndk';
 	import Input from '../../ui/input.svelte';
 	import { cn } from '../../utils/cn.js';
 	import type { HTMLInputAttributes } from 'svelte/elements';
@@ -33,7 +33,7 @@
 		...rest
 	}: Props = $props();
 
-	const ndk = getNDKFromContext(providedNdk);
+	const ndk = getNDK(providedNdk);
 
 	let normalizedUrl = $state('');
 	let debounceTimer: NodeJS.Timeout | null = null;

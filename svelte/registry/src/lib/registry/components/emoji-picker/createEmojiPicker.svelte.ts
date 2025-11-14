@@ -1,6 +1,6 @@
-import { getContext, hasContext } from 'svelte';
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface EmojiData {
     /** The emoji character or :shortcode: */
@@ -18,26 +18,6 @@ export interface EmojiPickerConfig {
     from?: string[];
 }
 
-const NDK_CONTEXT_KEY = 'ndk';
-
-function resolveNDK(providedNDK?: NDKSvelte): NDKSvelte {
-    if (providedNDK) return providedNDK;
-
-    try {
-        if (hasContext(NDK_CONTEXT_KEY)) {
-            const contextNDK = getContext<NDKSvelte>(NDK_CONTEXT_KEY);
-            if (contextNDK) return contextNDK;
-        }
-    } catch {
-        // getContext called outside component initialization
-    }
-
-    throw new Error(
-        `NDK not found. Either:
-1. Provide as second parameter: createEmojiPicker(() => config, ndk)
-2. Set in Svelte context: setContext('${NDK_CONTEXT_KEY}', ndk)`
-    );
-}
 
 /**
  * Creates a reactive emoji picker state manager
@@ -70,7 +50,7 @@ function resolveNDK(providedNDK?: NDKSvelte): NDKSvelte {
  * ```
  */
 export function createEmojiPicker(config: () => EmojiPickerConfig, ndk?: NDKSvelte) {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
 
     const emojiEvents = resolvedNDK.$subscribe(() => {
         const cfg = config();

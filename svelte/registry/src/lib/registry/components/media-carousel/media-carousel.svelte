@@ -9,17 +9,17 @@
 	import { createMediaRender } from '$lib/registry/builders/media-render/index.svelte.js';
 
 	interface Props {
-		url: string | string[];
+		url: string[];
 		event?: NDKEvent;
 		ndk?: NDKSvelte;
-		onclick?: (url: string | string[]) => void;
+		onclick?: (urls: string[], clickedIndex: number) => void;
 		class?: string;
 	}
 
 	let { url, event, ndk, onclick, class: className = '' }: Props = $props();
 
-	// Normalize to array
-	const urls = $derived(Array.isArray(url) ? url : [url]);
+	// url is always an array now
+	const urls = $derived(url);
 	let currentIndex = $state(0);
 	let lightboxOpen = $state(false);
 	let lightboxIndex = $state(0);
@@ -59,7 +59,7 @@
 	const openLightbox = (index: number) => {
 		// If onclick callback is provided, call it and skip lightbox
 		if (onclick) {
-			onclick(url);
+			onclick(urls, index);
 			return;
 		}
 		// Otherwise, open lightbox

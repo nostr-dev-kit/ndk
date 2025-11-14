@@ -27,8 +27,8 @@
 
   const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 
-  // Use onclick prop if provided, otherwise fall back to context callback
-  const handleClick = $derived(onclick ?? rendererContext?.onEventClick);
+  // Use onclick prop if provided, otherwise fall back to renderer callback
+  const handleClick = $derived(onclick ?? rendererContext?.renderer.onEventClick);
 </script>
 
 <Event.ReplyIndicator

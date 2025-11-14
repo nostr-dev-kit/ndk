@@ -44,22 +44,22 @@ export type HashtagComponent = Component<{
 
 /**
  * Link component interface
- * Accepts either a single URL or an array of URLs (for grouped links)
+ * Accepts a single URL only
  */
 export type LinkComponent = Component<{
-	url: string | string[];
-	onclick?: (url: string | string[]) => void;
+	url: string;
+	onclick?: (url: string) => void;
 	class?: string;
 }>;
 
 /**
  * Media component interface
- * Accepts either a single URL or an array of URLs (for grouped media)
+ * Accepts an array of URLs with the ability to handle clicks with index information
  */
 export type MediaComponent = Component<{
-	url: string | string[];
+	url: string[];
 	type?: string;
-	onclick?: (url: string | string[]) => void;
+	onclick?: (urls: string[], clickedIndex: number) => void;
 	class?: string;
 }>;
 
@@ -69,8 +69,8 @@ export type MediaComponent = Component<{
 export type UserClickCallback = (pubkey: string) => void;
 export type EventClickCallback = (event: NDKEvent) => void;
 export type HashtagClickCallback = (tag: string) => void;
-export type LinkClickCallback = (url: string | string[]) => void;
-export type MediaClickCallback = (url: string | string[]) => void;
+export type LinkClickCallback = (url: string) => void;
+export type MediaClickCallback = (urls: string[], clickedIndex: number) => void;
 
 /**
  * ContentRenderer - Unified system for customizing content rendering

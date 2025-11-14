@@ -38,7 +38,7 @@
 
     onLinkClick?: (url: string) => void;
 
-    onMediaClick?: (url: string | string[]) => void;
+    onMediaClick?: (urls: string[], clickedIndex: number) => void;
 
     class?: string;
   }

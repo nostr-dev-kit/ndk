@@ -71,7 +71,7 @@
 		{:else if segment.type === 'media'}
 			{#if renderer.mediaComponent}
 				{@const Component = renderer.mediaComponent}
-				<Component url={segment.content} />
+				<Component url={[segment.content]} />
 			{:else}
 				{#if segment.content.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
 					<img src={segment.content} alt="" class="media-image" />

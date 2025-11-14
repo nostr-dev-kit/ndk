@@ -3,7 +3,7 @@
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './article.context.js';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -26,7 +26,7 @@
     children
   }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
 
   // Create reactive context with getters
   const context = {

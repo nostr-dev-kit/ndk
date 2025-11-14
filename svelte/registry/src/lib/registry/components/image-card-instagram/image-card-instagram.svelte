@@ -2,7 +2,7 @@
 	import type { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { User } from '../../ui/user';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { getNDK } from '../../utils/ndk';
 	import RepostButton from '../repost-button/repost-button.svelte';
 	import ReactionButton from '../reaction-button/reaction-button.svelte';
 	// import { ZapButton } from '../zap/index.js'; // TODO: Add ZapButton when available
@@ -25,7 +25,7 @@
 		class: className = ''
 	}: Props = $props();
 
-	const ndk = getNDKFromContext(providedNdk);
+	const ndk = getNDK(providedNdk);
 
 	// Get first imeta image
 	const imeta = $derived(image.imetas[0]);

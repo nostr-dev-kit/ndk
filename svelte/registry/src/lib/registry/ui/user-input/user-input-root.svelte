@@ -4,7 +4,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createUserInput } from '../../builders/user-input/index.svelte.js';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './user-input.context.js';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -27,7 +27,7 @@
     children
   }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
 
   // Local query state
   let query = $state('');

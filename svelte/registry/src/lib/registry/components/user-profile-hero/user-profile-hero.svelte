@@ -2,7 +2,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { User } from '../../ui/user';
   import FollowButtonPill from '../follow-button-pill/follow-button-pill.svelte';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
 
   interface Props {
     ndk?: NDKSvelte;
@@ -27,7 +27,7 @@
     class: className = ''
   }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
   const user = $derived(ndk.getUser({ pubkey }));
 </script>
 

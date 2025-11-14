@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import { getContext, setContext } from 'svelte';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
   import {
     defaultContentRenderer,
     ContentRenderer,
@@ -46,7 +46,7 @@
     class: className = ''
   }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
 
   // Get parent context
   const parentContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);

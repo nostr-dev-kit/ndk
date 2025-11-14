@@ -1,6 +1,6 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface EmojiData {
     /** The emoji character or :shortcode: */
@@ -49,7 +49,7 @@ export interface EmojiPickerConfig {
  * ```
  */
 export function createEmojiPicker(config: () => EmojiPickerConfig, ndk?: NDKSvelte) {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
 
     const emojiEvents = resolvedNDK.$subscribe(() => {
         const cfg = config();

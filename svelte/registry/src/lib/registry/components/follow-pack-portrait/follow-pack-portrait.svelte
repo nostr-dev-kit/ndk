@@ -4,7 +4,7 @@
 	import { FollowPack } from '../../ui/follow-pack';
 	import AvatarGroup from '../avatar-group/avatar-group.svelte';
 	import { User } from '../../ui/user';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { getNDK } from '../../utils/ndk';
 
 	interface Props {
 		ndk?: NDKSvelte;
@@ -15,7 +15,7 @@
 
 	let { ndk: providedNdk, followPack, onclick, class: className = '' }: Props = $props();
 
-	const ndk = getNDKFromContext(providedNdk);
+	const ndk = getNDK(providedNdk);
 </script>
 
 <FollowPack.Root {ndk} {followPack} {onclick}>

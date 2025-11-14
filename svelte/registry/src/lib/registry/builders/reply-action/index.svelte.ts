@@ -1,6 +1,6 @@
 import { NDKEvent, NDKKind, eventIsReply } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 export interface ReplyStats {
     count: number;
@@ -36,7 +36,7 @@ export function createReplyAction(
     config: () => ReplyActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
     // Subscribe to replies for this event
     let repliesSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 

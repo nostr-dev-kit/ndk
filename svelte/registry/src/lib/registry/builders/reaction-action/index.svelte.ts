@@ -1,6 +1,6 @@
 import { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "@nostr-dev-kit/svelte";
-import { resolveNDK } from '../resolve-ndk/index.svelte.js';
+import { getNDK } from '../../utils/ndk/index.svelte.js';
 import { SvelteMap } from "svelte/reactivity";
 
 export interface EmojiReaction {
@@ -64,7 +64,7 @@ export function createReactionAction(
     config: () => ReactionActionConfig,
     ndk?: NDKSvelte
 ) {
-    const resolvedNDK = resolveNDK(ndk);
+    const resolvedNDK = getNDK(ndk);
     // Subscribe to reactions for this event
     let reactionsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 

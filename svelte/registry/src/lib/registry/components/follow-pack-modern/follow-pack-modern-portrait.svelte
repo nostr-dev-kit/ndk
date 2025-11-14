@@ -3,7 +3,7 @@
 	import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
 	import { FollowPack } from '../../ui/follow-pack';
 	import { User } from '../../ui/user';
-	import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+	import { getNDK } from '../../utils/ndk';
 
 	interface Props {
 		ndk?: NDKSvelte;
@@ -14,7 +14,7 @@
 
 	let { ndk: providedNdk, followPack, onclick, class: className = '' }: Props = $props();
 
-	const ndk = getNDKFromContext(providedNdk);
+	const ndk = getNDK(providedNdk);
 </script>
 
 <FollowPack.Root {ndk} {followPack} {onclick}>

@@ -11,7 +11,7 @@
     LinkClickCallback,
     MediaClickCallback
   } from '../../ui/content-renderer/index.svelte.js';
-  import { getNDKFromContext } from '../../utils/ndk-context.svelte.js';
+  import { getNDK } from '../../utils/ndk';
   import { cn } from '../../utils/cn';
   import type { Snippet } from 'svelte';
 
@@ -53,7 +53,7 @@
     ...restProps
   }: Props = $props();
 
-  const ndk = getNDKFromContext(providedNdk);
+  const ndk = getNDK(providedNdk);
 
   // EventCardContext: structural data about the card
   const context: EventCardContext = {

@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { ndk as contextNdk } from '$lib/site/ndk.svelte';
 	import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte';
 	import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
-	import { getContext } from 'svelte';
 
 	interface Props {
 		tag: string;
@@ -13,7 +14,6 @@
 	let { ndk: ndkProp, tag, class: className = '' }: Props = $props();
 
 	// Get NDK from context if not provided as prop
-	const contextNdk = getContext<NDKSvelte>('ndk');
 	const ndk = ndkProp || contextNdk;
 
 	// Get interactive state from context

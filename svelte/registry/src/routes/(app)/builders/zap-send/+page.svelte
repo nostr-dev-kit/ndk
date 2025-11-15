@@ -1,12 +1,9 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { createZapSendAction } from '$lib/registry/builders/zap-send/index.svelte.js';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { User } from '$lib/registry/ui/user';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Sample event with splits for demo
   let sampleEvent = $state<NDKEvent | undefined>();
 

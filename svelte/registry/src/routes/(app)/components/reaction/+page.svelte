@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -27,9 +27,6 @@
     title: 'Reactions',
     description: 'Interactive reaction buttons and displays with emoji picker, avatars, and Slack-style layouts'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let sampleEvent = $state<NDKEvent | undefined>();
   let slackVariant = $state<'horizontal' | 'vertical'>('horizontal');
 

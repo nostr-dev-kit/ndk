@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import Mention from '$lib/registry/components/mention/mention.svelte';
 	import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
-	import { getContext } from 'svelte';
 
 	interface Props {
 		ndk: NDKSvelte;

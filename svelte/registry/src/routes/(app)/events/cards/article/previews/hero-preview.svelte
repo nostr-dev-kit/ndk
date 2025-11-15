@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
 	import { Motion } from 'svelte-motion';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	let article = $state<NDKArticle | undefined>();
 
 	$effect(() => {

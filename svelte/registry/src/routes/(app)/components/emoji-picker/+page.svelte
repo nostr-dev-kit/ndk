@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
 
@@ -23,9 +23,6 @@
     title: 'Emoji Picker',
     description: 'Emoji selection components with search, categories, and smart aggregation'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let selectedEmoji = $state<string>('');
 
   // Components section configuration

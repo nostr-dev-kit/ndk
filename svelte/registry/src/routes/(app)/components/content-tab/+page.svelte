@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -24,9 +24,6 @@
     title: 'Content Tab',
     description: 'Smart content type selector with automatic kind detection'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let user1 = $state<NDKUser | undefined>();
   let user2 = $state<NDKUser | undefined>();
   let user4 = $state<NDKUser | undefined>();

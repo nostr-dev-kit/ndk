@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -12,9 +12,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import Composition from './examples/styled-card/index.svelte';
   import CompositionRaw from './examples/styled-card/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Fetch a highlight for examples and anatomy
   const highlightFetcher = ndk.$subscribe(() => ({
     filters: [{ kinds: [NDKKind.Highlight], limit: 1 }]
@@ -179,8 +176,7 @@
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { getContext } from 'svelte';
-import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '$lib/registry/ui/highlight';
+          code={`import { HIGHLIGHT_CONTEXT_KEY, type HighlightContext } from '$lib/registry/ui/highlight';
 
 const context = getContext<HighlightContext>(HIGHLIGHT_CONTEXT_KEY);
 // Access: context.highlight, context.ndk, context.onclick`}

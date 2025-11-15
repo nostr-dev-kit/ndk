@@ -3,15 +3,22 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { EventCard } from '../event-card/index.js';
   import { cn } from '../../utils/cn';
+  import type {
+    UserClickCallback,
+    EventClickCallback,
+    HashtagClickCallback,
+    LinkClickCallback,
+    MediaClickCallback
+  } from '../../ui/content-renderer/index.svelte.js';
 
   interface Props {
     ndk: NDKSvelte;
     event: NDKEvent;
-    onUserClick?: (pubkey: string) => void;
-    onEventClick?: (event: NDKEvent) => void;
-    onHashtagClick?: (tag: string) => void;
-    onLinkClick?: (url: string) => void;
-    onMediaClick?: (urls: string[], clickedIndex: number) => void;
+    onUserClick?: UserClickCallback;
+    onEventClick?: EventClickCallback;
+    onHashtagClick?: HashtagClickCallback;
+    onLinkClick?: LinkClickCallback;
+    onMediaClick?: MediaClickCallback;
     class?: string;
   }
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { NDKFollowPack } from '@nostr-dev-kit/ndk';
+    import { NDKFollowPack } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -12,9 +12,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import WithImage from './examples/with-image/index.svelte';
   import WithImageRaw from './examples/with-image/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock follow pack for anatomy visualization
   const mockFollowPack = new NDKFollowPack(ndk, {
     id: 'mock-followpack-id',
@@ -324,8 +321,7 @@ const members: NDKUser[] = followPack.members;
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { getContext } from 'svelte';
-import { type FollowPackContext, FOLLOW_PACK_CONTEXT_KEY } from '$lib/registry/ui/follow-pack';
+          code={`import { type FollowPackContext, FOLLOW_PACK_CONTEXT_KEY } from '$lib/registry/ui/follow-pack';
 
 const context = getContext<FollowPackContext>(FOLLOW_PACK_CONTEXT_KEY);
 

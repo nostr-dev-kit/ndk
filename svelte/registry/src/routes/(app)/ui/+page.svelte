@@ -45,69 +45,6 @@
   </section>
 
   <section class="mb-12">
-    <h2 class="text-[1.75rem] font-bold mb-3">Architecture Layers</h2>
-    <p class="text-muted-foreground mb-8 text-[1.05rem]">
-      NDK Svelte provides three architectural layers. Each serves a specific purpose:
-    </p>
-
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-      <div class="p-6 border-2 border-primary rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
-            <HugeiconsIcon icon={PaintBoardIcon} size={20} strokeWidth={2} />
-          </div>
-          <span class="px-3 py-1 rounded-full bg-primary text-white text-xs font-semibold">You are here</span>
-        </div>
-        <h3 class="text-lg font-semibold mb-1">UI Primitives</h3>
-        <p class="font-mono text-sm text-primary mb-3">/ui/*</p>
-        <p class="text-muted-foreground text-sm leading-relaxed mb-4">
-          Headless, composable building blocks. Complete control over styling and layout.
-          Use these when you need maximum flexibility.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;Article.Root&gt;</code>
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;User.Avatar /&gt;</code>
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;Relay.Icon /&gt;</code>
-        </div>
-      </div>
-
-      <div class="p-6 border border-border rounded-xl bg-card">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
-            <HugeiconsIcon icon={CodeIcon} size={20} strokeWidth={2} />
-          </div>
-        </div>
-        <h3 class="text-lg font-semibold mb-1">Components</h3>
-        <p class="font-mono text-sm text-primary mb-3">/components/*</p>
-        <p class="text-muted-foreground text-sm leading-relaxed mb-4">
-          Styled, opinionated components for specific use cases. Good defaults with customization options.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;EventContent /&gt;</code>
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;NoteComposer /&gt;</code>
-        </div>
-      </div>
-
-      <div class="p-6 border border-border rounded-xl bg-card">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
-            <HugeiconsIcon icon={Layers01Icon} size={20} strokeWidth={2} />
-          </div>
-        </div>
-        <h3 class="text-lg font-semibold mb-1">Blocks</h3>
-        <p class="font-mono text-sm text-primary mb-3">/blocks/*</p>
-        <p class="text-muted-foreground text-sm leading-relaxed mb-4">
-          Pre-built, ready-to-use layouts composed from primitives. Drop-in solutions for common patterns.
-        </p>
-        <div class="flex flex-wrap gap-2">
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;ArticleCardHero /&gt;</code>
-          <code class="px-2 py-1 rounded bg-muted font-mono text-xs">&lt;UserCardPortrait /&gt;</code>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="mb-12">
     <h2 class="text-[1.75rem] font-bold mb-3">Available Primitives</h2>
     <p class="text-muted-foreground mb-8 text-[1.05rem]">
       Browse all available UI primitives. Each provides a set of composable components for building custom interfaces.
@@ -235,38 +172,6 @@
           <span class="px-2 py-0.5 rounded bg-muted text-muted-foreground text-xs font-medium">Standalone</span>
         </div>
       </a>
-    </div>
-  </section>
-
-  <section class="mb-12">
-    <h2 class="text-[1.75rem] font-bold mb-6">Getting Started</h2>
-    <div class="flex flex-col gap-6">
-      <div class="border border-border rounded-lg overflow-hidden">
-        <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
-          Import primitives from /ui
-        </div>
-        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">import &#123; Article &#125; from '$lib/registry/ui/article';
-import &#123; User &#125; from '$lib/registry/ui/user';</code></pre>
-      </div>
-
-      <div class="border border-border rounded-lg overflow-hidden">
-        <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
-          Compose your own layouts
-        </div>
-        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">&lt;Article.Root &#123;ndk&#125; &#123;article&#125;&gt;
-  &lt;Article.Image /&gt;
-  &lt;Article.Title /&gt;
-  &lt;Article.Summary /&gt;
-&lt;/Article.Root&gt;</code></pre>
-      </div>
-
-      <div class="border border-border rounded-lg overflow-hidden">
-        <div class="px-4 py-3 bg-muted border-b border-border text-sm font-medium text-muted-foreground">
-          Style with your own CSS
-        </div>
-        <pre class="m-0 p-4 bg-background overflow-x-auto"><code class="font-mono text-sm leading-relaxed">&lt;Article.Title class="text-3xl font-bold" /&gt;
-&lt;Article.Summary class="text-gray-600" /&gt;</code></pre>
-      </div>
     </div>
   </section>
 </div>

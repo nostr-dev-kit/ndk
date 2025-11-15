@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { Snippet } from 'svelte';
+    import type { Snippet } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -26,9 +26,6 @@
     description: 'Components for rendering plain text event content',
     apiDocs: []
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Real event loaded via EditProps
   let sampleEvent = $state<NDKEvent | undefined>();
 

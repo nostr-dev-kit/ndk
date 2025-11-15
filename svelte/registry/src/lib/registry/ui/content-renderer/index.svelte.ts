@@ -1,5 +1,5 @@
 import type { Component } from 'svelte';
-import type { NDKEvent } from '@nostr-dev-kit/ndk';
+import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 /**
@@ -28,7 +28,7 @@ export type HandlerInfo = {
 export type MentionComponent = Component<{
 	ndk: NDKSvelte;
 	bech32: string;
-	onclick?: (pubkey: string) => void;
+	onclick?: (user: NDKUser) => void;
 	class?: string;
 }>;
 
@@ -66,7 +66,7 @@ export type MediaComponent = Component<{
 /**
  * Entity click callback types
  */
-export type UserClickCallback = (pubkey: string) => void;
+export type UserClickCallback = (user: NDKUser) => void;
 export type EventClickCallback = (event: NDKEvent) => void;
 export type HashtagClickCallback = (tag: string) => void;
 export type LinkClickCallback = (url: string) => void;

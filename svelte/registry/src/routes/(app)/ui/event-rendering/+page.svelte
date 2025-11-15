@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { NDKEvent } from '@nostr-dev-kit/ndk';
+    import { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -25,9 +25,6 @@
   import VariantsRaw from './examples/variants/index.txt?raw';
   import PrioritySystem from './examples/priority-system/index.svelte';
   import PrioritySystemRaw from './examples/priority-system/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock event for anatomy visualization
   const mockEvent = new NDKEvent(ndk, {
     kind: 1,

@@ -67,9 +67,22 @@
   // Get parent ContentRendererContext if it exists
   const parentRendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 
-  // ContentRendererContext: just the renderer (callbacks live on the renderer now)
+  // Create a renderer that merges parent renderer with local callbacks
+  const renderer = $derived.by(() => {
+    const base = parentRendererContext?.renderer ?? {} as any;
+    return {
+      ...base,
+      onUserClick: onUserClick ?? base.onUserClick,
+      onEventClick: onEventClick ?? base.onEventClick,
+      onHashtagClick: onHashtagClick ?? base.onHashtagClick,
+      onLinkClick: onLinkClick ?? base.onLinkClick,
+      onMediaClick: onMediaClick ?? base.onMediaClick
+    };
+  });
+
+  // ContentRendererContext: provide the merged renderer
   setContext(CONTENT_RENDERER_CONTEXT_KEY, {
-    get renderer() { return parentRendererContext?.renderer ?? {} as any; }
+    get renderer() { return renderer; }
   });
 
   // Determine if we should show as clickable

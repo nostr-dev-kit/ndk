@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -11,9 +11,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import FullCard from './examples/full-card/index.svelte';
   import FullCardRaw from './examples/full-card/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock relay URL for anatomy visualization
   const mockRelayUrl = 'wss://relay.damus.io';
 
@@ -444,8 +441,7 @@ Headers: Accept: application/nostr+json`}
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { getContext } from 'svelte';
-import { type RelayContext } from '$lib/registry/ui/relay';
+          code={`import { type RelayContext } from '$lib/registry/ui/relay';
 
 const context = getContext<RelayContext>('relay');
 

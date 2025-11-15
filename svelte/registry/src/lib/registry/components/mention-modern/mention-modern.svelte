@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+  import { NDKUser } from '@nostr-dev-kit/ndk';
   import { createProfileFetcher } from '../../builders/profile/index.svelte.js';
   import { User } from '../../ui/user';
   import { Popover } from 'bits-ui';
@@ -18,7 +19,7 @@
 
     bech32: string;
 
-    onclick?: (pubkey: string) => void;
+    onclick?: (user: NDKUser) => void;
 
     class?: string;
   }
@@ -51,9 +52,9 @@
   }
 
   function handleClick(e: MouseEvent | KeyboardEvent) {
-    if (onclick && pubkey) {
+    if (onclick && profileFetcher.user) {
       e.stopPropagation();
-      onclick(pubkey);
+      onclick(profileFetcher.user);
     }
   }
 </script>

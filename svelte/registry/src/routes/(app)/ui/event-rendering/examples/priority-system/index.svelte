@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import EventContent from '$lib/registry/ui/event-content.svelte';
 	import { NDKEvent } from '@nostr-dev-kit/ndk';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	// Create mock components to demonstrate priority
 	const BasicMention = {
 		render: () => '<span class="text-blue-500">[basic mention]</span>'

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import { Highlight as HighlightCard } from '$lib/registry/ui/highlight';
   import HighlightCardFeed from '$lib/registry/components/highlight-card-feed/highlight-card-feed.svelte';
@@ -27,9 +27,6 @@
     title: 'Highlight Cards',
     description: 'Highlight card components for displaying text highlights (NIP-84)'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let highlights = $state<NDKHighlight[]>([]);
   let loading = $state(true);
   let highlight1 = $state<NDKHighlight | undefined>();

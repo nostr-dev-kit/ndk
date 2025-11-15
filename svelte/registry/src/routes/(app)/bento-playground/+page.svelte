@@ -1,14 +1,11 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { BentoGrid, BentoGridItem } from '$lib/site/components/bento';
   import ArticleBentoGridPreview from './previews/article-bento-grid-preview.svelte';
   import ArticleBentoHeroPreview from './previews/article-bento-hero-preview.svelte';
   import ArticleBentoFeedPreview from './previews/article-bento-feed-preview.svelte';
-  import ArticleBentoReadingPreview from './previews/article-bento-reading-preview.svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-</script>
+  import ArticleBentoReadingPreview from './previews/article-bento-reading-preview.svelte';</script>
 
 <div class="container mx-auto px-4 py-12">
   <div class="mb-12">

@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import MediaBento from './media-bento.example.svelte';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	// Create custom renderer with bento grid
 	const customRenderer = new ContentRenderer();
 	customRenderer.mediaComponent = MediaBento;

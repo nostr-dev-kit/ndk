@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -42,9 +42,6 @@
     title: 'User Cards',
     description: 'Beautiful user profile cards with multiple variants and styles'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // State for users
   let users = $state<NDKUser[]>([]);
   let user1 = $state<NDKUser | undefined>();

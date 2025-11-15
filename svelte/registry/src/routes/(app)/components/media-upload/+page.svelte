@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
@@ -22,9 +22,6 @@
     title: 'Media Upload',
     description: 'Media upload components for Nostr applications'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let buttonUploads = $state<MediaUploadResult[]>([]);
   let carouselUploads = $state<MediaUploadResult[]>([]);
 

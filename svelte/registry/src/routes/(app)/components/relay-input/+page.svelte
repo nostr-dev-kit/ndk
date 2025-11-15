@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
 
@@ -26,9 +26,6 @@
   const relayInputLabelCard = { ...relayInputCard, name: 'relay-input-label', title: 'Relay Input with Label', variant: 'label' };
   const relayInputErrorCard = { ...relayInputCard, name: 'relay-input-error', title: 'Relay Input with Error', variant: 'error' };
   const relayInputDisabledCard = { ...relayInputCard, name: 'relay-input-disabled', title: 'Relay Input Disabled', variant: 'disabled' };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let basicBlockUrl = $state<string>('');
   let labelBlockUrl = $state<string>('');
   let errorBlockUrl = $state<string>('');

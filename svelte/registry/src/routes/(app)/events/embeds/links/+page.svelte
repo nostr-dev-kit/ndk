@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
 	import Preview from '$lib/site/components/preview.svelte';
 
@@ -19,9 +19,6 @@
 
 	// Import example components (for rendering)
 	import CustomLinkHandler from './examples/custom-handler/index.svelte';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	const metadata = {
 		title: 'Link Components',
 		description: 'Link renderer components that auto-register with ContentRenderer to handle URLs in event content'

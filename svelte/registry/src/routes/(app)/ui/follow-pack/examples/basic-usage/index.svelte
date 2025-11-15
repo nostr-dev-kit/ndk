@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKFollowPack } from '@nostr-dev-kit/ndk';
   import { FollowPack } from '$lib/registry/ui/follow-pack';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Example follow pack (you would normally get this from an event)
   let followPack = $state<NDKFollowPack | null>(null);
 </script>

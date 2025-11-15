@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -12,9 +12,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import CustomItem from './examples/custom-item/index.svelte';
   import CustomItemRaw from './examples/custom-item/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock data for anatomy visualization
   const mockUser1 = new NDKUser({ npub: 'npub1mock1...' });
   mockUser1.profile = { name: 'Alice', nip05: 'alice@example.com' };
@@ -387,8 +384,7 @@ interface UserInputResult {
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { getContext } from 'svelte';
-import { type UserInputContext, USER_INPUT_CONTEXT_KEY } from '$lib/registry/ui/user-input';
+          code={`import { type UserInputContext, USER_INPUT_CONTEXT_KEY } from '$lib/registry/ui/user-input';
 
 const context = getContext<UserInputContext>(USER_INPUT_CONTEXT_KEY);
 

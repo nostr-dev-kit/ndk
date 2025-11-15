@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import MediaCarousel from './media-carousel.example.svelte';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	// Create custom renderer with carousel
 	const customRenderer = new ContentRenderer();
 	customRenderer.mediaComponent = MediaCarousel;

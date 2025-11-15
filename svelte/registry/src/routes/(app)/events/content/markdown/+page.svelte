@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
 	import { EditProps } from '$lib/site/components/edit-props';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
@@ -17,10 +17,7 @@
 
   // Get page data
   let { data } = $props();
-  const { metadata } = data;
-
-	const ndk = getContext<NDKSvelte>('ndk');
-	let article = $state<NDKArticle | undefined>();
+  const { metadata } = data;	let article = $state<NDKArticle | undefined>();
 	let testArticle = $state<NDKArticle | undefined>();
 
 	const articleContentBasicCardWithDescription = {

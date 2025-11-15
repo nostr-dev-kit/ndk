@@ -16,12 +16,9 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { Relay } from '$lib/registry/ui/relay';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-  const relayUrl = 'wss://relay.damus.io';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
+  import { Relay } from '$lib/registry/ui/relay';  const relayUrl = 'wss://relay.damus.io';
 </script>
 
 <Relay.Root {ndk} {relayUrl}>

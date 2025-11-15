@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import type { ShowcaseComponent } from '$lib/site/templates/types';
@@ -29,9 +29,6 @@
     title: 'Relay Cards',
     description: 'Relay card components for displaying relay information'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let exampleRelay = $state<string>('wss://relay.damus.io');
 
   // Sample relays for blocks - customizable via EditProps

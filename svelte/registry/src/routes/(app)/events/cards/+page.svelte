@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte';
 	import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
@@ -27,10 +27,7 @@
 
   // Get page data
   let { data } = $props();
-  const { metadata } = data;
-
-	const ndk = getContext<NDKSvelte>('ndk');
-	let sampleEvent = $state<NDKEvent | undefined>();
+  const { metadata } = data;	let sampleEvent = $state<NDKEvent | undefined>();
 
 	// State for controlling content visibility
 	let showClassicContent = $state(false);

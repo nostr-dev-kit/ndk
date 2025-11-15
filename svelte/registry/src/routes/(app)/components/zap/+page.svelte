@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -22,9 +22,6 @@
     title: 'Zap Buttons',
     description: 'Interactive zap buttons for sending Bitcoin tips via Lightning'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let sampleEvent = $state<NDKEvent | undefined>();
 
   $effect(() => {

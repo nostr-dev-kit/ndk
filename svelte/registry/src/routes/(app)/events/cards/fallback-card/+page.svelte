@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -22,9 +22,6 @@
     title: 'Fallback Event Card',
     description: 'Fallback card for unknown event kinds with NIP-31 alt tag and NIP-89 app handler discovery'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Create a sample unknown event (kind 9999)
   let eventKind = $state<number>(10002);
   let eventContent = $state<string>('This is a sample event of an unknown kind.');

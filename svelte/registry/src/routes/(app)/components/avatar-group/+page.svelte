@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import Preview from '$lib/site/components/preview.svelte';
@@ -27,9 +27,6 @@
     title: 'Avatar Group',
     description: 'Display a group of user avatars with overflow handling and smart ordering'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let maxAvatars = $state<string>("5");
 
   const examplePubkeys = [

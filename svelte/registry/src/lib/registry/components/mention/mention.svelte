@@ -6,7 +6,7 @@
 	export interface MentionProps {
 		ndk: NDKSvelte;
 		bech32: string;
-		onclick?: (pubkey: string) => void;
+		onclick?: (user: NDKUser) => void;
 		class?: string;
 	}
 
@@ -21,7 +21,7 @@
 	function handleClick(e: MouseEvent) {
 		if (onclick && user) {
 			e.preventDefault();
-			onclick(user.pubkey);
+			onclick(user);
 		}
 	}
 </script>

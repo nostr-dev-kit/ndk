@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Fetch a sample article
   const articleFetcher = ndk.$subscribe(() => ({
     filters: [{ kinds: [NDKKind.Article], limit: 1 }]

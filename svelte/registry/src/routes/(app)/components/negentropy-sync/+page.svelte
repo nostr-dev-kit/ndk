@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { Button } from "$lib/site/components/ui/button";
   import { createNegentropySync } from '$lib/registry/builders/negentropy-sync/index.js';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
@@ -27,9 +27,6 @@
     title: 'Negentropy Sync',
     description: 'Negentropy sync components with real-time progress tracking'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Demo state
   let filters = $state<NDKFilter[]>([{ kinds: [0, 1] }]);
   let relayUrls = $state<string[] | undefined>(['wss://relay.damus.io', 'wss://relay.nostr.band']);

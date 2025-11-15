@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
   import { Highlight } from '$lib/registry/ui/highlight';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   const highlightFetcher = ndk.$subscribe(() => ({
     filters: [{ kinds: [NDKKind.Highlight], limit: 1 }]
   }));

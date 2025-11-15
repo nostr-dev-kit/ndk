@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NotificationGroup } from '$lib/registry/builders/notification/index.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -12,9 +12,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import CustomLayout from './examples/custom-layout/index.svelte';
   import CustomLayoutRaw from './examples/custom-layout/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock notification for anatomy visualization
   const mockNotification: NotificationGroup = {
     targetEvent: { id: 'event123', content: 'Sample post content', kind: 1 } as any,

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -11,9 +11,6 @@
   import basicUsage from './examples/basic-usage/index.txt?raw';
   import withStyling from './examples/with-styling/index.txt?raw';
   import inModal from './examples/in-modal/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   function handleSuccess(signer: NDKPrivateKeySigner) {
     // Profile created successfully
   }

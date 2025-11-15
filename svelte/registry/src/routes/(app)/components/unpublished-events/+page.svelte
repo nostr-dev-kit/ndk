@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
 	import ComponentCard from '$lib/site/components/ComponentCard.svelte';
 
@@ -28,10 +28,7 @@
 		description: 'Track and retry events that failed to publish to Nostr relays',
 		showcaseTitle: 'Unpublished Events Management',
 		showcaseDescription: 'Components for managing events that failed to publish, with retry and discard actions'
-	};
-
-	const ndk = getContext<NDKSvelte>('ndk');
-</script>
+	};</script>
 
 <!-- Preview snippets for showcase -->
 {#snippet basicPreview()}

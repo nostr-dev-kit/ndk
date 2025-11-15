@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte, NDKSvelteWithSession } from '@nostr-dev-kit/svelte';
+	import type { NDKSvelteWithSession } from '@nostr-dev-kit/svelte';
+	import { ndk } from '$lib/site/ndk.svelte';
 	import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
 	import Preview from '$site-components/preview.svelte';
 	import SessionSwitcher from '$lib/registry/blocks/session-switcher.svelte';
@@ -12,7 +12,6 @@
 	import customActionsExample from './examples/custom-actions.example?raw';
 	import primitivesExample from './examples/primitives.example?raw';
 
-	const ndk = getContext<NDKSvelte>('ndk') as NDKSvelteWithSession;
 </script>
 
 <BlockPageLayout

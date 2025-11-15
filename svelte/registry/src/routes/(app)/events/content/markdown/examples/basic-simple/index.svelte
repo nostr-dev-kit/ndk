@@ -17,8 +17,8 @@
 -->
 
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
   import { ArticleContentBasic } from '$lib/registry/components/article-content-basic';
 
@@ -26,9 +26,6 @@
     article: NDKArticle;
   }
 
-  let { article }: Props = $props();
-
-  const ndk = getContext<NDKSvelte>('ndk');
-</script>
+  let { article }: Props = $props();</script>
 
 <ArticleContentBasic {ndk} {article} />

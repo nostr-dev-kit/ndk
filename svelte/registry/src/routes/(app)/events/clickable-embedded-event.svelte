@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { NDKArticle } from '@nostr-dev-kit/ndk';
 	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
 	import { createFetchEvent } from '@nostr-dev-kit/svelte';
-	import { getContext } from 'svelte';
-	import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
+		import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
 	import EventCardInline from '$lib/registry/components/event-card-inline/event-card-inline.svelte';
 	import EventCardCompact from '$lib/registry/components/event-card-compact/event-card-compact.svelte';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';

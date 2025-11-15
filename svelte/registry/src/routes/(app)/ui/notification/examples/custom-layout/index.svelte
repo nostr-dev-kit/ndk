@@ -16,14 +16,11 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import { createNotificationFeed } from '$lib/registry/builders/notification/index.svelte';
 	import * as NotificationItem from '$lib/registry/ui/notification';
 	import type { ActionInfo } from '$lib/registry/ui/notification';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	const targetPubkey = '6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93';
 
 	const feed = createNotificationFeed(

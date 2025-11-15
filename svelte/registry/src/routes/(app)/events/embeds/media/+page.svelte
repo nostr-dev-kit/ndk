@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
 	import ComponentCard from '$lib/site/components/ComponentCard.svelte';
@@ -24,9 +24,6 @@
 	import CarouselCode from './examples/carousel/index.txt?raw';
 	import BentoExample from './examples/bento-grid/index.svelte';
 	import BentoCode from './examples/bento-grid/index.txt?raw';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	let sampleEvent = $state<NDKEvent | undefined>();
 
 	const metadata = {

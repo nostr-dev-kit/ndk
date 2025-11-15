@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
 	import Preview from '$site-components/preview.svelte';
 	import { EditProps } from '$lib/site/components/edit-props';
@@ -16,9 +16,6 @@
 		title: 'Notification System',
 		description: 'Real-time notification feed with builders and UI primitives'
 	};
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	// Default to Gigi's pubkey for demo purposes
 	let targetPubkey = $state(
 		'6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93'

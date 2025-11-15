@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -11,9 +11,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import Carousel from './examples/carousel/index.svelte';
   import CarouselRaw from './examples/carousel/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock upload data for anatomy visualization
   let mockUploads = $state([
     { url: 'https://example.com/image1.jpg', file: new File([], 'image1.jpg'), sha256: 'mock-hash-1', mimeType: 'image/jpeg' },

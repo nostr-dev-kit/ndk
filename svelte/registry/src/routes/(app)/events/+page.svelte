@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
 	import InteractiveDemo from './interactive-demo.svelte';
@@ -9,9 +9,6 @@
   // Get page data
   let { data } = $props();
   const { metadata } = data;
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	let sampleEvent = $state<NDKEvent | undefined>();
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { NDKArticle } from '@nostr-dev-kit/ndk';
+    import { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -12,9 +12,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import FullCard from './examples/full-card/index.svelte';
   import FullCardRaw from './examples/full-card/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock article for anatomy visualization
   const mockArticle = new NDKArticle(ndk, {
     id: 'mock-article-id',
@@ -390,8 +387,7 @@ import { User } from '$lib/registry/ui/user';
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { getContext } from 'svelte';
-import { type ArticleContext, ARTICLE_CONTEXT_KEY } from '$lib/registry/ui/article';
+          code={`import { type ArticleContext, ARTICLE_CONTEXT_KEY } from '$lib/registry/ui/article';
 
 const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY);
 

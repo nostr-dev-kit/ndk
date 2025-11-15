@@ -17,11 +17,8 @@
 -->
 <script lang="ts">
   import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-</script>
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';</script>
 
 <LoginCompact
   {ndk}

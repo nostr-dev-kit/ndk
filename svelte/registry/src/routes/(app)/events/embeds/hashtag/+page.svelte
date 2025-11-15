@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -30,9 +30,6 @@
     title: 'Hashtags',
     description: 'Inline hashtag displays and cards with statistics, contributors, and follow functionality'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let sampleEvent = $state<NDKEvent | undefined>();
   let tag = $state<string>('nostr');
 

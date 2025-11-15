@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import { NDKImage } from '@nostr-dev-kit/ndk';
+		import { NDKImage } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import ImageCardBase from '$lib/registry/components/image-card-base/image-card-base.svelte';
 	import ImageCardInstagram from '$lib/registry/components/image-card-instagram/image-card-instagram.svelte';
 	import ImageCardHero from '$lib/registry/components/image-card-hero/image-card-hero.svelte';
@@ -22,10 +22,7 @@
   const metadata = {
     title: 'Image Cards',
     description: 'Image card components for displaying image events (NIP-94)'
-  };
-
-	const ndk = getContext<NDKSvelte>('ndk');
-	let sampleImage = $state<NDKImage | undefined>();
+  };	let sampleImage = $state<NDKImage | undefined>();
 
 	$effect(() => {
 		(async () => {

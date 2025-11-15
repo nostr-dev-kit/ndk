@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import { Article } from '$lib/registry/ui/article';
 	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
@@ -26,9 +26,6 @@
   // Get page data
   let { data } = $props();
   const { metadata } = data;
-
-	const ndk = getContext<NDKSvelte>('ndk');
-
 	let articles = $state<NDKArticle[]>([]);
 	let loading = $state(true);
 	let article1 = $state<NDKArticle | undefined>();

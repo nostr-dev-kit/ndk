@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -11,9 +11,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import CustomEmoji from './examples/custom-emoji/index.svelte';
   import CustomEmojiRaw from './examples/custom-emoji/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Page metadata
   const metadata = {
     title: 'Reaction',

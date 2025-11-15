@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -17,9 +17,6 @@
   import CompositionRaw from './examples/profile-card/index.txt?raw';
   import Nip05Verification from './examples/nip05-verification/index.svelte';
   import Nip05VerificationRaw from './examples/nip05-verification/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let user = $state<NDKUser | undefined>();
 
   const userPubkey = $derived(user?.pubkey || 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
@@ -330,8 +327,7 @@
       <div class="my-4 bg-muted rounded-lg overflow-hidden">
         <CodeBlock
           lang="typescript"
-          code={`import { getContext } from 'svelte';
-import { USER_CONTEXT_KEY, type UserContext } from '$lib/registry/ui/user';
+          code={`import { USER_CONTEXT_KEY, type UserContext } from '$lib/registry/ui/user';
 
 const context = getContext<UserContext>(USER_CONTEXT_KEY);
 // Access: context.profile, context.ndk, context.user`}

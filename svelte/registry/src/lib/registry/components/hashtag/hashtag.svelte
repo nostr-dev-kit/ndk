@@ -16,7 +16,7 @@
 
 <span
 	data-hashtag=""
-	class="text-primary cursor-pointer hover:underline {className}"
+	class="text-foreground cursor-pointer hover:underline {className}"
 	role="button"
 	tabindex="0"
 	onclick={handleClick}

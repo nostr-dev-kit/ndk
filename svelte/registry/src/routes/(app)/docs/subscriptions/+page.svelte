@@ -2,8 +2,8 @@
 	import Preview from '$site-components/preview.svelte';
 	import CodeBlock from '$site-components/CodeBlock.svelte';
 	import PageTitle from '$site-components/PageTitle.svelte';
-	import { getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
 	import "$lib/site/styles/docs-page.css";
 
 	// Import demo
@@ -18,10 +18,7 @@
 	import sortUniqueAuthors from './examples/sort-unique-authors.example?raw';
 	import repostedContent from './examples/reposted-content.example?raw';
 	import commentedArticles from './examples/commented-articles.example?raw';
-	import popularReactions from './examples/popular-reactions.example?raw';
-
-	const ndk = getContext<NDKSvelte>('ndk');
-</script>
+	import popularReactions from './examples/popular-reactions.example?raw';</script>
 
 <PageTitle
 	title="Meta Subscriptions"

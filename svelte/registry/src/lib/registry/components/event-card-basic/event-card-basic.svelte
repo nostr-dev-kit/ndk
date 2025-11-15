@@ -14,6 +14,13 @@
   import type { ReplyIntentCallback } from '../../builders/reply-action/index.js';
   import type { QuoteIntentCallback } from '../../builders/repost-action/index.js';
   import type { ZapIntentCallback } from '../../builders/zap-action/index.js';
+  import type {
+    UserClickCallback,
+    EventClickCallback,
+    HashtagClickCallback,
+    LinkClickCallback,
+    MediaClickCallback
+  } from '../../ui/content-renderer/index.svelte.js';
 
   interface Props {
     ndk: NDKSvelte;
@@ -30,15 +37,15 @@
 
     onZapIntent?: ZapIntentCallback;
 
-    onUserClick?: (pubkey: string) => void;
+    onUserClick?: UserClickCallback;
 
-    onEventClick?: (event: NDKEvent) => void;
+    onEventClick?: EventClickCallback;
 
-    onHashtagClick?: (tag: string) => void;
+    onHashtagClick?: HashtagClickCallback;
 
-    onLinkClick?: (url: string) => void;
+    onLinkClick?: LinkClickCallback;
 
-    onMediaClick?: (urls: string[], clickedIndex: number) => void;
+    onMediaClick?: MediaClickCallback;
 
     class?: string;
   }

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
+    import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import * as ComponentAnatomy from '$site-components/component-anatomy';
@@ -31,9 +31,6 @@
     title: 'Follow Packs',
     description: 'Follow pack components for curated user collections'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let followPacks = $state<NDKFollowPack[]>([]);
   let pack1 = $state<NDKFollowPack | undefined>();
   let pack2 = $state<NDKFollowPack | undefined>();

@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { createBookmarkedRelayList } from '$lib/registry/builders/relay/bookmarks.svelte.js';
-  import { Relay } from '$lib/registry/ui/relay';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-  const relayUrl = 'wss://relay.damus.io';
+  import { Relay } from '$lib/registry/ui/relay';  const relayUrl = 'wss://relay.damus.io';
 
   // Create bookmarked relay list (includes current user)
   const bookmarks = createBookmarkedRelayList(() => ({

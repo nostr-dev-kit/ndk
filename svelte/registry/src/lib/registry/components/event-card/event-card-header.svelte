@@ -39,9 +39,9 @@
 
   // Handle user click
   function handleUserClick(e: Event) {
-    if (rendererContext?.renderer.onUserClick) {
+    if (rendererContext?.renderer.onUserClick && context.event.author) {
       e.stopPropagation();
-      rendererContext.renderer.onUserClick(context.event.pubkey);
+      rendererContext.renderer.onUserClick(context.event.author);
     }
   }
 </script>

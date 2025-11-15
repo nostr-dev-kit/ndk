@@ -21,7 +21,6 @@
 	}
 </script>
 
-<div class={cn('flex flex-col gap-2 my-2', className)}>
 	{#each urls as linkUrl, index (index)}
 		<a
 			href={linkUrl}
@@ -34,4 +33,3 @@
 			<span class="text-sm">{linkUrl}</span>
 		</a>
 	{/each}
-</div>

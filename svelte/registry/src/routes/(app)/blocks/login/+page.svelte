@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
   import Preview from '$site-components/preview.svelte';
@@ -11,10 +11,7 @@
   import withExtension from './examples/with-extension/index.txt?raw';
   import basicFlow from './examples/basic-flow/index.txt?raw';
   import withStyling from './examples/with-styling/index.txt?raw';
-  import inModal from './examples/in-modal/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-</script>
+  import inModal from './examples/in-modal/index.txt?raw';</script>
 
 <BlockPageLayout
   title="Login"

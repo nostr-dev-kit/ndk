@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import PageTitle from '$lib/site/components/PageTitle.svelte';
   import CodeBlock from '$lib/site/components/CodeBlock.svelte';
@@ -55,9 +55,6 @@
   // Get page data
   let { data } = $props();
   const { metadata } = data;
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Interactive selections with multiple options
   let selectedMention = $state<'none' | 'basic' | 'modern'>('none');
   let selectedHashtag = $state<'none' | 'basic' | 'modern'>('none');
@@ -136,8 +133,8 @@
     renderer.blockNsfw = blockNsfw;
 
     // Set up callbacks for demonstration
-    renderer.onUserClick = (pubkey) => {
-      toast.info(`User clicked: ${pubkey.slice(0, 16)}...`);
+    renderer.onUserClick = (user) => {
+      toast.info(`User clicked: ${user.pubkey.slice(0, 16)}...`);
     };
     renderer.onEventClick = (event) => {
       toast.info(`Event kind ${event.kind} clicked`);
@@ -224,18 +221,11 @@
       imports.push("", "// Configure NSFW blocking", "defaultContentRenderer.blockNsfw = false;");
     }
 
-    // Add toast imports
-    imports.push(
-      "",
-      "import { toast, Toaster } from 'svelte-sonner';"
-    );
-
-    // Add callback handlers
     imports.push(
       "",
       "// Set up click handlers for interactive content",
-      "defaultContentRenderer.onUserClick = (pubkey) => {",
-      "  // Example: goto(`/user/${pubkey}`)",
+      "defaultContentRenderer.onUserClick = (user) => {",
+      "  // Example: goto(`/user/${user.pubkey}`)",
       "};",
       "",
       "defaultContentRenderer.onEventClick = (event) => {",
@@ -260,8 +250,6 @@
       '',
       '{@render children()}',
       '',
-      '<!-- Add the Toaster component to show toast notifications -->',
-      '<Toaster position="bottom-right" />'
     ].join('\n');
 
     return htmlContent;
@@ -447,7 +435,7 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
       <div class="md:col-span-4 space-y-4">
         <Preview code={generatedCode} previewAreaClass="min-h-[400px]">
           <div class="w-full max-w-3xl bg-card border border-border rounded-lg p-4">
-            <EventContent {ndk} event={sampleEvent} renderer={dynamicRenderer} />
+            <EventContent {ndk} event={sampleEvent} renderer={dynamicRenderer} class="text-muted-foreground" />
           </div>
         </Preview>
 
@@ -461,86 +449,6 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- How Auto-Registration Works -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold mb-4">How Auto-Registration Works</h2>
-    <p class="text-muted-foreground mb-6">
-      When you import a component, it automatically registers itself with the <code class="text-xs bg-muted px-2 py-1 rounded">defaultContentRenderer</code>
-      at a specific priority level. No manual configuration needed!
-    </p>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <h3 class="text-lg font-semibold mb-3">✅ Auto-Registration (Recommended)</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          Simply import the component - it registers itself automatically.
-        </p>
-        <pre class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>// In your +layout.svelte
-import '$lib/registry/components/mention';
-import '$lib/registry/components/hashtag';
-
-// Done! They're now active for all child components</code></pre>
-      </div>
-
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <h3 class="text-lg font-semibold mb-3">⚙️ Manual Configuration</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          For custom renderers or multiple instances, configure manually.
-        </p>
-        <pre class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>// Create a custom renderer
-const renderer = new ContentRenderer();
-renderer.setMentionComponent(Mention, 1);
-renderer.setHashtagComponent(Hashtag, 1);</code></pre>
-      </div>
-    </div>
-  </section>
-
-  <!-- Common Options -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold mb-4">Common Options & Callbacks</h2>
-    <p class="text-muted-foreground mb-6">
-      Content renderer components support various options and callbacks. Here are the most commonly used:
-    </p>
-
-    <div class="space-y-4">
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <h3 class="text-lg font-semibold mb-3">NSFW Content Blocking</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          Automatically blur NSFW content (enabled by default). Users can click to reveal.
-        </p>
-        <pre class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>defaultContentRenderer.blockNsfw = true;  // Default
-defaultContentRenderer.blockNsfw = false; // Disable</code></pre>
-      </div>
-
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <h3 class="text-lg font-semibold mb-3">Hashtag Click Handler</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          Add custom behavior when users click hashtags (e.g., navigation, search).
-        </p>
-        <pre class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>{'// In the Hashtag component\n<Hashtag\n  {ndk}\n  tag="nostr"\n  onclick={(tag) => goto(`/search?q=${tag}`)}\n/>'}</code></pre>
-      </div>
-
-      <div class="p-6 border border-border rounded-lg bg-card">
-        <h3 class="text-lg font-semibold mb-3">Custom Styling</h3>
-        <p class="text-sm text-muted-foreground mb-4">
-          All renderer components accept a <code class="text-xs bg-muted px-1 rounded">class</code> prop for custom styling.
-        </p>
-        <pre class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>{'// Components accept class for styling\n<Mention\n  {ndk}\n  bech32="npub1..."\n  class="text-primary hover:underline"\n/>'}</code></pre>
-      </div>
-    </div>
-
-    <div class="mt-6 p-4 border-l-4 border-primary bg-muted/50 rounded-r-lg">
-      <p class="text-sm text-muted-foreground">
-        <strong>📚 Component-Specific Options:</strong> Each component has its own set of props and callbacks.
-        Visit the component-specific documentation pages for detailed API references:
-        <a href="/events/embeds/mention" class="text-primary hover:underline ml-1">Mentions</a>,
-        <a href="/events/embeds/hashtag" class="text-primary hover:underline ml-1">Hashtags</a>,
-        <a href="/events/embeds/links" class="text-primary hover:underline ml-1">Links</a>,
-        <a href="/events/embeds/media" class="text-primary hover:underline ml-1">Media</a>
-      </p>
     </div>
   </section>
 

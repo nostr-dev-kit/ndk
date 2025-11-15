@@ -16,13 +16,10 @@
   following the simplification rules above.
 -->
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import type { MediaUploadResult } from '$lib/registry/ui/media-upload';
   import { MediaUpload } from '$lib/registry/ui/media-upload';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let uploads = $state<MediaUploadResult[]>([]);
 </script>
 

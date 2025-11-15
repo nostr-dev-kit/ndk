@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
@@ -21,9 +21,6 @@
     title: 'Mute',
     description: 'Mute buttons and components for Nostr users'
   };
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let sampleUser = $state<NDKUser | undefined>();
 
   // Components section configuration

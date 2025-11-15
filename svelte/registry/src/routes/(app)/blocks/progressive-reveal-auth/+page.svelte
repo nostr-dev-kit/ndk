@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import BlockPageLayout from '$site-components/BlockPageLayout.svelte';
   import BlockPreview from '$site-components/BlockPreview.svelte';
   import ProgressiveRevealAuth from '$lib/registry/blocks/progressive-reveal-auth/progressive-reveal-auth.svelte';
   import { Dialog } from 'bits-ui';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let dialogOpen = $state(false);
 
   // Import all files from the progressive-reveal-auth directory

@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { getContext, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
   import { Motion } from 'svelte-motion';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   let articles = $state<NDKArticle[]>([]);
   let scrollContainer = $state<HTMLDivElement>();
   let containerElement = $state<HTMLDivElement>();

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { NDKUser } from '@nostr-dev-kit/ndk';
+    import { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { ndk } from '$lib/site/ndk.svelte';
   import UIPrimitivePageTemplate from '$lib/site/templates/UIPrimitivePageTemplate.svelte';
   import Preview from '$site-components/preview.svelte';
   import CodeBlock from '$site-components/CodeBlock.svelte';
@@ -12,9 +12,6 @@
   import BasicRaw from './examples/basic-usage/index.txt?raw';
   import Styled from './examples/styled/index.svelte';
   import StyledRaw from './examples/styled/index.txt?raw';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
   // Mock zap for anatomy visualization
   const mockZap = {
     amount: 1000,

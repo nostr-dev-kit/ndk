@@ -150,7 +150,7 @@
     dynamicRenderer = renderer;
   });
 
-  // Component name mapping
+  // Component name mapping (for import paths)
   const componentPaths = {
     mention: { basic: 'mention', modern: 'mention-modern' },
     hashtag: { basic: 'hashtag', modern: 'hashtag-modern' },
@@ -260,35 +260,35 @@
   const selectedComponents = $derived.by(() => {
     const components: string[] = [];
 
-    // Add inline content handlers
+    // Add inline content handlers (with components/ prefix for jsrepo)
     if (selectedMention !== 'none') {
-      components.push(componentPaths.mention[selectedMention]);
+      components.push(`components/${componentPaths.mention[selectedMention]}`);
     }
     if (selectedHashtag !== 'none') {
-      components.push(componentPaths.hashtag[selectedHashtag]);
+      components.push(`components/${componentPaths.hashtag[selectedHashtag]}`);
     }
     if (selectedLink !== 'none') {
-      components.push(componentPaths.link[selectedLink]);
+      components.push(`components/${componentPaths.link[selectedLink]}`);
     }
     if (selectedMedia !== 'none') {
-      components.push(componentPaths.media[selectedMedia]);
+      components.push(`components/${componentPaths.media[selectedMedia]}`);
     }
 
     // Add event cards
     if (selectedNoteCard !== 'none') {
-      components.push(selectedNoteCard);
+      components.push(`components/${selectedNoteCard}`);
     }
     if (selectedArticleCard !== 'none') {
-      components.push(selectedArticleCard);
+      components.push(`components/${selectedArticleCard}`);
     }
     if (selectedHighlightCard !== 'none') {
-      components.push(selectedHighlightCard);
+      components.push(`components/${selectedHighlightCard}`);
     }
     if (selectedImageCard !== 'none') {
-      components.push(selectedImageCard);
+      components.push(`components/${selectedImageCard}`);
     }
     if (enableGenericFallback) {
-      components.push('event-card-fallback');
+      components.push('components/event-card-fallback');
     }
 
     return components;

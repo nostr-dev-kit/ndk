@@ -4,7 +4,7 @@
   "category": "media",
   "variant": "basic",
   "oneLiner": "Basic media rendering with NSFW and follows filtering",
-  "command": "npx jsrepo add components/media-basic",
+  "registryName": "components/media-basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

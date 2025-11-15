@@ -3,7 +3,7 @@
   "title": "Get NDK Utility",
   "oneLiner": "Helper function to retrieve NDK instance from explicit parameter or Svelte context",
   "importPath": "import { getNDK } from '$lib/registry/utils/ndk';",
-  "command": "npx jsrepo add utils/ndk",
+  "registryName": "utils/ndk",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "svelte"

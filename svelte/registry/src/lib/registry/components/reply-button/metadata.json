@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "basic",
   "oneLiner": "A basic reply button with count display",
-  "command": "npx jsrepo add reply-button",
+  "registryName": "reply-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

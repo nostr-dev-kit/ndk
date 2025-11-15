@@ -3,7 +3,7 @@
   "title": "Reaction Action Builder",
   "oneLiner": "Reactive state manager for emoji reactions on Nostr events with NIP-30 custom emoji support",
   "importPath": "import { createReactionAction } from '$lib/registry/builders/reaction-action';",
-  "command": "npx jsrepo add builders/reaction-action",
+  "registryName": "builders/reaction-action",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "avatars",
   "variant": "avatar-group",
   "oneLiner": "Display a group of user avatars with intelligent follow filtering and overflow handling",
-  "command": "npx jsrepo add avatar-group",
+  "registryName": "avatar-group",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

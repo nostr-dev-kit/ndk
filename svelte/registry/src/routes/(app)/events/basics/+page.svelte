@@ -45,6 +45,7 @@
   import EventContent from '$lib/registry/ui/event-content.svelte';
   import { toast } from 'svelte-sonner';
   import { Toaster } from 'svelte-sonner';
+  import PMCommand from '$lib/site/components/ui/pm-command/pm-command.svelte';
 
   // Import example code
   import basicSetupCode from './examples/basic-setup/index.txt?raw';
@@ -255,6 +256,44 @@
     return htmlContent;
   });
 
+  // Generate list of selected components for installation command
+  const selectedComponents = $derived.by(() => {
+    const components: string[] = [];
+
+    // Add inline content handlers
+    if (selectedMention !== 'none') {
+      components.push(componentPaths.mention[selectedMention]);
+    }
+    if (selectedHashtag !== 'none') {
+      components.push(componentPaths.hashtag[selectedHashtag]);
+    }
+    if (selectedLink !== 'none') {
+      components.push(componentPaths.link[selectedLink]);
+    }
+    if (selectedMedia !== 'none') {
+      components.push(componentPaths.media[selectedMedia]);
+    }
+
+    // Add event cards
+    if (selectedNoteCard !== 'none') {
+      components.push(selectedNoteCard);
+    }
+    if (selectedArticleCard !== 'none') {
+      components.push(selectedArticleCard);
+    }
+    if (selectedHighlightCard !== 'none') {
+      components.push(selectedHighlightCard);
+    }
+    if (selectedImageCard !== 'none') {
+      components.push(selectedImageCard);
+    }
+    if (enableGenericFallback) {
+      components.push('event-card-fallback');
+    }
+
+    return components;
+  });
+
   // Create a rich sample event for demonstration
   const sampleEvent = $derived.by(() => {
     const event = new NDKEvent(ndk);
@@ -438,6 +477,14 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
             <EventContent {ndk} event={sampleEvent} renderer={dynamicRenderer} class="text-muted-foreground" />
           </div>
         </Preview>
+
+        <!-- Installation Command -->
+        {#if selectedComponents.length > 0}
+          <div class="space-y-2">
+            <h4 class="text-sm font-semibold">Install Selected Components</h4>
+            <PMCommand command="execute" args={['jsrepo', 'add', ...selectedComponents]} />
+          </div>
+        {/if}
 
         <!-- Tips -->
         <div class="flex flex-col gap-2">

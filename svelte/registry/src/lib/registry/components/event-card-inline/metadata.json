@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "inline",
   "oneLiner": "A compact horizontal event card for inline embedding in content",
-  "command": "npx jsrepo add event-card-inline",
+  "registryName": "event-card-inline",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -135,7 +135,7 @@
         name: 'plain-text',
         title: 'Plain Text Content',
         description: 'Toggle between raw text and enhanced rendering',
-        command: 'npx jsrepo add ui/event-content',
+        registryName: 'ui/event-content',
         apiDoc: {
           name: 'EventContent',
           description: 'Renders event content with optional plain text mode',

@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "neon",
   "oneLiner": "A futuristic neon-styled user card",
-  "command": "npx jsrepo add user-card-neon",
+  "registryName": "user-card-neon",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

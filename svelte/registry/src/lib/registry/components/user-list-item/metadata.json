@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "list-item",
   "oneLiner": "A list-item display for user content",
-  "command": "npx jsrepo add user-list-item",
+  "registryName": "user-list-item",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

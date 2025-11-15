@@ -5,7 +5,7 @@
   "subcategory": "upload",
   "variant": "button",
   "oneLiner": "A button uploader for media content",
-  "command": "npx jsrepo add components/media-upload-button",
+  "registryName": "components/media-upload-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

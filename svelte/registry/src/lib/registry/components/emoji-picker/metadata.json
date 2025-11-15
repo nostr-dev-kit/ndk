@@ -5,7 +5,7 @@
   "subcategory": "pickers",
   "variant": "emoji-picker",
   "oneLiner": "Emoji selection component with search and categories",
-  "command": "npx jsrepo add emoji-picker",
+  "registryName": "emoji-picker",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

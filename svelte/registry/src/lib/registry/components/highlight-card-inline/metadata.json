@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "inline",
   "oneLiner": "A inline card for highlight content",
-  "command": "npx jsrepo add highlight-card-inline",
+  "registryName": "highlight-card-inline",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

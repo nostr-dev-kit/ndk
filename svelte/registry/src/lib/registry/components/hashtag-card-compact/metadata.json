@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "compact",
   "oneLiner": "Compact hashtag card with stats, contributors, and follow button",
-  "command": "npx jsrepo add hashtag-card-compact",
+  "registryName": "hashtag-card-compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

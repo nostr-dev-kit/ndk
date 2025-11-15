@@ -3,7 +3,7 @@
   "title": "Repost Action Builder",
   "oneLiner": "Reactive state manager for tracking and creating reposts and quote posts on Nostr",
   "importPath": "import { createRepostAction } from '$lib/registry/builders/repost-action';",
-  "command": "npx jsrepo add builders/repost-action",
+  "registryName": "builders/repost-action",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

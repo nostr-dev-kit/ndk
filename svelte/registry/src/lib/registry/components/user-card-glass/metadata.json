@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "glass",
   "oneLiner": "A glassmorphism-styled user card",
-  "command": "npx jsrepo add user-card-glass",
+  "registryName": "user-card-glass",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

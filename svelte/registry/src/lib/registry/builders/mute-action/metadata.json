@@ -3,7 +3,7 @@
   "title": "Mute Action Builder",
   "oneLiner": "Reactive state manager for muting/unmuting Nostr users",
   "importPath": "import { createMuteAction } from '$lib/registry/builders/mute-action';",
-  "command": "npx jsrepo add builders/mute-action",
+  "registryName": "builders/mute-action",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

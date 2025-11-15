@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "fallback",
   "oneLiner": "A fallback card for any event type",
-  "command": "npx jsrepo add event-card-fallback",
+  "registryName": "event-card-fallback",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

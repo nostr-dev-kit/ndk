@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "grid",
   "oneLiner": "A grid-optimized card for highlight content",
-  "command": "npx jsrepo add highlight-card-grid",
+  "registryName": "highlight-card-grid",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "avatar-name",
   "oneLiner": "A avatar-name display for user content",
-  "command": "npx jsrepo add user-avatar-name",
+  "registryName": "user-avatar-name",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -8,14 +8,14 @@ export function createCardData(config: {
   name: string;
   title: string;
   richDescription?: string;
-  command: string;
+  registryName: string;
   apiDoc?: any;
 }): ComponentCardData {
   return {
     name: config.name,
     title: config.title,
     richDescription: config.richDescription,
-    command: config.command,
+    registryName: config.registryName,
     apiDoc: config.apiDoc
   };
 }
@@ -26,7 +26,7 @@ export function createCardData(config: {
 export function createShowcaseBlock(config: {
   name: string;
   description: string;
-  command: string;
+  registryName: string;
   preview: Snippet;
   cardData?: ComponentCardData;
   orientation?: 'horizontal' | 'vertical';
@@ -35,7 +35,7 @@ export function createShowcaseBlock(config: {
   return {
     name: config.name,
     description: config.description,
-    command: config.command,
+    registryName: config.registryName,
     preview: config.preview,
     cardData: config.cardData,
     orientation: config.orientation,
@@ -65,7 +65,7 @@ export function extractMetadataFromCardData(cardData: any): ComponentCardData {
     name: cardData.name || '',
     title: cardData.title || '',
     richDescription: cardData.richDescription,
-    command: cardData.command || '',
+    registryName: cardData.registryName || '',
     apiDoc: cardData.apiDoc
   };
 }

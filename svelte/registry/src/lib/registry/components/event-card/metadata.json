@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "compound",
   "oneLiner": "A compound event card component with header, content and actions",
-  "registryName": "event-card",
+  "registryName": "components/event-card",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

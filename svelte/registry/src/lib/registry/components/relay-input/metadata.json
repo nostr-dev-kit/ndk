@@ -5,7 +5,7 @@
   "subcategory": "inputs",
   "variant": "basic",
   "oneLiner": "A basic input for relay content",
-  "registryName": "relay-input",
+  "registryName": "components/relay-input",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

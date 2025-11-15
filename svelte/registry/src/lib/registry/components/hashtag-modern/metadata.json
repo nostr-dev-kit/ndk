@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "modern",
   "oneLiner": "Modern inline hashtag with stats card popover on hover",
-  "registryName": "hashtag-modern",
+  "registryName": "components/hashtag-modern",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk",

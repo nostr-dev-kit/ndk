@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "elegant",
   "oneLiner": "An elegant card for highlight content with refined styling",
-  "registryName": "highlight-card-elegant",
+  "registryName": "components/highlight-card-elegant",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

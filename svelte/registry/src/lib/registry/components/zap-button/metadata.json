@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "basic",
   "oneLiner": "Lightning payment button for zapping content",
-  "registryName": "zap-button",
+  "registryName": "components/zap-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

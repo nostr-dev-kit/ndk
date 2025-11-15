@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "basic",
   "oneLiner": "Basic hashtag display component for inline hashtag references",
-  "registryName": "hashtag",
+  "registryName": "components/hashtag",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

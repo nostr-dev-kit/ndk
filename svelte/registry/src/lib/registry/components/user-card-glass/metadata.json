@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "glass",
   "oneLiner": "A glassmorphism-styled user card",
-  "registryName": "user-card-glass",
+  "registryName": "components/user-card-glass",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

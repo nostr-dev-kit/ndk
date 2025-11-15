@@ -5,7 +5,7 @@
   "subcategory": "packs",
   "variant": "compact",
   "oneLiner": "A compact pack for follow content",
-  "registryName": "follow-pack-compact",
+  "registryName": "components/follow-pack-compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

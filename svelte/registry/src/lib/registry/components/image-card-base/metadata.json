@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "base",
   "oneLiner": "A basic card for image content",
-  "registryName": "image-card-base",
+  "registryName": "components/image-card-base",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

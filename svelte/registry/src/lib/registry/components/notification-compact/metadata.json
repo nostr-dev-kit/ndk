@@ -5,7 +5,7 @@
   "subcategory": "items",
   "variant": "compact",
   "oneLiner": "A compact item for notification content",
-  "registryName": "notification-compact",
+  "registryName": "components/notification-compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

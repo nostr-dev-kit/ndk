@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "compact",
   "oneLiner": "A compact vertical event card with header on top and content below",
-  "registryName": "event-card-compact",
+  "registryName": "components/event-card-compact",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
@@ -20,7 +20,10 @@
   "registration": {
     "autoRegister": true,
     "priority": 5,
-    "kinds": [1, 1111]
+    "kinds": [
+      1,
+      1111
+    ]
   },
   "apiDoc": {
     "name": "EventCardCompact",

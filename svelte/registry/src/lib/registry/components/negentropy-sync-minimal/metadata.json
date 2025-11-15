@@ -5,7 +5,7 @@
   "subcategory": "progress",
   "variant": "minimal",
   "oneLiner": "A minimal progres for negentropy-sync content",
-  "registryName": "negentropy-sync-minimal",
+  "registryName": "components/negentropy-sync-minimal",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -1,16 +1,34 @@
-import { NDKSvelte } from '@nostr-dev-kit/svelte';
-import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
+import { createNDK } from '@nostr-dev-kit/svelte';
+import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
+import { LocalStorage } from '@nostr-dev-kit/sessions';
 
-export const ndk = new NDKSvelte({
+// Initialize cache adapter
+const cacheAdapter = new NDKCacheAdapterSqliteWasm({
+  dbName: 'my-nostr-app',
+  workerUrl: '/worker.js',
+  wasmUrl: '/sql-wasm.wasm'
+});
+
+export const ndk = createNDK({
   explicitRelayUrls: [
     'wss://relay.damus.io',
     'wss://relay.nostr.band',
     'wss://nos.lol',
     'wss://relay.snort.social'
   ],
-  // Optional: Add caching for better performance
-  cacheAdapter: new NDKCacheDexie({ dbName: 'my-nostr-app' })
+  cacheAdapter,
+  session: {
+    autoSave: true,
+    storage: new LocalStorage()
+  }
 });
 
-// Connect to relays
-ndk.connect();
+// Initialize and connect
+export async function initializeNDK() {
+  try {
+    await cacheAdapter.initializeAsync();
+    ndk.connect();
+  } catch (err) {
+    console.error('NDK initialization error:', err);
+  }
+}

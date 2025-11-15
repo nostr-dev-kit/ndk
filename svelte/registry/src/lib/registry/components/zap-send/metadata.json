@@ -5,7 +5,7 @@
   "subcategory": "send",
   "variant": "basic",
   "oneLiner": "Interface for sending zaps",
-  "registryName": "zap-send",
+  "registryName": "components/zap-send",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

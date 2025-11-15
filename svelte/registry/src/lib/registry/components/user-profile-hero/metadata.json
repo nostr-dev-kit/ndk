@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "profile-hero",
   "oneLiner": "A profile-hero display for user content",
-  "registryName": "user-profile-hero",
+  "registryName": "components/user-profile-hero",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

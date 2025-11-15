@@ -5,7 +5,7 @@
   "subcategory": "items",
   "variant": "expanded",
   "oneLiner": "A expanded item for notification content",
-  "registryName": "notification-expanded",
+  "registryName": "components/notification-expanded",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

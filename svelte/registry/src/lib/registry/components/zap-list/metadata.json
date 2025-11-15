@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "list",
   "oneLiner": "A list display for zap content",
-  "registryName": "zap-list",
+  "registryName": "components/zap-list",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

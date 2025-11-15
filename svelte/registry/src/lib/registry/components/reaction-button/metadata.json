@@ -6,7 +6,7 @@
   "variant": "basic",
   "oneLiner": "A simple reaction button with variants",
   "documentation": "Provides a simple and elegant way for users to react to Nostr events. Supports multiple visual variants and displays real-time reaction counts.\n\n## Features\n\n- **Multiple Variants**: Choose from ghost, outline, pill, or solid styles\n- **Customizable Emoji**: Use any emoji for reactions (defaults to ❤️)\n- **Real-time Counts**: Shows live reaction counts that update automatically\n- **Optimistic Updates**: Immediate visual feedback for better UX\n- **Count Modes**: Display total reactions or count for specific emoji",
-  "registryName": "reaction-button",
+  "registryName": "components/reaction-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

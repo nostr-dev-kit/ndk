@@ -5,7 +5,7 @@
   "subcategory": "displays",
   "variant": "modern",
   "oneLiner": "Modern inline mention with avatar and hover card popover",
-  "registryName": "mention-modern",
+  "registryName": "components/mention-modern",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk",

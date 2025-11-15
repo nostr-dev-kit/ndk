@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "portrait",
   "oneLiner": "A portrait card for relay content",
-  "registryName": "relay-card-portrait",
+  "registryName": "components/relay-card-portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

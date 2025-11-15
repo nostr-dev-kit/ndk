@@ -21,12 +21,12 @@
 
   // Where to install components by category
   "paths": {
-    "*": "$lib/components/nostr",      // Default path
-    "ui": "$lib/components/ui",         // UI primitives
-    "hooks": "$lib/hooks",              // Svelte hooks
-    "utils": "$lib/utils",              // Utilities
-    "icons": "$lib/icons",              // Icon components
-    "blocks": "$lib/blocks",            // Complete blocks
-    "builders": "$lib/builders"         // Component builders
+    "*": "$lib/ndk/components",      // Default path
+    "ui": "$lib/ndk/ui",             // UI primitives
+    "hooks": "$lib/ndk/hooks",       // Svelte hooks
+    "utils": "$lib/ndk/utils",       // Utilities
+    "icons": "$lib/ndk/icons",       // Icon components
+    "blocks": "$lib/ndk/blocks",     // Complete blocks
+    "builders": "$lib/ndk/builders"  // Component builders
   }
 }

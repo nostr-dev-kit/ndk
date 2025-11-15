@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "inline",
   "oneLiner": "A compact horizontal event card for inline embedding in content",
-  "registryName": "event-card-inline",
+  "registryName": "components/event-card-inline",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"
@@ -20,7 +20,10 @@
   "registration": {
     "autoRegister": true,
     "priority": 10,
-    "kinds": [1, 1111]
+    "kinds": [
+      1,
+      1111
+    ]
   },
   "apiDoc": {
     "name": "EventCardInline",

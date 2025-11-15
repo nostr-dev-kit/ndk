@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "feed",
   "oneLiner": "A feed-optimized card for highlight content",
-  "registryName": "highlight-card-feed",
+  "registryName": "components/highlight-card-feed",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

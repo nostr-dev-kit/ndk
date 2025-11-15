@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "neon",
   "oneLiner": "A futuristic neon-styled user card",
-  "registryName": "user-card-neon",
+  "registryName": "components/user-card-neon",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

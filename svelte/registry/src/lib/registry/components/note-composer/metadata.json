@@ -5,7 +5,7 @@
   "subcategory": "composers",
   "variant": "compound",
   "oneLiner": "A compound composer for note-composer content",
-  "registryName": "note-composer",
+  "registryName": "components/note-composer",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

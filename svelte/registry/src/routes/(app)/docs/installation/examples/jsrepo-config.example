@@ -6,11 +6,11 @@
   "watermark": true,
   "formatter": "biome",
   "paths": {
-    "*": "$lib/components/nostr",
-    "ui": "$lib/components/ui",
-    "hooks": "$lib/hooks",
-    "utils": "$lib/utils",
-    "icons": "$lib/icons",
-    "blocks": "$lib/blocks"
+    "*": "$lib/ndk/components",
+    "ui": "$lib/ndk/ui",
+    "hooks": "$lib/ndk/hooks",
+    "utils": "$lib/ndk/utils",
+    "icons": "$lib/ndk/icons",
+    "blocks": "$lib/ndk/blocks"
   }
 }

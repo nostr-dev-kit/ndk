@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "pill",
   "oneLiner": "A pill-shaped follow button",
-  "registryName": "follow-button-pill",
+  "registryName": "components/follow-button-pill",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

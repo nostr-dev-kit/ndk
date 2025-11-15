@@ -1,3 +1,0 @@
-npm install -D @tailwindcss/vite
-# or
-bun add -D @tailwindcss/vite

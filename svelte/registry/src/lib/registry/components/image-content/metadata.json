@@ -5,7 +5,7 @@
   "subcategory": "content",
   "variant": "basic",
   "oneLiner": "A basic conten for image content",
-  "registryName": "image-content",
+  "registryName": "components/image-content",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

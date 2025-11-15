@@ -5,7 +5,7 @@
   "subcategory": "packs",
   "variant": "modern",
   "oneLiner": "A modern pack for follow content",
-  "registryName": "follow-pack-modern",
+  "registryName": "components/follow-pack-modern",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

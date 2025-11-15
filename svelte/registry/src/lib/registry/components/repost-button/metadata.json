@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "basic",
   "oneLiner": "A basic button for repost content",
-  "registryName": "repost-button",
+  "registryName": "components/repost-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

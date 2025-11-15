@@ -5,7 +5,7 @@
   "subcategory": "content",
   "variant": "basic",
   "oneLiner": "Lightweight renderer for NIP-23 long-form articles with markdown and typography",
-  "registryName": "article-content-basic",
+  "registryName": "components/article-content-basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

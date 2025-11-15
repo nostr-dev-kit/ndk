@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "instagram",
   "oneLiner": "An Instagram-style card for image content",
-  "registryName": "image-card-instagram",
+  "registryName": "components/image-card-instagram",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "progress",
   "variant": "detailed",
   "oneLiner": "A detailed progres for negentropy-sync content",
-  "registryName": "negentropy-sync-detailed",
+  "registryName": "components/negentropy-sync-detailed",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "content",
   "variant": "basic",
   "oneLiner": "Full article content renderer with highlighting support",
-  "registryName": "article-content",
+  "registryName": "components/article-content",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

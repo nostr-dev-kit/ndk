@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "avatars",
   "oneLiner": "Reply button showing avatars of users who replied",
-  "registryName": "reply-button-avatars",
+  "registryName": "components/reply-button-avatars",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

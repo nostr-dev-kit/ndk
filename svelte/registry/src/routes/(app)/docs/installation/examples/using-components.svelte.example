@@ -1,26 +1,31 @@
 <script lang="ts">
   import { ndk } from '$lib/ndk';
-  import { User } from '$lib/components/ui/user';
+  import { EventCard } from '$lib/ndk/components/event-card';
+  import { UserProfile } from '$lib/ndk/components/user-profile';
 
-  const pubkey = 'e33fe65f1fde44c6dc17eeb38fdad0fceaf1cae8722084332ed1e32496291d42';
-  const profile = ndk.$fetchProfile(() => pubkey);
+  // Example: Display a user profile
+  const userPubkey = 'e33fe65f1fde44c6dc17eeb38fdad0fceaf1cae8722084332ed1e32496291d42';
+
+  // Example: Subscribe to recent notes
+  const notes = ndk.$subscribe(() => ({
+    filters: { kinds: [1], limit: 10 }
+  }));
 </script>
 
-<div class="container mx-auto p-8">
-  <h1 class="text-2xl font-bold mb-4">User Profile</h1>
+<div class="container mx-auto p-8 space-y-8">
+  <!-- Display a user profile -->
+  <section>
+    <h2 class="text-2xl font-bold mb-4">User Profile</h2>
+    <UserProfile pubkey={userPubkey} />
+  </section>
 
-  {#if profile}
-    <User.Root {pubkey}>
-      <div class="flex items-center gap-4">
-        <User.Avatar class="w-16 h-16" />
-        <div>
-          <User.Name class="text-xl font-bold" />
-          <User.Nip05 class="text-sm text-gray-600" />
-          <User.Bio class="mt-2" />
-        </div>
-      </div>
-    </User.Root>
-  {:else}
-    <p>Loading profile...</p>
-  {/if}
+  <!-- Display recent notes -->
+  <section>
+    <h2 class="text-2xl font-bold mb-4">Recent Notes</h2>
+    <div class="space-y-4">
+      {#each $notes as event (event.id)}
+        <EventCard {event} />
+      {/each}
+    </div>
+  </section>
 </div>

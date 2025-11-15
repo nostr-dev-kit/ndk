@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "basic",
   "oneLiner": "A basic follow/unfollow button",
-  "registryName": "follow-button",
+  "registryName": "components/follow-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

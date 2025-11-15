@@ -5,7 +5,7 @@
   "subcategory": "packs",
   "variant": "hero",
   "oneLiner": "A hero pack for follow content",
-  "registryName": "follow-pack-hero",
+  "registryName": "components/follow-pack-hero",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

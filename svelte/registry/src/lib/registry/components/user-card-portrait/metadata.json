@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "portrait",
   "oneLiner": "A vertical user card with large avatar",
-  "registryName": "user-card-portrait",
+  "registryName": "components/user-card-portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

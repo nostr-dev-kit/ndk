@@ -5,7 +5,7 @@
   "subcategory": "progress",
   "variant": "animated",
   "oneLiner": "A animated progres for negentropy-sync content",
-  "registryName": "negentropy-sync-animated",
+  "registryName": "components/negentropy-sync-animated",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

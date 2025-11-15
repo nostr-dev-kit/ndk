@@ -5,7 +5,7 @@
   "subcategory": "packs",
   "variant": "portrait",
   "oneLiner": "A portrait pack for follow content",
-  "registryName": "follow-pack-portrait",
+  "registryName": "components/follow-pack-portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

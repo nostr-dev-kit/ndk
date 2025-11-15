@@ -1,7 +1,16 @@
-import { NDKSvelte } from '@nostr-dev-kit/svelte';
-import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
+import { createNDK } from '@nostr-dev-kit/svelte';
+import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
+import { LocalStorage } from '@nostr-dev-kit/sessions';
+import { NDKInterestList, NDKRelayFeedList } from '@nostr-dev-kit/ndk';
 
-export const ndk = new NDKSvelte({
+// Initialize cache with custom configuration
+const cacheAdapter = new NDKCacheAdapterSqliteWasm({
+  dbName: 'my-app-cache',
+  workerUrl: '/worker.js',
+  wasmUrl: '/sql-wasm.wasm'
+});
+
+export const ndk = createNDK({
   // Relay configuration
   explicitRelayUrls: [
     'wss://relay.damus.io',
@@ -10,27 +19,48 @@ export const ndk = new NDKSvelte({
     'wss://relay.snort.social'
   ],
 
-  // Enable caching for better performance
-  cacheAdapter: new NDKCacheDexie({
-    dbName: 'my-app-cache'
-  }),
+  // SQLite WASM cache adapter
+  cacheAdapter,
 
-  // Optional: Enable debug logging
+  // Session management
+  session: {
+    autoSave: true,
+    storage: new LocalStorage(),
+    fetches: {
+      follows: true,
+      mutes: true,
+      wallet: false,
+      // Monitor specific event kinds
+      monitor: [
+        NDKInterestList,
+        NDKRelayFeedList
+      ]
+    }
+  },
+
+  // Enable debug logging in development
   debug: import.meta.env.DEV,
 
-  // Optional: Set default relay policy
-  // outboxRelayUrls: ['wss://purplepag.es'],
-  // enableOutboxModel: true,
+  // Outbox model configuration (NIP-65)
+  enableOutboxModel: true,
+  outboxRelayUrls: ['wss://purplepag.es']
 });
 
-// Connect to relays
-ndk.connect();
+// Initialize and connect
+export async function initializeNDK() {
+  try {
+    await cacheAdapter.initializeAsync();
+    ndk.connect();
 
-// Optional: Handle connection events
-ndk.pool.on('relay:connect', (relay) => {
-  console.log('Connected to relay:', relay.url);
-});
+    // Optional: Handle connection events
+    ndk.pool.on('relay:connect', (relay) => {
+      console.log('Connected to relay:', relay.url);
+    });
 
-ndk.pool.on('relay:disconnect', (relay) => {
-  console.log('Disconnected from relay:', relay.url);
-});
+    ndk.pool.on('relay:disconnect', (relay) => {
+      console.log('Disconnected from relay:', relay.url);
+    });
+  } catch (err) {
+    console.error('NDK initialization error:', err);
+  }
+}

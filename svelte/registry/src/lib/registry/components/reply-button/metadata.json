@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "basic",
   "oneLiner": "A basic reply button with count display",
-  "registryName": "reply-button",
+  "registryName": "components/reply-button",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

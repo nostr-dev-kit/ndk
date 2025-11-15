@@ -3,6 +3,8 @@
   import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import { Article } from '$lib/registry/ui/article';
+	import ArticleCardInline from '$lib/registry/components/article-card-inline/article-card-inline.svelte';
+	import ArticleCardCompact from '$lib/registry/components/article-card-compact/article-card-compact.svelte';
 	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
 	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
 	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
@@ -16,12 +18,14 @@
 	import CodeBlock from '$site-components/CodeBlock.svelte';
 
 	// Import registry metadata
+	import articleCardInlineCard from '$lib/registry/components/article-card-inline/metadata.json';
+	import articleCardCompactCard from '$lib/registry/components/article-card-compact/metadata.json';
 	import articleCardPortraitCard from '$lib/registry/components/article-card-portrait/metadata.json';
 	import articleCardHeroCard from '$lib/registry/components/article-card-hero/metadata.json';
 	import articleCardMediumCard from '$lib/registry/components/article-card/metadata.json';
 	import articleCardNeonCard from '$lib/registry/components/article-card-neon/metadata.json';
 
-	const articleCardCards = [articleCardPortraitCard, articleCardHeroCard, articleCardMediumCard, articleCardNeonCard];
+	const articleCardCards = [articleCardInlineCard, articleCardCompactCard, articleCardPortraitCard, articleCardHeroCard, articleCardMediumCard, articleCardNeonCard];
 
   // Get page data
   let { data } = $props();
@@ -117,6 +121,18 @@
 
 	const showcaseComponents: ShowcaseComponent[] = [
     {
+      id: 'article-card-inline',
+      cardData: articleCardInlineCard,
+      preview: inlinePreview,
+      orientation: 'horizontal'
+    },
+    {
+      id: 'article-card-compact',
+      cardData: articleCardCompactCard,
+      preview: compactPreview,
+      orientation: 'vertical'
+    },
+    {
       id: 'article-card-portrait',
       cardData: articleCardPortraitCard,
       preview: portraitPreview,
@@ -142,11 +158,29 @@
     }
   ];
 </script>
+{#snippet inlinePreview()}
+	<ScrollArea orientation="horizontal" class="w-full">
+		<div class="flex gap-6 pb-4">
+			{#each displayArticles as article (article.id)}
+				<ArticleCardInline {ndk} event={article} />
+			{/each}
+		</div>
+	</ScrollArea>
+{/snippet}
+
+{#snippet compactPreview()}
+	<div class="w-full max-w-3xl space-y-4">
+		{#each displayArticles as article (article.id)}
+			<ArticleCardCompact {ndk} event={article} />
+		{/each}
+	</div>
+{/snippet}
+
 {#snippet portraitPreview()}
 	<ScrollArea orientation="horizontal" class="w-full">
 		<div class="flex gap-6 pb-4">
 			{#each displayArticles as article (article.id)}
-				<ArticleCardPortrait {ndk} {article} />
+				<ArticleCardPortrait {ndk} event={article} />
 			{/each}
 		</div>
 	</ScrollArea>
@@ -155,7 +189,7 @@
 {#snippet heroPreview()}
 	{#if article1}
 		<div class="min-w-[800px]">
-			<ArticleCardHero {ndk} article={article1} />
+			<ArticleCardHero {ndk} event={article1} />
 		</div>
 	{/if}
 {/snippet}
@@ -163,7 +197,7 @@
 {#snippet mediumPreview()}
 	<div class="w-full max-w-3xl space-y-4">
 		{#each displayArticles.slice(0, 2) as article (article.id)}
-			<ArticleCardMedium {ndk} {article} />
+			<ArticleCardMedium {ndk} event={article} />
 		{/each}
 	</div>
 {/snippet}
@@ -172,17 +206,35 @@
 	<ScrollArea orientation="horizontal" class="w-full">
 		<div class="flex gap-6 pb-4">
 			{#each displayArticles as article (article.id)}
-				<ArticleCardNeon {ndk} {article} />
+				<ArticleCardNeon {ndk} event={article} />
 			{/each}
 		</div>
 	</ScrollArea>
+{/snippet}
+
+{#snippet inlineComponentPreview()}
+	<ScrollArea orientation="horizontal" class="w-full">
+		<div class="flex gap-6 pb-4">
+			{#each displayArticles as article (article.id)}
+				<ArticleCardInline {ndk} event={article} />
+			{/each}
+		</div>
+	</ScrollArea>
+{/snippet}
+
+{#snippet compactComponentPreview()}
+	<div class="space-y-4 max-w-2xl mx-auto">
+		{#each displayArticles as article (article.id)}
+			<ArticleCardCompact {ndk} event={article} />
+		{/each}
+	</div>
 {/snippet}
 
 {#snippet portraitComponentPreview()}
 	<ScrollArea orientation="horizontal" class="w-full">
 		<div class="flex gap-6 pb-4">
 			{#each displayArticles as article (article.id)}
-				<ArticleCardPortrait {ndk} {article} />
+				<ArticleCardPortrait {ndk} event={article} />
 			{/each}
 		</div>
 	</ScrollArea>
@@ -191,7 +243,7 @@
 {#snippet heroComponentPreview()}
 	<div class="max-w-2xl mx-auto">
 		{#if article1}
-			<ArticleCardHero {ndk} article={article1} />
+			<ArticleCardHero {ndk} event={article1} />
 		{/if}
 	</div>
 {/snippet}
@@ -199,7 +251,7 @@
 {#snippet mediumComponentPreview()}
 	<div class="space-y-4 max-w-2xl mx-auto">
 		{#each displayArticles as article (article.id)}
-			<ArticleCardMedium {ndk} {article} />
+			<ArticleCardMedium {ndk} event={article} />
 		{/each}
 	</div>
 {/snippet}
@@ -208,7 +260,7 @@
 	<ScrollArea orientation="horizontal" class="w-full">
 		<div class="flex gap-6 pb-4">
 			{#each displayArticles as article (article.id)}
-				<ArticleCardNeon {ndk} {article} />
+				<ArticleCardNeon {ndk} event={article} />
 			{/each}
 		</div>
 	</ScrollArea>
@@ -436,6 +488,8 @@ defaultContentRenderer.addKind(NDKArticle, ArticleCardPortrait, 10);
 		componentsSection={{
 			cards: articleCardCards,
 			previews: {
+				'article-card-inline': inlineComponentPreview,
+				'article-card-compact': compactComponentPreview,
 				'article-card-portrait': portraitComponentPreview,
 				'article-card-hero': heroComponentPreview,
 				'article-card-basic': mediumComponentPreview,

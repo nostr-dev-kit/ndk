@@ -46,7 +46,7 @@
 					use:motion
 					class="grayscale hover:grayscale-0 transition-all duration-500 scale-90"
 				>
-					<ArticleCardHero {ndk} {article} />
+					<ArticleCardHero {ndk} event={article} />
 				</div>
 			</Motion>
 		{/if}

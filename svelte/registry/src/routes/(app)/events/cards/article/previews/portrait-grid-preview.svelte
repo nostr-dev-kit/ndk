@@ -43,7 +43,7 @@
 						use:motion
 						class="grayscale hover:grayscale-0 transition-all duration-500 scale-75"
 					>
-						<ArticleCardPortrait {ndk} {article} />
+						<ArticleCardPortrait {ndk} event={article} />
 					</div>
 				</Motion>
 			{/each}

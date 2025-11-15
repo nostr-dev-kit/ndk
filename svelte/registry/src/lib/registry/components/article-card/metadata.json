@@ -32,7 +32,7 @@
         "description": "NDK instance"
       },
       {
-        "name": "article",
+        "name": "event",
         "type": "NDKArticle",
         "description": "Article to display"
       },

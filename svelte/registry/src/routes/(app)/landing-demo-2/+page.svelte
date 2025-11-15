@@ -141,7 +141,7 @@
 
 			<!-- Card 5: Article Card -->
 			<div class="showcase-card card-5">
-				<ArticleCardHero {ndk} article={demoArticle} height="h-[280px]" badgeText="Featured" />
+				<ArticleCardHero {ndk} event={demoArticle} height="h-[280px]" badgeText="Featured" />
 			</div>
 
 			<!-- Card 6: Follow Button -->

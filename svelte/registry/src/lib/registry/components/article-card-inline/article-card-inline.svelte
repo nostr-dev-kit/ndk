@@ -5,14 +5,14 @@
 
   interface Props {
     ndk: NDKSvelte;
-    article: NDKArticle;
+    event: NDKArticle;
   }
 
-  let { ndk, article }: Props = $props();
+  let { ndk, event }: Props = $props();
 </script>
 
 <div data-article-card-inline="" class="rounded-lg overflow-hidden border border-border bg-card max-w-[400px]">
-  <Article.Root {ndk} {article}>
+  <Article.Root {ndk} article={event}>
     <div class="flex flex-col">
       <Article.Image class="h-32" />
 

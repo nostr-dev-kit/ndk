@@ -32,7 +32,7 @@
         "description": "NDK instance for Nostr operations"
       },
       {
-        "name": "article",
+        "name": "event",
         "type": "NDKArticle",
         "required": true,
         "description": "Article to display"

@@ -14,7 +14,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    article: NDKArticle;
+    event: NDKArticle;
 
     height?: string;
 
@@ -27,15 +27,15 @@
 
   let {
     ndk,
-    article,
+    event,
     height = 'h-[500px]',
     badgeText,
     onclick,
     class: className = ''
   }: Props = $props();
 
-  const publishedAt = $derived(article.published_at);
-  const articleImage = $derived(article.image);
+  const publishedAt = $derived(event.published_at);
+  const articleImage = $derived(event.image);
 
   // Create reactive time ago string
   const timeAgo = $derived(publishedAt ? createTimeAgo(publishedAt) : null);
@@ -53,7 +53,7 @@
   const interactiveClasses = onclick ? 'hover:shadow-2xl hover:shadow-purple-500/20 cursor-pointer' : '';
 </script>
 
-<Root {ndk} {article}>
+<Root {ndk} article={event}>
   <svelte:element
     data-article-card-hero=""
     this={onclick ? 'button' : 'div'}
@@ -67,7 +67,7 @@
       <div class="absolute inset-0">
         <img
           src={articleImage}
-          alt={article.title || 'Article'}
+          alt={event.title || 'Article'}
           class="w-full h-full object-cover"
         />
       </div>
@@ -94,7 +94,7 @@
       <Summary class="text-base md:text-lg text-white/90 mb-6 leading-relaxed max-w-3xl line-clamp-2" maxLength={200} />
 
       <!-- Author & Meta -->
-      <User.Root {ndk} user={article.author}>
+      <User.Root {ndk} user={event.author}>
         <div class="flex items-center gap-3 text-white/80">
           <!-- Avatar -->
           <User.Avatar class="w-10 h-10" />

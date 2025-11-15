@@ -91,17 +91,17 @@
 			{/if}
 		{:else if embedType === 'embedded-article' && asArticle}
 			{#if variant === 'inline'}
-				<ArticleCardInline {ndk} article={asArticle} />
+				<ArticleCardInline {ndk} event={asArticle} />
 			{:else if variant === 'compact'}
-				<ArticleCardCompact {ndk} article={asArticle} />
+				<ArticleCardCompact {ndk} event={asArticle} />
 			{:else if variant === 'medium'}
-				<ArticleCardMedium {ndk} article={asArticle} />
+				<ArticleCardMedium {ndk} event={asArticle} />
 			{:else if variant === 'hero'}
-				<ArticleCardHero {ndk} article={asArticle} />
+				<ArticleCardHero {ndk} event={asArticle} />
 			{:else if variant === 'neon'}
-				<ArticleCardNeon {ndk} article={asArticle} />
+				<ArticleCardNeon {ndk} event={asArticle} />
 			{:else if variant === 'portrait'}
-				<ArticleCardPortrait {ndk} article={asArticle} />
+				<ArticleCardPortrait {ndk} event={asArticle} />
 			{/if}
 		{:else if embedType === 'embedded-highlight'}
 			{#if variant === 'card'}

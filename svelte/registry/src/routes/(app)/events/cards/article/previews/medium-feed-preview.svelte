@@ -42,7 +42,7 @@
 					use:motion
 					class="grayscale hover:grayscale-0 transition-all duration-500 flex-shrink-0 scale-75"
 				>
-					<ArticleCardMedium {ndk} {article} />
+					<ArticleCardMedium {ndk} event={article} />
 				</div>
 			</Motion>
 		{/each}

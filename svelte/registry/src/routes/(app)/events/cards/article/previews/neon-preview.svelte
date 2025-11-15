@@ -39,7 +39,7 @@
 				let:motion
 			>
 				<div use:motion class="grayscale hover:grayscale-0 transition-all duration-500 scale-75">
-					<ArticleCardNeon {ndk} {article} width="w-full" />
+					<ArticleCardNeon {ndk} event={article} width="w-full" />
 				</div>
 			</Motion>
 		{/each}

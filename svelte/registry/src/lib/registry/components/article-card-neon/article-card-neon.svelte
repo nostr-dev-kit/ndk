@@ -13,7 +13,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    article: NDKArticle;
+    event: NDKArticle;
 
     width?: string;
 
@@ -26,7 +26,7 @@
 
   let {
     ndk,
-    article,
+    event,
     width = 'w-[320px]',
     height = 'h-[480px]',
     onclick,
@@ -45,7 +45,7 @@
   const interactiveClasses = onclick ? 'cursor-pointer' : '';
 </script>
 
-<Root {ndk} {article}>
+<Root {ndk} article={event}>
   {@const context = getContext<ArticleContext>(ARTICLE_CONTEXT_KEY)}
   {@const imageUrl = context.article.image}
 

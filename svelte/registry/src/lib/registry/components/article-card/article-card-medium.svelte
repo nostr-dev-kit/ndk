@@ -11,7 +11,7 @@
   interface Props {
     ndk: NDKSvelte;
 
-    article: NDKArticle;
+    event: NDKArticle;
 
     imageSize?: 'small' | 'medium' | 'large';
 
@@ -22,7 +22,7 @@
 
   let {
     ndk,
-    article,
+    event,
     imageSize = 'medium',
     onclick,
     class: className = ''
@@ -52,7 +52,7 @@
   const interactiveClasses = onclick ? 'hover:bg-card/30 cursor-pointer' : '';
 </script>
 
-<Root {ndk} {article}>
+<Root {ndk} article={event}>
   <svelte:element
     data-article-card-medium=""
     data-image-size={imageSize}

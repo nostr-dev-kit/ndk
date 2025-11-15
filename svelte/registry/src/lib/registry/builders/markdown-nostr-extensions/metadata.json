@@ -3,7 +3,7 @@
   "title": "Nostr Markdown Extensions",
   "oneLiner": "Marked.js extensions for rendering Nostr-specific content like mentions, event references, custom emojis, and hashtags",
   "importPath": "import { createNostrMarkdownExtensions } from '$lib/registry/builders/markdown-nostr-extensions';",
-  "command": "npx jsrepo add builders/markdown-nostr-extensions",
+  "registryName": "builders/markdown-nostr-extensions",
   "dependencies": [
     "marked"
   ],

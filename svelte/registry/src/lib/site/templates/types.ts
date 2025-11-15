@@ -51,7 +51,7 @@ export interface ShowcaseComponent {
 export interface ShowcaseBlock {
   name: string;
   description: string;
-  command: string;
+  registryName: string;
   preview: Snippet;
   cardData?: ComponentCardDataBase;
   orientation?: 'horizontal' | 'vertical';
@@ -95,7 +95,7 @@ export interface BuilderCardData {
   oneLiner?: string;
   description?: string;
   importPath: string;
-  command: string;
+  registryName: string;
   dependencies?: string[];
   nips?: string[];
   parameters: BuilderParameter[];

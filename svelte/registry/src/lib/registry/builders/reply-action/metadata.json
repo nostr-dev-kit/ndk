@@ -3,7 +3,7 @@
   "title": "Reply Action Builder",
   "oneLiner": "Reactive state manager for tracking and creating replies to Nostr events",
   "importPath": "import { createReplyAction } from '$lib/registry/builders/reply-action';",
-  "command": "npx jsrepo add builders/reply-action",
+  "registryName": "builders/reply-action",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

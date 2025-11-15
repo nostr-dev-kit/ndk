@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "list",
   "oneLiner": "A list-style card for relay content optimized for relay browsers",
-  "command": "npx jsrepo add relay-card-list",
+  "registryName": "relay-card-list",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "hero",
   "oneLiner": "A large hero article card for featured content",
-  "command": "npx jsrepo add article-card-hero",
+  "registryName": "article-card-hero",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

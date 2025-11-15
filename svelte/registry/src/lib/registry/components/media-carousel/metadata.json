@@ -4,7 +4,7 @@
   "category": "media",
   "variant": "carousel",
   "oneLiner": "Carousel layout with NSFW and follows-based filtering",
-  "command": "npx jsrepo add components/media-carousel",
+  "registryName": "components/media-carousel",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

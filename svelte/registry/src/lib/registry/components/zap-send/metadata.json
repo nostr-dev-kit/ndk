@@ -5,7 +5,7 @@
   "subcategory": "send",
   "variant": "basic",
   "oneLiner": "Interface for sending zaps",
-  "command": "npx jsrepo add zap-send",
+  "registryName": "zap-send",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

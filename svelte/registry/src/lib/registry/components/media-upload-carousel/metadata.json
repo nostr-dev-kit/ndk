@@ -5,7 +5,7 @@
   "subcategory": "upload",
   "variant": "carousel",
   "oneLiner": "A carousel uploader for media content",
-  "command": "npx jsrepo add components/media-upload-carousel",
+  "registryName": "components/media-upload-carousel",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

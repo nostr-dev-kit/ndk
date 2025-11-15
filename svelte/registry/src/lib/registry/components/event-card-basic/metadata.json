@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "basic",
   "oneLiner": "A minimal event card with flat design and subtle hover effects",
-  "command": "npx jsrepo add event-card-basic",
+  "registryName": "event-card-basic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

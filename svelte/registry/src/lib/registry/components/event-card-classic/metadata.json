@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "classic",
   "oneLiner": "A classic styled event card with rounded corners and card background",
-  "command": "npx jsrepo add event-card-classic",
+  "registryName": "event-card-classic",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

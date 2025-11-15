@@ -4,7 +4,7 @@
   "category": "media",
   "variant": "bento",
   "oneLiner": "Bento grid layout with smart content filtering",
-  "command": "npx jsrepo add components/media-bento",
+  "registryName": "components/media-bento",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

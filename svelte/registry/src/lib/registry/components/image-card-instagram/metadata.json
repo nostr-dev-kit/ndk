@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "instagram",
   "oneLiner": "An Instagram-style card for image content",
-  "command": "npx jsrepo add image-card-instagram",
+  "registryName": "image-card-instagram",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

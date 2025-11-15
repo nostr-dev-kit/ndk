@@ -5,7 +5,7 @@
   "subcategory": "content",
   "variant": "basic",
   "oneLiner": "Full article content renderer with highlighting support",
-  "command": "npx jsrepo add article-content",
+  "registryName": "article-content",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

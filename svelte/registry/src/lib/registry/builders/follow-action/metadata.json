@@ -3,7 +3,7 @@
   "title": "Follow Action Builder",
   "oneLiner": "Reactive state manager for following/unfollowing Nostr users and hashtags",
   "importPath": "import { createFollowAction } from '$lib/registry/builders/follow-action';",
-  "command": "npx jsrepo add builders/follow-action",
+  "registryName": "builders/follow-action",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

@@ -5,7 +5,7 @@
   "subcategory": "switchers",
   "variant": "compound",
   "oneLiner": "A compound switcher for session content",
-  "command": "npx jsrepo add session-switcher",
+  "registryName": "session-switcher",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

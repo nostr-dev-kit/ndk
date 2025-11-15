@@ -5,7 +5,7 @@
   "oneLiner": "Button with badge showing failed publish count, opens popover with retry/discard actions",
   "description": "A ready-to-use button component that displays the count of unpublished events in a badge. Clicking the button opens a popover showing a list of events that failed to publish to Nostr relays, with options to retry or discard each event.",
   "documentation": "# Unpublished Events Button Popover\n\n## Overview\n\nThe Unpublished Events Button Popover provides a complete solution for managing events that failed to publish to Nostr relays. It combines a button trigger with a badge indicator and a popover list of failed events.\n\n## Features\n\n- **Badge Indicator**: Shows count of unpublished events\n- **Popover Interface**: Clean dropdown showing failed events\n- **Custom Preview**: Use any snippet to render event previews\n- **Retry/Discard Actions**: Built-in callbacks for event management\n- **Real-time Updates**: Automatically updates when events publish or fail\n\n## Usage\n\nBest used in application headers, navigation bars, or anywhere users need visibility into failed publishes. The component requires a snippet to render each event, giving you full control over the preview appearance.",
-  "command": "npx jsrepo add components/unpublished-events-button-popover",
+  "registryName": "components/unpublished-events-button-popover",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk",

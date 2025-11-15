@@ -5,7 +5,7 @@
   "subcategory": "buttons",
   "variant": "slack",
   "oneLiner": "A Slack-style reaction button showing all reactions with counts and click-to-react",
-  "command": "npx jsrepo add reaction-button-slack",
+  "registryName": "reaction-button-slack",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk",

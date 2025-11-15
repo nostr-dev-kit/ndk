@@ -5,7 +5,7 @@
   "subcategory": "cards",
   "variant": "portrait",
   "oneLiner": "Portrait-oriented hashtag card with gradient header, activity chart, and detailed stats",
-  "command": "npx jsrepo add hashtag-card-portrait",
+  "registryName": "hashtag-card-portrait",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

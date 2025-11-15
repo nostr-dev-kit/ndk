@@ -6,7 +6,7 @@
   "variant": "basic",
   "oneLiner": "Simple inline link renderer with icon for EventContent",
   "documentation": "# Link Inline Basic\n\n## Overview\n\nA simple inline link renderer that displays URLs as clickable links with icons. Auto-registers with ContentRenderer when imported.\n\n## Features\n\n- Auto-registration with ContentRenderer (priority 1)\n- Icon support using registry icons (no external dependencies)\n- Handles both single URLs and arrays of grouped URLs\n- Opens links in new tab with proper security attributes",
-  "command": "npx jsrepo add link-inline-basic",
+  "registryName": "link-inline-basic",
   "dependencies": [],
   "useCases": [
     "inline-links",

@@ -3,7 +3,7 @@
   "title": "Emoji Picker Builder",
   "oneLiner": "Reactive emoji aggregator from user preferences and specified pubkeys with NIP-30 custom emoji support",
   "importPath": "import { createEmojiPicker } from '$lib/registry/builders/emoji-picker';",
-  "command": "npx jsrepo add builders/emoji-picker",
+  "registryName": "builders/emoji-picker",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

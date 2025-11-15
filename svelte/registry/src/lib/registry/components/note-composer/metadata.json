@@ -5,7 +5,7 @@
   "subcategory": "composers",
   "variant": "compound",
   "oneLiner": "A compound composer for note-composer content",
-  "command": "npx jsrepo add note-composer",
+  "registryName": "note-composer",
   "dependencies": [
     "@nostr-dev-kit/svelte",
     "@nostr-dev-kit/ndk"

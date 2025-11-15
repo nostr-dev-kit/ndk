@@ -6,7 +6,7 @@
   "variant": "basic",
   "oneLiner": "Rich embedded link previews with OpenGraph metadata for EventContent",
   "documentation": "# Link Embed\n\n## Overview\n\nA rich link embed component that fetches and displays OpenGraph metadata in card format. Auto-registers with ContentRenderer when imported, overriding simpler link handlers.\n\n## Features\n\n- Auto-registration with ContentRenderer (priority 5, overrides link-inline-basic)\n- Fetches OpenGraph metadata (title, description, image)\n- Rich card display with responsive layout\n- Handles both single URLs and arrays of grouped URLs\n- Loading states and fallback handling",
-  "command": "npx jsrepo add link-embed",
+  "registryName": "link-embed",
   "dependencies": [],
   "useCases": [
     "link-embeds",

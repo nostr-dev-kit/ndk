@@ -2,10 +2,25 @@ import { NDKEvent } from "../../src/events";
 import { NDKPrivateKeySigner } from "../../src/signers/private-key";
 
 /**
- * EventGenerator for testing purposes
+ * Low-level event generator for creating test events in your Nostr application tests.
  *
- * This utility helps generate test events for the NDK testing infrastructure.
- * It handles private key generation and event creation with proper signing.
+ * Provides simple methods to create various types of Nostr events with automatic signing.
+ * Must call `setNDK()` once before using any event creation methods.
+ *
+ * @example
+ * ```typescript
+ * import { EventGenerator, UserGenerator } from '@nostr-dev-kit/ndk/test';
+ *
+ * // Initialize once in your test setup
+ * EventGenerator.setNDK(ndk);
+ *
+ * // Create events
+ * const alice = await UserGenerator.getUser('alice', ndk);
+ * const note = await EventGenerator.createSignedTextNote('Hello!', alice.pubkey);
+ * const dm = await EventGenerator.createEncryptedDirectMessage('Secret', alice.pubkey, bob.pubkey);
+ *
+ * // Use these events to test your app's event handling
+ * ```
  */
 export class EventGenerator {
     private static privateKeys = new Map<string, string>();

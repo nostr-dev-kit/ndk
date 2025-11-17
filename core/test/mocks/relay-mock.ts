@@ -12,7 +12,35 @@ interface RelayMockOptions {
 }
 
 /**
- * Mock implementation of NDK Relay for testing purposes
+ * Mock Nostr relay for testing your application without real relay connections.
+ *
+ * Simulates a full Nostr relay with configurable behavior including connection delays,
+ * disconnections, and publish failures. Perfect for testing your app's relay interaction
+ * logic without network dependencies.
+ *
+ * @example
+ * ```typescript
+ * import { RelayMock } from '@nostr-dev-kit/ndk/test';
+ *
+ * // Create a mock relay
+ * const relay = new RelayMock('wss://relay.example.com', {
+ *   connectionDelay: 100,      // Simulate 100ms connection delay
+ *   simulateDisconnect: true,  // Randomly disconnect
+ *   disconnectAfter: 5000      // Disconnect after 5 seconds
+ * });
+ *
+ * // Use it in your NDK instance
+ * ndk.pool.relays.set(relay.url, relay);
+ *
+ * // Simulate events from relay
+ * const event = await EventGenerator.createSignedTextNote('Hello!', alice.pubkey);
+ * relay.simulateEvent(event);
+ * relay.simulateEOSE();
+ *
+ * // Test publish failures
+ * relay.failNextPublish = true;
+ * await myApp.publishNote('This will fail');
+ * ```
  */
 export class RelayMock extends EventEmitter {
     public url: string;

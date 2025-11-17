@@ -288,7 +288,7 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         const result = subscribeMethod(currentFilters, {
             ...currentNdkOpts,
             closeOnEose: false,
-            onEvents: (cachedEvents) => {
+            onEvents: (cachedEvents: NDKEvent[]) => {
                 // Batch process all cached events at once
                 for (const event of cachedEvents) {
                     const wrapperOpts = derivedWrapperOpts;

@@ -39,9 +39,9 @@ describe("FollowsProxy", () => {
         it("should throw error when no active user", async () => {
             mockStore = {
                 get currentUser() {
-                    return null;
+                    return undefined;
                 }
-            } as ReactiveSessionsStore;
+            } as Partial<ReactiveSessionsStore> as ReactiveSessionsStore;
 
             followsProxy = new FollowsProxy(mockStore, followSet);
 
@@ -75,9 +75,9 @@ describe("FollowsProxy", () => {
         it("should throw error when no active user", async () => {
             mockStore = {
                 get currentUser() {
-                    return null;
+                    return undefined;
                 }
-            } as ReactiveSessionsStore;
+            } as Partial<ReactiveSessionsStore> as ReactiveSessionsStore;
 
             followsProxy = new FollowsProxy(mockStore, followSet);
 

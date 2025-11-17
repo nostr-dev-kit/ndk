@@ -23,10 +23,10 @@ describe('Meta-Subscription Validation', () => {
 
         it('should throw TypeError when passed string', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => "not a config");
+                createMetaSubscription(ndk, () => "not a config" as any);
             }).toThrow(TypeError);
             expect(() => {
-                createMetaSubscription(ndk, () => "not a config");
+                createMetaSubscription(ndk, () => "not a config" as any);
             }).toThrow("$metaSubscribe expects config to be a function");
         });
 
@@ -38,7 +38,7 @@ describe('Meta-Subscription Validation', () => {
 
         it('should throw TypeError when passed null', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => null);
+                createMetaSubscription(ndk, () => null as any);
             }).toThrow(TypeError);
         });
 

@@ -67,7 +67,6 @@ export class ReactiveSessionsStore {
      * Get current active user
      */
     get currentUser(): NDKUser | undefined {
-        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return this.#manager.activeUser;
     }
 
@@ -145,7 +144,6 @@ export class ReactiveSessionsStore {
      * Get session event by kind for current session
      */
     getSessionEvent(kind: NDKKind): NDKEvent | null | undefined {
-        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return this.current?.events.get(kind);
     }
 
@@ -179,7 +177,6 @@ export class ReactiveSessionsStore {
      * ```
      */
     async login(userOrSigner: NDKUser | NDKSigner, options?: { setActive?: boolean }): Promise<Hexpubkey> {
-        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return await this.#manager.login(userOrSigner, options);
     }
 
@@ -189,7 +186,6 @@ export class ReactiveSessionsStore {
      * - With user: Read-only session
      */
     async add(userOrSigner: NDKUser | NDKSigner): Promise<Hexpubkey> {
-        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return await this.#manager.login(userOrSigner, { setActive: false });
     }
 
@@ -297,7 +293,6 @@ export class ReactiveSessionsStore {
             signer?: NDKPrivateKeySigner;
         }
     ): Promise<{ signer: NDKPrivateKeySigner; events: NDKEvent[] }> {
-        // @ts-expect-error - Monorepo type incompatibility between core and node_modules NDK instances
         return await this.#manager.createAccount(data, opts);
     }
 }

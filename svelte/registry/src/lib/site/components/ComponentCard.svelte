@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import type { Snippet } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { nip19 } from '@nostr-dev-kit/ndk';
 	import { marked } from 'marked';
 	import { User } from '$lib/registry/ui/user';
 	import ComponentAPI from '$site-components/component-api.svelte';
@@ -10,6 +7,7 @@
 	import * as Tabs from '$lib/site/components/ui/tabs';
 	import CodeSnippet from '$site-components/code-snippet.svelte';
 	import Preview from '$site-components/preview.svelte';
+    import { ndk } from '$site/ndk.svelte';
 
 	export interface ComponentDoc {
 		name: string;
@@ -62,8 +60,6 @@
 	}
 
 	let { data, preview }: Props = $props();
-
-	const ndk = getContext<NDKSvelte>('ndk');
 </script>
 
 {#if data}

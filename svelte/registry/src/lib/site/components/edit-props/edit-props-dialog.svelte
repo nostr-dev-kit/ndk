@@ -7,6 +7,7 @@
 	import type { PropDefinition } from './edit-props-context.svelte';
 	import EditPropsPreview from './edit-props-preview.svelte';
 	import { cn } from '$lib/registry/utils/cn.js';
+    import { ndk } from '$site/ndk.svelte';
 
 	interface Props {
 		show: boolean;
@@ -16,8 +17,6 @@
 	}
 
 	let { show = $bindable(), props, onClose, onApply }: Props = $props();
-
-	const ndk = getContext<NDKSvelte>('ndk');
 
 	// Local state for editing
 	let inputs = $state<Record<string, string>>({});

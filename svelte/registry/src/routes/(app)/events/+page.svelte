@@ -1,5 +1,4 @@
 <script lang="ts">
-		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ndk } from '$lib/site/ndk.svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
@@ -18,7 +17,7 @@
 		<EditProps.Prop
 			name="Sample Event"
 			type="event"
-			default="nevent1qvzqqqqqqypzq0mgmm0gz4yuczzyltl99rc4wj63uz27wjglg69aj6ylsamehwqaqqst6h0tdve9v0xwwpz4d4ckwfc9ksjtjjjutc4smjzewp85u7a9v0qhd8czh"
+			default="nevent1qqst6h0tdve9v0xwwpz4d4ckwfc9ksjtjjjutc4smjzewp85u7a9v0qpzemhxue69uhhyetvv9ujumn0wd68ytnzv9hxgqgkwaehxw309aex2mrp0yh8qunfd4skctnwv46qe9yg78"
 			bind:value={sampleEvent}
 		/>
 	</PageTitle>

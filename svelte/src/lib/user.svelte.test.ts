@@ -31,13 +31,13 @@ describe("User Validation", () => {
 
         it("should throw TypeError when passed object", () => {
             expect(() => {
-                createFetchUser(ndk, () => ({ npub: "npub1test" }));
+                createFetchUser(ndk, () => ({ npub: "npub1test" }) as any);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                createFetchUser(ndk, () => null);
+                createFetchUser(ndk, () => null as any);
             }).toThrow(TypeError);
         });
 
@@ -77,13 +77,13 @@ describe("User Validation", () => {
 
         it("should throw TypeError when passed string", () => {
             expect(() => {
-                createZapInfo(() => "npub1test");
+                createZapInfo(() => "npub1test" as any);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                createZapInfo(() => null);
+                createZapInfo(() => null as any);
             }).toThrow(TypeError);
         });
 

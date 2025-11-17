@@ -46,9 +46,9 @@ describe("MutesProxy", () => {
         it("should throw error when no active user", async () => {
             mockStore = {
                 get currentUser() {
-                    return null;
+                    return undefined;
                 }
-            } as ReactiveSessionsStore;
+            } as Partial<ReactiveSessionsStore> as ReactiveSessionsStore;
 
             mutesProxy = new MutesProxy(mockStore, muteSet);
 
@@ -125,9 +125,9 @@ describe("MutesProxy", () => {
         it("should throw error when no active user", async () => {
             mockStore = {
                 get currentUser() {
-                    return null;
+                    return undefined;
                 }
-            } as ReactiveSessionsStore;
+            } as Partial<ReactiveSessionsStore> as ReactiveSessionsStore;
 
             mutesProxy = new MutesProxy(mockStore, muteSet);
 

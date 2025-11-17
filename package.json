@@ -8,7 +8,7 @@
         "vitepress-plugin-mermaid": "^2.0.17"
     },
     "devDependencies": {
-        "svelte": "^5.41.0",
+        "svelte": "^5.41.1",
         "syncpack": "^13.0.4",
         "turbo": "^2.5.3"
     },
@@ -29,9 +29,10 @@
         "changeset": "changeset",
         "clean": "turbo clean && rm -rf node_modules",
         "cs": "changeset",
-        "cs:check": "bunx syncpack list-mismatches",
+        "cs:check": "syncpack list-mismatches",
         "cs:pub": "bun cs:check && changeset publish",
-        "cs:ver": "changeset version && bunx syncpack fix-mismatches",
+        "cs:ver": "changeset version && syncpack fix-mismatches",
+        "fix-mismatches": "syncpack fix-mismatches",
         "dev": "turbo dev --no-cache --continue",
         "docs:build": "bash ./prepare-docs.sh && vitepress build docs",
         "docs:dev": "bash ./prepare-docs.sh && npx vitepress dev docs",

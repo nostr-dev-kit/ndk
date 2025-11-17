@@ -9,15 +9,44 @@ export type Proof = {
 };
 
 /**
- * Creates a nutzap for a given amount, optionally locking to a p2pk.
- * @param mint
- * @param amount
- * @param ndk
- * @param opts
- * @param opts.senderPk - The private key of the sender
- * @param opts.recipientPubkey - The nostr pubkey of the recipient
- * @param opts.content - The content of the nutzap
- * @param opts.eventId - Event ID being zapped (for replay protection)
+ * Creates a mock Cashu nutzap for testing zap/payment features in your application.
+ *
+ * Generates a complete NIP-61 nutzap event with Cashu tokens, perfect for testing
+ * payment flows, zap handling, and wallet integration in your Nostr app without
+ * requiring real mints or tokens.
+ *
+ * @param mint The mint URL
+ * @param amount The amount in satoshis
+ * @param ndk The NDK instance
+ * @param opts Configuration options
+ * @param opts.senderPk The private key signer of the sender (defaults to random)
+ * @param opts.recipientPubkey The nostr pubkey of the recipient
+ * @param opts.content Optional comment/message with the nutzap
+ * @param opts.eventId Optional event ID being zapped (for replay protection)
+ * @returns A signed nutzap event ready for testing
+ *
+ * @example
+ * ```typescript
+ * import { mockNutzap, UserGenerator } from '@nostr-dev-kit/ndk/test';
+ *
+ * const alice = await UserGenerator.getUser('alice', ndk);
+ * const bob = await UserGenerator.getUser('bob', ndk);
+ *
+ * // Create a nutzap from alice to bob
+ * const nutzap = await mockNutzap(
+ *   'https://mint.example.com',
+ *   1000, // 1000 sats
+ *   ndk,
+ *   {
+ *     recipientPubkey: bob.pubkey,
+ *     content: 'Great post!',
+ *     eventId: originalEvent.id
+ *   }
+ * );
+ *
+ * // Test your app's nutzap handling
+ * await myApp.handleNutzap(nutzap);
+ * ```
  */
 export async function mockNutzap(
     mint: string,
@@ -63,12 +92,35 @@ export async function mockNutzap(
 }
 
 /**
- * Creates a proof for a given amount, optionally locking to a p2pk.
- * @param C
- * @param amount
- * @param p2pk
- * @param proofTags - Tags to include in proof secret (e.g., [["e", "event-id"], ["P", "sender-pubkey"]])
- * @returns
+ * Creates a mock Cashu proof for testing token handling in your application.
+ *
+ * Generates individual Cashu proofs with optional P2PK locking, useful for testing
+ * token validation, redemption, and wallet operations without real Cashu tokens.
+ *
+ * @param C The commitment point (usually mint URL for testing)
+ * @param amount The amount in satoshis
+ * @param p2pk Optional pubkey for P2PK locking the proof
+ * @param proofTags Optional tags for proof secret (e.g., [["e", "event-id"], ["P", "sender-pubkey"]])
+ * @returns A mock Cashu proof object
+ *
+ * @example
+ * ```typescript
+ * import { mockProof } from '@nostr-dev-kit/ndk/test';
+ *
+ * // Create a simple proof
+ * const proof = mockProof('https://mint.example.com', 100);
+ *
+ * // Create a P2PK-locked proof
+ * const lockedProof = mockProof(
+ *   'https://mint.example.com',
+ *   500,
+ *   bobPubkey, // locked to bob
+ *   [['P', alicePubkey]] // from alice
+ * );
+ *
+ * // Test your app's proof validation
+ * const isValid = await myApp.validateProof(lockedProof);
+ * ```
  */
 export function mockProof(
     C: string,

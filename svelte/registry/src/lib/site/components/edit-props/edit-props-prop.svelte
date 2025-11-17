@@ -4,6 +4,7 @@
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { getEditPropsContext, type PropType } from './edit-props-context.svelte';
 	import { fetchFromIdentifier } from './edit-props-fetcher';
+    import { ndk } from '$site/ndk.svelte';
 
 	interface Props {
 		name: string;
@@ -16,7 +17,6 @@
 	let { name, type, default: defaultValue, value = $bindable(), options }: Props = $props();
 
 	let context = getEditPropsContext();
-	const ndk = getContext<NDKSvelte>('ndk');
 
 	// Register this prop with the parent context
 	untrack(() => {

@@ -1,5 +1,5 @@
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-import { NDKArticle, NDKEvent, NDKSubscriptionCacheUsage, NDKUser } from '@nostr-dev-kit/ndk';
+import { NDKArticle, type NDKEvent, NDKSubscriptionCacheUsage, type NDKUser } from '@nostr-dev-kit/ndk';
 import { nip19 } from 'nostr-tools';
 import type { PropType } from './edit-props-context.svelte';
 

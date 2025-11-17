@@ -2,6 +2,8 @@
 	import type { NDKEvent, NDKFilter } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { EventCard } from '../event-card';
+	import { Popover } from 'bits-ui';
+	import { SvelteMap } from 'svelte/reactivity';
 	import {
 		replaceUrlTemplate,
 		type AppHandlerInfo,
@@ -32,7 +34,7 @@
 
 	// Parse handler events into AppHandlerInfo
 	const handlers = $derived.by(() => {
-		const handlerMap = new Map<string, AppHandlerInfo>();
+		const handlerMap = new SvelteMap<string, AppHandlerInfo>();
 
 		for (const handlerEvent of handlerSubscription.events) {
 			const platforms: HandlerPlatform[] = [];
@@ -133,34 +135,59 @@
 		{#if handlers.length > 0}
 			<div class="mt-4 pt-4 border-t border-border">
 				<div class="text-sm font-semibold text-foreground mb-3">Open in compatible app:</div>
-				<div class="flex flex-col gap-3">
+				<div class="flex gap-3 overflow-x-auto pb-2 -mx-3 px-3">
 					{#each handlers as handler (handler.pubkey)}
-						<div class="flex gap-3 p-3 bg-muted rounded-lg border border-border">
-							{#if handler.picture}
-								<img src={handler.picture} alt={handler.name || 'App'} class="w-10 h-10 rounded-md object-cover flex-shrink-0" />
-							{/if}
-							<div class="flex-1 min-w-0">
-								<div class="text-[0.9375rem] font-semibold text-foreground mb-1">{handler.name || 'Nostr App'}</div>
-								{#if handler.about}
-									<div class="text-[0.8125rem] text-muted-foreground mb-2 line-clamp-2">{handler.about}</div>
-								{/if}
-								<div class="flex gap-2 flex-wrap">
-									{#each handler.platforms as platform, index (index)}
-										<a
-											href={getHandlerUrl(platform)}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="inline-flex items-center gap-1 px-2 py-1 bg-primary text-primary-foreground rounded text-xs font-medium no-underline transition-opacity hover:opacity-80"
-											title="Open in {platform.platform}"
-											data-external-link
-										>
-											{getPlatformIcon(platform.platform)}
-											{platform.platform}
-										</a>
-									{/each}
+						<Popover.Root>
+							<Popover.Trigger class="flex-shrink-0">
+								<button
+									type="button"
+									class="w-12 h-12 rounded-lg border border-border bg-muted hover:bg-accent transition-colors overflow-hidden"
+									title={handler.name || 'Nostr App'}
+								>
+									{#if handler.picture}
+										<img
+											src={handler.picture}
+											alt={handler.name || 'App'}
+											class="w-full h-full object-cover"
+										/>
+									{:else}
+										<div class="w-full h-full flex items-center justify-center text-2xl">
+											📱
+										</div>
+									{/if}
+								</button>
+							</Popover.Trigger>
+							<Popover.Content
+								class="z-50 w-[320px] rounded-lg border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+								sideOffset={5}
+							>
+								<div class="p-4">
+									<div class="text-base font-semibold text-foreground mb-2">
+										{handler.name || 'Nostr App'}
+									</div>
+									{#if handler.about}
+										<div class="text-sm text-muted-foreground mb-3 leading-relaxed">
+											{handler.about}
+										</div>
+									{/if}
+									<div class="flex gap-2 flex-wrap">
+										{#each handler.platforms as platform, index (index)}
+											<a
+												href={getHandlerUrl(platform)}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="inline-flex items-center gap-1 px-2 py-1 bg-primary text-primary-foreground rounded text-xs font-medium no-underline transition-opacity hover:opacity-80"
+												title="Open in {platform.platform}"
+												data-external-link
+											>
+												{getPlatformIcon(platform.platform)}
+												{platform.platform}
+											</a>
+										{/each}
+									</div>
 								</div>
-							</div>
-						</div>
+							</Popover.Content>
+						</Popover.Root>
 					{/each}
 				</div>
 			</div>

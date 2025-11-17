@@ -9,7 +9,7 @@ export interface FetchEventState {
 }
 
 export interface FetchEventConfig {
-    bech32: string;
+    bech32: string | undefined;
 }
 
 /**
@@ -17,7 +17,7 @@ export interface FetchEventConfig {
  *
  * Fetches events from bech32 references (note1, nevent1, naddr1).
  *
- * @param config - Function returning configuration with bech32 reference
+ * @param config - Function returning configuration with bech32 reference (can be undefined)
  * @param ndk - Optional NDK instance (uses context if not provided)
  *
  * @example
@@ -28,10 +28,13 @@ export interface FetchEventConfig {
  * // Or with explicit NDK
  * const fetcher = createFetchEvent(() => ({ bech32: 'note1...' }), ndk);
  *
+ * // With potentially undefined bech32
+ * const fetcher = createFetchEvent(() => ({ bech32: $page.params.id }));
+ *
  * // Access state
  * fetcher.event // The fetched event
- * fetcher.loading // Loading state
- * fetcher.error // Error message if any
+ * fetcher.loading // Loading state (false when bech32 is undefined)
+ * fetcher.error // Error message if any ("No event provided" when bech32 is undefined)
  *
  * // Use in template
  * {#if fetcher.loading}
@@ -54,7 +57,12 @@ export function createFetchEvent(
 
     $effect(() => {
         const { bech32: currentBech32 } = config();
-        if (!currentBech32) return;
+        if (!currentBech32) {
+            loading = false;
+            error = 'No event provided';
+            fetchedEvent = null;
+            return;
+        }
 
         loading = true;
         error = null;

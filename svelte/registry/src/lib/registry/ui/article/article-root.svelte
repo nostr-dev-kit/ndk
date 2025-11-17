@@ -1,6 +1,6 @@
 <script lang="ts">
   import { setContext } from 'svelte';
-  import type { NDKArticle } from '@nostr-dev-kit/ndk';
+  import { NDKArticle } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ARTICLE_CONTEXT_KEY, type ArticleContext } from './article.context.js';
   import { getNDK } from '../../utils/ndk';

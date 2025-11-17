@@ -38,32 +38,8 @@ jobs:
               run: bun install
             - name: Build app
               run: bun run build:libs
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                node-version: '18'
-            - name: Install pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                version: 8
-            - name: Install documentation dependencies with bun
-              run: |
-                bun add -d vitepress vitepress-plugin-mermaid mermaid vue typescript typedoc
-            - name: Prepare documentation
-              run: |
-                chmod +x ./prepare-docs.sh
-                ./prepare-docs.sh
-            - name: Generate TypeDoc API documentation
-              run: |
-                cd core
-                npx typedoc --options typedoc.json
-                cd ..
-                mkdir -p docs/.vitepress/dist/api
-                cp -r core/typedoc-docs/* docs/.vitepress/dist/api/
-            - name: Build VitePress site
-              run: |
-                cd docs
-                npx vitepress build
+            - name: Build docs
+              run: bun run docs:build
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:

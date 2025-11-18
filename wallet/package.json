@@ -66,6 +66,8 @@
   "devDependencies": {
     "@cashu/cashu-ts": "^2.1",
     "@cashu/crypto": "*",
+    "@nostr-dev-kit/ndk": "workspace:*",
+    "@nostr-dev-kit/sync": "workspace:*",
     "@types/debug": "^4.1.12",
     "@types/node": "^24.10.0",
     "@webbtc/webln-types": "^3.0.0",

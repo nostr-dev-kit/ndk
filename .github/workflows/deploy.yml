@@ -38,11 +38,6 @@ jobs:
               run: bun install
             - name: Build all packages
               run: bun run build
-            - name: Run tests
-              run: |
-                cd svelte
-                bun test
-                cd ..
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:

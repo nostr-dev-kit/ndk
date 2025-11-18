@@ -57,8 +57,8 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@nostr-dev-kit/ndk": "workspace:*",
-    "@nostr-dev-kit/sync": "workspace:*",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.52",
+    "@nostr-dev-kit/sync": "0.4.0-beta.52",
     "@types/debug": "^4.1.12",
     "tsup": "^8.4.0"
   }

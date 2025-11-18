@@ -153,6 +153,9 @@ export enum NDKKind {
     CashuMintAnnouncement = 38172,
     FedimintMintAnnouncement = 38173,
 
+    // NIP-69: P2P Order
+    P2POrder = 38383,
+
     HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 

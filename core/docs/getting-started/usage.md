@@ -42,100 +42,21 @@ NDK provides flexible ways to fetch user objects, including support for
 [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) encoded identifiers
 and [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) addresses:
 
-```typescript
-// From hex pubkey
-const user1 = await ndk.fetchUser("3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d");
+<<< @/core/docs/snippets/managing-users.ts
 
-// From npub (NIP-19 encoded)
-const user2 = await ndk.fetchUser("npub1n0sturny6w9zn2wwexju3m6asu7zh7jnv2jt2kx6tlmfhs7thq0qnflahe");
+Note: `fetchUser` is async and returns a Promise. For [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md)
+lookups, it may return `undefined` if the address cannot be resolved.
 
-// From nprofile (includes relay hints)
-const user3 = await ndk.fetchUser("nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p");
+See the [NIP-19 tutorial](/core/docs/tutorial/nip19.md) for comprehensive examples and use cases.
 
-// From NIP-05 identifier
-const user4 = await ndk.fetchUser("pablo@test.com");
-const user5 = await ndk.fetchUser("test.com"); // Uses _@test.com
+### Frameworks Integrations
 
-// The method automatically detects the format
-const user6 = await ndk.fetchUser("deadbeef..."); // Assumes hex pubkey
-```
+If you're planning to use `NDK` in a react framework, check out the documentation for these specific packages:
 
-Note: `fetchUser` is async and returns a Promise. For NIP-05 lookups, it may return `undefined` if the address cannot be
-resolved.
+* [@nostr-dev-kit/react](/react/README.md): Hooks and utilities to integrate NDK into a React applications
+* [@nostr-dev-kit/svelte](/svelte/README.md): Modern, performant, and beautiful Svelte 5 integration
 
-
-See the [NIP-19 tutorial](/tutorial/nip19.html) for comprehensive examples and use cases.
-
-## Usage with React Hooks (`ndk-hooks`)
-
-When using the `ndk-hooks` package in a React application, the initialization process involves creating the NDK instance
-and then using the `useNDKInit` hook to make it available to the rest of your application via Zustand stores.
-
-This hook ensures that both the core NDK store and dependent stores (like the user profiles store) are properly
-initialized with the NDK instance.
-
-It's recommended to create and connect your NDK instance outside of your React components, potentially in a dedicated
-setup file or at the root of your application. Then, use the `useNDKInit` hook within your main App component or a
-context provider to initialize the stores once the component mounts.
-
-```tsx
-import React, { useEffect } from 'react'; // Removed useState
-import NDK from '@nostr-dev-kit/ndk';
-import { useNDKInit } from '@nostr-dev-kit/ndk-hooks'; // Assuming package name
-
-// 1. Configure your NDK instance (e.g., in src/ndk.ts or similar)
-const ndk = new NDK({
-    explicitRelayUrls: ['wss://relay.damus.io', 'wss://relay.primal.net'],
-    // Add signer or cache adapter if needed
-});
-
-// 2. Connect the instance immediately
-ndk.connect()
-    .then(() => console.log('NDK connected'))
-    .catch((e) => console.error('NDK connection error:', e));
-
-// Example: App component or Context Provider that initializes NDK stores
-function App() {
-    const initializeNDK = useNDKInit(); // Hook returns the function directly
-
-    useEffect(() => {
-        // 3. Initialize stores once the component mounts
-        initializeNDK(ndk);
-    }, [initializeNDK]); // Dependency ensures this runs if initializeNDK changes, though unlikely
-
-    // Your application components can now use other ndk-hooks
-    // No need to wait for connection state here, as hooks handle NDK readiness internally
-    return (
-        <div>
-            {/* ... Your app content using useProfile, useSubscribe, etc. ... */}
-        </div>
-    );
-}
-
-export default App;
-```
-
-**Key Points:**
-
-* Create and configure your `NDK` instance globally or outside components.
-* Call `ndk.connect()` immediately after creation. Connection happens in the background.
-* In your main App or Provider component, get the `initializeNDK` function from `useNDKInit`.
-* Use `useEffect` with an empty dependency array (or `[initializeNDK]`) to call `initializeNDK(ndk)` once on mount.
-* This sets up the necessary Zustand stores. Other `ndk-hooks` will access the initialized `ndk` instance from the store
-  and handle its readiness internally.
-
----
-
-## Architecture decisions & suggestions
-
-- Users of NDK should instantiate a single NDK instance.
-- That instance tracks state with all relays connected, explicit and otherwise.
-- All relays are tracked in a single pool that handles connection errors/reconnection logic.
-- RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting,
-  like the `explicitRelayUrls` specified by the user.
-- RelaySets are always a subset of the pool of all available relays.
-
-## Subscribing to Events
+### Subscribing to Events
 
 Once connected, you can subscribe to events using `ndk.subscribe()`. You provide filters to specify the events you're
 interested in.

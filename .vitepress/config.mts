@@ -38,8 +38,8 @@ export default defineConfig({
                 text: "Getting Started",
                 items: [
                     {text: "Installing ✅", link: "/core/docs/getting-started/installing"},
+                    {text: "Usage ✅", link: "/core/docs/getting-started/usage"},
                     {text: "Debugging ✅", link: "/core/docs/getting-started/debugging"},
-                    {text: "Usage ❌", link: "/core/docs/getting-started/usage"},
                 ],
             },
             {

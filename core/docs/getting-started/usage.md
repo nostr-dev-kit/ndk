@@ -22,25 +22,25 @@ You can pass an object with several options to a newly created instance of NDK.
 Note: In normal client use, it's best practice to instantiate NDK as a singleton
 class. [See more below](#architecture-decisions--suggestions).
 
-## Connecting
+### Connecting
 
-After you've instatiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
+After you've instantiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
 
-```ts
-// Import the package
-import NDK from "@nostr-dev-kit/ndk";
+<<< @/core/docs/snippets/connecting.ts
 
-// Create a new NDK instance with explicit relays
-const ndk = new NDK({
-    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
-});
-// Now connect to specified relays
-await ndk.connect();
-```
+### Using NIP-19 Identifiers
 
-## Creating Users
+NDK re-exports [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) from the
+[nostr-tools library](https://github.com/nbd-wtf/nostr-tools) which provides different utilities for encoding and
+decoding Nostr identifiers:
 
-NDK provides flexible ways to fetch user objects, including support for NIP-19 encoded identifiers and NIP-05 addresses:
+<<< @/core/docs/snippets/nip-19-identifiers.ts
+
+### Managing Users
+
+NDK provides flexible ways to fetch user objects, including support for
+[NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) encoded identifiers
+and [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) addresses:
 
 ```typescript
 // From hex pubkey
@@ -63,28 +63,6 @@ const user6 = await ndk.fetchUser("deadbeef..."); // Assumes hex pubkey
 Note: `fetchUser` is async and returns a Promise. For NIP-05 lookups, it may return `undefined` if the address cannot be
 resolved.
 
-## Working with NIP-19 Identifiers
-
-NDK re-exports NIP-19 utilities for encoding and decoding Nostr identifiers:
-
-```typescript
-import { nip19 } from '@nostr-dev-kit/ndk';
-
-// Encode a pubkey as npub
-const npub = nip19.npubEncode("3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d");
-
-// Decode any NIP-19 identifier
-const decoded = nip19.decode("npub1...");
-console.log(decoded.type); // "npub"
-console.log(decoded.data); // hex pubkey
-
-// Encode events
-const nevent = nip19.neventEncode({
-    id: eventId,
-    relays: ["wss://relay.example.com"],
-    author: authorPubkey
-});
-```
 
 See the [NIP-19 tutorial](/tutorial/nip19.html) for comprehensive examples and use cases.
 

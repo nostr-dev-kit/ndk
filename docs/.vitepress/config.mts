@@ -5,6 +5,7 @@ export default defineConfig({
     title: "NDK",
     srcDir: "../",
     description: "NDK Docs",
+    cleanUrls: true,
     // base: "/ndk/",
     ignoreDeadLinks: true,
     markdown: {

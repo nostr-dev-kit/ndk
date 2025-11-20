@@ -5,4 +5,5 @@ export default defineWorkspace([
     "./ndk-mobile/vitest.config.ts",
     "./wallet/vitest.config.ts",
     "./ndk-hooks/vitest.config.ts",
+    "./svelte/registry/vitest.config.ts",
 ]);

@@ -7,7 +7,21 @@ import { EventGenerator } from "../mocks/event-generator";
 type Names = "alice" | "bob" | "carol" | "dave" | "eve";
 
 /**
- * Class for generating deterministic test users
+ * Generates deterministic test users for consistent, reproducible testing.
+ *
+ * Provides predefined users (alice, bob, carol, dave, eve) with static keypairs,
+ * ensuring your tests produce the same results every time. Perfect for testing
+ * multi-user interactions in your Nostr application.
+ *
+ * @example
+ * ```typescript
+ * // Get a deterministic test user
+ * const alice = await UserGenerator.getUser('alice', ndk);
+ * const bob = await UserGenerator.getUser('bob', ndk);
+ *
+ * // Use in your app tests
+ * const dm = await myApp.sendMessage(alice, bob, 'Hello!');
+ * ```
  */
 export class UserGenerator {
     public static privateKeys: Record<string, string> = {
@@ -19,10 +33,20 @@ export class UserGenerator {
     };
 
     /**
-     * Get a user with a deterministic private key
+     * Get a deterministic test user by name.
+     *
+     * Returns a test user with a predefined keypair, ensuring consistent behavior
+     * across test runs. Use this when testing features that involve specific users.
+     *
      * @param name The name of the user (alice, bob, carol, dave, eve)
-     * @param ndk The NDK instance to use for the user
-     * @returns The NDK user
+     * @param ndk Optional NDK instance to attach to the user
+     * @returns The NDK user with a deterministic keypair
+     *
+     * @example
+     * ```typescript
+     * const alice = await UserGenerator.getUser('alice', ndk);
+     * expect(alice.pubkey).toBe('e9e4276490374a0daf7759fd5f475deff6ffb9b0fc5fa98c902b5f4b2fe3bba1');
+     * ```
      */
     static async getUser(name: Names, ndk?: NDK): Promise<NDKUser> {
         const privateKey = UserGenerator.privateKeys[name.toLowerCase()];
@@ -69,7 +93,20 @@ export class UserGenerator {
 }
 
 /**
- * Class for generating deterministic test signers
+ * Generates signers for test users to sign events in your application tests.
+ *
+ * Provides signers for predefined test users, allowing you to test event signing,
+ * publishing, and authentication flows in your Nostr application.
+ *
+ * @example
+ * ```typescript
+ * // Get a signer for a test user
+ * const aliceSigner = SignerGenerator.getSigner('alice');
+ * ndk.signer = aliceSigner;
+ *
+ * // Now alice can sign events in your app
+ * await myApp.publishNote('Hello, Nostr!');
+ * ```
  */
 export class SignerGenerator {
     /**
@@ -103,7 +140,33 @@ export class SignerGenerator {
 }
 
 /**
- * Enhanced event generation utilities that build on EventGenerator
+ * High-level event factory for creating test events with proper relationships and tagging.
+ *
+ * Provides convenient methods for creating common event patterns like notes, DMs,
+ * replies, and conversation threads. Automatically handles proper NIP-10 tagging
+ * and event relationships for testing your app's event handling logic.
+ *
+ * @example
+ * ```typescript
+ * const factory = new TestEventFactory(ndk);
+ * const alice = await UserGenerator.getUser('alice', ndk);
+ * const bob = await UserGenerator.getUser('bob', ndk);
+ *
+ * // Create a note
+ * const note = await factory.createSignedTextNote('Hello!', alice);
+ *
+ * // Create a reply
+ * const reply = await factory.createReply(note, 'Hi back!', bob);
+ *
+ * // Create a DM
+ * const dm = await factory.createDirectMessage('Secret message', alice, bob);
+ *
+ * // Create a conversation thread
+ * const thread = await factory.createEventChain('Original post', alice, [
+ *   { author: bob, content: 'First reply' },
+ *   { author: alice, content: 'Response' }
+ * ]);
+ * ```
  */
 export class TestEventFactory {
     private ndk: NDK;
@@ -263,7 +326,29 @@ export class TestEventFactory {
 }
 
 /**
- * Complete test fixture environment
+ * Complete test environment with NDK, users, and event factory pre-configured.
+ *
+ * Provides a ready-to-use test environment that combines NDK instance, event factory,
+ * and convenient access to test users and signers. Reduces boilerplate in your tests.
+ *
+ * @example
+ * ```typescript
+ * const fixture = new TestFixture();
+ *
+ * // Access NDK instance
+ * fixture.ndk.connect();
+ *
+ * // Get test users
+ * const alice = await fixture.getUser('alice');
+ *
+ * // Setup signer
+ * fixture.setupSigner('alice');
+ *
+ * // Use event factory
+ * const note = await fixture.eventFactory.createSignedTextNote('Test', alice);
+ *
+ * // Test your app with this environment
+ * ```
  */
 export class TestFixture {
     ndk: NDK;

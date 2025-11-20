@@ -1,5 +1,215 @@
 # Changelog
 
+## Unreleased
+
+### Breaking Changes
+
+- **REMOVED: UI/Action builders moved to registry-only** - The following builders have been removed from the `@nostr-dev-kit/svelte` package exports and are now only available in the registry as reference implementations:
+
+  **Removed action builder exports:**
+  - `createFollowAction`, `createReactionAction`, `createReplyAction`, `createRepostAction`, `createMuteAction`
+  - `createEmojiPicker`
+  - Related types: `FollowActionConfig`, `ReactionActionConfig`, `ReplyActionConfig`, `RepostActionConfig`, `MuteActionConfig`, `EmojiReaction`, `EmojiData`, `EmojiPickerConfig`, `ReplyStats`, `RepostStats`
+
+  **Removed complex builder exports:**
+  - `createThreadView` and types: `ThreadView`, `ThreadNode`, `CreateThreadViewOptions`, `ThreadingMetadata`
+  - `createHighlight` and types: `HighlightConfig`, `HighlightState`, `HighlightPosition`, `SourceInfo`, `UrlMetadata`
+  - `createZapSendAction` and types: `ZapSendActionConfig`, `ZapSendSplit`
+  - `createBookmarkedRelayList` and types: `BookmarkedRelayListState`, `BookmarkedRelayWithStats`
+  - `createAvatarGroup` and types: `AvatarGroupConfig`, `AvatarGroupState`
+  - `createUserInput` and types: `UserInputConfig`, `UserInputResult`
+
+  **Remaining core exports:**
+  The package now only exports these core primitives:
+  - `createFetchEvent` - Fetch and track individual events
+  - `createProfileFetcher` - Fetch and track user profiles
+  - `createRelayInfo` - Fetch relay information documents
+
+  **Migration:** If you were importing action or UI builders from `@nostr-dev-kit/svelte`, copy the implementation from the registry into your project. These builders are UI-specific and better suited as reference implementations rather than library exports.
+
+- **REMOVED: Payment tracking infrastructure** - Removed `$payments` store and all payment tracking functionality (`src/lib/payments/`) as it was not fully integrated with the rest of the system. The wallet store (`$wallet`) remains fully functional for Cashu, NWC, and WebLN wallet operations.
+
+  **Removed exports:**
+  - `createIsZapped`, `createPendingPayments`, `createTargetTransactions`, `createTransactions`, `createZapAmount` runes
+  - `PendingPayment`, `Transaction`, `TransactionDirection`, `TransactionStatus`, `TransactionType` types
+  - `ReactivePaymentsStore` type
+  - `ndk.$payments` property
+
+  **Migration:** Remove any references to `ndk.$payments` from your code. Wallet functionality (`ndk.$wallet`) continues to work as before.
+
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@3.0.0
+
+## 4.0.0
+
+### Major Changes
+
+- b5bdb2c: BREAKING: Rename all use* functions to create* for consistency
+
+    All reactive utilities now consistently use the `create*` prefix to match Svelte idioms (like `createEventDispatcher`).
+
+    **Svelte package renames:**
+    - `useZapAmount` → `createZapAmount`
+    - `useIsZapped` → `createIsZapped`
+    - `useTargetTransactions` → `createTargetTransactions`
+    - `usePendingPayments` → `createPendingPayments`
+    - `useTransactions` → `createTransactions`
+    - `useWoTScore` → `createWoTScore`
+    - `useWoTDistance` → `createWoTDistance`
+    - `useIsInWoT` → `createIsInWoT`
+    - `useZapInfo` → `createZapInfo`
+    - `useBlossomUpload` → `createBlossomUpload`
+    - `useBlossomUrl` → `createBlossomUrl`
+
+    Migration: Replace all `use*` function calls with their `create*` equivalents in your Svelte components.
+
+### Minor Changes
+
+- d4da836: Add meta-subscription support with $metaSubscribe
+
+    Introduces `ndk.$metaSubscribe()`, a reactive subscription that returns events pointed to by e-tags and a-tags, rather than the matching events themselves. Perfect for:
+    - Showing reposted content (kind 6/16)
+    - Finding articles commented on (kind 1111)
+    - Displaying zapped notes (kind 9735)
+    - Any use case where you want to follow event references
+
+    Supports multiple sort options:
+    - `time`: Sort by event creation time (newest first)
+    - `count`: Sort by number of pointers (most pointed-to first)
+    - `tag-time`: Sort by most recently tagged (newest pointer first)
+    - `unique-authors`: Sort by number of unique authors pointing to it
+
+    Example usage:
+
+    ```typescript
+    const feed = ndk.$metaSubscribe(() => ({
+        filters: [{ kinds: [6, 16], authors: $follows }],
+        sort: "tag-time",
+    }));
+
+    // Access pointed-to events
+    feed.events;
+
+    // Access pointer events by target
+    feed.eventsTagging(event);
+    ```
+
+- b5bdb2c: Add meta-subscription support with $metaSubscribe
+
+    Introduces `ndk.$metaSubscribe()`, a reactive subscription that returns events pointed to by e-tags and a-tags, rather than the matching events themselves. Perfect for:
+    - Showing reposted content (kind 6/16)
+    - Finding articles commented on (kind 1111)
+    - Displaying zapped notes (kind 9735)
+    - Any use case where you want to follow event references
+
+    Supports multiple sort options:
+    - `time`: Sort by event creation time (newest first)
+    - `count`: Sort by number of pointers (most pointed-to first)
+    - `tag-time`: Sort by most recently tagged (newest pointer first)
+    - `unique-authors`: Sort by number of unique authors pointing to it
+
+    Example usage:
+
+    ```typescript
+    const feed = ndk.$metaSubscribe(() => ({
+        filters: [{ kinds: [6, 16], authors: $follows }],
+        sort: "tag-time",
+    }));
+
+    // Access pointed-to events
+    feed.events;
+
+    // Access pointer events by target
+    feed.eventsTagging(event);
+    ```
+
+- b5bdb2c: Add reactive zap subscription system
+
+    Comprehensive zap support for Svelte with reactive subscriptions and utilities:
+
+    **$zaps() subscription method:**
+    - Reactive zap subscriptions on events or users
+    - Support for both NIP-57 (lightning) and NIP-61 (nutzaps)
+    - Validation for both zap types
+    - Filter by zap method
+    - Aggregate metrics (count, total amount)
+    - Support for validated-only zaps
+
+    **ReactiveFollows class:**
+    - Reactive wrapper around follow set
+    - Network-aware add/remove operations
+
+    **Utility functions:**
+    - Extract zap amount, sender, and comments
+    - Type-safe zap validation and parsing
+
+    Example usage:
+
+    ```typescript
+    const zapSub = ndk.$zaps(() => ({
+        target: event,
+        validatedOnly: true,
+    }));
+
+    // Access zap metrics
+    zapSub.totalAmount;
+    zapSub.count;
+    zapSub.events;
+    ```
+
+### Patch Changes
+
+- b5bdb2c: Add event throttling to prevent excessive UI updates
+
+    Implemented throttling mechanism for reactive event subscriptions to prevent excessive UI updates when many events arrive in quick succession. This improves performance and reduces unnecessary re-renders in Svelte applications.
+
+- 46b1c0f: Simplify zap function to use ndk.wallet and ndk.$currentPubkey
+
+    Refactored the zap function to access wallet directly from ndk.wallet instead of ndk.$wallet.wallet, and use ndk.$currentPubkey instead of requiring an active session. This simplifies the code and makes it more robust.
+
+- Updated dependencies [b8e7a06]
+- Updated dependencies [79503f5]
+- Updated dependencies [ad7936b]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [4b8d146]
+- Updated dependencies [8f116fa]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [72fc3b0]
+- Updated dependencies [73adeb9]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [b5bdb2c]
+    - @nostr-dev-kit/ndk@3.0.0
+    - @nostr-dev-kit/cache-sqlite-wasm@1.0.0
+    - @nostr-dev-kit/sync@0.4.0
+    - @nostr-dev-kit/sessions@0.6.4
+    - @nostr-dev-kit/wallet@0.8.11
+    - @nostr-dev-kit/wot@0.3.7
+
+## 3.0.0
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+    - @nostr-dev-kit/wallet@0.8.10
+    - @nostr-dev-kit/sync@0.3.6
+
+## 2.4.4
+
+### Patch Changes
+
+- 4482b62: Fix wallet store API: `mints` now returns `string[]` of configured mint URLs (not filtered by balance), and add `mintBalances` getter that returns all mints with their balances including configured mints with 0 balance
+- Updated dependencies
+- Updated dependencies [6c5f645]
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.11
+    - @nostr-dev-kit/sessions@0.6.3
+
 ## 2.4.3
 
 ### Patch Changes

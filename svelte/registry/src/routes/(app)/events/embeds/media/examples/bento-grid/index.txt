@@ -1,0 +1,17 @@
+<script lang="ts">
+	import EventContent from '$lib/registry/ui/event-content.svelte';
+	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+	import MediaBento from '$lib/registry/components/media-bento';
+
+	let { ndk, event } = $props();
+
+	// Create a custom renderer with bento grid layout
+	const bentoRenderer = new ContentRenderer();
+	bentoRenderer.mediaComponent = MediaBento;
+</script>
+
+<div class="w-full max-w-3xl">
+	{#if event}
+		<EventContent {ndk} {event} renderer={bentoRenderer} />
+	{/if}
+</div>

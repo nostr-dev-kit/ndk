@@ -58,14 +58,14 @@ export class BlossomUpload {
         try {
             const mergedOptions = {
                 ...options,
-                onProgress: (progress) => {
+                onProgress: (progress: { loaded: number; total: number }) => {
                     const percentage = Math.round((progress.loaded / progress.total) * 100);
                     this.#progress = {
                         loaded: progress.loaded,
                         total: progress.total,
                         percentage,
                     };
-                    return "continue";
+                    return "continue" as const;
                 },
             };
             const result = await this.blossom.upload(file, mergedOptions);
@@ -88,6 +88,6 @@ export class BlossomUpload {
     }
 }
 
-export function useBlossomUpload(blossom: NDKBlossom): BlossomUpload {
+export function createBlossomUpload(blossom: NDKBlossom): BlossomUpload {
     return new BlossomUpload(blossom);
 }

@@ -1,4 +1,43 @@
-# @nostr-dev-kit/ndk-cache-redis
+# @nostr-dev-kit/wallet
+
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [b8e7a06]
+- Updated dependencies [ad7936b]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [4b8d146]
+- Updated dependencies [8f116fa]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [72fc3b0]
+- Updated dependencies [73adeb9]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [b5bdb2c]
+    - @nostr-dev-kit/ndk@3.0.0
+    - @nostr-dev-kit/sync@0.4.0
+
+## 0.8.10
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+    - @nostr-dev-kit/sync@0.3.6
+
+## 0.8.9
+
+### Patch Changes
+
+- e2154a0: Add `publishMintList()` method to NDKCashuWallet for simplified CashuMintList (kind 10019) publishing. The svelte wallet store's `save()` method now automatically publishes both the wallet configuration (kind 17375) and the mint list (kind 10019) for nutzap reception, eliminating the need for manual mint list creation.
+
+## 0.8.8
+
+### Patch Changes
+
+- Add `publishMintList()` method to NDKCashuWallet for simplified CashuMintList (kind 10019) publishing. The svelte wallet store's `save()` method now automatically publishes both the wallet configuration (kind 17375) and the mint list (kind 10019) for nutzap reception, eliminating the need for manual mint list creation.
 
 ## 0.8.8
 

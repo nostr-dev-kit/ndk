@@ -1,0 +1,10 @@
+<script lang="ts">
+  import { Highlight } from '$lib/registry/ui/highlight';
+
+  let { ndk, highlight } = $props();
+</script>
+
+<Highlight.Root {ndk} event={highlight}>
+  <Highlight.Content class="text-lg italic border-l-4 border-primary pl-4" />
+  <Highlight.Source class="text-sm text-gray-500 mt-2" />
+</Highlight.Root>

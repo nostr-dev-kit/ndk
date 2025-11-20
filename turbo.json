@@ -6,36 +6,40 @@
             "dependsOn": ["^build"],
             "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
         },
-        "ndk-core#build": {
+        "core#build": {
             "outputs": ["dist/**"]
         },
         "wallet#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build", "sync#build"]
+            "dependsOn": ["core#build", "sync#build"]
         },
-        "ndk-hooks#build": {
+        "hooks#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build", "wallet#build"]
+            "dependsOn": ["core#build", "wallet#build"]
         },
-        "ndk-mobile#build": {
+        "mobile#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build", "wallet#build", "ndk-hooks#build"]
+            "dependsOn": ["core#build", "wallet#build", "hooks#build"]
         },
         "blossom#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build"]
+            "dependsOn": ["core#build"]
         },
         "cache-sqlite#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build"]
+            "dependsOn": ["core#build"]
         },
         "sync#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build"]
+            "dependsOn": ["core#build"]
         },
         "wot#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build", "sync#build"]
+            "dependsOn": ["core#build", "sync#build"]
+        },
+        "sessions#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build", "wallet#build"]
         },
         "test": {
             "outputs": ["coverage/**"],

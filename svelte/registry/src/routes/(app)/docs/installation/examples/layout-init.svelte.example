@@ -1,0 +1,15 @@
+<script lang="ts">
+  import { ndk, initializeNDK } from '$lib/ndk';
+  import { setContext } from 'svelte';
+  import { NDK_CONTEXT_KEY } from '@nostr-dev-kit/svelte';
+
+  // Make NDK available to all components via context
+  setContext(NDK_CONTEXT_KEY, ndk);
+
+  // Initialize NDK when the layout mounts
+  $effect(() => {
+    initializeNDK();
+  });
+</script>
+
+<slot />

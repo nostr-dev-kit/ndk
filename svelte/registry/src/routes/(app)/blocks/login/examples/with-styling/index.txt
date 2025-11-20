@@ -1,0 +1,12 @@
+<script lang="ts">
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
+  import { ndk } from '$lib/ndk.svelte';
+</script>
+
+<div class="flex items-center justify-center min-h-screen">
+  <LoginCompact
+    {ndk}
+    class="max-w-md shadow-2xl"
+    onSuccess={() => console.log('Logged in!')}
+  />
+</div>

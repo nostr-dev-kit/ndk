@@ -1,0 +1,14 @@
+<script lang="ts">
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
+  import { getContext } from 'svelte';
+
+  const ndk = getContext('ndk');
+</script>
+
+<LoginCompact
+  {ndk}
+  onSuccess={() => {
+    console.log('Login successful!');
+    // Navigate to dashboard or protected route
+  }}
+/>

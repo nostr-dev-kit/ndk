@@ -1,0 +1,48 @@
+{
+  "name": "follow-hero",
+  "title": "Follow Hero",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "hero",
+  "oneLiner": "A hero pack for follow content",
+  "registryName": "components/follow-pack-hero",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "hero",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "FollowPackHero",
+    "description": "A large hero card for featured follow packs with full-bleed background image and gradient overlay. Displays pack title, description, member avatars (up to 5), and pack author details. Features 400px height, dramatic gradient overlays, and hover shadow effect. Perfect for landing pages and featured content sections.",
+    "importPath": "import { FollowPackHero } from '$lib/registry/components/follow/packs/hero'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "followPack",
+        "type": "NDKFollowPack",
+        "required": true,
+        "description": "Follow pack to display"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler callback"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+<script lang="ts">
+  import { Article } from '$lib/registry/ui/article';
+
+  let { ndk, article } = $props();
+</script>
+
+<Article.Root {ndk} {article} class="flex flex-col items-start">
+  <Article.Title class="text-2xl font-bold mb-2" />
+  <Article.Summary class="text-muted-foreground mb-4" />
+  <Article.ReadingTime class="text-sm text-muted-foreground" />
+</Article.Root>

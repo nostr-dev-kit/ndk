@@ -16,7 +16,7 @@
         "preserveWatchOutput": true,
         "skipLibCheck": true,
         "strict": true,
-        "types": ["vitest/globals"], // Add vitest globals
+        "types": ["node", "vitest/globals"], // Add vitest globals
         "allowJs": true,
         "checkJs": true,
         "lib": ["dom", "dom.iterable", "esnext"],

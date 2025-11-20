@@ -1,0 +1,51 @@
+{
+  "name": "media-carousel",
+  "title": "Media Carousel",
+  "category": "media",
+  "variant": "carousel",
+  "oneLiner": "Carousel layout with NSFW and follows-based filtering",
+  "registryName": "components/media-carousel",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "media",
+    "carousel",
+    "nsfw",
+    "nostr",
+    "social"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "type": "media"
+  },
+  "apiDoc": {
+    "name": "MediaCarousel",
+    "description": "Carousel/slider layout with navigation and NSFW filtering",
+    "importPath": "import MediaCarousel from '$lib/registry/components/media-carousel'",
+    "props": [
+      {
+        "name": "url",
+        "type": "string | string[]",
+        "description": "Single media URL or array of URLs for grouped media"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "description": "Nostr event for checking author and content-warning tags"
+      },
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

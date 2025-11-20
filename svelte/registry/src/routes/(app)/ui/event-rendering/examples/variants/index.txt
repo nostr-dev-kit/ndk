@@ -1,0 +1,26 @@
+<script>
+    import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
+
+  let {  ndk, eventBech32  } = $props();
+</script>
+
+<div class="variants-demo">
+  <div class="variant-section">
+    <h3>Card (default)</h3>
+    <EmbeddedEvent {ndk} bech32={eventBech32} variant="card" />
+  </div>
+
+  <div class="variant-section">
+    <h3>Compact</h3>
+    <EmbeddedEvent {ndk} bech32={eventBech32} variant="compact" />
+  </div>
+
+  <div class="variant-section">
+    <h3>Inline</h3>
+    <p>
+      Check out this event:
+      <EmbeddedEvent {ndk} bech32={eventBech32} variant="inline" />
+      in the middle of text.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<script lang="ts">
+  import { createMuteAction } from '$lib/registry/builders/mute-action/index.svelte.js';
+
+  let { user, ndk } = $props();
+
+  const muteState = createMuteAction(() => ({ target: user }), ndk);
+</script>
+
+<button
+  class:text-red-500={muteState.isMuted}
+  onclick={muteState.mute}
+>
+  {muteState.isMuted ? '🔇 Muted' : '🔊 Mute'}
+</button>

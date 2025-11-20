@@ -1,0 +1,12 @@
+// Show content reposted by people you follow
+const reposts = ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [6, 16], authors: ndk.$follows }],
+  sort: 'tag-time'
+}));
+
+{#each reposts.events as event (event.id)}
+  {@const reposters = reposts.eventsTagging(event)}
+  <EventCard {event}>
+    <span>Reposted by {reposters.length} people</span>
+  </EventCard>
+{/each}

@@ -1,0 +1,21 @@
+<script>
+	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+	import MediaCarousel from './media-carousel.example.svelte';
+
+	let { ndk } = $props();
+
+	// Create custom renderer with carousel
+	const customRenderer = new ContentRenderer();
+	customRenderer.mediaComponent = MediaCarousel;
+
+	const sampleContent = `Check out these amazing photos!
+
+https://picsum.photos/800/600?random=1
+https://picsum.photos/800/600?random=2
+
+https://picsum.photos/800/600?random=3
+
+All from the same collection!`;
+</script>
+
+<EventContent {ndk} content={sampleContent} renderer={customRenderer} />

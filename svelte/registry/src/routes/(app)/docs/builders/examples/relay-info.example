@@ -1,0 +1,5 @@
+const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
+
+relay.nip11?.name
+relay.nip11?.description
+relay.nip11?.supported_nips

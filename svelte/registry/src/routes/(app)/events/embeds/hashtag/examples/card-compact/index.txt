@@ -1,0 +1,7 @@
+<script lang="ts">
+  import { HashtagCardCompact } from '$lib/registry/components/hashtag-card-compact';
+
+  let { ndk, tag = 'nostr' } = $props();
+</script>
+
+<HashtagCardCompact {ndk} hashtag={tag} />

@@ -1,12 +1,12 @@
 /**
  * Runs all necessary database migrations.
- * Applies the schema for events, profiles, nutzap_monitor_state, decrypted_events, and unpublished_events tables.
+ * Applies the schema for events, profiles, decrypted_events, and unpublished_events tables.
  * @param db The SQLite WASM database instance
  */
 import type { SQLDatabase } from "../types";
 import { SCHEMA } from "./schema";
 
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 5;
 
 function getCurrentVersion(db: SQLDatabase): number {
     try {
@@ -33,12 +33,10 @@ export async function runMigrations(db: SQLDatabase): Promise<void> {
         // Always ensure all tables exist (idempotent)
         db.exec(SCHEMA.events);
         db.exec(SCHEMA.profiles);
-        db.exec(SCHEMA.nutzap_monitor_state);
         db.exec(SCHEMA.decrypted_events);
         db.exec(SCHEMA.unpublished_events);
         db.exec(SCHEMA.event_tags);
         db.exec(SCHEMA.cache_data);
-        db.exec(SCHEMA.event_relays);
 
         // Version 1: Added nip05 table
         if (currentVersion < 1) {
@@ -48,6 +46,48 @@ export async function runMigrations(db: SQLDatabase): Promise<void> {
         // Version 2: Ensure nip05 table exists (for databases that might have been corrupted)
         if (currentVersion < 2) {
             db.exec(SCHEMA.nip05);
+        }
+
+        // Version 3: Simplify relay tracking - add relay_url to events, drop event_relays table
+        if (currentVersion < 3) {
+            // Add relay_url column to events table
+            try {
+                db.exec("ALTER TABLE events ADD COLUMN relay_url TEXT");
+            } catch (e) {
+                // Column might already exist, that's fine
+            }
+
+            // Drop event_relays table - we only track first relay now
+            try {
+                db.exec("DROP TABLE IF EXISTS event_relays");
+                db.exec("DROP INDEX IF EXISTS idx_event_relays_event_id");
+            } catch (e) {
+                // Table might not exist, that's fine
+            }
+        }
+
+        // Version 4: Add compound indexes for query performance
+        if (currentVersion < 4) {
+            // Create compound indexes for common query patterns
+            db.exec("CREATE INDEX IF NOT EXISTS idx_events_kind_created_at ON events(kind, created_at)");
+            db.exec("CREATE INDEX IF NOT EXISTS idx_events_pubkey_created_at ON events(pubkey, created_at)");
+            db.exec("CREATE INDEX IF NOT EXISTS idx_event_tags_tag_value ON event_tags(tag, value)");
+        }
+
+        // Version 5: Ensure raw column exists (for databases created before this column was added)
+        if (currentVersion < 5) {
+            try {
+                // Check if raw column exists
+                const tableInfo = db.exec("PRAGMA table_info(events)");
+                const columns = tableInfo[0]?.values?.map(row => row[1]) || [];
+
+                if (!columns.includes('raw')) {
+                    db.exec("ALTER TABLE events ADD COLUMN raw TEXT");
+                }
+            } catch (e) {
+                console.error('[NDK Cache] Failed to add raw column:', e);
+                // Column might already exist, that's fine
+            }
         }
 
         setVersion(db, CURRENT_VERSION);

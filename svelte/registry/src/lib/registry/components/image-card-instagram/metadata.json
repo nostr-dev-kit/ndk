@@ -1,0 +1,61 @@
+{
+  "name": "image-card-instagram",
+  "title": "Image Card Instagram",
+  "category": "image",
+  "subcategory": "cards",
+  "variant": "instagram",
+  "oneLiner": "An Instagram-style card for image content",
+  "registryName": "components/image-card-instagram",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "image",
+    "cards",
+    "instagram",
+    "social",
+    "nostr"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 8,
+    "wrapper": "NDKImage"
+  },
+  "apiDoc": {
+    "name": "ImageCardInstagram",
+    "description": "An Instagram-style card for displaying image events (NIP-94) with a social media inspired layout. Features header with author info, full-width image display, interaction buttons, and caption area.",
+    "importPath": "import { ImageCardInstagram } from '$lib/registry/components/image-card-instagram'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "image",
+        "type": "NDKImage",
+        "required": true,
+        "description": "Image event to display"
+      },
+      {
+        "name": "interactive",
+        "type": "boolean",
+        "default": "false",
+        "description": "Enable clickable interaction mode"
+      },
+      {
+        "name": "showActions",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show action buttons (reactions, reposts)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

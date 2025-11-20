@@ -1,0 +1,33 @@
+{
+	"$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/registry-config.json",
+	"name": "@ndk/svelte",
+	"version": "0.0.45",
+	"readme": "README.md",
+	"allowSubdirectories": true,
+	"dirs": [
+		"./src/lib/registry"
+	],
+	"doNotListCategories": [],
+	"listBlocks": [],
+	"listCategories": [],
+	"excludeDeps": [
+		"svelte"
+	],
+	"includeBlocks": [],
+	"includeCategories": [],
+	"includeFiles": [],
+	"excludeFiles": [
+		"**/*.test.ts",
+		"**/*.test.js",
+		"**/*.spec.ts",
+		"**/*.spec.js",
+		"**/__screenshots__/**",
+		"**/__tests__/**",
+		"**/test-results/**",
+		"**/playwright-report/**"
+	],
+	"excludeBlocks": [],
+	"excludeCategories": [],
+	"preview": true,
+	"includeDocs": false
+}

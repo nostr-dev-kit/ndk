@@ -8,6 +8,7 @@ import { NDKKind } from "./index.js";
  * @group Kind Wrapper
  */
 export class NDKBlossomList extends NDKEvent {
+    static kind = NDKKind.BlossomList;
     static kinds = [NDKKind.BlossomList];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {

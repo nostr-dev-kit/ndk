@@ -1,0 +1,38 @@
+{
+  "name": "negentropy-sync-detailed",
+  "title": "Negentropy-sync Detailed",
+  "category": "negentropy-sync",
+  "subcategory": "progress",
+  "variant": "detailed",
+  "oneLiner": "A detailed progres for negentropy-sync content",
+  "registryName": "components/negentropy-sync-detailed",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "negentropy-sync",
+    "progress",
+    "detailed",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "NegentropySyncProgressDetailed",
+    "description": "Detailed negentropy sync progress display with stats, progress bar, and per-relay status. Shows sync statistics horizontally, percentage-based progress bar, and individual relay status with counts. Uses NegentrogySync builder pattern with Root, Stats, ProgressBar, and RelayStatus subcomponents. Perfect for detailed sync monitoring in settings or debug views.",
+    "importPath": "import { NegentropySyncProgressDetailed } from '$lib/registry/components/negentropy-sync/progress/detailed'",
+    "props": [
+      {
+        "name": "syncBuilder",
+        "type": "ReturnType<typeof createNegentropySync>",
+        "required": true,
+        "description": "Negentropy sync builder instance from createNegentropySync"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

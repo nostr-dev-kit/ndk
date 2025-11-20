@@ -1,60 +1,61 @@
 {
-    "name": "@nostr-dev-kit/cache-memory",
-    "version": "2.7.7",
-    "description": "NDK In-Memory LRU Cache Adapter",
-    "license": "MIT",
-    "docs": "typedoc",
-    "bugs": {
-        "url": "https://github.com/nostr-dev-kit/cache-memory/issues"
+  "name": "@nostr-dev-kit/cache-memory",
+  "version": "2.7.8-beta.52",
+  "description": "NDK In-Memory LRU Cache Adapter",
+  "license": "MIT",
+  "docs": "typedoc",
+  "bugs": {
+    "url": "https://github.com/nostr-dev-kit/cache-memory/issues"
+  },
+  "homepage": "https://github.com/nostr-dev-kit/cache-memory#readme",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
-    "homepage": "https://github.com/nostr-dev-kit/cache-memory#readme",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "exports": {
-        "import": {
-            "types": "./dist/index.d.mts",
-            "default": "./dist/index.mjs"
-        },
-        "require": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        }
-    },
-    "files": [
-        "dist",
-        "README.md"
-    ],
-    "scripts": {
-        "dev": "bun run build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts",
-        "clean": "rm -rf dist",
-        "lint": "prettier --check . && eslint .",
-        "format": "prettier --write .",
-        "test": "vitest"
-    },
-    "keywords": [
-        "nostr",
-        "memory",
-        "lru",
-        "cache"
-    ],
-    "authors": [
-        "pablof7z"
-    ],
-    "devDependencies": {
-        "@types/debug": "^4.1.12",
-        "@types/node": "^24.7.0",
-        "prettier": "^3.3.3",
-        "ts-node": "^10.9.2",
-        "tsup": "^8.4.0",
-        "typedoc": "^0.28.13",
-        "typedoc-plugin-markdown": "^4.9.0",
-        "vitest": "^3.2.4"
-    },
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.9",
-        "debug": "^4.3.7",
-        "nostr-tools": "^2.17.0",
-        "typescript-lru-cache": "^2.0.0"
+    "require": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "bun run build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "rm -rf dist",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write .",
+    "test": "vitest"
+  },
+  "keywords": [
+    "nostr",
+    "memory",
+    "lru",
+    "cache"
+  ],
+  "authors": [
+    "pablof7z"
+  ],
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/node": "^24.10.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.4.0",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "vitest": "^4.0.7"
+  },
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.52",
+    "debug": "^4.3.7",
+    "nostr-tools": "^2.17.2",
+    "typescript": "^5.9.3",
+    "typescript-lru-cache": "^2.0.0"
+  }
 }

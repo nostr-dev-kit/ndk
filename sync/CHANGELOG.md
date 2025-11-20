@@ -1,5 +1,34 @@
 # @nostr-dev-kit/sync
 
+## 0.4.0
+
+### Minor Changes
+
+- b5bdb2c: Add onEvents batch handler for O(n) performance
+
+    Implemented batch event processing handler for NDK Sync, improving performance from O(n²) to O(n) when processing large numbers of events. The `onEvents` callback allows efficient batch processing of synchronized events.
+
+### Patch Changes
+
+- Updated dependencies [b8e7a06]
+- Updated dependencies [ad7936b]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [4b8d146]
+- Updated dependencies [8f116fa]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [72fc3b0]
+- Updated dependencies [73adeb9]
+- Updated dependencies [b5bdb2c]
+    - @nostr-dev-kit/ndk@3.0.0
+
+## 0.3.6
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+
 ## 0.3.5
 
 ### Patch Changes

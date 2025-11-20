@@ -1,0 +1,60 @@
+{
+  "name": "reply-button",
+  "title": "Reply Button",
+  "category": "reply",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "oneLiner": "A basic reply button with count display",
+  "registryName": "components/reply-button",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "reply",
+    "buttons",
+    "basic",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "ReplyButton",
+    "description": "Reply button component",
+    "importPath": "import { ReplyButton } from '$lib/registry/components/reply/buttons/basic';",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (optional if available in context)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to reply to"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual variant of the button"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Whether to show reply count"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Optional click handler"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

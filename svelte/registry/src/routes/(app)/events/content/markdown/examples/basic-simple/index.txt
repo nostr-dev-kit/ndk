@@ -1,0 +1,10 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import { ArticleContentBasic } from '$lib/registry/components/article-content-basic';
+
+  let { article } = $props();
+
+  const ndk = getContext('ndk');
+</script>
+
+<ArticleContentBasic {ndk} {article} />

@@ -1,0 +1,136 @@
+<script lang="ts">
+	import { EventCard } from '$lib/registry/components/event/cards/compound';
+	import { User } from '$lib/registry/ui/user';
+
+	let { ndk } = $props();
+
+	let sortOption = $state('tag-time');
+
+	// Subscribe to repost events from your follows
+	// $metaSubscribe automatically fetches the reposted content
+	const feed = ndk.$metaSubscribe(() => ({
+		filters: [{ kinds: [6, 16], authors: [...ndk.$follows] }],
+		sort: sortOption
+	}));
+
+	// Derive sorted events for display
+	const events = $derived(feed.events.slice(0, 10));
+
+	// Get repost count for an event
+	function getRepostCount(event) {
+		return feed.eventsTagging(event).length;
+	}
+
+	// Get unique reposter count
+	function getReposterCount(event) {
+		const reposts = feed.eventsTagging(event);
+		const uniqueReposters = new Set(reposts.map((r) => r.pubkey));
+		return uniqueReposters.size;
+	}
+
+	// Get reposters for display
+	function getReposters(event) {
+		return feed.eventsTagging(event);
+	}
+</script>
+
+<div class="repost-feed">
+	<div class="sort-controls">
+		<label class="sort-button" class:active={sortOption === 'tag-time'}>
+			<input type="radio" name="sort" value="tag-time" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Most Recent</strong>
+				<small>Newest reposts first</small>
+			</span>
+		</label>
+		<label class="sort-button" class:active={sortOption === 'count'}>
+			<input type="radio" name="sort" value="count" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Most Popular</strong>
+				<small>Most reposted first</small>
+			</span>
+		</label>
+		<label class="sort-button" class:active={sortOption === 'time'}>
+			<input type="radio" name="sort" value="time" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Newest Content</strong>
+				<small>By creation time</small>
+			</span>
+		</label>
+		<label class="sort-button" class:active={sortOption === 'unique-authors'}>
+			<input type="radio" name="sort" value="unique-authors" bind:group={sortOption} />
+			<span class="sort-label">
+				<strong>Most Diverse</strong>
+				<small>Unique reposters</small>
+			</span>
+		</label>
+	</div>
+
+	{#if !feed.eosed && events.length === 0}
+		<div class="loading">
+			<div class="spinner"></div>
+			<p>Loading reposted content from your network...</p>
+		</div>
+	{:else if events.length === 0}
+		<div class="empty-state">
+			<p class="empty-title">No reposts yet</p>
+			<p class="empty-description">
+				Content reposted by people you follow will appear here. Follow more people or wait for them
+				to repost content!
+			</p>
+		</div>
+	{:else}
+		<div class="feed-header">
+			<h4 class="feed-title">Reposted by Your Network</h4>
+			<div class="feed-stats">
+				<span class="stat">{feed.count} events</span>
+				<span class="separator">•</span>
+				<span class="stat">{feed.eosed ? 'Live' : 'Loading...'}</span>
+			</div>
+		</div>
+
+		<div class="events-list">
+			{#each events as event (event.id)}
+				{@const repostCount = getRepostCount(event)}
+				{@const reposterCount = getReposterCount(event)}
+				{@const reposters = getReposters(event)}
+
+				<EventCard.Root {ndk} {event}>
+					<EventCard.Header variant="compact" />
+
+					<EventCard.Content truncate={280} />
+
+					<div class="repost-info">
+						<div class="repost-stats">
+							<div class="repost-badge">
+								<span class="repost-emoji">🔁</span>
+								<span class="repost-count">{repostCount} {repostCount === 1 ? 'repost' : 'reposts'}</span>
+							</div>
+							<span class="reposter-count">
+								from {reposterCount} {reposterCount === 1 ? 'person' : 'people'}
+							</span>
+						</div>
+						<div class="reposters-avatars">
+							{#each reposters.slice(0, 5) as reposter (reposter.pubkey)}
+								<div class="avatar-wrapper">
+									<User.Root {ndk} pubkey={reposter.pubkey}>
+										<User.Avatar class="w-7 h-7" />
+									</User.Root>
+								</div>
+							{/each}
+							{#if reposters.length > 5}
+								<div class="avatar-more">+{reposters.length - 5}</div>
+							{/if}
+						</div>
+					</div>
+				</EventCard.Root>
+			{/each}
+		</div>
+
+		{#if feed.count > 10}
+			<div class="more-indicator">
+				<p>+{feed.count - 10} more reposted events</p>
+			</div>
+		{/if}
+	{/if}
+</div>

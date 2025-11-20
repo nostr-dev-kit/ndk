@@ -1,0 +1,102 @@
+{
+  "name": "repost-button-avatars",
+  "title": "Repost Button Avatars",
+  "category": "repost",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "oneLiner": "A avatars button for repost content",
+  "registryName": "components/repost-button-avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "repost",
+    "buttons",
+    "avatars",
+    "nostr",
+    "social"
+  ],
+  "examples": [
+    {
+      "title": "Basic repost button",
+      "code": "<RepostButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Show all reposters",
+      "code": "<RepostButtonAvatars {ndk} {event} onlyFollows={false} max={10} />"
+    },
+    {
+      "title": "Custom click handler",
+      "code": "<RepostButtonAvatars\n  {ndk}\n  {event}\n  onclick={() => showRepostModal()}\n  variant=\"outline\"\n/>"
+    },
+    {
+      "title": "Compact display",
+      "code": "<RepostButtonAvatars\n  {ndk}\n  {event}\n  max={2}\n  avatarSize={20}\n  spacing=\"tight\"\n  showCount={false}\n/>"
+    }
+  ],
+  "apiDoc": {
+    "name": "RepostButtonAvatars",
+    "description": "A repost button that displays avatars of users who have reposted the content. By default, filters to show only avatars from followed users (onlyFollows=true) to highlight reposts from your social circle. When clicked without a custom handler, it toggles the repost state. Supports multiple visual variants and customizable avatar display with intelligent overflow handling.",
+    "importPath": "import { RepostButtonAvatars } from '$lib/registry/components/repost/buttons/avatars'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (optional if available in context)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to repost"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual variant of the button"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "3",
+        "description": "Maximum number of avatars to display before showing overflow"
+      },
+      {
+        "name": "avatarSize",
+        "type": "number",
+        "default": "24",
+        "description": "Size of each avatar in pixels"
+      },
+      {
+        "name": "spacing",
+        "type": "'tight' | 'normal' | 'loose'",
+        "default": "'tight'",
+        "description": "Spacing between avatars in the group"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Whether to show repost count alongside avatars"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Optional custom click handler. If not provided, clicking will toggle repost state (repost/unrepost)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

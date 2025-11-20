@@ -1,0 +1,45 @@
+{
+  "name": "fallback-event-basic",
+  "title": "Fallback Event Basic",
+  "category": "event",
+  "oneLiner": "A simple card for displaying fallback Nostr events with kind and content",
+  "description": "A simple, lightweight card component for displaying fallback Nostr events. Shows the event kind, NIP-31 alt tag (if available), or the first 200 characters of content with author information.",
+  "documentation": "# Fallback Event Basic\n\n## Overview\n\nThe Fallback Event Basic component provides a simple, lightweight way to display any Nostr event type. It's designed for cases where you need a quick, clean view of an event without complex features.\n\n## Features\n\n- Displays event kind as a badge\n- Shows NIP-31 alt tag when available\n- Falls back to first 200 characters of content (truncated)\n- Compact author information with avatar and timestamp\n- Responsive layout with consistent styling\n\n## Usage\n\nBest used as a fallback display for unknown event kinds, in event lists where you need uniform cards, or when prototyping event displays.\n\n## Best Practices\n\n1. Use for event types without dedicated components\n2. Perfect for feed views with mixed event kinds\n3. Good starting point before creating specialized event cards",
+  "registryName": "components/fallback-event-basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "event",
+    "fallback",
+    "card",
+    "basic",
+    "nostr"
+  ],
+  "apiDoc": {
+    "name": "FallbackEventBasic",
+    "description": "A simple card for displaying fallback Nostr events with kind and content",
+    "importPath": "$lib/registry/components/fallback-event-basic",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "required": false,
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

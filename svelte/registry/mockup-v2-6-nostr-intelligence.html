@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Components That Understand Nostr</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .hero {
+            padding: 100px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        .hero .subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+        .section h2 {
+            font-size: 32px;
+            margin-bottom: 32px;
+            font-weight: 700;
+        }
+
+        .feature {
+            margin-bottom: 80px;
+        }
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 20px;
+        }
+        .comparison-side {
+            background: #fafafa;
+            padding: 28px;
+            border-radius: 8px;
+            border: 2px solid #e5e5e5;
+        }
+        .comparison-side h4 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .comparison-side.magic {
+            border-color: #1a1a1a;
+            background: #fff;
+        }
+
+        .avatar-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .avatar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+        .avatar.following {
+            box-shadow: 0 0 0 3px #000;
+        }
+        .avatar-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .follow-btn {
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .follow-btn.following {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #e5e5e5;
+        }
+
+        .state-demo {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .reaction-bar {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .reaction-btn {
+            background: #f5f5f5;
+            border: 1px solid #e5e5e5;
+            padding: 8px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .reaction-count {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .thread-visual {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .thread-item {
+            padding-left: 24px;
+            border-left: 2px solid #e5e5e5;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+        }
+        .thread-item .marker {
+            font-size: 11px;
+            background: #000;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .thread-item .content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .tag-visual {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+            margin-top: 12px;
+            color: #666;
+        }
+
+        .zap-splits {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .split-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .split-amount {
+            font-weight: 600;
+        }
+
+        .event-kinds {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .kind-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 16px;
+            border-radius: 6px;
+        }
+        .kind-card .kind-num {
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .kind-card .kind-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .kind-card .render-as {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .note {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 16px;
+        }
+
+        .code {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 16px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            margin: 16px 0;
+        }
+        .code .comment { color: #888; }
+        .code .tag { color: #50fa7b; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <h1>Components That<br>Understand Nostr</h1>
+            <p class="subtitle">
+                Not just UI. Protocol intelligence. Automatically knows your follows, parses event tags,
+                reconstructs threads, calculates zap splits. This is Nostr-native.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="feature">
+                <h3>AvatarGroup Prioritizes Your Follows</h3>
+                <div class="comparison">
+                    <div class="comparison-side">
+                        <h4>Generic Avatar Group</h4>
+                        <div class="state-demo">
+                            <div class="avatar-grid">
+                                <div class="avatar-item">
+                                    <div class="avatar"></div>
+                                    <span class="avatar-label">User 1</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #c0c0c0;"></div>
+                                    <span class="avatar-label">User 2</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #a0a0a0;"></div>
+                                    <span class="avatar-label">User 3</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #808080;"></div>
+                                    <span class="avatar-label">User 4</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #606060;"></div>
+                                    <span class="avatar-label">User 5</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="note">Just shows avatars in order received.</div>
+                    </div>
+
+                    <div class="comparison-side magic">
+                        <h4>Nostr-Aware Avatar Group</h4>
+                        <div class="state-demo">
+                            <div class="avatar-grid">
+                                <div class="avatar-item">
+                                    <div class="avatar following"></div>
+                                    <span class="avatar-label">Alice ✓</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar following" style="background: #c0c0c0;"></div>
+                                    <span class="avatar-label">Bob ✓</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #a0a0a0;"></div>
+                                    <span class="avatar-label">Charlie</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #808080;"></div>
+                                    <span class="avatar-label">Diana</span>
+                                </div>
+                                <div class="avatar-item">
+                                    <div class="avatar" style="background: #606060;"></div>
+                                    <span class="avatar-label">Eve</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="note">People you follow shown first (with ring). Reads ndk.$follows automatically.</div>
+                    </div>
+                </div>
+
+                <div class="code">
+<span class="comment">// You don't tell it who you follow. It already knows.</span>
+const avatars = createAvatarGroup(() => ({
+  pubkeys: [...allPubkeys]
+}));
+
+<span class="comment">// Automatically reads from ndk.$follows (your kind-3 contact list)</span>
+<span class="comment">// Shows followed users first, with visual indicator</span>
+<span class="tag">&lt;AvatarGroup</span> {avatars} showFollowedFirst={true} <span class="tag">/&gt;</span>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>FollowButton Knows Follow State</h3>
+                <div class="comparison">
+                    <div class="comparison-side">
+                        <h4>Generic Button</h4>
+                        <div class="state-demo">
+                            <button class="follow-btn">Follow</button>
+                        </div>
+                        <div class="code" style="font-size: 11px; padding: 12px; margin-top: 12px;">
+<span class="comment">// You track state manually</span>
+let isFollowing = false;
+
+function handleClick() {
+  isFollowing = !isFollowing;
+  <span class="comment">// Now publish event, update UI...</span>
+}
+                            </div>
+                    </div>
+
+                    <div class="comparison-side magic">
+                        <h4>Nostr-Aware Button</h4>
+                        <div class="state-demo">
+                            <button class="follow-btn following">Following ✓</button>
+                        </div>
+                        <div class="code" style="font-size: 11px; padding: 12px; margin-top: 12px;">
+<span class="comment">// State tracked automatically from NDK</span>
+const action = createFollowAction(() => ({
+  target: user
+}));
+
+<span class="comment">// action.isFollowing derived from ndk.$follows</span>
+<span class="comment">// Updates instantly when contact list changes</span>
+                            </div>
+                    </div>
+                </div>
+                <div class="note">Also works for hashtags! Same API, automatically publishes kind-3 for users or kind-10015 for hashtags.</div>
+            </div>
+
+            <div class="feature">
+                <h3>Reactions Update Live As Events Arrive</h3>
+                <div class="state-demo" style="max-width: 600px; margin: 0 auto;">
+                    <div style="padding: 20px; background: #fafafa; border-radius: 8px; margin-bottom: 16px;">
+                        <div style="font-size: 15px; margin-bottom: 12px;">
+                            Just shipped the new feature! 🚀
+                        </div>
+                        <div class="reaction-bar">
+                            <div class="reaction-btn">
+                                ❤️ <span class="reaction-count">23</span>
+                            </div>
+                            <div class="reaction-btn">
+                                🔥 <span class="reaction-count">12</span>
+                            </div>
+                            <div class="reaction-btn">
+                                ⚡ <span class="reaction-count">8</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; font-size: 24px; margin: 20px 0; color: #ccc;">↓ New reaction arrives ↓</div>
+                    <div style="padding: 20px; background: #fff; border: 2px solid #1a1a1a; border-radius: 8px;">
+                        <div style="font-size: 15px; margin-bottom: 12px;">
+                            Just shipped the new feature! 🚀
+                        </div>
+                        <div class="reaction-bar">
+                            <div class="reaction-btn">
+                                ❤️ <span class="reaction-count" style="color: #e53935;">24</span>
+                            </div>
+                            <div class="reaction-btn">
+                                🔥 <span class="reaction-count">12</span>
+                            </div>
+                            <div class="reaction-btn">
+                                ⚡ <span class="reaction-count">8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code" style="max-width: 600px; margin: 24px auto 0;">
+<span class="comment">// Subscribes to kind-7 reactions on this event</span>
+<span class="comment">// Auto-updates count when new reactions published</span>
+<span class="comment">// No polling. No manual refresh. Just works.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: #f9f9f9;">
+        <div class="container">
+            <div class="feature">
+                <h3>Thread Reconstruction From 'e' Tags</h3>
+                <div class="comparison">
+                    <div class="comparison-side">
+                        <h4>Raw Events (What You Get)</h4>
+                        <div class="tag-visual" style="font-size: 11px;">
+Event A: ["e", "root123", "", "root"]<br>
+Event B: ["e", "root123", "", "root"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;["e", "eventA", "", "reply"]<br>
+Event C: ["e", "root123", "", "root"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;["e", "eventB", "", "reply"]
+                        </div>
+                    </div>
+
+                    <div class="comparison-side magic">
+                        <h4>Reconstructed Tree (What You See)</h4>
+                        <div class="thread-visual">
+                            <div class="thread-item">
+                                <div class="marker">ROOT</div>
+                                <div class="content">Original post content here...</div>
+                            </div>
+                            <div class="thread-item" style="padding-left: 48px;">
+                                <div class="marker">REPLY</div>
+                                <div class="content">First reply content...</div>
+                            </div>
+                            <div class="thread-item" style="padding-left: 72px;">
+                                <div class="marker">REPLY</div>
+                                <div class="content">Nested reply content...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="note">Parses NIP-10 markers, extracts relay hints, handles circular refs, creates placeholders for missing events.</div>
+            </div>
+
+            <div class="feature">
+                <h3>Zap Splits Calculated Automatically</h3>
+                <div class="state-demo" style="max-width: 600px; margin: 0 auto;">
+                    <div class="tag-visual" style="margin-bottom: 16px;">
+Event tags:<br>
+["zap", "pubkey_alice", "wss://relay.damus.io", "60"]<br>
+["zap", "pubkey_bob", "wss://relay.nostr.band", "40"]
+                    </div>
+                    <div style="text-align: center; font-size: 24px; margin: 20px 0; color: #ccc;">↓ Automatically calculates splits ↓</div>
+                    <div style="background: #fff; border: 2px solid #1a1a1a; padding: 20px; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 12px;">Zapping 1000 sats to this event:</div>
+                        <div class="zap-splits">
+                            <div class="split-item">
+                                <span>Alice</span>
+                                <span class="split-amount">600 sats (60%)</span>
+                            </div>
+                            <div class="split-item">
+                                <span>Bob</span>
+                                <span class="split-amount">400 sats (40%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code" style="max-width: 600px; margin: 24px auto 0;">
+<span class="comment">// Reads zap tags, calculates percentages</span>
+<span class="comment">// Generates multiple invoices if needed</span>
+<span class="comment">// All NIP-57 compliant automatically</span>
+                </div>
+            </div>
+
+            <div class="feature">
+                <h3>Event Kind Auto-Detection</h3>
+                <div class="event-kinds" style="max-width: 900px; margin: 0 auto;">
+                    <div class="kind-card">
+                        <div class="kind-num">kind: 1</div>
+                        <div class="kind-name">Short Note</div>
+                        <div class="render-as">→ EventCard.Compact</div>
+                    </div>
+                    <div class="kind-card">
+                        <div class="kind-num">kind: 30023</div>
+                        <div class="kind-name">Article</div>
+                        <div class="render-as">→ ArticleCard.Hero</div>
+                    </div>
+                    <div class="kind-card">
+                        <div class="kind-num">kind: 9802</div>
+                        <div class="kind-name">Highlight</div>
+                        <div class="render-as">→ HighlightCard.Elegant</div>
+                    </div>
+                    <div class="kind-card">
+                        <div class="kind-num">kind: 1063</div>
+                        <div class="kind-name">File Metadata</div>
+                        <div class="render-as">→ ImageCard.Hero</div>
+                    </div>
+                    <div class="kind-card">
+                        <div class="kind-num">kind: 30018</div>
+                        <div class="kind-name">Product (NIP-99)</div>
+                        <div class="render-as">→ ProductCard</div>
+                    </div>
+                    <div class="kind-card">
+                        <div class="kind-num">kind: 30311</div>
+                        <div class="kind-name">Live Event</div>
+                        <div class="render-as">→ EventCard.Neon</div>
+                    </div>
+                </div>
+                <div class="code" style="max-width: 700px; margin: 24px auto 0;">
+<span class="comment">// Just pass any event. Component auto-detects kind.</span>
+<span class="tag">&lt;EventCard</span> {event} <span class="tag">/&gt;</span>
+
+<span class="comment">// Renders correctly whether it's a note, article, highlight, product...</span>
+<span class="comment">// No switch statements in your code. Protocol-aware.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="feature">
+                <h3>User Stats From Events, Not APIs</h3>
+                <div class="state-demo" style="max-width: 700px; margin: 0 auto; padding: 32px;">
+                    <div style="display: flex; justify-content: space-around; margin-bottom: 24px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700;">1,234</div>
+                            <div style="font-size: 13px; color: #666;">Following</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700;">8,567</div>
+                            <div style="font-size: 13px; color: #666;">Followers</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700;">42</div>
+                            <div style="font-size: 13px; color: #666;">Posts This Week</div>
+                        </div>
+                    </div>
+                    <div class="tag-visual">
+Following: Count 'p' tags in their kind-3<br>
+Followers: Query kind-3 where '#p' = this pubkey<br>
+Posts: Filter kind-1 by timestamp, exclude replies
+                    </div>
+                </div>
+                <div class="note">All calculated from Nostr events. No centralized API. No database.</div>
+            </div>
+
+            <div style="max-width: 800px; margin: 80px auto 0; text-align: center;">
+                <h2 style="font-size: 36px; margin-bottom: 24px;">This Is Nostr-Native Development</h2>
+                <p style="font-size: 18px; color: #666; line-height: 1.8;">
+                    Components that understand the protocol. Automatically read your contact list,
+                    parse event tags, reconstruct threads, calculate stats, detect event kinds,
+                    handle zap splits, prioritize follows, and update reactively as events stream in.
+                </p>
+                <p style="font-size: 18px; color: #333; line-height: 1.8; margin-top: 24px; font-weight: 600;">
+                    You don't build the protocol layer. You just build your app.
+                </p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

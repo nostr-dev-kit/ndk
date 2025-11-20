@@ -1,0 +1,20 @@
+<script lang="ts">
+  import { EmojiPicker } from '$lib/registry/components/emoji-picker';
+
+  const emojis = [
+    { emoji: '❤️' },
+    { emoji: '👍' },
+    { emoji: '😂' },
+    { emoji: '🔥' },
+    { emoji: '🚀' },
+    { emoji: '🎉' },
+  ];
+
+  let selected = $state(null);
+
+  function handleSelect(emoji) {
+    selected = emoji;
+  }
+</script>
+
+<EmojiPicker.List {emojis} onSelect={handleSelect} columns={6} />

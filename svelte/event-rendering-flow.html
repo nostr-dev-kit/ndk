@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Rendering Flow - Interactive Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #58a6ff;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #79c0ff;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #30363d;
+        }
+
+        .level {
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .level:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, #1f6feb 0%, #58a6ff 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .level-title {
+            font-size: 1.4em;
+            color: #58a6ff;
+            font-weight: 600;
+        }
+
+        .file-path {
+            background: #0d1117;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #79c0ff;
+            margin: 8px 0;
+            border-left: 3px solid #58a6ff;
+        }
+
+        .code-line {
+            background: #0d1117;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin: 4px 0;
+            color: #8b949e;
+        }
+
+        .code-line strong {
+            color: #79c0ff;
+        }
+
+        .value-box {
+            background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #58a6ff;
+            margin: 10px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .split-arrow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .split-arrow .branch {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .split-arrow .branch::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #58a6ff;
+        }
+
+        .split-arrow .arrow-down {
+            font-size: 2em;
+            color: #58a6ff;
+        }
+
+        .routing-table {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .routing-row {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin: 4px 0;
+            border-left: 3px solid #30363d;
+            transition: all 0.2s ease;
+        }
+
+        .routing-row:hover {
+            border-left-color: #58a6ff;
+            background: #161b22;
+        }
+
+        .routing-type {
+            color: #f0883e;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        .routing-line {
+            color: #58a6ff;
+            font-size: 0.85em;
+            min-width: 80px;
+        }
+
+        .routing-component {
+            color: #79c0ff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .recursive-box {
+            background: linear-gradient(135deg, #8957e5 0%, #bc8cff 100%);
+            border: 2px dashed #bc8cff;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            color: white;
+            font-weight: 500;
+        }
+
+        .example-tree {
+            background: #0d1117;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        .tree-node {
+            margin: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .tree-node::before {
+            content: '└─';
+            position: absolute;
+            left: 0;
+            color: #58a6ff;
+        }
+
+        .tree-level-1 { padding-left: 0; color: #79c0ff; }
+        .tree-level-2 { padding-left: 20px; color: #8b949e; }
+        .tree-level-3 { padding-left: 40px; color: #6e7681; }
+        .tree-level-4 { padding-left: 60px; color: #484f58; }
+
+        .tree-level-1::before { content: ''; }
+
+        .parsing-flow {
+            background: #161b22;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .parsing-step {
+            margin: 16px 0;
+            padding: 12px;
+            background: #0d1117;
+            border-radius: 6px;
+            border-left: 4px solid #58a6ff;
+        }
+
+        .parsing-step-title {
+            color: #79c0ff;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .pattern-list {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .pattern-list li {
+            padding: 4px 0;
+            color: #8b949e;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .pattern-list li::before {
+            content: '▸ ';
+            color: #58a6ff;
+        }
+
+        .input-output {
+            background: #0d1117;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .input-label, .output-label {
+            color: #f0883e;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .segment-array {
+            padding-left: 20px;
+            color: #8b949e;
+        }
+
+        .segment-item {
+            margin: 4px 0;
+            padding: 4px 8px;
+            background: #161b22;
+            border-radius: 4px;
+        }
+
+        .registry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .registry-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .registry-card:hover {
+            border-color: #58a6ff;
+            transform: translateY(-2px);
+        }
+
+        .registry-kind {
+            color: #f0883e;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .registry-component {
+            color: #79c0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .context-flow {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .context-level {
+            margin: 12px 0;
+            padding: 12px;
+            border-left: 4px solid #30363d;
+            transition: all 0.2s ease;
+        }
+
+        .context-level:hover {
+            border-left-color: #58a6ff;
+            background: #0d1117;
+        }
+
+        .context-indent-1 { margin-left: 0; }
+        .context-indent-2 { margin-left: 20px; }
+        .context-indent-3 { margin-left: 40px; }
+        .context-indent-4 { margin-left: 60px; }
+
+        .context-component {
+            color: #79c0ff;
+            font-weight: bold;
+        }
+
+        .context-action {
+            color: #8b949e;
+            font-size: 0.9em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight {
+            color: #f0883e;
+        }
+
+        .legend {
+            background: #161b22;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+        }
+
+        .color-routing { background: #1f6feb; }
+        .color-handler { background: #238636; }
+        .color-recursive { background: #8957e5; }
+        .color-parsing { background: #f0883e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Event Rendering Flow - Complete Visual Map</h1>
+
+        <div class="legend">
+            <h3 style="color: #79c0ff; margin-bottom: 12px;">Legend</h3>
+            <div class="legend-item">
+                <div class="legend-color color-routing"></div>
+                <span>Routing Components (dispatch based on type/kind)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-handler"></div>
+                <span>Handler Components (render specific content types)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-recursive"></div>
+                <span>Recursive Components (enable nesting)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-parsing"></div>
+                <span>Parsing & Infrastructure</span>
+            </div>
+        </div>
+
+        <h2>📊 Main Rendering Chain</h2>
+
+        <!-- Level 1 -->
+        <div class="level">
+            <div class="level-header">
+                <div class="level-badge">LEVEL 1</div>
+                <div class="level-title">EventCardClassic (Entry Point)</div>
+            </div>
+            <div class="file-path">📁 registry/src/lib/registry/components/event-card-classic/event-card-classic.svelte</div>
+            <div class="code-line"><strong>Props:</strong> { ndk, event }</div>
+            <div class="code-line"><strong>Line 43:</strong> &lt;EventCard.Root {'{ndk}'} {'{event}'}&gt;</div>
+            <div class="code-line"><strong>Line 53:</strong> &nbsp;&nbsp;&lt;EventCard.Header /&gt;</div>
+            <div class="code-line"><strong>Line 59:</strong> &nbsp;&nbsp;&lt;EventCard.Content {'{truncate}'} /&gt; ← <span class="highlight">Renders content</span></div>
+            <div class="code-line"><strong>Line 62:</strong> &nbsp;&nbsp;&lt;EventCard.Actions&gt;...&lt;/EventCard.Actions&gt;</div>
+            <div class="value-box">✨ Value: Pre-composed card layout with header, content, and actions</div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <!-- Level 2 -->
+        <div class="level">
+            <div class="level-header">
+                <div class="level-badge">LEVEL 2</div>
+                <div class="level-title">EventCard.Content</div>
+            </div>
+            <div class="file-path">📁 registry/src/lib/registry/components/event-card/event-card-content.svelte</div>
+            <div class="code-line"><strong>Line 33:</strong> Gets EventCardContext (ndk, event)</div>
+            <div class="code-line"><strong>Line 39:</strong> Gets ContentRendererContext (renderer)</div>
+            <div class="code-line"><strong>Line 86-90:</strong> &lt;EventContent</div>
+            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;ndk={'{context.ndk}'}</div>
+            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;event={'{context.event}'}</div>
+            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;renderer={'{rendererContext?.renderer}'} /&gt;</div>
+            <div class="value-box">✨ Value: Truncation UI + bridges EventCard context to content rendering</div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <!-- Level 3 -->
+        <div class="level">
+            <div class="level-header">
+                <div class="level-badge">LEVEL 3</div>
+                <div class="level-title">EventContent (Parser & Router)</div>
+            </div>
+            <div class="file-path">📁 registry/src/lib/registry/ui/event-content.svelte</div>
+            <div class="code-line"><strong>Line 30-31:</strong> renderer = prop ?? context ?? defaultContentRenderer</div>
+            <div class="code-line"><strong>Line 33-39:</strong> parsed = createEventContent({ event, content, emojiTags })</div>
+            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;└─→ Returns { segments: ParsedSegment[] }</div>
+            <div class="code-line"><strong>Line 43:</strong> {'{#each parsed.segments as segment}'}</div>
+
+            <div class="routing-table">
+                <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">Segment Type Routing:</div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'text'</span>
+                    <span class="routing-line">Line 44:</span>
+                    <span class="routing-component">{'{segment.content}'}</span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'npub'</span>
+                    <span class="routing-line">Line 46:</span>
+                    <span class="routing-component">&lt;MentionComponent /&gt; → <span class="highlight">LEVEL 4a</span></span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'nprofile'</span>
+                    <span class="routing-line">Line 46:</span>
+                    <span class="routing-component">&lt;MentionComponent /&gt; → <span class="highlight">LEVEL 4a</span></span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'event-ref'</span>
+                    <span class="routing-line">Line 55-57:</span>
+                    <span class="routing-component">&lt;EmbeddedEvent /&gt; → <span class="highlight">LEVEL 4b</span></span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'hashtag'</span>
+                    <span class="routing-line">Line 59:</span>
+                    <span class="routing-component">&lt;HashtagComponent /&gt;</span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'link'</span>
+                    <span class="routing-line">Line 68:</span>
+                    <span class="routing-component">&lt;LinkComponent /&gt; or &lt;a&gt;</span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'media'</span>
+                    <span class="routing-line">Line 78:</span>
+                    <span class="routing-component">&lt;MediaComponent /&gt; or &lt;img&gt;/&lt;video&gt;</span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'emoji'</span>
+                    <span class="routing-line">Line 104:</span>
+                    <span class="routing-component">&lt;img src={'{emoji}'} /&gt;</span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'image-grid'</span>
+                    <span class="routing-line">Line 108:</span>
+                    <span class="routing-component">Grouped images</span>
+                </div>
+
+                <div class="routing-row">
+                    <span class="routing-type">'link-group'</span>
+                    <span class="routing-line">Line 121:</span>
+                    <span class="routing-component">Grouped links</span>
+                </div>
+            </div>
+
+            <div class="value-box">✨ Value: Central routing system - parses content and delegates to specialized renderers</div>
+        </div>
+
+        <div class="split-arrow">
+            <div class="branch">
+                <div class="arrow-down">↓</div>
+                <span style="color: #79c0ff;">Mention Path</span>
+            </div>
+            <div class="branch">
+                <div class="arrow-down">↓</div>
+                <span style="color: #79c0ff;">Event Embed Path</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+            <!-- Level 4a -->
+            <div class="level">
+                <div class="level-header">
+                    <div class="level-badge">LEVEL 4a</div>
+                    <div class="level-title">Mention</div>
+                </div>
+                <div class="file-path">📁 components/mention/mention.svelte</div>
+                <div class="code-line"><strong>Props:</strong> { ndk, bech32 }</div>
+                <div class="code-line"><strong>Line 18:</strong> ndk.fetchUser(bech32) → user</div>
+                <div class="code-line"><strong>Line 24-26:</strong></div>
+                <div class="code-line">&lt;User.Root {'{ndk}'} {'{user}'}&gt;</div>
+                <div class="code-line">&nbsp;&nbsp;@&lt;User.Name /&gt;</div>
+                <div class="code-line">&lt;/User.Root&gt;</div>
+                <div class="value-box">✨ Value: Fetches & displays user profile for npub/nprofile mentions</div>
+            </div>
+
+            <!-- Level 4b -->
+            <div class="level">
+                <div class="level-header">
+                    <div class="level-badge">LEVEL 4b</div>
+                    <div class="level-title">EmbeddedEvent</div>
+                </div>
+                <div class="file-path">📁 ui/embedded-event.svelte</div>
+                <div class="code-line"><strong>Props:</strong> { ndk, bech32, variant, renderer }</div>
+                <div class="code-line"><strong>Line 26:</strong> setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer })</div>
+                <div class="code-line">&nbsp;&nbsp;└─→ <span class="highlight">Propagates renderer to nested components</span></div>
+                <div class="code-line"><strong>Line 28:</strong> fetcher = createFetchEvent({ bech32 }, ndk)</div>
+                <div class="code-line">&nbsp;&nbsp;└─→ Fetches event via ndk.fetchEvent(bech32)</div>
+                <div class="code-line"><strong>Line 31:</strong> handlerInfo = renderer.getKindHandler(event.kind)</div>
+                <div class="code-line">&nbsp;&nbsp;└─→ <span class="highlight">Looks up handler in registry</span></div>
+                <div class="code-line"><strong>Line 36-40:</strong> wrappedEvent = handlerInfo.wrapper.from(event)</div>
+                <div class="code-line"><strong>Line 52-53:</strong> &lt;Handler {'{ndk}'} event={'{wrappedEvent}'} {'{variant}'} /&gt;</div>
+                <div class="value-box">✨ Value: Fetches embedded events and routes by kind to appropriate handler</div>
+            </div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <!-- Level 5 -->
+        <div class="level">
+            <div class="level-header">
+                <div class="level-badge">LEVEL 5</div>
+                <div class="level-title">Kind-Specific Handlers</div>
+            </div>
+
+            <div class="recursive-box">
+                <strong>🔄 NoteEmbedded (Kind 1, 1111) - THE RECURSIVE COMPONENT</strong>
+                <div style="margin-top: 12px; font-size: 0.95em;">
+                    This is where recursion happens! NoteEmbedded renders another EventCard.Content, which goes back to LEVEL 2, enabling infinite nesting.
+                </div>
+            </div>
+
+            <div class="file-path">📁 components/note-embedded/note-embedded.svelte</div>
+            <div class="code-line"><strong>Props:</strong> { ndk, event, variant }</div>
+            <div class="code-line"><strong>Line 17:</strong> &lt;EventCard.Root {'{ndk}'} {'{event}'}&gt;</div>
+            <div class="code-line"><strong>Line 18:</strong> &nbsp;&nbsp;&lt;EventCard.Header /&gt;</div>
+            <div class="code-line"><strong>Line 24:</strong> &nbsp;&nbsp;&lt;EventCard.Content truncate={'{...}'} /&gt;</div>
+            <div class="code-line" style="color: #f0883e; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;└─→ RECURSION! Goes back to LEVEL 2</div>
+
+            <div class="file-path" style="margin-top: 16px;">📁 components/note-embedded/index.ts</div>
+            <div class="code-line"><strong>Line 6:</strong> defaultContentRenderer.addKind([1, 1111], NoteEmbedded)</div>
+            <div class="code-line">&nbsp;&nbsp;└─→ Self-registers for kind 1 (notes) and kind 1111 (generic replies)</div>
+
+            <div class="value-box">✨ Value: Renders notes recursively using EventCard system, enabling nested embeds</div>
+
+            <div class="registry-grid" style="margin-top: 20px;">
+                <div class="registry-card">
+                    <div class="registry-kind">Kind 30023 (Articles)</div>
+                    <div class="registry-component">ArticleEmbedded</div>
+                    <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">Wraps with NDKArticle</div>
+                </div>
+                <div class="registry-card">
+                    <div class="registry-kind">Kind 9802 (Highlights)</div>
+                    <div class="registry-component">HighlightEmbedded</div>
+                    <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">Wraps with NDKHighlight</div>
+                </div>
+                <div class="registry-card">
+                    <div class="registry-kind">Other Kinds</div>
+                    <div class="registry-component">Fallback UI</div>
+                    <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">Shows kind badge + truncated content</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🔍 Content Parsing Pipeline</h2>
+
+        <div class="parsing-flow">
+            <div class="parsing-step">
+                <div class="parsing-step-title">Step 1: Regex Pattern Matching</div>
+                <div class="file-path">📁 builders/event-content/utils.ts - Line 23-31</div>
+                <div class="input-output">
+                    <div class="input-label">Input:</div>
+                    <div style="color: #c9d1d9;">"Hello nostr:npub1abc... check nostr:nevent1xyz... #bitcoin"</div>
+                </div>
+                <ul class="pattern-list">
+                    <li>NOSTR_URI: /nostr:(npub1|note1|nevent1|naddr1|nprofile1)/gi</li>
+                    <li>HASHTAG: /(^|\s)#([a-zA-Z0-9_]+)(?=\s|$|[^\w])/g</li>
+                    <li>MEDIA_FILE: /https?:\/\/.*\.(jpg|png|mp4|...)/gi</li>
+                    <li>YOUTUBE: /youtube\.com\/watch.../gi</li>
+                    <li>URL: /https?:\/\/[^\s<>"]+/gi</li>
+                    <li>EMOJI_SHORTCODE: /:([a-zA-Z0-9_]+):/g</li>
+                </ul>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="parsing-step">
+                <div class="parsing-step-title">Step 2: Segment Classification</div>
+                <div class="file-path">📁 builders/event-content/utils.ts - Line 171-217</div>
+                <div class="code-line"><strong>parseContentToSegments(content, emojiMap)</strong></div>
+                <div class="code-line">• Iterates matches in order</div>
+                <div class="code-line">• Adds text segments between matches</div>
+                <div class="code-line">• Classifies each match via classifyMatch()</div>
+
+                <div style="margin-top: 12px;">
+                    <div class="file-path">📁 Line 63-88: decodeNostrUri()</div>
+                    <div class="code-line">"npub1..." → { type: 'npub', data: 'npub1...' }</div>
+                    <div class="code-line">"nprofile1..." → { type: 'nprofile', data: 'nprofile1...' }</div>
+                    <div class="code-line">"note1..." → { type: 'event-ref', data: 'note1...' }</div>
+                    <div class="code-line">"nevent1..." → { type: 'event-ref', data: 'nevent1...' }</div>
+                    <div class="code-line">"naddr1..." → { type: 'event-ref', data: 'naddr1...' }</div>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="parsing-step">
+                <div class="parsing-step-title">Step 3: Grouping & Output</div>
+                <div class="file-path">📁 Line 227-272: groupConsecutiveImages()</div>
+                <div class="file-path">📁 Line 278-323: groupConsecutiveLinks()</div>
+                <div class="input-output" style="margin-top: 12px;">
+                    <div class="output-label">Output: ParsedSegment[]</div>
+                    <div class="segment-array">
+                        [<br>
+                        <div class="segment-item">{ type: 'text', content: 'Hello ' },</div>
+                        <div class="segment-item">{ type: 'npub', content: 'npub1abc...', data: 'npub1abc...' },</div>
+                        <div class="segment-item">{ type: 'text', content: ' check ' },</div>
+                        <div class="segment-item">{ type: 'event-ref', content: 'nevent1xyz...', data: 'nevent1xyz...' },</div>
+                        <div class="segment-item">{ type: 'text', content: ' ' },</div>
+                        <div class="segment-item">{ type: 'hashtag', content: 'bitcoin', data: 'bitcoin' }</div>
+                        ]
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🗂️ ContentRenderer Registry System</h2>
+
+        <div class="level">
+            <div class="level-header">
+                <div class="level-title">ContentRenderer Class</div>
+            </div>
+            <div class="file-path">📁 ui/content-renderer.svelte.ts</div>
+
+            <div class="code-line" style="margin-top: 16px;"><strong>Line 229:</strong> export const defaultContentRenderer = new ContentRenderer()</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">Inline Handlers (content segments):</div>
+                    <div class="code-line"><strong>Line 101:</strong> mentionComponent</div>
+                    <div class="code-line"><strong>Line 107:</strong> hashtagComponent</div>
+                    <div class="code-line"><strong>Line 113:</strong> linkComponent</div>
+                    <div class="code-line"><strong>Line 119:</strong> mediaComponent</div>
+                </div>
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">Kind Registry (embedded events):</div>
+                    <div class="code-line"><strong>Line 125:</strong> private handlers = Map&lt;number, HandlerInfo&gt;</div>
+                    <div class="code-line" style="margin-top: 8px;">HandlerInfo = {</div>
+                    <div class="code-line">&nbsp;&nbsp;component: Component,</div>
+                    <div class="code-line">&nbsp;&nbsp;wrapper: NDKWrapper</div>
+                    <div class="code-line">}</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">Methods:</div>
+                <div class="code-line"><strong>Line 154:</strong> addKind(target, component) - Register handler for event kind(s)</div>
+                <div class="code-line"><strong>Line 176:</strong> getKindHandler(kind) - Lookup handler by kind number</div>
+            </div>
+
+            <div class="recursive-box" style="margin-top: 20px;">
+                <strong>Registration Example (note-embedded/index.ts):</strong>
+                <div style="margin-top: 12px; font-family: 'Courier New', monospace; font-size: 0.9em;">
+                    import NoteEmbedded from './note-embedded.svelte';<br>
+                    import { defaultContentRenderer } from '../../ui/...';<br>
+                    <br>
+                    defaultContentRenderer.addKind([1, 1111], NoteEmbedded);<br>
+                    <span style="color: #8b949e;">// Registers: handlers.set(1, { component: NoteEmbedded, wrapper: null })</span><br>
+                    <span style="color: #8b949e;">//            handlers.set(1111, { component: NoteEmbedded, wrapper: null })</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">Registry State After Imports:</div>
+                <div class="registry-grid">
+                    <div class="registry-card">
+                        <div class="registry-kind">Kind 1</div>
+                        <div class="registry-component">NoteEmbedded</div>
+                        <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">wrapper: null</div>
+                    </div>
+                    <div class="registry-card">
+                        <div class="registry-kind">Kind 1111</div>
+                        <div class="registry-component">NoteEmbedded</div>
+                        <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">wrapper: null</div>
+                    </div>
+                    <div class="registry-card">
+                        <div class="registry-kind">Kind 30023</div>
+                        <div class="registry-component">ArticleEmbedded</div>
+                        <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">wrapper: NDKArticle</div>
+                    </div>
+                    <div class="registry-card">
+                        <div class="registry-kind">Kind 9802</div>
+                        <div class="registry-component">HighlightEmbedded</div>
+                        <div style="color: #8b949e; font-size: 0.85em; margin-top: 4px;">wrapper: NDKHighlight</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🔄 Recursive Embedding Example</h2>
+
+        <div class="example-tree">
+<div class="tree-level-1">User posts event A (kind 1):</div>
+<div class="tree-level-1">"Check out this article nostr:nevent1[B] and my friend nostr:npub1[C]"</div>
+<div class="tree-level-1">│</div>
+<div class="tree-node tree-level-1">EventCardClassic renders event A</div>
+<div class="tree-node tree-level-2">EventContent parses content, finds:</div>
+<div class="tree-node tree-level-2">├─ Text: "Check out this article "</div>
+<div class="tree-node tree-level-2">├─ event-ref: nevent1[B]  <span style="color: #58a6ff;">──→ Triggers EmbeddedEvent</span></div>
+<div class="tree-node tree-level-3">│   EmbeddedEvent fetches B (kind 30023 - article)</div>
+<div class="tree-node tree-level-3">│   └─→ ArticleEmbedded renders</div>
+<div class="tree-node tree-level-3">│       Content: "Great post! nostr:nevent1[D] #nostr"</div>
+<div class="tree-node tree-level-3">│       │</div>
+<div class="tree-node tree-level-3">│       └─→ EventContent parses (NESTED), finds:</div>
+<div class="tree-node tree-level-4">│           ├─ Text: "Great post! "</div>
+<div class="tree-node tree-level-4">│           ├─ event-ref: nevent1[D]  <span style="color: #58a6ff;">──→ Triggers EmbeddedEvent (NESTED)</span></div>
+<div class="tree-node tree-level-4">│           │   EmbeddedEvent fetches D (kind 1 - note)</div>
+<div class="tree-node tree-level-4">│           │   └─→ NoteEmbedded renders</div>
+<div class="tree-node tree-level-4">│           │       Content: "Hello nostr:npub1[E]!"</div>
+<div class="tree-node tree-level-4">│           │       │</div>
+<div class="tree-node tree-level-4">│           │       └─→ EventContent parses (DOUBLE NESTED), finds:</div>
+<div class="tree-node tree-level-4">│           │           ├─ Text: "Hello "</div>
+<div class="tree-node tree-level-4">│           │           ├─ npub: npub1[E]  <span style="color: #58a6ff;">──→ Mention fetches user E</span></div>
+<div class="tree-node tree-level-4">│           │           └─ Text: "!"</div>
+<div class="tree-node tree-level-4">│           │</div>
+<div class="tree-node tree-level-4">│           └─ hashtag: #nostr</div>
+<div class="tree-node tree-level-2">│</div>
+<div class="tree-node tree-level-2">├─ Text: " and my friend "</div>
+<div class="tree-node tree-level-2">└─ npub: npub1[C]  <span style="color: #58a6ff;">──→ Mention fetches user C</span></div>
+<br>
+<div class="tree-level-1"><span style="color: #f0883e;">Nesting Depth:</span></div>
+<div class="tree-level-1"> 1. EventCardClassic (event A)</div>
+<div class="tree-level-1"> 2. ├─ EmbeddedEvent (event B - article)</div>
+<div class="tree-level-1"> 3. │  └─ EmbeddedEvent (event D - note)</div>
+<div class="tree-level-1"> 4. │     └─ Mention (user E)</div>
+<div class="tree-level-1">    └─ Mention (user C)</div>
+        </div>
+
+        <h2>🔗 Context Flow Through Nesting</h2>
+
+        <div class="context-flow">
+            <div class="context-level context-indent-1">
+                <div class="context-component">EventCardClassic</div>
+                <div class="context-action">Initial render</div>
+            </div>
+
+            <div class="context-level context-indent-2">
+                <div class="context-component">EventCard.Root</div>
+                <div class="context-action">setContext(EVENT_CARD_CONTEXT_KEY, { ndk, event })</div>
+            </div>
+
+            <div class="context-level context-indent-2">
+                <div class="context-component">EventCard.Content</div>
+                <div class="context-action">getContext(EVENT_CARD_CONTEXT_KEY) ← gets { ndk, event }</div>
+                <div class="context-action">getContext(CONTENT_RENDERER_CONTEXT_KEY) ← undefined (not set yet)</div>
+            </div>
+
+            <div class="context-level context-indent-3">
+                <div class="context-component">EventContent</div>
+                <div class="context-action">renderer = context ?? defaultContentRenderer</div>
+            </div>
+
+            <div class="context-level context-indent-3">
+                <div class="context-component">EmbeddedEvent</div>
+                <div class="context-action" style="color: #f0883e;">setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer }) ← <strong>PROPAGATES TO CHILDREN</strong></div>
+            </div>
+
+            <div class="context-level context-indent-4">
+                <div class="context-component">NoteEmbedded</div>
+                <div class="context-action">Renders new EventCard.Root with embedded event</div>
+            </div>
+
+            <div class="context-level context-indent-4">
+                <div class="context-component">EventCard.Root (NEW CONTEXT)</div>
+                <div class="context-action">setContext(EVENT_CARD_CONTEXT_KEY, { ndk, event: embeddedEvent })</div>
+            </div>
+
+            <div class="context-level context-indent-4">
+                <div class="context-component">EventCard.Content (nested)</div>
+                <div class="context-action">getContext(EVENT_CARD_CONTEXT_KEY) ← gets embeddedEvent</div>
+                <div class="context-action" style="color: #f0883e;">getContext(CONTENT_RENDERER_CONTEXT_KEY) ← <strong>gets renderer from parent!</strong></div>
+            </div>
+
+            <div class="context-level context-indent-4">
+                <div class="context-component">EventContent (nested)</div>
+                <div class="context-action">renderer = context ← <strong>same renderer as parent</strong></div>
+            </div>
+
+            <div class="context-level context-indent-4">
+                <div class="context-component">EmbeddedEvent (nested)</div>
+                <div class="context-action" style="color: #8b949e;">(process repeats recursively...)</div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 16px; background: #0d1117; border-radius: 6px; border-left: 4px solid #58a6ff;">
+                <strong style="color: #79c0ff;">Key Insight:</strong>
+                <div style="margin-top: 8px; color: #8b949e;">
+                    • <strong style="color: #f0883e;">Renderer context flows DOWN</strong> through nesting (set at EmbeddedEvent, inherited by all children)<br>
+                    • <strong style="color: #f0883e;">EventCard context is LOCAL</strong> to each EventCard.Root (different event at each level)<br>
+                    • This enables consistent rendering behavior across all nesting levels
+                </div>
+            </div>
+        </div>
+
+        <h2>🎯 Key Architectural Points</h2>
+
+        <div class="level">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">1. Separation of Concerns</div>
+                    <div class="code-line">• Parsing (utils.ts)</div>
+                    <div class="code-line">• Routing (EventContent)</div>
+                    <div class="code-line">• Rendering (handler components)</div>
+                </div>
+
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">2. Kind-Based Dispatch</div>
+                    <div class="code-line">• EmbeddedEvent uses event.kind</div>
+                    <div class="code-line">• Looks up in ContentRenderer registry</div>
+                    <div class="code-line">• Selects appropriate handler</div>
+                </div>
+
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">3. Context Propagation</div>
+                    <div class="code-line">• ContentRenderer flows via Svelte context</div>
+                    <div class="code-line">• Set at embedded-event.svelte:26</div>
+                    <div class="code-line">• Consumed at event-content.svelte:30</div>
+                </div>
+
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">4. Self-Registration</div>
+                    <div class="code-line">• Components register on import</div>
+                    <div class="code-line">• note-embedded/index.ts:6</div>
+                    <div class="code-line">• Progressive enhancement pattern</div>
+                </div>
+
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">5. Recursive Composition</div>
+                    <div class="code-line">• NoteEmbedded uses EventCard.Content</div>
+                    <div class="code-line">• Which can render more NoteEmbedded</div>
+                    <div class="code-line">• Infinite nesting depth supported</div>
+                </div>
+
+                <div>
+                    <div style="color: #79c0ff; font-weight: bold; margin-bottom: 12px;">6. Extensibility</div>
+                    <div class="code-line">• Add new kinds via addKind()</div>
+                    <div class="code-line">• Replace inline handlers</div>
+                    <div class="code-line">• Create custom renderers</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px; padding: 40px; background: #161b22; border-radius: 12px;">
+            <div style="font-size: 1.5em; color: #58a6ff; margin-bottom: 16px;">🎉 Complete Rendering System Mapped!</div>
+            <div style="color: #8b949e;">
+                This architecture enables flexible, recursive content rendering with<br>
+                clean separation of concerns and infinite extensibility.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

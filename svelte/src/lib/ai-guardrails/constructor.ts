@@ -20,8 +20,8 @@ export function constructing(params: NDKSvelteParams, _error: never, warn: WarnF
                 "  • No automatic session persistence\n" +
                 "  • No follows/mutes management\n\n" +
                 "Most interactive apps need session support.",
-            "Enable sessions: new NDKSvelte({ session: true })\n" +
-                "Or with custom options: new NDKSvelte({ session: { follows: true, wallet: true } })",
+            "Enable sessions: createNDK({ session: true })\n" +
+                "Or with custom options: createNDK({ session: { follows: true, wallet: true } })",
         );
     }
 }

@@ -1,0 +1,102 @@
+{
+  "name": "reply-button-avatars",
+  "title": "Reply Button Avatars",
+  "category": "reply",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "oneLiner": "Reply button showing avatars of users who replied",
+  "registryName": "components/reply-button-avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "reply",
+    "buttons",
+    "avatars",
+    "nostr",
+    "social"
+  ],
+  "examples": [
+    {
+      "title": "Basic reply button",
+      "code": "<ReplyButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Show all repliers",
+      "code": "<ReplyButtonAvatars {ndk} {event} onlyFollows={false} />"
+    },
+    {
+      "title": "Open reply composer",
+      "code": "<ReplyButtonAvatars\n  {ndk}\n  {event}\n  onclick={() => openReplyComposer(event)}\n/>"
+    },
+    {
+      "title": "Minimal display",
+      "code": "<ReplyButtonAvatars\n  {ndk}\n  {event}\n  max={2}\n  showCount={false}\n  variant=\"ghost\"\n/>"
+    }
+  ],
+  "apiDoc": {
+    "name": "ReplyButtonAvatars",
+    "description": "A reply button that displays avatars of users who have replied to an event. By default, shows only avatars from followed users (onlyFollows=true) to emphasize replies from your network. Typically used with a custom onclick handler to open a reply composer. Includes reply count and supports various visual styles.",
+    "importPath": "import { ReplyButtonAvatars } from '$lib/registry/components/reply/buttons/avatars';",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (optional if available in context)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to show replies for"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual variant of the button"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "3",
+        "description": "Maximum number of avatars to show"
+      },
+      {
+        "name": "avatarSize",
+        "type": "number",
+        "default": "24",
+        "description": "Size of avatars in pixels"
+      },
+      {
+        "name": "spacing",
+        "type": "'tight' | 'normal' | 'loose'",
+        "default": "'tight'",
+        "description": "Spacing between avatars"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Whether to show reply count"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Optional click handler"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

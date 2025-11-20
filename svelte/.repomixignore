@@ -1,0 +1,4 @@
+registry/.svelte-kit
+registry/static
+registry/templates
+templates

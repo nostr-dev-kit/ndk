@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind, type LnPaymentInfo, type NDKRelaySet } from "@nostr-dev-kit/ndk";
 import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
 import {
     type NDKCashuDeposit,
@@ -108,8 +108,8 @@ export class ReactiveWalletStore {
                 // Start wallet monitoring (will load from cache first, then sync)
                 await wallet.start({ pubkey });
             }
-        } catch (error) {
-            console.error(`[ReactiveWalletStore] Failed to load wallet from event:`, error);
+        } catch {
+            // Failed to load wallet from event
         } finally {
             this.#syncing = false;
         }
@@ -167,8 +167,8 @@ export class ReactiveWalletStore {
         try {
             const balance = this.#wallet.balance;
             this.balance = balance?.amount || 0;
-        } catch (error) {
-            console.error("[svelte] Failed to refresh wallet balance:", error);
+        } catch {
+            // Failed to refresh wallet balance
         }
     }
 
@@ -242,17 +242,10 @@ export class ReactiveWalletStore {
 
     /**
      * Get transaction history
+     * TODO: Implement when $payments is ready
      */
     get transactions(): Transaction[] {
-        const paymentTxs = this.#ndk.$payments.history.map((tx: any) => ({
-            type: tx.direction === "out" ? ("send" as const) : ("receive" as const),
-            amount: tx.amount,
-            timestamp: tx.timestamp,
-            memo: tx.comment,
-            status: tx.status === "confirmed" ? "completed" : tx.status,
-        }));
-
-        return paymentTxs.sort((a, b) => b.timestamp - a.timestamp);
+        return [];
     }
 
     /**
@@ -270,13 +263,14 @@ export class ReactiveWalletStore {
         const wallet = this.#wallet;
         if (!(wallet instanceof NDKCashuWallet)) return undefined;
         const privkeys = Array.from(wallet.privkeys);
-        return privkeys.length > 0 ? privkeys[0] : undefined;
+        const firstEntry = privkeys.length > 0 ? privkeys[0] : undefined;
+        return firstEntry ? firstEntry[0] : undefined;
     }
 
     /**
      * Get the wallet's relay set
      */
-    get relaySet() {
+    get relaySet(): NDKRelaySet | undefined {
         const wallet = this.#wallet;
         if (!(wallet instanceof NDKCashuWallet)) return undefined;
         return wallet.relaySet;
@@ -321,6 +315,15 @@ export class ReactiveWalletStore {
     }
 
     /**
+     * Pay a Lightning invoice
+     */
+    async lnPay(payment: LnPaymentInfo): Promise<any> {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) throw new Error("No wallet");
+        return wallet.lnPay(payment);
+    }
+
+    /**
      * Save wallet configuration (mints and relays).
      * Creates a new wallet if none exists, or updates the existing one.
      * Also publishes the CashuMintList (kind 10019) for nutzap reception.
@@ -340,7 +343,7 @@ export class ReactiveWalletStore {
 
         if (!(wallet instanceof NDKCashuWallet)) {
             // No wallet exists, create one
-            const session = this.#sessionManager.getState().activePubkey;
+            const session = this.#sessionManager.activePubkey;
             if (!session) throw new Error("No active session");
 
             const newWallet = await NDKCashuWallet.create(this.#ndk, config.mints, config.relays);
@@ -353,7 +356,9 @@ export class ReactiveWalletStore {
         }
 
         // Publish CashuMintList (kind 10019) for nutzap reception
-        await wallet.publishMintList();
+        if (wallet instanceof NDKCashuWallet) {
+            await wallet.publishMintList();
+        }
     }
 }
 

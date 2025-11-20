@@ -1,0 +1,1 @@
+export { default as EventCardBasic } from './event-card-basic.svelte';

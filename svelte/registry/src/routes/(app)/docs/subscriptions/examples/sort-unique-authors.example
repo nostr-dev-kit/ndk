@@ -1,0 +1,4 @@
+ndk.$metaSubscribe(() => ({
+  filters: [{ kinds: [7], authors: follows }],
+  sort: 'unique-authors'  // Most unique reactors first
+}))

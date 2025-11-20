@@ -1,0 +1,34 @@
+<script>
+  import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { Event } from '$lib/registry/ui/event';
+
+  let { ndk } = $props();
+
+  let clickedEvent = $state(null);
+
+  // Create a mock reply event
+  const replyEvent = new NDKEvent(ndk, {
+    kind: 1,
+    content: 'This is a reply with a click handler',
+    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [
+      ['e', 'abcdef1234567890', '', 'reply'],
+      ['p', '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d']
+    ]
+  });
+
+  function handleClick(event) {
+    clickedEvent = event;
+  }
+</script>
+
+<div class="border border-border rounded-lg p-6 bg-background flex flex-col gap-4">
+  <Event.ReplyIndicator {ndk} event={replyEvent} onclick={handleClick} />
+
+  {#if clickedEvent}
+    <div class="p-3 rounded bg-accent text-accent-foreground text-sm">
+      Clicked! Event ID: {clickedEvent.id?.slice(0, 16)}...
+    </div>
+  {/if}
+</div>

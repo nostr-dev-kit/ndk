@@ -1,0 +1,66 @@
+{
+  "name": "highlight-card-grid",
+  "title": "Highlight Card Grid",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "grid",
+  "oneLiner": "A grid-optimized card for highlight content",
+  "registryName": "components/highlight-card-grid",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "grid",
+    "nostr",
+    "social"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 6,
+    "wrapper": "NDKHighlight"
+  },
+  "apiDoc": {
+    "name": "HighlightCardGrid",
+    "description": "A card for displaying text highlights (NIP-84) in grid layouts. Features compact design optimized for grid displays with optional author header, source information, and custom action buttons.",
+    "importPath": "import { HighlightCardGrid } from '$lib/registry/components/highlight-card-grid'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Highlight event to display"
+      },
+      {
+        "name": "showHeader",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show author header with avatar and timestamp"
+      },
+      {
+        "name": "showActions",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show actions area below highlight"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "actions",
+        "type": "Snippet",
+        "description": "Custom Svelte 5 snippet for actions area"
+      }
+    ]
+  }
+}

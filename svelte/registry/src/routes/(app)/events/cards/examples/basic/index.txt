@@ -1,0 +1,9 @@
+<script lang="ts">
+  import EventCardBasic from '$lib/registry/components/event-card-basic/event-card-basic.svelte';
+
+  let { ndk, event } = $props();
+</script>
+
+{#if event}
+  <EventCardBasic {ndk} {event} />
+{/if}

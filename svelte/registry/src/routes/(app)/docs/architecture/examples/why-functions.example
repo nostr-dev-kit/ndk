@@ -1,0 +1,10 @@
+let currentEvent = $state(events[0]);
+
+// ✅ Reacts when currentEvent changes
+const content = createEventContent(() => ({ event: currentEvent }), ndk);
+
+// When you update currentEvent, builder automatically:
+// 1. Stops old processing
+// 2. Parses new event content
+// 3. Updates all state
+currentEvent = events[1];

@@ -1,6 +1,8 @@
 import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
 import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
+import { FollowsProxy } from "./follows.svelte";
+import { MutesProxy } from "./mutes.svelte";
 
 /**
  * Reactive wrapper around NDKSessionManager
@@ -30,15 +32,21 @@ export class ReactiveSessionsStore {
                 sessionsObj[pubkey] = session;
             });
             this.sessions = sessionsObj;
-            this.activePubkey = state.activePubkey;
 
-            // Sync signer to NDK
+            // Sync signer to NDK BEFORE setting activePubkey
+            // This prevents race conditions where reactive code runs before signer is ready
             if (state.activePubkey) {
                 const signer = state.signers.get(state.activePubkey);
                 if (signer && state.ndk) {
                     state.ndk.signer = signer;
                 }
+            } else if (state.ndk) {
+                // Clear signer and activeUser when no active session
+                state.ndk.signer = undefined;
+                state.ndk.activeUser = undefined;
             }
+
+            this.activePubkey = state.activePubkey;
         });
 
         // Restore sessions on init
@@ -64,16 +72,51 @@ export class ReactiveSessionsStore {
 
     /**
      * Get follows set for current session
+     *
+     * Returns a FollowsProxy that works like a Set but has async add/remove methods
+     * that publish changes to the network.
+     *
+     * @example
+     * ```ts
+     * // Use as a Set
+     * const isFollowing = ndk.$sessions.follows.has(pubkey);
+     * const count = ndk.$sessions.follows.size;
+     * for (const pubkey of ndk.$sessions.follows) { ... }
+     *
+     * // Add/remove follows (publishes to network)
+     * await ndk.$sessions.follows.add(pubkey);
+     * await ndk.$sessions.follows.remove(pubkey);
+     * ```
      */
-    get follows(): Set<Hexpubkey> {
-        return this.current?.followSet ?? new Set();
+    get follows(): FollowsProxy {
+        const followSet = this.current?.followSet ?? new Set();
+        return new FollowsProxy(this, followSet);
     }
 
     /**
-     * Get muted IDs for current session
+     * Get mutes for current session
+     *
+     * Returns a MutesProxy that works like a Set but has async mute/unmute methods
+     * that publish changes to the network.
+     *
+     * @example
+     * ```ts
+     * // Use as a Set
+     * const isMuted = ndk.$sessions.mutes.has(pubkey);
+     * const count = ndk.$sessions.mutes.size;
+     * for (const pubkey of ndk.$sessions.mutes) { ... }
+     *
+     * // Mute/unmute users (publishes to network)
+     * await ndk.$sessions.mutes.mute(pubkey);
+     * await ndk.$sessions.mutes.unmute(pubkey);
+     * await ndk.$sessions.mutes.toggle(pubkey);
+     * ```
      */
-    get mutes(): Map<string, string> {
-        return this.current?.muteSet ?? new Map();
+    get mutes(): MutesProxy {
+        // Convert Map<string, string> to Set<string> by taking keys
+        const muteMap = this.current?.muteSet ?? new Map();
+        const muteSet = new Set(muteMap.keys());
+        return new MutesProxy(this, muteSet);
     }
 
     /**
@@ -155,18 +198,9 @@ export class ReactiveSessionsStore {
 
         this.#manager.logout(targetPubkey);
 
-        // Update local state immediately
-        delete this.sessions[targetPubkey];
-        if (this.activePubkey === targetPubkey) {
-            this.activePubkey = undefined;
-        }
-
-        // If this was the last session, clear storage completely
-        if (Object.keys(this.sessions).length === 0) {
-            this.#manager.clear().catch((error) => {
-                console.error("[svelte] Failed to clear sessions from storage:", error);
-            });
-        }
+        // Note: State updates will happen via the subscription handler
+        // Don't update local state manually - let the subscription handler handle it
+        // to avoid race conditions and ensure NDK's activeUser is properly cleared
     }
 
     /**
@@ -179,14 +213,8 @@ export class ReactiveSessionsStore {
             this.#manager.logout(pubkey);
         }
 
-        // Update local state immediately
-        this.sessions = {};
-        this.activePubkey = undefined;
-
-        // Clear persisted sessions from storage
-        this.#manager.clear().catch((error) => {
-            console.error("[svelte] Failed to clear sessions from storage:", error);
-        });
+        // Note: State updates will happen via the subscription handler
+        // Don't update local state manually - let the subscription handler handle it
     }
 
     /**
@@ -222,6 +250,19 @@ export class ReactiveSessionsStore {
      */
     stop(pubkey: Hexpubkey): void {
         this.#manager.stopSession(pubkey);
+    }
+
+    /**
+     * Add monitors to the active session
+     *
+     * @example
+     * ```ts
+     * // Add monitors to active session
+     * ndk.$sessions.addMonitor([NDKInterestList, 10050, 10051]);
+     * ```
+     */
+    addMonitor(monitor: import("@nostr-dev-kit/sessions").MonitorItem[]): void {
+        this.#manager.addMonitor(monitor);
     }
 
     /**

@@ -1,0 +1,13 @@
+<script lang="ts">
+  import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
+
+  let { ndk } = $props();
+</script>
+
+<RelayInputBlock
+  {ndk}
+  value="wss://relay.damus.io"
+  label="Default Relay"
+  helperText="This relay cannot be changed"
+  disabled
+/>

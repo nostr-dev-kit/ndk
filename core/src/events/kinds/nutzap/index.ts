@@ -3,6 +3,12 @@ import type NDK from "../../../index.js";
 import type { Hexpubkey, NostrEvent } from "../../../index.js";
 import { NDKEvent, NDKKind, NDKUser } from "../../../index.js";
 import type { Proof } from "./proof.js";
+import {
+    createValidationIssue,
+    NutzapValidationCode,
+    NutzapValidationSeverity,
+    type NutzapValidationResult,
+} from "./validation.js";
 
 /**
  * Represents a NIP-61 nutzap
@@ -190,8 +196,22 @@ export class NDKNutzap extends NDKEvent {
 
     /**
      * Validates that the nutzap conforms to NIP-61
+     * @deprecated Use validateNIP61() instead for detailed validation results
      */
     get isValid(): boolean {
+        const result = this.validateNIP61();
+        return result.valid;
+    }
+
+    /**
+     * Performs comprehensive validation of the nutzap according to NIP-61.
+     * Returns detailed validation results including errors and warnings.
+     *
+     * Errors make the nutzap invalid, warnings are recommendations for best practices.
+     */
+    validateNIP61(): NutzapValidationResult {
+        const issues: NutzapValidationResult["issues"] = [];
+
         let eTagCount = 0;
         let pTagCount = 0;
         let mintTagCount = 0;
@@ -202,15 +222,112 @@ export class NDKNutzap extends NDKEvent {
             if (tag[0] === "u") mintTagCount++;
         }
 
-        return (
-            // exactly one recipient and mint
-            pTagCount === 1 &&
-            mintTagCount === 1 &&
-            // must have at most one e tag
-            eTagCount <= 1 &&
-            // must have at least one proof
-            this.proofs.length > 0
-        );
+        // Critical validations
+        if (this.proofs.length === 0) {
+            issues.push(createValidationIssue(NutzapValidationCode.NO_PROOFS));
+        }
+
+        if (pTagCount === 0) {
+            issues.push(createValidationIssue(NutzapValidationCode.NO_RECIPIENT));
+        } else if (pTagCount > 1) {
+            issues.push(createValidationIssue(NutzapValidationCode.MULTIPLE_RECIPIENTS));
+        }
+
+        if (mintTagCount === 0) {
+            issues.push(createValidationIssue(NutzapValidationCode.NO_MINT));
+        } else if (mintTagCount > 1) {
+            issues.push(createValidationIssue(NutzapValidationCode.MULTIPLE_MINTS));
+        }
+
+        if (eTagCount > 1) {
+            issues.push(createValidationIssue(NutzapValidationCode.MULTIPLE_EVENT_TAGS));
+        }
+
+        // Validate proof structure and tags
+        const eventId = this.tagValue("e");
+        const senderPubkey = this.pubkey;
+
+        for (let i = 0; i < this.proofs.length; i++) {
+            const proof = this.proofs[i];
+            try {
+                const secret = JSON.parse(proof.secret);
+                const payload = typeof secret === "string" ? JSON.parse(secret) : secret;
+
+                if (Array.isArray(payload) && payload[0] === "P2PK" && payload[1]) {
+                    const tags = payload[1].tags;
+
+                    if (eventId) {
+                        // Event has an e tag, check if proof has matching e tag
+                        if (!tags) {
+                            issues.push(
+                                createValidationIssue(
+                                    NutzapValidationCode.MISSING_EVENT_TAG_IN_PROOF,
+                                    i
+                                )
+                            );
+                        } else {
+                            const eTag = tags.find((t: any[]) => t[0] === "e");
+                            if (!eTag) {
+                                issues.push(
+                                    createValidationIssue(
+                                        NutzapValidationCode.MISSING_EVENT_TAG_IN_PROOF,
+                                        i
+                                    )
+                                );
+                            } else if (eTag[1] !== eventId) {
+                                issues.push(
+                                    createValidationIssue(
+                                        NutzapValidationCode.MISMATCHED_EVENT_TAG_IN_PROOF,
+                                        i
+                                    )
+                                );
+                            }
+                        }
+                    }
+
+                    // Check for P tag in proof
+                    if (!tags) {
+                        issues.push(
+                            createValidationIssue(NutzapValidationCode.MISSING_SENDER_TAG_IN_PROOF, i)
+                        );
+                    } else {
+                        const PTag = tags.find((t: any[]) => t[0] === "P");
+                        if (!PTag) {
+                            issues.push(
+                                createValidationIssue(
+                                    NutzapValidationCode.MISSING_SENDER_TAG_IN_PROOF,
+                                    i
+                                )
+                            );
+                        } else if (PTag[1] !== senderPubkey) {
+                            issues.push(
+                                createValidationIssue(
+                                    NutzapValidationCode.MISMATCHED_SENDER_TAG_IN_PROOF,
+                                    i
+                                )
+                            );
+                        }
+                    }
+                }
+            } catch {
+                issues.push(
+                    createValidationIssue(NutzapValidationCode.MALFORMED_PROOF_SECRET, i)
+                );
+            }
+        }
+
+        // Check if event should have an e tag
+        if (!eventId && this.proofs.length > 0) {
+            issues.push(createValidationIssue(NutzapValidationCode.NO_EVENT_TAG_IN_EVENT));
+        }
+
+        // Only errors make the nutzap invalid
+        const hasErrors = issues.some((issue) => issue.severity === NutzapValidationSeverity.ERROR);
+
+        return {
+            valid: !hasErrors,
+            issues,
+        };
     }
 }
 

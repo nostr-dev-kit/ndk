@@ -1,0 +1,17 @@
+<script lang="ts">
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+  import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+  import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
+
+  let { ndk, event } = $props();
+
+  // Create a custom renderer with modern hashtag component
+  const modernRenderer = new ContentRenderer();
+  modernRenderer.hashtagComponent = HashtagModern;
+</script>
+
+<div class="w-full max-w-2xl">
+  {#if event}
+    <EventContent {ndk} {event} renderer={modernRenderer} />
+  {/if}
+</div>

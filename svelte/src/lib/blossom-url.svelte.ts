@@ -57,6 +57,6 @@ export class BlossomUrl {
     }
 }
 
-export function useBlossomUrl(blossom: NDKBlossom, user: NDKUser, url: string): BlossomUrl {
+export function createBlossomUrl(blossom: NDKBlossom, user: NDKUser, url: string): BlossomUrl {
     return new BlossomUrl(blossom, user, url);
 }

@@ -44,9 +44,8 @@ svelte embraces **Svelte 5's reactive primitives** to create a library that feel
 ### ✅ Implemented Features
 
 - **Core Subscriptions**: Reactive EventSubscription with automatic cleanup
-- **Namespaced Stores**: Sessions, WoT, wallet, payments, and pool
+- **Namespaced Stores**: Sessions, WoT, wallet, and pool
 - **Wallet Integration**: Full support for Cashu, NWC, and WebLN wallets
-- **Payment Tracking**: Reactive payment/transaction tracking with pending state management
 - **Nutzap Monitoring**: Automatic nutzap detection and redemption
 - **Test Coverage**: 119 tests passing across all core functionality
 
@@ -69,19 +68,38 @@ Initialize NDK in your app:
 
 ```typescript
 // lib/ndk.ts
-import { NDKSvelte } from '@nostr-dev-kit/svelte';
+import { createNDK } from '@nostr-dev-kit/svelte';
 import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
 
-export const ndk = new NDKSvelte({
+export const ndk = createNDK({
   explicitRelayUrls: [
     'wss://relay.damus.io',
     'wss://relay.nostr.band',
   ],
-  cacheAdapter: new NDKCacheDexie({ dbName: 'my-app' })
+  cacheAdapter: new NDKCacheDexie({ dbName: 'my-app' }),
+  // Enable sessions for wallet, follows, mutes, and WoT
+  session: true
 });
 
 ndk.connect();
 ```
+
+### Type-Safe Session Stores
+
+When you enable `session`, TypeScript automatically knows that `$wallet`, `$sessions`, and `$wot` exist:
+
+```typescript
+// ✅ No optional chaining needed - TypeScript knows these exist
+const balance = ndk.$wallet.balance;
+const follows = ndk.$sessions.follows;
+const score = ndk.$wot.getScore(pubkey);
+
+// Without sessions, TypeScript enforces optional chaining
+const ndkNoSession = createNDK({ explicitRelayUrls: [...] });
+const balance = ndkNoSession.$wallet?.balance; // Must use ?. operator
+```
+
+This is achieved through function overloads that provide compile-time guarantees about store availability.
 
 **Session Persistence:**
 Sessions are automatically persisted to localStorage by default. Users stay logged in across page reloads.
@@ -144,9 +162,6 @@ const score = ndk.$wot.getScore(pubkey);
 // Wallet
 ndk.$wallet.set(myWallet);
 const balance = ndk.$wallet.balance;
-
-// Payments
-const amount = ndk.$payments.getZapAmount(event);
 
 // Pool
 const connected = ndk.pool.connectedCount;
@@ -232,8 +247,14 @@ import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 // Current session (reactive) - wrap getters in $derived() to make them reactive
 const current = $derived(ndk.$currentSession);
 const currentUser = $derived(ndk.$currentUser);
-const profile = ndk.$fetchProfile(() => currentUser?.pubkey);
-const follows = $derived(ndk.$sessions.follows);
+
+// Fetch profile reactively
+let profile = $state(null);
+$effect(() => {
+  if (currentUser?.pubkey) {
+    currentUser.fetchProfile().then(p => profile = p);
+  }
+});
 
 async function login() {
   const signer = new NDKNip07Signer();
@@ -247,8 +268,12 @@ function logout() {
 
 {#if current}
   <div>
-    <p>Logged in as {profile?.name || 'Anonymous'}</p>
-    <p>Following {follows.size} accounts</p>
+    {#if profile}
+      <p>Logged in as {profile.name || 'Anonymous'}</p>
+    {:else}
+      <p>Loading profile...</p>
+    {/if}
+    <p>Following {ndk.$follows.length} accounts</p>
     <button onclick={logout}>Logout</button>
   </div>
 {:else}
@@ -259,10 +284,17 @@ function logout() {
 ### Session API
 
 ```typescript
-// Reactive getters
+// Reactive getters on ndk
+ndk.$currentSession        // NDKSession | undefined - alias for ndk.$sessions.current
+ndk.$currentUser           // NDKUser | undefined - alias for ndk.$sessions.currentUser
+ndk.$currentPubkey         // Hexpubkey | undefined - current user's pubkey
+ndk.$follows               // ReactiveFollows (array) - current session's follow list as array
+                           // Includes add(), remove(), and has() methods
+
+// Reactive getters on ndk.$sessions
 ndk.$sessions.current      // NDKSession | undefined
 ndk.$sessions.currentUser  // NDKUser | undefined
-ndk.$sessions.follows      // Set<Hexpubkey>
+ndk.$sessions.follows      // FollowsProxy (Set-like) - with add/remove/has methods
 ndk.$sessions.mutes        // Map<string, string>
 ndk.$sessions.mutedWords   // Set<string>
 ndk.$sessions.blockedRelays // Set<string>
@@ -286,6 +318,46 @@ ndk.$sessions.walletEvent  // Get NIP-60 wallet event
 
 // Note: What to fetch (follows, mutes, wallet, etc.) is configured once
 // at the NDKSvelte level, not per-login. All sessions fetch the same data.
+```
+
+### Using `ndk.$follows`
+
+The `$follows` getter provides convenient array access to your follow list with add/remove/has methods:
+
+```svelte
+<script lang="ts">
+// Use as an array
+const follows = ndk.$follows;
+
+// Check if following (O(1) lookup)
+const isFollowing = ndk.$follows.has(pubkey);
+
+// Add/remove follows
+async function followUser(pubkey: string) {
+  await ndk.$follows.add(pubkey);
+}
+
+async function unfollowUser(pubkey: string) {
+  await ndk.$follows.remove(pubkey);
+}
+</script>
+
+<!-- Iterate over follows -->
+{#each ndk.$follows as pubkey}
+  <UserCard {pubkey} />
+{/each}
+
+<!-- Use in subscriptions -->
+{@const feed = ndk.$subscribe(() => ({
+  filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }]
+}))}
+```
+
+**Difference between `ndk.$follows` and `ndk.$sessions.follows`:**
+- `ndk.$follows` - Reactive array (extends Array) with `add()`/`remove()`/`has()` methods. Best for templates and subscriptions.
+- `ndk.$sessions.follows` - FollowsProxy (Set-like) with `add()`/`remove()`/`has()` methods. Best when you need Set operations.
+
+Both update reactively and both have `add()`/`remove()`/`has()` methods that publish to the network (except `has()` which is read-only).
 ```
 
 ### Automatic Wallet Loading
@@ -429,42 +501,6 @@ ndk.$wallet.balance      // number
 ndk.$wallet.mints        // string[] - configured mint URLs
 ndk.$wallet.mintBalances // Mint[] - mints with balances (including 0 balance)
 ndk.$wallet.relays       // string[]
-```
-
-## Payment Tracking
-
-Real-time payment tracking with automatic pending-to-confirmed transitions:
-
-```svelte
-<script lang="ts">
-import { ndk } from '$lib/ndk';
-
-// Reactive payment state
-const history = $derived(ndk.$payments.history);
-const pending = $derived(ndk.$payments.pending);
-const byTarget = $derived(ndk.$payments.byTarget);
-
-// Check zap status
-const amount = ndk.$payments.getZapAmount(event);
-const isZapped = ndk.$payments.isZapped(event);
-</script>
-
-{#if isZapped}
-  <span>⚡ Zapped {amount} sats</span>
-{/if}
-```
-
-### Payments API
-
-```typescript
-// Query payments
-ndk.$payments.getZapAmount(target)  // number
-ndk.$payments.isZapped(target)      // boolean
-
-// State
-ndk.$payments.history     // Transaction[]
-ndk.$payments.pending     // PendingPayment[]
-ndk.$payments.byTarget    // Map<string, Transaction[]>
 ```
 
 ## Relay Pool Monitoring
@@ -692,35 +728,6 @@ Subscription<T>
 
 ## Reactive Fetching
 
-### Fetch Single Event
-
-```svelte
-<script lang="ts">
-import { ndk } from '$lib/ndk';
-
-// By bech32 ID (most common)
-const eventId = $derived($page.params.id);
-const event = ndk.$fetchEvent(() => eventId); // "note1..." or "nevent1..."
-
-// By filter
-const latestNote = ndk.$fetchEvent(() => ({
-  kinds: [1],
-  authors: [pubkey],
-  limit: 1
-}));
-
-// Conditional fetch
-const event = ndk.$fetchEvent(() => {
-  if (!shouldFetch || !eventId) return undefined;
-  return eventId;
-});
-</script>
-
-{#if event}
-  <article>{event.content}</article>
-{/if}
-```
-
 ### Fetch Multiple Events
 
 ```svelte
@@ -751,7 +758,7 @@ const events = ndk.$fetchEvents(() => [
 See the [examples](./examples) directory for complete working examples:
 
 - [Basic Feed](./examples/basic-feed) - Simple note feed with profiles ✅
-- [Nutsack](./examples/nutsack) - NIP-60 Cashu wallet with payment tracking ✅
+- [Nutsack](./examples/nutsack) - NIP-60 Cashu wallet ✅
 - [Fetch Event Demo](./examples/fetch-event-demo.md) - Event fetching patterns ✅
 
 ### Coming Soon
@@ -770,7 +777,6 @@ class NDKSvelte extends NDK {
   $sessions: ReactiveSessionsStore;
   $wot: ReactiveWoTStore;
   $wallet: ReactiveWalletStore;
-  $payments: ReactivePaymentsStore;
   $pool: ReactivePoolStore;
 
   // Reactive subscription
@@ -779,9 +785,6 @@ class NDKSvelte extends NDK {
   ): Subscription<T>;
 
   // Reactive fetching
-  $fetchUser(identifier: () => string | undefined): NDKUser | undefined;
-  $fetchProfile(pubkey: () => string | undefined): NDKUserProfile | undefined;
-  $fetchEvent(idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined): NDKEvent | undefined;
   $fetchEvents(filters: () => NDKFilter | NDKFilter[] | undefined): NDKEvent[];
 }
 ```

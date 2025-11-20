@@ -1,0 +1,43 @@
+{
+  "name": "user-card-portrait",
+  "title": "User Card Portrait",
+  "category": "user",
+  "subcategory": "cards",
+  "variant": "portrait",
+  "oneLiner": "A vertical user card with large avatar",
+  "registryName": "components/user-card-portrait",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "profile-pages",
+    "team-grids",
+    "featured-users"
+  ],
+  "apiDoc": {
+    "name": "UserCardPortrait",
+    "description": "A portrait-oriented user profile card",
+    "importPath": "$lib/registry/components/user/cards/portrait",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching user data"
+      },
+      {
+        "name": "pubkey",
+        "type": "string",
+        "required": true,
+        "description": "The user's public key (hex format)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "required": false,
+        "description": "Additional CSS classes to apply to the card"
+      }
+    ]
+  }
+}

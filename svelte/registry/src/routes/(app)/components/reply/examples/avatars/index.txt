@@ -1,0 +1,7 @@
+<script lang="ts">
+  import ReplyButtonAvatars from '$lib/registry/components/reply/buttons/avatars/reply-button-avatars.svelte';
+
+  let { ndk, event } = $props();
+</script>
+
+<ReplyButtonAvatars {ndk} {event} variant="ghost" />

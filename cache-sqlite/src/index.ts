@@ -99,6 +99,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         if (!this.db) throw new Error("Database not initialized");
 
         try {
+            // Store in unpublished_events table for retry tracking
             const stmt = this.db
                 .getDatabase()
                 .prepare(
@@ -106,6 +107,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 );
             const now = Math.floor(Date.now() / 1000);
             stmt.run(event.id, JSON.stringify(event.rawEvent()), JSON.stringify(relayUrls), now);
+
+            // Also store in main events table with relay = undefined
+            // so it's queryable by subscriptions
+            this.setEvent(event, [], undefined).catch((e) => {
+                console.error('[addUnpublishedEvent] Failed to store event in main table:', e);
+            });
         } catch (e) {
             console.error("Error adding unpublished event:", e);
         }

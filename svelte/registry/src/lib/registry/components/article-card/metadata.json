@@ -1,0 +1,58 @@
+{
+  "name": "article-card-basic",
+  "title": "Article Card",
+  "category": "article",
+  "subcategory": "cards",
+  "variant": "basic",
+  "oneLiner": "A medium-sized article card with image, title, summary and metadata",
+  "registryName": "components/article-card",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "article-lists",
+    "content-feeds",
+    "blog-layouts",
+    "news-sites"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 7,
+    "wrapper": "NDKArticle"
+  },
+  "apiDoc": {
+    "name": "ArticleCard",
+    "description": "Article card component",
+    "importPath": "import { ArticleCard } from '$lib/registry/components/article/cards/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance"
+      },
+      {
+        "name": "event",
+        "type": "NDKArticle",
+        "description": "Article to display"
+      },
+      {
+        "name": "showImage",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show article image"
+      },
+      {
+        "name": "showExcerpt",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show article excerpt"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

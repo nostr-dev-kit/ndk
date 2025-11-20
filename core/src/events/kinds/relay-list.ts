@@ -13,6 +13,7 @@ const WRITE_MARKER = "write";
  * @group Kind Wrapper
  */
 export class NDKRelayList extends NDKEvent {
+    static kind = NDKKind.RelayList;
     static kinds = [NDKKind.RelayList];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {

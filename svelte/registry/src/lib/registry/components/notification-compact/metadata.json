@@ -1,0 +1,44 @@
+{
+  "name": "notification-compact",
+  "title": "Notification Compact",
+  "category": "notification",
+  "subcategory": "items",
+  "variant": "compact",
+  "oneLiner": "A compact item for notification content",
+  "registryName": "components/notification-compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "notification",
+    "items",
+    "compact",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "NotificationItemCompact",
+    "description": "A compact notification item displaying grouped notification events. Features actor avatars (max 3), action description, timestamp, and content preview in a space-efficient layout. Uses NotificationItem builder pattern with Root, Actors, Action, Timestamp, and Content subcomponents. Includes hover background transition.",
+    "importPath": "import { NotificationItemCompact } from '$lib/registry/components/notification/items/compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "notification",
+        "type": "NotificationGroup",
+        "required": true,
+        "description": "Grouped notification data"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

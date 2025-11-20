@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your Way, Not Ours</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+        .hero {
+            padding: 100px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        .hero .subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+        .section h2 {
+            font-size: 32px;
+            margin-bottom: 32px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+        .layout-box {
+            background: #fafafa;
+            padding: 24px;
+            border-radius: 8px;
+            border: 2px solid #e5e5e5;
+        }
+        .layout-box h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Twitter Style */
+        .twitter-style {
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 0;
+        }
+        .twitter-style .header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .twitter-style .avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+        }
+        .twitter-style .user-info {
+            flex: 1;
+        }
+        .twitter-style .name {
+            font-weight: 700;
+            font-size: 15px;
+            display: inline;
+            margin-right: 6px;
+        }
+        .twitter-style .handle {
+            color: #666;
+            font-size: 15px;
+        }
+        .twitter-style .content {
+            margin-left: 60px;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .twitter-style .actions {
+            margin-left: 60px;
+            display: flex;
+            gap: 48px;
+            color: #666;
+            font-size: 14px;
+        }
+        .twitter-style .action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Card Style */
+        .card-style {
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .card-style .header {
+            padding: 20px 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-style .avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border-radius: 50%;
+        }
+        .card-style .name {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .card-style .handle {
+            color: #666;
+            font-size: 14px;
+        }
+        .card-style .content {
+            padding: 20px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .card-style .actions {
+            border-top: 1px solid #e5e5e5;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .card-style .action {
+            padding: 16px;
+            text-align: center;
+            border-right: 1px solid #e5e5e5;
+            font-size: 14px;
+            color: #666;
+        }
+        .card-style .action:last-child {
+            border-right: none;
+        }
+        .card-style .action .icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        /* Magazine Style */
+        .magazine-style {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .magazine-style .image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+        .magazine-style .body {
+            padding: 24px;
+        }
+        .magazine-style .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .magazine-style .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border-radius: 50%;
+        }
+        .magazine-style .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .magazine-style .content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .magazine-style .actions {
+            display: flex;
+            gap: 12px;
+        }
+        .magazine-style .action {
+            flex: 1;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .code-section {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            margin-top: 16px;
+        }
+        .code-section .comment { color: #888; }
+        .code-section .tag { color: #50fa7b; }
+
+        .same-primitives {
+            background: #f9f9f9;
+            padding: 40px;
+            border-radius: 8px;
+            margin: 60px 0;
+        }
+        .same-primitives h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .same-primitives .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .primitive-box {
+            background: #fff;
+            padding: 16px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e5e5e5;
+        }
+        .primitive-box .name {
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <h1>Build Your Way,<br>Not Ours</h1>
+            <p class="subtitle">
+                Same primitives. Same Nostr intelligence. Infinite designs.
+                Build the UI you want, keep the protocol smarts.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2>Three Different UIs, Same Components</h2>
+
+            <div class="layout-grid">
+                <!-- Twitter Style -->
+                <div class="layout-box">
+                    <h3>Twitter-Style Feed</h3>
+                    <div class="twitter-style">
+                        <div class="header">
+                            <div class="avatar"></div>
+                            <div class="user-info">
+                                <div>
+                                    <span class="name">Alice Johnson</span>
+                                    <span class="handle">@alice · 2h</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content">
+                            The composability of @nostr/svelte is amazing! Built a custom feed in 30 minutes using primitives. Everything just works.
+                        </div>
+                        <div class="actions">
+                            <div class="action">💬 12</div>
+                            <div class="action">🔄 8</div>
+                            <div class="action">❤️ 45</div>
+                            <div class="action">⚡ 1.2k</div>
+                        </div>
+                    </div>
+
+                    <div class="code-section">
+<span class="comment">// Minimal, inline</span>
+<span class="tag">&lt;Event.Root</span> {event}<span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> class="flex gap-3"<span class="tag">&gt;</span>
+    <span class="tag">&lt;User.Avatar</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;User.Name</span> inline <span class="tag">/&gt;</span>
+      <span class="tag">&lt;User.Handle</span> inline <span class="tag">/&gt;</span>
+      <span class="tag">&lt;Event.Content</span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;Event.Actions</span>
+        compact
+        inline
+      <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/Event.Root&gt;</span>
+                    </div>
+                </div>
+
+                <!-- Card Style -->
+                <div class="layout-box">
+                    <h3>Elevated Cards</h3>
+                    <div class="card-style">
+                        <div class="header">
+                            <div class="avatar"></div>
+                            <div>
+                                <div class="name">Bob Wilson</div>
+                                <div class="handle">@bob · 4h ago</div>
+                            </div>
+                        </div>
+                        <div class="content">
+                            The composability of @nostr/svelte is amazing! Built a custom feed in 30 minutes using primitives. Everything just works.
+                        </div>
+                        <div class="actions">
+                            <div class="action">
+                                <div class="icon">💬</div>
+                                <div>Reply</div>
+                            </div>
+                            <div class="action">
+                                <div class="icon">🔄</div>
+                                <div>Repost</div>
+                            </div>
+                            <div class="action">
+                                <div class="icon">❤️</div>
+                                <div>React</div>
+                            </div>
+                            <div class="action">
+                                <div class="icon">⚡</div>
+                                <div>Zap</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-section">
+<span class="comment">// Card layout, prominent actions</span>
+<span class="tag">&lt;Event.Root</span>
+  class="card border-2 rounded-xl"
+<span class="tag">&gt;</span>
+  <span class="tag">&lt;Event.Header</span> padding<span class="tag">&gt;</span>
+    <span class="tag">&lt;User.Avatar</span> size="lg" <span class="tag">/&gt;</span>
+    <span class="tag">&lt;User.Name</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/Event.Header&gt;</span>
+  <span class="tag">&lt;Event.Content</span> padding <span class="tag">/&gt;</span>
+  <span class="tag">&lt;Event.Actions</span>
+    layout="grid"
+    bordered
+  <span class="tag">/&gt;</span>
+<span class="tag">&lt;/Event.Root&gt;</span>
+                    </div>
+                </div>
+
+                <!-- Magazine Style -->
+                <div class="layout-box">
+                    <h3>Magazine Layout</h3>
+                    <div class="magazine-style">
+                        <div class="image"></div>
+                        <div class="body">
+                            <div class="header">
+                                <div class="avatar"></div>
+                                <div class="name">Charlie Davis</div>
+                            </div>
+                            <div class="content">
+                                The composability of @nostr/svelte is amazing! Built a custom feed in 30 minutes.
+                            </div>
+                            <div class="actions">
+                                <div class="action">💬 Reply</div>
+                                <div class="action">❤️ React</div>
+                                <div class="action">⚡ Zap</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-section">
+<span class="comment">// Image-first, elegant</span>
+<span class="tag">&lt;Event.Root</span> class="shadow-lg"<span class="tag">&gt;</span>
+  <span class="tag">&lt;Event.Media</span>
+    featured
+    height="180px"
+  <span class="tag">/&gt;</span>
+  <span class="tag">&lt;div</span> class="p-6"<span class="tag">&gt;</span>
+    <span class="tag">&lt;Event.Header</span> compact<span class="tag">&gt;</span>
+      <span class="tag">&lt;User.Avatar</span> size="sm" <span class="tag">/&gt;</span>
+      <span class="tag">&lt;User.Name</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/Event.Header&gt;</span>
+    <span class="tag">&lt;Event.Content</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;Event.Actions</span> pills <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/Event.Root&gt;</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="same-primitives">
+                <h3>All Use The Same Primitives</h3>
+                <div class="grid">
+                    <div class="primitive-box">
+                        <div class="name">Event.Root</div>
+                    </div>
+                    <div class="primitive-box">
+                        <div class="name">Event.Header</div>
+                    </div>
+                    <div class="primitive-box">
+                        <div class="name">Event.Content</div>
+                    </div>
+                    <div class="primitive-box">
+                        <div class="name">Event.Actions</div>
+                    </div>
+                    <div class="primitive-box">
+                        <div class="name">User.Avatar</div>
+                    </div>
+                    <div class="primitive-box">
+                        <div class="name">User.Name</div>
+                    </div>
+                </div>
+                <div style="text-align: center; color: #666; font-size: 15px; margin-top: 20px;">
+                    Each layout composes the same Nostr-aware primitives differently.<br>
+                    Same protocol intelligence. Same auto-follow detection. Same reaction updates. Different UI.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: #f9f9f9;">
+        <div class="container">
+            <h2>More Examples: User Profile Cards</h2>
+
+            <div class="layout-grid">
+                <!-- Minimal -->
+                <div class="layout-box">
+                    <h3>Minimal List Item</h3>
+                    <div style="background: #fff; border: 1px solid #e5e5e5; padding: 16px; border-radius: 6px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;"></div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 14px;">Alice Johnson</div>
+                                <div style="font-size: 12px; color: #666;">@alice</div>
+                            </div>
+                            <button style="background: #1a1a1a; color: #fff; border: none; padding: 6px 16px; border-radius: 4px; font-size: 13px;">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="code-section">
+<span class="tag">&lt;User.Root</span> class="flex"<span class="tag">&gt;</span>
+  <span class="tag">&lt;User.Avatar</span> size="sm" <span class="tag">/&gt;</span>
+  <span class="tag">&lt;User.Name</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;User.Handle</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;FollowButton</span> compact <span class="tag">/&gt;</span>
+<span class="tag">&lt;/User.Root&gt;</span>
+                    </div>
+                </div>
+
+                <!-- Featured -->
+                <div class="layout-box">
+                    <h3>Featured Profile</h3>
+                    <div style="background: #fff; border: 2px solid #e5e5e5; padding: 24px; border-radius: 8px; text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 50%; margin: 0 auto 16px;"></div>
+                        <div style="font-weight: 700; font-size: 18px; margin-bottom: 4px;">Bob Wilson</div>
+                        <div style="font-size: 13px; color: #666; margin-bottom: 16px;">@bob</div>
+                        <div style="font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 16px;">
+                            Building decentralized tools for the future
+                        </div>
+                        <button style="background: #1a1a1a; color: #fff; border: none; padding: 10px 32px; border-radius: 6px; width: 100%;">
+                            Follow
+                        </button>
+                    </div>
+
+                    <div class="code-section">
+<span class="tag">&lt;User.Root</span> centered<span class="tag">&gt;</span>
+  <span class="tag">&lt;User.Avatar</span> size="xl" <span class="tag">/&gt;</span>
+  <span class="tag">&lt;User.Name</span> size="lg" <span class="tag">/&gt;</span>
+  <span class="tag">&lt;User.Handle</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;User.Bio</span> lines={2} <span class="tag">/&gt;</span>
+  <span class="tag">&lt;FollowButton</span> full-width <span class="tag">/&gt;</span>
+<span class="tag">&lt;/User.Root&gt;</span>
+                    </div>
+                </div>
+
+                <!-- Detailed -->
+                <div class="layout-box">
+                    <h3>Detailed Card</h3>
+                    <div style="background: #fff; border: 1px solid #e5e5e5; padding: 20px; border-radius: 8px;">
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); border-radius: 50%;"></div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 16px; margin-bottom: 2px;">Charlie Davis</div>
+                                <div style="font-size: 13px; color: #666; margin-bottom: 8px;">@charlie ✓</div>
+                                <div style="display: flex; gap: 16px; font-size: 13px;">
+                                    <div><strong>1.2k</strong> <span style="color: #666;">following</span></div>
+                                    <div><strong>8.5k</strong> <span style="color: #666;">followers</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 16px;">
+                            Open source developer. Building the decentralized web.
+                        </div>
+                        <button style="background: #1a1a1a; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; width: 100%;">
+                            Follow
+                        </button>
+                    </div>
+
+                    <div class="code-section">
+<span class="tag">&lt;User.Root</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;User.Header&gt;</span>
+    <span class="tag">&lt;User.Avatar</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;User.Name</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;User.Handle</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;User.Stats</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/User.Header&gt;</span>
+  <span class="tag">&lt;User.Bio</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;FollowButton</span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/User.Root&gt;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+                <h2 style="font-size: 40px; margin-bottom: 32px;">Your Design. Our Intelligence.</h2>
+                <p style="font-size: 18px; color: #666; line-height: 1.8; margin-bottom: 32px;">
+                    Every layout gets the same Nostr-aware features automatically. Follow state from NDK.
+                    Reaction counts that update live. Event kind detection. Zap splits calculated.
+                    Thread reconstruction. All the protocol complexity handled.
+                </p>
+                <p style="font-size: 20px; color: #333; font-weight: 600; line-height: 1.6;">
+                    You compose the UI.<br>
+                    We provide the Nostr intelligence.<br>
+                    Build exactly what you envision.
+                </p>
+
+                <div style="margin-top: 60px; background: #fafafa; padding: 40px; border-radius: 8px;">
+                    <div style="font-size: 16px; color: #666; margin-bottom: 20px;">
+                        Same primitives. Different compositions. All Nostr-native.
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                        <div style="background: #fff; padding: 20px; border-radius: 6px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Twitter Clone</div>
+                            <div style="font-size: 13px; color: #666;">Minimal inline layout</div>
+                        </div>
+                        <div style="background: #fff; padding: 20px; border-radius: 6px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Instagram Feed</div>
+                            <div style="font-size: 13px; color: #666;">Image-first cards</div>
+                        </div>
+                        <div style="background: #fff; padding: 20px; border-radius: 6px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Medium Blog</div>
+                            <div style="font-size: 13px; color: #666;">Article-focused</div>
+                        </div>
+                        <div style="background: #fff; padding: 20px; border-radius: 6px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Your App</div>
+                            <div style="font-size: 13px; color: #666;">Whatever you imagine</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

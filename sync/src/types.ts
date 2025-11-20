@@ -1,6 +1,47 @@
 import type { NDKEvent, NDKEventId, NDKRelaySet } from "@nostr-dev-kit/ndk";
 
 /**
+ * Phase of the negentropy sync negotiation process
+ */
+export type NegotiationPhase = "initiating" | "reconciling" | "closing" | "fetching";
+
+/**
+ * Progress information during negentropy sync negotiation.
+ * Provides real-time visibility into the sync process with a relay.
+ */
+export interface NegotiationProgress {
+    /**
+     * Current phase of the sync negotiation
+     */
+    phase: NegotiationPhase;
+
+    /**
+     * Current round number (number of message exchanges so far)
+     */
+    round: number;
+
+    /**
+     * Cumulative count of event IDs we need from the relay
+     */
+    needCount: number;
+
+    /**
+     * Cumulative count of event IDs we have that the relay doesn't
+     */
+    haveCount: number;
+
+    /**
+     * Size of the current/last message in bytes
+     */
+    messageSize: number;
+
+    /**
+     * Timestamp when this progress update was created
+     */
+    timestamp: number;
+}
+
+/**
  * Options for the NDK sync operation
  */
 export interface NDKSyncOptions {
@@ -44,6 +85,30 @@ export interface NDKSyncOptions {
      * Can be async to perform operations like cache updates.
      */
     onRelayError?: (relay: import("@nostr-dev-kit/ndk").NDKRelay, error: Error) => void | Promise<void>;
+
+    /**
+     * Callback for negotiation progress updates during sync.
+     * Called multiple times during the sync process with each relay to provide
+     * real-time visibility into the negotiation rounds and event discovery.
+     *
+     * @param relay - The relay currently being synced
+     * @param progress - Current negotiation progress information
+     *
+     * @example
+     * ```typescript
+     * const sync = new NDKSync(ndk);
+     * await sync.sync(filters, {
+     *   onNegotiationProgress: (relay, progress) => {
+     *     console.log(`${relay.url}: Round ${progress.round}, Phase: ${progress.phase}`);
+     *     console.log(`  Need: ${progress.needCount}, Have: ${progress.haveCount}`);
+     *   }
+     * });
+     * ```
+     */
+    onNegotiationProgress?: (
+        relay: import("@nostr-dev-kit/ndk").NDKRelay,
+        progress: NegotiationProgress,
+    ) => void | Promise<void>;
 }
 
 /**

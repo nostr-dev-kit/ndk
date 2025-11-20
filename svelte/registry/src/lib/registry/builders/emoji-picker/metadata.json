@@ -1,0 +1,34 @@
+{
+  "name": "createEmojiPicker",
+  "title": "Emoji Picker Builder",
+  "oneLiner": "Reactive emoji aggregator from user preferences and specified pubkeys with NIP-30 custom emoji support",
+  "importPath": "import { createEmojiPicker } from '$lib/registry/builders/emoji-picker';",
+  "registryName": "builders/emoji-picker",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["30", "51"],
+  "parameters": [
+    {
+      "name": "defaults",
+      "type": "EmojiData[]",
+      "description": "Default emojis to show at the end if no user preferences",
+      "required": false
+    },
+    {
+      "name": "from",
+      "type": "string[]",
+      "description": "Array of pubkeys to aggregate emojis from (sorted by frequency)",
+      "required": false
+    }
+  ],
+  "returns": [
+    {
+      "name": "emojis",
+      "type": "EmojiData[]",
+      "description": "Aggregated and deduplicated emoji list with emoji character, optional shortcode, and optional URL for custom emojis"
+    }
+  ],
+  "usageExample": "const emojiPicker = createEmojiPicker(() => ({\n  defaults: [{ emoji: '❤️' }, { emoji: '👍' }, { emoji: '🔥' }],\n  from: ['pubkey1', 'pubkey2']  // Aggregate from these users\n}), ndk);\n\n// Get aggregated emoji list\nemojiPicker.emojis  // EmojiData[] - { emoji, shortcode?, url? }\n\n// Render emojis (handles both standard and custom)\n{#each emojiPicker.emojis as emoji}\n  {#if emoji.url}\n    <img src={emoji.url} alt={emoji.shortcode} />\n  {:else}\n    {emoji.emoji}\n  {/if}\n{/each}"
+}

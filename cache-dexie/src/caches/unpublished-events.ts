@@ -68,6 +68,12 @@ export function addUnpublishedEvent(this: NDKCacheAdapterDexie, event: NDKEvent,
     relays.forEach((url) => (r[url] = false));
     this.unpublishedEvents.set(event.id!, { id: event.id, event: event.rawEvent(), relays: r });
 
+    // Also store in main events table with relay = undefined
+    // so it's queryable by subscriptions
+    this.setEvent(event, [], undefined).catch((e) => {
+        console.error('[addUnpublishedEvent] Failed to store event in main table:', e);
+    });
+
     const onPublished = (relay: NDKRelay) => {
         const url = relay.url;
 

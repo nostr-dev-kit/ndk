@@ -1,0 +1,33 @@
+{
+  "name": "createFollowAction",
+  "title": "Follow Action Builder",
+  "oneLiner": "Reactive state manager for following/unfollowing Nostr users and hashtags",
+  "importPath": "import { createFollowAction } from '$lib/registry/builders/follow-action';",
+  "registryName": "builders/follow-action",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["02", "51"],
+  "parameters": [
+    {
+      "name": "target",
+      "type": "NDKUser | string",
+      "description": "User or hashtag to follow/unfollow",
+      "required": true
+    }
+  ],
+  "returns": [
+    {
+      "name": "isFollowing",
+      "type": "boolean",
+      "description": "Whether currently following the target"
+    },
+    {
+      "name": "follow",
+      "type": "() => Promise<void>",
+      "description": "Toggle follow/unfollow state"
+    }
+  ],
+  "usageExample": "const followAction = createFollowAction(() => ({ target: user }), ndk);\n\n// Access reactive state\nfollowAction.isFollowing  // boolean - whether currently following\n\n// Toggle follow/unfollow\nawait followAction.follow();"
+}

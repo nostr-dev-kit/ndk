@@ -1,0 +1,14 @@
+<script>
+  import { NoteComposer } from '@nostr-dev-kit/svelte-registry/components/note-composer';
+</script>
+
+<NoteComposer.Root {ndk}>
+  <div class="space-y-4">
+    <NoteComposer.Textarea placeholder="Custom composer..." />
+    <div class="flex gap-2">
+      <NoteComposer.MentionInput />
+      <NoteComposer.Media />
+    </div>
+    <NoteComposer.Submit variant="outline" />
+  </div>
+</NoteComposer.Root>

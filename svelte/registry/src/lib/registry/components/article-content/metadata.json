@@ -1,0 +1,57 @@
+{
+  "name": "article-content",
+  "title": "Article Content",
+  "category": "article",
+  "subcategory": "content",
+  "variant": "basic",
+  "oneLiner": "Full article content renderer with highlighting support",
+  "registryName": "components/article-content",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "article-pages",
+    "blog-posts",
+    "content-display",
+    "reading-view"
+  ],
+  "apiDoc": {
+    "name": "ArticleContent",
+    "description": "Full article content renderer with markdown formatting, text selection highlighting support, and floating avatars for highlights. Allows users to select text and create Nostr highlights, displays existing highlights with author avatars, and supports custom content renderers. Features prose typography with responsive headings, lists, blockquotes, and code blocks.",
+    "importPath": "import { ArticleContent } from '$lib/registry/components/article/content/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "article",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to render"
+      },
+      {
+        "name": "renderer",
+        "type": "ContentRenderer",
+        "description": "Custom content renderer (uses context or default if not provided)"
+      },
+      {
+        "name": "highlightFilter",
+        "type": "(highlight: NDKHighlight) => boolean",
+        "description": "Filter function to determine which highlights to display"
+      },
+      {
+        "name": "onHighlightClick",
+        "type": "(highlight: NDKHighlight) => void",
+        "description": "Callback when a highlight is clicked"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

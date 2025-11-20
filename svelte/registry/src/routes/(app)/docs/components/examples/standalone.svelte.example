@@ -1,0 +1,9 @@
+<!-- Composed - gets data from context -->
+<User.Root {ndk} {user}>
+  <User.Avatar />
+  <User.Name />
+</User.Root>
+
+<!-- Standalone - provide data directly -->
+<User.Avatar {ndk} {user} class="w-16 h-16" />
+<User.Name {ndk} {user} field="displayName" />

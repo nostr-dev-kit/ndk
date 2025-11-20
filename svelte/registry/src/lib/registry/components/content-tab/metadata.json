@@ -1,0 +1,75 @@
+{
+  "name": "content-tab",
+  "title": "Content Tab",
+  "category": "navigation",
+  "subcategory": "tabs",
+  "variant": "content-tab",
+  "oneLiner": "Tab component for content categorization and filtering",
+  "registryName": "components/content-tab",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "content-filtering",
+    "tab-navigation",
+    "category-selection",
+    "view-switching"
+  ],
+  "apiDoc": {
+    "name": "ContentTab",
+    "description": "Displays tabs based on types of content users actually publish. Samples user content to conditionally show tabs with counts. Features customizable tab rendering via Svelte 5 snippet, sortable tabs, and optional click handlers. Uses createContentSampler builder for efficient content discovery. Perfect for feed filtering or user profile content categories.",
+    "importPath": "import { ContentTab } from '$lib/registry/components/content-tab'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for content sampling"
+      },
+      {
+        "name": "pubkeys",
+        "type": "string[]",
+        "required": true,
+        "description": "Array of pubkeys to sample content from"
+      },
+      {
+        "name": "kinds",
+        "type": "number[]",
+        "required": true,
+        "description": "Event kinds to check for tabs"
+      },
+      {
+        "name": "since",
+        "type": "number",
+        "description": "Unix timestamp to limit content sampling"
+      },
+      {
+        "name": "subOpts",
+        "type": "NDKSubscriptionOptions",
+        "description": "NDK subscription options for sampling"
+      },
+      {
+        "name": "sort",
+        "type": "(tabs: ContentTabType[]) => ContentTabType[]",
+        "description": "Function to sort tabs before rendering"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "tab",
+        "type": "Snippet<[ContentTabType & { name: string }]>",
+        "required": true,
+        "description": "Svelte 5 snippet for rendering each tab"
+      },
+      {
+        "name": "onTabClick",
+        "type": "(tab: ContentTabType) => void",
+        "description": "Click handler for tab selection"
+      }
+    ]
+  }
+}

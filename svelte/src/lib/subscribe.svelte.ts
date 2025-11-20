@@ -9,25 +9,11 @@ import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/wot";
 import type { NDKSvelte } from "./ndk-svelte.svelte.js";
 import { validateCallback } from "./utils/validate-callback.js";
 
-export interface SubscribeConfig {
+export type SubscribeConfig = {
     /**
      * Nostr filters for the subscription
      */
     filters: NDKFilter | NDKFilter[];
-    /**
-     * Relay URLs to use for this subscription
-     */
-    relayUrls?: string[];
-    /**
-     * NDK subscription options
-     */
-    pool?: NDKSubscriptionOptions["pool"];
-    closeOnEose?: boolean;
-    groupable?: boolean;
-    groupableDelay?: number;
-    cacheUsage?: NDKSubscriptionOptions["cacheUsage"];
-    subId?: string;
-    maxEventsToReturn?: number;
     /**
      * Disable automatic de-duplication
      */
@@ -46,14 +32,32 @@ export interface SubscribeConfig {
      * Web of Trust ranking (applied after filtering)
      */
     wotRank?: WoTRankOptions;
-}
+} & NDKSubscriptionOptions;
 
-export interface SyncSubscribeConfig extends Omit<SubscribeConfig, "filters">, SyncAndSubscribeOptions {
+export type SyncSubscribeConfig = {
     /**
      * Nostr filters for the subscription
      */
     filters: NDKFilter | NDKFilter[];
-}
+    /**
+     * Disable automatic de-duplication
+     */
+    noDedupe?: boolean;
+    /**
+     * Custom dedupe key function
+     */
+    dedupeKey?: (event: NDKEvent) => string;
+    /**
+     * Web of Trust filtering
+     * - false: Disable WoT filtering even if globally enabled
+     * - WoTFilterOptions: Override global WoT settings
+     */
+    wot?: false | WoTFilterOptions;
+    /**
+     * Web of Trust ranking (applied after filtering)
+     */
+    wotRank?: WoTRankOptions;
+} & NDKSubscriptionOptions & SyncAndSubscribeOptions;
 
 export interface Subscription<T extends NDKEvent = NDKEvent> {
     // Reactive reads
@@ -75,8 +79,6 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     config: () => SubscribeConfig | SyncSubscribeConfig | NDKFilter | NDKFilter[] | undefined,
     subscribeMethod: (filters: NDKFilter[], opts: NDKSubscriptionOptions) => NDKSubscription | Promise<NDKSubscription>,
 ): Subscription<T> {
-    // Get WoT store from NDK instance
-    const wot = ndk.$wot;
     let _events = $state<T[]>([]);
     let _eosed = $state(false);
 
@@ -119,14 +121,15 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     // Extract filters
     const derivedFilters = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg?.filters) return [];
+        if (!cfg) return [];
+        if (!('filters' in cfg)) return [];
         return Array.isArray(cfg.filters) ? cfg.filters : [cfg.filters];
     });
 
     // Extract NDK subscription options (trigger restart when changed)
     const derivedNdkOpts = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg) return {};
+        if (!cfg || !('filters' in cfg)) return {};
 
         // Filter out our wrapper properties, keep everything else for NDK
         const { filters, noDedupe, dedupeKey, wot, wotRank, ...ndkOpts } = cfg;
@@ -137,7 +140,7 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     // Extract wrapper options (just re-process when changed)
     const derivedWrapperOpts = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg) {
+        if (!cfg || !('filters' in cfg)) {
             return {
                 noDedupe: undefined,
                 dedupeKey: undefined,
@@ -178,7 +181,16 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         updateEvents();
     });
 
+    // Throttle updateEvents to batch relay event processing
+    let throttleTimer: ReturnType<typeof setTimeout> | undefined;
+    let lastUpdateTime = 0;
+    let relayEventsSinceLastUpdate = 0;
+    let totalRelayEvents = 0;
+
     function handleEvent(event: NDKEvent) {
+        totalRelayEvents++;
+        relayEventsSinceLastUpdate++;
+
         const wrapperOpts = derivedWrapperOpts;
         const key = dedupeKey(event as T);
 
@@ -196,7 +208,28 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         }
 
         eventMap.set(key, event as T);
-        updateEvents();
+
+        // Throttle updateEvents to batch multiple rapid relay events
+        // Update at most once per 16ms (~1 frame at 60fps)
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastUpdateTime;
+
+        if (timeSinceLastUpdate >= 16) {
+            // Enough time has passed, update immediately
+            lastUpdateTime = now;
+            relayEventsSinceLastUpdate = 0;
+            updateEvents();
+        } else if (throttleTimer === undefined) {
+            // Schedule an update for the next throttle window
+            const delay = 16 - timeSinceLastUpdate;
+            throttleTimer = setTimeout(() => {
+                throttleTimer = undefined;
+                lastUpdateTime = Date.now();
+                relayEventsSinceLastUpdate = 0;
+                updateEvents();
+            }, delay);
+        }
+        // Else: timer already scheduled, just accumulate events
     }
 
     function updateEvents() {
@@ -205,10 +238,10 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         let wotSorted = false;
 
         // Apply WoT filtering if enabled and WoT store exists
-        if (wot && wot.loaded) {
+        if (ndk.$wot && ndk.$wot.loaded) {
             const shouldApplyWoTFilter =
                 wrapperOpts.wot !== false && // Not explicitly disabled
-                (wrapperOpts.wot || wot.autoFilterEnabled); // Has override config or global filter enabled
+                (wrapperOpts.wot || ndk.$wot.autoFilterEnabled); // Has override config or global filter enabled
 
             if (shouldApplyWoTFilter) {
                 // Filter by WoT
@@ -217,28 +250,28 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
                     if (wrapperOpts.wot && typeof wrapperOpts.wot === "object") {
                         // Custom filter options for this subscription
                         const { maxDepth, minScore, includeUnknown = false } = wrapperOpts.wot;
-                        const inWoT = wot.includes(event.pubkey, { maxDepth });
+                        const inWoT = ndk.$wot!.includes(event.pubkey, { maxDepth });
 
                         if (!inWoT) {
                             return includeUnknown;
                         }
 
                         if (minScore !== undefined) {
-                            const score = wot.getScore(event.pubkey);
+                            const score = ndk.$wot!.getScore(event.pubkey);
                             return score >= minScore;
                         }
 
                         return true;
                     } else {
                         // Use global auto-filter
-                        return !wot.shouldFilterEvent(event);
+                        return !ndk.$wot!.shouldFilterEvent(event);
                     }
                 });
             }
 
             // Apply WoT ranking if specified
             if (wrapperOpts.wotRank) {
-                events = wot.rankEvents(events, wrapperOpts.wotRank) as typeof events;
+                events = ndk.$wot!.rankEvents(events, wrapperOpts.wotRank) as typeof events;
                 wotSorted = true;
             }
         }
@@ -255,6 +288,31 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         const result = subscribeMethod(currentFilters, {
             ...currentNdkOpts,
             closeOnEose: false,
+            onEvents: (cachedEvents: NDKEvent[]) => {
+                // Batch process all cached events at once
+                for (const event of cachedEvents) {
+                    const wrapperOpts = derivedWrapperOpts;
+                    const key = dedupeKey(event as T);
+
+                    // Skip if we already have this event (unless noDedupe)
+                    if (!wrapperOpts.noDedupe && eventMap.has(key)) {
+                        const existing = eventMap.get(key);
+                        if (existing) {
+                            // Keep the newer one (default to 0 if created_at is missing)
+                            const existingTime = existing.created_at || 0;
+                            const newTime = event.created_at || 0;
+                            if (existingTime >= newTime) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    eventMap.set(key, event as T);
+                }
+
+                // Call updateEvents ONCE for all cached events
+                updateEvents();
+            },
             onEvent: handleEvent,
             onEose: () => {
                 _eosed = true;
@@ -266,8 +324,8 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
                 .then((sub) => {
                     subscription = sub;
                 })
-                .catch((error) => {
-                    console.error("[createSubscription] Failed to start subscription:", error);
+                .catch(() => {
+                    // Subscription failed to start
                 });
         } else {
             subscription = result;
@@ -277,6 +335,10 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     function stop() {
         subscription?.stop();
         subscription = undefined;
+        if (throttleTimer !== undefined) {
+            clearTimeout(throttleTimer);
+            throttleTimer = undefined;
+        }
     }
 
     let isRestarting = false;
@@ -291,6 +353,8 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         eventMap.clear();
         _events = [];
         _eosed = false;
+        relayEventsSinceLastUpdate = 0;
+        lastUpdateTime = 0;
         start();
 
         // Reset flag on next microtask to batch synchronous calls
@@ -300,9 +364,15 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     }
 
     function clear() {
+        if (throttleTimer !== undefined) {
+            clearTimeout(throttleTimer);
+            throttleTimer = undefined;
+        }
         eventMap.clear();
         _events = [];
         _eosed = false;
+        relayEventsSinceLastUpdate = 0;
+        lastUpdateTime = 0;
     }
 
     return {

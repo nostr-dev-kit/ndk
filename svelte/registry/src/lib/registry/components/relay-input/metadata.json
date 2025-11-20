@@ -1,0 +1,76 @@
+{
+  "name": "relay-input",
+  "title": "Relay Basic",
+  "category": "relay",
+  "subcategory": "inputs",
+  "variant": "basic",
+  "oneLiner": "A basic input for relay content",
+  "registryName": "components/relay-input",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "inputs",
+    "basic",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "RelayInput",
+    "description": "A relay URL input field with live relay information preview. Features optional label, helper text, error states, disabled state, and bindable value. Shows relay NIP-11 data when valid URL entered. Wraps Relay.Input component with form-friendly layout and styling.",
+    "importPath": "import { RelayInput } from '$lib/registry/components/relay/inputs/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "default": "",
+        "description": "Bindable input value"
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "default": "relay.example.com",
+        "description": "Input placeholder text"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes for container"
+      },
+      {
+        "name": "showRelayInfo",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show relay NIP-11 information preview"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "default": "false",
+        "description": "Disable input field"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "Label text for input"
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "description": "Helper text below input"
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "description": "Error message to display"
+      }
+    ]
+  }
+}

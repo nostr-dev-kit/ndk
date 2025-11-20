@@ -2,8 +2,7 @@ import type { NDKEvent, NDKEventId } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
- * Adds a decrypted event to the SQLite WASM database.
- * Supports both worker and direct database modes.
+ * Adds a decrypted event to the SQLite WASM database via worker.
  * @param wrapperId - The ID of the gift-wrapped event (kind 1059) to use as the cache key
  * @param decryptedEvent - The decrypted rumor event to store
  */
@@ -11,22 +10,12 @@ export async function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, wrapper
     await this.ensureInitialized();
 
     const serialized = decryptedEvent.serialize(true, true);
-    const stmt = `
-        INSERT OR REPLACE INTO decrypted_events (
-            id, event
-        ) VALUES (?, ?)
-    `;
 
-    if (this.useWorker) {
-        await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: stmt,
-                params: [wrapperId, serialized],
-            },
-        });
-    } else {
-        if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [wrapperId, serialized]);
-    }
+    await this.postWorkerMessage({
+        type: "addDecryptedEvent",
+        payload: {
+            wrapperId,
+            serialized,
+        },
+    });
 }

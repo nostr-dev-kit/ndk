@@ -1,0 +1,10 @@
+<!-- Your copy at src/lib/components/event-card/
+     event-card-header.svelte -->
+<script>
+  import { fade } from 'svelte/transition';
+</script>
+
+<header transition:fade class="my-custom-styles">
+  <div class="badge">Premium</div>
+  <Avatar {ndk} user={event.author} />
+</header>

@@ -121,6 +121,12 @@ export default defineConfig({
                 ]
             },
             {
+                text: "Testing",
+                items: [
+                    { text: "Introduction", link: "/testing/index" },
+                ],
+            },
+            {
                 text: "Internals",
                 items: [{ text: "Subscription Lifecycle", link: "/internals/subscriptions" }],
             },

@@ -1,0 +1,7 @@
+<script lang="ts">
+  import ReplyButton from '$lib/registry/components/reply/buttons/basic/reply-button.svelte';
+
+  let { ndk, event } = $props();
+</script>
+
+<ReplyButton {ndk} {event} />

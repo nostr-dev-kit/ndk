@@ -1,0 +1,72 @@
+{
+  "name": "media-button",
+  "title": "Media Button",
+  "category": "media",
+  "subcategory": "upload",
+  "variant": "button",
+  "oneLiner": "A button uploader for media content",
+  "registryName": "components/media-upload-button",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "media",
+    "upload",
+    "button",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "UploadButton",
+    "description": "A simple upload button component for media files using Blossom servers. Features bindable uploads array, customizable button text, multi-file support, file type filtering, and fallback server configuration. Uses MediaUpload builder pattern. Perfect for adding upload functionality to forms or composers.",
+    "importPath": "import { UploadButton } from '$lib/registry/components/media/upload/button'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "uploads",
+        "type": "MediaUploadResult[]",
+        "default": "[]",
+        "description": "Bindable array of upload results"
+      },
+      {
+        "name": "fallbackServer",
+        "type": "string",
+        "default": "https://blossom.primal.net",
+        "description": "Fallback Blossom server URL"
+      },
+      {
+        "name": "accept",
+        "type": "string",
+        "default": "*/*",
+        "description": "Accepted file MIME types"
+      },
+      {
+        "name": "buttonText",
+        "type": "string",
+        "default": "Upload Files",
+        "description": "Button label text"
+      },
+      {
+        "name": "multiple",
+        "type": "boolean",
+        "default": "true",
+        "description": "Allow multiple file selection"
+      },
+      {
+        "name": "maxFiles",
+        "type": "number",
+        "description": "Maximum number of files allowed"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes for button"
+      }
+    ]
+  }
+}

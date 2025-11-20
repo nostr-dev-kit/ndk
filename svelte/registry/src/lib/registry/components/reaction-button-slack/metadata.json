@@ -1,0 +1,84 @@
+{
+  "name": "reaction-button-slack",
+  "title": "Slack-style Reaction Button",
+  "category": "reaction",
+  "subcategory": "buttons",
+  "variant": "slack",
+  "oneLiner": "A Slack-style reaction button showing all reactions with counts and click-to-react",
+  "registryName": "components/reaction-button-slack",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk",
+    "bits-ui"
+  ],
+  "useCases": [
+    "social-interactions",
+    "engagement",
+    "feedback"
+  ],
+  "examples": [
+    {
+      "title": "Basic Slack-style reactions",
+      "code": "<ReactionButtonSlack {ndk} {event} />"
+    },
+    {
+      "title": "Vertical layout with all reactors",
+      "code": "<ReactionButtonSlack\n  {ndk}\n  {event}\n  variant=\"vertical\"\n  onlyFollows={false}\n/>"
+    },
+    {
+      "title": "Horizontal without avatars",
+      "code": "<ReactionButtonSlack\n  {ndk}\n  {event}\n  showAvatars={false}\n/>"
+    },
+    {
+      "title": "Delayed reactions",
+      "code": "<ReactionButtonSlack\n  {ndk}\n  {event}\n  delayed={5}\n  onlyFollows={true}\n/>"
+    }
+  ],
+  "apiDoc": {
+    "name": "ReactionButtonSlack",
+    "description": "Slack-style reaction display showing all reaction types with their counts and avatars. In horizontal mode, avatars appear in tooltips; in vertical mode, they're displayed inline. By default, filters avatars to show only followed users (onlyFollows=true) for cleaner display. Each reaction type is clickable to add/remove your reaction. Supports delayed publishing for undo functionality.",
+    "importPath": "import { ReactionButtonSlack } from '$lib/registry/components/reaction/buttons/slack'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to show reactions for"
+      },
+      {
+        "name": "variant",
+        "type": "'horizontal' | 'vertical'",
+        "default": "'horizontal'",
+        "description": "Layout variant"
+      },
+      {
+        "name": "showAvatars",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show user avatars (in tooltip for horizontal, inline for vertical)"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
+      },
+      {
+        "name": "delayed",
+        "type": "number",
+        "description": "Delay in seconds before publishing (for cancellable reactions)"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

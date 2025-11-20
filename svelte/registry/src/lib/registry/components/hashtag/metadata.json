@@ -1,0 +1,47 @@
+{
+  "name": "hashtag",
+  "title": "Hashtag",
+  "category": "hashtag",
+  "subcategory": "displays",
+  "variant": "basic",
+  "oneLiner": "Basic hashtag display component for inline hashtag references",
+  "registryName": "components/hashtag",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "hashtag-display",
+    "inline-tags",
+    "topic-links",
+    "content-categorization"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "type": "hashtag"
+  },
+  "apiDoc": {
+    "name": "Hashtag",
+    "description": "Simple inline hashtag display component with primary color styling, hover underline effect, and keyboard navigation support. Renders hashtag with # prefix and optional click handler for tag interaction.",
+    "importPath": "import { Hashtag } from '$lib/registry/components/hashtag'",
+    "props": [
+      {
+        "name": "tag",
+        "type": "string",
+        "required": true,
+        "description": "Hashtag text (without # prefix)"
+      },
+      {
+        "name": "onclick",
+        "type": "(tag: string) => void",
+        "description": "Click handler receiving the tag string"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

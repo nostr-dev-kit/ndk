@@ -1,5 +1,44 @@
 # @nostr-dev-kit/sessions
 
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies [b8e7a06]
+- Updated dependencies [ad7936b]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [4b8d146]
+- Updated dependencies [8f116fa]
+- Updated dependencies [b5bdb2c]
+- Updated dependencies [72fc3b0]
+- Updated dependencies [73adeb9]
+- Updated dependencies [b5bdb2c]
+    - @nostr-dev-kit/ndk@3.0.0
+    - @nostr-dev-kit/wallet@0.8.11
+
+## 0.6.3
+
+### Patch Changes
+
+- 6c5f645: Add optional `signer` parameter to `createAccount()` method. When provided, the method uses the existing signer instead of generating a new one, allowing callers to have access to the user's npub before creating the account (useful for creating npub.cash addresses and other pre-account operations).
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.11
+
+## 0.6.2
+
+### Patch Changes
+
+- Add follows support and publish option to createAccount method
+    - Added `follows` parameter to createAccount for creating kind:3 contact lists
+    - Added `publish` option to control whether events are published immediately or returned signed
+    - Refactored API to separate data parameters from behavior options: `createAccount(data, opts)`
+    - Changed return type to always return `{ signer: NDKPrivateKeySigner; events: NDKEvent[] }`
+    - Events array contains signed events when publish is false, empty array when publish is true
+
+- Updated dependencies [eb8d400]
+    - @nostr-dev-kit/ndk@2.17.10
+
 ## 0.6.1
 
 ### Patch Changes

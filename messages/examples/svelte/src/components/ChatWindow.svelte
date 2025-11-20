@@ -22,10 +22,17 @@
     let messagesContainer = $state<HTMLDivElement>();
     let isLoading = $state(false);
     let isSending = $state(false);
+    let contactProfile = $state(null);
+    let messageProfiles = $state<Map<string, any>>(new Map());
 
     $effect(() => {
         if (contact) {
             loadConversation();
+            // Fetch contact profile
+            const user = ndk.getUser({ pubkey: contact.user.pubkey });
+            user.fetchProfile().then(p => contactProfile = p);
+        } else {
+            contactProfile = null;
         }
 
         return () => {
@@ -34,6 +41,21 @@
                 conversation.off("message", handleNewMessage);
             }
         };
+    });
+
+    // Fetch profiles for all message senders
+    $effect(() => {
+        const newProfiles = new Map(messageProfiles);
+        for (const message of messages) {
+            const pubkey = message.sender.pubkey;
+            if (!newProfiles.has(pubkey)) {
+                const user = ndk.getUser({ pubkey });
+                user.fetchProfile().then(p => {
+                    messageProfiles.set(pubkey, p);
+                    messageProfiles = new Map(messageProfiles); // Trigger reactivity
+                });
+            }
+        }
     });
 
     async function loadConversation() {
@@ -118,7 +140,6 @@
 
 <div class="icq-chat">
     {#if contact}
-        {@const contactProfile = ndk.$fetchProfile(() => contact.user.pubkey)}
         <div class="icq-chat-header">
             <div class="icq-contact-status online"></div>
             <strong>
@@ -142,7 +163,7 @@
                 {#each messages as message, i (message.id)}
                     {@const isMe = message.sender.pubkey === myPubkey}
                     {@const showDate = i === 0 || formatDate(messages[i - 1].created_at) !== formatDate(message.created_at)}
-                    {@const senderProfile = ndk.$fetchProfile(() => message.sender.pubkey)}
+                    {@const senderProfile = messageProfiles.get(message.sender.pubkey)}
 
                     {#if showDate && message.created_at}
                         <div style="text-align: center; color: #999; font-size: 10px; margin: 12px 0;">

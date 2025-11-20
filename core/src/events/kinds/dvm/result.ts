@@ -1,12 +1,26 @@
 import type { NDK } from "../../../ndk/index.js";
 import type { NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
+import { NDKKind } from "../index.js";
 
 /**
  * This event is published by Data Vending Machines when
  * they have finished processing a job.
  */
 export class NDKDVMJobResult extends NDKEvent {
+    static kind = 6000;
+    static kinds = [
+        6000, // DVMReqTextExtraction result
+        6001, // DVMReqTextSummarization result
+        6002, // DVMReqTextTranslation result
+        6050, // DVMReqTextGeneration result
+        6100, // DVMReqImageGeneration result
+        6250, // DVMReqTextToSpeech result
+        6300, // DVMReqDiscoveryNostrContent result
+        6301, // DVMReqDiscoveryNostrPeople result
+        6900, // DVMReqTimestamping result
+        6905, // DVMEventSchedule result
+    ];
     static from(event: NDKEvent) {
         return new NDKDVMJobResult(event.ndk, event.rawEvent());
     }

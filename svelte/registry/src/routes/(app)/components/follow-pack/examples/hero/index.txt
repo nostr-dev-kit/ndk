@@ -1,0 +1,7 @@
+<script lang="ts">
+  import FollowPackHero from '$lib/registry/components/follow/packs/hero/follow-pack-hero.svelte';
+
+  let { pack } = $props();
+</script>
+
+<FollowPackHero followPack={pack} />

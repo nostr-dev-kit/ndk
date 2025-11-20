@@ -105,10 +105,10 @@ const ndk = new NDK({
 
 await ndk.connect();
 
-const sub = ndk.subscribe({ kinds: [1], limit: 50 });
-
-sub.on('event', (event) => {
-  console.log('New note:', event.content);
+const sub = ndk.subscribe({ kinds: [1], limit: 50 }, {
+  onEvent: (event) => {
+    console.log('New note:', event.content);
+  }
 });
 ```
 
@@ -248,6 +248,34 @@ await wallet.cashuPay({ amount: 1000, unit: 'sat', target: event });
 - Educational error messages with actionable fixes
 - Granular configuration (enable/disable specific checks)
 - Zero performance impact when disabled
+
+### Testing Your App
+- **Comprehensive Test Utilities** - Full mock infrastructure for testing Nostr apps
+- Mock relays with network simulation (delays, disconnects, failures)
+- Deterministic test users and event factories
+- Time control for async testing
+- All utilities exported via `@nostr-dev-kit/ndk/test`
+
+```typescript
+import { RelayPoolMock, UserGenerator, EventGenerator } from '@nostr-dev-kit/ndk/test';
+
+// Create mock relay environment
+const pool = new RelayPoolMock();
+pool.addMockRelay('wss://relay.example.com');
+
+// Generate test users and events
+const alice = UserGenerator.getUser('alice', ndk);
+const event = await EventGenerator.createSignedTextNote('Hello!', alice.pubkey);
+
+// Simulate relay behavior
+const relay = pool.getMockRelay('wss://relay.example.com');
+relay.simulateEvent(event);
+relay.simulateEOSE();
+
+// Test your app's event handling
+```
+
+📖 **[Testing Guide](./core/TESTING.md)** - Complete guide to testing your Nostr application
 
 ## Documentation
 

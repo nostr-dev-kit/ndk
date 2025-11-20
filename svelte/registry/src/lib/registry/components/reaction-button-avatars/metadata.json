@@ -1,0 +1,112 @@
+{
+  "name": "reaction-avatars",
+  "title": "Reaction Button with Avatars",
+  "category": "reaction",
+  "subcategory": "buttons",
+  "variant": "avatars",
+  "oneLiner": "A reaction button showing avatars of users who reacted",
+  "registryName": "components/reaction-button-avatars",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "social-interactions",
+    "engagement",
+    "feedback"
+  ],
+  "examples": [
+    {
+      "title": "Basic heart reaction button",
+      "code": "<ReactionButtonAvatars {ndk} {event} />"
+    },
+    {
+      "title": "Show reactions from all users",
+      "code": "<ReactionButtonAvatars {ndk} {event} onlyFollows={false} />"
+    },
+    {
+      "title": "Custom emoji with more avatars",
+      "code": "<ReactionButtonAvatars\n  {ndk}\n  {event}\n  emoji=\"🔥\"\n  max={5}\n  onlyFollows={true}\n/>"
+    },
+    {
+      "title": "Track specific emoji count",
+      "code": "<ReactionButtonAvatars\n  {ndk}\n  {event}\n  emoji=\"👍\"\n  countMode=\"emoji\"\n  variant=\"pill\"\n/>"
+    }
+  ],
+  "apiDoc": {
+    "name": "ReactionButtonAvatars",
+    "description": "A reaction button that displays avatars of users who have reacted to an event. By default, it shows only avatars from followed users when logged in (onlyFollows=true), helping reduce noise and highlight reactions from your social graph. Supports custom emojis, multiple visual variants, and configurable avatar display limits. The button is interactive and triggers reactions when clicked.",
+    "importPath": "import { ReactionButtonAvatars } from '$lib/registry/components/reaction/buttons/avatars'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (optional if available in context)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to show reactions for"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual variant of the button"
+      },
+      {
+        "name": "emoji",
+        "type": "string",
+        "default": "'❤️'",
+        "description": "Emoji to filter reactions by"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "3",
+        "description": "Maximum number of avatars to display"
+      },
+      {
+        "name": "avatarSize",
+        "type": "number",
+        "default": "24",
+        "description": "Size of each avatar in pixels"
+      },
+      {
+        "name": "spacing",
+        "type": "'tight' | 'normal' | 'loose'",
+        "default": "'tight'",
+        "description": "Spacing between avatars"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Whether to show total reaction count"
+      },
+      {
+        "name": "countMode",
+        "type": "'total' | 'emoji'",
+        "default": "'total'",
+        "description": "Whether to show total count of all reactions or just count for the specific emoji"
+      },
+      {
+        "name": "onlyFollows",
+        "type": "boolean",
+        "default": "true",
+        "description": "When true and user is logged in, only displays avatars from users the current user follows"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Optional click handler"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+<script lang="ts">
+  import RelayCardList from '$lib/registry/components/relay-card-list/relay-card-list.svelte';
+
+  let { ndk, relayUrl = 'wss://relay.damus.io' } = $props();
+</script>
+
+<RelayCardList {ndk} {relayUrl} />
+
+<RelayCardList {ndk} {relayUrl} compact />

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Primitives To Complete UIs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .hero {
+            padding: 100px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        .hero .subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+        .section h2 {
+            font-size: 32px;
+            margin-bottom: 32px;
+            font-weight: 700;
+        }
+
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .layer {
+            background: #fafafa;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 32px;
+            position: relative;
+        }
+        .layer-number {
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: #1a1a1a;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .layer-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #999;
+            margin-bottom: 16px;
+            padding-left: 44px;
+        }
+        .layer-code {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 16px;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .layer-code .tag { color: #50fa7b; }
+        .layer-code .comment { color: #888; }
+
+        .layer-render {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 24px;
+        }
+
+        /* Component visuals */
+        .avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+        }
+
+        .user-root {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-info .name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .user-info .nip05 {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .check {
+            width: 14px;
+            height: 14px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .user-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .user-card .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .user-card .bio {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .user-card .follow-btn {
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .follow-pack {
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 32px;
+        }
+        .follow-pack .pack-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .follow-pack .user-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 32px;
+            color: #ccc;
+            margin: 20px 0;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin: 40px 0;
+        }
+        .comparison-box {
+            background: #fafafa;
+            padding: 24px;
+            border-radius: 8px;
+            border: 2px solid #e5e5e5;
+        }
+        .comparison-box h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .event-example {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        .event-example .event-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .event-example .avatar-sm {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 50%;
+        }
+        .event-example .content {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .event-example .actions {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <h1>From Primitives<br>To Complete UIs</h1>
+            <p class="subtitle">
+                Four layers. Each one builds on the last. Enter at any layer. Compose freely.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2>The User Component Stack</h2>
+
+            <div class="layer-stack">
+                <!-- Layer 1 -->
+                <div class="layer">
+                    <div class="layer-number">1</div>
+                    <div class="layer-title">Atomic Primitive</div>
+                    <div class="layer-code">
+<span class="tag">&lt;User.Avatar</span> user={user} size="lg" <span class="tag">/&gt;</span>
+                    </div>
+                    <div class="layer-render">
+                        <div class="avatar"></div>
+                    </div>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Layer 2 -->
+                <div class="layer">
+                    <div class="layer-number">2</div>
+                    <div class="layer-title">Composed Primitives</div>
+                    <div class="layer-code">
+<span class="tag">&lt;User.Root</span> {user}<span class="tag">&gt;</span>
+  <span class="tag">&lt;User.Avatar</span> size="lg" <span class="tag">/&gt;</span>
+  <span class="tag">&lt;div&gt;</span>
+    <span class="tag">&lt;User.Name</span> class="font-bold" <span class="tag">/&gt;</span>
+    <span class="tag">&lt;User.Nip05</span> showCheck={true} <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/User.Root&gt;</span>
+                    </div>
+                    <div class="layer-render">
+                        <div class="user-root">
+                            <div class="avatar"></div>
+                            <div class="user-info">
+                                <div class="name">Alice Johnson</div>
+                                <div class="nip05">
+                                    alice@example.com
+                                    <span class="check">✓</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Layer 3 -->
+                <div class="layer">
+                    <div class="layer-number">3</div>
+                    <div class="layer-title">Pre-composed Component</div>
+                    <div class="layer-code">
+<span class="tag">&lt;UserCard.Classic</span>
+  {user}
+  followAction={followAction}
+<span class="tag">/&gt;</span>
+
+<span class="comment">// Includes: avatar, name, nip05, bio, follow button</span>
+<span class="comment">// All styled, all wired up, ready to use</span>
+                    </div>
+                    <div class="layer-render">
+                        <div class="user-card">
+                            <div class="header">
+                                <div class="avatar"></div>
+                                <div class="user-info">
+                                    <div class="name">Alice Johnson</div>
+                                    <div class="nip05">
+                                        alice@example.com
+                                        <span class="check">✓</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bio">
+                                Building decentralized social tools. Passionate about open protocols and user sovereignty.
+                            </div>
+                            <button class="follow-btn">Follow</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Layer 4 -->
+                <div class="layer">
+                    <div class="layer-number">4</div>
+                    <div class="layer-title">Complex Block</div>
+                    <div class="layer-code">
+<span class="tag">&lt;FollowPack.Hero</span>
+  users={suggestedUsers}
+  title="Suggested Follows"
+  layout="grid"
+<span class="tag">/&gt;</span>
+
+<span class="comment">// Renders multiple UserCard.Classic components</span>
+<span class="comment">// in a styled grid with title and actions</span>
+                    </div>
+                    <div class="layer-render">
+                        <div class="follow-pack">
+                            <div class="pack-title">Suggested Follows</div>
+                            <div class="user-grid">
+                                <div class="user-card">
+                                    <div class="header">
+                                        <div class="avatar"></div>
+                                        <div class="user-info">
+                                            <div class="name">Alice</div>
+                                        </div>
+                                    </div>
+                                    <div class="bio" style="font-size: 13px;">Building decentralized tools...</div>
+                                    <button class="follow-btn">Follow</button>
+                                </div>
+
+                                <div class="user-card">
+                                    <div class="header">
+                                        <div class="avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                                        <div class="user-info">
+                                            <div class="name">Bob</div>
+                                        </div>
+                                    </div>
+                                    <div class="bio" style="font-size: 13px;">Nostr developer and designer...</div>
+                                    <button class="follow-btn">Follow</button>
+                                </div>
+
+                                <div class="user-card">
+                                    <div class="header">
+                                        <div class="avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"></div>
+                                        <div class="user-info">
+                                            <div class="name">Charlie</div>
+                                        </div>
+                                    </div>
+                                    <div class="bio" style="font-size: 13px;">Creator of open source projects...</div>
+                                    <button class="follow-btn">Follow</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: #f9f9f9; padding: 60px 0;">
+        <div class="container">
+            <h2>The Event Component Stack</h2>
+
+            <div class="comparison">
+                <div class="comparison-box">
+                    <h3>Layer 1-2: Build From Scratch</h3>
+                    <div class="layer-code" style="margin-bottom: 16px;">
+<span class="tag">&lt;Event.Root</span> {event}<span class="tag">&gt;</span>
+  <span class="tag">&lt;Event.Header&gt;</span>
+    <span class="tag">&lt;User.Avatar</span> user={event.author} <span class="tag">/&gt;</span>
+    <span class="tag">&lt;User.Name</span> user={event.author} <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/Event.Header&gt;</span>
+
+  <span class="tag">&lt;Event.Content</span> {event} <span class="tag">/&gt;</span>
+
+  <span class="tag">&lt;Event.Actions&gt;</span>
+    <span class="tag">&lt;ReplyButton</span> {event} <span class="tag">/&gt;</span>
+    <span class="tag">&lt;ReactionButton</span> {event} <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/Event.Actions&gt;</span>
+<span class="tag">&lt;/Event.Root&gt;</span>
+                    </div>
+                    <div class="event-example">
+                        <div class="event-header">
+                            <div class="avatar-sm"></div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Diana Smith</div>
+                                <div style="font-size: 12px; color: #999;">2h ago</div>
+                            </div>
+                        </div>
+                        <div class="content">
+                            Just discovered this amazing component library for Nostr! The composability is incredible.
+                        </div>
+                        <div class="actions">
+                            <span>💬 Reply</span>
+                            <span>❤️ React</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-box">
+                    <h3>Layer 3: Use Pre-built</h3>
+                    <div class="layer-code" style="margin-bottom: 16px;">
+<span class="tag">&lt;EventCard.Classic</span>
+  {event}
+  reactionAction={reactionAction}
+  replyAction={replyAction}
+<span class="tag">/&gt;</span>
+
+<span class="comment">// Same result, 90% less code</span>
+                    </div>
+                    <div class="event-example">
+                        <div class="event-header">
+                            <div class="avatar-sm"></div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Diana Smith</div>
+                                <div style="font-size: 12px; color: #999;">2h ago</div>
+                            </div>
+                        </div>
+                        <div class="content">
+                            Just discovered this amazing component library for Nostr! The composability is incredible.
+                        </div>
+                        <div class="actions">
+                            <span>💬 Reply</span>
+                            <span>❤️ React</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 32px; color: #666;">
+                <p>Both approaches work. Mix and match based on your needs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2>The Magic: Override Any Layer</h2>
+
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="layer-code">
+<span class="comment">// Start with pre-built Layer 3</span>
+<span class="tag">&lt;UserCard.Classic</span> {user}<span class="tag">&gt;</span>
+
+  <span class="comment">// Override just the avatar (Layer 1)</span>
+  <span class="tag">&lt;User.Avatar</span>
+    size="xl"
+    shape="square"
+    fallback={CustomFallback}
+  <span class="tag">/&gt;</span>
+
+  <span class="comment">// Keep everything else: name, nip05, bio, follow button</span>
+  <span class="comment">// They all still work, still styled, still wired up</span>
+
+<span class="tag">&lt;/UserCard.Classic&gt;</span>
+
+
+<span class="comment">// Or use Layer 2 with Layer 3 bio</span>
+<span class="tag">&lt;User.Root</span> {user}<span class="tag">&gt;</span>
+  <span class="tag">&lt;User.Avatar</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;User.Name</span> <span class="tag">/&gt;</span>
+
+  <span class="comment">// Use the pre-built bio component</span>
+  <span class="tag">&lt;User.Bio</span> class="text-sm" <span class="tag">/&gt;</span>
+
+  <span class="comment">// Add your own custom content</span>
+  &lt;YourCustomStats {user} /&gt;
+<span class="tag">&lt;/User.Root&gt;</span>
+                </div>
+
+                <div style="margin-top: 40px; padding: 32px; background: #fafafa; border-radius: 8px;">
+                    <div class="user-card">
+                        <div class="header">
+                            <div class="avatar" style="border-radius: 8px; width: 72px; height: 72px;"></div>
+                            <div class="user-info">
+                                <div class="name" style="font-size: 20px;">Alice Johnson</div>
+                                <div class="nip05">
+                                    alice@example.com
+                                    <span class="check">✓</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bio">
+                            Building decentralized social tools. Passionate about open protocols.
+                        </div>
+                        <div style="display: flex; gap: 24px; margin-bottom: 16px; padding: 12px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5;">
+                            <div style="text-align: center;">
+                                <div style="font-weight: 700; font-size: 18px;">1.2k</div>
+                                <div style="font-size: 12px; color: #666;">Following</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: 700; font-size: 18px;">8.5k</div>
+                                <div style="font-size: 12px; color: #666;">Followers</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: 700; font-size: 18px;">324</div>
+                                <div style="font-size: 12px; color: #666;">Posts</div>
+                            </div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+                        ↑ Square avatar, custom stats section, but using pre-built name, bio, follow button
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: #f9f9f9; padding: 60px 0;">
+        <div class="container">
+            <h2>Enter At Any Layer</h2>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px;">
+                    <div style="background: #fff; padding: 24px; border-radius: 8px; border: 2px solid #e5e5e5;">
+                        <h3 style="font-size: 18px; margin-bottom: 16px;">Need Just An Avatar?</h3>
+                        <p style="color: #666; margin-bottom: 16px; font-size: 14px;">
+                            Use Layer 1. Get exactly what you need, nothing more.
+                        </p>
+                        <div style="background: #f9f9f9; padding: 16px; border-radius: 4px;">
+                            <div class="avatar" style="width: 48px; height: 48px;"></div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fff; padding: 24px; border-radius: 8px; border: 2px solid #e5e5e5;">
+                        <h3 style="font-size: 18px; margin-bottom: 16px;">Need A Full Profile Card?</h3>
+                        <p style="color: #666; margin-bottom: 16px; font-size: 14px;">
+                            Use Layer 3. Complete component, ready to go.
+                        </p>
+                        <div style="background: #f9f9f9; padding: 16px; border-radius: 4px;">
+                            <div class="user-card">
+                                <div class="header">
+                                    <div class="avatar" style="width: 48px; height: 48px;"></div>
+                                    <div class="user-info">
+                                        <div class="name">Alice Johnson</div>
+                                    </div>
+                                </div>
+                                <button class="follow-btn">Follow</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fff; padding: 24px; border-radius: 8px; border: 2px solid #e5e5e5;">
+                        <h3 style="font-size: 18px; margin-bottom: 16px;">Need Custom Layout?</h3>
+                        <p style="color: #666; margin-bottom: 16px; font-size: 14px;">
+                            Use Layer 2. Compose primitives your way.
+                        </p>
+                        <div style="background: #f9f9f9; padding: 16px; border-radius: 4px;">
+                            <div class="user-root">
+                                <div class="avatar" style="width: 48px; height: 48px;"></div>
+                                <div class="user-info">
+                                    <div class="name">Alice Johnson</div>
+                                    <div class="nip05">alice@example.com</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fff; padding: 24px; border-radius: 8px; border: 2px solid #e5e5e5;">
+                        <h3 style="font-size: 18px; margin-bottom: 16px;">Need Multiple Users?</h3>
+                        <p style="color: #666; margin-bottom: 16px; font-size: 14px;">
+                            Use Layer 4. Complex layouts handled for you.
+                        </p>
+                        <div style="background: #f9f9f9; padding: 16px; border-radius: 4px;">
+                            <div style="display: flex; gap: 8px; margin-left: -8px;">
+                                <div class="avatar" style="width: 36px; height: 36px; border: 2px solid #fff; margin-left: -8px;"></div>
+                                <div class="avatar" style="width: 36px; height: 36px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border: 2px solid #fff; margin-left: -8px;"></div>
+                                <div class="avatar" style="width: 36px; height: 36px; background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); border: 2px solid #fff; margin-left: -8px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 48px; text-align: center; color: #666; font-size: 18px; line-height: 1.8;">
+                    <p style="font-weight: 600; color: #333;">Four layers. One system. Infinite flexibility.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

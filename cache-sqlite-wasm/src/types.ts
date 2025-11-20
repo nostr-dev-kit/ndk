@@ -4,8 +4,14 @@ import type initSqlJs from "sql.js";
 export interface NDKCacheAdapterSqliteWasmOptions {
     dbName?: string;
     wasmUrl?: string;
-    useWorker?: boolean;
     workerUrl?: string;
+
+    // Metadata LRU cache
+    metadataLruSize?: number; // Max metadata items (profiles, relay info, NIP-05) in LRU cache (default: 1000)
+
+    // Persistence configuration
+    saveDebounceMs?: number; // Debounce time for saving to IndexedDB (default: 5000ms)
+    disableAutosave?: boolean; // Disable automatic persistence (default: false)
 }
 
 export type WorkerMessage = {
@@ -32,6 +38,3 @@ export type SQLDatabase = Database & {
     _scheduleSave: () => void;
     saveToIndexedDB: () => Promise<void>;
 };
-
-// Legacy type alias for backward compatibility
-export type SQLQueryResult = QueryExecResult;

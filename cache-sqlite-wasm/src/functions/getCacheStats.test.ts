@@ -8,7 +8,7 @@ describe("getCacheStats", () => {
     beforeEach(async () => {
         cache = new NDKCacheSqliteWasm({
             dbName: "test-cache-stats",
-            useWorker: false,
+            
             wasmUrl: new URL("../../example/sql-wasm.wasm", import.meta.url).href,
         });
         await cache.initializeAsync();

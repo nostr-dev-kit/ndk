@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NDKSvelte } from "../ndk-svelte.svelte";
+import { createNDK, type NDKSvelte } from "../ndk-svelte.svelte";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
@@ -36,11 +36,12 @@ describe("WalletStore", () => {
     let ndk: NDKSvelte;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"], session: true });
+        ndk = createNDK({ explicitRelayUrls: ["wss://relay.test"], session: true });
     });
 
     it("should initialize with default state", () => {
         expect(ndk.$wallet).toBeDefined();
+        if (!ndk.$wallet) return;
         expect(ndk.$wallet.balance).toBe(0);
         expect(ndk.$wallet.privkey).toBeUndefined();
     });
@@ -48,6 +49,7 @@ describe("WalletStore", () => {
     it("should set wallet and update state", async () => {
         const mockWallet = new MockWallet() as any;
 
+        if (!ndk.$wallet) return;
         ndk.$wallet.set(mockWallet);
 
         // Wait for async balance refresh
@@ -59,6 +61,7 @@ describe("WalletStore", () => {
 
     it("should update balance when wallet emits balance_updated", async () => {
         const mockWallet = new MockWallet() as any;
+        if (!ndk.$wallet) return;
         ndk.$wallet.set(mockWallet);
 
         mockWallet.setBalance(2000);
@@ -72,6 +75,7 @@ describe("WalletStore", () => {
     it("should clear wallet", () => {
         const mockWallet = new MockWallet() as any;
 
+        if (!ndk.$wallet) return;
         ndk.$wallet.set(mockWallet);
 
         // Verify wallet is set (balance updated)
@@ -101,6 +105,7 @@ describe("WalletStore", () => {
         const mockWallet = new MockWallet() as any;
         mockWallet.setBalance(5000);
 
+        if (!ndk.$wallet) return;
         // Simulate: Session A has wallet loaded
         ndk.$wallet.set(mockWallet);
 

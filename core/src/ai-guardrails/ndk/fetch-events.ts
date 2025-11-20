@@ -31,21 +31,6 @@ function isNip33Pattern(filters: any): boolean {
     );
 }
 
-/**
- * Check if filters represent a single event lookup by ID
- */
-function isSingleIdLookup(filters: any): boolean {
-    // Handle both single filter and array of filters
-    const filterArray = Array.isArray(filters) ? filters : [filters];
-
-    // Only consider it a single event lookup if there's exactly one filter
-    if (filterArray.length !== 1) return false;
-
-    const filter = filterArray[0];
-
-    // Check if it's an ids filter with a single ID
-    return filter.ids && Array.isArray(filter.ids) && filter.ids.length === 1;
-}
 
 /**
  * Check if filter is fetching replaceable events where fetchEvents is appropriate
@@ -133,25 +118,6 @@ export function fetchingEvents(
                 "  ✅ GOOD: const event = await ndk.fetchEvent(naddr);\n" +
                 "  ✅ GOOD: const event = await ndk.fetchEvent('naddr1...');\n\n" +
                 "fetchEvent() handles naddr decoding automatically and returns the event directly.",
-        );
-    } else if (isSingleIdLookup(filters)) {
-        // If this looks like a single ID lookup, suggest fetchEvent() instead
-        const filter = filterArray[0];
-        const eventId = filter.ids?.[0];
-        warn(
-            "fetch-events-usage",
-            "For fetching a single event, use fetchEvent() instead.\n\n" +
-                "📦 Your filter:\n   " +
-                formattedFilters +
-                "\n\n" +
-                "💡 Looking for event: " +
-                eventId +
-                "\n\n" +
-                "  ❌ BAD:  const events = await ndk.fetchEvents({ ids: [eventId] });\n" +
-                "  ✅ GOOD: const event = await ndk.fetchEvent(eventId);\n" +
-                "  ✅ GOOD: const event = await ndk.fetchEvent('note1...');\n" +
-                "  ✅ GOOD: const event = await ndk.fetchEvent('nevent1...');\n\n" +
-                "fetchEvent() is optimized for single event lookups and returns the event directly.",
         );
     } else if (isReplaceableEventFilter(filters)) {
         // Replaceable events - fetchEvents is actually correct here

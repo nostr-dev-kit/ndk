@@ -1,0 +1,16 @@
+<script lang="ts">
+  import { Relay } from '$lib/registry/ui/relay';
+
+  let { ndk } = $props();
+  const relayUrl = 'wss://relay.damus.io';
+</script>
+
+<Relay.Root {ndk} {relayUrl}>
+  <div class="flex items-center gap-3">
+    <Relay.Icon />
+    <div>
+      <Relay.Name />
+      <Relay.Url />
+    </div>
+  </div>
+</Relay.Root>

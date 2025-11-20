@@ -1,7 +1,37 @@
 import type { Hexpubkey, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
 import { NDKCashuMintList, NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
 import { useNDKMutes } from "../../mutes/store";
-import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
+import type { MonitorItem, NDKEventConstructor, NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
+
+/**
+ * Normalize monitor array into kinds and constructor map
+ */
+function normalizeMonitor(monitor?: MonitorItem[]): {
+    kinds: NDKKind[];
+    constructorMap: Map<NDKKind, NDKEventConstructor>;
+} {
+    const kinds: NDKKind[] = [];
+    const constructorMap = new Map<NDKKind, NDKEventConstructor>();
+
+    if (!monitor || monitor.length === 0) {
+        return { kinds, constructorMap };
+    }
+
+    for (const item of monitor) {
+        if (typeof item === "number") {
+            // Raw NDKKind
+            kinds.push(item);
+        } else if (item.kinds && Array.isArray(item.kinds)) {
+            // NDKEventConstructor
+            for (const kind of item.kinds) {
+                kinds.push(kind);
+                constructorMap.set(kind, item);
+            }
+        }
+    }
+
+    return { kinds, constructorMap };
+}
 
 function handleProfileEvent(event: NDKEvent, session: NDKUserSession): void {
     const profile = profileFromEvent(event);
@@ -16,79 +46,17 @@ function handleContactsEvent(event: NDKEvent, session: NDKUserSession): void {
     session.followSet = followSet;
 }
 
-function handleOtherEvent(event: NDKEvent, session: NDKUserSession, opts?: SessionStartOptions): void {
+function handleOtherEvent(event: NDKEvent, session: NDKUserSession, constructorMap: Map<NDKKind, NDKEventConstructor>): void {
     const existingEvent = session.events.get(event.kind);
     // Only update if the new event is newer
     if (!existingEvent || event.created_at > existingEvent.created_at) {
-        session.events.set(event.kind, event);
-    }
-
-    const klassWrapper = opts?.events?.get(event.kind);
-    if (klassWrapper) {
-        const wrappedEvent = klassWrapper.from(event);
-        if (wrappedEvent) session.events.set(event.kind, wrappedEvent);
+        const eventConstructor = constructorMap.get(event.kind);
+        const wrappedEvent = eventConstructor && typeof eventConstructor.from === "function" ? eventConstructor.from(event) : event;
+        session.events.set(event.kind, wrappedEvent);
     }
 }
 
-/**
- * Called when we need to update the kindFollowSet
- *
- * This is called when we are handling a follow event or when we need to undo a follow event because it was deleted.
- */
-function handleKindFollowEvent(
-    event: NDKEvent,
-    session: NDKUserSession,
-    followed = true,
-    last_updated_at = event.created_at,
-): void {
-    const kindFollowSet =
-        session.kindFollowSet ?? new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
-
-    // get all the kind numbers in the follow event
-    const kinds = event.getMatchingTags("k").map((t) => Number(t[1]));
-
-    // get all the followed pubkeys
-    const followedPubkeys = event.getMatchingTags("p").map((t) => t[1]);
-
-    for (const kind of kinds) {
-        for (const pubkey of followedPubkeys) {
-            const kindFollows =
-                kindFollowSet.get(kind) || new Map<Hexpubkey, { followed: boolean; last_updated_at: number }>();
-            const followedInfo = { followed, last_updated_at };
-
-            // see if we already have this pubkey in the map and if the timestamp we have now is newer
-            const existingFollowedInfo = kindFollows.get(pubkey);
-            if (!existingFollowedInfo || existingFollowedInfo.last_updated_at < event.created_at) {
-                kindFollows.set(pubkey, followedInfo);
-            }
-            kindFollowSet.set(kind, kindFollows);
-        }
-    }
-
-    session.kindFollowSet = kindFollowSet;
-}
-
-/**
- * Called when we receive a deletion of a follow event,
- * we need to go through the kindFollowSet and remove the pubkey if the event we have now is newer
- * @returns
- */
-function handkeEventDeletion(event: NDKEvent, session: NDKUserSession): void {
-    const kindFollowSet = session.kindFollowSet;
-
-    if (!kindFollowSet) return;
-
-    for (const eTag of event.getMatchingTags("e")) {
-        if (!eTag[1]) continue;
-        if (!event.ndk) continue;
-
-        const followEventDeleted = event.ndk.fetchEventSync(eTag[1]);
-        if (!followEventDeleted?.[0]) continue;
-        handleKindFollowEvent(followEventDeleted[0], session, false, event.created_at);
-    }
-}
-
-function processEvent(event: NDKEvent, session: NDKUserSession, opts?: SessionStartOptions): void {
+function processEvent(event: NDKEvent, session: NDKUserSession, constructorMap: Map<NDKKind, NDKEventConstructor>): void {
     const knownEventForKind = session.events?.get(event.kind);
 
     if (!(!knownEventForKind || knownEventForKind.created_at < event.created_at) && event.isReplaceable()) {
@@ -106,14 +74,8 @@ function processEvent(event: NDKEvent, session: NDKUserSession, opts?: SessionSt
             case NDKKind.MuteList:
                 useNDKMutes.getState().loadMuteList(event);
                 break;
-            case 967:
-                handleKindFollowEvent(event, session);
-                break;
-            case NDKKind.EventDeletion:
-                handkeEventDeletion(event, session);
-                break;
             default:
-                handleOtherEvent(event, session, opts);
+                handleOtherEvent(event, session, constructorMap);
         }
 
         // add the event
@@ -123,22 +85,19 @@ function processEvent(event: NDKEvent, session: NDKUserSession, opts?: SessionSt
     }
 }
 
-function buildSessionFilter(pubkey: string, opts: SessionStartOptions): NDKFilter[] {
+function buildSessionFilter(pubkey: string, opts: SessionStartOptions, monitorKinds: NDKKind[]): NDKFilter[] {
     const mainKindsToFetch = new Set<NDKKind>();
 
     if (opts.profile !== false) mainKindsToFetch.add(NDKKind.Metadata);
-    if (opts.follows !== false) mainKindsToFetch.add(NDKKind.Contacts);
+    if (opts.follows) mainKindsToFetch.add(NDKKind.Contacts);
     mainKindsToFetch.add(NDKKind.MuteList);
 
-    for (const kind of opts.events?.keys() || []) {
+    // Add monitor kinds
+    for (const kind of monitorKinds) {
         mainKindsToFetch.add(kind);
     }
 
     const filter: NDKFilter[] = [{ kinds: Array.from(mainKindsToFetch), authors: [pubkey] }];
-
-    if (Array.isArray(opts.follows)) {
-        filter.push({ kinds: [967 as NDKKind], "#k": opts.follows.map((k) => k.toString()), authors: [pubkey] });
-    }
 
     return filter;
 }
@@ -160,21 +119,26 @@ export const startSession = (
         return;
     }
 
-    // Stop existing subscription if present
-    if (existingSession.subscription) {
-        existingSession.subscription.stop();
+    // Stop existing subscriptions if present
+    if (existingSession.subscriptions) {
+        for (const sub of existingSession.subscriptions) {
+            sub.stop();
+        }
         set((state) => {
             const session = state.sessions.get(pubkey);
             if (!session) return {};
-            const updatedSession = { ...session, subscription: undefined };
+            const updatedSession = { ...session, subscriptions: [] };
             const newSessions = new Map(state.sessions);
             newSessions.set(pubkey, updatedSession);
             return { sessions: newSessions };
         });
     }
 
+    // Normalize monitor items
+    const { kinds: monitorKinds, constructorMap } = normalizeMonitor(opts.monitor);
+
     // Build the filter(s) based on options
-    const filters = buildSessionFilter(pubkey, opts);
+    const filters = buildSessionFilter(pubkey, opts, monitorKinds);
 
     if (filters.length === 0) {
         console.warn(`No filters generated for session start options for pubkey ${pubkey}. No subscription created.`);
@@ -191,7 +155,7 @@ export const startSession = (
             // Clone session and events map for immutability
             const updatedSession: NDKUserSession = { ...session, events: new Map(session.events) };
             // Process event (mutates updatedSession)
-            processEvent(event, updatedSession, opts);
+            processEvent(event, updatedSession, constructorMap);
             const newSessions = new Map(state.sessions);
             newSessions.set(pubkey, updatedSession);
             return { sessions: newSessions };
@@ -205,7 +169,7 @@ export const startSession = (
             // Clone session and events map for immutability
             const updatedSession: NDKUserSession = { ...session, events: new Map(session.events) };
             for (const event of events) {
-                processEvent(event, updatedSession, opts);
+                processEvent(event, updatedSession, constructorMap);
             }
             const newSessions = new Map(state.sessions);
             newSessions.set(pubkey, updatedSession);
@@ -216,13 +180,13 @@ export const startSession = (
 
     console.debug("Starting session for", pubkey, "with filters", JSON.stringify(filters, null, 4));
 
-    const sub = ndk.subscribe(filters, { closeOnEose: false, addSinceFromCache: true }, { onEvent, onEvents });
+    const sub = ndk.subscribe(filters, { closeOnEose: false, addSinceFromCache: true, onEvent, onEvents });
 
-    // Store the subscription handle
+    // Store the subscription handle in the subscriptions array
     set((state) => {
         const session = state.sessions.get(pubkey);
         if (!session) return {};
-        const updatedSession = { ...session, subscription: sub };
+        const updatedSession = { ...session, subscriptions: [sub] };
         const newSessions = new Map(state.sessions);
         newSessions.set(pubkey, updatedSession);
         return { sessions: newSessions };

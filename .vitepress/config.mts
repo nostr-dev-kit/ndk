@@ -47,6 +47,7 @@ export default defineConfig({
                 collapsed: false,
                 items: [
                     {text: "Events ✅", link: "/core/docs/fundamentals/events"},
+                    {text: "Subscribing ❌", link: "/core/docs/fundamentals/subscribing"},
                     {text: "Signers ✅", link: "/core/docs/fundamentals/signers"},
                     {text: "Publishing ✅", link: "/core/docs/fundamentals/publishing"},
                     {text: "Connecting ✅", link: "/core/docs/fundamentals/connecting"},

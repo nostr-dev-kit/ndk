@@ -8,20 +8,29 @@ import type { EventForEncoding } from './encoder';
 const MAGIC_NUMBER = 0x4E4F5354; // 'NOST' in hex
 const SUPPORTED_VERSION = 1;
 
+// Reuse TextDecoder instance for better performance
+const textDecoder = new TextDecoder();
+
+// Hex lookup table for faster conversion
+const HEX_CHARS = '0123456789abcdef';
+
 /**
- * Converts bytes to a hex string
+ * Converts bytes to a hex string (optimized version)
  */
 function bytesToHex(bytes: Uint8Array): string {
-    return Array.from(bytes)
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+    let hex = '';
+    for (let i = 0; i < bytes.length; i++) {
+        const byte = bytes[i];
+        hex += HEX_CHARS[byte >> 4] + HEX_CHARS[byte & 15];
+    }
+    return hex;
 }
 
 /**
  * Decodes UTF-8 bytes to a string
  */
 function decodeString(bytes: Uint8Array): string {
-    return new TextDecoder().decode(bytes);
+    return textDecoder.decode(bytes);
 }
 
 /**

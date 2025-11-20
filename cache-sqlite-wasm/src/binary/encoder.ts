@@ -42,8 +42,11 @@ export interface EventForEncoding {
     relay_url?: string | null;
 }
 
+// Reuse TextEncoder instance (PERFORMANCE FIX)
+const textEncoder = new TextEncoder();
+
 /**
- * Converts a hex string to bytes
+ * Converts a hex string to bytes (optimized version)
  */
 function hexToBytes(hex: string): Uint8Array {
     if (hex.length % 2 !== 0) {
@@ -51,7 +54,12 @@ function hexToBytes(hex: string): Uint8Array {
     }
     const bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
-        bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+        const hi = hex.charCodeAt(i);
+        const lo = hex.charCodeAt(i + 1);
+        // Convert hex char codes to values (0-15)
+        const hiVal = hi > 96 ? hi - 87 : hi > 64 ? hi - 55 : hi - 48;
+        const loVal = lo > 96 ? lo - 87 : lo > 64 ? lo - 55 : lo - 48;
+        bytes[i / 2] = (hiVal << 4) | loVal;
     }
     return bytes;
 }
@@ -60,120 +68,154 @@ function hexToBytes(hex: string): Uint8Array {
  * Encodes a string to UTF-8 bytes
  */
 function encodeString(str: string): Uint8Array {
-    return new TextEncoder().encode(str);
+    return textEncoder.encode(str);
 }
 
 /**
- * Calculate the size needed for a single event
+ * Pre-encoded event data to avoid double encoding
  */
-function calculateEventSize(event: EventForEncoding): number {
+interface EncodedEventData {
+    idBytes: Uint8Array;
+    pubkeyBytes: Uint8Array;
+    sigBytes: Uint8Array;
+    contentBytes: Uint8Array;
+    tagBytes: Uint8Array[][];
+    relayBytes: Uint8Array | null;
+    totalSize: number;
+}
+
+/**
+ * Pre-encode all string data for an event (encode once, use twice)
+ */
+function preEncodeEvent(event: EventForEncoding): EncodedEventData {
+    // Encode hex fields
+    const idBytes = hexToBytes(event.id);
+    const pubkeyBytes = hexToBytes(event.pubkey);
+    const sigBytes = hexToBytes(event.sig);
+
+    // Encode content
+    const contentBytes = encodeString(event.content);
+
+    // Encode tags
+    const tagBytes: Uint8Array[][] = [];
+    for (const tag of event.tags) {
+        const encodedTag: Uint8Array[] = [];
+        for (const item of tag) {
+            encodedTag.push(encodeString(item));
+        }
+        tagBytes.push(encodedTag);
+    }
+
+    // Encode relay URL
+    const relayBytes = event.relay_url ? encodeString(event.relay_url) : null;
+
+    // Calculate total size
     let size = 4; // Event size field itself
-    size += 32; // ID (32 bytes when decoded from hex)
-    size += 32; // Pubkey (32 bytes when decoded from hex)
+    size += 32; // ID
+    size += 32; // Pubkey
     size += 4; // Created_at
     size += 2; // Kind
-    size += 64; // Sig (64 bytes when decoded from hex)
-
-    // Content
-    const contentBytes = encodeString(event.content);
+    size += 64; // Sig
     size += 4; // Content length
     size += contentBytes.length;
-
-    // Tags
     size += 2; // Tags count
-    for (const tag of event.tags) {
+
+    for (const tag of tagBytes) {
         size += 1; // Tag items count
         for (const item of tag) {
-            const itemBytes = encodeString(item);
             size += 2; // Item length
-            size += itemBytes.length;
+            size += item.length;
         }
     }
 
-    // Optional relay URL
     size += 1; // Has relay URL flag
-    if (event.relay_url) {
-        const relayBytes = encodeString(event.relay_url);
+    if (relayBytes) {
         size += 2; // Relay URL length
         size += relayBytes.length;
     }
 
-    return size;
+    return {
+        idBytes,
+        pubkeyBytes,
+        sigBytes,
+        contentBytes,
+        tagBytes,
+        relayBytes,
+        totalSize: size,
+    };
 }
 
 /**
- * Encode a single event to a buffer at the specified offset
+ * Encode a pre-encoded event to a buffer at the specified offset
  */
-function encodeEvent(event: EventForEncoding, buffer: ArrayBuffer, offset: number): number {
+function writeEncodedEvent(
+    event: EventForEncoding,
+    encoded: EncodedEventData,
+    buffer: ArrayBuffer,
+    offset: number
+): number {
     const view = new DataView(buffer);
     const uint8 = new Uint8Array(buffer);
     let pos = offset;
 
-    // Calculate and write event size
-    const eventSize = calculateEventSize(event);
-    view.setUint32(pos, eventSize, true); // little-endian
+    // Write event size
+    view.setUint32(pos, encoded.totalSize, true);
     pos += 4;
 
-    // Write ID (32 bytes)
-    const idBytes = hexToBytes(event.id);
-    uint8.set(idBytes, pos);
+    // Write ID
+    uint8.set(encoded.idBytes, pos);
     pos += 32;
 
-    // Write Pubkey (32 bytes)
-    const pubkeyBytes = hexToBytes(event.pubkey);
-    uint8.set(pubkeyBytes, pos);
+    // Write Pubkey
+    uint8.set(encoded.pubkeyBytes, pos);
     pos += 32;
 
-    // Write Created_at (4 bytes)
+    // Write Created_at
     view.setUint32(pos, event.created_at, true);
     pos += 4;
 
-    // Write Kind (2 bytes)
+    // Write Kind
     view.setUint16(pos, event.kind, true);
     pos += 2;
 
-    // Write Sig (64 bytes)
-    const sigBytes = hexToBytes(event.sig);
-    uint8.set(sigBytes, pos);
+    // Write Sig
+    uint8.set(encoded.sigBytes, pos);
     pos += 64;
 
     // Write Content
-    const contentBytes = encodeString(event.content);
-    view.setUint32(pos, contentBytes.length, true);
+    view.setUint32(pos, encoded.contentBytes.length, true);
     pos += 4;
-    uint8.set(contentBytes, pos);
-    pos += contentBytes.length;
+    uint8.set(encoded.contentBytes, pos);
+    pos += encoded.contentBytes.length;
 
     // Write Tags
-    view.setUint16(pos, event.tags.length, true);
+    view.setUint16(pos, encoded.tagBytes.length, true);
     pos += 2;
 
-    for (const tag of event.tags) {
+    for (const tag of encoded.tagBytes) {
         // Write tag items count
         view.setUint8(pos, tag.length);
         pos += 1;
 
         // Write each tag item
         for (const item of tag) {
-            const itemBytes = encodeString(item);
-            view.setUint16(pos, itemBytes.length, true);
+            view.setUint16(pos, item.length, true);
             pos += 2;
-            uint8.set(itemBytes, pos);
-            pos += itemBytes.length;
+            uint8.set(item, pos);
+            pos += item.length;
         }
     }
 
     // Write relay URL
-    if (event.relay_url) {
-        view.setUint8(pos, 1); // Has relay URL
+    if (encoded.relayBytes) {
+        view.setUint8(pos, 1);
         pos += 1;
-        const relayBytes = encodeString(event.relay_url);
-        view.setUint16(pos, relayBytes.length, true);
+        view.setUint16(pos, encoded.relayBytes.length, true);
         pos += 2;
-        uint8.set(relayBytes, pos);
-        pos += relayBytes.length;
+        uint8.set(encoded.relayBytes, pos);
+        pos += encoded.relayBytes.length;
     } else {
-        view.setUint8(pos, 0); // No relay URL
+        view.setUint8(pos, 0);
         pos += 1;
     }
 
@@ -184,11 +226,14 @@ function encodeEvent(event: EventForEncoding, buffer: ArrayBuffer, offset: numbe
  * Encode multiple events to a binary format
  */
 export function encodeEvents(events: EventForEncoding[]): ArrayBuffer {
-    // Calculate total size needed
+    // Pre-encode all events (encode strings once)
+    const encodedEvents: EncodedEventData[] = [];
     let totalSize = 4 + 1 + 4; // Magic number + Version + Event count
+
     for (const event of events) {
-        const eventSize = calculateEventSize(event);
-        totalSize += eventSize;
+        const encoded = preEncodeEvent(event);
+        encodedEvents.push(encoded);
+        totalSize += encoded.totalSize;
     }
 
     // Create buffer
@@ -206,7 +251,7 @@ export function encodeEvents(events: EventForEncoding[]): ArrayBuffer {
 
     // Write events
     for (let i = 0; i < events.length; i++) {
-        offset = encodeEvent(events[i], buffer, offset);
+        offset = writeEncodedEvent(events[i], encodedEvents[i], buffer, offset);
     }
 
     return buffer;

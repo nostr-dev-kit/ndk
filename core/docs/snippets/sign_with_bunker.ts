@@ -1,5 +1,8 @@
 // provided by the user
+import NDK, { NDKNip46Signer, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+
 const signerConnectionString = "bunker://....";
+const ndk = new NDK();
 
 // local keypair generated when signer if first initialised
 const clientKeypair = NDKPrivateKeySigner.generate(); //

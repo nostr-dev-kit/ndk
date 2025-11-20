@@ -1,12 +1,33 @@
-### Subscribing to Events
+# Subscribing to Events
 
-Once connected, you can subscribe to events using `ndk.subscribe()`. You provide filters to specify the events you're
-interested in.
+Once [connected](/core/docs/getting-started/usage#connecting), you can subscribe to events using `ndk.subscribe()` by
+providing filters you can specify the events you're interested in.
 
-### Preferred Method: Direct Event Handlers
+## Subscribe
 
-The **recommended** way to handle events is to provide handler functions directly when calling `ndk.subscribe()`. This
-is done using the third argument (`autoStart`), which accepts an object containing `onEvent`, `onEvents`, and/or
+The `ndk.subscribe()` method accepts these parameters:
+
+- `filters`: A single or array of `NDKFilter`.
+  See [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#communication-between-clients-and-relays).
+- `opts?`: Subscription options object `NDKSubscriptionOptions`.
+- `autoStart?`: [Event handlers](#event-handlers) for that subscription.
+
+<<< @/core/docs/snippets/subscribe.ts
+
+## Specifying Relays
+
+By default, NDK will use the already connected relay set or provided through the signer. You can
+override this behavior by providing explicit relays in the `relayUrls` or `relaySet` options.
+
+<<< @/core/docs/snippets/subscribe_relayset.ts
+
+## Event Handlers
+
+### Handler Functions
+
+> [!TIP]
+> The **recommended** way to handle events is to provide handler functions directly when calling `ndk.subscribe()`. This
+> is done using the third argument (`autoStart`), which accepts an object containing `onEvent`, `onEvents`, and/or
 `onEose` callbacks.
 
 **Why is this preferred?** Subscriptions can start receiving events (especially from a fast cache) almost immediately
@@ -14,54 +35,25 @@ after `ndk.subscribe()` is called. By providing handlers directly, you ensure th
 emitted, preventing potential race conditions where you might miss the first few events if you attached handlers later
 using `.on()`.
 
-```typescript
-// Example with default relay calculation
-ndk.subscribe(
-    {kinds: [1], authors: [pubkey]}, // Filters
-    {closeOnEose: true}, // Options (no explicit relays specified)
-    { // Direct handlers via autoStart parameter (now the 3rd argument)
-        onEvent: (event: NDKEvent, relay?: NDKRelay) => {
-            // Called for events received from relays after the initial cache load (if onEvents is used)
-            console.log("Received event from relay (id):", event.id);
-        },
-        onEvents: (events: NDKEvent[]) => { // Parameter renamed to 'events'
-            console.log(`Received ${events.length} events from cache initially.`);
-        },
-        onEose: (subscription: NDKSubscription) => {
-            console.log("Subscription reached EOSE:", subscription.internalId);
-        }
-    }
-);
+<<< @/core/docs/snippets/subscribe_event_handlers.ts
 
-// Example specifying explicit relays using relayUrls option
-ndk.subscribe(
-    {kinds: [0], authors: [pubkey]}, // Filters
-    { // Options object now includes relayUrls
-        closeOnEose: true,
-        relayUrls: ["wss://explicit1.relay", "wss://explicit2.relay"]
-    },
-    { // Direct handlers
-        onEvent: (event: NDKEvent) => { /* ... */
-        }
-    }
-);
+### Attaching Handlers
 
-// Example specifying explicit relays using relaySet option
-const explicitRelaySet = NDKRelaySet.fromRelayUrls(["wss://explicit.relay"], ndk);
-ndk.subscribe(
-    {kinds: [7], authors: [pubkey]}, // Filters
-    { // Options object now includes relaySet
-        closeOnEose: true,
-        relaySet: explicitRelaySet
-    },
-    { // Direct handlers
-        onEvent: (event: NDKEvent) => { /* ... */
-        }
-    }
-);
-```
+You can also attach event listeners *after* creating the subscription using the `.on()` method.
 
-### Efficient Cache Handling with `onEvents`
+> [!WARNING]
+> While functional, be mindful of the potential race condition mentioned above, especially if you rely on immediate
+> cache results.
+
+<<< @/core/docs/snippets/subscribe_event_attach.ts
+
+## Functions
+
+### onEvent
+
+The `onEvent` handler is called for every event received from relays or the cache.
+
+### onEvents
 
 Using the `onEvents` handler provides an efficient way to process events loaded from the cache. When you provide
 `onEvents`:
@@ -78,31 +70,6 @@ item.
 If you *don't* provide `onEvents`, the standard `onEvent` handler will be triggered for every event, whether it comes
 from the cache or a relay.
 
-### Alternative Method: Attaching Handlers with `.on()`
+### onEose
 
-You can also attach event listeners *after* creating the subscription using the `.on()` method. While functional, be
-mindful of the potential race condition mentioned above, especially if you rely on immediate cache results.
-
-```typescript
-// Subscribe using default relay calculation
-const subscription = ndk.subscribe(
-    { kinds: [1], authors: [pubkey] },
-    { closeOnEose: true } // Options
-);
-
-// Subscribe using explicit relays via options
-const subscriptionWithRelays = ndk.subscribe(
-    { kinds: [0], authors: [pubkey] },
-    { relayUrls: ["wss://explicit.relay"] } // Options with explicit relays
-);
-
-// Attach handlers later
-subscription.on("event", (event) => {
-    console.log("Received event:", event.id);
-});
-subscription.on("eose", () => {
-    console.log("Initial events loaded");
-});
-
-// Remember to stop the subscription when it's no longer needed
-// setTimeout(() => subscription.stop(), 5000);
+Called when the subscription is closed.

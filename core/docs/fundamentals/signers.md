@@ -12,8 +12,8 @@ runtime.
 
 A common way to use NDK is to use a browser extension which is described
 in [NIP-07](https://github.com/nostr-protocol/nips/blob/master/07.md).
-This mechanism allows the user to sign events with a browser extension to not share their private key 
-with the application. 
+This mechanism allows the user to sign events with a browser extension to not share their private key with the
+application.
 
 The most used browser extensions are [Nos2x](https://github.com/fiatjaf/nos2x) and [Alby](https://getalby.com/alby-extension).
 
@@ -54,12 +54,10 @@ This library can also [help with generating new keys](/core/docs/fundamentals/si
 ### Remote Signer
 
 A Nostr remote signer (aka `bunker`) is an application or device that securely stores your private key and signs Nostr
-events on
-your behalf, preventing you from having to expose the private key. It works by establishing a secure connection (over
-Nostr relays)
-, as described in [NIP-46](https://github.com/nostr-protocol/nips/blob/master/46.md), where the bunker implementation
-can approve
-or deny requests.
+events on your behalf, preventing you from having to expose the private key. It works by establishing a secure
+connection (over
+Nostr relays), as described in [NIP-46](https://github.com/nostr-protocol/nips/blob/master/46.md), where the bunker
+implementation can approve or deny requests.
 
 To add remote signing support to your application, there are a few things you need:
 
@@ -106,7 +104,6 @@ You can specify the use of a different signer to sign with different keys.
 <<< @/core/docs/snippets/sign_event_with_other_signers.ts
 
 ## Read Public key
-
 
 **Read the user's public key**
 

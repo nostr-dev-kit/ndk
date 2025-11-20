@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EventGenerator, RelayPoolMock } from "../test";
-import NDK, { type NDKEvent, type NDKFilter, NDKKind, type NDKRelay, NDKRelaySet, NDKSubscription } from "./index";
+import NDK, {
+    NDKSubscriptionCacheUsage,
+    type NDKEvent,
+    type NDKFilter,
+    NDKKind,
+    type NDKRelay,
+    NDKRelaySet,
+    NDKSubscription,
+} from "./index";
 
 describe("NDKSubscription", () => {
     let ndk: NDK;
@@ -119,5 +127,49 @@ describe("NDKSubscription", () => {
         expect(eventReceived).toBe(true);
         expect(eoseReceived).toBe(true);
         expect(closedReceived).toBe(true);
+    });
+
+    it("should not cache ephemeral events", async () => {
+        // Mock cache adapter
+        const mockCacheAdapter = {
+            setEvent: vi.fn(),
+            query: vi.fn().mockResolvedValue([]),
+        };
+        // @ts-expect-error - We're intentionally replacing the cache for testing
+        ndk.cacheAdapter = mockCacheAdapter;
+
+        // Create replaceable and ephemeral events
+        const replaceableEvent = EventGenerator.createEvent(10002, "replaceable");
+        await replaceableEvent.sign();
+        const ephemeralEvent = EventGenerator.createEvent(20000, "ephemeral");
+        await ephemeralEvent.sign();
+
+        // Get the first relay
+        const relaysArray = Array.from(pool.relays);
+        const mockRelay = relaysArray[0];
+        const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
+        const filter: NDKFilter = {
+            kinds: [replaceableEvent.kind as number, ephemeralEvent.kind as number],
+        };
+        const sub = new NDKSubscription(ndk, filter, {
+            subId: "test-subscription-cache",
+            skipVerification: true,
+            skipValidation: true,
+            relaySet,
+            cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+        });
+
+        // Start subscription and simulate events
+        sub.start();
+        await mockRelay.simulateEvent(replaceableEvent, sub.subId!);
+        await mockRelay.simulateEvent(ephemeralEvent, sub.subId!);
+        mockRelay.simulateEOSE(sub.subId!);
+        // Verify cache adapter was only called for the replaceable event
+        expect(mockCacheAdapter.setEvent).toHaveBeenCalledTimes(1);
+        expect(mockCacheAdapter.setEvent).toHaveBeenCalledWith(
+            expect.objectContaining({ id: replaceableEvent.id }),
+            expect.any(Array),
+            expect.any(Object)
+        );
     });
 });

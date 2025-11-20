@@ -898,7 +898,7 @@ export class NDKSubscription extends EventEmitter<{
                     }
                 }
 
-                if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache) {
+                if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache && !kindIsEphemeral(ndkEvent.kind as NDKKind)) {
                     this.ndk.cacheAdapter.setEvent(ndkEvent, this.filters, relay);
                 }
             }

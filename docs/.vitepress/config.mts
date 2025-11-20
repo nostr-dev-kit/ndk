@@ -3,6 +3,7 @@ import {defineConfig} from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     title: "NDK",
+    srcDir: "../",
     description: "NDK Docs",
     // base: "/ndk/",
     ignoreDeadLinks: true,

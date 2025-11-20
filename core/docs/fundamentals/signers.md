@@ -81,6 +81,20 @@ event.content = "Hello, world!";
 await event.sign(); // [!code focus]
 ```
 
+## Signer Relays
+
+If the [signer](/core/docs/fundamentals/signers.md) implements the `getRelays()` method,
+NDK will use the relays returned by that method as the explicit relays.
+
+```ts
+// Import the package
+import NDK, {NDKNip07Signer} from "@nostr-dev-kit/ndk";
+
+// Create a new NDK instance with just a signer (provided the signer implements the getRelays() method)
+const nip07signer = new NDKNip07Signer();
+const ndk = new NDK({signer: nip07signer});
+```
+
 ## Combining signers
 
 You can specify the use of a different signer to sign with different keys.

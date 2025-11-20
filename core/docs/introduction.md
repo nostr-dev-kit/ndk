@@ -8,17 +8,31 @@ NDK is a TypeScript/JavaScript library that simplifies building Nostr clients, r
 
 ## Features
 
-- Outbox model support
-- Relay connection pool with automatic reconnection and failover
+- Event creation, validation, and wrappers for [major NIPs](#nip-support)
 - Flexible subscription API with caching, batching, and auto-closing
-- Event creation, validation, and wrappers for major NIPs (e.g., NIP-01, NIP-04, NIP-07, NIP-18, NIP-49, NIP-57, NIP-60,
-  NIP-61)
-- Signer adapters: private key, encrypted keys (NIP-49), browser extension (NIP-07), remote signing (NIP-46)
-- Pluggable cache adapters (Redis, Dexie, SQLite, etc.)
-- Data Vending Machine support (NIP-90)
-- Zap utilities (NIP-57, NIP-61)
+- Event Signing through private key, encrypted
+  keys ([NIP-49](https://github.com/nostr-protocol/nips/blob/master/49.md)),
+  browser extension ([NIP-07](https://github.com/nostr-protocol/nips/blob/master/07.md)) or remote signer
+  ([NIP-46](https://github.com/nostr-protocol/nips/blob/master/46.md))
+- Relay connection pool with automatic reconnection and failover
+- Outbox model support
+- Pluggable cache adapters (Redis, Dexie, SQLite, etc)
+- Data Vending Machine support ([NIP-90](https://github.com/nostr-protocol/nips/blob/master/90.md))
+- Zap
+  utilities ([NIP-57](https://github.com/nostr-protocol/nips/blob/master/57.md), [NIP-61](https://github.com/nostr-protocol/nips/blob/master/61.md))
 - Threading, event kinds, and utility functions (URL normalization, metadata tags, filters)
-- Modular design with many pluggable packages for different frameworks (Mobile, Svelte 4 and 5, React)
+- Modular design with packages for different frameworks (Mobile, Svelte, React)
+
+### NIP Support
+
+- [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md)
+- [NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md)
+- [NIP-07](https://github.com/nostr-protocol/nips/blob/master/07.md)
+- [NIP-18](https://github.com/nostr-protocol/nips/blob/master/18.md)
+- [NIP-49](https://github.com/nostr-protocol/nips/blob/master/49.md)
+- [NIP-57](https://github.com/nostr-protocol/nips/blob/master/57.md)
+- [NIP-60](https://github.com/nostr-protocol/nips/blob/master/60.md)
+- [NIP-61](https://github.com/nostr-protocol/nips/blob/master/61.md)
 
 ## Multi-Repo
 

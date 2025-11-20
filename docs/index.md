@@ -22,6 +22,6 @@ Nostr clients and applications. The package contains relay interaction code, rea
 caching libraries, Web of Trust functionality, and more.
 
 > [!WARNING]
-> The documentation of the NDK project is under heavy construction.
+> The documentation of the NDK project is under heavy construction
 > [More information available in open pull request](https://github.com/nostr-dev-kit/ndk/pull/344).
 > 

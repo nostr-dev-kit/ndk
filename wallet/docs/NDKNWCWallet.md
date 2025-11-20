@@ -1,6 +1,7 @@
 # NWC Client (`NDKWalletNWC`)
 
-The `NDKWalletNWC` implements the [NIP-47](https://nostr-nips.com/nip-47) specification and allows you to zap using [Nostr
+The `NDKWalletNWC` implements the [NIP-47](https://github.com/nostr-protocol/nips/blob/master/47.md) specification and
+allows you to zap using [Nostr
 Web Connect (NWC)](https://nwc.dev/).
 
 ## Usage

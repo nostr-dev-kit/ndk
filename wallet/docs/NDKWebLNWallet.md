@@ -95,7 +95,7 @@ Make sure to await the promise to fully refresh the balance.
 
 ## Nostr Zaps
 
-Lightning Zaps on the Nostr network are described in [NIP-57](https://nostr-nips.com/nip-57).
+Lightning Zaps on the Nostr network are described in [NIP-57](https://github.com/nostr-protocol/nips/blob/master/57.md).
 
 The full protocol (Step 1 to 9) is described in the respective docs. In the below example we will
 refer to the steps described in the Nostr Implementation Protocol (NIP).

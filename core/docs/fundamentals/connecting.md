@@ -43,7 +43,8 @@ Explicit relays can also be added using the `addExplicitRelay()` method.
 A [signer](/core/getting-started/signers.html) is used to sign events and tells NDK about your pubkey and related
 settings. Once you
 link up a signer and you have `autoConnectUserRelays` enabled (on by default) NDK will fetch your `kind:10002` event
-([NIP-65](https://nostr-nips.com/nip-65)) and add discovered relays specified to a 2nd pool of connected relays.
+([NIP-65](https://github.com/nostr-protocol/nips/blob/master/65.md)) and add discovered relays specified to a 2nd pool
+of connected relays.
 
 <<< @/core/docs/snippets/connect_nip07.ts
 
@@ -59,7 +60,7 @@ The outbox model works similarly to the web/RSS model:
 - **Inbox Relays**: You designate relays where you want to receive messages
 - **Dynamic Discovery**: Clients discover and connect to relays based on where users actually post
 
-The protocol is formalized in ([NIP-65](https://nostr-nips.com/nip-65)), which defines:
+The protocol is formalized in ([NIP-65](https://github.com/nostr-protocol/nips/blob/master/65.md)), which defines:
 
 - **`kind:10002` events**: Relay list metadata containing read/write relay preferences
 - **Relay tags**: "r" tags with optional "read"/"write" markers

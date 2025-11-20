@@ -3,7 +3,8 @@
 A Nostr remote signer is an application or device that securely stores your private key and signs Nostr events on
 your behalf, preventing you from having to expose the key clients.
 
-It works by establishing a secure connection, as described in [NIP-46](https://nostr-nips.com/nip-46), with a Nostr
+It works by establishing a secure connection, as described
+in [NIP-46](https://github.com/nostr-protocol/nips/blob/master/46.md), with a Nostr
 client and then receiving signing requests via push notifications to approve or deny.
 
 #### bunker://

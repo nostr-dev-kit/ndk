@@ -1,7 +1,7 @@
 # Signers
 
-All events on the Nostr protocol are signed through a keypair 
-(described in [NIP-01](https://nostr-nips.com/nip-01#events-and-signatures)).
+All events on the Nostr protocol are signed through a keypair
+(described in [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#events-and-signatures)).
 
 In NDK this is taken care of by the `NDKSigner` interface that can be passed in during initialization or later during
 runtime.
@@ -10,7 +10,8 @@ runtime.
 
 ### Browser Extensions
 
-A common way to use NDK is to use a browser extension which is described in [NIP-07](https://nostr-nips.com/nip-07). 
+A common way to use NDK is to use a browser extension which is described
+in [NIP-07](https://github.com/nostr-protocol/nips/blob/master/07.md).
 This mechanism allows the user to sign events with a browser extension to not share their private key 
 with the application. 
 

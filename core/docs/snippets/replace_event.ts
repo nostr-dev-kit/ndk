@@ -1,17 +1,12 @@
-import NDK, { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import NDK from "@nostr-dev-kit/ndk";
 
 const ndk = new NDK();
-const event = new NDKEvent(ndk);
-event.kind = NDKKind.Metadata;
-event.content = JSON.stringify({
-    name: "Johnny",
-    about: "I come from nowhere",
-});
-// first publish
-await event.publish();
+const existingEvent = await ndk.fetchEvent("574033c986bea1d7493738b46fec1bb98dd6a826391d6aa893137e89790027ec"); // fetch the event to replace
 
-// this will republish/broadcast the same event
-await event.publish();
-
-// this will create a new event and publish it
-await event.publishReplaceable();
+if (existingEvent) {
+    existingEvent.tags.push(
+        ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"], // follow a new user
+    );
+    existingEvent.publish(); // this will NOT work
+    existingEvent.publishReplaceable(); // this WILL work
+}

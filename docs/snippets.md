@@ -9,6 +9,10 @@ Snippets are grouped by category. Some of them are listed in more than one categ
 
 <!--@include: ./snippets/events.md -->
 
+## Connecting
+
+<!--@include: ./snippets/connecting.md -->
+
 ## Subscribing
 
 <!--@include: ./snippets/subscribing.md -->
@@ -21,9 +25,6 @@ Snippets are grouped by category. Some of them are listed in more than one categ
 
 <!--@include: ./snippets/publishing.md -->
 
-## Connecting
-
-<!--@include: ./snippets/connecting.md -->
 
 ## Not migrated yet
 

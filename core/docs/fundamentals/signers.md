@@ -6,7 +6,10 @@ All events on the Nostr protocol are signed through a keypair
 In NDK this is taken care of by the `NDKSigner` interface that can be passed in during initialization or later during
 runtime.
 
-## Different Signing Methods
+## Signing Methods
+
+Before you can sign events you need a signer set-up. There are different ways to sign events and this space is still
+evolving.
 
 ### Browser Extensions
 
@@ -17,13 +20,7 @@ application.
 
 The most used browser extensions are [Nos2x](https://github.com/fiatjaf/nos2x) and [Alby](https://getalby.com/alby-extension).
 
-```ts
-// Import the package, NIP-07 signer and NDK event
-import NDK, { NDKEvent, NDKNip07Signer } from "@nostr-dev-kit/ndk";
-
-const signer = new NDKNip07Signer();
-const ndk = new NDK({ signer });
-```
+<<< @/core/docs/snippets/sign_event.ts
 
 Anytime you call `sign()` or `publish()` on an [NDK Event](/core/docs/fundamentals/events.html) the browser
 extension will prompt the user to sign the event.
@@ -39,17 +36,9 @@ NDK provides `NDKPrivateKeySigner` for managing in-memory private keys. This is 
 
 The private key signer takes the private key in the `nsec` format.
 
-```ts
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-
-// Generate a new private key
-const signer = NDKPrivateKeySigner.generate();
-console.log("nsec:", signer.nsec);
-console.log("npub:", signer.npub);
-```
+<<< @/core/docs/snippets/sign_event_nsec.ts
 
 This library can also [help with generating new keys](/core/docs/fundamentals/signers.html#generate-keys).
-
 
 ### Remote Signer
 
@@ -73,26 +62,12 @@ Create a `NDKNip46Signer` with the bunker connection string and local keypair.
 
 Once the signer is initialized, you can use it to sign and [publish](/core/docs/fundamentals/publishing.html) events:
 
-```ts
-const event = new NDKEvent(ndk);
-event.kind = 1;
-event.content = "Hello, world!";
-await event.sign(); // [!code focus]
-```
+<<< @/core/docs/snippets/sign_event.ts
 
 ## Signer Relays
 
 If the [signer](/core/docs/fundamentals/signers.md) implements the `getRelays()` method,
 NDK will use the relays returned by that method as the explicit relays.
-
-```ts
-// Import the package
-import NDK, {NDKNip07Signer} from "@nostr-dev-kit/ndk";
-
-// Create a new NDK instance with just a signer (provided the signer implements the getRelays() method)
-const nip07signer = new NDKNip07Signer();
-const ndk = new NDK({signer: nip07signer});
-```
 
 ## Combining signers
 
@@ -122,9 +97,8 @@ provides helper methods:
 
 <<< @/core/docs/snippets/key_create.ts
 
+
 ## Code Snippets
 
-More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
-
-<!--@include: @/docs/snippets/signers.md -->
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md#signers)
 

@@ -65,6 +65,4 @@ through the `event:publish-failed` handler
 
 ## Code Snippets
 
-More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
-
-<!--@include: @/docs/snippets/publishing.md -->
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md#publishing)

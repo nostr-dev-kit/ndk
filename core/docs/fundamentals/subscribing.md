@@ -74,8 +74,7 @@ from the cache or a relay.
 
 Called when the subscription is closed.
 
+
 ## Code Snippets
 
-More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
-
-<!--@include: @/docs/snippets/subscribing.md -->
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md#subscribing)

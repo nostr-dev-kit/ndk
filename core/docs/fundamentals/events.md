@@ -42,6 +42,4 @@ Read more about signers in [the signer documentation](/core/docs/fundamentals/si
 
 ## Code Snippets
 
-More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
-
-<!--@include: @/docs/snippets/events.md -->
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md#events).

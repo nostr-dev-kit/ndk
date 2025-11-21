@@ -94,23 +94,11 @@ relays.
 
 ## Connection Events
 
-```typescript
-// Main pool events
-ndk.pool.on("relay:connecting", (relay: NDKRelay) => {
-    console.log(`⟳ [Main Pool] Connecting to relay: ${relay.url}`);
-});
+There are a number of events you can hook into to get information about relay connection
+status
 
-ndk.pool.on("relay:connect", (relay: NDKRelay) => {
-    connectedRelays.add(relay.url);
-    console.log(`✓ [Main Pool] Connected to relay: ${relay.url}`);
-    console.log(`Total connected relays: ${connectedRelays.size}`);
-});
+<<< @/core/docs/snippets/connection_events.ts
 
-ndk.pool.on("relay:disconnect", (relay: NDKRelay) => {
-    connectedRelays.delete(relay.url);
-    console.log(`✗ [Main Pool] Disconnected from relay: ${relay.url}`);
-    console.log(`Total connected relays: ${connectedRelays.size}`);
-});
-```
+## Code Snippets
 
-
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md#connecting)

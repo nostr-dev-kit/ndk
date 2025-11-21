@@ -17,3 +17,7 @@
 ### Relay Pools
 
 <<< @/core/docs/snippets/connect_pools.ts
+
+### Connection Events
+
+<<< @/core/docs/snippets/connection_events.ts

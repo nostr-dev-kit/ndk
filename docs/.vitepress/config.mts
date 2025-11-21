@@ -49,10 +49,10 @@ export default defineConfig({
                 collapsed: false,
                 items: [
                     {text: "Events ✅", link: "/core/docs/fundamentals/events"},
+                    {text: "Connecting ✅", link: "/core/docs/fundamentals/connecting"},
+                    {text: "Publishing ✅", link: "/core/docs/fundamentals/publishing"},
                     {text: "Subscribing ✅", link: "/core/docs/fundamentals/subscribing"},
                     {text: "Signers ✅", link: "/core/docs/fundamentals/signers"},
-                    {text: "Publishing ✅", link: "/core/docs/fundamentals/publishing"},
-                    {text: "Connecting ✅", link: "/core/docs/fundamentals/connecting"},
                     {text: "Zaps ❌", link: "/core/docs/tutorial/zaps"},
                     {text: "Local-first ❌", link: "/core/docs/tutorial/local-first"},
                     {

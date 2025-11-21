@@ -33,6 +33,27 @@ and `created_at` to allow for easy replacement: `event.publishReplaceable()`
 
 <<< @/core/docs/snippets/replace_event.ts
 
+## Specifying Relays
+
+NDK will publish your event to the already connected relaySets. If you want to specify where to
+publish that specific event to you can pass a `NDKRelaySet` to the publish method:
+
+<<< @/core/docs/snippets/publish_to_relayset.ts
+
+## Tracking Publication Status
+
+You can use the event.on `published` handler to keep track of where events are
+published and the status of each publish attempt:
+
+<<< @/core/docs/snippets/publish_tracking.ts
+
+## Publication Failures
+
+When publishing to multiple relays, some may succeed while others fail. This can be handled
+through the `event:publish-failed` handler
+
+<<< @/core/docs/snippets/publish_failure.ts
+
 ## Event Status Properties
 
 - `event.publishedToRelays` - Array of relay URLs where the event was successfully published

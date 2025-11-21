@@ -22,7 +22,9 @@ On connection changes NDK will emit
 
 ::: tip
 Because NOSTR is decentralized and comprised of thousands of relays, it's important to read up on the
-advised ways of connecting to relays. We strongly advise you to use the "[Outbox Model](/core/fundamentals/connecting.html#outbox-model)" in addition or replacement of specifying explicit relays.
+advised ways of connecting to relays. We advise you to use
+the "[Outbox Model](/core/fundamentals/connecting.html#outbox-model)"
+in addition or as a replacement for specifying explicit relays.
 :::
 
 ### Specific Relays

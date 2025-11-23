@@ -5,9 +5,9 @@
  * Usage: bun run test-auth-publish.ts --nsec <your-nsec> --msg "your message"
  */
 
-import { NDKEvent } from "./src/events";
-import { NDK } from "./src/ndk";
-import { NDKPrivateKeySigner } from "./src/signers/private-key";
+import {NDKEvent} from "./src/events";
+import {NDK} from "./src/ndk";
+import {NDKPrivateKeySigner} from "./src/signers/private-key";
 
 // Parse command line arguments
 const args = process.argv.slice(2);

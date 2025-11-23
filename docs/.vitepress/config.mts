@@ -30,10 +30,10 @@ export default defineConfig({
         sidebar: [
             {
                 items: [
-                    {text: "Introduction ✅", link: "/core/docs/introduction"},
-                    {text: "About Nostr ✅", link: "/core/docs/about-nostr"},
-                    {text: "Contributing ❌", link: "/docs/contributing.md"},
-                    {text: "Changelog ✅", link: "/docs/changelogs.md"},
+                    {text: "Introduction ✅", link: "/docs/introduction"},
+                    {text: "About Nostr ✅", link: "/docs/about-nostr"},
+                    {text: "Contributing ❌", link: "/docs/contributing"},
+                    {text: "Changelog ✅", link: "/docs/changelogs"},
                 ],
             },
             {

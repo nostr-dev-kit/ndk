@@ -5,6 +5,8 @@ We maintain changelogs for each package in the multi-repo. Consult the individua
 ## Core
 
 * [@nostr-dev-kit/core](/core/README.md) -> [CHANGELOG.md](/core/CHANGELOG.md)
+    * [Migration guide from `2.12` to `2.13`](/core/docs/migration/2.12-to-2.13.md)
+    * [Migration guide from `2.13` to `2.16`](/core/docs/migration/2.13-to-2.16.md)
 
 ## Extras
 

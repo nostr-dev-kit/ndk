@@ -110,7 +110,7 @@ You can use these different formats for different purposes:
 - `nsec`: Encoded private key format (bech32) - used for secure sharing when needed
 - `npub`: Encoded public key format (bech32) - used for user identification
 
-### Storing Keys
+### Encrypting Keys
 
 For storing keys securely with password protection,
 use [NIP-49](https://github.com/nostr-protocol/nips/blob/master/49.md) (ncryptsec format):
@@ -118,6 +118,13 @@ use [NIP-49](https://github.com/nostr-protocol/nips/blob/master/49.md) (ncryptse
 <<< @/core/docs/snippets/key_create_store.ts
 
 See [Encrypted Keys (NIP-49)](/core/docs/advanced/encrypted-keys-nip49.md) for more examples and best practices.
+
+## Signer Persistence
+
+In a lot of applications you would want to persist the signer preferences so the state
+can be maintained without requiring re-authentication.
+
+Please consult [the dedicated section about signer persistence](/core/docs/advanced/signer-persistence.md).
 
 ## Code Snippets
 

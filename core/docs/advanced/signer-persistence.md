@@ -12,9 +12,6 @@ function.
 Every NDK signer (`NDKPrivateKeySigner`, `NDKNip07Signer`, `NDKNip46Signer`, etc.) implements a `toPayload()` method.
 This method returns a JSON string containing the minimal information needed to reconstruct a functionally equivalent
 signer instance later.
-Every NDK signer (`NDKPrivateKeySigner`, `NDKNip07Signer`, `NDKNip46Signer`, etc.) implements a `toPayload()` method.
-This method returns a string containing the information needed to reconstruct a functionally equivalent signer instance
-later.
 
 **Example Usage:**
 

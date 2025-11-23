@@ -60,6 +60,7 @@ export default defineConfig({
                         link: "/core/docs/tutorial/subscription-management",
                     },
                     {text: "Mute Filtering ❌", link: "/core/docs/tutorial/mute-filtering"},
+                    {text: "Helpers ❌", link: "/core/docs/fundamentals/helpers"},
                 ],
             },
             {

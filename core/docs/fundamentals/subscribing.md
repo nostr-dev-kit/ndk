@@ -21,6 +21,9 @@ override this behavior by providing explicit relays in the `relayUrls` or `relay
 
 <<< @/core/docs/snippets/subscribe_relayset.ts
 
+By default, NDK subscriptions use cross-subscription matching: when an event comes in from any relay, it's delivered to
+all subscriptions whose filters match, regardless of which relays the subscription was targeting.
+
 ## Event Handlers
 
 ### Handler Functions
@@ -74,6 +77,20 @@ from the cache or a relay.
 
 Called when the subscription is closed.
 
+## Targetting Relays
+
+By default, NDK subscriptions use cross-subscription matching: when an event comes in from any relay, it's delivered to
+all subscriptions whose filters match, regardless of which relays the subscription was targeting.
+
+The `exclusiveRelay` option allows you to create subscriptions that **only** accept events from their specified relays,
+ignoring events that match the filter but come from other relays.
+
+<<< @/core/docs/snippets/subscribe_relay_targetting.ts
+
+Without `exclusiveRelay`, subscriptions receive events from any relay (Cross-Subscription Matching).
+
+More information, use-cases and examples of exclusive relays is available in
+the [advanced exclusive relay documentation](/core/docs/advanced/exclusive-relay.md#subscribing).
 
 ## Code Snippets
 

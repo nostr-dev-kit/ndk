@@ -159,6 +159,10 @@ export default defineConfig({
                         link: "/core/docs/advanced/ai-guardrails"
                     },
                     {
+                        text: "Exclusive Relays ✅",
+                        link: "/core/docs/advanced/exclusive-relay"
+                    },
+                    {
                         text: "Subscription Lifecycle ❌",
                         link: "/core/docs/advanced/subscription-internals"
                     },

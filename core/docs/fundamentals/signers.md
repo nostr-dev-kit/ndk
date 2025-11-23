@@ -18,7 +18,8 @@ in [NIP-07](https://github.com/nostr-protocol/nips/blob/master/07.md).
 This mechanism allows the user to sign events with a browser extension to not share their private key with the
 application.
 
-The most used browser extensions are [Nos2x](https://github.com/fiatjaf/nos2x) and [Alby](https://getalby.com/alby-extension).
+The most used browser extensions are [Nos2x](https://github.com/fiatjaf/nos2x)
+and [Alby](https://getalby.com/alby-extension).
 
 <<< @/core/docs/snippets/sign_event.ts
 
@@ -27,11 +28,13 @@ extension will prompt the user to sign the event.
 
 ### Private Key Signer
 
-NDK provides `NDKPrivateKeySigner` for managing in-memory private keys. This is useful for development, testing, or applications that manage keys locally.
+NDK provides `NDKPrivateKeySigner` for managing in-memory private keys. This is useful for development, testing, or
+applications that manage keys locally.
 
 > [!WARNING]
 > We strongly recommend not using this in production. Requiring users to share their private key is a security
-> risk and should be avoided in favor of using [a browser extension](/core/docs/fundamentals/signers.html#browser-extensions) 
+> risk and should be avoided in favor of
+> using [a browser extension](/core/docs/fundamentals/signers.html#browser-extensions)
 > or [a remote signer](/core/docs/fundamentals/signers.html#remote-signer).
 
 The private key signer takes the private key in the `nsec` format.
@@ -92,13 +95,30 @@ nip07signer.user().then(async (user) => {
 
 ## Generate Keys
 
-One good case where weo do want you to use `NDKPrivateKeySigner` is to help you generate keys as the signer
-provides helper methods:
+One good case where you would want to use `NDKPrivateKeySigner` is to help you generate keys as the signer
+provides helper methods.
+
+This snippet demonstrates how to generate a new key pair and obtain all its various formats (private key, public key,
+nsec, npub).
 
 <<< @/core/docs/snippets/key_create.ts
 
+You can use these different formats for different purposes:
+
+- `privateKey`: Raw private key for cryptographic operations
+- `publicKey`: Raw public key (hex format) for verification
+- `nsec`: Encoded private key format (bech32) - used for secure sharing when needed
+- `npub`: Encoded public key format (bech32) - used for user identification
+
+### Storing Keys
+
+For storing keys securely with password protection,
+use [NIP-49](https://github.com/nostr-protocol/nips/blob/master/49.md) (ncryptsec format):
+
+<<< @/core/docs/snippets/key_create_store.ts
+
+See [Encrypted Keys (NIP-49)](./encrypted-keys-nip49.md) for more examples and best practices.
 
 ## Code Snippets
 
 More snippets and examples can be found in the [snippets directory](/docs/snippets.md#signers)
-

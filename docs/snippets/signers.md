@@ -17,3 +17,7 @@
 ### Generate Keypair
 
 <<< @/core/docs/snippets/key_create.ts
+
+### Encrypt/Decrypt Keypair
+
+<<< @/core/docs/snippets/key_create_store.ts

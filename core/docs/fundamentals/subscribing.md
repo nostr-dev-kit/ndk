@@ -3,6 +3,9 @@
 Once [connected](/core/docs/getting-started/usage#connecting), you can subscribe to events using `ndk.subscribe()` by
 providing filters you can specify the events you're interested in.
 
+More about how this all works
+in [the dedicated section about subscription internals](/core/docs/advanced/subscription-internals.md).
+
 ## Subscribe
 
 The `ndk.subscribe()` method accepts these parameters:

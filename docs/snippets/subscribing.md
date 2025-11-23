@@ -14,3 +14,6 @@
 
 <<< @/core/docs/snippets/subscribe_event_attach.ts
 
+### Exclusive Relays
+
+<<< @/core/docs/snippets/subscribe_relay_targetting.ts

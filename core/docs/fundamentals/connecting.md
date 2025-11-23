@@ -92,6 +92,31 @@ using the `NDKPool` class.
 Note that if you have outbox enabled you will have an extra pool in the `ndk.pools` array reserved for user provided
 relays.
 
+## Authentication
+
+([NIP-42](https://github.com/nostr-protocol/nips/blob/master/42.md)) defines that relays can request authentication from
+clients. NDK uses an `NDKAuthPolicy` callback to provide a way to handle authentication requests.
+
+* Relays can have specific `NDKAuthPolicy` functions.
+* NDK can be configured with a default `relayAuthDefaultPolicy` function.
+* NDK provides some generic policies:
+    * `NDKAuthPolicies.signIn`: Authenticate to the relay (using the `ndk.signer` signer).
+    * `NDKAuthPolicies.disconnect`: Immediately disconnect from the relay if asked to authenticate.
+
+<<< @/core/docs/snippets/connect_auth.ts
+
+Clients should typically allow their users to choose where to authenticate. This can be accomplished by returning the
+decision the user made from the `NDKAuthPolicy` function.
+
+```ts
+import NDK, {NDKRelayAuthPolicies} from "@nostr-dev-kit/ndk";
+
+const ndk = new NDK();
+ndk.relayAuthDefaultPolicy = (relay: NDKRelay) => {
+    return confirm(`Authenticate to ${relay.url}?`);
+};
+```
+
 ## Connection Events
 
 There are a number of events you can hook into to get information about relay connection

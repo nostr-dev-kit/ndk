@@ -1,7 +1,0 @@
-dist
-docs
-lib
-coverage
-**/.changeset
-**/.svelte-kit
-docs-styles.css

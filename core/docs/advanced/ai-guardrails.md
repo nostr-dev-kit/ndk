@@ -1,6 +1,7 @@
 # AI Guardrails
 
-AI Guardrails is a runtime validation system designed to catch common mistakes when using NDK, especially those made by LLMs (Large Language Models) generating code.
+AI Guardrails is a runtime validation system designed to catch common mistakes when using NDK, especially those made by
+LLMs (Large Language Models) generating code.
 
 ## Overview
 
@@ -10,7 +11,8 @@ AI Guardrails provides:
 - **Zero performance impact** - Disabled by default, opt-in only
 - **Granular control** - Enable all checks or selectively disable specific ones
 - **LLM-friendly** - Designed to help AI-generated code self-correct
-- **Always visible** - Both errors and warnings throw exceptions AND log to console.error (so AIs see them even if throws get swallowed)
+- **Always visible** - Both errors and warnings throw exceptions AND log to console.error (so AIs see them even if
+  throws get swallowed)
 
 ## Quick Start
 
@@ -18,13 +20,13 @@ AI Guardrails provides:
 import NDK from "@nostr-dev-kit/ndk";
 
 // Enable all guardrails (recommended for development)
-const ndk = new NDK({ aiGuardrails: true });
+const ndk = new NDK({aiGuardrails: true});
 
 // Or enable with exceptions
 const ndk = new NDK({
-  aiGuardrails: {
-    skip: new Set(['filter-large-limit', 'fetch-events-usage'])
-  }
+    aiGuardrails: {
+        skip: new Set(['filter-large-limit', 'fetch-events-usage'])
+    }
 });
 
 // Or programmatically control
@@ -37,6 +39,7 @@ ndk.aiGuardrails.enable('filter-bech32-in-array');
 ### Filter-Related Checks
 
 #### `filter-bech32-in-array`
+
 **Level:** Error
 
 Catches bech32-encoded values in filter arrays. Filters expect hex values, not bech32.
@@ -44,39 +47,43 @@ Catches bech32-encoded values in filter arrays. Filters expect hex values, not b
 ```typescript
 // ❌ WRONG
 ndk.subscribe({
-  authors: ['npub1...'] // bech32 npub
+    authors: ['npub1...'] // bech32 npub
 });
 
 // ✅ CORRECT
-import { nip19 } from 'nostr-tools';
-const { data } = nip19.decode('npub1...');
+import {nip19} from 'nostr-tools';
+
+const {data} = nip19.decode('npub1...');
 ndk.subscribe({
-  authors: [data] // hex pubkey
+    authors: [data] // hex pubkey
 });
 
 // Or use filterFromId for complete bech32 entities
-import { filterFromId } from '@nostr-dev-kit/ndk';
+import {filterFromId} from '@nostr-dev-kit/ndk';
+
 const filter = filterFromId('nevent1...');
 ndk.subscribe(filter);
 ```
 
 #### `filter-only-limit`
+
 **Level:** Error
 
 Catches filters with only a `limit` parameter and no filtering criteria.
 
 ```typescript
 // ❌ WRONG - will fetch random events
-ndk.subscribe({ limit: 10 });
+ndk.subscribe({limit: 10});
 
 // ✅ CORRECT
 ndk.subscribe({
-  kinds: [1],
-  limit: 10
+    kinds: [1],
+    limit: 10
 });
 ```
 
 #### `filter-large-limit`
+
 **Level:** Warning
 
 Warns about very large limit values that can cause performance issues.
@@ -84,18 +91,19 @@ Warns about very large limit values that can cause performance issues.
 ```typescript
 // ⚠️  WARNING
 ndk.subscribe({
-  kinds: [1],
-  limit: 10000 // Too large!
+    kinds: [1],
+    limit: 10000 // Too large!
 });
 
 // ✅ BETTER
 ndk.subscribe({
-  kinds: [1],
-  limit: 100 // More reasonable
+    kinds: [1],
+    limit: 100 // More reasonable
 });
 ```
 
 #### `filter-empty`
+
 **Level:** Error
 
 Catches completely empty filters.
@@ -105,10 +113,11 @@ Catches completely empty filters.
 ndk.subscribe({});
 
 // ✅ CORRECT
-ndk.subscribe({ kinds: [1] });
+ndk.subscribe({kinds: [1]});
 ```
 
 #### `filter-since-after-until`
+
 **Level:** Error
 
 Catches filters where `since` is after `until`, which would match zero events.
@@ -116,18 +125,19 @@ Catches filters where `since` is after `until`, which would match zero events.
 ```typescript
 // ❌ WRONG
 ndk.subscribe({
-  since: 1000000,
-  until: 500000
+    since: 1000000,
+    until: 500000
 });
 
 // ✅ CORRECT
 ndk.subscribe({
-  since: 500000,
-  until: 1000000
+    since: 500000,
+    until: 1000000
 });
 ```
 
 #### `filter-invalid-a-tag`
+
 **Level:** Error
 
 Catches malformed `#a` tag values. Must be `kind:pubkey:d-tag` format.
@@ -135,35 +145,36 @@ Catches malformed `#a` tag values. Must be `kind:pubkey:d-tag` format.
 ```typescript
 // ❌ WRONG
 ndk.subscribe({
-  '#a': ['nevent1...'] // bech32 instead of address
+    '#a': ['nevent1...'] // bech32 instead of address
 });
 
 // ✅ CORRECT
 ndk.subscribe({
-  '#a': ['30023:fa984bd7...:my-article']
+    '#a': ['30023:fa984bd7...:my-article']
 });
 ```
 
 ### fetchEvents Anti-Pattern
 
 #### `fetch-events-usage`
+
 **Level:** Warning
 
 Warns about using `fetchEvents()` which is a blocking operation.
 
 ```typescript
 // ⚠️  SUBOPTIMAL - blocks until EOSE
-const events = await ndk.fetchEvents({ kinds: [1] });
+const events = await ndk.fetchEvents({kinds: [1]});
 
 // ✅ BETTER - reactive, non-blocking
-ndk.subscribe({ kinds: [1] }, {
-  onEvent: (event) => {
-    console.log('Got event:', event);
-  }
+ndk.subscribe({kinds: [1]}, {
+    onEvent: (event) => {
+        console.log('Got event:', event);
+    }
 });
 
 // Or for single events
-const event = await ndk.fetchEvent({ kinds: [1] });
+const event = await ndk.fetchEvent({kinds: [1]});
 ```
 
 **When to disable:** If you truly need to block until all events arrive (rare).
@@ -176,6 +187,7 @@ const events = await ndk.fetchEvents(filter);
 ### Event Construction Checks
 
 #### `event-missing-kind`
+
 **Level:** Error
 
 Catches attempts to sign events without a `kind`.
@@ -194,6 +206,7 @@ await event.sign();
 ```
 
 #### `event-content-is-object`
+
 **Level:** Error
 
 Catches attempts to set event content to an object instead of a string.
@@ -202,17 +215,18 @@ Catches attempts to set event content to an object instead of a string.
 // ❌ WRONG
 const event = new NDKEvent(ndk);
 event.kind = 30023;
-event.content = { title: "My Article" }; // Object!
+event.content = {title: "My Article"}; // Object!
 await event.sign(); // Error!
 
 // ✅ CORRECT
 const event = new NDKEvent(ndk);
 event.kind = 30023;
-event.content = JSON.stringify({ title: "My Article" });
+event.content = JSON.stringify({title: "My Article"});
 await event.sign();
 ```
 
 #### `event-param-replaceable-no-dtag`
+
 **Level:** Warning
 
 Warns about parameterized replaceable events (kinds 30000-39999) without a d-tag.
@@ -233,6 +247,7 @@ await event.sign();
 ```
 
 #### `event-created-at-milliseconds`
+
 **Level:** Error
 
 Catches using milliseconds instead of seconds for `created_at`.
@@ -256,6 +271,7 @@ await event.sign();
 ### Tag Validation Checks
 
 #### `tag-invalid-p-tag`
+
 **Level:** Error
 
 Catches invalid p-tags (must be 64-character hex pubkeys).
@@ -275,6 +291,7 @@ await event.sign();
 ```
 
 #### `tag-invalid-e-tag`
+
 **Level:** Error
 
 Catches invalid e-tags (must be 64-character hex event IDs).
@@ -294,6 +311,7 @@ await event.sign();
 ```
 
 #### `event-manual-reply-markers`
+
 **Level:** Warning
 
 Warns about manually adding e-tags with reply/root markers instead of using `.reply()`.
@@ -344,7 +362,7 @@ ndk.aiGuardrails.setMode(true);
 
 // Or enable with specific skips
 ndk.aiGuardrails.setMode({
-  skip: new Set(['filter-large-limit'])
+    skip: new Set(['filter-large-limit'])
 });
 
 // Disable entirely
@@ -354,6 +372,7 @@ ndk.aiGuardrails.setMode(false);
 ## Error Messages
 
 When a guardrail is triggered, it will:
+
 1. **Log to console.error** (visible even if the exception is caught)
 2. **Throw an Error** (stops execution)
 
@@ -362,6 +381,7 @@ Both "ERROR" and "WARNING" level checks throw exceptions - warnings are not just
 ### Fatal vs Non-Fatal Errors
 
 Some errors are **fatal** - they represent fundamental mistakes that cannot be bypassed:
+
 - Missing event kind
 - Content as object instead of string
 - Timestamps in milliseconds instead of seconds
@@ -399,8 +419,8 @@ Enable all guardrails during development:
 
 ```typescript
 const ndk = new NDK({
-  aiGuardrails: true,
-  // ... other options
+    aiGuardrails: true,
+    // ... other options
 });
 ```
 
@@ -410,8 +430,8 @@ Keep guardrails disabled in production for zero performance impact:
 
 ```typescript
 const ndk = new NDK({
-  aiGuardrails: process.env.NODE_ENV === 'development',
-  // ... other options
+    aiGuardrails: process.env.NODE_ENV === 'development',
+    // ... other options
 });
 ```
 
@@ -422,7 +442,10 @@ If you're using AI to generate code, enable guardrails and let the AI learn from
 ```typescript
 // In your prompt/system message:
 "When NDK throws an AI_GUARDRAILS error, read the error message carefully.
-It explains what's wrong and how to fix it. Update your code accordingly."
+It
+explains
+what
+'s wrong and how to fix it. Update your code accordingly."
 ```
 
 The AI can also programmatically skip checks it knows are safe:
@@ -430,7 +453,7 @@ The AI can also programmatically skip checks it knows are safe:
 ```typescript
 // LLM can disable specific checks when it knows what it's doing
 ndk.aiGuardrails.skip('filter-large-limit'); // I know I need 5000 events
-ndk.subscribe({ kinds: [1], limit: 5000 });
+ndk.subscribe({kinds: [1], limit: 5000});
 ```
 
 ## Complete Check ID Reference
@@ -438,7 +461,7 @@ ndk.subscribe({ kinds: [1], limit: 5000 });
 Import these for type-safe check IDs:
 
 ```typescript
-import { GuardrailCheckId } from '@nostr-dev-kit/ndk';
+import {GuardrailCheckId} from '@nostr-dev-kit/ndk';
 
 // All available check IDs:
 GuardrailCheckId.FILTER_BECH32_IN_ARRAY
@@ -497,10 +520,10 @@ Example:
 
 ```typescript
 if (ndk?.aiGuardrails.isEnabled()) {
-  ndk.aiGuardrails.error(
-    GuardrailCheckId.YOUR_NEW_CHECK,
-    "Clear explanation of what's wrong",
-    "Helpful hint on how to fix it"
-  );
+    ndk.aiGuardrails.error(
+        GuardrailCheckId.YOUR_NEW_CHECK,
+        "Clear explanation of what's wrong",
+        "Helpful hint on how to fix it"
+    );
 }
 ```

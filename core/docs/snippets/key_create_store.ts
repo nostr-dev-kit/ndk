@@ -15,5 +15,6 @@ if (restoredButEncrypted) {
     // Later, restore the signer
     const restoredSigner = NDKPrivateKeySigner.fromNcryptsec(restoredButEncrypted, password);
 
-    console.log(restoredSigner);
+    console.log("Original pubkey:", signer.pubkey);
+    console.log("Restored pubkey:", restoredSigner.pubkey);
 }

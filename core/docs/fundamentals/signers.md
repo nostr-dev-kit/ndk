@@ -117,7 +117,7 @@ use [NIP-49](https://github.com/nostr-protocol/nips/blob/master/49.md) (ncryptse
 
 <<< @/core/docs/snippets/key_create_store.ts
 
-See [Encrypted Keys (NIP-49)](./encrypted-keys-nip49.md) for more examples and best practices.
+See [Encrypted Keys (NIP-49)](/core/docs/advanced/encrypted-keys-nip49.md) for more examples and best practices.
 
 ## Code Snippets
 

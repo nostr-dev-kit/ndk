@@ -4,27 +4,7 @@ This snippet demonstrates how to encrypt and decrypt private keys using NIP-49 (
 
 ## Basic Encryption and Decryption
 
-```typescript
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-
-// Generate or load a signer
-const signer = NDKPrivateKeySigner.generate();
-
-// Encrypt the private key with a password
-const password = "user-chosen-password";
-const ncryptsec = signer.encryptToNcryptsec(password);
-
-// Store the encrypted key (e.g., localStorage, database)
-localStorage.setItem("encrypted_key", ncryptsec);
-
-// Later, restore the signer from the encrypted key
-const storedKey = localStorage.getItem("encrypted_key");
-const restoredSigner = NDKPrivateKeySigner.fromNcryptsec(storedKey, password);
-
-console.log("Original pubkey:", signer.pubkey);
-console.log("Restored pubkey:", restoredSigner.pubkey);
-// Both will match!
-```
+<<< @/core/docs/snippets/key_create_store.ts
 
 ## Security Parameters
 
@@ -126,24 +106,7 @@ main().catch(console.error);
 
 For advanced use cases, you can access the raw NIP-49 functions:
 
-```typescript
-import { nip49 } from "@nostr-dev-kit/ndk";
-import { hexToBytes, bytesToHex } from "@noble/hashes/utils";
-
-// Encrypt raw private key bytes
-const privateKeyHex = "14c226dbdd865d5e1645e72c7470fd0a17feb42cc87b750bab6538171b3a3f8a";
-const privateKeyBytes = hexToBytes(privateKeyHex);
-const password = "my-password";
-
-const ncryptsec = nip49.encrypt(privateKeyBytes, password, 16, 0x02);
-console.log("Encrypted:", ncryptsec);
-
-// Decrypt to raw bytes
-const decryptedBytes = nip49.decrypt(ncryptsec, password);
-const decryptedHex = bytesToHex(decryptedBytes);
-console.log("Decrypted:", decryptedHex);
-// Will match original privateKeyHex
-```
+<<< @/core/docs/snippets/nip-49-encrypting.ts
 
 ## Security Best Practices
 

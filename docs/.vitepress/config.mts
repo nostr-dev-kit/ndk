@@ -163,6 +163,10 @@ export default defineConfig({
                         link: "/core/docs/advanced/exclusive-relay"
                     },
                     {
+                        text: "Encrypting Keys (NIP-49) ✅",
+                        link: "/core/docs/advanced/encrypted-keys-nip49"
+                    },
+                    {
                         text: "Subscription Lifecycle ❌",
                         link: "/core/docs/advanced/subscription-internals"
                     },

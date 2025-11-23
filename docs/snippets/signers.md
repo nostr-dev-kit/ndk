@@ -21,3 +21,7 @@
 ### Encrypt/Decrypt Keypair
 
 <<< @/core/docs/snippets/key_create_store.ts
+
+### NIP-49 encryption
+
+<<< @/core/docs/snippets/nip-49-encrypting.ts

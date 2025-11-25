@@ -4,7 +4,7 @@
 
 A simple example of how to use NDK in a Node.js application:
 
-<<< @/core/docs/snippets/quick-start-with-guardrails.ts
+<<< @/core/docs/snippets/examples/quick-start-with-guardrails.ts
 
 ## NDK Usage
 

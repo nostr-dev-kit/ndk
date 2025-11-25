@@ -27,7 +27,8 @@ Default to using Bun instead of Node.js.
 
 Use `bun test` to run tests.
 
-```ts#index.test.ts
+```ts
+// index.test.ts
 import { test, expect } from "bun:test";
 
 test("hello world", () => {
@@ -41,7 +42,8 @@ Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully suppor
 
 Server:
 
-```ts#index.ts
+```ts
+// index.ts
 import index from "./index.html"
 
 Bun.serve({
@@ -74,7 +76,8 @@ Bun.serve({
 
 HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
 
-```html#index.html
+```html
+<!--index.html-->
 <html>
   <body>
     <h1>Hello, world!</h1>
@@ -85,7 +88,8 @@ HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will tr
 
 With the following `frontend.tsx`:
 
-```tsx#frontend.tsx
+```tsx
+//frontend.tsx
 import React from "react";
 
 // import .css files directly and it works

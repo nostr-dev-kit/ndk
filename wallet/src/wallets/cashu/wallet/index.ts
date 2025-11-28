@@ -6,6 +6,7 @@ import {
     type Hexpubkey,
     type LnPaymentInfo,
     NDKCashuMintList,
+    NDKCashuWalletTx,
     NDKEvent,
     type NDKFilter,
     NDKKind,
@@ -28,6 +29,7 @@ import {
     NDKWallet,
     type NDKWalletBalance,
     NDKWalletStatus,
+    type NDKWalletTransaction,
     type NDKWalletTypes,
     type RedeemNutzapsOpts,
 } from "../../index.js";
@@ -778,6 +780,82 @@ export class NDKCashuWallet extends NDKWallet {
     async getMintInfo(mintUrl: string): Promise<GetInfoResponse | undefined> {
         const cashuWallet = await this.getCashuWallet(mintUrl);
         return await cashuWallet.mint.getInfo();
+    }
+
+    /**
+     * Fetches transaction history (kind 7376) for this wallet.
+     */
+    async fetchTransactions(): Promise<NDKWalletTransaction[]> {
+        const user = await this.ndk.signer?.user();
+        if (!user) return [];
+
+        const events = await this.ndk.fetchEvents(
+            { kinds: [NDKKind.CashuWalletTx], authors: [user.pubkey] },
+            { cacheUsage: NDKSubscriptionCacheUsage.PARALLEL },
+            this.relaySet,
+        );
+
+        const transactions: NDKWalletTransaction[] = [];
+        for (const event of events) {
+            const tx = await NDKCashuWalletTx.from(event);
+            if (tx) {
+                transactions.push(this.txEventToTransaction(tx));
+            }
+        }
+
+        return transactions.sort((a, b) => b.timestamp - a.timestamp);
+    }
+
+    /**
+     * Subscribes to transaction updates (kind 7376) for real-time updates.
+     */
+    subscribeTransactions(callback: (tx: NDKWalletTransaction) => void): () => void {
+        const user = this.ndk.activeUser;
+        if (!user) return () => {};
+
+        const seenIds = new Set<string>();
+
+        // First fetch existing transactions
+        this.fetchTransactions().then((txs) => {
+            for (const tx of txs) {
+                if (!seenIds.has(tx.id)) {
+                    seenIds.add(tx.id);
+                    callback(tx);
+                }
+            }
+        });
+
+        // Then subscribe for new ones
+        const sub = this.ndk.subscribe(
+            { kinds: [NDKKind.CashuWalletTx], authors: [user.pubkey] },
+            {
+                closeOnEose: false,
+                relaySet: this.relaySet,
+                onEvent: async (event: NDKEvent) => {
+                    if (seenIds.has(event.id)) return;
+                    seenIds.add(event.id);
+
+                    const tx = await NDKCashuWalletTx.from(event);
+                    if (tx) {
+                        callback(this.txEventToTransaction(tx));
+                    }
+                },
+            },
+        );
+
+        return () => sub.stop();
+    }
+
+    private txEventToTransaction(tx: NDKCashuWalletTx): NDKWalletTransaction {
+        return {
+            id: tx.id,
+            direction: tx.direction ?? "out",
+            amount: tx.amount ?? 0,
+            timestamp: tx.created_at ?? 0,
+            description: tx.description,
+            fee: tx.fee,
+            mint: tx.mint,
+        };
     }
 }
 

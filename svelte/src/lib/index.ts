@@ -2,7 +2,7 @@
 
 // Re-export session types from ndk-sessions
 export type { LoginOptions, NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
-export { NDKWalletStatus } from "@nostr-dev-kit/wallet";
+export { NDKWalletStatus, type NDKWalletTransaction } from "@nostr-dev-kit/wallet";
 // Re-export WoT utilities
 export { createWoTComparator, filterByWoT, rankByWoT } from "@nostr-dev-kit/wot";
 // Blossom

@@ -36,9 +36,14 @@ export function query(
     this: NDKCacheAdapterSqliteWasm,
     subscription: NDKSubscription,
 ): NDKEvent[] | Promise<NDKEvent[]> {
+    // If in degraded mode, return empty results (no cache available)
+    if (this.degradedMode) return [];
+
     if (!this.ready) {
         if (this.initializationPromise) {
             return this.initializationPromise.then(async () => {
+                // Check again after initialization completes
+                if (this.degradedMode) return [];
                 return await queryWorker.call(this, subscription);
             });
         }

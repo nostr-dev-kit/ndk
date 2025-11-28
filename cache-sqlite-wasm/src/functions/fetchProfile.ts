@@ -10,11 +10,14 @@ export async function fetchProfile(
 ): Promise<NDKCacheEntry<NDKUserProfile> | null> {
     await this.ensureInitialized();
 
-    // Check LRU cache first
+    // Check LRU cache first (works even in degraded mode)
     const cached = this.metadataCache?.getProfile(pubkey);
     if (cached) {
         return cached;
     }
+
+    // If in degraded mode, return null (only LRU cache available)
+    if (this.degradedMode) return null;
 
     const result = await this.postWorkerMessage<{ profile?: string; updated_at?: number }>({
         type: "fetchProfile",

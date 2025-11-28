@@ -14,9 +14,12 @@ export async function saveProfile(
 
     await this.ensureInitialized();
 
-    // Update LRU cache immediately
+    // Update LRU cache immediately (works even in degraded mode)
     const entry = { ...profile, cachedAt: updatedAt };
     this.metadataCache?.setProfile(pubkey, entry);
+
+    // If in degraded mode, skip persistent storage (LRU cache only)
+    if (this.degradedMode) return;
 
     await this.postWorkerMessage({
         type: "saveProfile",

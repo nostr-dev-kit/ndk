@@ -7,19 +7,12 @@ import {
     type NDKWallet,
     type NDKWalletBalance,
     NDKWalletStatus,
+    type NDKWalletTransaction,
 } from "@nostr-dev-kit/wallet";
 
 export interface Mint {
     url: string;
     balance: number;
-}
-
-export interface Transaction {
-    type: "send" | "receive";
-    amount: number;
-    timestamp: number;
-    memo?: string;
-    status: string;
 }
 
 /**
@@ -37,6 +30,7 @@ export interface Transaction {
  */
 export class ReactiveWalletStore {
     balance = $state<number>(0);
+    transactions = $state<NDKWalletTransaction[]>([]);
     #wallet = $state<NDKWallet | undefined>(undefined);
     status = $state<NDKWalletStatus>(NDKWalletStatus.INITIAL);
     #ndk: NDK;
@@ -44,6 +38,7 @@ export class ReactiveWalletStore {
     #currentWalletEventId?: string;
     #currentPubkey?: string;
     #syncing = false;
+    #txUnsubscribe?: () => void;
 
     constructor(ndk: NDK, sessionManager: NDKSessionManager) {
         this.#ndk = ndk;
@@ -124,9 +119,11 @@ export class ReactiveWalletStore {
             this.#wallet.off("balance_updated", this.#handleBalanceUpdate);
             this.#wallet.off("status_changed", this.#handleStatusChange);
         }
+        this.#txUnsubscribe?.();
 
         this.#wallet = wallet;
         this.status = wallet.status;
+        this.transactions = [];
 
         // Register wallet with NDK so its payment methods are available to NDKZapper
         this.#ndk.wallet = wallet;
@@ -134,6 +131,17 @@ export class ReactiveWalletStore {
         // Subscribe to balance updates
         wallet.on("balance_updated", this.#handleBalanceUpdate);
         wallet.on("status_changed", this.#handleStatusChange);
+
+        // Subscribe to transactions
+        this.#txUnsubscribe = wallet.subscribeTransactions((tx) => {
+            // Insert sorted by timestamp (newest first)
+            const idx = this.transactions.findIndex((t) => t.timestamp < tx.timestamp);
+            if (idx === -1) {
+                this.transactions = [...this.transactions, tx];
+            } else {
+                this.transactions = [...this.transactions.slice(0, idx), tx, ...this.transactions.slice(idx)];
+            }
+        });
 
         // Get initial balance
         void this.refreshBalance();
@@ -180,8 +188,12 @@ export class ReactiveWalletStore {
             this.#wallet.off("balance_updated", this.#handleBalanceUpdate);
             this.#wallet.off("status_changed", this.#handleStatusChange);
         }
+        this.#txUnsubscribe?.();
+        this.#txUnsubscribe = undefined;
+
         this.#wallet = undefined;
         this.balance = 0;
+        this.transactions = [];
         this.status = NDKWalletStatus.INITIAL;
         this.#currentWalletEventId = undefined;
         this.#currentPubkey = undefined;
@@ -238,14 +250,6 @@ export class ReactiveWalletStore {
         if (!wallet || !(wallet instanceof NDKCashuWallet)) return [];
         if (!wallet.relaySet) return [];
         return Array.from(wallet.relaySet.relays).map((relay) => relay.url);
-    }
-
-    /**
-     * Get transaction history
-     * TODO: Implement when $payments is ready
-     */
-    get transactions(): Transaction[] {
-        return [];
     }
 
     /**

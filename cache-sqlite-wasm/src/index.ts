@@ -47,6 +47,9 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     private nextRequestId: number = 0;
     protected initializationPromise?: Promise<void>;
 
+    // Degraded mode for WASM failures (e.g., iOS Lockdown Mode)
+    protected degradedMode = false;
+
     // Performance optimizations
     protected metadataCache: MetadataLRUCache;
 
@@ -81,8 +84,37 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
         this.initializationPromise = (async () => {
             this.ndk = ndk;
-            await this.initializeWorker();
-            this.ready = true;
+            try {
+                await this.initializeWorker();
+                this.ready = true;
+            } catch (error) {
+                this.degradedMode = true;
+
+                const errorMsg = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+                const isWasmError =
+                    errorMsg.includes('wasm') ||
+                    errorMsg.includes('webassembly') ||
+                    errorMsg.includes('compile') ||
+                    errorMsg.includes('instantiate');
+
+                if (isWasmError) {
+                    console.warn(
+                        '[NDK Cache SQLite WASM] Running in degraded mode - WebAssembly unavailable.\n' +
+                        'This is expected in:\n' +
+                        '  • iOS/iPadOS Lockdown Mode\n' +
+                        '  • Browsers with WASM disabled\n' +
+                        '  • Restricted security environments\n\n' +
+                        'The app will continue to function normally, but events will not be cached locally.\n' +
+                        'All data will be fetched directly from Nostr relays.'
+                    );
+                } else {
+                    console.error(
+                        '[NDK Cache SQLite WASM] Initialization failed, running in degraded mode.\n' +
+                        'Cache will not persist data, but app will continue to function.\n' +
+                        'Error:', error
+                    );
+                }
+            }
         })();
 
         return this.initializationPromise;
@@ -390,6 +422,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
     public async ensureInitialized(): Promise<void> {
         if (this.ready) return;
+        if (this.degradedMode) return; // Gracefully skip if in degraded mode
         if (this.initializationPromise) {
             await this.initializationPromise;
         }

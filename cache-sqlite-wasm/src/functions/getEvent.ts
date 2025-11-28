@@ -7,6 +7,9 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Promise<NDKEvent | null> {
     await this.ensureInitialized();
 
+    // If in degraded mode, return null (no cache available)
+    if (this.degradedMode) return null;
+
     const result = await this.postWorkerMessage<{ raw?: string }>({
         type: "getEvent",
         payload: { id },

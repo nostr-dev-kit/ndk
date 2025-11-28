@@ -97,6 +97,9 @@ export async function setEvent(
     // Ensure the adapter is initialized before trying to use it
     await this.ensureInitialized();
 
+    // If in degraded mode, silently skip caching
+    if (this.degradedMode) return;
+
     // Batch events to reduce worker communication
     await this.batchEvent({
         id: event.id,

@@ -10,7 +10,8 @@
     "devDependencies": {
         "svelte": "^5.43.3",
         "syncpack": "^13.0.4",
-        "turbo": "^2.6.0"
+        "turbo": "^2.6.0",
+        "typescript": "^5.9.3"
     },
     "engines": {
         "node": ">=16.0"

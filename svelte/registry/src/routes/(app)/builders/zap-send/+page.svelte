@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ndk } from '$lib/site/ndk.svelte';
   import { createZapSendAction } from '$lib/registry/builders/zap-send/index.svelte.js';
   import { NDKEvent } from '@nostr-dev-kit/ndk';

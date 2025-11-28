@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setContext, getContext } from 'svelte';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { createFetchEvent, type NDKSvelte } from '@nostr-dev-kit/svelte';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import { defaultContentRenderer, type ContentRenderer } from './content-renderer';
 	import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from './content-renderer/content-renderer.context.js';
@@ -32,29 +32,10 @@
 		get renderer() { return renderer; }
 	});
 
-	// Fetch event from bech32
-	let event = $state<NDKEvent | undefined>(undefined);
-	let loading = $state(true);
-	let error = $state<Error | undefined>(undefined);
-
-	$effect(() => {
-		loading = true;
-		error = undefined;
-		event = undefined;
-
-		ndk.fetchEvent(bech32).then(fetchedEvent => {
-			event = fetchedEvent ?? undefined;
-			loading = false;
-		}).catch(err => {
-			error = err;
-			loading = false;
-		});
-	});
-
-	const embedded = $derived({ event, loading, error });
+	const eventFetcher = createFetchEvent(() => ({ bech32 }))
 
 	// Lookup handler from registry for this specific kind
-	let handlerInfo = $derived(renderer.getKindHandler(embedded.event?.kind));
+	let handlerInfo = $derived(renderer.getKindHandler(eventFetcher.event?.kind));
 
 	// Use kind-specific handler
 	let KindHandler = $derived(handlerInfo?.component);
@@ -64,9 +45,9 @@
 
 	// Wrap event using NDK wrapper class if available (only for kind-specific handlers)
 	let wrappedEvent = $derived(
-		embedded.event && handlerInfo?.wrapper?.from
-			? handlerInfo.wrapper.from(embedded.event)
-			: embedded.event
+		eventFetcher.event && handlerInfo?.wrapper?.from
+			? handlerInfo.wrapper.from(eventFetcher.event)
+			: eventFetcher.event
 	);
 
 	// Handle click on embedded event
@@ -78,12 +59,12 @@
 	}
 </script>
 
-{#if embedded.loading}
+{#if eventFetcher.loading}
 	<div class="flex items-center gap-2 p-3 rounded-lg border border-border bg-muted text-sm {className}">
 		<div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
 		<span>Loading event...</span>
 	</div>
-{:else if embedded.error}
+{:else if eventFetcher.error}
 	<div class="p-3 rounded-lg border border-border bg-muted text-sm text-destructive {className}">
 		<span>Failed to load event</span>
 	</div>

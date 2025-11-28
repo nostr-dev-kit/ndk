@@ -1,4 +1,4 @@
-import type { NDKEvent } from '@nostr-dev-kit/ndk';
+import { filterAndRelaySetFromBech32, type NDKEvent, type NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { getNDK } from '../../../utils/ndk/index.svelte.js';
 
@@ -10,6 +10,7 @@ export interface FetchEventState {
 
 export interface FetchEventConfig {
     bech32: string;
+    opts?: NDKSubscriptionOptions
 }
 
 /**
@@ -53,26 +54,30 @@ export function createFetchEvent(
     let error = $state<string | null>(null);
 
     $effect(() => {
-        const { bech32: currentBech32 } = config();
+        const { bech32: currentBech32, opts } = config();
         if (!currentBech32) return;
 
         loading = true;
         error = null;
 
-        ndk.fetchEvent(currentBech32)
-            .then(event => {
-                if (event) {
-                    fetchedEvent = event;
-                } else {
-                    error = 'Event not found';
-                }
-                loading = false;
-            })
-            .catch(err => {
-                console.error('Failed to fetch event:', err);
-                error = 'Failed to load event';
-                loading = false;
-            });
+        const { filter, relaySet } = filterAndRelaySetFromBech32(currentBech32, ndk);
+
+        ndk.subscribe(
+            filter,
+            { relaySet, closeOnEose: true, ...opts },
+            {
+                onEvent: (e: NDKEvent) => {
+                    if (fetchedEvent?.created_at && e.created_at && fetchedEvent?.created_at > e.created_at) return;
+                    if (fetchedEvent?.id && e.id && fetchedEvent?.id === e.id) return;
+
+                    fetchedEvent = e;
+                    loading = false;
+                },
+                onEose: () => {
+                    loading = false;
+                },
+            },
+        );
     });
 
     return {

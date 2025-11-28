@@ -169,6 +169,7 @@ export class NDKNip46Backend {
         const { id, method, params } = (await this.rpc.parseEvent(event)) as any;
         const remotePubkey = event.pubkey;
         let response: string | undefined;
+        let errorHandled = false;
 
         this.debug("incoming event", { id, method, params });
 
@@ -186,17 +187,29 @@ export class NDKNip46Backend {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (e: any) {
                 this.debug("error handling event", e, { id, method, params });
-                this.rpc.sendResponse(id, remotePubkey, "error", undefined, e.message);
+                errorHandled = true;
+                try {
+                    await this.rpc.sendResponse(id, remotePubkey, "error", undefined, e.message);
+                } catch (sendError: any) {
+                    this.debug("failed to send error response", sendError);
+                }
             }
         } else {
             this.debug("unsupported method", { method, params });
         }
 
-        if (response) {
-            this.debug(`sending response to ${remotePubkey}`, response);
-            this.rpc.sendResponse(id, remotePubkey, response);
-        } else {
-            this.rpc.sendResponse(id, remotePubkey, "error", undefined, "Not authorized");
+        // Only send response if we haven't already handled an error
+        if (!errorHandled) {
+            try {
+                if (response) {
+                    this.debug(`sending response to ${remotePubkey}`, response);
+                    await this.rpc.sendResponse(id, remotePubkey, response);
+                } else {
+                    await this.rpc.sendResponse(id, remotePubkey, "error", undefined, "Not authorized");
+                }
+            } catch (sendError: any) {
+                this.debug("failed to send response", sendError);
+            }
         }
     }
 

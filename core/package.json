@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk",
-  "version": "3.0.0-beta.62",
+  "version": "3.0.0-beta.63",
   "description": "NDK - Nostr Development Kit. Includes AI Guardrails to catch common mistakes during development.",
   "homepage": "https://ndk.fyi",
   "documentation": "https://nostr-dev-kit.github.io/ndk",

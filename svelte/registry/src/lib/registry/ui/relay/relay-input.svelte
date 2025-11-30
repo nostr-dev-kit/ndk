@@ -36,7 +36,7 @@
 	const ndk = getNDK(providedNdk);
 
 	let normalizedUrl = $state('');
-	let debounceTimer: NodeJS.Timeout | null = null;
+	let debounceTimer: number | null = null;
 
 	// Normalize relay URL by adding wss:// prefix if missing
 	function normalizeUrl(url: string): string {

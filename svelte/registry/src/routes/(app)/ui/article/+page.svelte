@@ -250,15 +250,16 @@
         <CodeBlock
           lang="typescript"
           code={`import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
+import { createFetchEvent } from '@nostr-dev-kit/svelte';
 
 // Fetch a specific article
-const event = await ndk.fetchEvent({
+const fetcher = createFetchEvent(ndk, () => ({
   kinds: [NDKKind.Article], // 30023
   authors: [authorPubkey],
   '#d': [articleIdentifier]
-});
+}));
 
-const article = NDKArticle.from(event);
+const article = $derived(fetcher.event ? NDKArticle.from(fetcher.event) : null);
 
 // Subscribe to articles
 const sub = ndk.subscribe({

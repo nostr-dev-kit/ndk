@@ -38,25 +38,6 @@
   let pack4 = $state<NDKFollowPack | undefined>();
   let pack5 = $state<NDKFollowPack | undefined>();
 
-  $effect(() => {
-    (async () => {
-      const fetched = await ndk.fetchEvents({
-        kinds: [NDKKind.FollowPack],
-        limit: 10
-      });
-      const packs = Array.from(fetched).map((e) => NDKFollowPack.from(e));
-      followPacks = packs;
-
-      if (packs.length > 0) {
-        if (!pack1) pack1 = packs[0];
-        if (!pack2 && packs.length > 1) pack2 = packs[1];
-        if (!pack3 && packs.length > 2) pack3 = packs[2];
-        if (!pack4 && packs.length > 3) pack4 = packs[3];
-        if (!pack5 && packs.length > 4) pack5 = packs[4];
-      }
-    })();
-  });
-
   const displayPacks = $derived([pack1, pack2, pack3, pack4, pack5].filter(Boolean) as NDKFollowPack[]);
 
   // Anatomy layers for the component anatomy viewer
@@ -117,7 +98,7 @@
 {#snippet heroPreview()}
   {#if pack1}
     <div class="min-w-[800px]">
-      <FollowPackHero {ndk} followPack={pack1} />
+      {pack1.content}
     </div>
   {/if}
 {/snippet}
@@ -224,9 +205,9 @@
   {componentsSection}
   {primitives}
 >
-  <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} options={followPacks} default="naddr1qvzqqqyckypzp7gpv9hspf3lf7w83qw5sudq8heafnh89y02l4ade0h20j2utr38qythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qqvdajx2mn2duexudfcxfhs0c040z" />
-  <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} options={followPacks} default="naddr1qvzqqqyckypzpw9fm7ppszzwfyxc3q6z482g3d70p7eqkxseh93mantga44ttjaaqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qqvd5env7t4ddcxgdttw3esjyw7cr" />
-  <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} options={followPacks} default="naddr1qvzqqqyckypzqlrkt4q86w5at6s30juts6vk9ptq0plupp9qca404fzfh773y8vyqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqx8gupedph8zurwvd3kxmcu58dse" />
-  <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} options={followPacks} default="naddr1qvzqqqyckypzpm0yzdfrja6cz4z3g9ytysgjxzxwm9k3yy3fkrn2v679526qcqlvqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqdhxarjv4sk6etjwdrx7mrvdam4qctrdd5rsjm6xdgryugz7ju6m" />
-  <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} options={followPacks} default="naddr1qvzqqqyckypzpaf8e7tsecnquapxzg2t7cfw3a66t8d3sd0d0eq9xvnv8aj7yvhwqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxxyumzxscxka3edemhydq4wdqvs" />
+  <EditProps.Prop name="Pack 1" type="event" bind:value={pack1} default="naddr1qvzqqqyckypzp7gpv9hspf3lf7w83qw5sudq8heafnh89y02l4ade0h20j2utr38qythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qqvdajx2mn2duexudfcxfhs0c040z" />
+  <EditProps.Prop name="Pack 2" type="event" bind:value={pack2} default="naddr1qvzqqqyckypzpw9fm7ppszzwfyxc3q6z482g3d70p7eqkxseh93mantga44ttjaaqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qqvd5env7t4ddcxgdttw3esjyw7cr" />
+  <EditProps.Prop name="Pack 3" type="event" bind:value={pack3} default="naddr1qvzqqqyckypzqlrkt4q86w5at6s30juts6vk9ptq0plupp9qca404fzfh773y8vyqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqx8gupedph8zurwvd3kxmcu58dse" />
+  <EditProps.Prop name="Pack 4" type="event" bind:value={pack4} default="naddr1qvzqqqyckypzpm0yzdfrja6cz4z3g9ytysgjxzxwm9k3yy3fkrn2v679526qcqlvqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqdhxarjv4sk6etjwdrx7mrvdam4qctrdd5rsjm6xdgryugz7ju6m" />
+  <EditProps.Prop name="Pack 5" type="event" bind:value={pack5} default="naddr1qvzqqqyckypzpaf8e7tsecnquapxzg2t7cfw3a66t8d3sd0d0eq9xvnv8aj7yvhwqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxxyumzxscxka3edemhydq4wdqvs" />
 </ComponentPageTemplate>

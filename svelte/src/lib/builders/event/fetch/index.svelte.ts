@@ -1,6 +1,5 @@
-import type { NDKEvent } from '@nostr-dev-kit/ndk';
+import { filterAndRelaySetFromBech32, type NDKEvent, type NDKSubscriptionOptions, type NDKFilter } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '../../../ndk-svelte.svelte.js';
-import { resolveNDK } from '../../resolve-ndk.svelte.js';
 
 export interface FetchEventState {
     event: NDKEvent | null;
@@ -8,33 +7,30 @@ export interface FetchEventState {
     error: string | null;
 }
 
-export interface FetchEventConfig {
-    bech32: string | undefined;
-}
+export type FetchEventConfig =
+    | { bech32: string; opts?: NDKSubscriptionOptions }
+    | (NDKFilter & { opts?: NDKSubscriptionOptions })
 
 /**
- * Create reactive state for fetching an event by bech32 reference
+ * Create reactive state for fetching an event by bech32 reference or filter
  *
- * Fetches events from bech32 references (note1, nevent1, naddr1).
+ * Fetches events from bech32 references (note1, nevent1, naddr1) or filter objects.
  *
- * @param config - Function returning configuration with bech32 reference (can be undefined)
- * @param ndk - Optional NDK instance (uses context if not provided)
+ * @param ndk - NDK instance
+ * @param config - Function returning configuration with bech32 reference or filter
  *
  * @example
  * ```ts
- * // NDK from context
- * const fetcher = createFetchEvent(() => ({ bech32: 'note1...' }));
+ * // With bech32
+ * const fetcher = createFetchEvent(ndk, () => ({ bech32: 'note1...' }));
  *
- * // Or with explicit NDK
- * const fetcher = createFetchEvent(() => ({ bech32: 'note1...' }), ndk);
- *
- * // With potentially undefined bech32
- * const fetcher = createFetchEvent(() => ({ bech32: $page.params.id }));
+ * // With filter
+ * const fetcher = createFetchEvent(ndk, () => ({ kinds: [3], authors: [pubkey] }));
  *
  * // Access state
  * fetcher.event // The fetched event
- * fetcher.loading // Loading state (false when bech32 is undefined)
- * fetcher.error // Error message if any ("No event provided" when bech32 is undefined)
+ * fetcher.loading // Loading state
+ * fetcher.error // Error message if any
  *
  * // Use in template
  * {#if fetcher.loading}
@@ -47,40 +43,57 @@ export interface FetchEventConfig {
  * ```
  */
 export function createFetchEvent(
-    config: () => FetchEventConfig,
-    ndk?: NDKSvelte
+    ndk: NDKSvelte,
+    config: () => FetchEventConfig
 ): FetchEventState {
-    const resolvedNDK = resolveNDK(ndk);
     let fetchedEvent = $state<NDKEvent | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);
 
     $effect(() => {
-        const { bech32: currentBech32 } = config();
-        if (!currentBech32) {
-            loading = false;
-            error = 'No event provided';
-            fetchedEvent = null;
-            return;
-        }
+        const cfg = config();
 
         loading = true;
         error = null;
 
-        resolvedNDK.fetchEvent(currentBech32)
-            .then(event => {
-                if (event) {
-                    fetchedEvent = event;
-                } else {
-                    error = 'Event not found';
-                }
-                loading = false;
-            })
-            .catch(err => {
-                console.error('Failed to fetch event:', err);
-                error = 'Failed to load event';
-                loading = false;
-            });
+        let filter: NDKFilter;
+        let relaySet: any = undefined;
+        let opts: NDKSubscriptionOptions | undefined;
+
+        // Check if config has bech32 property
+        if ('bech32' in cfg) {
+            if (!cfg.bech32) return;
+            const result = filterAndRelaySetFromBech32(cfg.bech32, ndk);
+            filter = result.filter;
+            relaySet = result.relaySet;
+            opts = cfg.opts;
+        } else {
+            // Extract opts from filter config
+            const { opts: configOpts, ...filterProps } = cfg;
+            filter = filterProps as NDKFilter;
+            opts = configOpts;
+        }
+
+        const sub = ndk.subscribe(
+            filter,
+            { relaySet, closeOnEose: true, ...opts },
+            {
+                onEvent: (e: NDKEvent) => {
+                    if (fetchedEvent?.created_at && e.created_at && fetchedEvent?.created_at > e.created_at) return;
+                    if (fetchedEvent?.id && e.id && fetchedEvent?.id === e.id) return;
+
+                    fetchedEvent = e;
+                    loading = false;
+                },
+                onEose: () => {
+                    loading = false;
+                },
+            },
+        );
+
+        return () => {
+            sub?.stop();
+        };
     });
 
     return {

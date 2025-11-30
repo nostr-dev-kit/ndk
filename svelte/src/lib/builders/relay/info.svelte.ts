@@ -1,4 +1,3 @@
-import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
 import { normalizeRelayUrl, type NDKRelayInformation } from '@nostr-dev-kit/ndk';
 import { SvelteMap } from 'svelte/reactivity';
 
@@ -93,11 +92,7 @@ export interface RelayInfoConfig {
  *
  * @example
  * ```ts
- * // NDK from context (NDK not used by this builder)
  * const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }));
- *
- * // Or with explicit NDK (for consistency, though not used)
- * const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
  *
  * // Access reactive state
  * console.log(relay.url);          // normalized URL
@@ -106,8 +101,7 @@ export interface RelayInfoConfig {
  * ```
  */
 export function createRelayInfo(
-    config: () => RelayInfoConfig,
-    ndk?: NDKSvelte
+    config: () => RelayInfoConfig
 ): RelayInfoState {
     // Handle falsy URLs gracefully
     const normalizedUrl = $derived.by(() => {

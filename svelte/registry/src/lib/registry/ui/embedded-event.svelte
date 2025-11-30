@@ -32,7 +32,7 @@
 		get renderer() { return renderer; }
 	});
 
-	const eventFetcher = createFetchEvent(() => ({ bech32 }))
+	const eventFetcher = createFetchEvent(ndk, () => ({ bech32 }))
 
 	// Lookup handler from registry for this specific kind
 	let handlerInfo = $derived(renderer.getKindHandler(eventFetcher.event?.kind));
@@ -87,10 +87,5 @@
 		<FallbackHandler {ndk} event={wrappedEvent} class={className} />
 	{/if}
 {:else if wrappedEvent}
-	<!-- NO HANDLER: Show raw bech32. Users can register generic-embedded if they want it. -->
-	{#if onclick}
-		<button onclick={handleClick} class="cursor-pointer font-mono text-sm bg-transparent border-none p-0 m-0 inline text-inherit">{bech32}</button>
-	{:else}
-		<code>{bech32}</code>
-	{/if}
+	{bech32}
 {/if}

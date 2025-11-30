@@ -114,7 +114,7 @@ export class ContentRenderer {
 	blockNsfw: boolean = true;
 
 	/**
-	 * Component for rendering npub/nprofile mentions
+	 * Component for rendering user mentions (npub/nprofile)
 	 * If null, renders raw bech32 string
 	 */
 	mentionComponent: MentionComponent | null = null;

@@ -30,7 +30,6 @@
   // Get page data
   let { data } = $props();
   const { metadata } = data;
-	let articles = $state<NDKArticle[]>([]);
 	let loading = $state(true);
 	let article1 = $state<NDKArticle | undefined>();
 	let article2 = $state<NDKArticle | undefined>();
@@ -498,9 +497,9 @@ defaultContentRenderer.addKind(NDKArticle, ArticleCardPortrait, 10);
 		}}
 		{anatomy}
 	>
-<EditProps.Prop name="Article 1" type="article" bind:value={article1} options={articles} default="naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qq8xyatfd3jxjmn8943x7unfwvvuysuh" />
-	<EditProps.Prop name="Article 2" type="article" bind:value={article2} options={articles} default="naddr1qvzqqqr4gupzq4rqjpyzsnf2z5wgma397sxr382z8mg90l80jf7m3z2k628z9wsrqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqu8g6r994c8y6tkv93hjtt5wfshqtthdpuj67t0w4ez6enfv96z6mt0dejhjtthd9kxcttwv4mx2u3dvfjj67t0w4e8xdzhxh7" />
-	<EditProps.Prop name="Article 3" type="article" bind:value={article3} options={articles} default="naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxnzd3cx5urjd35xg6rwwpee39928" />
+<EditProps.Prop name="Article 1" type="article" bind:value={article1} default="naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qq8xyatfd3jxjmn8943x7unfwvvuysuh" />
+	<EditProps.Prop name="Article 2" type="article" bind:value={article2} default="naddr1qvzqqqr4gupzq4rqjpyzsnf2z5wgma397sxr382z8mg90l80jf7m3z2k628z9wsrqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqu8g6r994c8y6tkv93hjtt5wfshqtthdpuj67t0w4ez6enfv96z6mt0dejhjtthd9kxcttwv4mx2u3dvfjj67t0w4e8xdzhxh7" />
+	<EditProps.Prop name="Article 3" type="article" bind:value={article3} default="naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxnzd3cx5urjd35xg6rwwpee39928" />
   </ComponentPageTemplate>
 
 <!-- API Drawer -->

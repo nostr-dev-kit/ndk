@@ -8,7 +8,6 @@ export interface PropDefinition {
 	type: PropType;
 	default?: string | number | boolean;
 	value?: NDKUser | NDKEvent | NDKArticle | string | number | boolean;
-	options?: (NDKUser | NDKEvent | NDKArticle)[];
 }
 
 export interface EditPropsContext {

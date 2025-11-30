@@ -29,7 +29,7 @@
 	let { ndk, bech32, renderer, class: className = '' }: Props = $props();
 
 	// Fetch the event to determine its kind
-	const fetcher = createFetchEvent(() => ({ bech32 }), ndk);
+	const fetcher = createFetchEvent(ndk, () => ({ bech32 }));
 	const eventKind = $derived(fetcher.event?.kind);
 
 	// Determine the embed type based on kind

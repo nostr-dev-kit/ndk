@@ -1,7 +1,7 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, generateTestEventId } from "../../../../../test-utils";
+import { createTestNDK, generateTestEventId } from "../../test-utils";
 import { createFetchEvent } from "./index.svelte";
 
 describe("createFetchEvent", () => {
@@ -24,7 +24,7 @@ describe("createFetchEvent", () => {
             const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(null as any);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "note1test" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "note1test" }));
             });
 
             expect(fetchState!.loading).toBe(true);
@@ -38,7 +38,7 @@ describe("createFetchEvent", () => {
             const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(null as any);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "" }));
             });
 
             // Should not call fetchEvent with empty bech32
@@ -58,7 +58,7 @@ describe("createFetchEvent", () => {
             vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "note1test123" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "note1test123" }));
             });
 
             // Wait for async fetch to complete
@@ -79,7 +79,7 @@ describe("createFetchEvent", () => {
             const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "note1abc123" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "note1abc123" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -96,7 +96,7 @@ describe("createFetchEvent", () => {
             const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "nevent1xyz789" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "nevent1xyz789" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -113,7 +113,7 @@ describe("createFetchEvent", () => {
             const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "naddr1qwerty" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "naddr1qwerty" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -131,7 +131,7 @@ describe("createFetchEvent", () => {
             vi.spyOn(ndk, "fetchEvent").mockResolvedValue(null as any);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "note1notfound" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "note1notfound" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -148,7 +148,7 @@ describe("createFetchEvent", () => {
             vi.spyOn(ndk, "fetchEvent").mockResolvedValue(undefined as any);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "note1undefined" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "note1undefined" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -167,7 +167,7 @@ describe("createFetchEvent", () => {
             vi.spyOn(ndk, "fetchEvent").mockRejectedValue(new Error("Network error"));
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "note1error" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "note1error" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -188,7 +188,7 @@ describe("createFetchEvent", () => {
             vi.spyOn(ndk, "fetchEvent").mockRejectedValue(new Error("Invalid bech32"));
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: "invalid-bech32" }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: "invalid-bech32" }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -219,7 +219,7 @@ describe("createFetchEvent", () => {
                 .mockResolvedValueOnce(event2);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: currentBech32 }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: currentBech32 }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -251,7 +251,7 @@ describe("createFetchEvent", () => {
             const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: currentBech32 }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: currentBech32 }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -284,7 +284,7 @@ describe("createFetchEvent", () => {
                 .mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(event2), 50)));
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: currentBech32 }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: currentBech32 }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -313,7 +313,7 @@ describe("createFetchEvent", () => {
             const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(event1);
 
             cleanup = $effect.root(() => {
-                fetchState = createFetchEvent(() => ({ bech32: currentBech32 }), ndk);
+                fetchState = createFetchEvent(ndk, () => ({ bech32: currentBech32 }));
             });
 
             await new Promise(resolve => setTimeout(resolve, 10));

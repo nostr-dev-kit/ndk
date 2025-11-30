@@ -1,26 +1,19 @@
 <script lang="ts">
   import { ndk } from '$lib/site/ndk.svelte';
   import { createZapSendAction } from '$lib/registry/builders/zap-send/index.svelte.js';
-  import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { createFetchEvent } from '@nostr-dev-kit/svelte';
   import { User } from '$lib/registry/ui/user';
-  // Sample event with splits for demo
-  let sampleEvent = $state<NDKEvent | undefined>();
 
-  $effect(() => {
-    (async () => {
-      try {
-        const event = await ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
-        if (event && !sampleEvent) sampleEvent = event;
-      } catch (err) {
-        console.error('Failed to fetch sample event:', err);
-      }
-    })();
-  });
+  // Fetch sample event with splits for demo
+  const sampleEventFetcher = createFetchEvent(
+    ndk,
+    () => ({ bech32: 'nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j' })
+  );
 
   // Create the zap send action
   const zap = $derived(
-    sampleEvent
-      ? createZapSendAction(() => ({ target: sampleEvent! }), ndk)
+    sampleEventFetcher.event
+      ? createZapSendAction(() => ({ target: sampleEventFetcher.event! }), ndk)
       : null
   );
 </script>

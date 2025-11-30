@@ -1,7 +1,7 @@
 {
 	"$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/registry-config.json",
 	"name": "@ndk/svelte",
-	"version": "0.0.46",
+	"version": "0.0.47",
 	"readme": "README.md",
 	"allowSubdirectories": true,
 	"dirs": [

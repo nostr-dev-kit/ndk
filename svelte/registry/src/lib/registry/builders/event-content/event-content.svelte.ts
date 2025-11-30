@@ -24,7 +24,7 @@ export interface EventContentConfig {
  * Create reactive state for rendering event content with rich parsing
  *
  * Automatically detects and parses:
- * - User mentions (npub, nprofile)
+ * - User mentions (npub/nprofile → "mention" type)
  * - Event references (note, nevent, naddr)
  * - Media (images, videos, YouTube embeds)
  * - Custom emojis

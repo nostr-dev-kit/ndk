@@ -3,17 +3,14 @@ import { nip19 } from "@nostr-dev-kit/ndk";
 export interface ParsedSegment {
     type:
         | "text"
-        | "npub"
-        | "nprofile"
+        | "mention" // User mentions (npub/nprofile)
         | "event-ref" // Combined type for note, nevent, naddr
         | "link"
         | "media"
         | "emoji"
-        | "hashtag"
-        | "image-grid"
-        | "link-group";
+        | "hashtag";
     content: string;
-    data?: string | string[]; // bech32 string, array of image URLs, or array of link URLs
+    data?: string | string[]; // For media/link: always string[] in data field
 }
 
 // ============================================================================
@@ -67,13 +64,9 @@ export function decodeNostrUri(uri: string): ParsedSegment {
         // Validate by attempting to decode
         nip19.decode(uri);
 
-        // For user references, just store the bech32 string
-        if (prefix === "npub1") {
-            return { type: "npub", content: uri, data: uri };
-        }
-
-        if (prefix === "nprofile1") {
-            return { type: "nprofile", content: uri, data: uri };
+        // For user references (mentions), just store the bech32 string
+        if (prefix === "npub1" || prefix === "nprofile1") {
+            return { type: "mention", content: uri, data: uri };
         }
 
         // For event references, just store the bech32 string
@@ -232,15 +225,11 @@ export function groupConsecutiveImages(segments: ParsedSegment[]): ParsedSegment
     function flushImages() {
         if (imageBuffer.length === 0) return;
 
-        if (imageBuffer.length === 1) {
-            result.push({ type: "media", content: imageBuffer[0] });
-        } else {
-            result.push({
-                type: "image-grid",
-                content: "",
-                data: imageBuffer,
-            });
-        }
+        result.push({
+            type: "media",
+            content: "",
+            data: imageBuffer, // Always array, even for single image
+        });
         imageBuffer = [];
         whitespaceBuffer = [];
     }
@@ -283,15 +272,11 @@ export function groupConsecutiveLinks(segments: ParsedSegment[]): ParsedSegment[
     function flushLinks() {
         if (linkBuffer.length === 0) return;
 
-        if (linkBuffer.length === 1) {
-            result.push({ type: "link", content: linkBuffer[0] });
-        } else {
-            result.push({
-                type: "link-group",
-                content: "",
-                data: linkBuffer,
-            });
-        }
+        result.push({
+            type: "link",
+            content: "",
+            data: linkBuffer, // Always array, even for single link
+        });
         linkBuffer = [];
         whitespaceBuffer = [];
     }

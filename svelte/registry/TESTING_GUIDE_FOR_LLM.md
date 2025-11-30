@@ -1017,7 +1017,7 @@ describe("isImage", () => {
 4. **Test Data Transformations**
 ```typescript
 describe("groupConsecutiveImages", () => {
-    it("should group consecutive images into image-grid", () => {
+    it("should group consecutive images", () => {
         const segments: ParsedSegment[] = [
             { type: "media", content: "https://ex.com/1.jpg" },
             { type: "media", content: "https://ex.com/2.jpg" },
@@ -1027,12 +1027,13 @@ describe("groupConsecutiveImages", () => {
         const result = groupConsecutiveImages(segments);
 
         expect(result).toHaveLength(1);
-        expect(result[0].type).toBe("image-grid");
+        expect(result[0].type).toBe("media");
+        expect(result[0].content).toBe("");
         expect(result[0].data).toHaveLength(3);
     });
 
-    it("should not group single images", () => {
-        // Test the opposite case
+    it("should handle single images", () => {
+        // Test the opposite case - single images also get data array
     });
 
     it("should break grouping on non-image content", () => {

@@ -135,3 +135,21 @@ export function generateTestPubkey(seed: string = "test"): string {
 
     return repeated.padEnd(64, '0');
 }
+
+/**
+ * Generate a valid event ID for testing
+ *
+ * Creates a deterministic 64-character hex string for use as an event ID.
+ *
+ * @param seed - String to use as seed (defaults to "event")
+ * @returns 64-character hex string
+ *
+ * @example
+ * ```ts
+ * testEvent.id = generateTestEventId("note1");
+ * testEvent.id = generateTestEventId(); // Uses "event" as seed
+ * ```
+ */
+export function generateTestEventId(seed: string = "event"): string {
+    return generateTestPubkey(seed);
+}

@@ -473,9 +473,8 @@ console.log(kindPriorities);
         <div class="p-4 border border-border rounded-lg bg-card">
           <h4 class="font-semibold mb-2">Image Grouping</h4>
           <p class="text-sm text-muted-foreground mb-3">
-            Consecutive images separated only by whitespace (spaces, newlines) are automatically grouped into an
-            <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">image-grid</code>.
-            Single images remain as individual <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">media</code> segments.
+            Consecutive images separated only by whitespace (spaces, newlines) are automatically grouped.
+            All images (single or multiple) are stored as <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">media</code> segments with URLs in the data array.
           </p>
           <div class="bg-muted rounded-lg overflow-hidden">
             <CodeBlock
@@ -486,7 +485,7 @@ https://example.com/2.jpg
 
 https://example.com/3.jpg
 
-// Result: One image-grid with 3 images`}
+// Result: One media segment with data: [url1, url2, url3]`}
             />
           </div>
         </div>
@@ -494,9 +493,8 @@ https://example.com/3.jpg
         <div class="p-4 border border-border rounded-lg bg-card">
           <h4 class="font-semibold mb-2">Link Grouping</h4>
           <p class="text-sm text-muted-foreground mb-3">
-            Consecutive links separated only by whitespace are automatically grouped into a
-            <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">link-group</code>.
-            Single links remain as individual <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">link</code> segments.
+            Consecutive links separated only by whitespace are automatically grouped.
+            All links (single or multiple) are stored as <code class="font-mono text-[0.9em] px-1.5 py-0.5 bg-muted rounded">link</code> segments with URLs in the data array.
           </p>
           <div class="bg-muted rounded-lg overflow-hidden">
             <CodeBlock
@@ -507,7 +505,7 @@ https://nostr.com
 
 https://njump.me
 
-// Result: One link-group with 3 URLs`}
+// Result: One link segment with data: [url1, url2, url3]`}
             />
           </div>
         </div>

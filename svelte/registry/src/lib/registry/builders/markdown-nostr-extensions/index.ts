@@ -9,7 +9,7 @@ interface NostrMentionToken extends Tokens.Generic {
     type: 'nostr-mention';
     raw: string;
     bech32: string;
-    mentionType: 'npub' | 'nprofile';
+    mentionType: 'mention';
 }
 
 interface NostrEventRefToken extends Tokens.Generic {
@@ -56,12 +56,12 @@ export function createNostrMentionExtension() {
                 const bech32 = match[1];
                 const segment = decodeNostrUri(bech32);
 
-                if (segment.type === 'npub' || segment.type === 'nprofile') {
+                if (segment.type === 'mention') {
                     return {
                         type: 'nostr-mention',
                         raw: match[0],
                         bech32,
-                        mentionType: segment.type
+                        mentionType: 'mention'
                     } as NostrMentionToken;
                 }
             }

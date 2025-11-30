@@ -34,7 +34,7 @@ export type { SubscribeConfig, Subscription, SyncSubscribeConfig } from "./subsc
 // Subscription - can be used as standalone function or via ndk.$subscribe()
 export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
 // Event fetching - can be used as standalone function or via ndk.$fetchEvents()
-export { createFetchEvents, type FetchEventsConfig, type FetchEventOptions } from "./event.svelte.js";
+export { createFetchEvents, type FetchEventsConfig } from "./event.svelte.js";
 // User helpers
 export { createFetchUser, createZapInfo, type ZapInfo } from "./user.svelte.js";
 // Zap utilities and subscriptions

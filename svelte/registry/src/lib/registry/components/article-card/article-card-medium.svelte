@@ -64,10 +64,10 @@
   >
     <div class="flex items-start gap-4 sm:gap-6">
       <!-- Content -->
-      <div class="flex-1 min-w-0">
-        <Title class="text-xl sm:text-2xl mb-2 font-serif line-clamp-2" />
-        <Summary class="text-sm text-foreground/80 mb-4 leading-relaxed line-clamp-3" maxLength={150} />
-        <ReadingTime class="text-xs sm:text-sm" />
+      <div class="flex-1 min-w-0 flex flex-col">
+        <Title class="text-xl sm:text-2xl font-serif line-clamp-2" />
+        <Summary class="text-sm text-foreground/80 leading-relaxed line-clamp-3" maxLength={150} />
+        <ReadingTime class="text-xs mt-2 text-muted-foreground" />
       </div>
 
       <!-- Image -->

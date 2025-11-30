@@ -80,7 +80,7 @@ describe("createEventContent", () => {
     });
 
     describe("mention parsing", () => {
-        it("should parse npub mentions", () => {
+        it("should parse mentions (npub format)", () => {
             let contentState: ReturnType<typeof createEventContent> | undefined;
             // Note: This uses a test npub that may not pass bech32 validation
             // In production, use properly encoded npub strings
@@ -94,12 +94,12 @@ describe("createEventContent", () => {
 
             flushSync();
             // Since test npub may fail bech32 decode, just verify the pattern was detected
-            // In production with valid npub, this would create an npub segment
+            // In production with valid npub, this would create a mention segment
             expect(contentState!.segments.length).toBeGreaterThan(0);
             expect(contentState!.content).toBe(`Hello nostr:${npub} world`);
         });
 
-        it("should parse nprofile mentions", () => {
+        it("should parse mentions (nprofile format)", () => {
             let contentState: ReturnType<typeof createEventContent> | undefined;
             // Valid nprofile1 string (this will need to be a real encoded one or we mock decoding)
             const nprofile = "nprofile1qqstest123456789012345678901234567890123456789";
@@ -112,7 +112,7 @@ describe("createEventContent", () => {
 
             flushSync();
             const segments = contentState!.segments;
-            // Should have text + nprofile segments (or text if decode fails)
+            // Should have text + mention segments (or text if decode fails)
             expect(segments.length).toBeGreaterThanOrEqual(1);
         });
 
@@ -303,7 +303,7 @@ describe("createEventContent", () => {
             flushSync();
             const media = contentState!.segments.filter((s) => s.type === "media");
             expect(media).toHaveLength(1);
-            expect(media[0].content).toBe("https://example.com/image.jpg");
+            expect(media[0].data).toEqual(["https://example.com/image.jpg"]);
         });
 
         it("should detect multiple image formats", () => {
@@ -317,20 +317,15 @@ describe("createEventContent", () => {
             });
 
             flushSync();
-            // Consecutive images get grouped into image-grid
-            const imageGrids = contentState!.segments.filter((s) => s.type === "image-grid");
+            // Consecutive images get grouped into media segments
             const media = contentState!.segments.filter((s) => s.type === "media");
 
-            // Should have either an image-grid with 4 images, or 4 individual media segments
-            if (imageGrids.length > 0) {
-                const totalImages = imageGrids.reduce(
-                    (sum, grid) => sum + (Array.isArray(grid.data) ? grid.data.length : 0),
-                    0
-                );
-                expect(totalImages).toBeGreaterThanOrEqual(4);
-            } else {
-                expect(media.length).toBeGreaterThanOrEqual(4);
-            }
+            // Should have media segments with total of 4 images
+            const totalImages = media.reduce(
+                (sum, segment) => sum + (Array.isArray(segment.data) ? segment.data.length : 0),
+                0
+            );
+            expect(totalImages).toBeGreaterThanOrEqual(4);
         });
 
         it("should detect video URLs", () => {
@@ -415,12 +410,12 @@ describe("createEventContent", () => {
             });
 
             flushSync();
-            const imageGrids = contentState!.segments.filter((s) => s.type === "image-grid");
-            expect(imageGrids).toHaveLength(1);
-            expect(imageGrids[0].data).toHaveLength(3);
+            const media = contentState!.segments.filter((s) => s.type === "media");
+            expect(media).toHaveLength(1);
+            expect(media[0].data).toHaveLength(3);
         });
 
-        it("should not group single images", () => {
+        it("should handle single images", () => {
             let contentState: ReturnType<typeof createEventContent> | undefined;
 
             cleanup = $effect.root(() => {
@@ -430,10 +425,9 @@ describe("createEventContent", () => {
             });
 
             flushSync();
-            const imageGrids = contentState!.segments.filter((s) => s.type === "image-grid");
             const media = contentState!.segments.filter((s) => s.type === "media");
-            expect(imageGrids).toHaveLength(0);
             expect(media).toHaveLength(1);
+            expect(media[0].data).toHaveLength(1);
         });
 
         it("should break grouping on non-image content", () => {
@@ -446,11 +440,10 @@ describe("createEventContent", () => {
             });
 
             flushSync();
-            const imageGrids = contentState!.segments.filter((s) => s.type === "image-grid");
             const media = contentState!.segments.filter((s) => s.type === "media");
 
             // Should have one group of 2 and one standalone
-            expect(imageGrids.length + media.length).toBeGreaterThanOrEqual(2);
+            expect(media.length).toBeGreaterThanOrEqual(2);
         });
     });
 
@@ -465,12 +458,12 @@ describe("createEventContent", () => {
             });
 
             flushSync();
-            const linkGroups = contentState!.segments.filter((s) => s.type === "link-group");
-            expect(linkGroups).toHaveLength(1);
-            expect(linkGroups[0].data).toHaveLength(3);
+            const links = contentState!.segments.filter((s) => s.type === "link");
+            expect(links).toHaveLength(1);
+            expect(links[0].data).toHaveLength(3);
         });
 
-        it("should not group single links", () => {
+        it("should handle single links", () => {
             let contentState: ReturnType<typeof createEventContent> | undefined;
 
             cleanup = $effect.root(() => {
@@ -480,10 +473,9 @@ describe("createEventContent", () => {
             });
 
             flushSync();
-            const linkGroups = contentState!.segments.filter((s) => s.type === "link-group");
             const links = contentState!.segments.filter((s) => s.type === "link");
-            expect(linkGroups).toHaveLength(0);
             expect(links).toHaveLength(1);
+            expect(links[0].data).toHaveLength(1);
         });
     });
 
@@ -596,7 +588,7 @@ describe("createEventContent", () => {
 
             // Should have various segment types
             expect(segments.length).toBeGreaterThan(5);
-            expect(segments.some((s) => s.type === "npub" || s.type === "text")).toBe(true);
+            expect(segments.some((s) => s.type === "mention" || s.type === "text")).toBe(true);
             expect(segments.some((s) => s.type === "hashtag")).toBe(true);
             expect(segments.some((s) => s.type === "media")).toBe(true);
         });
@@ -618,7 +610,7 @@ describe("createEventContent", () => {
             expect(segments[0]?.content).toBe("Text");
             // Note: hashtag pattern includes leading whitespace which gets added as separate text segment
             expect(segments.some((s) => s.type === "hashtag")).toBe(true);
-            expect(segments.some((s) => s.type === "link" && s.content === "https://example.com")).toBe(
+            expect(segments.some((s) => s.type === "link" && s.data && Array.isArray(s.data) && s.data.includes("https://example.com"))).toBe(
                 true
             );
         });

@@ -4,6 +4,7 @@
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
+  import { createFetchEvent } from '@nostr-dev-kit/svelte';
 
   // Import code examples
   import zapButtonCode from './examples/basic/index.txt?raw';
@@ -22,17 +23,17 @@
     title: 'Zap Buttons',
     description: 'Interactive zap buttons for sending Bitcoin tips via Lightning'
   };
-  let sampleEvent = $state<NDKEvent | undefined>();
 
+  // Fetch sample event
+  const sampleEventFetcher = createFetchEvent(
+    ndk,
+    () => ({ bech32: 'nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j' })
+  );
+  let sampleEvent = $state<NDKEvent | undefined>(sampleEventFetcher.event ?? undefined);
+
+  // Update sampleEvent when fetcher.event changes
   $effect(() => {
-    (async () => {
-      try {
-        const event = await ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j');
-        if (event && !sampleEvent) sampleEvent = event;
-      } catch (err) {
-        console.error('Failed to fetch sample event:', err);
-      }
-    })();
+    sampleEvent = sampleEventFetcher.event ?? undefined;
   });
 
   // Components section configuration

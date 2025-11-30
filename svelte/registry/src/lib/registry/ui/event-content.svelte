@@ -47,7 +47,7 @@
 	{#each parsed.segments as segment, i (i)}
 		{#if segment.type === 'text'}
 			{segment.content}
-		{:else if segment.type === 'npub' || segment.type === 'nprofile'}
+		{:else if segment.type === 'mention'}
 			{#if segment.data && typeof segment.data === 'string'}
 				{#if renderer.mentionComponent}
 					{@const Component = renderer.mentionComponent}
@@ -70,35 +70,6 @@
 				{/if}
 			{/if}
 		{:else if segment.type === 'link'}
-			{#if renderer.linkComponent}
-				{@const Component = renderer.linkComponent}
-				<Component url={segment.content} onclick={renderer.onLinkClick} />
-			{:else}
-				{segment.content}
-			{/if}
-		{:else if segment.type === 'media'}
-			{#if renderer.mediaComponent}
-				{@const Component = renderer.mediaComponent}
-				<Component url={[segment.content]} onclick={renderer.onMediaClick} />
-			{:else}
-				{segment.content}
-			{/if}
-		{:else if segment.type === 'emoji'}
-			{#if typeof segment.data === 'string'}
-				<img src={segment.data} alt=":{segment.content}:" class="inline-block w-[1.25em] h-[1.25em] align-middle mx-[0.1em]" />
-			{/if}
-		{:else if segment.type === 'image-grid'}
-			{#if segment.data && Array.isArray(segment.data)}
-				{#if renderer.mediaComponent}
-					{@const Component = renderer.mediaComponent}
-					<Component url={segment.data} onclick={renderer.onMediaClick} />
-				{:else}
-					{#each segment.data as url, j (j)}
-						<img src={url} alt="" class="w-full h-auto object-cover rounded-lg aspect-square" />
-					{/each}
-				{/if}
-			{/if}
-		{:else if segment.type === 'link-group'}
 			{#if segment.data && Array.isArray(segment.data)}
 				{#if renderer.linkComponent}
 					{@const Component = renderer.linkComponent}
@@ -110,6 +81,21 @@
 						{url}
 					{/each}
 				{/if}
+			{/if}
+		{:else if segment.type === 'media'}
+			{#if segment.data && Array.isArray(segment.data)}
+				{#if renderer.mediaComponent}
+					{@const Component = renderer.mediaComponent}
+					<Component url={segment.data} onclick={renderer.onMediaClick} />
+				{:else}
+					{#each segment.data as url, j (j)}
+						{url}
+					{/each}
+				{/if}
+			{/if}
+		{:else if segment.type === 'emoji'}
+			{#if typeof segment.data === 'string'}
+				<img src={segment.data} alt=":{segment.content}:" class="inline-block w-[1.25em] h-[1.25em] align-middle mx-[0.1em]" />
 			{/if}
 		{/if}
 	{/each}

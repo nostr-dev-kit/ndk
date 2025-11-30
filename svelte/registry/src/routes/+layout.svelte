@@ -8,26 +8,39 @@
   import { nip19 } from 'nostr-tools';
   import type { Snippet } from 'svelte';
   import { NDK_CONTEXT_KEY } from '$lib/registry/utils/ndk';
+  import { createFetchEvent } from '@nostr-dev-kit/svelte';
 
   let { children }: { children: Snippet } = $props();
 
 
   let isInitialized = $state(false);
   let showLoginModal = $state(false);
+  let shouldFetchContactList = $state(false);
 
   setContext(NDK_CONTEXT_KEY, ndk);
 
-  async function autoCreateAccount() {
-    const sourceNpub = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
-    const decoded = nip19.decode(sourceNpub);
-    const sourcePubkey = decoded.data as string;
+  const sourceNpub = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
+  const decoded = nip19.decode(sourceNpub);
+  const sourcePubkey = decoded.data as string;
 
-    const contactListEvent = await ndk.fetchEvent({
-      kinds: [3],
-      authors: [sourcePubkey],
-      limit: 1
-    });
+  // Fetch contact list reactively
+  const contactListFetcher = createFetchEvent(
+    ndk,
+    () => {
+      if (!shouldFetchContactList) return { kinds: [] as number[] };
+      return {
+        kinds: [3],
+        authors: [sourcePubkey],
+        limit: 1
+      };
+    }
+  );
 
+  // Auto-create account when contact list is fetched
+  $effect(() => {
+    if (!shouldFetchContactList || contactListFetcher.loading) return;
+
+    const contactListEvent = contactListFetcher.event;
     const follows: string[] = [];
     if (contactListEvent) {
       for (const tag of contactListEvent.tags) {
@@ -42,7 +55,7 @@
     const randomSeed = Math.random().toString(36).substring(2, 15);
     const avatarUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${randomSeed}`;
 
-    await ndk.$sessions.createAccount({
+    ndk.$sessions.createAccount({
       profile: {
         name: randomName,
         about: 'Just checking out Nostr!',
@@ -50,14 +63,16 @@
       },
       follows
     });
-  }
+
+    shouldFetchContactList = false; // Only create once
+  });
 
   $effect(() => {
-    initializeNDK().then(async () => {
+    initializeNDK().then(() => {
       isInitialized = true;
 
       if (!ndk.$currentPubkey) {
-        await autoCreateAccount();
+        shouldFetchContactList = true;
       }
     });
   });

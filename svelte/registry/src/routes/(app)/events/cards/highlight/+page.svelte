@@ -422,11 +422,11 @@
     {anatomy}
   >
     {#key highlights}
-      <EditProps.Prop name="Highlight 1" type="highlight" bind:value={highlight1} options={highlights} />
-      <EditProps.Prop name="Highlight 2" type="highlight" bind:value={highlight2} options={highlights} />
-      <EditProps.Prop name="Highlight 3" type="highlight" bind:value={highlight3} options={highlights} />
-      <EditProps.Prop name="Highlight 4" type="highlight" bind:value={highlight4} options={highlights} />
-      <EditProps.Prop name="Highlight 5" type="highlight" bind:value={highlight5} options={highlights} />
+      <EditProps.Prop name="Highlight 1" type="highlight" bind:value={highlight1} />
+      <EditProps.Prop name="Highlight 2" type="highlight" bind:value={highlight2} />
+      <EditProps.Prop name="Highlight 3" type="highlight" bind:value={highlight3} />
+      <EditProps.Prop name="Highlight 4" type="highlight" bind:value={highlight4} />
+      <EditProps.Prop name="Highlight 5" type="highlight" bind:value={highlight5} />
     {/key}
   </ComponentPageTemplate>
 {/if}

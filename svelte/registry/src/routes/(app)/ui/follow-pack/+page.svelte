@@ -225,15 +225,16 @@
         <CodeBlock
           lang="typescript"
           code={`import { NDKFollowPack, NDKKind } from '@nostr-dev-kit/ndk';
+import { createFetchEvent } from '@nostr-dev-kit/svelte';
 
 // Fetch a specific follow pack
-const event = await ndk.fetchEvent({
+const fetcher = createFetchEvent(ndk, () => ({
   kinds: [NDKKind.FollowPack], // 30000
   authors: [authorPubkey],
   '#d': [packIdentifier]
-});
+}));
 
-const followPack = NDKFollowPack.from(event);
+const followPack = $derived(fetcher.event ? NDKFollowPack.from(fetcher.event) : null);
 
 // Subscribe to follow packs
 const sub = ndk.subscribe({

@@ -4,6 +4,7 @@
   import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
+  import { createFetchEvent } from '@nostr-dev-kit/svelte';
 
   // Import example components
   import BasicUsage from './examples/basic-usage/index.svelte';
@@ -18,27 +19,27 @@
     description: 'Classic zap sending interface for Lightning payments'
   };
   let targetInput = $state('npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft');
-  let target = $state<NDKEvent | NDKUser | undefined>();
 
-  $effect(() => {
-    (async () => {
-      if (!targetInput) {
-        target = undefined;
-        return;
+  // Fetch event if targetInput is a nevent or note1
+  const eventFetcher = createFetchEvent(
+    ndk,
+    () => {
+      if (targetInput && (targetInput.startsWith('nevent') || targetInput.startsWith('note1'))) {
+        return { bech32: targetInput };
       }
+      return { bech32: '' }; // Empty bech32 when not applicable
+    }
+  );
 
-      try {
-        if (targetInput.startsWith('nevent') || targetInput.startsWith('note1')) {
-          const event = await ndk.fetchEvent(targetInput);
-          target = event || undefined;
-        } else if (targetInput.startsWith('npub')) {
-          target = ndk.getUser({ npub: targetInput });
-        }
-      } catch (err) {
-        console.error('Failed to fetch target:', err);
-        target = undefined;
-      }
-    })();
+  // Derive target based on input type
+  const target = $derived.by(() => {
+    if (!targetInput) return undefined;
+    if (targetInput.startsWith('nevent') || targetInput.startsWith('note1')) {
+      return eventFetcher.event || undefined;
+    } else if (targetInput.startsWith('npub')) {
+      return ndk.getUser({ npub: targetInput });
+    }
+    return undefined;
   });
 
   // Components section configuration

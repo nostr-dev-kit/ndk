@@ -1,20 +1,18 @@
 <script lang="ts">
-	import { untrack, getContext } from 'svelte';
+	import { untrack } from 'svelte';
 	import type { NDKArticle, NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { createFetchEvent, createFetchUser } from '@nostr-dev-kit/svelte';
 	import { getEditPropsContext, type PropType } from './edit-props-context.svelte';
-	import { fetchFromIdentifier } from './edit-props-fetcher';
-    import { ndk } from '$site/ndk.svelte';
+	import { ndk } from '$site/ndk.svelte';
 
 	interface Props {
 		name: string;
 		type: PropType;
 		default?: string | number | boolean;
 		value?: NDKUser | NDKEvent | NDKArticle | string | number | boolean;
-		options?: (NDKUser | NDKEvent | NDKArticle)[];
 	}
 
-	let { name, type, default: defaultValue, value = $bindable(), options }: Props = $props();
+	let { name, type, default: defaultValue, value = $bindable() }: Props = $props();
 
 	let context = getEditPropsContext();
 
@@ -24,21 +22,31 @@
 			name,
 			type,
 			default: defaultValue,
-			value,
-			options
+			value
 		});
 	});
 
-	// Fetch default value on mount if no value is provided
+	// Create reactive fetchers based on type
+	const eventFetcher = $derived.by(() => {
+		if (type !== 'event' || !defaultValue) return null;
+		return createFetchEvent(() => ({ bech32: String(defaultValue) }), ndk);
+	});
+
+	const userFetcher = $derived.by(() => {
+		if (type !== 'user' || !defaultValue) return null;
+		return createFetchUser(ndk, () => String(defaultValue));
+	});
+
+	// Wire up fetched values when they become available
 	$effect(() => {
-		if (!value && defaultValue && (type === 'user' || type === 'event' || type === 'article')) {
-			untrack(async () => {
-				const result = await fetchFromIdentifier(ndk, type, String(defaultValue));
-				if (result.success && result.value) {
-					value = result.value;
-					context.updatePropValue(name, result.value);
-				}
-			});
+		if (!value) {
+			if (type === 'event' && eventFetcher && !eventFetcher.loading && eventFetcher.event) {
+				value = eventFetcher.event;
+				context.updatePropValue(name, eventFetcher.event);
+			} else if (type === 'user' && userFetcher && userFetcher.$loaded) {
+				value = userFetcher;
+				context.updatePropValue(name, userFetcher);
+			}
 		}
 	});
 

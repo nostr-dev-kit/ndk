@@ -223,14 +223,14 @@ describe("decodeNostrUri", () => {
         const segment = decodeNostrUri(npub);
 
         // Will either decode successfully or return text on failure
-        expect(segment.type === "npub" || segment.type === "text").toBe(true);
+        expect(segment.type === "mention" || segment.type === "text").toBe(true);
     });
 
     it("should handle nprofile URIs", () => {
         const nprofile = "nprofile1test123456789012345678901234567890";
         const segment = decodeNostrUri(nprofile);
 
-        expect(segment.type === "nprofile" || segment.type === "text").toBe(true);
+        expect(segment.type === "mention" || segment.type === "text").toBe(true);
     });
 
     it("should handle note1 URIs", () => {
@@ -297,8 +297,8 @@ describe("classifyMatch", () => {
         const npub = "nostr:npub1test1234567890123456789012345678901234567890123456789";
         const segment = classifyMatch(npub, emptyEmojiMap);
 
-        // Will be either npub or text depending on decode success
-        expect(["npub", "text"].includes(segment.type)).toBe(true);
+        // Will be either mention or text depending on decode success
+        expect(["mention", "text"].includes(segment.type)).toBe(true);
     });
 
     it("should classify images", () => {
@@ -444,7 +444,7 @@ describe("parseContentToSegments", () => {
 });
 
 describe("groupConsecutiveImages", () => {
-    it("should group consecutive images into image-grid", () => {
+    it("should group consecutive images", () => {
         const segments: ParsedSegment[] = [
             { type: "media", content: "https://ex.com/1.jpg" },
             { type: "media", content: "https://ex.com/2.jpg" },
@@ -454,7 +454,8 @@ describe("groupConsecutiveImages", () => {
         const result = groupConsecutiveImages(segments);
 
         expect(result).toHaveLength(1);
-        expect(result[0].type).toBe("image-grid");
+        expect(result[0].type).toBe("media");
+        expect(result[0].content).toBe("");
         expect(result[0].data).toEqual([
             "https://ex.com/1.jpg",
             "https://ex.com/2.jpg",
@@ -462,13 +463,15 @@ describe("groupConsecutiveImages", () => {
         ]);
     });
 
-    it("should not group single images", () => {
+    it("should handle single images", () => {
         const segments: ParsedSegment[] = [{ type: "media", content: "https://ex.com/image.jpg" }];
 
         const result = groupConsecutiveImages(segments);
 
         expect(result).toHaveLength(1);
         expect(result[0].type).toBe("media");
+        expect(result[0].content).toBe("");
+        expect(result[0].data).toEqual(["https://ex.com/image.jpg"]);
     });
 
     it("should break grouping on non-image content", () => {
@@ -481,10 +484,13 @@ describe("groupConsecutiveImages", () => {
 
         const result = groupConsecutiveImages(segments);
 
-        // Should have: image-grid, text, media
+        // Should have: media, text, media
         expect(result.length).toBeGreaterThanOrEqual(3);
-        expect(result[0].type).toBe("image-grid");
+        expect(result[0].type).toBe("media");
+        expect(result[0].data).toHaveLength(2);
         expect(result[1].type).toBe("text");
+        expect(result[2].type).toBe("media");
+        expect(result[2].data).toHaveLength(1);
     });
 
     it("should handle whitespace between images", () => {
@@ -497,7 +503,7 @@ describe("groupConsecutiveImages", () => {
         const result = groupConsecutiveImages(segments);
 
         // Whitespace should not break grouping
-        expect(result[0].type).toBe("image-grid");
+        expect(result[0].type).toBe("media");
         expect(result[0].data).toHaveLength(2);
     });
 
@@ -535,7 +541,7 @@ describe("groupConsecutiveImages", () => {
 });
 
 describe("groupConsecutiveLinks", () => {
-    it("should group consecutive links into link-group", () => {
+    it("should group consecutive links", () => {
         const segments: ParsedSegment[] = [
             { type: "link", content: "https://ex1.com" },
             { type: "link", content: "https://ex2.com" },
@@ -545,17 +551,20 @@ describe("groupConsecutiveLinks", () => {
         const result = groupConsecutiveLinks(segments);
 
         expect(result).toHaveLength(1);
-        expect(result[0].type).toBe("link-group");
+        expect(result[0].type).toBe("link");
+        expect(result[0].content).toBe("");
         expect(result[0].data).toEqual(["https://ex1.com", "https://ex2.com", "https://ex3.com"]);
     });
 
-    it("should not group single links", () => {
+    it("should handle single links", () => {
         const segments: ParsedSegment[] = [{ type: "link", content: "https://example.com" }];
 
         const result = groupConsecutiveLinks(segments);
 
         expect(result).toHaveLength(1);
         expect(result[0].type).toBe("link");
+        expect(result[0].content).toBe("");
+        expect(result[0].data).toEqual(["https://example.com"]);
     });
 
     it("should break grouping on non-link content", () => {
@@ -569,9 +578,11 @@ describe("groupConsecutiveLinks", () => {
         const result = groupConsecutiveLinks(segments);
 
         expect(result.length).toBeGreaterThanOrEqual(3);
-        expect(result[0].type).toBe("link-group");
+        expect(result[0].type).toBe("link");
+        expect(result[0].data).toHaveLength(2);
         expect(result[1].type).toBe("text");
         expect(result[2].type).toBe("link");
+        expect(result[2].data).toHaveLength(1);
     });
 
     it("should handle whitespace between links", () => {
@@ -583,7 +594,7 @@ describe("groupConsecutiveLinks", () => {
 
         const result = groupConsecutiveLinks(segments);
 
-        expect(result[0].type).toBe("link-group");
+        expect(result[0].type).toBe("link");
         expect(result[0].data).toHaveLength(2);
     });
 
@@ -618,9 +629,10 @@ describe("groupConsecutiveLinks", () => {
         const result = groupConsecutiveLinks(segments);
 
         expect(result).toHaveLength(3);
-        expect(result[0].type).toBe("link-group");
+        expect(result[0].type).toBe("link");
         expect(result[0].data).toHaveLength(2);
         expect(result[1].type).toBe("text");
         expect(result[2].type).toBe("link");
+        expect(result[2].data).toHaveLength(1);
     });
 });

@@ -45,6 +45,7 @@ PACKAGES=(
     "mobile"
     "wallet"
     "blossom"
+    "cache-browser"
     "cache-dexie"
     "cache-memory"
     "cache-redis"

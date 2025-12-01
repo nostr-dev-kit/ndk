@@ -4,6 +4,14 @@
 
 ### Patch Changes
 
+- Updated dependencies [53768a2]
+    - @nostr-dev-kit/ndk@3.0.0
+    - @nostr-dev-kit/wallet@1.0.0
+
+## 1.3.13
+
+### Patch Changes
+
 - Updated dependencies [b8e7a06]
 - Updated dependencies [ad7936b]
 - Updated dependencies [b5bdb2c]

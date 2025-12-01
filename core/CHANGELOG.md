@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 3.0.0
+
+### Minor Changes
+
+- 53768a2: Add NIP-A0 voice message support with NDKVoiceMessage (kind 1222) and NDKVoiceReply (kind 1244) event wrappers. Both classes include getters/setters for audio URL, waveform data, and duration from imeta tags.
+
 ## 3.0.0-beta.2
 
 ### Minor Changes

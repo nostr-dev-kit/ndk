@@ -45,11 +45,13 @@
     "type": "module",
     "workspaces": [
         "core",
+        "cache-browser",
         "cache-dexie",
         "cache-memory",
         "cache-redis",
         "cache-nostr",
         "cache-sqlite",
+        "cache-sqlite-wasm",
         "react",
         "mobile",
         "messages",
@@ -58,7 +60,6 @@
         "svelte",
         "wallet",
         "wot",
-        "blossom",
-        "cache-sqlite-wasm"
+        "blossom"
     ]
 }

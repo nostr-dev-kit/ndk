@@ -1,5 +1,12 @@
 # @nostr-dev-kit/sync
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [53768a2]
+    - @nostr-dev-kit/ndk@3.0.0
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @nostr-dev-kit/wot
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [53768a2]
+    - @nostr-dev-kit/ndk@3.0.0
+    - @nostr-dev-kit/sync@1.0.0
+
 ## 0.3.7
 
 ### Patch Changes

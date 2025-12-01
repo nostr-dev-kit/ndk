@@ -46,7 +46,7 @@ export function createEventContent(
 ): EventContentState {
     return {
         get segments() {
-            const actualContent = String(config().event?.content ?? config().content ?? '');
+            const actualContent = String(config().event?.content ?? config().content ?? '').trim();
             const event = config().event;
             const actualEmojiTags = (event?.tags && Array.isArray(event.tags))
                 ? event.tags.filter(t => t[0] === 'emoji')

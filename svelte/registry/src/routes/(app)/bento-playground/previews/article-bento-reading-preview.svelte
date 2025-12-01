@@ -3,7 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ndk } from '$lib/site/ndk.svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
-  import { Motion } from 'svelte-motion';
+  import { fade, fly } from 'svelte/transition';
   let article = $state<NDKArticle | undefined>();
   let scrollContainer = $state<HTMLDivElement>();
   let containerElement = $state<HTMLDivElement>();
@@ -94,17 +94,10 @@
   <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent pointer-events-none"></div>
 
   <!-- Text overlay -->
-  <Motion
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.25, duration: 0.6 }}
-    let:motion
-  >
-    <div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-      <h3 class="text-3xl font-bold text-white mb-2">Reading Experience</h3>
-      <p class="text-white/80 text-sm">Clean, focused reading with beautiful typography</p>
-    </div>
-  </Motion>
+  <div in:fly={{ y: 20, duration: 600, delay: 250 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+    <h3 class="text-3xl font-bold text-white mb-2">Reading Experience</h3>
+    <p class="text-white/80 text-sm">Clean, focused reading with beautiful typography</p>
+  </div>
 </div>
 
 <style>

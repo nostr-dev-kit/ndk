@@ -1,0 +1,10 @@
+dist/
+.svelte-kit/
+node_modules/
+build/
+registry/
+coverage/
+.claude/
+.gemini/
+*.config.js
+*.config.ts

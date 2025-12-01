@@ -1,9 +1,9 @@
 <script lang="ts">
-		import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { ndk } from '$lib/site/ndk.svelte';
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import ArticleCardHero from '$lib/registry/components/article-card-hero/article-card-hero.svelte';
-	import { Motion } from 'svelte-motion';
+	import { fade, fly } from 'svelte/transition';
 	let article = $state<NDKArticle | undefined>();
 
 	$effect(() => {
@@ -36,19 +36,14 @@
 	<!-- Background: Hero card (grayscale) -->
 	<div class="absolute inset-0 flex items-center justify-center p-8 opacity-70">
 		{#if article}
-			<Motion
-				initial={{ opacity: 0, y: 30 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6 }}
-				let:motion
-			>
+			{#key article}
 				<div
-					use:motion
+					in:fly={{ y: 30, duration: 600 }}
 					class="grayscale hover:grayscale-0 transition-all duration-500 scale-90"
 				>
 					<ArticleCardHero {ndk} event={article} />
 				</div>
-			</Motion>
+			{/key}
 		{/if}
 	</div>
 
@@ -58,15 +53,8 @@
 	></div>
 
 	<!-- Text overlay -->
-	<Motion
-		initial={{ opacity: 0, y: 20 }}
-		animate={{ opacity: 1, y: 0 }}
-		transition={{ delay: 0.4, duration: 0.6 }}
-		let:motion
-	>
-		<div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-			<h3 class="text-3xl font-bold text-white mb-2">Hero Display</h3>
-			<p class="text-white/80 text-sm">Full-width featured article showcase</p>
-		</div>
-	</Motion>
+	<div in:fly={{ y: 20, duration: 600, delay: 400 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+		<h3 class="text-3xl font-bold text-white mb-2">Hero Display</h3>
+		<p class="text-white/80 text-sm">Full-width featured article showcase</p>
+	</div>
 </div>

@@ -1,6 +1,18 @@
-import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import type {
+  Hexpubkey,
+  NDKEvent,
+  NDKKind,
+  NDKSigner,
+  NDKUser,
+  NDKUserProfile,
+  NDKPrivateKeySigner,
+} from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
-import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
+import type {
+  NDKSession,
+  NDKSessionManager,
+  SessionStartOptions,
+} from "@nostr-dev-kit/sessions";
 import { FollowsProxy } from "./follows.svelte";
 import { MutesProxy } from "./mutes.svelte";
 
@@ -14,292 +26,297 @@ import { MutesProxy } from "./mutes.svelte";
  * by ReactiveWalletStore which subscribes to the same session manager.
  */
 export class ReactiveSessionsStore {
-    #manager: NDKSessionManager;
+  #manager: NDKSessionManager;
 
-    // Reactive state synced from Zustand store
-    // Using Record instead of Map to avoid Proxy issues with $state
-    sessions = $state<Record<Hexpubkey, NDKSession>>({});
-    activePubkey = $state<Hexpubkey | undefined>(undefined);
+  // Reactive state synced from Zustand store
+  // Using Record instead of Map to avoid Proxy issues with $state
+  sessions = $state<Record<Hexpubkey, NDKSession>>({});
+  activePubkey = $state<Hexpubkey | undefined>(undefined);
 
-    constructor(sessionManager: NDKSessionManager) {
-        this.#manager = sessionManager;
+  constructor(sessionManager: NDKSessionManager) {
+    this.#manager = sessionManager;
 
-        // Sync Zustand state to Svelte reactive state
-        this.#manager.subscribe((state) => {
-            // Convert Map to Record
-            const sessionsObj: Record<Hexpubkey, NDKSession> = {};
-            state.sessions.forEach((session, pubkey) => {
-                sessionsObj[pubkey] = session;
-            });
-            this.sessions = sessionsObj;
+    // Sync Zustand state to Svelte reactive state
+    this.#manager.subscribe((state) => {
+      // Convert Map to Record
+      const sessionsObj: Record<Hexpubkey, NDKSession> = {};
+      state.sessions.forEach((session, pubkey) => {
+        sessionsObj[pubkey] = session;
+      });
+      this.sessions = sessionsObj;
 
-            // Sync signer to NDK BEFORE setting activePubkey
-            // This prevents race conditions where reactive code runs before signer is ready
-            if (state.activePubkey) {
-                const signer = state.signers.get(state.activePubkey);
-                if (signer && state.ndk) {
-                    state.ndk.signer = signer;
-                }
-            } else if (state.ndk) {
-                // Clear signer and activeUser when no active session
-                state.ndk.signer = undefined;
-                state.ndk.activeUser = undefined;
-            }
-
-            this.activePubkey = state.activePubkey;
-        });
-
-        // Restore sessions on init
-        this.#manager.restore().catch((error) => {
-            console.error("[svelte] Failed to restore sessions:", error);
-        });
-    }
-
-    /**
-     * Get current active session
-     */
-    get current(): NDKSession | undefined {
-        if (!this.activePubkey) return undefined;
-        return this.sessions[this.activePubkey];
-    }
-
-    /**
-     * Get current active user
-     */
-    get currentUser(): NDKUser | undefined {
-        return this.#manager.activeUser;
-    }
-
-    /**
-     * Get follows set for current session
-     *
-     * Returns a FollowsProxy that works like a Set but has async add/remove methods
-     * that publish changes to the network.
-     *
-     * @example
-     * ```ts
-     * // Use as a Set
-     * const isFollowing = ndk.$sessions.follows.has(pubkey);
-     * const count = ndk.$sessions.follows.size;
-     * for (const pubkey of ndk.$sessions.follows) { ... }
-     *
-     * // Add/remove follows (publishes to network)
-     * await ndk.$sessions.follows.add(pubkey);
-     * await ndk.$sessions.follows.remove(pubkey);
-     * ```
-     */
-    get follows(): FollowsProxy {
-        const followSet = this.current?.followSet ?? new Set();
-        return new FollowsProxy(this, followSet);
-    }
-
-    /**
-     * Get mutes for current session
-     *
-     * Returns a MutesProxy that works like a Set but has async mute/unmute methods
-     * that publish changes to the network.
-     *
-     * @example
-     * ```ts
-     * // Use as a Set
-     * const isMuted = ndk.$sessions.mutes.has(pubkey);
-     * const count = ndk.$sessions.mutes.size;
-     * for (const pubkey of ndk.$sessions.mutes) { ... }
-     *
-     * // Mute/unmute users (publishes to network)
-     * await ndk.$sessions.mutes.mute(pubkey);
-     * await ndk.$sessions.mutes.unmute(pubkey);
-     * await ndk.$sessions.mutes.toggle(pubkey);
-     * ```
-     */
-    get mutes(): MutesProxy {
-        // Convert Map<string, string> to Set<string> by taking keys
-        const muteMap = this.current?.muteSet ?? new Map();
-        const muteSet = new Set(muteMap.keys());
-        return new MutesProxy(this, muteSet);
-    }
-
-    /**
-     * Get muted words for current session
-     */
-    get mutedWords(): Set<string> {
-        return this.current?.mutedWords ?? new Set();
-    }
-
-    /**
-     * Get blocked relays for current session
-     */
-    get blockedRelays(): Set<string> {
-        return this.current?.blockedRelays ?? new Set();
-    }
-
-    /**
-     * Get user's relay list for current session
-     */
-    get relayList(): Map<string, { read: boolean; write: boolean }> {
-        return this.current?.relayList ?? new Map();
-    }
-
-    /**
-     * Get session event by kind for current session
-     */
-    getSessionEvent(kind: NDKKind): NDKEvent | null | undefined {
-        return this.current?.events.get(kind);
-    }
-
-    /**
-     * Get wallet event (kind 17375) for current session
-     */
-    get walletEvent(): NDKEvent | null | undefined {
-        return this.getSessionEvent(Kind.CashuWallet as NDKKind);
-    }
-
-    /**
-     * Get all sessions as array
-     */
-    get all(): NDKSession[] {
-        return Object.values(this.sessions);
-    }
-
-    /**
-     * Login with a signer or user
-     * - With signer: Full access to sign and publish events
-     * - With user: Read-only access to view profile, follows, etc.
-     *
-     * @example
-     * ```ts
-     * // Full access with signer
-     * await ndk.$sessions.login(signer, { setActive: true });
-     *
-     * // Read-only with user
-     * const user = ndk.getUser({ pubkey: "hex..." });
-     * await ndk.$sessions.login(user);
-     * ```
-     */
-    async login(userOrSigner: NDKUser | NDKSigner, options?: { setActive?: boolean }): Promise<Hexpubkey> {
-        return await this.#manager.login(userOrSigner, options);
-    }
-
-    /**
-     * Add a session without setting it as active
-     * - With signer: Full access session
-     * - With user: Read-only session
-     */
-    async add(userOrSigner: NDKUser | NDKSigner): Promise<Hexpubkey> {
-        return await this.#manager.login(userOrSigner, { setActive: false });
-    }
-
-    /**
-     * Logout (remove) a session
-     */
-    logout(pubkey?: Hexpubkey): void {
-        const targetPubkey = pubkey ?? this.activePubkey;
-        if (!targetPubkey) return;
-
-        this.#manager.logout(targetPubkey);
-
-        // Note: State updates will happen via the subscription handler
-        // Don't update local state manually - let the subscription handler handle it
-        // to avoid race conditions and ensure NDK's activeUser is properly cleared
-    }
-
-    /**
-     * Logout all sessions
-     */
-    logoutAll(): void {
-        // Clear all sessions from the manager
-        const pubkeys = Object.keys(this.sessions);
-        for (const pubkey of pubkeys) {
-            this.#manager.logout(pubkey);
+      // Sync signer to NDK BEFORE setting activePubkey
+      // This prevents race conditions where reactive code runs before signer is ready
+      if (state.activePubkey) {
+        const signer = state.signers.get(state.activePubkey);
+        if (signer && state.ndk) {
+          state.ndk.signer = signer;
         }
+      } else if (state.ndk) {
+        // Clear signer and activeUser when no active session
+        state.ndk.signer = undefined;
+        state.ndk.activeUser = undefined;
+      }
 
-        // Note: State updates will happen via the subscription handler
-        // Don't update local state manually - let the subscription handler handle it
+      this.activePubkey = state.activePubkey;
+    });
+
+    // Restore sessions on init
+    this.#manager.restore().catch((error) => {
+      console.error("[svelte] Failed to restore sessions:", error);
+    });
+  }
+
+  /**
+   * Get current active session
+   */
+  get current(): NDKSession | undefined {
+    if (!this.activePubkey) return undefined;
+    return this.sessions[this.activePubkey];
+  }
+
+  /**
+   * Get current active user
+   */
+  get currentUser(): NDKUser | undefined {
+    return this.#manager.activeUser;
+  }
+
+  /**
+   * Get follows set for current session
+   *
+   * Returns a FollowsProxy that works like a Set but has async add/remove methods
+   * that publish changes to the network.
+   *
+   * @example
+   * ```ts
+   * // Use as a Set
+   * const isFollowing = ndk.$sessions.follows.has(pubkey);
+   * const count = ndk.$sessions.follows.size;
+   * for (const pubkey of ndk.$sessions.follows) { ... }
+   *
+   * // Add/remove follows (publishes to network)
+   * await ndk.$sessions.follows.add(pubkey);
+   * await ndk.$sessions.follows.remove(pubkey);
+   * ```
+   */
+  get follows(): FollowsProxy {
+    const followSet = this.current?.followSet ?? new Set();
+    return new FollowsProxy(this, followSet);
+  }
+
+  /**
+   * Get mutes for current session
+   *
+   * Returns a MutesProxy that works like a Set but has async mute/unmute methods
+   * that publish changes to the network.
+   *
+   * @example
+   * ```ts
+   * // Use as a Set
+   * const isMuted = ndk.$sessions.mutes.has(pubkey);
+   * const count = ndk.$sessions.mutes.size;
+   * for (const pubkey of ndk.$sessions.mutes) { ... }
+   *
+   * // Mute/unmute users (publishes to network)
+   * await ndk.$sessions.mutes.mute(pubkey);
+   * await ndk.$sessions.mutes.unmute(pubkey);
+   * await ndk.$sessions.mutes.toggle(pubkey);
+   * ```
+   */
+  get mutes(): MutesProxy {
+    // Convert Map<string, string> to Set<string> by taking keys
+    const muteMap = this.current?.muteSet ?? new Map();
+    const muteSet = new Set(muteMap.keys());
+    return new MutesProxy(this, muteSet);
+  }
+
+  /**
+   * Get muted words for current session
+   */
+  get mutedWords(): Set<string> {
+    return this.current?.mutedWords ?? new Set();
+  }
+
+  /**
+   * Get blocked relays for current session
+   */
+  get blockedRelays(): Set<string> {
+    return this.current?.blockedRelays ?? new Set();
+  }
+
+  /**
+   * Get user's relay list for current session
+   */
+  get relayList(): Map<string, { read: boolean; write: boolean }> {
+    return this.current?.relayList ?? new Map();
+  }
+
+  /**
+   * Get session event by kind for current session
+   */
+  getSessionEvent(kind: NDKKind): NDKEvent | null | undefined {
+    return this.current?.events.get(kind);
+  }
+
+  /**
+   * Get wallet event (kind 17375) for current session
+   */
+  get walletEvent(): NDKEvent | null | undefined {
+    return this.getSessionEvent(Kind.CashuWallet as NDKKind);
+  }
+
+  /**
+   * Get all sessions as array
+   */
+  get all(): NDKSession[] {
+    return Object.values(this.sessions);
+  }
+
+  /**
+   * Login with a signer or user
+   * - With signer: Full access to sign and publish events
+   * - With user: Read-only access to view profile, follows, etc.
+   *
+   * @example
+   * ```ts
+   * // Full access with signer
+   * await ndk.$sessions.login(signer, { setActive: true });
+   *
+   * // Read-only with user
+   * const user = ndk.getUser({ pubkey: "hex..." });
+   * await ndk.$sessions.login(user);
+   * ```
+   */
+  async login(
+    userOrSigner: NDKUser | NDKSigner,
+    options?: { setActive?: boolean },
+  ): Promise<Hexpubkey> {
+    return await this.#manager.login(userOrSigner, options);
+  }
+
+  /**
+   * Add a session without setting it as active
+   * - With signer: Full access session
+   * - With user: Read-only session
+   */
+  async add(userOrSigner: NDKUser | NDKSigner): Promise<Hexpubkey> {
+    return await this.#manager.login(userOrSigner, { setActive: false });
+  }
+
+  /**
+   * Logout (remove) a session
+   */
+  logout(pubkey?: Hexpubkey): void {
+    const targetPubkey = pubkey ?? this.activePubkey;
+    if (!targetPubkey) return;
+
+    this.#manager.logout(targetPubkey);
+
+    // Note: State updates will happen via the subscription handler
+    // Don't update local state manually - let the subscription handler handle it
+    // to avoid race conditions and ensure NDK's activeUser is properly cleared
+  }
+
+  /**
+   * Logout all sessions
+   */
+  logoutAll(): void {
+    // Clear all sessions from the manager
+    const pubkeys = Object.keys(this.sessions);
+    for (const pubkey of pubkeys) {
+      this.#manager.logout(pubkey);
     }
 
-    /**
-     * Switch to a different session
-     */
-    async switch(pubkey: Hexpubkey | null): Promise<void> {
-        await this.#manager.switchTo(pubkey);
-    }
+    // Note: State updates will happen via the subscription handler
+    // Don't update local state manually - let the subscription handler handle it
+  }
 
-    /**
-     * Switch to a different session (alias for switch)
-     */
-    async switchTo(pubkey: Hexpubkey | null): Promise<void> {
-        await this.#manager.switchTo(pubkey);
-    }
+  /**
+   * Switch to a different session
+   */
+  async switch(pubkey: Hexpubkey | null): Promise<void> {
+    await this.#manager.switchTo(pubkey);
+  }
 
-    /**
-     * Get a specific session
-     */
-    get(pubkey: Hexpubkey): NDKSession | undefined {
-        return this.sessions[pubkey];
-    }
+  /**
+   * Switch to a different session (alias for switch)
+   */
+  async switchTo(pubkey: Hexpubkey | null): Promise<void> {
+    await this.#manager.switchTo(pubkey);
+  }
 
-    /**
-     * Start fetching data for a session
-     */
-    start(pubkey: Hexpubkey, options: SessionStartOptions): void {
-        this.#manager.startSession(pubkey, options);
-    }
+  /**
+   * Get a specific session
+   */
+  get(pubkey: Hexpubkey): NDKSession | undefined {
+    return this.sessions[pubkey];
+  }
 
-    /**
-     * Stop fetching data for a session
-     */
-    stop(pubkey: Hexpubkey): void {
-        this.#manager.stopSession(pubkey);
-    }
+  /**
+   * Start fetching data for a session
+   */
+  start(pubkey: Hexpubkey, options: SessionStartOptions): void {
+    this.#manager.startSession(pubkey, options);
+  }
 
-    /**
-     * Add monitors to the active session
-     *
-     * @example
-     * ```ts
-     * // Add monitors to active session
-     * ndk.$sessions.addMonitor([NDKInterestList, 10050, 10051]);
-     * ```
-     */
-    addMonitor(monitor: import("@nostr-dev-kit/sessions").MonitorItem[]): void {
-        this.#manager.addMonitor(monitor);
-    }
+  /**
+   * Stop fetching data for a session
+   */
+  stop(pubkey: Hexpubkey): void {
+    this.#manager.stopSession(pubkey);
+  }
 
-    /**
-     * Check if a session is read-only (no signer available)
-     * @param pubkey - Optional pubkey to check. If not provided, checks active session
-     * @returns true if the session has no signer (read-only), false if it has a signer
-     */
-    isReadOnly(pubkey?: Hexpubkey): boolean {
-        return this.#manager.isReadOnly(pubkey);
-    }
+  /**
+   * Add monitors to the active session
+   *
+   * @example
+   * ```ts
+   * // Add monitors to active session
+   * ndk.$sessions.addMonitor([NDKInterestList, 10050, 10051]);
+   * ```
+   */
+  addMonitor(monitor: import("@nostr-dev-kit/sessions").MonitorItem[]): void {
+    this.#manager.addMonitor(monitor);
+  }
 
-    /**
-     * Create a new account with optional profile, relays, wallet, and follows
-     * Delegates to the underlying session manager's createAccount method
-     */
-    async createAccount(
-        data?: {
-            profile?: NDKUserProfile;
-            relays?: string[];
-            wallet?: {
-                mints: string[];
-                relays?: string[];
-            };
-            follows?: Hexpubkey[];
-        },
-        opts?: {
-            publish?: boolean;
-            signer?: NDKPrivateKeySigner;
-        }
-    ): Promise<{ signer: NDKPrivateKeySigner; events: NDKEvent[] }> {
-        return await this.#manager.createAccount(data, opts);
-    }
+  /**
+   * Check if a session is read-only (no signer available)
+   * @param pubkey - Optional pubkey to check. If not provided, checks active session
+   * @returns true if the session has no signer (read-only), false if it has a signer
+   */
+  isReadOnly(pubkey?: Hexpubkey): boolean {
+    return this.#manager.isReadOnly(pubkey);
+  }
+
+  /**
+   * Create a new account with optional profile, relays, wallet, and follows
+   * Delegates to the underlying session manager's createAccount method
+   */
+  async createAccount(
+    data?: {
+      profile?: NDKUserProfile;
+      relays?: string[];
+      wallet?: {
+        mints: string[];
+        relays?: string[];
+      };
+      follows?: Hexpubkey[];
+    },
+    opts?: {
+      publish?: boolean;
+      signer?: NDKPrivateKeySigner;
+    },
+  ): Promise<{ signer: NDKPrivateKeySigner; events: NDKEvent[] }> {
+    return await this.#manager.createAccount(data, opts);
+  }
 }
 
 /**
  * Create reactive sessions store
  */
-export function createReactiveSessions(sessionManager: NDKSessionManager): ReactiveSessionsStore {
-    return new ReactiveSessionsStore(sessionManager);
+export function createReactiveSessions(
+  sessionManager: NDKSessionManager,
+): ReactiveSessionsStore {
+  return new ReactiveSessionsStore(sessionManager);
 }

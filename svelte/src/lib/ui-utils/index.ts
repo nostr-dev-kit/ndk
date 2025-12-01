@@ -1,1 +1,1 @@
-export * from './formatting.js';
+export * from "./formatting.js";

@@ -13,7 +13,7 @@ A ground-up reimagining of NDK for Svelte 5, built with runes, designed for beau
 ```typescript
 // ✅ CORRECT - callback function returning config
 const notes = ndk.$subscribe(() => ({
-  filters: [{ kinds: [1], limit: 50 }]
+  filters: [{ kinds: [1], limit: 50 }],
 }));
 
 // ❌ WRONG - direct config (this API doesn't exist)
@@ -68,17 +68,14 @@ Initialize NDK in your app:
 
 ```typescript
 // lib/ndk.ts
-import { createNDK } from '@nostr-dev-kit/svelte';
-import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
+import { createNDK } from "@nostr-dev-kit/svelte";
+import NDKCacheDexie from "@nostr-dev-kit/cache-dexie";
 
 export const ndk = createNDK({
-  explicitRelayUrls: [
-    'wss://relay.damus.io',
-    'wss://relay.nostr.band',
-  ],
-  cacheAdapter: new NDKCacheDexie({ dbName: 'my-app' }),
+  explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.nostr.band"],
+  cacheAdapter: new NDKCacheDexie({ dbName: "my-app" }),
   // Enable sessions for wallet, follows, mutes, and WoT
-  session: true
+  session: true,
 });
 
 ndk.connect();
@@ -114,19 +111,19 @@ The heart of svelte is the `$subscribe()` method - a reactive, self-managing sub
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
-import { NDKKind } from '@nostr-dev-kit/ndk';
+  import { ndk } from "$lib/ndk";
+  import { NDKKind } from "@nostr-dev-kit/ndk";
 
-// Create a reactive subscription - note the callback function () => ({ ... })
-const notes = ndk.$subscribe(() => ({
-  filters: [{ kinds: [NDKKind.Text], limit: 50 }]
-}));
+  // Create a reactive subscription - note the callback function () => ({ ... })
+  const notes = ndk.$subscribe(() => ({
+    filters: [{ kinds: [NDKKind.Text], limit: 50 }],
+  }));
 
-// Properties are $state runes that automatically trigger reactivity
-// when accessed in Svelte templates or $effect blocks
-$inspect(notes.events); // Array of events (reactive)
-$inspect(notes.eosed);  // EOSE flag (reactive)
-$inspect(notes.count);  // Event count (derived)
+  // Properties are $state runes that automatically trigger reactivity
+  // when accessed in Svelte templates or $effect blocks
+  $inspect(notes.events); // Array of events (reactive)
+  $inspect(notes.eosed); // EOSE flag (reactive)
+  $inspect(notes.count); // Event count (derived)
 </script>
 
 {#each notes.events as note}
@@ -148,23 +145,23 @@ All stores are namespaced under the NDK instance:
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
+  import { ndk } from "$lib/ndk";
 
-// Session management
-const currentUser = ndk.$sessions.current;
-await ndk.$sessions.login(signer);
-ndk.$sessions.logout();
+  // Session management
+  const currentUser = ndk.$sessions.current;
+  await ndk.$sessions.login(signer);
+  ndk.$sessions.logout();
 
-// Web of Trust
-await ndk.$wot.load();
-const score = ndk.$wot.getScore(pubkey);
+  // Web of Trust
+  await ndk.$wot.load();
+  const score = ndk.$wot.getScore(pubkey);
 
-// Wallet
-ndk.$wallet.set(myWallet);
-const balance = ndk.$wallet.balance;
+  // Wallet
+  ndk.$wallet.set(myWallet);
+  const balance = ndk.$wallet.balance;
 
-// Pool
-const connected = ndk.pool.connectedCount;
+  // Pool
+  const connected = ndk.pool.connectedCount;
 </script>
 ```
 
@@ -176,17 +173,17 @@ const connected = ndk.pool.connectedCount;
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
+  import { ndk } from "$lib/ndk";
 
-const sub = ndk.$subscribe(() => ({
-  filters: [{ kinds: [1], authors: [pubkey], limit: 100 }]
-}));
+  const sub = ndk.$subscribe(() => ({
+    filters: [{ kinds: [1], authors: [pubkey], limit: 100 }],
+  }));
 
-// The subscription has reactive properties
-sub.events  // T[] - sorted by created_at desc
-sub.eosed   // boolean
-sub.count   // number (derived)
-sub.isEmpty // boolean (derived)
+  // The subscription has reactive properties
+  sub.events; // T[] - sorted by created_at desc
+  sub.eosed; // boolean
+  sub.count; // number (derived)
+  sub.isEmpty; // boolean (derived)
 </script>
 ```
 
@@ -194,23 +191,23 @@ sub.isEmpty // boolean (derived)
 
 ```svelte
 <script lang="ts">
-const highlights = ndk.$subscribe(
-  { kinds: [9802], limit: 50 },
-  {
-    // Buffer events for performance (default: 30ms)
-    bufferMs: 30,
+  const highlights = ndk.$subscribe(
+    { kinds: [9802], limit: 50 },
+    {
+      // Buffer events for performance (default: 30ms)
+      bufferMs: 30,
 
-    // Convert events to specific class
-    eventClass: NDKHighlight,
+      // Convert events to specific class
+      eventClass: NDKHighlight,
 
-    // Relay set
-    relaySet: myRelaySet,
+      // Relay set
+      relaySet: myRelaySet,
 
-    // Callbacks
-    onEvent: (event) => console.log('New event', event),
-    onEose: () => console.log('EOSE reached'),
-  }
-);
+      // Callbacks
+      onEvent: (event) => console.log("New event", event),
+      onEose: () => console.log("EOSE reached"),
+    },
+  );
 </script>
 ```
 
@@ -218,20 +215,20 @@ const highlights = ndk.$subscribe(
 
 ```svelte
 <script lang="ts">
-const sub = ndk.$subscribe([filters], { autoStart: false });
+  const sub = ndk.$subscribe([filters], { autoStart: false });
 
-// Manual control
-sub.start();
-sub.stop();
-sub.restart();
-sub.clear(); // Clear events and restart
+  // Manual control
+  sub.start();
+  sub.stop();
+  sub.restart();
+  sub.clear(); // Clear events and restart
 
-// Change filters
-sub.changeFilters([newFilters]);
+  // Change filters
+  sub.changeFilters([newFilters]);
 
-// Add/remove individual events
-sub.add(event);
-sub.remove(eventId);
+  // Add/remove individual events
+  sub.add(event);
+  sub.remove(eventId);
 </script>
 ```
 
@@ -241,35 +238,35 @@ Built-in multi-user session support with automatic persistence:
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
-import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
+  import { ndk } from "$lib/ndk";
+  import { NDKNip07Signer } from "@nostr-dev-kit/ndk";
 
-// Current session (reactive) - wrap getters in $derived() to make them reactive
-const current = $derived(ndk.$currentSession);
-const currentUser = $derived(ndk.$currentUser);
+  // Current session (reactive) - wrap getters in $derived() to make them reactive
+  const current = $derived(ndk.$currentSession);
+  const currentUser = $derived(ndk.$currentUser);
 
-// Fetch profile reactively
-let profile = $state(null);
-$effect(() => {
-  if (currentUser?.pubkey) {
-    currentUser.fetchProfile().then(p => profile = p);
+  // Fetch profile reactively
+  let profile = $state(null);
+  $effect(() => {
+    if (currentUser?.pubkey) {
+      currentUser.fetchProfile().then((p) => (profile = p));
+    }
+  });
+
+  async function login() {
+    const signer = new NDKNip07Signer();
+    await ndk.$sessions.login(signer);
   }
-});
 
-async function login() {
-  const signer = new NDKNip07Signer();
-  await ndk.$sessions.login(signer);
-}
-
-function logout() {
-  ndk.$sessions.logout();
-}
+  function logout() {
+    ndk.$sessions.logout();
+  }
 </script>
 
 {#if current}
   <div>
     {#if profile}
-      <p>Logged in as {profile.name || 'Anonymous'}</p>
+      <p>Logged in as {profile.name || "Anonymous"}</p>
     {:else}
       <p>Loading profile...</p>
     {/if}
@@ -326,20 +323,20 @@ The `$follows` getter provides convenient array access to your follow list with 
 
 ```svelte
 <script lang="ts">
-// Use as an array
-const follows = ndk.$follows;
+  // Use as an array
+  const follows = ndk.$follows;
 
-// Check if following (O(1) lookup)
-const isFollowing = ndk.$follows.has(pubkey);
+  // Check if following (O(1) lookup)
+  const isFollowing = ndk.$follows.has(pubkey);
 
-// Add/remove follows
-async function followUser(pubkey: string) {
-  await ndk.$follows.add(pubkey);
-}
+  // Add/remove follows
+  async function followUser(pubkey: string) {
+    await ndk.$follows.add(pubkey);
+  }
 
-async function unfollowUser(pubkey: string) {
-  await ndk.$follows.remove(pubkey);
-}
+  async function unfollowUser(pubkey: string) {
+    await ndk.$follows.remove(pubkey);
+  }
 </script>
 
 <!-- Iterate over follows -->
@@ -349,16 +346,18 @@ async function unfollowUser(pubkey: string) {
 
 <!-- Use in subscriptions -->
 {@const feed = ndk.$subscribe(() => ({
-  filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }]
+  filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }],
 }))}
 ```
 
 **Difference between `ndk.$follows` and `ndk.$sessions.follows`:**
+
 - `ndk.$follows` - Reactive array (extends Array) with `add()`/`remove()`/`has()` methods. Best for templates and subscriptions.
 - `ndk.$sessions.follows` - FollowsProxy (Set-like) with `add()`/`remove()`/`has()` methods. Best when you need Set operations.
 
 Both update reactively and both have `add()`/`remove()`/`has()` methods that publish to the network (except `has()` which is read-only).
-```
+
+````
 
 ### Automatic Wallet Loading
 
@@ -380,7 +379,7 @@ const balance = $derived(ndk.$wallet.balance);
 </script>
 
 <p>Balance: {balance} sats</p>
-```
+````
 
 When you switch sessions or logout, the wallet updates automatically based on the active session's wallet.
 
@@ -390,25 +389,25 @@ Powerful WoT filtering and ranking:
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
-import { onMount } from 'svelte';
+  import { ndk } from "$lib/ndk";
+  import { onMount } from "svelte";
 
-onMount(async () => {
-  if (ndk.$sessions.current) {
-    // Load WoT data
-    await ndk.$wot.load({ maxDepth: 2 });
+  onMount(async () => {
+    if (ndk.$sessions.current) {
+      // Load WoT data
+      await ndk.$wot.load({ maxDepth: 2 });
 
-    // Enable automatic filtering on all subscriptions
-    ndk.$wot.enableAutoFilter({
-      maxDepth: 2,
-      minScore: 0.5,
-      includeUnknown: false
-    });
-  }
-});
+      // Enable automatic filtering on all subscriptions
+      ndk.$wot.enableAutoFilter({
+        maxDepth: 2,
+        minScore: 0.5,
+        includeUnknown: false,
+      });
+    }
+  });
 
-// Subscriptions automatically filter by WoT when enabled
-const notes = ndk.$subscribe({ kinds: [1], limit: 100 });
+  // Subscriptions automatically filter by WoT when enabled
+  const notes = ndk.$subscribe({ kinds: [1], limit: 100 });
 </script>
 ```
 
@@ -440,20 +439,20 @@ Mute management is handled directly by NDK core:
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
+  import { ndk } from "$lib/ndk";
 
-// Mute lists are automatically loaded when user logs in
+  // Mute lists are automatically loaded when user logs in
 
-// Check if muted
-const isMuted = ndk.mutedIds.has(pubkey);
-const isWordMuted = ndk.muteFilter(event);
+  // Check if muted
+  const isMuted = ndk.mutedIds.has(pubkey);
+  const isWordMuted = ndk.muteFilter(event);
 
-// Mute/unmute
-ndk.mutedIds.set(pubkey, "p");
-ndk.mutedIds.delete(pubkey);
+  // Mute/unmute
+  ndk.mutedIds.set(pubkey, "p");
+  ndk.mutedIds.delete(pubkey);
 
-ndk.mutedWords.add("spam");
-ndk.mutedWords.delete("spam");
+  ndk.mutedWords.add("spam");
+  ndk.mutedWords.delete("spam");
 </script>
 ```
 
@@ -465,17 +464,17 @@ Seamless integration with ndk-wallet:
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
-import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet';
+  import { ndk } from "$lib/ndk";
+  import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 
-// Create and set wallet
-const cashuWallet = new NDKCashuWallet(ndk);
-await cashuWallet.init();
-ndk.$wallet.set(cashuWallet);
+  // Create and set wallet
+  const cashuWallet = new NDKCashuWallet(ndk);
+  await cashuWallet.init();
+  ndk.$wallet.set(cashuWallet);
 
-// Reactive wallet state
-const balance = $derived(ndk.$wallet.balance);
-const connected = $derived(!!ndk.$wallet.wallet);
+  // Reactive wallet state
+  const balance = $derived(ndk.$wallet.balance);
+  const connected = $derived(!!ndk.$wallet.wallet);
 </script>
 
 <p>Balance: {balance} sats</p>
@@ -487,20 +486,20 @@ const connected = $derived(!!ndk.$wallet.wallet);
 // Save wallet configuration (creates or updates)
 // Publishes both the wallet config (kind 17375) and mint list (kind 10019) for nutzap reception
 await ndk.$wallet.save({
-  mints: ['https://mint.example.com'],
-  relays: ['wss://relay.example.com']
-})
+  mints: ["https://mint.example.com"],
+  relays: ["wss://relay.example.com"],
+});
 
 // Set/clear wallet
-ndk.$wallet.set(wallet)
-ndk.$wallet.clear()
-await ndk.$wallet.refreshBalance()
+ndk.$wallet.set(wallet);
+ndk.$wallet.clear();
+await ndk.$wallet.refreshBalance();
 
 // State
-ndk.$wallet.balance      // number
-ndk.$wallet.mints        // string[] - configured mint URLs
-ndk.$wallet.mintBalances // Mint[] - mints with balances (including 0 balance)
-ndk.$wallet.relays       // string[]
+ndk.$wallet.balance; // number
+ndk.$wallet.mints; // string[] - configured mint URLs
+ndk.$wallet.mintBalances; // Mint[] - mints with balances (including 0 balance)
+ndk.$wallet.relays; // string[]
 ```
 
 ## Relay Pool Monitoring
@@ -509,11 +508,11 @@ Monitor relay connections:
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
+  import { ndk } from "$lib/ndk";
 
-const connected = $derived(ndk.pool.connectedCount);
-const connecting = $derived(ndk.pool.connectingCount);
-const relays = $derived(ndk.pool.getConnectedRelays());
+  const connected = $derived(ndk.pool.connectedCount);
+  const connecting = $derived(ndk.pool.connectingCount);
+  const relays = $derived(ndk.pool.getConnectedRelays());
 </script>
 
 <p>Connected: {connected} | Connecting: {connecting}</p>
@@ -529,13 +528,13 @@ const relays = $derived(ndk.pool.getConnectedRelays());
 
 ```typescript
 // Query relays
-ndk.pool.getRelay(url)           // RelayInfo | undefined
-ndk.pool.getConnectedRelays()    // RelayInfo[]
+ndk.pool.getRelay(url); // RelayInfo | undefined
+ndk.pool.getConnectedRelays(); // RelayInfo[]
 
 // State
-ndk.pool.relays            // Map<string, RelayInfo>
-ndk.pool.connectedCount    // number
-ndk.pool.connectingCount   // number
+ndk.pool.relays; // Map<string, RelayInfo>
+ndk.pool.connectedCount; // number
+ndk.pool.connectingCount; // number
 ```
 
 ## Advanced Patterns
@@ -546,20 +545,21 @@ Create derived reactive state from subscriptions:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.$subscribe({ kinds: [1], authors: [pubkey] });
+  const notes = ndk.$subscribe({ kinds: [1], authors: [pubkey] });
 
-// Derived state using $derived
-const recentNotes = $derived(
-  notes.events.slice(0, 10)
-);
+  // Derived state using $derived
+  const recentNotes = $derived(notes.events.slice(0, 10));
 
-const notesByDay = $derived(
-  notes.events.reduce((acc, note) => {
-    const day = new Date(note.created_at! * 1000).toDateString();
-    (acc[day] ??= []).push(note);
-    return acc;
-  }, {} as Record<string, NDKEvent[]>)
-);
+  const notesByDay = $derived(
+    notes.events.reduce(
+      (acc, note) => {
+        const day = new Date(note.created_at! * 1000).toDateString();
+        (acc[day] ??= []).push(note);
+        return acc;
+      },
+      {} as Record<string, NDKEvent[]>,
+    ),
+  );
 </script>
 ```
 
@@ -569,22 +569,22 @@ Run side effects when subscription state changes:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.$subscribe({ kinds: [1] });
+  const notes = ndk.$subscribe({ kinds: [1] });
 
-// Run effect when new events arrive
-$effect(() => {
-  if (notes.events.length > 0) {
-    console.log('New events:', notes.events.length);
-    playNotificationSound();
-  }
-});
+  // Run effect when new events arrive
+  $effect(() => {
+    if (notes.events.length > 0) {
+      console.log("New events:", notes.events.length);
+      playNotificationSound();
+    }
+  });
 
-// Run once when EOSE is reached
-$effect(() => {
-  if (notes.eosed) {
-    console.log('Initial load complete');
-  }
-});
+  // Run once when EOSE is reached
+  $effect(() => {
+    if (notes.eosed) {
+      console.log("Initial load complete");
+    }
+  });
 </script>
 ```
 
@@ -594,24 +594,24 @@ The `eosed` flag is for **performance optimization and analytics**, not loading 
 
 ```svelte
 <script lang="ts">
-const notes = ndk.$subscribe({ kinds: [1] });
+  const notes = ndk.$subscribe({ kinds: [1] });
 
-// ✅ Good: Trigger pagination after initial load
-$effect(() => {
-  if (notes.eosed && notes.count < 10) {
-    notes.fetchMore(20);
-  }
-});
+  // ✅ Good: Trigger pagination after initial load
+  $effect(() => {
+    if (notes.eosed && notes.count < 10) {
+      notes.fetchMore(20);
+    }
+  });
 
-// ✅ Good: Performance analytics
-$effect(() => {
-  if (notes.eosed) {
-    console.log(`Loaded ${notes.count} events`);
-  }
-});
+  // ✅ Good: Performance analytics
+  $effect(() => {
+    if (notes.eosed) {
+      console.log(`Loaded ${notes.count} events`);
+    }
+  });
 
-// ❌ Bad: Blocking UI
-// {#if !notes.eosed}<Spinner />{/if}
+  // ❌ Bad: Blocking UI
+  // {#if !notes.eosed}<Spinner />{/if}
 </script>
 
 <!-- Just render events as they stream in -->
@@ -628,15 +628,15 @@ By default, events are buffered for 30ms to batch DOM updates:
 
 ```svelte
 <script lang="ts">
-// High-frequency updates (default)
-const sub1 = ndk.$subscribe(filters, {
-  bufferMs: 30 // Batch updates every 30ms
-});
+  // High-frequency updates (default)
+  const sub1 = ndk.$subscribe(filters, {
+    bufferMs: 30, // Batch updates every 30ms
+  });
 
-// Real-time updates (no buffering)
-const sub2 = ndk.$subscribe(filters, {
-  bufferMs: false // Update immediately
-});
+  // Real-time updates (no buffering)
+  const sub2 = ndk.$subscribe(filters, {
+    bufferMs: false, // Update immediately
+  });
 </script>
 ```
 
@@ -646,14 +646,14 @@ Events are automatically deduplicated using NDK's deduplication keys:
 
 ```svelte
 <script lang="ts">
-// Duplicate events are automatically filtered
-const sub = ndk.$subscribe([
-  { kinds: [1], authors: [pubkey] },
-  { kinds: [1], '#p': [pubkey] }
-]);
+  // Duplicate events are automatically filtered
+  const sub = ndk.$subscribe([
+    { kinds: [1], authors: [pubkey] },
+    { kinds: [1], "#p": [pubkey] },
+  ]);
 
-// Only unique events appear in sub.events
-// Replaceable events are automatically replaced with newer versions
+  // Only unique events appear in sub.events
+  // Replaceable events are automatically replaced with newer versions
 </script>
 ```
 
@@ -662,13 +662,13 @@ const sub = ndk.$subscribe([
 Full TypeScript support with smart type inference:
 
 ```typescript
-import { ndk } from '$lib/ndk';
-import { NDKHighlight } from '@nostr-dev-kit/ndk';
+import { ndk } from "$lib/ndk";
+import { NDKHighlight } from "@nostr-dev-kit/ndk";
 
 // Type is inferred as EventSubscription<NDKHighlight>
 const highlights = ndk.$subscribe<NDKHighlight>(
   { kinds: [9802] },
-  { eventClass: NDKHighlight }
+  { eventClass: NDKHighlight },
 );
 
 // highlights.events is NDKHighlight[]
@@ -732,20 +732,20 @@ Subscription<T>
 
 ```svelte
 <script lang="ts">
-import { ndk } from '$lib/ndk';
+  import { ndk } from "$lib/ndk";
 
-const pubkey = $state('hex...');
-const notes = ndk.$fetchEvents(() => ({
-  kinds: [1],
-  authors: [pubkey],
-  limit: 20
-}));
+  const pubkey = $state("hex...");
+  const notes = ndk.$fetchEvents(() => ({
+    kinds: [1],
+    authors: [pubkey],
+    limit: 20,
+  }));
 
-// Multiple filters
-const events = ndk.$fetchEvents(() => [
-  { kinds: [1], authors: [pubkey1], limit: 10 },
-  { kinds: [1], authors: [pubkey2], limit: 10 }
-]);
+  // Multiple filters
+  const events = ndk.$fetchEvents(() => [
+    { kinds: [1], authors: [pubkey1], limit: 10 },
+    { kinds: [1], authors: [pubkey2], limit: 10 },
+  ]);
 </script>
 
 {#each notes as note}
@@ -781,7 +781,7 @@ class NDKSvelte extends NDK {
 
   // Reactive subscription
   $subscribe<T extends NDKEvent>(
-    config: () => SubscribeConfig | undefined
+    config: () => SubscribeConfig | undefined,
   ): Subscription<T>;
 
   // Reactive fetching

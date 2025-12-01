@@ -38,23 +38,23 @@ We provide comprehensive test utilities in `src/lib/test-utils.ts`:
 
 ```typescript
 import {
-    UserGenerator,      // Generate test users (alice, bob, carol, dave, eve)
-    SignerGenerator,    // Generate signers for test users
-    TestEventFactory,   // Create test events easily
-    EventGenerator,     // Generate various event types
-    RelayMock,          // Mock relay for testing
-    TimeController,     // Control time in tests
-} from './test-utils';
+  UserGenerator, // Generate test users (alice, bob, carol, dave, eve)
+  SignerGenerator, // Generate signers for test users
+  TestEventFactory, // Create test events easily
+  EventGenerator, // Generate various event types
+  RelayMock, // Mock relay for testing
+  TimeController, // Control time in tests
+} from "./test-utils";
 ```
 
 ### Svelte-specific helpers
 
 ```typescript
 import {
-    createTestNDK,      // Create NDK instance for tests
-    waitForEffects,     // Wait for reactive effects to settle
-    generateTestPubkey, // Generate valid test pubkeys
-} from './test-utils';
+  createTestNDK, // Create NDK instance for tests
+  waitForEffects, // Wait for reactive effects to settle
+  generateTestPubkey, // Generate valid test pubkeys
+} from "./test-utils";
 ```
 
 ## Testing Patterns
@@ -68,31 +68,31 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestNDK, waitForEffects } from "../../test-utils";
 
 describe("My Reactive Function", () => {
-    let ndk;
-    let cleanup;
+  let ndk;
+  let cleanup;
 
-    beforeEach(() => {
-        ndk = createTestNDK();
+  beforeEach(() => {
+    ndk = createTestNDK();
+  });
+
+  afterEach(() => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+
+  it("should react to changes", async () => {
+    let result;
+
+    cleanup = $effect.root(() => {
+      // Your reactive code here
+      result = myReactiveFunction(ndk, () => someConfig);
     });
 
-    afterEach(() => {
-        cleanup?.();
-        cleanup = undefined;
-    });
+    // Wait for effects to settle
+    await waitForEffects();
 
-    it("should react to changes", async () => {
-        let result;
-
-        cleanup = $effect.root(() => {
-            // Your reactive code here
-            result = myReactiveFunction(ndk, () => someConfig);
-        });
-
-        // Wait for effects to settle
-        await waitForEffects();
-
-        expect(result.someProperty).toBe(expectedValue);
-    });
+    expect(result.someProperty).toBe(expectedValue);
+  });
 });
 ```
 
@@ -107,44 +107,44 @@ import { createTestNDK, UserGenerator } from "../../test-utils";
 import { createFollowAction } from "./follow-action.svelte";
 
 describe("createFollowAction", () => {
-    let ndk;
-    let cleanup;
-    let testUser;
+  let ndk;
+  let cleanup;
+  let testUser;
 
-    beforeEach(async () => {
-        ndk = createTestNDK();
-        ndk.signer = NDKPrivateKeySigner.generate();
+  beforeEach(async () => {
+    ndk = createTestNDK();
+    ndk.signer = NDKPrivateKeySigner.generate();
 
-        // Create test user
-        testUser = await UserGenerator.getUser("bob", ndk);
+    // Create test user
+    testUser = await UserGenerator.getUser("bob", ndk);
 
-        // Mock store getters (they're read-only)
-        const mockFollows = {
-            has: vi.fn().mockReturnValue(false),
-            add: vi.fn().mockResolvedValue(undefined),
-            remove: vi.fn().mockResolvedValue(undefined),
-        };
-        vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows);
+    // Mock store getters (they're read-only)
+    const mockFollows = {
+      has: vi.fn().mockReturnValue(false),
+      add: vi.fn().mockResolvedValue(undefined),
+      remove: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows);
+  });
+
+  afterEach(() => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+
+  it("should follow user when not following", async () => {
+    const mockFollows = ndk.$follows;
+    vi.mocked(mockFollows.has).mockReturnValue(false);
+
+    let action;
+    cleanup = $effect.root(() => {
+      action = createFollowAction(() => ({ ndk, target: testUser }));
     });
 
-    afterEach(() => {
-        cleanup?.();
-        cleanup = undefined;
-    });
+    await action.follow();
 
-    it("should follow user when not following", async () => {
-        const mockFollows = ndk.$follows;
-        vi.mocked(mockFollows.has).mockReturnValue(false);
-
-        let action;
-        cleanup = $effect.root(() => {
-            action = createFollowAction(() => ({ ndk, target: testUser }));
-        });
-
-        await action.follow();
-
-        expect(mockFollows.add).toHaveBeenCalledWith(testUser.pubkey);
-    });
+    expect(mockFollows.add).toHaveBeenCalledWith(testUser.pubkey);
+  });
 });
 ```
 
@@ -157,28 +157,28 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestNDK, waitForEffects } from "../test-utils";
 
 describe("MyStore", () => {
-    let ndk;
-    let cleanup;
+  let ndk;
+  let cleanup;
 
-    beforeEach(() => {
-        ndk = createTestNDK();
+  beforeEach(() => {
+    ndk = createTestNDK();
+  });
+
+  afterEach(() => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+
+  it("should update reactive state", async () => {
+    cleanup = $effect.root(() => {
+      // Access store
+      const value = ndk.$myStore.someProperty;
+      // Test store behavior
     });
 
-    afterEach(() => {
-        cleanup?.();
-        cleanup = undefined;
-    });
-
-    it("should update reactive state", async () => {
-        cleanup = $effect.root(() => {
-            // Access store
-            const value = ndk.$myStore.someProperty;
-            // Test store behavior
-        });
-
-        await waitForEffects();
-        // Assertions
-    });
+    await waitForEffects();
+    // Assertions
+  });
 });
 ```
 
@@ -191,17 +191,17 @@ import { vi } from "vitest";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 it("should fetch events", async () => {
-    const mockEvent = new NDKEvent(ndk);
-    mockEvent.content = "Test content";
+  const mockEvent = new NDKEvent(ndk);
+  mockEvent.content = "Test content";
 
-    // Mock the fetchEvent method
-    vi.spyOn(ndk, "fetchEvent").mockResolvedValue(mockEvent);
+  // Mock the fetchEvent method
+  vi.spyOn(ndk, "fetchEvent").mockResolvedValue(mockEvent);
 
-    // Your test code that calls ndk.fetchEvent
-    const result = await ndk.fetchEvent("note1...");
+  // Your test code that calls ndk.fetchEvent
+  const result = await ndk.fetchEvent("note1...");
 
-    expect(ndk.fetchEvent).toHaveBeenCalledWith("note1...", { wrap: true });
-    expect(result.content).toBe("Test content");
+  expect(ndk.fetchEvent).toHaveBeenCalledWith("note1...", { wrap: true });
+  expect(result.content).toBe("Test content");
 });
 ```
 
@@ -215,8 +215,8 @@ ndk.$follows = mockFollows;
 
 // ✅ Correct - mock the getter
 const mockFollows = {
-    has: vi.fn().mockReturnValue(false),
-    add: vi.fn().mockResolvedValue(undefined),
+  has: vi.fn().mockReturnValue(false),
+  add: vi.fn().mockResolvedValue(undefined),
 };
 vi.spyOn(ndk, "$follows", "get").mockReturnValue(mockFollows);
 
@@ -244,8 +244,8 @@ Always clean up reactive roots in `afterEach`:
 
 ```typescript
 afterEach(() => {
-    cleanup?.();
-    cleanup = undefined;
+  cleanup?.();
+  cleanup = undefined;
 });
 ```
 
@@ -261,17 +261,17 @@ await waitForEffects();
 
 ```typescript
 describe("myFunction", () => {
-    it("should succeed with valid input", () => {
-        // Happy path
-    });
+  it("should succeed with valid input", () => {
+    // Happy path
+  });
 
-    it("should throw with invalid input", () => {
-        expect(() => myFunction(invalid)).toThrow("Expected error");
-    });
+  it("should throw with invalid input", () => {
+    expect(() => myFunction(invalid)).toThrow("Expected error");
+  });
 
-    it("should handle async errors", async () => {
-        await expect(myAsyncFunction()).rejects.toThrow("Error");
-    });
+  it("should handle async errors", async () => {
+    await expect(myAsyncFunction()).rejects.toThrow("Error");
+  });
 });
 ```
 
@@ -288,17 +288,17 @@ Each test should verify ONE behavior:
 ```typescript
 // ❌ Bad - testing multiple things
 it("should follow and unfollow users", () => {
-    // Follow logic
-    // Unfollow logic
+  // Follow logic
+  // Unfollow logic
 });
 
 // ✅ Good - focused tests
 it("should add user to follows when not following", () => {
-    // Only test the follow action
+  // Only test the follow action
 });
 
 it("should remove user from follows when already following", () => {
-    // Only test the unfollow action
+  // Only test the unfollow action
 });
 ```
 
@@ -338,6 +338,7 @@ Tests run automatically in GitHub Actions on every push. The build will fail if 
 ### Coverage Thresholds
 
 Current coverage thresholds (configured in `vitest.config.ts`):
+
 - Lines: 60%
 - Functions: 60%
 - Branches: 60%
@@ -351,12 +352,12 @@ These will increase as we add more tests.
 
 ```typescript
 it("should publish event", async () => {
-    const mockPublish = vi.fn().mockResolvedValue(new Set());
-    vi.spyOn(someEvent, "publish").mockImplementation(mockPublish);
+  const mockPublish = vi.fn().mockResolvedValue(new Set());
+  vi.spyOn(someEvent, "publish").mockImplementation(mockPublish);
 
-    await action.execute();
+  await action.execute();
 
-    expect(mockPublish).toHaveBeenCalled();
+  expect(mockPublish).toHaveBeenCalled();
 });
 ```
 
@@ -364,16 +365,16 @@ it("should publish event", async () => {
 
 ```typescript
 it("should subscribe to events", () => {
-    const mockSubscribe = vi.fn();
-    vi.spyOn(ndk, "subscribe").mockReturnValue(mockSubscribe as any);
+  const mockSubscribe = vi.fn();
+  vi.spyOn(ndk, "subscribe").mockReturnValue(mockSubscribe as any);
 
-    cleanup = $effect.root(() => {
-        createSubscription(ndk, () => ({ kinds: [1] }));
-    });
+  cleanup = $effect.root(() => {
+    createSubscription(ndk, () => ({ kinds: [1] }));
+  });
 
-    expect(ndk.subscribe).toHaveBeenCalledWith(
-        expect.objectContaining({ kinds: [1] })
-    );
+  expect(ndk.subscribe).toHaveBeenCalledWith(
+    expect.objectContaining({ kinds: [1] }),
+  );
 });
 ```
 
@@ -381,16 +382,16 @@ it("should subscribe to events", () => {
 
 ```typescript
 it("should handle network errors gracefully", async () => {
-    vi.spyOn(ndk, "fetchEvent").mockRejectedValue(new Error("Network error"));
+  vi.spyOn(ndk, "fetchEvent").mockRejectedValue(new Error("Network error"));
 
-    let event;
-    cleanup = $effect.root(() => {
-        event = createFetchEvent(ndk, () => "note1test");
-    });
+  let event;
+  cleanup = $effect.root(() => {
+    event = createFetchEvent(ndk, () => "note1test");
+  });
 
-    await waitForEffects();
+  await waitForEffects();
 
-    expect(event.content).toBeUndefined();
+  expect(event.content).toBeUndefined();
 });
 ```
 
@@ -414,12 +415,12 @@ Tests run in a headless browser. For debugging:
 ```typescript
 // ❌ Bad
 cleanup = $effect.root(() => {
-    const state = $state(initialValue);
+  const state = $state(initialValue);
 });
 
 // ✅ Good - don't use $state in tests, pass values via config callbacks
 cleanup = $effect.root(() => {
-    result = myFunction(() => ({ config: value }));
+  result = myFunction(() => ({ config: value }));
 });
 ```
 
@@ -443,6 +444,7 @@ When adding new features:
 6. **Document complex setups** with comments
 
 Example PR checklist:
+
 - [ ] Tests added for new functionality
 - [ ] Tests pass locally (`pnpm test`)
 - [ ] Coverage meets thresholds (`pnpm test:coverage`)

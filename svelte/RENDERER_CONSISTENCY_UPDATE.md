@@ -13,6 +13,7 @@ Components were inconsistent in how they handled the `renderer` prop:
 3. **EventCard.Content**: ⚠️ Passed renderer explicitly as prop (unnecessary)
 
 This created a bug where:
+
 - EventContent had to explicitly pass `{renderer}` to EmbeddedEvent
 - Nested components couldn't inherit renderer from context
 - Props were being drilled unnecessarily
@@ -25,10 +26,14 @@ All components now follow the same pattern:
 
 ```typescript
 // 1. Get context
-const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
+const rendererContext = getContext<ContentRendererContext | undefined>(
+  CONTENT_RENDERER_CONTEXT_KEY,
+);
 
 // 2. Resolve renderer: prop overrides context, context overrides default
-const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
+const renderer = $derived(
+  rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer,
+);
 
 // 3. Set in context for children
 setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
@@ -37,47 +42,65 @@ setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
 ### Changes Made
 
 #### 1. Fixed EmbeddedEvent (`ui/embedded-event.svelte`)
+
 **Before:**
+
 ```typescript
 let { renderer = defaultContentRenderer } = $props();
 setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
 ```
 
 **After:**
+
 ```typescript
 let { renderer: rendererProp } = $props();
-const rendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
-const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
+const rendererContext = getContext<ContentRendererContext | undefined>(
+  CONTENT_RENDERER_CONTEXT_KEY,
+);
+const renderer = $derived(
+  rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer,
+);
 setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
 ```
 
 #### 2. Added setContext to EventContent (`ui/event-content.svelte`)
+
 **Before:**
+
 ```typescript
-const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
+const renderer = $derived(
+  rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer,
+);
 // Did not set context for children
 ```
 
 **After:**
+
 ```typescript
-const renderer = $derived(rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer);
+const renderer = $derived(
+  rendererProp ?? rendererContext?.renderer ?? defaultContentRenderer,
+);
 setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer }); // Now sets context
 ```
 
 #### 3. Removed Prop Drilling
+
 **EventContent → EmbeddedEvent**
+
 ```diff
 - <EmbeddedEvent {ndk} bech32={segment.data} {renderer} />
 + <EmbeddedEvent {ndk} bech32={segment.data} />
 ```
 
 **EventCard.Content → EventContent**
+
 ```diff
 - <EventContent ndk={context.ndk} event={context.event} renderer={rendererContext?.renderer} />
 + <EventContent ndk={context.ndk} event={context.event} />
 ```
 
 #### 4. Updated NotificationContent
+
 Added context setting since it creates a custom renderer:
 
 ```typescript
@@ -86,6 +109,7 @@ setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer: activeRenderer });
 ```
 
 Now passes renderer via context instead of prop:
+
 ```diff
 - <EmbeddedEvent {ndk} bech32="..." renderer={activeRenderer} />
 + <EmbeddedEvent {ndk} bech32="..." />
@@ -99,8 +123,8 @@ Set renderer once at app/page level:
 
 ```svelte
 <script>
-  import { setContext } from 'svelte';
-  import { CONTENT_RENDERER_CONTEXT_KEY } from '$lib/registry/ui/content-renderer.context';
+  import { setContext } from "svelte";
+  import { CONTENT_RENDERER_CONTEXT_KEY } from "$lib/registry/ui/content-renderer.context";
 
   const myRenderer = new ContentRenderer();
   myRenderer.mentionComponent = MyMention;
@@ -132,6 +156,7 @@ test('custom rendering', () => {
 ### 3. Resolution Order
 
 Components resolve renderer in this priority:
+
 1. **Prop** - Explicit override
 2. **Context** - Inherited from parent
 3. **Default** - `defaultContentRenderer`
@@ -141,22 +166,27 @@ When a component receives a prop, it automatically sets that in context for its 
 ## Benefits
 
 ### ✅ Consistency
+
 - All components use the same pattern
 - Predictable behavior everywhere
 
 ### ✅ No Prop Drilling
+
 - Don't need to pass renderer between components
 - Context handles propagation automatically
 
 ### ✅ Flexibility
+
 - Props allow explicit overrides (testing, one-offs)
 - Context provides implicit inheritance (app-wide)
 
 ### ✅ Proper Inheritance
+
 - Nested embeds automatically use parent's renderer
 - No more bugs from missing context checks
 
 ### ✅ Clean APIs
+
 - Components don't clutter templates with prop passing
 - Renderer flows naturally through component tree
 
@@ -190,12 +220,14 @@ When a component receives a prop, it automatically sets that in context for its 
 Considered **context-only** but chose **prop-or-context** because:
 
 ### For a Component Library:
+
 - ✅ Easier testing (can pass props directly)
 - ✅ Explicit overrides possible (one-off customizations)
 - ✅ More flexible for library consumers
 - ✅ Svelte-idiomatic (props override context)
 
 ### Context-Only Would Be:
+
 - ❌ Harder to test (need wrapper components)
 - ❌ Can't do quick overrides
 - ❌ Less flexible for library use cases
@@ -207,19 +239,22 @@ For an app (not a library), context-only might be simpler. But for a reusable co
 ### If You Were Passing Renderer Props:
 
 **Before:**
+
 ```svelte
 <EventContent {ndk} {event} {renderer} />
-  <EmbeddedEvent {ndk} bech32="..." {renderer} />
+<EmbeddedEvent {ndk} bech32="..." {renderer} />
 ```
 
 **After (still works, but not needed):**
+
 ```svelte
 <EventContent {ndk} {event} {renderer} />
-  <!-- EmbeddedEvent automatically inherits from context -->
-  <EmbeddedEvent {ndk} bech32="..." />
+<!-- EmbeddedEvent automatically inherits from context -->
+<EmbeddedEvent {ndk} bech32="..." />
 ```
 
 **After (recommended):**
+
 ```svelte
 <script>
   setContext(CONTENT_RENDERER_CONTEXT_KEY, { renderer });
@@ -227,7 +262,7 @@ For an app (not a library), context-only might be simpler. But for a reusable co
 
 <!-- All nested components inherit -->
 <EventContent {ndk} {event} />
-  <EmbeddedEvent {ndk} bech32="..." />
+<EmbeddedEvent {ndk} bech32="..." />
 ```
 
 ### No Breaking Changes

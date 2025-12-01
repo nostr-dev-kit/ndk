@@ -3,7 +3,7 @@
   import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import ArticleCardPortrait from '$lib/registry/components/article-card-portrait/article-card-portrait.svelte';
-	import { Motion } from 'svelte-motion';
+	import { fade, fly } from 'svelte/transition';
 	let articles = $state<NDKArticle[]>([]);
 
 	$effect(() => {
@@ -33,19 +33,12 @@
 	<div class="absolute inset-0 p-6 opacity-70">
 		<div class="grid grid-cols-3 gap-4 h-full">
 			{#each articles.slice(0, 6) as article, i (article.id)}
-				<Motion
-					initial={{ opacity: 0, scale: 0.9 }}
-					animate={{ opacity: 1, scale: 1 }}
-					transition={{ delay: i * 0.1, duration: 0.4 }}
-					let:motion
+				<div
+					in:fade={{ duration: 400, delay: i * 100 }}
+					class="grayscale hover:grayscale-0 transition-all duration-500 scale-75"
 				>
-					<div
-						use:motion
-						class="grayscale hover:grayscale-0 transition-all duration-500 scale-75"
-					>
-						<ArticleCardPortrait {ndk} event={article} />
-					</div>
-				</Motion>
+					<ArticleCardPortrait {ndk} event={article} />
+				</div>
 			{/each}
 		</div>
 	</div>
@@ -56,15 +49,8 @@
 	></div>
 
 	<!-- Text overlay -->
-	<Motion
-		initial={{ opacity: 0, y: 20 }}
-		animate={{ opacity: 1, y: 0 }}
-		transition={{ delay: 0.6, duration: 0.6 }}
-		let:motion
-	>
-		<div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-			<h3 class="text-3xl font-bold text-white mb-2">Portrait Grid</h3>
-			<p class="text-white/80 text-sm">Vertical cards perfect for grid layouts</p>
-		</div>
-	</Motion>
+	<div in:fly={{ y: 20, duration: 600, delay: 600 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+		<h3 class="text-3xl font-bold text-white mb-2">Portrait Grid</h3>
+		<p class="text-white/80 text-sm">Vertical cards perfect for grid layouts</p>
+	</div>
 </div>

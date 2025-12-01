@@ -3,7 +3,7 @@
   import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import ArticleCardMedium from '$lib/registry/components/article-card/article-card-medium.svelte';
-	import { Motion } from 'svelte-motion';
+	import { fade, fly } from 'svelte/transition';
 	let articles = $state<NDKArticle[]>([]);
 
 	$effect(() => {
@@ -32,19 +32,12 @@
 	<!-- Background: Medium cards in horizontal feed (grayscale) -->
 	<div class="absolute inset-0 flex gap-4 items-center p-6 opacity-70 overflow-x-auto">
 		{#each articles.slice(0, 3) as article, i (article.id)}
-			<Motion
-				initial={{ opacity: 0, scale: 0.9 }}
-				animate={{ opacity: 1, scale: 1 }}
-				transition={{ delay: i * 0.15, duration: 0.5 }}
-				let:motion
+			<div
+				in:fade={{ duration: 500, delay: i * 150 }}
+				class="grayscale hover:grayscale-0 transition-all duration-500 flex-shrink-0 scale-75"
 			>
-				<div
-					use:motion
-					class="grayscale hover:grayscale-0 transition-all duration-500 flex-shrink-0 scale-75"
-				>
-					<ArticleCardMedium {ndk} event={article} />
-				</div>
-			</Motion>
+				<ArticleCardMedium {ndk} event={article} />
+			</div>
 		{/each}
 	</div>
 
@@ -54,15 +47,8 @@
 	></div>
 
 	<!-- Text overlay -->
-	<Motion
-		initial={{ opacity: 0, y: 20 }}
-		animate={{ opacity: 1, y: 0 }}
-		transition={{ delay: 0.5, duration: 0.6 }}
-		let:motion
-	>
-		<div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-			<h3 class="text-3xl font-bold text-white mb-2">Medium Feed</h3>
-			<p class="text-white/80 text-sm">Compact cards for content feeds</p>
-		</div>
-	</Motion>
+	<div in:fly={{ y: 20, duration: 600, delay: 500 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+		<h3 class="text-3xl font-bold text-white mb-2">Medium Feed</h3>
+		<p class="text-white/80 text-sm">Compact cards for content feeds</p>
+	</div>
 </div>

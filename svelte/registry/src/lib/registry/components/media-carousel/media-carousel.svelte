@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-	import { Motion } from 'svelte-motion';
 	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { ViewOffIcon } from '@hugeicons/core-free-icons';
@@ -159,49 +158,46 @@
 	{:else}
 		<!-- Unblurred media -->
 		<div class="relative w-full overflow-hidden">
-			<Motion
-				animate={{ x: -currentIndex * 100 + '%' }}
-				transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-				let:motion
+			<div
+				class="flex w-full transition-transform duration-500 ease-out"
+				style="transform: translateX({-currentIndex * 100}%)"
 			>
-				<div use:motion class="flex w-full">
-					{#each urls as mediaUrl, i (i)}
-						<button
-							type="button"
-							onclick={() => openLightbox(i)}
-							class="min-w-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
-						>
-							{#if mediaUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
-								<img
-									src={mediaUrl}
-									alt=""
-									class="w-full h-auto max-h-[600px] object-contain pointer-events-none"
-								/>
-							{:else if mediaUrl.match(/\.(mp4|webm|mov)(\?|$)/i)}
-								<!-- svelte-ignore a11y_media_has_caption -->
-								<video
-									src={mediaUrl}
-									class="w-full h-auto max-h-[600px] object-contain pointer-events-none"
-								></video>
-							{:else if mediaUrl.match(/youtube\.com|youtu\.be/i)}
-								{@const videoId = mediaUrl.match(
-									/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
-								)?.[1]}
-								{#if videoId}
-									<iframe
-										src="https://www.youtube.com/embed/{videoId}"
-										title="YouTube video"
-										class="w-full aspect-video pointer-events-none"
-										frameborder="0"
-										allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-										allowfullscreen
-									></iframe>
-								{/if}
+				{#each urls as mediaUrl, i (i)}
+					<button
+						type="button"
+						onclick={() => openLightbox(i)}
+						class="min-w-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
+					>
+						{#if mediaUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
+							<img
+								src={mediaUrl}
+								alt=""
+								class="w-full h-auto max-h-[600px] object-contain pointer-events-none"
+							/>
+						{:else if mediaUrl.match(/\.(mp4|webm|mov)(\?|$)/i)}
+							<!-- svelte-ignore a11y_media_has_caption -->
+							<video
+								src={mediaUrl}
+								class="w-full h-auto max-h-[600px] object-contain pointer-events-none"
+							></video>
+						{:else if mediaUrl.match(/youtube\.com|youtu\.be/i)}
+							{@const videoId = mediaUrl.match(
+								/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
+							)?.[1]}
+							{#if videoId}
+								<iframe
+									src="https://www.youtube.com/embed/{videoId}"
+									title="YouTube video"
+									class="w-full aspect-video pointer-events-none"
+									frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowfullscreen
+								></iframe>
 							{/if}
-						</button>
-					{/each}
-				</div>
-			</Motion>
+						{/if}
+					</button>
+				{/each}
+			</div>
 
 			{#if urls.length > 1}
 				<!-- Navigation buttons -->

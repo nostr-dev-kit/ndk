@@ -10,17 +10,20 @@ import type { NDKSvelte } from "../ndk-svelte.svelte.js";
  * {score.value}
  * ```
  */
-export function createWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) {
-    const score = $derived.by(() => {
-        const pk = typeof pubkey === "function" ? pubkey() : pubkey;
-        return ndk.$wot?.getScore(pk) ?? 0;
-    });
+export function createWoTScore(
+  ndk: NDKSvelte,
+  pubkey: string | (() => string),
+) {
+  const score = $derived.by(() => {
+    const pk = typeof pubkey === "function" ? pubkey() : pubkey;
+    return ndk.$wot?.getScore(pk) ?? 0;
+  });
 
-    return {
-        get value() {
-            return score;
-        },
-    };
+  return {
+    get value() {
+      return score;
+    },
+  };
 }
 
 /**
@@ -33,17 +36,20 @@ export function createWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) 
  * {distance.value}
  * ```
  */
-export function createWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string)) {
-    const distance = $derived.by(() => {
-        const pk = typeof pubkey === "function" ? pubkey() : pubkey;
-        return ndk.$wot?.getDistance(pk) ?? null;
-    });
+export function createWoTDistance(
+  ndk: NDKSvelte,
+  pubkey: string | (() => string),
+) {
+  const distance = $derived.by(() => {
+    const pk = typeof pubkey === "function" ? pubkey() : pubkey;
+    return ndk.$wot?.getDistance(pk) ?? null;
+  });
 
-    return {
-        get value() {
-            return distance;
-        },
-    };
+  return {
+    get value() {
+      return distance;
+    },
+  };
 }
 
 /**
@@ -57,15 +63,19 @@ export function createWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string
  * {/if}
  * ```
  */
-export function createIsInWoT(ndk: NDKSvelte, pubkey: string | (() => string), options?: { maxDepth?: number }) {
-    const inWoT = $derived.by(() => {
-        const pk = typeof pubkey === "function" ? pubkey() : pubkey;
-        return ndk.$wot?.includes(pk, options) ?? false;
-    });
+export function createIsInWoT(
+  ndk: NDKSvelte,
+  pubkey: string | (() => string),
+  options?: { maxDepth?: number },
+) {
+  const inWoT = $derived.by(() => {
+    const pk = typeof pubkey === "function" ? pubkey() : pubkey;
+    return ndk.$wot?.includes(pk, options) ?? false;
+  });
 
-    return {
-        get value() {
-            return inWoT;
-        },
-    };
+  return {
+    get value() {
+      return inWoT;
+    },
+  };
 }

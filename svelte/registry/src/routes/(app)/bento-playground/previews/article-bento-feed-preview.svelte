@@ -4,7 +4,7 @@
   import { ndk } from '$lib/site/ndk.svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
-  import { Motion } from 'svelte-motion';
+  import { fade, fly } from 'svelte/transition';
   let articles = $state<NDKArticle[]>([]);
   let scrollContainer = $state<HTMLDivElement>();
   let containerElement = $state<HTMLDivElement>();
@@ -90,17 +90,10 @@
   <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"></div>
 
   <!-- Text overlay -->
-  <Motion
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.2, duration: 0.6 }}
-    let:motion
-  >
-    <div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-      <h3 class="text-3xl font-bold text-white mb-2">Article Feed</h3>
-      <p class="text-white/80 text-sm">Browse your reading list with infinite scroll</p>
-    </div>
-  </Motion>
+  <div in:fly={{ y: 20, duration: 600, delay: 200 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+    <h3 class="text-3xl font-bold text-white mb-2">Article Feed</h3>
+    <p class="text-white/80 text-sm">Browse your reading list with infinite scroll</p>
+  </div>
 </div>
 
 <style>

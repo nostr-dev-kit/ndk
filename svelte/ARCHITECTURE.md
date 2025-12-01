@@ -29,47 +29,56 @@
 
 ```typescript
 // Signature: create[Feature](config: () => Config, ndk?: NDKSvelte): State
-export function createFeature(config: () => FeatureConfig, ndk?: NDKSvelte): FeatureState
+export function createFeature(
+  config: () => FeatureConfig,
+  ndk?: NDKSvelte,
+): FeatureState;
 
 // Config: NO ndk field, direct values
 export interface FeatureConfig {
-    event: NDKEvent;          // Direct value (not function!)
-    user?: NDKUser;           // Direct value (not function!)
-    showDetails?: boolean;    // Optional config
+  event: NDKEvent; // Direct value (not function!)
+  user?: NDKUser; // Direct value (not function!)
+  showDetails?: boolean; // Optional config
 }
 
 // Return: Object with getters
 export interface FeatureState {
-    data: Data | null;        // Data fields
-    loading: boolean;         // Status fields
-    count: number;            // Computed fields
-    execute?: () => Promise<void>; // Methods
+  data: Data | null; // Data fields
+  loading: boolean; // Status fields
+  count: number; // Computed fields
+  execute?: () => Promise<void>; // Methods
 }
 
 // Implementation
-import { resolveNDK } from '../resolve-ndk.svelte.js';
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export function createFeature(config: () => FeatureConfig, ndk?: NDKSvelte) {
-    const resolvedNDK = resolveNDK(ndk); // Auto-resolves from context
+  const resolvedNDK = resolveNDK(ndk); // Auto-resolves from context
 
-    $effect(() => {
-        const { event } = config(); // Reactive tracking
-        // use resolvedNDK and config
-    });
+  $effect(() => {
+    const { event } = config(); // Reactive tracking
+    // use resolvedNDK and config
+  });
 
-    return {
-        get data() { return state.data; },     // ← Getter!
-        get loading() { return state.loading; } // ← Getter!
-    };
+  return {
+    get data() {
+      return state.data;
+    }, // ← Getter!
+    get loading() {
+      return state.loading;
+    }, // ← Getter!
+  };
 }
 ```
 
 **Why?**
+
 - Config is function → Reactive tracking with `$effect`
 - NDK separate param → Auto-resolves from Svelte context
 - Return has getters → Lazy evaluation + fine-grained reactivity
 
 **Usage:**
+
 ```typescript
 // Most common - NDK from context
 const card = createEventCard(() => ({ event }));
@@ -82,65 +91,71 @@ const card = createEventCard(() => ({ event }), customNDK);
 
 ```typescript
 // src/lib/builders/[feature]/index.svelte.ts
-import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
-import { resolveNDK } from '../resolve-ndk.svelte.js';
+import type { NDKSvelte } from "$lib/ndk-svelte.svelte.js";
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export interface FeatureState {
-    data: Data | null;
-    loading: boolean;
+  data: Data | null;
+  loading: boolean;
 }
 
 export interface FeatureConfig {
-    target: Target;  // Direct value!
-    // NO ndk field
+  target: Target; // Direct value!
+  // NO ndk field
 }
 
 export function createFeature(
-    config: () => FeatureConfig,
-    ndk?: NDKSvelte
+  config: () => FeatureConfig,
+  ndk?: NDKSvelte,
 ): FeatureState {
-    const resolvedNDK = resolveNDK(ndk); // Auto-resolve
-    const state = $state({ data: null, loading: false });
+  const resolvedNDK = resolveNDK(ndk); // Auto-resolve
+  const state = $state({ data: null, loading: false });
 
-    $effect(() => {
-        const { target } = config(); // Track changes
-        fetchData(target);
-    });
+  $effect(() => {
+    const { target } = config(); // Track changes
+    fetchData(target);
+  });
 
-    async function fetchData(target: Target) {
-        state.loading = true;
-        state.data = await resolvedNDK.fetchSomething(target);
-        state.loading = false;
-    }
+  async function fetchData(target: Target) {
+    state.loading = true;
+    state.data = await resolvedNDK.fetchSomething(target);
+    state.loading = false;
+  }
 
-    return {
-        get data() { return state.data; },
-        get loading() { return state.loading; }
-    };
+  return {
+    get data() {
+      return state.data;
+    },
+    get loading() {
+      return state.loading;
+    },
+  };
 }
 ```
 
 ## Component Template (Copy & Modify)
 
 ### context.svelte.ts
+
 ```typescript
-import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+import type { NDKSvelte } from "@nostr-dev-kit/svelte";
 
 export interface FeatureContext {
-    ndk: NDKSvelte;
-    state: FeatureState;
+  ndk: NDKSvelte;
+  state: FeatureState;
 }
 
-export const FEATURE_CONTEXT_KEY = Symbol.for('feature');
+export const FEATURE_CONTEXT_KEY = Symbol.for("feature");
 ```
 
 ### feature-root.svelte
+
 ```svelte
 <script lang="ts">
-  import { setContext } from 'svelte';
-  import { createFeature } from '@nostr-dev-kit/svelte';
-  import { FEATURE_CONTEXT_KEY } from './context.svelte.js';
-  import type { Snippet } from 'svelte';
+  import { setContext } from "svelte";
+  import { createFeature } from "@nostr-dev-kit/svelte";
+  import { FEATURE_CONTEXT_KEY } from "./context.svelte.js";
+  import type { Snippet } from "svelte";
 
   interface Props {
     ndk: NDKSvelte;
@@ -153,8 +168,12 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature');
   const state = createFeature(() => ({ target }), ndk);
 
   setContext(FEATURE_CONTEXT_KEY, {
-    get ndk() { return ndk; },
-    get state() { return state; }
+    get ndk() {
+      return ndk;
+    },
+    get state() {
+      return state;
+    },
   });
 </script>
 
@@ -164,10 +183,14 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature');
 ```
 
 ### feature-display.svelte
+
 ```svelte
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { FEATURE_CONTEXT_KEY, type FeatureContext } from './context.svelte.js';
+  import { getContext } from "svelte";
+  import {
+    FEATURE_CONTEXT_KEY,
+    type FeatureContext,
+  } from "./context.svelte.js";
 
   // ✅ CORRECT: Keep context object (don't destructure!)
   const context = getContext<FeatureContext>(FEATURE_CONTEXT_KEY);
@@ -183,26 +206,30 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature');
 ```
 
 ### index.ts
+
 ```typescript
-import Root from './feature-root.svelte';
-import Display from './feature-display.svelte';
+import Root from "./feature-root.svelte";
+import Display from "./feature-display.svelte";
 
 export const Feature = { Root, Display };
-export type { FeatureContext } from './context.svelte.js';
+export type { FeatureContext } from "./context.svelte.js";
 ```
 
 ## Key Patterns Summary
 
 ### Builder Signature (v3.0)
+
 ```typescript
 create[Feature](config: () => Config, ndk?: NDKSvelte): State
 ```
+
 - **Config:** Function returning object with direct values (`event: NDKEvent`)
 - **NDK:** Optional parameter, auto-resolves from context
 - **Return:** Object with getters (`get data() { return state.data; }`)
 - **Interfaces:** Export `[Feature]Config` and `[Feature]State`
 
 ### Component Pattern
+
 ```svelte
 <!-- Root: Creates builder, sets context -->
 <Feature.Root> → createFeature() → setContext()
@@ -214,6 +241,7 @@ create[Feature](config: () => Config, ndk?: NDKSvelte): State
 ## Key Rules
 
 ### Builders MUST:
+
 - ✅ Use `$state`, `$derived`, `$effect`
 - ✅ Accept config function: `config: () => Config`
 - ✅ Use `resolveNDK(ndk)` to get NDK instance
@@ -225,6 +253,7 @@ create[Feature](config: () => Config, ndk?: NDKSvelte): State
 - ❌ NO backwards compatibility
 
 ### Components MUST:
+
 - ✅ Follow Root + Children pattern
 - ✅ Use builders for data
 - ✅ Share via context with getters
@@ -261,59 +290,66 @@ svelte/
 ## Common Patterns
 
 ### Lazy Subscription
+
 ```typescript
 const data = $derived.by(() => {
-    const target = props.target();
-    if (!target) return null;
+  const target = props.target();
+  if (!target) return null;
 
-    // Subscribe only when getter accessed
-    const sub = props.ndk.$subscribe(() => ({
-        filters: [/* ... */]
-    }));
+  // Subscribe only when getter accessed
+  const sub = props.ndk.$subscribe(() => ({
+    filters: [
+      /* ... */
+    ],
+  }));
 
-    return sub.events;
+  return sub.events;
 });
 ```
 
 ### Deduplication
+
 ```typescript
 const cache = new Map<string, Promise<Data>>();
 
 async function fetch(id: string) {
-    if (cache.has(id)) return cache.get(id);
+  if (cache.has(id)) return cache.get(id);
 
-    const promise = ndk.fetchData(id)
-        .finally(() => cache.delete(id));
+  const promise = ndk.fetchData(id).finally(() => cache.delete(id));
 
-    cache.set(id, promise);
-    return promise;
+  cache.set(id, promise);
+  return promise;
 }
 ```
 
 ### Action Builder
+
 ```typescript
 export function createAction(config: () => Config) {
-    const state = $derived.by(() => {
-        const { ndk, target } = config();
-        return computeState(ndk, target);
-    });
+  const state = $derived.by(() => {
+    const { ndk, target } = config();
+    return computeState(ndk, target);
+  });
 
-    async function execute() {
-        const { ndk, target } = config();
-        await ndk.performAction(target);
-    }
+  async function execute() {
+    const { ndk, target } = config();
+    await ndk.performAction(target);
+  }
 
-    return {
-        get state() { return state; },
-        execute
-    };
+  return {
+    get state() {
+      return state;
+    },
+    execute,
+  };
 }
 ```
 
 ### Standalone + Context Component
+
 ```svelte
 <script lang="ts">
-  import { getContext } from 'svelte';
+  import { getContext } from "svelte";
 
   interface Props {
     ndk?: NDKSvelte;
@@ -337,6 +373,7 @@ export function createAction(config: () => Config) {
 **After creating ANY new builder or component, you MUST:**
 
 ### New Builder Created → Check:
+
 ```bash
 # 1. Can other builders use it?
 grep -r "similar pattern" src/lib/builders/
@@ -351,6 +388,7 @@ grep -r "similar pattern" registry/src/lib/ndk/
 ```
 
 ### New Component Created → Check:
+
 ```bash
 # 1. Can other components compose with it?
 find registry/src/lib/ndk -name "*.svelte"
@@ -362,6 +400,7 @@ find registry/src/lib/ndk -name "*.svelte"
 ```
 
 ### Why This Matters:
+
 - Prevents code duplication
 - Ensures consistent behavior
 - Leverages improvements everywhere
@@ -372,6 +411,7 @@ find registry/src/lib/ndk -name "*.svelte"
 ## Export Checklist
 
 ### New Builder:
+
 1. Create in `src/lib/builders/[feature]/`
 2. Export from `src/lib/builders/[feature]/index.ts`
 3. Add to `src/lib/index.ts`
@@ -382,6 +422,7 @@ find registry/src/lib/ndk -name "*.svelte"
 8. **Refactor any duplicated logic to use this new builder**
 
 ### New Component:
+
 1. Create in `registry/src/lib/ndk/[feature]/`
 2. Create `context.svelte.ts`
 3. Create Root + Children components
@@ -447,6 +488,7 @@ const value = props.newProp();
 When sharing data through Svelte context, **you MUST use getters** in the context object and **MUST NOT destructure** when consuming it. This is essential for reactivity.
 
 **The Problem:**
+
 ```svelte
 <!-- Root sets context with getters ✅ -->
 <script>
@@ -467,6 +509,7 @@ When sharing data through Svelte context, **you MUST use getters** in the contex
 ```
 
 **The Solution:**
+
 ```svelte
 <!-- Child keeps context object ✅ CORRECT! -->
 <script>
@@ -474,7 +517,7 @@ When sharing data through Svelte context, **you MUST use getters** in the contex
   // context.event runs the getter each time
 </script>
 
-<div>{context.event.content}</div>  <!-- Always fresh! -->
+<div>{context.event.content}</div> <!-- Always fresh! -->
 ```
 
 ### Why Destructuring Breaks Reactivity
@@ -482,13 +525,17 @@ When sharing data through Svelte context, **you MUST use getters** in the contex
 When you destructure, JavaScript **captures the value at that moment**:
 
 ```typescript
-const context = { get value() { return someState } };
+const context = {
+  get value() {
+    return someState;
+  },
+};
 
 // Destructuring captures current value
-const { value } = context;  // ❌ value is now frozen
+const { value } = context; // ❌ value is now frozen
 
 // Accessing through object runs getter
-context.value;  // ✅ Runs getter, gets fresh value
+context.value; // ✅ Runs getter, gets fresh value
 ```
 
 ### Pattern: Use $derived for Derived Values
@@ -501,7 +548,7 @@ If you need to derive values from context, use `$derived`:
 
   // ✅ Reactive derived value
   const displayName = $derived(
-    context.event.author?.profile?.displayName || 'Unknown'
+    context.event.author?.profile?.displayName || "Unknown",
   );
 </script>
 
@@ -511,11 +558,13 @@ If you need to derive values from context, use `$derived`:
 ### Performance: Getters Are Fast
 
 **Getters have minimal overhead:**
+
 - Modern JavaScript engines optimize property access
 - Svelte 5's fine-grained reactivity only updates what changed
 - No performance penalty compared to direct property access
 
 **From community research (2024-2025):**
+
 - Svelte 5 uses **Proxies** for state, which are highly optimized
 - Getter pattern is **standard practice** for reactive contexts
 - Comparable performance to direct property access in modern engines
@@ -543,9 +592,10 @@ New functionality needed?
 ## Usage Examples
 
 ### Using Builder Directly (Custom UI)
+
 ```svelte
 <script>
-  import { createEventCard } from '@nostr-dev-kit/svelte';
+  import { createEventCard } from "@nostr-dev-kit/svelte";
 
   const card = createEventCard(() => ({ event }), ndk);
 </script>
@@ -559,9 +609,10 @@ New functionality needed?
 ```
 
 ### Using Component (Pre-built UI)
+
 ```svelte
 <script>
-  import { EventCard } from '$lib/components/ui/event-card';
+  import { EventCard } from "$lib/components/ui/event-card";
 </script>
 
 <!-- Composable pre-built UI -->
@@ -573,10 +624,11 @@ New functionality needed?
 ```
 
 ### Mixing Both
+
 ```svelte
 <script>
-  import { EventCard } from '$lib/components/ui/event-card';
-  import { createZapAction } from '@nostr-dev-kit/svelte';
+  import { EventCard } from "$lib/components/ui/event-card";
+  import { createZapAction } from "@nostr-dev-kit/svelte";
 
   const zapAction = createZapAction(() => ({ ndk, event }));
 </script>

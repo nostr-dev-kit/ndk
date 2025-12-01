@@ -18,9 +18,9 @@ npm install @nostr-dev-kit/svelte @nostr-dev-kit/blossom
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
-  import { ndk } from './ndk-instance'; // Your NDK instance
+  import { NDKBlossom } from "@nostr-dev-kit/blossom";
+  import { useBlossomUpload } from "@nostr-dev-kit/svelte";
+  import { ndk } from "./ndk-instance"; // Your NDK instance
 
   const blossom = new NDKBlossom(ndk);
   const upload = useBlossomUpload(blossom);
@@ -32,9 +32,9 @@ npm install @nostr-dev-kit/svelte @nostr-dev-kit/blossom
 
     try {
       await upload.upload(file);
-      console.log('Upload successful!', upload.result);
+      console.log("Upload successful!", upload.result);
     } catch (error) {
-      console.error('Upload failed:', error);
+      console.error("Upload failed:", error);
     }
   }
 </script>
@@ -42,21 +42,21 @@ npm install @nostr-dev-kit/svelte @nostr-dev-kit/blossom
 <div>
   <input type="file" onchange={handleFileChange} />
 
-  {#if upload.status === 'uploading'}
+  {#if upload.status === "uploading"}
     <div>
       <p>Uploading... {upload.progress?.percentage}%</p>
       <progress value={upload.progress?.loaded} max={upload.progress?.total} />
     </div>
   {/if}
 
-  {#if upload.status === 'success'}
+  {#if upload.status === "success"}
     <div>
       <p>Upload complete!</p>
       <img src={upload.result?.url} alt="Uploaded image" />
     </div>
   {/if}
 
-  {#if upload.status === 'error'}
+  {#if upload.status === "error"}
     <p class="error">Error: {upload.error?.message}</p>
   {/if}
 </div>
@@ -69,6 +69,7 @@ npm install @nostr-dev-kit/svelte @nostr-dev-kit/blossom
 Creates a new `BlossomUpload` instance for managing file uploads.
 
 **Parameters:**
+
 - `blossom`: An instance of `NDKBlossom`
 
 **Returns:** A `BlossomUpload` instance with reactive state
@@ -82,6 +83,7 @@ All properties are reactive Svelte 5 runes:
 ##### `status: UploadStatus`
 
 Current upload status. One of:
+
 - `'idle'`: No upload in progress
 - `'uploading'`: Upload in progress
 - `'success'`: Upload completed successfully
@@ -90,10 +92,11 @@ Current upload status. One of:
 ##### `progress: UploadProgress | null`
 
 Upload progress information:
+
 ```typescript
 interface UploadProgress {
-  loaded: number;    // Bytes uploaded
-  total: number;     // Total bytes
+  loaded: number; // Bytes uploaded
+  total: number; // Total bytes
   percentage: number; // Progress as percentage (0-100)
 }
 ```
@@ -101,13 +104,14 @@ interface UploadProgress {
 ##### `result: NDKImetaTag | null`
 
 The successful upload result containing URL and metadata:
+
 ```typescript
 interface NDKImetaTag {
   url: string;
   size?: string;
-  m?: string;      // MIME type
-  x?: string;      // SHA256 hash
-  dim?: string;    // Dimensions (e.g., "1920x1080")
+  m?: string; // MIME type
+  x?: string; // SHA256 hash
+  dim?: string; // Dimensions (e.g., "1920x1080")
   blurhash?: string;
   alt?: string;
 }
@@ -120,6 +124,7 @@ Error object if upload failed.
 ##### `state: UploadState`
 
 Combined state object containing all the above properties:
+
 ```typescript
 interface UploadState {
   status: UploadStatus;
@@ -136,6 +141,7 @@ interface UploadState {
 Uploads a file to a Blossom server.
 
 **Parameters:**
+
 - `file`: The file to upload
 
 **Returns:** A promise that resolves with the upload result
@@ -145,6 +151,7 @@ Uploads a file to a Blossom server.
 ##### `reset(): void`
 
 Resets the upload state to initial values:
+
 - `status`: `'idle'`
 - `progress`: `null`
 - `result`: `null`
@@ -156,9 +163,9 @@ Resets the upload state to initial values:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
-  import { ndk } from './ndk-instance';
+  import { NDKBlossom } from "@nostr-dev-kit/blossom";
+  import { useBlossomUpload } from "@nostr-dev-kit/svelte";
+  import { ndk } from "./ndk-instance";
 
   const blossom = new NDKBlossom(ndk);
   let uploads = $state<Map<string, BlossomUpload>>(new Map());
@@ -193,9 +200,9 @@ Resets the upload state to initial values:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
-  import { ndk } from './ndk-instance';
+  import { NDKBlossom } from "@nostr-dev-kit/blossom";
+  import { useBlossomUpload } from "@nostr-dev-kit/svelte";
+  import { ndk } from "./ndk-instance";
 
   const blossom = new NDKBlossom(ndk);
   const upload = useBlossomUpload(blossom);
@@ -229,7 +236,7 @@ Resets the upload state to initial values:
 >
   Drop files here
 
-  {#if upload.status === 'uploading'}
+  {#if upload.status === "uploading"}
     <progress value={upload.progress?.percentage} max={100} />
   {/if}
 </div>
@@ -241,10 +248,10 @@ Upload a file and include it in a nostr event:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
-  import { imetaTagToTag } from '@nostr-dev-kit/ndk/lib/utils/imeta';
-  import { ndk } from './ndk-instance';
+  import { NDKBlossom } from "@nostr-dev-kit/blossom";
+  import { useBlossomUpload } from "@nostr-dev-kit/svelte";
+  import { imetaTagToTag } from "@nostr-dev-kit/ndk/lib/utils/imeta";
+  import { ndk } from "./ndk-instance";
 
   const blossom = new NDKBlossom(ndk);
   const upload = useBlossomUpload(blossom);
@@ -275,9 +282,9 @@ Upload a file and include it in a nostr event:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
-  import { ndk } from './ndk-instance';
+  import { NDKBlossom } from "@nostr-dev-kit/blossom";
+  import { useBlossomUpload } from "@nostr-dev-kit/svelte";
+  import { ndk } from "./ndk-instance";
 
   const blossom = new NDKBlossom(ndk);
   const upload = useBlossomUpload(blossom);
@@ -287,12 +294,12 @@ Upload a file and include it in a nostr event:
       await upload.upload(file);
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes('No signer')) {
-          console.error('User not logged in');
-        } else if (error.message.includes('server')) {
-          console.error('Server error, try again later');
+        if (error.message.includes("No signer")) {
+          console.error("User not logged in");
+        } else if (error.message.includes("server")) {
+          console.error("Server error, try again later");
         } else {
-          console.error('Unknown error:', error.message);
+          console.error("Unknown error:", error.message);
         }
       }
     }

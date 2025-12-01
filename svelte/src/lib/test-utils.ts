@@ -26,10 +26,12 @@ import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
  * const ndk2 = createTestNDK(["wss://relay1.test", "wss://relay2.test"]);
  * ```
  */
-export function createTestNDK(relayUrls: string[] = ["wss://relay.test"]): NDKSvelte {
-    return createNDK({
-        explicitRelayUrls: relayUrls,
-    });
+export function createTestNDK(
+  relayUrls: string[] = ["wss://relay.test"],
+): NDKSvelte {
+  return createNDK({
+    explicitRelayUrls: relayUrls,
+  });
 }
 
 /**
@@ -50,7 +52,7 @@ export function createTestNDK(relayUrls: string[] = ["wss://relay.test"]): NDKSv
  * ```
  */
 export function waitForEffects(ms: number = 10): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -74,21 +76,24 @@ export function waitForEffects(ms: number = 10): Promise<void> {
  * cleanup?.();
  * ```
  */
-export function createEffectCleanup(): [() => void, (fn: (() => void) | undefined) => void] {
-    let cleanupFn: (() => void) | undefined;
+export function createEffectCleanup(): [
+  () => void,
+  (fn: (() => void) | undefined) => void,
+] {
+  let cleanupFn: (() => void) | undefined;
 
-    const cleanup = () => {
-        if (cleanupFn) {
-            cleanupFn();
-            cleanupFn = undefined;
-        }
-    };
+  const cleanup = () => {
+    if (cleanupFn) {
+      cleanupFn();
+      cleanupFn = undefined;
+    }
+  };
 
-    const setCleanup = (fn: (() => void) | undefined) => {
-        cleanupFn = fn;
-    };
+  const setCleanup = (fn: (() => void) | undefined) => {
+    cleanupFn = fn;
+  };
 
-    return [cleanup, setCleanup];
+  return [cleanup, setCleanup];
 }
 
 /**
@@ -107,15 +112,15 @@ export function createEffectCleanup(): [() => void, (fn: (() => void) | undefine
  * ```
  */
 export function generateTestPubkey(seed: string = "test"): string {
-    // Create a deterministic 64-char hex string from the seed
-    const repeated = (seed + seed + seed + seed + seed + seed + seed + seed)
-        .slice(0, 64)
-        .split('')
-        .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
-        .join('')
-        .slice(0, 64);
+  // Create a deterministic 64-char hex string from the seed
+  const repeated = (seed + seed + seed + seed + seed + seed + seed + seed)
+    .slice(0, 64)
+    .split("")
+    .map((c) => c.charCodeAt(0).toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 64);
 
-    return repeated.padEnd(64, '0');
+  return repeated.padEnd(64, "0");
 }
 
 /**
@@ -133,5 +138,5 @@ export function generateTestPubkey(seed: string = "test"): string {
  * ```
  */
 export function generateTestEventId(seed: string = "event"): string {
-    return generateTestPubkey(seed);
+  return generateTestPubkey(seed);
 }

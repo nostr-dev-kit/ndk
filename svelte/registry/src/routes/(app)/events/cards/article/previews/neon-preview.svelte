@@ -3,7 +3,7 @@
   import { ndk } from '$lib/site/ndk.svelte';
 	import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
 	import ArticleCardNeon from '$lib/registry/components/article-card-neon/article-card-neon.svelte';
-	import { Motion } from 'svelte-motion';
+	import { fade, fly } from 'svelte/transition';
 	let articles = $state<NDKArticle[]>([]);
 
 	$effect(() => {
@@ -32,16 +32,12 @@
 	<!-- Background: Neon cards (grayscale) -->
 	<div class="absolute inset-0 flex flex-col gap-6 justify-center p-8 opacity-70">
 		{#each articles.slice(0, 2) as article, i (article.id)}
-			<Motion
-				initial={{ opacity: 0, x: -30 }}
-				animate={{ opacity: 1, x: 0 }}
-				transition={{ delay: i * 0.2, duration: 0.6 }}
-				let:motion
+			<div
+				in:fly={{ x: -30, duration: 600, delay: i * 200 }}
+				class="grayscale hover:grayscale-0 transition-all duration-500 scale-75"
 			>
-				<div use:motion class="grayscale hover:grayscale-0 transition-all duration-500 scale-75">
-					<ArticleCardNeon {ndk} event={article} width="w-full" />
-				</div>
-			</Motion>
+				<ArticleCardNeon {ndk} event={article} width="w-full" />
+			</div>
 		{/each}
 	</div>
 
@@ -51,15 +47,8 @@
 	></div>
 
 	<!-- Text overlay -->
-	<Motion
-		initial={{ opacity: 0, y: 20 }}
-		animate={{ opacity: 1, y: 0 }}
-		transition={{ delay: 0.5, duration: 0.6 }}
-		let:motion
-	>
-		<div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-			<h3 class="text-3xl font-bold text-white mb-2">Neon Style</h3>
-			<p class="text-white/80 text-sm">Modern cards with vibrant accents</p>
-		</div>
-	</Motion>
+	<div in:fly={{ y: 20, duration: 600, delay: 500 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+		<h3 class="text-3xl font-bold text-white mb-2">Neon Style</h3>
+		<p class="text-white/80 text-sm">Modern cards with vibrant accents</p>
+	</div>
 </div>

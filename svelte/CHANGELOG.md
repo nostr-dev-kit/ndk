@@ -42,7 +42,7 @@
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@3.0.0
+  - @nostr-dev-kit/ndk@3.0.0
 
 ## 4.0.0
 
@@ -50,126 +50,126 @@
 
 - b5bdb2c: BREAKING: Rename all use* functions to create* for consistency
 
-    All reactive utilities now consistently use the `create*` prefix to match Svelte idioms (like `createEventDispatcher`).
+  All reactive utilities now consistently use the `create*` prefix to match Svelte idioms (like `createEventDispatcher`).
 
-    **Svelte package renames:**
-    - `useZapAmount` → `createZapAmount`
-    - `useIsZapped` → `createIsZapped`
-    - `useTargetTransactions` → `createTargetTransactions`
-    - `usePendingPayments` → `createPendingPayments`
-    - `useTransactions` → `createTransactions`
-    - `useWoTScore` → `createWoTScore`
-    - `useWoTDistance` → `createWoTDistance`
-    - `useIsInWoT` → `createIsInWoT`
-    - `useZapInfo` → `createZapInfo`
-    - `useBlossomUpload` → `createBlossomUpload`
-    - `useBlossomUrl` → `createBlossomUrl`
+  **Svelte package renames:**
+  - `useZapAmount` → `createZapAmount`
+  - `useIsZapped` → `createIsZapped`
+  - `useTargetTransactions` → `createTargetTransactions`
+  - `usePendingPayments` → `createPendingPayments`
+  - `useTransactions` → `createTransactions`
+  - `useWoTScore` → `createWoTScore`
+  - `useWoTDistance` → `createWoTDistance`
+  - `useIsInWoT` → `createIsInWoT`
+  - `useZapInfo` → `createZapInfo`
+  - `useBlossomUpload` → `createBlossomUpload`
+  - `useBlossomUrl` → `createBlossomUrl`
 
-    Migration: Replace all `use*` function calls with their `create*` equivalents in your Svelte components.
+  Migration: Replace all `use*` function calls with their `create*` equivalents in your Svelte components.
 
 ### Minor Changes
 
 - d4da836: Add meta-subscription support with $metaSubscribe
 
-    Introduces `ndk.$metaSubscribe()`, a reactive subscription that returns events pointed to by e-tags and a-tags, rather than the matching events themselves. Perfect for:
-    - Showing reposted content (kind 6/16)
-    - Finding articles commented on (kind 1111)
-    - Displaying zapped notes (kind 9735)
-    - Any use case where you want to follow event references
+  Introduces `ndk.$metaSubscribe()`, a reactive subscription that returns events pointed to by e-tags and a-tags, rather than the matching events themselves. Perfect for:
+  - Showing reposted content (kind 6/16)
+  - Finding articles commented on (kind 1111)
+  - Displaying zapped notes (kind 9735)
+  - Any use case where you want to follow event references
 
-    Supports multiple sort options:
-    - `time`: Sort by event creation time (newest first)
-    - `count`: Sort by number of pointers (most pointed-to first)
-    - `tag-time`: Sort by most recently tagged (newest pointer first)
-    - `unique-authors`: Sort by number of unique authors pointing to it
+  Supports multiple sort options:
+  - `time`: Sort by event creation time (newest first)
+  - `count`: Sort by number of pointers (most pointed-to first)
+  - `tag-time`: Sort by most recently tagged (newest pointer first)
+  - `unique-authors`: Sort by number of unique authors pointing to it
 
-    Example usage:
+  Example usage:
 
-    ```typescript
-    const feed = ndk.$metaSubscribe(() => ({
-        filters: [{ kinds: [6, 16], authors: $follows }],
-        sort: "tag-time",
-    }));
+  ```typescript
+  const feed = ndk.$metaSubscribe(() => ({
+    filters: [{ kinds: [6, 16], authors: $follows }],
+    sort: "tag-time",
+  }));
 
-    // Access pointed-to events
-    feed.events;
+  // Access pointed-to events
+  feed.events;
 
-    // Access pointer events by target
-    feed.eventsTagging(event);
-    ```
+  // Access pointer events by target
+  feed.eventsTagging(event);
+  ```
 
 - b5bdb2c: Add meta-subscription support with $metaSubscribe
 
-    Introduces `ndk.$metaSubscribe()`, a reactive subscription that returns events pointed to by e-tags and a-tags, rather than the matching events themselves. Perfect for:
-    - Showing reposted content (kind 6/16)
-    - Finding articles commented on (kind 1111)
-    - Displaying zapped notes (kind 9735)
-    - Any use case where you want to follow event references
+  Introduces `ndk.$metaSubscribe()`, a reactive subscription that returns events pointed to by e-tags and a-tags, rather than the matching events themselves. Perfect for:
+  - Showing reposted content (kind 6/16)
+  - Finding articles commented on (kind 1111)
+  - Displaying zapped notes (kind 9735)
+  - Any use case where you want to follow event references
 
-    Supports multiple sort options:
-    - `time`: Sort by event creation time (newest first)
-    - `count`: Sort by number of pointers (most pointed-to first)
-    - `tag-time`: Sort by most recently tagged (newest pointer first)
-    - `unique-authors`: Sort by number of unique authors pointing to it
+  Supports multiple sort options:
+  - `time`: Sort by event creation time (newest first)
+  - `count`: Sort by number of pointers (most pointed-to first)
+  - `tag-time`: Sort by most recently tagged (newest pointer first)
+  - `unique-authors`: Sort by number of unique authors pointing to it
 
-    Example usage:
+  Example usage:
 
-    ```typescript
-    const feed = ndk.$metaSubscribe(() => ({
-        filters: [{ kinds: [6, 16], authors: $follows }],
-        sort: "tag-time",
-    }));
+  ```typescript
+  const feed = ndk.$metaSubscribe(() => ({
+    filters: [{ kinds: [6, 16], authors: $follows }],
+    sort: "tag-time",
+  }));
 
-    // Access pointed-to events
-    feed.events;
+  // Access pointed-to events
+  feed.events;
 
-    // Access pointer events by target
-    feed.eventsTagging(event);
-    ```
+  // Access pointer events by target
+  feed.eventsTagging(event);
+  ```
 
 - b5bdb2c: Add reactive zap subscription system
 
-    Comprehensive zap support for Svelte with reactive subscriptions and utilities:
+  Comprehensive zap support for Svelte with reactive subscriptions and utilities:
 
-    **$zaps() subscription method:**
-    - Reactive zap subscriptions on events or users
-    - Support for both NIP-57 (lightning) and NIP-61 (nutzaps)
-    - Validation for both zap types
-    - Filter by zap method
-    - Aggregate metrics (count, total amount)
-    - Support for validated-only zaps
+  **$zaps() subscription method:**
+  - Reactive zap subscriptions on events or users
+  - Support for both NIP-57 (lightning) and NIP-61 (nutzaps)
+  - Validation for both zap types
+  - Filter by zap method
+  - Aggregate metrics (count, total amount)
+  - Support for validated-only zaps
 
-    **ReactiveFollows class:**
-    - Reactive wrapper around follow set
-    - Network-aware add/remove operations
+  **ReactiveFollows class:**
+  - Reactive wrapper around follow set
+  - Network-aware add/remove operations
 
-    **Utility functions:**
-    - Extract zap amount, sender, and comments
-    - Type-safe zap validation and parsing
+  **Utility functions:**
+  - Extract zap amount, sender, and comments
+  - Type-safe zap validation and parsing
 
-    Example usage:
+  Example usage:
 
-    ```typescript
-    const zapSub = ndk.$zaps(() => ({
-        target: event,
-        validatedOnly: true,
-    }));
+  ```typescript
+  const zapSub = ndk.$zaps(() => ({
+    target: event,
+    validatedOnly: true,
+  }));
 
-    // Access zap metrics
-    zapSub.totalAmount;
-    zapSub.count;
-    zapSub.events;
-    ```
+  // Access zap metrics
+  zapSub.totalAmount;
+  zapSub.count;
+  zapSub.events;
+  ```
 
 ### Patch Changes
 
 - b5bdb2c: Add event throttling to prevent excessive UI updates
 
-    Implemented throttling mechanism for reactive event subscriptions to prevent excessive UI updates when many events arrive in quick succession. This improves performance and reduces unnecessary re-renders in Svelte applications.
+  Implemented throttling mechanism for reactive event subscriptions to prevent excessive UI updates when many events arrive in quick succession. This improves performance and reduces unnecessary re-renders in Svelte applications.
 
 - 46b1c0f: Simplify zap function to use ndk.wallet and ndk.$currentPubkey
 
-    Refactored the zap function to access wallet directly from ndk.wallet instead of ndk.$wallet.wallet, and use ndk.$currentPubkey instead of requiring an active session. This simplifies the code and makes it more robust.
+  Refactored the zap function to access wallet directly from ndk.wallet instead of ndk.$wallet.wallet, and use ndk.$currentPubkey instead of requiring an active session. This simplifies the code and makes it more robust.
 
 - Updated dependencies [b8e7a06]
 - Updated dependencies [79503f5]
@@ -182,12 +182,12 @@
 - Updated dependencies [73adeb9]
 - Updated dependencies [b5bdb2c]
 - Updated dependencies [b5bdb2c]
-    - @nostr-dev-kit/ndk@3.0.0
-    - @nostr-dev-kit/cache-sqlite-wasm@1.0.0
-    - @nostr-dev-kit/sync@0.4.0
-    - @nostr-dev-kit/sessions@0.6.4
-    - @nostr-dev-kit/wallet@0.8.11
-    - @nostr-dev-kit/wot@0.3.7
+  - @nostr-dev-kit/ndk@3.0.0
+  - @nostr-dev-kit/cache-sqlite-wasm@1.0.0
+  - @nostr-dev-kit/sync@0.4.0
+  - @nostr-dev-kit/sessions@0.6.4
+  - @nostr-dev-kit/wallet@0.8.11
+  - @nostr-dev-kit/wot@0.3.7
 
 ## 3.0.0
 
@@ -195,9 +195,9 @@
 
 - Updated dependencies
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.18.0
-    - @nostr-dev-kit/wallet@0.8.10
-    - @nostr-dev-kit/sync@0.3.6
+  - @nostr-dev-kit/ndk@2.18.0
+  - @nostr-dev-kit/wallet@0.8.10
+  - @nostr-dev-kit/sync@0.3.6
 
 ## 2.4.4
 
@@ -207,8 +207,8 @@
 - Updated dependencies
 - Updated dependencies [6c5f645]
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.11
-    - @nostr-dev-kit/sessions@0.6.3
+  - @nostr-dev-kit/ndk@2.17.11
+  - @nostr-dev-kit/sessions@0.6.3
 
 ## 2.4.3
 
@@ -222,7 +222,7 @@
 
 - e2154a0: Add `publishMintList()` method to NDKCashuWallet for simplified CashuMintList (kind 10019) publishing. The svelte wallet store's `save()` method now automatically publishes both the wallet configuration (kind 17375) and the mint list (kind 10019) for nutzap reception, eliminating the need for manual mint list creation.
 - Updated dependencies [e2154a0]
-    - @nostr-dev-kit/wallet@0.8.9
+  - @nostr-dev-kit/wallet@0.8.9
 
 ## 2.4.1
 
@@ -236,62 +236,62 @@
 
 - feat(svelte): add shorthand filter syntax for $subscribe
 
-    **New Feature:**
-    - `$subscribe` now accepts filters directly without requiring a `filters` wrapper for cleaner, more concise code
-    - Shorthand examples:
-        - Single filter: `ndk.$subscribe(() => ({ kinds: [1], limit: 50 }))`
-        - Array of filters: `ndk.$subscribe(() => [{ kinds: [1] }, { kinds: [3] }])`
-    - The full config syntax with `filters` property still works when you need additional options like `relayUrls`, `wot`, etc.
-    - Filter objects are automatically detected by checking for common filter properties (kinds, authors, ids, since, until, limit, etc.)
-    - Updated documentation with examples showing both shorthand and full config syntax
-    - Added test coverage for shorthand syntax
+  **New Feature:**
+  - `$subscribe` now accepts filters directly without requiring a `filters` wrapper for cleaner, more concise code
+  - Shorthand examples:
+    - Single filter: `ndk.$subscribe(() => ({ kinds: [1], limit: 50 }))`
+    - Array of filters: `ndk.$subscribe(() => [{ kinds: [1] }, { kinds: [3] }])`
+  - The full config syntax with `filters` property still works when you need additional options like `relayUrls`, `wot`, etc.
+  - Filter objects are automatically detected by checking for common filter properties (kinds, authors, ids, since, until, limit, etc.)
+  - Updated documentation with examples showing both shorthand and full config syntax
+  - Added test coverage for shorthand syntax
 
 ### Patch Changes
 
 - fix(svelte): add runtime validation for callback parameters in reactive methods
-    - All reactive methods now validate that parameters are functions and throw descriptive TypeErrors when non-functions are passed
-    - Affected methods: `$subscribe`, `$fetchUser`, `$fetchProfile`, `$fetchEvent`, `$fetchEvents`, and `useZapInfo`
-    - Error messages include the function name, parameter name, and usage examples
-    - Added comprehensive test coverage for validation logic
-    - Prevents confusing Svelte runtime errors when developers accidentally pass values directly instead of callbacks
+  - All reactive methods now validate that parameters are functions and throw descriptive TypeErrors when non-functions are passed
+  - Affected methods: `$subscribe`, `$fetchUser`, `$fetchProfile`, `$fetchEvent`, `$fetchEvents`, and `useZapInfo`
+  - Error messages include the function name, parameter name, and usage examples
+  - Added comprehensive test coverage for validation logic
+  - Prevents confusing Svelte runtime errors when developers accidentally pass values directly instead of callbacks
 
-    **Example error message:**
+  **Example error message:**
 
-    ```
-    TypeError: $subscribe expects config to be a function, but received object.
-    Example: ndk.$subscribe(() => value) instead of ndk.$subscribe(value)
-    ```
+  ```
+  TypeError: $subscribe expects config to be a function, but received object.
+  Example: ndk.$subscribe(() => value) instead of ndk.$subscribe(value)
+  ```
 
 ## 2.3.2
 
 ### Patch Changes
 
 - fix(svelte): add runtime validation for callback parameters in reactive methods
-    - All reactive methods now validate that parameters are functions and throw descriptive TypeErrors when non-functions are passed
-    - Affected methods: `$subscribe`, `$fetchUser`, `$fetchProfile`, `$fetchEvent`, `$fetchEvents`, and `useZapInfo`
-    - Error messages include the function name, parameter name, and usage examples
-    - Added comprehensive test coverage for validation logic
-    - Prevents confusing Svelte runtime errors when developers accidentally pass values directly instead of callbacks
+  - All reactive methods now validate that parameters are functions and throw descriptive TypeErrors when non-functions are passed
+  - Affected methods: `$subscribe`, `$fetchUser`, `$fetchProfile`, `$fetchEvent`, `$fetchEvents`, and `useZapInfo`
+  - Error messages include the function name, parameter name, and usage examples
+  - Added comprehensive test coverage for validation logic
+  - Prevents confusing Svelte runtime errors when developers accidentally pass values directly instead of callbacks
 
 - feat(svelte): add automatic event wrapping and generic typing to $fetchEvent and $fetchEvents
 
-    **Breaking Change in Default Behavior:**
-    - $fetchEvent and $fetchEvents now automatically use `wrap: true` by default to wrap events in their kind-specific classes (e.g., NDKArticle for kind 30023)
-    - Invalid events that fail wrapper validation are silently dropped (return undefined), protecting apps from malformed data
-    - To disable wrapping, pass `{ wrap: false }` as the second argument
+  **Breaking Change in Default Behavior:**
+  - $fetchEvent and $fetchEvents now automatically use `wrap: true` by default to wrap events in their kind-specific classes (e.g., NDKArticle for kind 30023)
+  - Invalid events that fail wrapper validation are silently dropped (return undefined), protecting apps from malformed data
+  - To disable wrapping, pass `{ wrap: false }` as the second argument
 
-    **New Features:**
-    - Added generic type parameter support: `ndk.$fetchEvent<NDKArticle>(() => naddr)` and `ndk.$fetchEvents<NDKArticle>(() => filters)`
-    - Added optional `FetchEventOptions` parameter to both methods to control wrapping behavior
-    - Examples:
-        - `ndk.$fetchEvent(() => eventId)` - automatically wrapped (default)
-        - `ndk.$fetchEvent(() => eventId, { wrap: false })` - no wrapping
-        - `ndk.$fetchEvent<NDKArticle>(() => naddr)` - typed and wrapped
+  **New Features:**
+  - Added generic type parameter support: `ndk.$fetchEvent<NDKArticle>(() => naddr)` and `ndk.$fetchEvents<NDKArticle>(() => filters)`
+  - Added optional `FetchEventOptions` parameter to both methods to control wrapping behavior
+  - Examples:
+    - `ndk.$fetchEvent(() => eventId)` - automatically wrapped (default)
+    - `ndk.$fetchEvent(() => eventId, { wrap: false })` - no wrapping
+    - `ndk.$fetchEvent<NDKArticle>(() => naddr)` - typed and wrapped
 
-    **Documentation & Tests:**
-    - Updated documentation with examples showing typed usage and options
-    - Added tests for automatic wrapping functionality
-    - Added tests for wrap override options
+  **Documentation & Tests:**
+  - Updated documentation with examples showing typed usage and options
+  - Added tests for automatic wrapping functionality
+  - Added tests for wrap override options
 
 ## 2.3.1
 
@@ -300,22 +300,22 @@
 - minor bugfix on Avatar component
 - Simplify wallet API: replace `setupWallet()` and `updateWallet()` with single `save()` method. The new `save()` method automatically creates a new wallet if none exists, or updates the existing one. This provides a clearer, simpler API for managing wallet configuration.
 
-    **Migration:**
+  **Migration:**
 
-    ```typescript
-    // Before
-    await ndk.$wallet.setupWallet({ mints, relays });
-    await ndk.$wallet.updateWallet({ mints, relays });
+  ```typescript
+  // Before
+  await ndk.$wallet.setupWallet({ mints, relays });
+  await ndk.$wallet.updateWallet({ mints, relays });
 
-    // After
-    await ndk.$wallet.save({ mints, relays });
-    ```
+  // After
+  await ndk.$wallet.save({ mints, relays });
+  ```
 
 - Fix wallet being cleared during session transitions. Previously, when switching between sessions (e.g., logging in with a different account), the wallet would be incorrectly cleared because the new session's wallet event hadn't loaded yet. The fix tracks the current session's pubkey and only clears the wallet when staying on the same session, not during session transitions.
 - Updated dependencies
 - Updated dependencies [eb8d400]
-    - @nostr-dev-kit/sessions@0.6.2
-    - @nostr-dev-kit/ndk@2.17.10
+  - @nostr-dev-kit/sessions@0.6.2
+  - @nostr-dev-kit/ndk@2.17.10
 
 ## 2.3.0
 
@@ -323,26 +323,26 @@
 
 - 1307288: Add reactive event fetching methods with consistent ergonomics:
 
-    **$fetchEvent()**:
-    - Reactively fetch a single event by bech32 ID (note1..., nevent1...) or filter
-    - Returns reactive proxy to NDKEvent that updates when identifier/filter changes
-    - Supports conditional fetching by returning undefined
-    - Automatic cleanup and refetching
+  **$fetchEvent()**:
+  - Reactively fetch a single event by bech32 ID (note1..., nevent1...) or filter
+  - Returns reactive proxy to NDKEvent that updates when identifier/filter changes
+  - Supports conditional fetching by returning undefined
+  - Automatic cleanup and refetching
 
-    **$fetchEvents()**:
-    - Reactively fetch multiple events by single or multiple filters
-    - Returns reactive array of NDKEvent[] that updates when filters change
-    - Supports conditional fetching by returning undefined
-    - Automatic cleanup and refetching
+  **$fetchEvents()**:
+  - Reactively fetch multiple events by single or multiple filters
+  - Returns reactive array of NDKEvent[] that updates when filters change
+  - Supports conditional fetching by returning undefined
+  - Automatic cleanup and refetching
 
-    Both methods follow the same callback-based API as $subscribe, $fetchUser, and $fetchProfile for consistent developer experience.
+  Both methods follow the same callback-based API as $subscribe, $fetchUser, and $fetchProfile for consistent developer experience.
 
 ### Patch Changes
 
 - Updated dependencies [bcef3e7]
 - Updated dependencies [1307288]
-    - @nostr-dev-kit/ndk@2.17.10
-    - @nostr-dev-kit/cache-sqlite-wasm@0.8.2
+  - @nostr-dev-kit/ndk@2.17.10
+  - @nostr-dev-kit/cache-sqlite-wasm@0.8.2
 
 ## 2.2.6
 
@@ -350,7 +350,7 @@
 
 - add LRU cache on fetchProfile
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.9
+  - @nostr-dev-kit/ndk@2.17.9
 
 ## 2.2.5
 
@@ -358,7 +358,7 @@
 
 - add NutzapMonitor import
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.7
+  - @nostr-dev-kit/wallet@0.8.7
 
 ## 2.2.4
 
@@ -366,28 +366,28 @@
 
 - add nutzap monitor
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.6
+  - @nostr-dev-kit/wallet@0.8.6
 
 ## 2.2.3
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.8
+  - @nostr-dev-kit/ndk@2.17.8
 
 ## 2.2.2
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.7
+  - @nostr-dev-kit/ndk@2.17.7
 
 ## 2.2.1
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.5
+  - @nostr-dev-kit/wallet@0.8.5
 
 ## 2.2.0
 
@@ -398,93 +398,93 @@
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.4
-    - @nostr-dev-kit/ndk@2.17.6
+  - @nostr-dev-kit/wallet@0.8.4
+  - @nostr-dev-kit/ndk@2.17.6
 
 ## 2.1.12
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.3
+  - @nostr-dev-kit/wallet@0.8.3
 
 ## 2.1.11
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.5
-    - @nostr-dev-kit/wallet@0.8.2
+  - @nostr-dev-kit/ndk@2.17.5
+  - @nostr-dev-kit/wallet@0.8.2
 
 ## 2.1.10
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.4
+  - @nostr-dev-kit/ndk@2.17.4
 
 ## 2.1.9
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.1
+  - @nostr-dev-kit/wallet@0.8.1
 
 ## 2.1.8
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.8.0
+  - @nostr-dev-kit/wallet@0.8.0
 
 ## 2.1.7
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.3
+  - @nostr-dev-kit/ndk@2.17.3
 
 ## 2.1.6
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.2
+  - @nostr-dev-kit/ndk@2.17.2
 
 ## 2.1.5
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.1
+  - @nostr-dev-kit/ndk@2.17.1
 
 ## 2.1.4
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.17.0
+  - @nostr-dev-kit/ndk@2.17.0
 
 ## 2.1.3
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.16.3
+  - @nostr-dev-kit/ndk@2.16.3
 
 ## 2.1.2
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.16.2
+  - @nostr-dev-kit/ndk@2.16.2
 
 ## 2.1.1
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.16.1
+  - @nostr-dev-kit/ndk@2.16.1
 
 ## 2.1.0
 
@@ -495,36 +495,36 @@
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/wallet@0.7.0
-    - @nostr-dev-kit/ndk@2.16.0
+  - @nostr-dev-kit/wallet@0.7.0
+  - @nostr-dev-kit/ndk@2.16.0
 
 ## 2.0.4
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.15.3
+  - @nostr-dev-kit/ndk@2.15.3
 
 ## 2.0.3
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.15.2
+  - @nostr-dev-kit/ndk@2.15.2
 
 ## 2.0.2
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.15.1
+  - @nostr-dev-kit/ndk@2.15.1
 
 ## 2.0.1
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.15.0
+  - @nostr-dev-kit/ndk@2.15.0
 
 ## 2.0.0
 
@@ -535,7 +535,7 @@
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk@2.14.0
+  - @nostr-dev-kit/ndk@2.14.0
 
 ## 1.1.0
 

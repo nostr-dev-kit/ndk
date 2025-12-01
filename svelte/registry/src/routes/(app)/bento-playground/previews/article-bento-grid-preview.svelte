@@ -4,7 +4,7 @@
   import { ndk } from '$lib/site/ndk.svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { Article } from '$lib/registry/ui/article';
-  import { Motion } from 'svelte-motion';
+  import { fade, fly } from 'svelte/transition';
   let articles = $state<NDKArticle[]>([]);
   let scrollContainer = $state<HTMLDivElement>();
   let containerElement = $state<HTMLDivElement>();
@@ -70,29 +70,22 @@
   >
     <div class="flex gap-6 p-6 h-full items-center">
       {#each articles as article, i (article.id)}
-        <Motion
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.1, duration: 0.4 }}
-          let:motion
-        >
-          <div use:motion class="flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500">
-            <div class="scale-75 w-80">
-              <Article.Root {ndk} {article}>
-                <div class="h-[480px] rounded-xl overflow-hidden border border-border bg-card shadow-lg flex flex-col">
-                  <Article.Image class="h-64 w-full" />
-                  <div class="flex-1 p-6 flex flex-col gap-3">
-                    <Article.Title class="text-lg font-bold line-clamp-2" />
-                    <Article.Summary class="text-sm text-muted-foreground line-clamp-3" maxLength={150} />
-                    <div class="mt-auto pt-4 border-t border-border">
-                      <Article.ReadingTime class="text-xs text-muted-foreground" />
-                    </div>
+        <div in:fly={{ x: 50, duration: 400, delay: i * 100 }} class="flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500">
+          <div class="scale-75 w-80">
+            <Article.Root {ndk} {article}>
+              <div class="h-[480px] rounded-xl overflow-hidden border border-border bg-card shadow-lg flex flex-col">
+                <Article.Image class="h-64 w-full" />
+                <div class="flex-1 p-6 flex flex-col gap-3">
+                  <Article.Title class="text-lg font-bold line-clamp-2" />
+                  <Article.Summary class="text-sm text-muted-foreground line-clamp-3" maxLength={150} />
+                  <div class="mt-auto pt-4 border-t border-border">
+                    <Article.ReadingTime class="text-xs text-muted-foreground" />
                   </div>
                 </div>
-              </Article.Root>
-            </div>
+              </div>
+            </Article.Root>
           </div>
-        </Motion>
+        </div>
       {/each}
     </div>
   </div>
@@ -101,17 +94,10 @@
   <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"></div>
 
   <!-- Text overlay -->
-  <Motion
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.3, duration: 0.6 }}
-    let:motion
-  >
-    <div use:motion class="absolute bottom-0 left-0 right-0 p-6 z-10">
-      <h3 class="text-3xl font-bold text-white mb-2">Article Grid</h3>
-      <p class="text-white/80 text-sm">Discover content visually in a masonry layout</p>
-    </div>
-  </Motion>
+  <div in:fly={{ y: 20, duration: 600, delay: 300 }} class="absolute bottom-0 left-0 right-0 p-6 z-10">
+    <h3 class="text-3xl font-bold text-white mb-2">Article Grid</h3>
+    <p class="text-white/80 text-sm">Discover content visually in a masonry layout</p>
+  </div>
 </div>
 
 <style>

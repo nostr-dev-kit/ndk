@@ -1,4 +1,8 @@
-import { NDKUser, type NDKZapMethod, type NDKZapMethodInfo } from "@nostr-dev-kit/ndk";
+import {
+  NDKUser,
+  type NDKZapMethod,
+  type NDKZapMethodInfo,
+} from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../ndk-svelte.svelte";
 import { validateCallback } from "../utils/validate-callback.js";
 import { untrack } from "svelte";
@@ -7,7 +11,7 @@ import { untrack } from "svelte";
 const inFlightUserRequests = new Map<string, Promise<NDKUser | null>>();
 
 export type FetchUserResult = NDKUser & {
-    $loaded: boolean;
+  $loaded: boolean;
 };
 
 /**
@@ -29,72 +33,78 @@ export type FetchUserResult = NDKUser & {
  * {/if}
  * ```
  */
-export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undefined): FetchUserResult {
-    validateCallback(identifier, "$fetchUser", "identifier");
+export function createFetchUser(
+  ndk: NDKSvelte,
+  identifier: () => string | undefined,
+): FetchUserResult {
+  validateCallback(identifier, "$fetchUser", "identifier");
 
-    // Initialize as class instance to preserve prototype/getters/methods
-    const instance = new NDKUser({});
-    (instance as any).$loaded = false; // Add dynamic $loaded property
-    const res = $state(instance as FetchUserResult);
+  // Initialize as class instance to preserve prototype/getters/methods
+  const instance = new NDKUser({});
+  (instance as any).$loaded = false; // Add dynamic $loaded property
+  const res = $state(instance as FetchUserResult);
 
-    const derivedIdentifier = $derived(identifier());
+  const derivedIdentifier = $derived(identifier());
 
-    function clearRes() {
-        // Mutate to clear all properties except $loaded, then set $loaded
-        Object.keys(res).forEach((key) => {
-            if (key !== "$loaded") delete res[key as keyof FetchUserResult];
-        });
-        res.$loaded = false;
+  function clearRes() {
+    // Mutate to clear all properties except $loaded, then set $loaded
+    Object.keys(res).forEach((key) => {
+      if (key !== "$loaded") delete res[key as keyof FetchUserResult];
+    });
+    res.$loaded = false;
+  }
+
+  $effect(() => {
+    const id = derivedIdentifier;
+
+    if (!id) {
+      untrack(() => clearRes());
+      return;
     }
 
-    $effect(() => {
-        const id = derivedIdentifier;
+    // Check if there's already an in-flight request for this identifier
+    let fetchPromise = inFlightUserRequests.get(id);
 
-        if (!id) {
-            untrack(() => clearRes());
-            return;
+    if (!fetchPromise) {
+      // No in-flight request, create a new one
+      fetchPromise = ndk
+        .fetchUser(id)
+        .then((user) => user ?? null)
+        .finally(() => {
+          inFlightUserRequests.delete(id);
+        });
+
+      inFlightUserRequests.set(id, fetchPromise);
+    }
+
+    // Clear user while loading
+    untrack(() => clearRes());
+
+    // Capture id in closure for async callbacks
+    const capturedId = id;
+
+    fetchPromise
+      .then((fetchedUser) => {
+        if (fetchedUser && derivedIdentifier === capturedId) {
+          // Assign all user properties directly to res
+          Object.assign(res, fetchedUser);
+          res.$loaded = true;
         }
-
-        // Check if there's already an in-flight request for this identifier
-        let fetchPromise = inFlightUserRequests.get(id);
-
-        if (!fetchPromise) {
-            // No in-flight request, create a new one
-            fetchPromise = ndk.fetchUser(id).then(user => user ?? null).finally(() => {
-                inFlightUserRequests.delete(id);
-            });
-
-            inFlightUserRequests.set(id, fetchPromise);
+      })
+      .catch(() => {
+        if (derivedIdentifier === capturedId) {
+          clearRes();
         }
+      });
+  });
 
-        // Clear user while loading
-        untrack(() => clearRes());
-
-        // Capture id in closure for async callbacks
-        const capturedId = id;
-
-        fetchPromise
-            .then((fetchedUser) => {
-                if (fetchedUser && derivedIdentifier === capturedId) {
-                    // Assign all user properties directly to res
-                    Object.assign(res, fetchedUser);
-                    res.$loaded = true;
-                }
-            })
-            .catch(() => {
-                if (derivedIdentifier === capturedId) {
-                    clearRes();
-                }
-            });
-    });
-
-    return res;
+  return res;
 }
 
 export type ZapInfo = {
-    methods: Map<NDKZapMethod, NDKZapMethodInfo>;
-    isLoading: boolean;
-    error?: string;
+  methods: Map<NDKZapMethod, NDKZapMethodInfo>;
+  isLoading: boolean;
+  error?: string;
 };
 
 /**
@@ -121,49 +131,52 @@ export type ZapInfo = {
  * {/if}
  * ```
  */
-export function createZapInfo(user: () => NDKUser | undefined, timeoutMs: number = 2500): ZapInfo {
-    validateCallback(user, 'createZapInfo', 'user');
-    let methods = $state<Map<NDKZapMethod, NDKZapMethodInfo>>(new Map());
-    let isLoading = $state(false);
-    let error = $state<string | undefined>(undefined);
+export function createZapInfo(
+  user: () => NDKUser | undefined,
+  timeoutMs: number = 2500,
+): ZapInfo {
+  validateCallback(user, "createZapInfo", "user");
+  let methods = $state<Map<NDKZapMethod, NDKZapMethodInfo>>(new Map());
+  let isLoading = $state(false);
+  let error = $state<string | undefined>(undefined);
 
-    const derivedUser = $derived(user());
+  const derivedUser = $derived(user());
 
-    $effect(() => {
-        const currentUser = derivedUser;
+  $effect(() => {
+    const currentUser = derivedUser;
 
-        if (!currentUser) {
-            methods = new Map();
-            isLoading = false;
-            error = undefined;
-            return;
-        }
+    if (!currentUser) {
+      methods = new Map();
+      isLoading = false;
+      error = undefined;
+      return;
+    }
 
-        isLoading = true;
-        error = undefined;
+    isLoading = true;
+    error = undefined;
 
-        currentUser
-            .getZapInfo(timeoutMs)
-            .then((zapMethods) => {
-                methods = zapMethods;
-                isLoading = false;
-            })
-            .catch((e) => {
-                error = e.message || "Failed to fetch zap info";
-                methods = new Map();
-                isLoading = false;
-            });
-    });
+    currentUser
+      .getZapInfo(timeoutMs)
+      .then((zapMethods) => {
+        methods = zapMethods;
+        isLoading = false;
+      })
+      .catch((e) => {
+        error = e.message || "Failed to fetch zap info";
+        methods = new Map();
+        isLoading = false;
+      });
+  });
 
-    return {
-        get methods() {
-            return methods;
-        },
-        get isLoading() {
-            return isLoading;
-        },
-        get error() {
-            return error;
-        },
-    };
+  return {
+    get methods() {
+      return methods;
+    },
+    get isLoading() {
+      return isLoading;
+    },
+    get error() {
+      return error;
+    },
+  };
 }

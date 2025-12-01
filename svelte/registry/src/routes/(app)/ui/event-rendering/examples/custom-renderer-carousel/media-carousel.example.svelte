@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Motion } from 'svelte-motion';
 	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 	import { HugeiconsIcon } from '@hugeicons/svelte';
 
@@ -47,38 +46,35 @@
 	aria-label="Media carousel"
 >
 	<div class="carousel-viewport">
-		<Motion
-			animate={{ x: -currentIndex * 100 + '%' }}
-			transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-			let:motion
+		<div
+			class="carousel-track"
+			style="transform: translateX({-currentIndex * 100}%)"
 		>
-			<div use:motion class="carousel-track">
-				{#each urls as mediaUrl, i (i)}
-					<div class="carousel-slide">
-						{#if mediaUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
-							<img src={mediaUrl} alt="" class="carousel-image" />
-						{:else if mediaUrl.match(/\.(mp4|webm|mov)(\?|$)/i)}
-							<!-- svelte-ignore a11y_media_has_caption -->
-							<video src={mediaUrl} controls class="carousel-video"></video>
-						{:else if mediaUrl.match(/youtube\.com|youtu\.be/i)}
-							{@const videoId = mediaUrl.match(
-								/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
-							)?.[1]}
-							{#if videoId}
-								<iframe
-									src="https://www.youtube.com/embed/{videoId}"
-									title="YouTube video"
-									class="carousel-youtube"
-									frameborder="0"
-									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-									allowfullscreen
-								></iframe>
-							{/if}
+			{#each urls as mediaUrl, i (i)}
+				<div class="carousel-slide">
+					{#if mediaUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i)}
+						<img src={mediaUrl} alt="" class="carousel-image" />
+					{:else if mediaUrl.match(/\.(mp4|webm|mov)(\?|$)/i)}
+						<!-- svelte-ignore a11y_media_has_caption -->
+						<video src={mediaUrl} controls class="carousel-video"></video>
+					{:else if mediaUrl.match(/youtube\.com|youtu\.be/i)}
+						{@const videoId = mediaUrl.match(
+							/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
+						)?.[1]}
+						{#if videoId}
+							<iframe
+								src="https://www.youtube.com/embed/{videoId}"
+								title="YouTube video"
+								class="carousel-youtube"
+								frameborder="0"
+								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+								allowfullscreen
+							></iframe>
 						{/if}
-					</div>
-				{/each}
-			</div>
-		</Motion>
+					{/if}
+				</div>
+			{/each}
+		</div>
 
 		{#if urls.length > 1}
 			<!-- Navigation buttons -->
@@ -141,6 +137,7 @@
 	.carousel-track {
 		display: flex;
 		width: 100%;
+		transition: transform 0.5s ease-out;
 	}
 
 	.carousel-slide {

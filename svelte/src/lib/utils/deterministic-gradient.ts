@@ -46,7 +46,7 @@ export function deterministicPubkeyGradient(pubkey: string): string {
   }
 
   // Subtle variation: slightly rotate hue (30 degrees) and adjust lightness
-  const hue2 = ((h * 360 + 30) % 360);
+  const hue2 = (h * 360 + 30) % 360;
   const lightness2 = Math.min(l * 100 + 10, 90);
 
   return `linear-gradient(135deg, ${color1}, hsl(${hue2}, ${s * 100}%, ${lightness2}%))`;

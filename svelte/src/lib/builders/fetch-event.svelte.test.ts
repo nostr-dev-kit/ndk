@@ -1,8 +1,8 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createTestNDK, generateTestEventId } from "../../test-utils";
-import { createFetchEvent } from "./index.svelte";
+import { createTestNDK, generateTestEventId } from "../test-utils.js";
+import { createFetchEvent } from "./fetch-event.svelte.js";
 
 describe("createFetchEvent", () => {
     let ndk: ReturnType<typeof createTestNDK>;

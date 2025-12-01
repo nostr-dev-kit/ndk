@@ -1,7 +1,7 @@
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
-import { createSubscription } from "./subscribe.svelte.js";
+import { createNDK, type NDKSvelte } from "../ndk-svelte.svelte.js";
+import { createSubscription } from "./subscription.svelte.js";
 
 describe("Subscription Validation", () => {
     let ndk: NDKSvelte;

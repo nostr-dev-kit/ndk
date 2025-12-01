@@ -1,6 +1,6 @@
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
+import { createNDK, type NDKSvelte } from "../ndk-svelte.svelte.js";
 import { createFetchUser, createZapInfo } from "./user.svelte.js";
 
 describe("User Validation", () => {

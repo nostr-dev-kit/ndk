@@ -62,7 +62,7 @@
 					newErrors[prop.name] = 'Must be note1..., nevent1..., or naddr1...';
 					continue;
 				}
-				newFetchers[prop.name] = createFetchEvent(() => ({ bech32: input }), ndk);
+				newFetchers[prop.name] = createFetchEvent(ndk, () => ({ bech32: input }));
 			} else if (prop.type === 'user') {
 				if (!input.startsWith('npub1') && !input.startsWith('nprofile1')) {
 					newErrors[prop.name] = 'Must be npub1... or nprofile1...';

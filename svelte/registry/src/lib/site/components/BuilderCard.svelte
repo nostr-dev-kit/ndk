@@ -63,13 +63,13 @@
 
 			<Tabs.Content value="about" class="flex flex-col gap-8">
 				{#if data.usageExample}
-					<section class="flex flex-col gap-4">
+					<section class="flex flex-col">
 						<CodeBlock lang="typescript" code={data.usageExample} />
 					</section>
 				{/if}
 
 				{#if data.description}
-					<section class="flex flex-col gap-4 prose prose-sm max-w-none dark:prose-invert">
+					<section class="flex flex-col prose prose-sm max-w-none dark:prose-invert">
 						{@html marked.parse(data.description)}
 					</section>
 				{/if}

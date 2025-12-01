@@ -1,12 +1,12 @@
 import type { NDKEvent, NDKFilter, NDKSubscription, NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKKind, NDKNutzap } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "./ndk-svelte.svelte.js";
-import { validateCallback } from "./utils/validate-callback.js";
-import { validateZap } from "./zaps/validation.js";
-import { getZapAmount, type ZapMethod } from "./zaps/utils.js";
+import type { NDKSvelte } from "../ndk-svelte.svelte.js";
+import { validateCallback } from "../utils/validate-callback.js";
+import { validateZap } from "../zaps/validation.js";
+import { getZapAmount, type ZapMethod } from "../zaps/utils.js";
 
-export { validateNip57Zap, validateNip61Zap, validateZap } from "./zaps/validation.js";
-export { getZapAmount, getZapSender, getZapComment, getZapMethod, hasZappedBy, type ZapMethod } from "./zaps/utils.js";
+export { validateNip57Zap, validateNip61Zap, validateZap } from "../zaps/validation.js";
+export { getZapAmount, getZapSender, getZapComment, getZapMethod, hasZappedBy, type ZapMethod } from "../zaps/utils.js";
 
 export interface ZapConfig {
     /**

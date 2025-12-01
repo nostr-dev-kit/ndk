@@ -17,6 +17,9 @@
 	import type { ShowcaseComponent } from '$lib/site/templates/types';
 	import CodeBlock from '$site-components/CodeBlock.svelte';
 
+	// Import page metadata
+	import metadata from '$lib/registry/components/article-card/metadata.json';
+
 	// Import registry metadata
 	import articleCardInlineCard from '$lib/registry/components/article-card-inline/metadata.json';
 	import articleCardCompactCard from '$lib/registry/components/article-card-compact/metadata.json';
@@ -26,10 +29,6 @@
 	import articleCardNeonCard from '$lib/registry/components/article-card-neon/metadata.json';
 
 	const articleCardCards = [articleCardInlineCard, articleCardCompactCard, articleCardPortraitCard, articleCardHeroCard, articleCardMediumCard, articleCardNeonCard];
-
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
 	let loading = $state(true);
 	let article1 = $state<NDKArticle | undefined>();
 	let article2 = $state<NDKArticle | undefined>();

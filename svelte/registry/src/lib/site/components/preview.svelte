@@ -18,7 +18,7 @@ Used in component documentation pages to show both the visual output and source 
 	let { title, code, children, class: className = '', previewAreaClass = '' }: Props = $props();
 </script>
 
-<section class="flex flex-col gap-4 {className}">
+<section class="flex flex-col {className}">
 	<div class="flex flex-col w-full rounded-lg divide-y divide-border border border-border overflow-clip">
 		{#if title}
 			<h3 class="text-xl font-semibold text-foreground m-0 p-4">{title}</h3>

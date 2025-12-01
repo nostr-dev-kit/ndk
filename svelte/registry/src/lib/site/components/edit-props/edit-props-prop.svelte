@@ -29,7 +29,7 @@
 	// Create reactive fetchers based on type
 	const eventFetcher = $derived.by(() => {
 		if (type !== 'event' || !defaultValue) return null;
-		return createFetchEvent(() => ({ bech32: String(defaultValue) }), ndk);
+		return createFetchEvent(ndk, () => ({ bech32: String(defaultValue) }));
 	});
 
 	const userFetcher = $derived.by(() => {

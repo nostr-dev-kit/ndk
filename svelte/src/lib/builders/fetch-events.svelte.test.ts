@@ -1,8 +1,8 @@
 import { NDKArticle, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { flushSync } from "svelte";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createFetchEvents } from "./event.svelte.js";
-import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
+import { createFetchEvents } from "./fetch-events.svelte.js";
+import { createNDK, type NDKSvelte } from "../ndk-svelte.svelte.js";
 
 describe("Event Fetching", () => {
     let ndk: NDKSvelte;

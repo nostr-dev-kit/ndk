@@ -53,9 +53,10 @@
   import manualSetupCode from './examples/manual-setup/index.txt?raw';
     import { cn } from '$lib/registry/utils/cn';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+	const metadata = {
+		title: 'Getting Started with Content Rendering',
+		oneLiner: 'Configure the content renderer in your app layout to enable rich content display'
+	};
   // Interactive selections with multiple options
   let selectedMention = $state<'none' | 'basic' | 'modern'>('none');
   let selectedHashtag = $state<'none' | 'basic' | 'modern'>('none');
@@ -326,7 +327,7 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
   <PageTitle title={metadata.title} subtitle={metadata.oneLiner} />
 
   <!-- Introduction -->
-  <section class="prose prose-lg max-w-none mb-8 flex flex-col gap-4">
+  <section class="prose prose-lg max-w-none mb-8 flex flex-col">
     <h2 class="text-3xl font-bold">What is the Content Renderer?</h2>
     <p class="text-muted-foreground">
       The ContentRenderer is a powerful system that transforms plain Nostr event content into rich,
@@ -507,29 +508,6 @@ nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uh
     </p>
 
     <div class="space-y-8">
-      <div>
-        <h3 class="text-xl font-semibold mb-3">Minimal Setup</h3>
-        <p class="text-muted-foreground mb-4">
-          Basic configuration with essential handlers for mentions, hashtags, links, and media.
-          This example shows the minimal setup you'd place in your <code class="text-xs bg-muted px-1 rounded">+layout.svelte</code>
-        </p>
-        <div class="border border-border rounded-lg bg-muted overflow-hidden">
-          <CodeBlock code={basicSetupCode} lang="svelte" />
-        </div>
-      </div>
-
-      <div>
-        <h3 class="text-xl font-semibold mb-3">Full Setup</h3>
-        <p class="text-muted-foreground mb-4">
-          Complete configuration with modern components and event kind handlers for a rich experience.
-          This example includes enhanced components like <code class="text-xs bg-muted px-1 rounded">mention-modern</code>
-          and <code class="text-xs bg-muted px-1 rounded">link-embed</code> for richer interactions.
-        </p>
-        <div class="border border-border rounded-lg bg-muted overflow-hidden">
-          <CodeBlock code={fullSetupCode} lang="svelte" />
-        </div>
-      </div>
-
       <div>
         <h3 class="text-xl font-semibold mb-3">Manual Configuration</h3>
         <p class="text-muted-foreground mb-4">

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createNDK, type NDKSvelte } from './ndk-svelte.svelte.js';
-import { createMetaSubscription } from './meta-subscribe.svelte.js';
+import { createNDK, type NDKSvelte } from '../ndk-svelte.svelte.js';
+import { createMetaSubscription } from './meta-subscription.svelte.js';
 
 describe('Meta-Subscription Validation', () => {
     let ndk: NDKSvelte;

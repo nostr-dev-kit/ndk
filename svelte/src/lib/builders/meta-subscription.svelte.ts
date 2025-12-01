@@ -1,7 +1,7 @@
 import type { NDKEvent, NDKFilter, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "./ndk-svelte.svelte.js";
-import type { SubscribeConfig } from "./subscribe.svelte.js";
-import { validateCallback } from "./utils/validate-callback.js";
+import type { NDKSvelte } from "../ndk-svelte.svelte.js";
+import type { SubscribeConfig } from "./subscription.svelte.js";
+import { validateCallback } from "../utils/validate-callback.js";
 
 export type MetaSubscribeSortOption = "time" | "count" | "tag-time" | "unique-authors";
 

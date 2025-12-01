@@ -6,14 +6,14 @@
       "dependencies": {
         "@hugeicons/core-free-icons": "^1.2.1",
         "@hugeicons/svelte": "^1.0.2",
-        "@nostr-dev-kit/blossom": "8.0.0-beta.51",
-        "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.51",
-        "@nostr-dev-kit/ndk": "3.0.0-beta.51",
-        "@nostr-dev-kit/sessions": "0.6.4-beta.51",
-        "@nostr-dev-kit/svelte": "4.0.0-beta.51",
-        "@nostr-dev-kit/sync": "0.4.0-beta.51",
-        "@nostr-dev-kit/wallet": "0.8.11-beta.51",
-        "@nostr-dev-kit/wot": "0.3.7-beta.51",
+        "@nostr-dev-kit/blossom": "8.0.0-beta.56",
+        "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.56",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.56",
+        "@nostr-dev-kit/sessions": "0.6.4-beta.56",
+        "@nostr-dev-kit/svelte": "4.0.0-beta.56",
+        "@nostr-dev-kit/sync": "0.4.0-beta.56",
+        "@nostr-dev-kit/wallet": "0.8.11-beta.56",
+        "@nostr-dev-kit/wot": "0.3.7-beta.56",
         "bits-ui": "^2.14.3",
         "html5-qrcode": "^2.3.8",
         "marked": "^17.0.0",
@@ -163,21 +163,21 @@
 
     "@noble/secp256k1": ["@noble/secp256k1@2.3.0", "", {}, "sha512-0TQed2gcBbIrh7Ccyw+y/uZQvbJwm7Ao4scBUxqpBCcsOlZG0O4KGfjtNAy/li4W8n1xt3dxrwJ0beZ2h2G6Kw=="],
 
-    "@nostr-dev-kit/blossom": ["@nostr-dev-kit/blossom@8.0.0-beta.51", "", { "dependencies": { "debug": "^4.3.7" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.51" } }, "sha512-EtQAKnVj9yz9WU+5C0P7anzm7IQ3hQeE30J6p2CcwO5Lg580CG0yty8a2x2P90gOZSspGlYTXPqR1w2VC5Xv0Q=="],
+    "@nostr-dev-kit/blossom": ["@nostr-dev-kit/blossom@8.0.0-beta.56", "", { "dependencies": { "debug": "^4.3.7" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.56" } }, "sha512-nNk7v54P7CW5B18G4QxPeNgSuUbxodFFBz17+RfOCAJ0svXIVrtNkjcuw4qs6b3f9GuaJhyzzl8T7cMIcC3Qbw=="],
 
-    "@nostr-dev-kit/cache-sqlite-wasm": ["@nostr-dev-kit/cache-sqlite-wasm@1.0.0-beta.51", "", { "dependencies": { "sql.js": "^1.8.0" } }, "sha512-XfTCX8FwHIvmFhSpqK+zGf+H5thFVv7Vxlh4fsnTO66a/ZsyZ4klHoDj+nNxsvya8wVjloyGXP6uYG0pgpNZQw=="],
+    "@nostr-dev-kit/cache-sqlite-wasm": ["@nostr-dev-kit/cache-sqlite-wasm@1.0.0-beta.56", "", { "dependencies": { "sql.js": "^1.8.0" } }, "sha512-3svSsIVEG3w5/ACImhnqm1HqB2yB3mfSoSY02x6uJyVP6QIqPVod/Cn7L3vOsKQ2aulwViTTxF1mq4sa0bI6TQ=="],
 
-    "@nostr-dev-kit/ndk": ["@nostr-dev-kit/ndk@3.0.0-beta.51", "", { "dependencies": { "@codesandbox/sandpack-client": "^2.19.8", "@noble/curves": "^1.6.0", "@noble/hashes": "^1.5.0", "@noble/secp256k1": "^2.1.0", "@scure/base": "^1.1.9", "debug": "^4.3.7", "light-bolt11-decoder": "^3.2.0", "shiki": "^3.13.0", "tseep": "^1.3.1", "typescript-lru-cache": "^2.0.0" }, "peerDependencies": { "nostr-tools": "^2.17.2" } }, "sha512-sQXc9q1dT1sbIO7yiRcqMQcxDXCj5R43KX4k2CF2VdHNjFYIfaIjZvi65Q50LtuXXHbXPNQFT9XbwfC6lPzLkg=="],
+    "@nostr-dev-kit/ndk": ["@nostr-dev-kit/ndk@3.0.0-beta.56", "", { "dependencies": { "@codesandbox/sandpack-client": "^2.19.8", "@noble/curves": "^1.6.0", "@noble/hashes": "^1.5.0", "@noble/secp256k1": "^2.1.0", "@scure/base": "^1.1.9", "debug": "^4.3.7", "light-bolt11-decoder": "^3.2.0", "shiki": "^3.13.0", "tseep": "^1.3.1", "typescript-lru-cache": "^2.0.0" }, "peerDependencies": { "nostr-tools": "^2.17.2" } }, "sha512-4uJh/SWW2h1a4x3OqSBw1CofRvQadvDXrJaGzsPnFvb5mztlAKX3cJLf47z3tDeYZS/HbN4GnBk7e5PzOdAkzw=="],
 
-    "@nostr-dev-kit/sessions": ["@nostr-dev-kit/sessions@0.6.4-beta.51", "", { "dependencies": { "zustand": "^5.0.3" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.51", "@nostr-dev-kit/wallet": "0.8.11-beta.51" } }, "sha512-1odz2/214Wdr0GPNg3Clgxv/Eeu/JO1OxinRexVklFMMn1hDnxlkckxbAo4d94u9xkRA8ECfge4skhjQd7+TMw=="],
+    "@nostr-dev-kit/sessions": ["@nostr-dev-kit/sessions@0.6.4-beta.56", "", { "dependencies": { "zustand": "^5.0.3" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.56", "@nostr-dev-kit/wallet": "0.8.11-beta.56" } }, "sha512-NSbc6xfqB2yyPAyhH+YwPYt+8FXnIEVd2LK8Ad1naR53BV2YmD66M8JpFtpcYqE4tghTUCqYwR/XedCrohhh3g=="],
 
-    "@nostr-dev-kit/svelte": ["@nostr-dev-kit/svelte@4.0.0-beta.51", "", { "peerDependencies": { "@nostr-dev-kit/blossom": "8.0.0-beta.51", "@nostr-dev-kit/ndk": "3.0.0-beta.51", "@nostr-dev-kit/sessions": "0.6.4-beta.51", "@nostr-dev-kit/sync": "0.4.0-beta.51", "@nostr-dev-kit/wallet": "0.8.11-beta.51", "@nostr-dev-kit/wot": "0.3.7-beta.51", "svelte": "^5.43.3" } }, "sha512-UUs2k9SLdsF3YfLZ/oxHtwIx5WF5JAVLJcgACPgVkSX/7td9f4hj7yE+fjzNa169HgrMrWd2elE97dv21G+swQ=="],
+    "@nostr-dev-kit/svelte": ["@nostr-dev-kit/svelte@4.0.0-beta.56", "", { "peerDependencies": { "@nostr-dev-kit/blossom": "8.0.0-beta.56", "@nostr-dev-kit/ndk": "3.0.0-beta.56", "@nostr-dev-kit/sessions": "0.6.4-beta.56", "@nostr-dev-kit/sync": "0.4.0-beta.56", "@nostr-dev-kit/wallet": "0.8.11-beta.56", "@nostr-dev-kit/wot": "0.3.7-beta.56", "svelte": "^5.43.3" } }, "sha512-lvZnP+W5J2vQnC5ZvEIauZAYdi/eWp+ea7wOzURP85p5/O4QzaV7SuIIMeh/r2X3QoYCXRV3S7ufv7wz3tLg6g=="],
 
-    "@nostr-dev-kit/sync": ["@nostr-dev-kit/sync@0.4.0-beta.51", "", { "dependencies": { "nostr-tools": "^2.17.2", "tseep": "^1.3.1" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.51" } }, "sha512-7+ai8yqspDtkYQ+uTb82P1l0Eqt7txMokFAP3DeA78jbFZMaWV6TqKKKE9CqzQgpcsgD+NT96TXDYEAnRtkavw=="],
+    "@nostr-dev-kit/sync": ["@nostr-dev-kit/sync@0.4.0-beta.56", "", { "dependencies": { "nostr-tools": "^2.17.2", "tseep": "^1.3.1" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.56" } }, "sha512-0gv4rIV99BOmaba7N2yizB28rypCCQHDddFZ2X5+49tix+gmx8ksx/E1Id/be0lp2s/UpRMXFY6EiWp4D2f0Jw=="],
 
-    "@nostr-dev-kit/wallet": ["@nostr-dev-kit/wallet@0.8.11-beta.51", "", { "dependencies": { "debug": "^4.3.7", "light-bolt11-decoder": "^3.2.0", "tseep": "^1.3.1", "typescript": "^5.9.3", "webln": "^0.3.2", "zustand": "^5.0.3" }, "peerDependencies": { "@cashu/cashu-ts": "^2.1", "@cashu/crypto": "*", "@nostr-dev-kit/ndk": "3.0.0-beta.51", "@nostr-dev-kit/sync": "0.4.0-beta.51" } }, "sha512-fOcIoZy6NjB6NHyF9AwTKvr8BtyIQcW2A6a19KeOTBRpxZnWjqMLc64q1nSNdZoD2rVFmFk2PKXRNjuwhbBcoA=="],
+    "@nostr-dev-kit/wallet": ["@nostr-dev-kit/wallet@0.8.11-beta.56", "", { "dependencies": { "debug": "^4.3.7", "light-bolt11-decoder": "^3.2.0", "tseep": "^1.3.1", "typescript": "^5.9.3", "webln": "^0.3.2", "zustand": "^5.0.3" }, "peerDependencies": { "@cashu/cashu-ts": "^2.1", "@cashu/crypto": "*", "@nostr-dev-kit/ndk": "3.0.0-beta.56", "@nostr-dev-kit/sync": "0.4.0-beta.56" } }, "sha512-6CbdkpnmU/9tHaFMeWdVS5npSf5CsccrfEad4sKx+kqjhWy17U6UcIJfFEerN6nkx3pt6H5MrdezkoaEvPjQOw=="],
 
-    "@nostr-dev-kit/wot": ["@nostr-dev-kit/wot@0.3.7-beta.51", "", { "dependencies": { "debug": "^4.3.7", "typescript": "^5.9.3" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.51", "@nostr-dev-kit/sync": "0.4.0-beta.51" } }, "sha512-l3EZIGAudJqpPUmKg5lK3kAzeqdsS+4Zj6Pwq6KBmTidAEMLDflMqGC6AxHHiPHvb92c5eA9NY4JerH3kmmOGg=="],
+    "@nostr-dev-kit/wot": ["@nostr-dev-kit/wot@0.3.7-beta.56", "", { "dependencies": { "debug": "^4.3.7", "typescript": "^5.9.3" }, "peerDependencies": { "@nostr-dev-kit/ndk": "3.0.0-beta.56", "@nostr-dev-kit/sync": "0.4.0-beta.56" } }, "sha512-dXxr1So/1UTX6HJgDqQAWvCaGejqHgDTrY/4OkkpolHOt8TlhCcRgldFV9lk9vLCkEhluLTB3b42x6/fcI5iTA=="],
 
     "@open-draft/deferred-promise": ["@open-draft/deferred-promise@2.2.0", "", {}, "sha512-CecwLWx3rhxVQF6V4bAgPS5t+So2sTbPgAzafKkVizyi7tlwpcFpdFqq+wqF2OwNBmqFuu6tOyouTuxgpMfzmA=="],
 

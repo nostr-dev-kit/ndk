@@ -9,15 +9,14 @@
 	import BasicSimpleExample from './examples/basic-simple/index.svelte';
 	import BasicExample from './examples/basic.example.svelte';
 
+	// Import page metadata
+	import metadata from '$lib/registry/components/article-content/metadata.json';
+
 	// Import registry metadata
 	import articleContentBasicCardBase from '$lib/registry/components/article-content/metadata.json';
 
 	const articleContentBasicCard = { ...articleContentBasicCardBase, name: 'article-content-basic' };
-	const articleContentCard = { ...articleContentBasicCardBase, name: 'article-content', title: 'Article Content' };
-
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;	let article = $state<NDKArticle | undefined>();
+	const articleContentCard = { ...articleContentBasicCardBase, name: 'article-content', title: 'Article Content' };	let article = $state<NDKArticle | undefined>();
 	let testArticle = $state<NDKArticle | undefined>();
 
 	const articleContentBasicCardWithDescription = {

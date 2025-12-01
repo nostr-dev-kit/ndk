@@ -154,7 +154,7 @@ Uses tabs to switch between preview and code views.
 	}
 </script>
 
-<section class="flex flex-col gap-4 {className}">
+<section class="flex flex-col {className}">
 	<Tabs.Root value="preview">
 		<!-- Header with Title and Tabs -->
 		<div class="flex flex-col w-full border border-border rounded-lg">

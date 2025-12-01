@@ -1,5 +1,6 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vitest/config";
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
     plugins: [
@@ -16,8 +17,12 @@ export default defineConfig({
     test: {
         browser: {
             enabled: true,
-            name: "chromium",
-            provider: "playwright",
+            provider: playwright(),
+            instances: [
+                {
+                    browser: "chromium",
+                },
+            ],
             headless: true,
         },
         globals: true,

@@ -25,9 +25,10 @@
 
 	const eventCardCards = [eventCardClassicCard, eventCardBasicCard, eventCardInlineCard, eventCardCompactCard];
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;	let sampleEvent = $state<NDKEvent | undefined>();
+	const metadata = {
+		title: 'Event Cards',
+		oneLiner: 'Composable card components for displaying Nostr events'
+	};	let sampleEvent = $state<NDKEvent | undefined>();
 
 	// State for controlling content visibility
 	let showClassicContent = $state(false);
@@ -117,32 +118,6 @@
 					or use pre-built blocks for speed. Both use the same underlying components, so you can start with blocks
 					and refactor to primitives as your needs evolve.
 				</p>
-			</div>
-		</section>
-
-		<section class="mb-16">
-			<h2 class="text-3xl font-bold mb-4">Specialized Cards</h2>
-			<p class="text-muted-foreground mb-6">
-				For specific event kinds, the registry provides specialized card components with optimized
-				layouts and metadata display.
-			</p>
-
-			<div class="grid gap-4 md:grid-cols-3">
-				<a href="/events/cards/article" class="group p-6 border rounded-lg hover:bg-accent/50 transition-colors">
-					<h3 class="font-semibold mb-2 group-hover:text-primary">ArticleCard</h3>
-					<p class="text-sm text-muted-foreground mb-3">
-						Long-form article layouts with hero images and reading time.
-					</p>
-					<span class="text-sm text-primary">View variants →</span>
-				</a>
-
-				<a href="/events/cards/highlight" class="group p-6 border rounded-lg hover:bg-accent/50 transition-colors">
-					<h3 class="font-semibold mb-2 group-hover:text-primary">HighlightCard</h3>
-					<p class="text-sm text-muted-foreground mb-3">
-						Text highlight displays with source context and attribution.
-					</p>
-					<span class="text-sm text-primary">View variants →</span>
-				</a>
 			</div>
 		</section>
 	{/if}

@@ -1,4 +1,4 @@
-import type { NDKSvelte } from "./ndk-svelte.svelte.js";
+import type { NDKSvelte } from "../ndk-svelte.svelte.js";
 
 /**
  * Reactive WoT score for a pubkey

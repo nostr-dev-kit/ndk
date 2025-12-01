@@ -1,6 +1,6 @@
 import { NDKUser, type NDKZapMethod, type NDKZapMethodInfo } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "./ndk-svelte.svelte";
-import { validateCallback } from "./utils/validate-callback.js";
+import type { NDKSvelte } from "../ndk-svelte.svelte";
+import { validateCallback } from "../utils/validate-callback.js";
 import { untrack } from "svelte";
 
 // Track in-flight user fetch requests to prevent duplicate fetches

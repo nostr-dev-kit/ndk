@@ -1,5 +1,5 @@
 import { filterAndRelaySetFromBech32, type NDKEvent, type NDKSubscriptionOptions, type NDKFilter } from '@nostr-dev-kit/ndk';
-import type { NDKSvelte } from '../../../ndk-svelte.svelte.js';
+import type { NDKSvelte } from '../ndk-svelte.svelte.js';
 
 export interface FetchEventState {
     event: NDKEvent | null;

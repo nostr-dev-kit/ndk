@@ -126,7 +126,7 @@
 
 			<Tabs.Content value="about" class="flex flex-col gap-8">
 				{#if data.richDescription || data.description}
-					<section class="flex flex-col gap-4">
+					<section class="flex flex-col">
 						{#if data.richDescription}
 							{#if typeof data.richDescription === 'function'}
 								{@render data.richDescription()}
@@ -152,9 +152,9 @@
 				{/if}
 
 				{#if data.relatedComponents && data.relatedComponents.length > 0}
-					<section class="flex flex-col gap-4">
+					<section class="flex flex-col">
 						<h3 class="text-xl font-semibold text-foreground m-0">Related Components</h3>
-						<div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
+						<div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
 							{#each data.relatedComponents as related (related.name)}
 								<a href={related.path} class="p-4 bg-muted border border-border rounded-lg no-underline transition-all duration-200 cursor-pointer hover:border-primary hover:bg-accent">
 									<div class="text-base font-semibold text-foreground mb-1">{related.title}</div>
@@ -167,12 +167,12 @@
 			</Tabs.Content>
 
 			<Tabs.Content value="usage" class="flex flex-col gap-8">
-				<section class="flex flex-col gap-4">
+				<section class="flex flex-col">
 					<h3 class="text-xl font-semibold text-foreground m-0">Installation</h3>
 					<PMCommand command="execute" args={['jsrepo', 'add', data.registryName]} />
 				</section>
 
-				<section class="flex flex-col gap-4">
+				<section class="flex flex-col">
 					{#if data.dependencies && data.dependencies.length > 0}
 						<div class="mt-4">
 							<h4 class="text-sm font-semibold text-foreground m-0 mb-2">Dependencies</h4>
@@ -196,7 +196,7 @@
 					{/if}
 				</section>
 
-				<section class="flex flex-col gap-4">
+				<section class="flex flex-col">
 					<ComponentAPI component={data.apiDoc} />
 				</section>
 			</Tabs.Content>

@@ -5,9 +5,10 @@
 	import InteractiveDemo from './interactive-demo.svelte';
 	import LayerVisualization from './layer-visualization.svelte';	import { EditProps } from '$lib/site/components/edit-props';
 
-  // Get page data
-  let { data } = $props();
-  const { metadata } = data;
+	const metadata = {
+		title: 'Event Rendering Architecture',
+		oneLiner: 'Understanding the three composable layers for rendering Nostr events'
+	};
 	let sampleEvent = $state<NDKEvent | undefined>();
 </script>
 
@@ -23,7 +24,7 @@
 	</PageTitle>
 
 	<!-- Introduction -->
-	<section class="prose prose-lg max-w-none mb-12 flex flex-col gap-4">
+	<section class="prose prose-lg max-w-none mb-12 flex flex-col">
 		<h2 class="text-3xl font-bold">The Three-Layer Architecture</h2>
 		<p class="text-muted-foreground">
 			Nostr events render through three composable layers. Each layer has a specific responsibility

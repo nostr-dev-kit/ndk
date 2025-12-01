@@ -1,6 +1,6 @@
 import { NDKEvent, type NDKFilter, type NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "./ndk-svelte.svelte";
-import { validateCallback } from "./utils/validate-callback.js";
+import type { NDKSvelte } from "../ndk-svelte.svelte";
+import { validateCallback } from "../utils/validate-callback.js";
 import { untrack } from "svelte";
 
 // Track in-flight event fetch requests to prevent duplicate fetches

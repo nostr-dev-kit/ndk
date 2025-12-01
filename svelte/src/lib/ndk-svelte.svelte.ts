@@ -4,7 +4,7 @@ import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
 import * as subscribeGuardrails from "./ai-guardrails/subscribe.js";
-import { createFetchEvents } from "./event.svelte.js";
+import { createFetchEvents } from "./builders/fetch-events.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
 import { createReactivePool } from "./stores/pool.svelte.js";
 import type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
@@ -13,12 +13,12 @@ import type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
 import { createReactiveWallet } from "./stores/wallet.svelte.js";
 import type { ReactiveWoTStore } from "./stores/wot.svelte.js";
 import { createReactiveWoT } from "./stores/wot.svelte.js";
-import type { SubscribeConfig, Subscription } from "./subscribe.svelte.js";
-import { createSubscription } from "./subscribe.svelte.js";
-import type { MetaSubscribeConfig, MetaSubscription } from "./meta-subscribe.svelte.js";
-import { createMetaSubscription } from "./meta-subscribe.svelte.js";
-import type { ZapConfig, ZapSubscription } from "./zaps.svelte.js";
-import { createZapSubscription } from "./zaps.svelte.js";
+import type { SubscribeConfig, Subscription } from "./builders/subscription.svelte.js";
+import { createSubscription } from "./builders/subscription.svelte.js";
+import type { MetaSubscribeConfig, MetaSubscription } from "./builders/meta-subscription.svelte.js";
+import { createMetaSubscription } from "./builders/meta-subscription.svelte.js";
+import type { ZapConfig, ZapSubscription } from "./builders/zap-subscription.svelte.js";
+import { createZapSubscription } from "./builders/zap-subscription.svelte.js";
 
 /**
  * Reactive follows list with add/remove methods

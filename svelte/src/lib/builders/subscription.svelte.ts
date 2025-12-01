@@ -6,8 +6,8 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { NDKSync, type SyncAndSubscribeOptions } from "@nostr-dev-kit/sync";
 import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/wot";
-import type { NDKSvelte } from "./ndk-svelte.svelte.js";
-import { validateCallback } from "./utils/validate-callback.js";
+import type { NDKSvelte } from "../ndk-svelte.svelte.js";
+import { validateCallback } from "../utils/validate-callback.js";
 
 export type SubscribeConfig = {
     /**

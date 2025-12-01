@@ -363,6 +363,49 @@ export class ContentRenderer {
 		this.mediaPriority = 0;
 		this.fallbackPriority = 0;
 	}
+
+	/**
+	 * Create a clone of this renderer with all handlers and components
+	 * Optionally override click callbacks
+	 */
+	clone(callbacks?: {
+		onUserClick?: UserClickCallback;
+		onEventClick?: EventClickCallback;
+		onHashtagClick?: HashtagClickCallback;
+		onLinkClick?: LinkClickCallback;
+		onMediaClick?: MediaClickCallback;
+	}): ContentRenderer {
+		const cloned = new ContentRenderer();
+
+		// Copy all public properties
+		cloned.blockNsfw = this.blockNsfw;
+		cloned.mentionComponent = this.mentionComponent;
+		cloned.hashtagComponent = this.hashtagComponent;
+		cloned.linkComponent = this.linkComponent;
+		cloned.mediaComponent = this.mediaComponent;
+		cloned.fallbackComponent = this.fallbackComponent;
+
+		// Copy callbacks (use provided overrides or original values)
+		cloned.onUserClick = callbacks?.onUserClick ?? this.onUserClick;
+		cloned.onEventClick = callbacks?.onEventClick ?? this.onEventClick;
+		cloned.onHashtagClick = callbacks?.onHashtagClick ?? this.onHashtagClick;
+		cloned.onLinkClick = callbacks?.onLinkClick ?? this.onLinkClick;
+		cloned.onMediaClick = callbacks?.onMediaClick ?? this.onMediaClick;
+
+		// Copy all handlers from the private map
+		for (const [kind, info] of this.handlers) {
+			cloned.handlers.set(kind, info);
+		}
+
+		// Copy priorities
+		cloned.mentionPriority = this.mentionPriority;
+		cloned.hashtagPriority = this.hashtagPriority;
+		cloned.linkPriority = this.linkPriority;
+		cloned.mediaPriority = this.mediaPriority;
+		cloned.fallbackPriority = this.fallbackPriority;
+
+		return cloned;
+	}
 }
 
 /**

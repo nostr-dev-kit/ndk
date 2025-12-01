@@ -4,12 +4,13 @@
   import { getContext, setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './event-card.context.js';
   import { CONTENT_RENDERER_CONTEXT_KEY, type ContentRendererContext } from '../../ui/content-renderer/content-renderer.context.js';
-  import type {
-    UserClickCallback,
-    EventClickCallback,
-    HashtagClickCallback,
-    LinkClickCallback,
-    MediaClickCallback
+  import {
+    defaultContentRenderer,
+    type UserClickCallback,
+    type EventClickCallback,
+    type HashtagClickCallback,
+    type LinkClickCallback,
+    type MediaClickCallback
   } from '../../ui/content-renderer/index.svelte.js';
   import { getNDK } from '../../utils/ndk';
   import { cn } from '../../utils/cn';
@@ -67,17 +68,23 @@
   // Get parent ContentRendererContext if it exists
   const parentRendererContext = getContext<ContentRendererContext | undefined>(CONTENT_RENDERER_CONTEXT_KEY);
 
-  // Create a renderer that merges parent renderer with local callbacks
+  // Create a renderer that clones parent renderer with overridden callbacks
   const renderer = $derived.by(() => {
-    const base = parentRendererContext?.renderer ?? {} as any;
-    return {
-      ...base,
-      onUserClick: onUserClick ?? base.onUserClick,
-      onEventClick: onEventClick ?? base.onEventClick,
-      onHashtagClick: onHashtagClick ?? base.onHashtagClick,
-      onLinkClick: onLinkClick ?? base.onLinkClick,
-      onMediaClick: onMediaClick ?? base.onMediaClick
-    };
+    const base = parentRendererContext?.renderer ?? defaultContentRenderer;
+
+    // If no callbacks to override, return base as-is
+    if (!onUserClick && !onEventClick && !onHashtagClick && !onLinkClick && !onMediaClick) {
+      return base;
+    }
+
+    // Clone the renderer with overridden callbacks
+    return base.clone({
+      onUserClick,
+      onEventClick,
+      onHashtagClick,
+      onLinkClick,
+      onMediaClick
+    });
   });
 
   // ContentRendererContext: provide the merged renderer

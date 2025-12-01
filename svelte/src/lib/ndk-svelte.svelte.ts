@@ -371,7 +371,7 @@ export class NDKSvelte extends NDK {
      * ```
      */
     $fetchEvents<T extends NDKEvent = NDKEvent>(
-        config: () => import("./event.svelte").FetchEventsConfig | NDKFilter | NDKFilter[] | undefined,
+        config: () => import("./builders/fetch-events.svelte").FetchEventsConfig | NDKFilter | NDKFilter[] | undefined,
     ): T[] {
         return createFetchEvents<T>(this, config);
     }

@@ -1,224 +1,537 @@
 <script lang="ts">
-  import { ndk } from '$lib/site/ndk.svelte';
-	import type { NDKEvent } from '@nostr-dev-kit/ndk';
+	import { ndk } from '$lib/site/ndk.svelte';
+	import { NDKEvent } from '@nostr-dev-kit/ndk';
 	import PageTitle from '$lib/site/components/PageTitle.svelte';
-	import InteractiveDemo from './interactive-demo.svelte';
-	import LayerVisualization from './layer-visualization.svelte';	import { EditProps } from '$lib/site/components/edit-props';
+	import Preview from '$lib/site/components/preview.svelte';
+	import EventContent from '$lib/registry/ui/event-content.svelte';
+	import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+	import { toast } from 'svelte-sonner';
+	import { Toaster } from 'svelte-sonner';
+	import PMCommand from '$lib/site/components/ui/pm-command/pm-command.svelte';
+	import LayerVisualization from './layer-visualization.svelte';
+	import { cn } from '$lib/registry/utils/cn';
+
+	// Import all renderer components
+	import Mention from '$lib/registry/components/mention/mention.svelte';
+	import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
+	import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte';
+	import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte';
+	import LinkInlineBasic from '$lib/registry/components/link-inline-basic/link-inline-basic.svelte';
+	import LinkEmbed from '$lib/registry/components/link-embed/link-embed.svelte';
+	import MediaBasic from '$lib/registry/components/media-basic/media-basic.svelte';
+	import MediaBento from '$lib/registry/components/media-bento/media-bento.svelte';
+	import MediaCarousel from '$lib/registry/components/media-carousel/media-carousel.svelte';
+
+	// Import event card registration modules
+	import * as EventCardInline from '$lib/registry/components/event-card-inline';
+	import * as EventCardCompact from '$lib/registry/components/event-card-compact';
+	import * as EventCardBasic from '$lib/registry/components/event-card-basic';
+	import * as ArticleCardInline from '$lib/registry/components/article-card-inline';
+	import * as ArticleCardCompact from '$lib/registry/components/article-card-compact';
+	import * as ArticleCardPortrait from '$lib/registry/components/article-card-portrait';
+	import * as ArticleCardMedium from '$lib/registry/components/article-card';
+	import * as ArticleCardNeon from '$lib/registry/components/article-card-neon';
+	import * as ArticleCardHero from '$lib/registry/components/article-card-hero';
+	import * as HighlightCardInline from '$lib/registry/components/highlight-card-inline';
+	import * as HighlightCardCompact from '$lib/registry/components/highlight-card-compact';
+	import * as HighlightCardGrid from '$lib/registry/components/highlight-card-grid';
+	import * as HighlightCardElegant from '$lib/registry/components/highlight-card-elegant';
+	import * as HighlightCardFeed from '$lib/registry/components/highlight-card-feed';
+	import * as ImageCardBase from '$lib/registry/components/image-card-base';
+	import * as ImageCardInstagram from '$lib/registry/components/image-card-instagram';
+	import * as ImageCardHero from '$lib/registry/components/image-card-hero';
+	import * as EventCardFallback from '$lib/registry/components/event-card-fallback';
 
 	const metadata = {
-		title: 'Event Rendering Architecture',
-		oneLiner: 'Understanding the three composable layers for rendering Nostr events'
+		title: 'Rendering Events',
+		oneLiner: 'Turn raw event text into clickable mentions, hashtags, links, media, and embedded events'
 	};
-	let sampleEvent = $state<NDKEvent | undefined>();
+
+	// Interactive selections
+	let selectedMention = $state<'none' | 'basic' | 'modern'>('none');
+	let selectedHashtag = $state<'none' | 'basic' | 'modern'>('none');
+	let selectedLink = $state<'none' | 'basic' | 'embed'>('none');
+	let selectedMedia = $state<'none' | 'basic' | 'bento' | 'carousel'>('none');
+	let selectedNoteCard = $state<'none' | string>('none');
+	let selectedArticleCard = $state<'none' | string>('none');
+	let selectedHighlightCard = $state<'none' | string>('none');
+	let selectedImageCard = $state<'none' | string>('none');
+	let enableGenericFallback = $state(false);
+	let blockNsfw = $state(true);
+
+	// Component registry mapping
+	const componentRegistry: Record<string, any> = {
+		'event-card-inline': EventCardInline,
+		'event-card-compact': EventCardCompact,
+		'event-card-basic': EventCardBasic,
+		'article-card-inline': ArticleCardInline,
+		'article-card-compact': ArticleCardCompact,
+		'article-card-portrait': ArticleCardPortrait,
+		'article-card': ArticleCardMedium,
+		'article-card-neon': ArticleCardNeon,
+		'article-card-hero': ArticleCardHero,
+		'highlight-card-inline': HighlightCardInline,
+		'highlight-card-compact': HighlightCardCompact,
+		'highlight-card-grid': HighlightCardGrid,
+		'highlight-card-elegant': HighlightCardElegant,
+		'highlight-card-feed': HighlightCardFeed,
+		'image-card-base': ImageCardBase,
+		'image-card-instagram': ImageCardInstagram,
+		'image-card-hero': ImageCardHero,
+		'event-card-fallback': EventCardFallback
+	};
+
+	// Create dynamic renderer
+	let dynamicRenderer = $state(new ContentRenderer());
+
+	$effect(() => {
+		const renderer = new ContentRenderer();
+
+		// Apply inline content handlers
+		if (selectedMention === 'basic') renderer.setMentionComponent(Mention, 1);
+		else if (selectedMention === 'modern') renderer.setMentionComponent(MentionModern, 10);
+
+		if (selectedHashtag === 'basic') renderer.setHashtagComponent(Hashtag, 1);
+		else if (selectedHashtag === 'modern') renderer.setHashtagComponent(HashtagModern, 10);
+
+		if (selectedLink === 'basic') renderer.setLinkComponent(LinkInlineBasic, 1);
+		else if (selectedLink === 'embed') renderer.setLinkComponent(LinkEmbed, 5);
+
+		if (selectedMedia === 'basic') renderer.setMediaComponent(MediaBasic, 6);
+		else if (selectedMedia === 'bento') renderer.setMediaComponent(MediaBento, 8);
+		else if (selectedMedia === 'carousel') renderer.setMediaComponent(MediaCarousel, 10);
+
+		// Event cards
+		if (selectedNoteCard !== 'none' && componentRegistry[selectedNoteCard]) {
+			componentRegistry[selectedNoteCard].register(renderer);
+		}
+		if (selectedArticleCard !== 'none' && componentRegistry[selectedArticleCard]) {
+			componentRegistry[selectedArticleCard].register(renderer);
+		}
+		if (selectedHighlightCard !== 'none' && componentRegistry[selectedHighlightCard]) {
+			componentRegistry[selectedHighlightCard].register(renderer);
+		}
+		if (selectedImageCard !== 'none' && componentRegistry[selectedImageCard]) {
+			componentRegistry[selectedImageCard].register(renderer);
+		}
+		if (enableGenericFallback) {
+			EventCardFallback.register(renderer);
+		}
+
+		renderer.blockNsfw = blockNsfw;
+
+		// Set up callbacks
+		renderer.onUserClick = (user) => {
+			toast.info(`User clicked: ${user.pubkey.slice(0, 16)}...`);
+		};
+		renderer.onEventClick = (event) => {
+			toast.info(`Event kind ${event.kind} clicked`);
+		};
+		renderer.onHashtagClick = (tag) => {
+			toast.info(`Hashtag clicked: #${tag}`);
+		};
+		renderer.onLinkClick = (url) => {
+			toast.info(`Link clicked: ${url.slice(0, 40)}...`);
+		};
+
+		dynamicRenderer = renderer;
+	});
+
+	// Component paths for code generation
+	const componentPaths = {
+		mention: { basic: 'mention', modern: 'mention-modern' },
+		hashtag: { basic: 'hashtag', modern: 'hashtag-modern' },
+		link: { basic: 'link-inline-basic', embed: 'link-embed' },
+		media: { basic: 'media-basic', bento: 'media-bento', carousel: 'media-carousel' }
+	};
+
+	// Generate code based on selections
+	const generatedCode = $derived.by(() => {
+		const componentImports: string[] = [];
+		let hasAnySelection = false;
+
+		if (selectedMention !== 'none') {
+			componentImports.push(
+				`import '$lib/registry/components/${componentPaths.mention[selectedMention]}';`
+			);
+			hasAnySelection = true;
+		}
+		if (selectedHashtag !== 'none') {
+			componentImports.push(
+				`import '$lib/registry/components/${componentPaths.hashtag[selectedHashtag]}';`
+			);
+			hasAnySelection = true;
+		}
+		if (selectedLink !== 'none') {
+			componentImports.push(
+				`import '$lib/registry/components/${componentPaths.link[selectedLink]}';`
+			);
+			hasAnySelection = true;
+		}
+		if (selectedMedia !== 'none') {
+			componentImports.push(
+				`import '$lib/registry/components/${componentPaths.media[selectedMedia]}';`
+			);
+			hasAnySelection = true;
+		}
+		if (selectedNoteCard !== 'none') {
+			componentImports.push(`import '$lib/registry/components/${selectedNoteCard}';`);
+			hasAnySelection = true;
+		}
+		if (selectedArticleCard !== 'none') {
+			componentImports.push(`import '$lib/registry/components/${selectedArticleCard}';`);
+			hasAnySelection = true;
+		}
+		if (selectedHighlightCard !== 'none') {
+			componentImports.push(`import '$lib/registry/components/${selectedHighlightCard}';`);
+			hasAnySelection = true;
+		}
+		if (selectedImageCard !== 'none') {
+			componentImports.push(`import '$lib/registry/components/${selectedImageCard}';`);
+			hasAnySelection = true;
+		}
+		if (enableGenericFallback) {
+			componentImports.push(`import '$lib/registry/components/event-card-fallback';`);
+			hasAnySelection = true;
+		}
+
+		if (!hasAnySelection) {
+			componentImports.push('// No components selected - content will render as plain text');
+		}
+
+		const imports = [
+			'// Import components to auto-register with defaultContentRenderer',
+			...componentImports,
+			'',
+			"import { defaultContentRenderer } from '$lib/registry/ui/content-renderer';",
+			'',
+			'let { children } = $props();'
+		];
+
+		if (!blockNsfw) {
+			imports.push('', '// Configure NSFW blocking', 'defaultContentRenderer.blockNsfw = false;');
+		}
+
+		imports.push(
+			'',
+			'// Set up click handlers for interactive content',
+			'defaultContentRenderer.onUserClick = (user) => {',
+			"  // Example: goto(`/user/${user.pubkey}`)",
+			'};',
+			'',
+			'defaultContentRenderer.onEventClick = (event) => {',
+			"  // Example: goto(`/event/${event.id}`)",
+			'};',
+			'',
+			'defaultContentRenderer.onHashtagClick = (tag) => {',
+			'  // Example: goto(`/search?q=${tag}`)',
+			'};',
+			'',
+			'defaultContentRenderer.onLinkClick = (url) => {',
+			"  // Example: window.open(url, '_blank')",
+			'};'
+		);
+
+		const scriptOpen = '<' + 'script lang="ts">';
+		const scriptClose = '<' + '/script>';
+		return [scriptOpen, imports.join('\n'), scriptClose, '', '{@render children()}'].join('\n');
+	});
+
+	// Selected components list for installation
+	const selectedComponents = $derived.by(() => {
+		const components: string[] = [];
+
+		if (selectedMention !== 'none') {
+			components.push(`components/${componentPaths.mention[selectedMention]}`);
+		}
+		if (selectedHashtag !== 'none') {
+			components.push(`components/${componentPaths.hashtag[selectedHashtag]}`);
+		}
+		if (selectedLink !== 'none') {
+			components.push(`components/${componentPaths.link[selectedLink]}`);
+		}
+		if (selectedMedia !== 'none') {
+			components.push(`components/${componentPaths.media[selectedMedia]}`);
+		}
+		if (selectedNoteCard !== 'none') {
+			components.push(`components/${selectedNoteCard}`);
+		}
+		if (selectedArticleCard !== 'none') {
+			components.push(`components/${selectedArticleCard}`);
+		}
+		if (selectedHighlightCard !== 'none') {
+			components.push(`components/${selectedHighlightCard}`);
+		}
+		if (selectedImageCard !== 'none') {
+			components.push(`components/${selectedImageCard}`);
+		}
+		if (enableGenericFallback) {
+			components.push('components/event-card-fallback');
+		}
+
+		return components;
+	});
+
+	// Sample event
+	const sampleEvent = $derived.by(() => {
+		const event = new NDKEvent(ndk);
+		event.kind = 1;
+		event.content = `Just discovered this amazing Nostr library! 🚀
+
+Check out the docs at https://ndk.fyi for more info.
+
+Special thanks to nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft for building this!
+
+#nostr #bitcoin #decentralized
+
+Here's a cool image to go with it:
+https://r2a.primal.net/uploads2/d/f3/bd/df3bdd118f7db2cdf57821f958033db07dfd9de72248e6869734cbb9e2e8c130.png
+
+This is an article:
+nostr:naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxnzd3cx5urjd35xg6rwwpee39928
+
+And here's a note worth checking out:
+nostr:nevent1qgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycppemhxue69uhkummn9ekx7mp0qqsq3zms08nzx3a72cgc0jtsd0g0g9fdx0f9jvp69kp05peuvmrpj5g0w639m`;
+		event.pubkey = 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
+		event.created_at = Math.floor(Date.now() / 1000);
+		event.id = 'sample_event_id';
+		return event;
+	});
 </script>
 
 <div class="px-8 flex flex-col gap-8">
-	<!-- Header -->
-	<PageTitle title={metadata.title} subtitle={metadata.oneLiner}>
-		<EditProps.Prop
-			name="Sample Event"
-			type="event"
-			default="nevent1qqst6h0tdve9v0xwwpz4d4ckwfc9ksjtjjjutc4smjzewp85u7a9v0qpzemhxue69uhhyetvv9ujumn0wd68ytnzv9hxgqgkwaehxw309aex2mrp0yh8qunfd4skctnwv46qe9yg78"
-			bind:value={sampleEvent}
-		/>
-	</PageTitle>
+	<PageTitle title={metadata.title} subtitle={metadata.oneLiner} />
 
 	<!-- Introduction -->
-	<section class="prose prose-lg max-w-none mb-12 flex flex-col">
-		<h2 class="text-3xl font-bold">The Three-Layer Architecture</h2>
-		<p class="text-muted-foreground">
-			Nostr events render through three composable layers. Each layer has a specific responsibility
-			and can be used independently or combined together. This separation allows for maximum
-			flexibility and reusability.
+	<section class="max-w-3xl mb-8">
+		<p class="text-lg text-muted-foreground">
+			Nostr events are just text. A note might contain <code class="text-xs bg-muted px-1.5 py-0.5 rounded">@mentions</code>,
+			<code class="text-xs bg-muted px-1.5 py-0.5 rounded">#hashtags</code>, URLs, images, and references to other events.
+			Pick components below to control how each element renders.
+		</p>
+	</section>
+
+	<!-- Interactive Configuration -->
+	<section class="mb-12 w-full relative">
+
+		<div class="w-full grid grid-cols-1 md:grid-cols-5 gap-6 sticky top-0">
+			<!-- Configuration Controls -->
+			<div class="md:col-span-1 space-y-3 sticky top-0">
+				<h3 class="text-lg font-semibold mb-3">Configure</h3>
+
+				<div class="space-y-1.5">
+					<select
+						id="mention-select"
+						bind:value={selectedMention}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedMention === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Mentions: None</option>
+						<option value="basic">Mentions: Basic</option>
+						<option value="modern">Mentions: Modern</option>
+					</select>
+
+					<select
+						id="hashtag-select"
+						bind:value={selectedHashtag}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedHashtag === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Hashtags: None</option>
+						<option value="basic">Hashtags: Basic</option>
+						<option value="modern">Hashtags: Modern</option>
+					</select>
+
+					<select
+						id="link-select"
+						bind:value={selectedLink}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedLink === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Links: None</option>
+						<option value="basic">Links: Basic</option>
+						<option value="embed">Links: Embed</option>
+					</select>
+
+					<select
+						id="media-select"
+						bind:value={selectedMedia}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedMedia === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Media: None</option>
+						<option value="basic">Media: Basic</option>
+						<option value="bento">Media: Bento</option>
+						<option value="carousel">Media: Carousel</option>
+					</select>
+				</div>
+
+				<!-- Event Cards -->
+				<div class="pt-3 border-t border-border space-y-1.5">
+					<select
+						id="note-card-select"
+						bind:value={selectedNoteCard}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedNoteCard === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Notes: None</option>
+						<option value="event-card-inline">Notes: Inline</option>
+						<option value="event-card-compact">Notes: Compact</option>
+						<option value="event-card-basic">Notes: Basic</option>
+					</select>
+
+					<select
+						id="article-card-select"
+						bind:value={selectedArticleCard}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedArticleCard === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Articles: None</option>
+						<option value="article-card-inline">Articles: Inline</option>
+						<option value="article-card-compact">Articles: Compact</option>
+						<option value="article-card-portrait">Articles: Portrait</option>
+						<option value="article-card">Articles: Medium</option>
+						<option value="article-card-neon">Articles: Neon</option>
+						<option value="article-card-hero">Articles: Hero</option>
+					</select>
+
+					<select
+						id="highlight-card-select"
+						bind:value={selectedHighlightCard}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedHighlightCard === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Highlights: None</option>
+						<option value="highlight-card-inline">Highlights: Inline</option>
+						<option value="highlight-card-compact">Highlights: Compact</option>
+						<option value="highlight-card-grid">Highlights: Grid</option>
+						<option value="highlight-card-elegant">Highlights: Elegant</option>
+						<option value="highlight-card-feed">Highlights: Feed</option>
+					</select>
+
+					<select
+						id="image-card-select"
+						bind:value={selectedImageCard}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							selectedImageCard === 'none' ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value="none">Images: None</option>
+						<option value="image-card-base">Images: Base</option>
+						<option value="image-card-instagram">Images: Instagram</option>
+						<option value="image-card-hero">Images: Hero</option>
+					</select>
+
+					<select
+						id="fallback-select"
+						bind:value={enableGenericFallback}
+						class={cn(
+							'w-full px-2 py-1.5 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted rounded cursor-pointer',
+							!enableGenericFallback ? 'text-muted-foreground' : ''
+						)}
+					>
+						<option value={false}>Fallback: None</option>
+						<option value={true}>Fallback: Generic</option>
+					</select>
+				</div>
+
+				<!-- Options -->
+				<div class="pt-3 border-t border-border">
+					<label class="flex items-center gap-2 cursor-pointer group">
+						<input
+							type="checkbox"
+							bind:checked={blockNsfw}
+							class="w-4 h-4 rounded border-input cursor-pointer"
+						/>
+						<span class="text-sm text-muted-foreground">Block NSFW</span>
+					</label>
+				</div>
+			</div>
+
+			<!-- Live Preview -->
+			<div class="md:col-span-4 space-y-4">
+				<Preview code={generatedCode} previewAreaClass="min-h-[400px]">
+					<div class="w-full max-w-3xl bg-card border border-border rounded-lg p-4">
+						<EventContent
+							{ndk}
+							event={sampleEvent}
+							renderer={dynamicRenderer}
+							class="text-muted-foreground"
+						/>
+					</div>
+				</Preview>
+
+				<!-- Installation Command -->
+				{#if selectedComponents.length > 0}
+					<div class="space-y-2">
+						<h4 class="text-sm font-semibold">Install Selected Components</h4>
+						<PMCommand command="execute" args={['jsrepo', 'add', ...selectedComponents]} />
+					</div>
+				{/if}
+			</div>
+		</div>
+	</section>
+
+	<!-- How It Works -->
+	<section class="mb-16">
+		<h2 class="text-2xl font-bold mb-4">How It Works</h2>
+		<p class="text-muted-foreground mb-6 max-w-3xl">
+			Import components in your <code class="text-xs bg-muted px-1.5 py-0.5 rounded">+layout.svelte</code>.
+			They auto-register with the default renderer. All nested pages inherit the configuration.
 		</p>
 
 		<LayerVisualization />
 	</section>
 
-	<!-- Interactive Demo -->
-	{#if sampleEvent}
-		<section class="mb-16">
-			<h2 class="text-3xl font-bold mb-2">Interactive Demonstration</h2>
-			<p class="text-muted-foreground mb-8">
-				Click on any layer to explore how different variants change the rendering. Notice how the
-				<span class="text-blue-500 font-semibold">chrome (blue)</span>,
-				<span class="text-purple-500 font-semibold">content (purple)</span>, and
-				<span class="text-orange-500 font-semibold">embeds (orange)</span>
-				are independently swappable.
-			</p>
-
-			<InteractiveDemo {ndk} event={sampleEvent} />
-		</section>
-	{:else}
-		<section class="mb-16">
-			<div class="flex items-center justify-center py-12 border border-border rounded-lg bg-muted/50">
-				<div class="text-muted-foreground">Loading event...</div>
-			</div>
-		</section>
-	{/if}
-
-	<!-- Usage Patterns -->
+	<!-- Component Categories -->
 	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-4">Common Usage Patterns</h2>
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-			<div class="p-6 border border-border rounded-lg bg-card">
-				<h3 class="text-lg font-semibold mb-3">Full Event Card</h3>
-				<p class="text-sm text-muted-foreground mb-4">
-					Combine all three layers for a complete social post display in feeds.
-				</p>
-				<pre
-					class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>&lt;EventCard.Root&gt;
-  &lt;EventCard.Header /&gt;
-  &lt;EventCard.Content /&gt;
-  &lt;EventCard.Actions /&gt;
-&lt;/EventCard.Root&gt;</code></pre>
-			</div>
-
-			<div class="p-6 border border-border rounded-lg bg-card">
-				<h3 class="text-lg font-semibold mb-3">Content Only</h3>
-				<p class="text-sm text-muted-foreground mb-4">
-					Render just the event body without chrome for focused reading experiences.
-				</p>
-				<pre class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>&lt;EventContent
-  event=&#123;event&#125;
-  ndk=&#123;ndk&#125;
-/&gt;</code></pre>
-			</div>
-
-			<div class="p-6 border border-border rounded-lg bg-card">
-				<h3 class="text-lg font-semibold mb-3">Thread View</h3>
-				<p class="text-sm text-muted-foreground mb-4">
-					Use the Thread chrome variant for optimized conversation layouts.
-				</p>
-				<pre
-					class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>&lt;EventCard.Root variant="threaded"&gt;
-  &lt;EventCard.Header /&gt;
-  &lt;EventCard.Content /&gt;
-  &lt;EventCard.Actions /&gt;
-&lt;/EventCard.Root&gt;</code></pre>
-			</div>
-
-			<div class="p-6 border border-border rounded-lg bg-card">
-				<h3 class="text-lg font-semibold mb-3">Custom Composition</h3>
-				<p class="text-sm text-muted-foreground mb-4">
-					Mix chrome with custom content for specialized layouts.
-				</p>
-				<pre
-					class="text-xs bg-muted p-4 rounded overflow-x-auto"><code>&lt;EventCard.Root&gt;
-  &lt;EventCard.Header /&gt;
-  &lt;CustomContentComponent /&gt;
-  &lt;EventCard.Actions /&gt;
-&lt;/EventCard.Root&gt;</code></pre>
-			</div>
-		</div>
-	</section>
-
-	<!-- Chromes -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-4">Specialized Chrome Components</h2>
-		<p class="text-muted-foreground mb-6">
-			Chrome components provide the visual container and structure for events. The registry includes specialized chromes for handling specific scenarios.
-		</p>
-
-		<div class="grid gap-6">
-			<div class="p-6 border border-border rounded-lg bg-card">
-				<div class="flex items-start justify-between mb-3">
-					<div>
-						<h3 class="text-lg font-semibold mb-1">Fallback Event Card</h3>
-						<a href="/events/cards/fallback-card" class="text-sm text-primary hover:underline">
-							View component →
-						</a>
-					</div>
-					<span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded font-semibold">
-						Chrome
-					</span>
-				</div>
-				<p class="text-sm text-muted-foreground mb-4">
-					A fallback card for displaying any event kind. Automatically discovers and displays NIP-89 app handler recommendations for unknown event types. Shows event's alt tag (NIP-31) and provides links to recommended handlers with URL template replacement. Ideal for debugging or displaying events without specific renderers.
-				</p>
-				<div class="flex flex-wrap gap-2">
-					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">NIP-31: Alt Tag</span>
-					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">NIP-89: App Handlers</span>
-					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">Unknown Events</span>
-					<span class="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">Fallback Display</span>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Learn More -->
-	<section class="mb-16">
-		<h2 class="text-3xl font-bold mb-4">Learn More</h2>
-		<p class="text-muted-foreground mb-6">Dive deeper into each layer:</p>
-
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 			<a
 				href="/events/cards"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
-				<div class="flex items-start justify-between mb-3">
-					<h3 class="text-lg font-semibold">Cards (Chrome)</h3>
-					<span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded font-semibold"
-						>Layer 1</span
-					>
-				</div>
-				<p class="text-sm text-muted-foreground mb-4">
-					EventCard primitives and specialized card components. See specialized chromes above for fallback cards like Fallback Event Card.
+				<h3 class="text-lg font-semibold mb-2 group-hover:text-primary">Cards</h3>
+				<p class="text-sm text-muted-foreground">
+					The container around an event: header, actions, styling.
 				</p>
-				<div class="text-sm text-primary group-hover:underline">View Cards Documentation →</div>
 			</a>
 
 			<a
 				href="/events/content/plain-text"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
-				<div class="flex items-start justify-between mb-3">
-					<h3 class="text-lg font-semibold">Content Renderers</h3>
-					<span class="text-xs px-2 py-1 bg-purple-500/10 text-purple-500 rounded font-semibold"
-						>Layer 2</span
-					>
-				</div>
-				<p class="text-sm text-muted-foreground mb-4">
-					Content parsing strategies for plain text and markdown rendering.
+				<h3 class="text-lg font-semibold mb-2 group-hover:text-primary">Content</h3>
+				<p class="text-sm text-muted-foreground">
+					How text is parsed: plain text or markdown.
 				</p>
-				<div class="text-sm text-primary group-hover:underline">View Content Components →</div>
 			</a>
 
 			<a
 				href="/events/embeds"
 				class="group block p-6 border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
 			>
-				<div class="flex items-start justify-between mb-3">
-					<h3 class="text-lg font-semibold">Embedded Previews</h3>
-					<span class="text-xs px-2 py-1 bg-orange-500/10 text-orange-500 rounded font-semibold"
-						>Layer 3</span
-					>
-				</div>
-				<p class="text-sm text-muted-foreground mb-4">
-					ContentRenderer system and embedded event handlers for rich previews.
+				<h3 class="text-lg font-semibold mb-2 group-hover:text-primary">Embeds</h3>
+				<p class="text-sm text-muted-foreground">
+					Inline elements: mentions, hashtags, links, media.
 				</p>
-				<div class="text-sm text-primary group-hover:underline">View Embeds Documentation →</div>
 			</a>
 		</div>
 	</section>
-
-	<!-- Design Philosophy -->
-	<section class="p-6 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-16">
-		<h3 class="text-lg font-semibold mb-2">💡 Design Philosophy</h3>
-		<p class="text-muted-foreground">
-			The three-layer architecture provides maximum flexibility. Use the full stack (Chrome +
-			Content + Embeds) for rich social feeds, or use layers independently for specialized views.
-			Each layer is swappable and composable, allowing you to build exactly the UI you need without
-			fighting the framework.
-		</p>
-	</section>
 </div>
 
-<style>
-	code {
-		background: hsl(var(--muted));
-		padding: 0.2em 0.4em;
-		border-radius: 0.25rem;
-		font-size: 0.9em;
-	}
-</style>
+<Toaster position="bottom-right" />

@@ -14,37 +14,44 @@ describe('Meta-Subscription Validation', () => {
     describe('createMetaSubscription validation', () => {
         it('should throw TypeError when passed non-function', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => ({ filters: [{ kinds: [6] }] }));
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, { filters: [{ kinds: [6] }] });
             }).toThrow(TypeError);
             expect(() => {
-                createMetaSubscription(ndk, () => ({ filters: [{ kinds: [6] }] }));
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, { filters: [{ kinds: [6] }] });
             }).toThrow("$metaSubscribe expects config to be a function");
         });
 
         it('should throw TypeError when passed string', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => "not a config" as any);
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, "not a config");
             }).toThrow(TypeError);
             expect(() => {
-                createMetaSubscription(ndk, () => "not a config" as any);
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, "not a config");
             }).toThrow("$metaSubscribe expects config to be a function");
         });
 
         it('should throw TypeError when passed array', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => [{ kinds: [6] }]);
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, [{ kinds: [6] }]);
             }).toThrow(TypeError);
         });
 
         it('should throw TypeError when passed null', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => null as any);
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, null);
             }).toThrow(TypeError);
         });
 
         it('should throw TypeError when passed undefined', () => {
             expect(() => {
-                createMetaSubscription(ndk, () => undefined);
+                // @ts-expect-error - testing runtime validation
+                createMetaSubscription(ndk, undefined);
             }).toThrow(TypeError);
         });
     });

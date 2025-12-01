@@ -12,7 +12,7 @@
   let { title, subtitle, tags, children }: Props = $props();
 </script>
 
-<div class="border-b border-border -mx-4 md:-mx-8 px-4 md:px-8 py-6 md:py-8 flex flex-col gap-2">
+<div class="border-b border-border -mx-4 md:-mx-8 px-4 md:px-8 pb-4 !pt-2 flex flex-col gap-2">
   <div class="flex items-center justify-between gap-4">
     <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold">{title}</h1>
 

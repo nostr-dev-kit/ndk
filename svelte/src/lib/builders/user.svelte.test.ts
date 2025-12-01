@@ -22,28 +22,33 @@ describe("User Validation", () => {
     describe("createFetchUser validation", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                createFetchUser(ndk, () => "npub1test");
+                // @ts-expect-error - testing runtime validation
+                createFetchUser(ndk, "npub1test");
             }).toThrow(TypeError);
             expect(() => {
-                createFetchUser(ndk, () => "npub1test");
+                // @ts-expect-error - testing runtime validation
+                createFetchUser(ndk, "npub1test");
             }).toThrow("$fetchUser expects identifier to be a function");
         });
 
         it("should throw TypeError when passed object", () => {
             expect(() => {
-                createFetchUser(ndk, () => ({ npub: "npub1test" }) as any);
+                // @ts-expect-error - testing runtime validation
+                createFetchUser(ndk, { npub: "npub1test" });
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                createFetchUser(ndk, () => null as any);
+                // @ts-expect-error - testing runtime validation
+                createFetchUser(ndk, null);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed undefined", () => {
             expect(() => {
-                createFetchUser(ndk, () => undefined);
+                // @ts-expect-error - testing runtime validation
+                createFetchUser(ndk, undefined);
             }).toThrow(TypeError);
         });
 
@@ -68,28 +73,33 @@ describe("User Validation", () => {
         it("should throw TypeError when passed non-function", () => {
             const user = ndk.getUser({ npub: "npub1test" });
             expect(() => {
-                createZapInfo(() => user);
+                // @ts-expect-error - testing runtime validation
+                createZapInfo(user);
             }).toThrow(TypeError);
             expect(() => {
-                createZapInfo(() => user);
+                // @ts-expect-error - testing runtime validation
+                createZapInfo(user);
             }).toThrow("createZapInfo expects user to be a function");
         });
 
         it("should throw TypeError when passed string", () => {
             expect(() => {
-                createZapInfo(() => "npub1test" as any);
+                // @ts-expect-error - testing runtime validation
+                createZapInfo("npub1test");
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                createZapInfo(() => null as any);
+                // @ts-expect-error - testing runtime validation
+                createZapInfo(null);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed undefined", () => {
             expect(() => {
-                createZapInfo(() => undefined);
+                // @ts-expect-error - testing runtime validation
+                createZapInfo(undefined);
             }).toThrow(TypeError);
         });
 

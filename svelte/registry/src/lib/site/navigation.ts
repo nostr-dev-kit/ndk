@@ -69,8 +69,7 @@ export const eventCategories: NavCategory[] = [
   {
     title: 'Introduction',
     items: [
-      { name: 'Overview', path: '/events', icon: Calendar01Icon, title: 'Event Rendering', description: 'The three-layer model: Chrome, Content, and Embeds' },
-      { name: 'Basics', path: '/events/basics', icon: Book02Icon, title: 'Getting Started', description: 'Configure the content renderer in your app layout' },
+      { name: 'Overview', path: '/events', icon: Calendar01Icon, title: 'Event Rendering', description: 'Interactive configuration and three-layer architecture' },
     ]
   },
   {
@@ -102,7 +101,7 @@ export const eventCategories: NavCategory[] = [
   },
 ];
 
-export const componentCategories: NavCategory[] = [
+export const uiPrimitives: NavCategory[] = [
   {
     title: 'UI Primitives',
     items: [
@@ -120,6 +119,9 @@ export const componentCategories: NavCategory[] = [
       { name: 'Event Rendering', path: '/ui/event-rendering', icon: File01Icon, title: 'Event Rendering Primitives', description: 'Render rich event content, embedded events, and markdown with one renderer.' },
     ]
   },
+];
+
+export const componentCategories: NavCategory[] = [
   {
     title: 'Actions',
     items: [

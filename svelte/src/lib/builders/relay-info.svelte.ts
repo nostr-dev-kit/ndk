@@ -1,3 +1,4 @@
+import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { normalizeRelayUrl, type NDKRelayInformation } from '@nostr-dev-kit/ndk';
 import { SvelteMap } from 'svelte/reactivity';
 
@@ -15,7 +16,7 @@ const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 // Track in-flight requests to prevent duplicates
 const inFlightRequests = new Map<string, Promise<NDKRelayInformation>>();
 
-async function fetchRelayInfo(relayUrl: string, signal?: AbortSignal): Promise<NDKRelayInformation> {
+async function fetchRelayInfo(relayUrl: string, ndk?: NDKSvelte, signal?: AbortSignal): Promise<NDKRelayInformation> {
     // Check cache first
     const cached = relayInfoCache.get(relayUrl);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -43,7 +44,8 @@ async function fetchRelayInfo(relayUrl: string, signal?: AbortSignal): Promise<N
 
     const requestPromise = (async () => {
         try {
-            const response = await fetch(httpUrl, {
+            const fetchFn = ndk?.httpFetch || fetch;
+            const response = await fetchFn(httpUrl, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/nostr+json'
@@ -94,6 +96,9 @@ export interface RelayInfoConfig {
  * ```ts
  * const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }));
  *
+ * // Or with explicit NDK (for httpFetch support)
+ * const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
+ *
  * // Access reactive state
  * console.log(relay.url);          // normalized URL
  * console.log(relay.nip11?.name);  // relay name
@@ -101,7 +106,8 @@ export interface RelayInfoConfig {
  * ```
  */
 export function createRelayInfo(
-    config: () => RelayInfoConfig
+    config: () => RelayInfoConfig,
+    ndk?: NDKSvelte
 ): RelayInfoState {
     // Handle falsy URLs gracefully
     const normalizedUrl = $derived.by(() => {
@@ -134,7 +140,7 @@ export function createRelayInfo(
         loading = true;
         error = null;
 
-        fetchRelayInfo(url, controller.signal)
+        fetchRelayInfo(url, ndk, controller.signal)
             .then(info => {
                 if (!controller.signal.aborted) {
                     nip11 = info;

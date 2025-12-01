@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/sessions",
-  "version": "0.6.4-beta.56",
+  "version": "0.6.4-beta.58",
   "description": "Framework-agnostic session management for NDK with multi-account support",
   "type": "module",
   "main": "dist/index.cjs",
@@ -31,19 +31,19 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.56",
-    "@nostr-dev-kit/wallet": "0.8.11-beta.56"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.58",
+    "@nostr-dev-kit/wallet": "0.8.11-beta.58"
   },
   "dependencies": {
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.56",
-    "@nostr-dev-kit/wallet": "0.8.11-beta.56",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.58",
+    "@nostr-dev-kit/wallet": "0.8.11-beta.58",
     "@types/node": "^24.10.0",
     "tsup": "^8.4.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.7",
+    "vitest": "^4.0.14",
     "vite": "^7.1.11"
   },
   "keywords": [

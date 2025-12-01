@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { getContext } from 'svelte';
 	import { LinkIcon } from '../../ui/icons';
 	import { cn } from '../../utils/cn.js';
 
@@ -6,6 +8,7 @@
 		url: string | string[];
 		onclick?: (url: string) => void;
 		class?: string;
+		ndk?: NDKSvelte;
 	}
 
 	interface LinkMetadata {
@@ -16,7 +19,10 @@
 		favicon?: string;
 	}
 
-	let { url, onclick, class: className = '' }: Props = $props();
+	let { url, onclick, class: className = '', ndk: ndkProp }: Props = $props();
+
+	const ndkContext = getContext<NDKSvelte>('ndk');
+	const ndk = $derived(ndkProp || ndkContext);
 
 	const urls = $derived(Array.isArray(url) ? url : [url]);
 
@@ -45,7 +51,8 @@
 		loadingMap.set(urlString, true);
 
 		try {
-			const response = await fetch(urlString, { mode: 'cors' });
+			const fetchFn = ndk?.httpFetch || fetch;
+			const response = await fetchFn(urlString, { mode: 'cors' });
 			const html = await response.text();
 
 			const parser = new DOMParser();

@@ -104,18 +104,8 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
             return { filters: rawConfig as NDKFilter[] } as SubscribeConfig;
         }
 
-        // Check if this looks like a filter object (has filter properties but no 'filters' key)
-        // Common filter properties: kinds, authors, ids, since, until, limit, etc.
-        const filterProps = ['kinds', 'authors', 'ids', 'since', 'until', 'limit', '#e', '#p', '#a', '#d', '#t', 'search'];
-        const hasFilterProp = filterProps.some(prop => prop in rawConfig);
-
-        if (hasFilterProp) {
-            // This is a filter object, wrap it in a filters property
-            return { filters: rawConfig as NDKFilter } as SubscribeConfig;
-        }
-
-        // Return as-is (might be undefined or malformed)
-        return rawConfig;
+        // If it doesn't have 'filters' and it's not an array, it's a filter object
+        return { filters: rawConfig as NDKFilter } as SubscribeConfig;
     });
 
     // Extract filters

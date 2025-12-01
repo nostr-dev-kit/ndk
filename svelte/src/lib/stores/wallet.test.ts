@@ -27,6 +27,13 @@ class MockWallet extends EventEmitter {
         this.#balance = amount;
     }
 
+    subscribeTransactions(callback: (tx: any) => void) {
+        // Mock transaction subscription
+        return () => {
+            // Mock unsubscribe
+        };
+    }
+
     async start() {
         // Mock start method
     }

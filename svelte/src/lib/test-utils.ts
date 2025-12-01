@@ -1,34 +1,16 @@
 /**
  * Test utilities for NDK Svelte tests
  *
- * Re-exports useful test utilities from ndk-core and provides
- * Svelte-specific test helpers.
+ * Provides Svelte-specific test helpers.
  *
  * @example
  * ```ts
- * import { UserGenerator, TestEventFactory, createTestNDK } from './test-utils';
+ * import { createTestNDK, generateTestPubkey } from './test-utils';
  *
  * const ndk = createTestNDK();
- * const alice = await UserGenerator.getUser("alice", ndk);
- * const factory = new TestEventFactory(ndk);
- * const note = await factory.createSignedTextNote("Hello world", "alice");
+ * const pubkey = generateTestPubkey("alice");
  * ```
  */
-
-// Re-export all test utilities from ndk-core
-export {
-    UserGenerator,
-    SignerGenerator,
-    TestEventFactory,
-    TestFixture,
-    EventGenerator,
-    RelayMock,
-    RelayPoolMock,
-    TimeController,
-    withTimeControl,
-    mockNutzap,
-    mockProof,
-} from "@nostr-dev-kit/ndk/test";
 
 import { createNDK, type NDKSvelte } from "./ndk-svelte.svelte.js";
 

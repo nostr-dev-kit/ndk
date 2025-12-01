@@ -114,7 +114,7 @@
 
         case 'nip05': {
           const [name, domain] = credentialInput.trim().split('@');
-          const response = await fetch(`https://${domain}/.well-known/nostr.json?name=${name}`);
+          const response = await ndk.httpFetch!(`https://${domain}/.well-known/nostr.json?name=${name}`);
           if (!response.ok) throw new Error('NIP-05 address not found');
           const data = await response.json();
           const pubkey = data.names?.[name];

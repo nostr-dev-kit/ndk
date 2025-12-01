@@ -1,15 +1,26 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { HugeiconsIcon } from '@hugeicons/svelte';
-  import type { NavCategory } from '$lib/site/navigation';
+  import { docs, componentCategories, eventCategories, uiPrimitives, type NavCategory } from '$lib/site/navigation';
   import { sidebar } from '$lib/site/stores/sidebar.svelte';
   import NipBadge from '$lib/site/components/nip-badge.svelte';
 
-  let { sections = [] }: { sections?: NavCategory[] } = $props();
+  const ROUTE_SECTIONS: Record<string, NavCategory[]> = {
+    '/docs': [{ title: 'Documentation', items: docs }],
+    '/events': eventCategories,
+    '/ui': uiPrimitives,
+    '/components': componentCategories,
+  };
 
   let isHovering = $state(false);
   const isExpanded = $derived(!sidebar.collapsed || isHovering);
   const isActive = (path: string) => $page.url.pathname === path;
+
+  const sections = $derived.by(() => {
+    const pathname = $page.url.pathname;
+    const route = Object.keys(ROUTE_SECTIONS).find(r => pathname.startsWith(r));
+    return route ? ROUTE_SECTIONS[route] : [];
+  });
 
   // Build all the class strings in the script, not in the template
   const overlayClasses = $derived(

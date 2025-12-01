@@ -22,37 +22,44 @@ describe("Subscription Validation", () => {
     describe("createSubscription validation", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                createSubscription(ndk, () => ({ filters: [{ kinds: [1] }] }));
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, { filters: [{ kinds: [1] }] });
             }).toThrow(TypeError);
             expect(() => {
-                createSubscription(ndk, () => ({ filters: [{ kinds: [1] }] }));
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, { filters: [{ kinds: [1] }] });
             }).toThrow("$subscribe expects config to be a function");
         });
 
         it("should throw TypeError when passed string", () => {
             expect(() => {
-                createSubscription(ndk, () => "not a config" as any);
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, "not a config");
             }).toThrow(TypeError);
             expect(() => {
-                createSubscription(ndk, () => "not a config" as any);
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, "not a config");
             }).toThrow("$subscribe expects config to be a function");
         });
 
         it("should throw TypeError when passed array", () => {
             expect(() => {
-                createSubscription(ndk, () => [{ kinds: [1] }] as any);
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, [{ kinds: [1] }]);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed null", () => {
             expect(() => {
-                createSubscription(ndk, () => null as any);
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, null);
             }).toThrow(TypeError);
         });
 
         it("should throw TypeError when passed undefined", () => {
             expect(() => {
-                createSubscription(ndk, () => undefined as any);
+                // @ts-expect-error - testing runtime validation
+                createSubscription(ndk, undefined);
             }).toThrow(TypeError);
         });
 
@@ -86,8 +93,8 @@ describe("Subscription Validation", () => {
             expect(() => {
                 cleanup = $effect.root(() => {
                     createSubscription(ndk, () => [
-                        { kinds: [1], authors: ["pubkey1"] },
-                        { kinds: [1], authors: ["pubkey2"] }
+                        { kinds: [1], authors: ["a".repeat(64)] },
+                        { kinds: [1], authors: ["b".repeat(64)] }
                     ]);
                 });
             }).not.toThrow();
@@ -97,10 +104,12 @@ describe("Subscription Validation", () => {
     describe("NDKSvelte.$subscribe validation", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                ndk.$subscribe(() => ({ filters: [{ kinds: [1] }] }));
+                // @ts-expect-error - testing runtime validation
+                ndk.$subscribe({ filters: [{ kinds: [1] }] });
             }).toThrow(TypeError);
             expect(() => {
-                ndk.$subscribe(() => ({ filters: [{ kinds: [1] }] }));
+                // @ts-expect-error - testing runtime validation
+                ndk.$subscribe({ filters: [{ kinds: [1] }] });
             }).toThrow("$subscribe expects config to be a function");
         });
 
@@ -126,8 +135,8 @@ describe("Subscription Validation", () => {
             expect(() => {
                 cleanup = $effect.root(() => {
                     ndk.$subscribe(() => [
-                        { kinds: [1], authors: ["pubkey1"] },
-                        { kinds: [1], authors: ["pubkey2"] }
+                        { kinds: [1], authors: ["a".repeat(64)] },
+                        { kinds: [1], authors: ["b".repeat(64)] }
                     ]);
                 });
             }).not.toThrow();

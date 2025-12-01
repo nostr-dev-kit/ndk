@@ -24,19 +24,23 @@ describe("Event Fetching", () => {
     describe("createFetchEvents", () => {
         it("should throw TypeError when passed non-function", () => {
             expect(() => {
-                createFetchEvents(ndk, () => ({ kinds: [1] }));
+                // @ts-expect-error - testing runtime validation
+                createFetchEvents(ndk, { kinds: [1] });
             }).toThrow(TypeError);
             expect(() => {
-                createFetchEvents(ndk, () => ({ kinds: [1] }));
+                // @ts-expect-error - testing runtime validation
+                createFetchEvents(ndk, { kinds: [1] });
             }).toThrow("$fetchEvents expects config to be a function");
         });
 
         it("should throw TypeError when passed array directly", () => {
             expect(() => {
-                createFetchEvents(ndk, () => [{ kinds: [1] }]);
+                // @ts-expect-error - testing runtime validation
+                createFetchEvents(ndk, [{ kinds: [1] }]);
             }).toThrow(TypeError);
             expect(() => {
-                createFetchEvents(ndk, () => [{ kinds: [1] }]);
+                // @ts-expect-error - testing runtime validation
+                createFetchEvents(ndk, [{ kinds: [1] }]);
             }).toThrow("$fetchEvents expects config to be a function");
         });
 

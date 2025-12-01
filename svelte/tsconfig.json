@@ -19,6 +19,6 @@
             "$lib/*": ["./src/lib/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.svelte.ts", "src/**/*.d.ts"],
+    "include": ["src/**/*.ts", "src/**/*.svelte", "src/**/*.svelte.ts", "src/**/*.d.ts"],
     "exclude": ["node_modules", "dist", "**/*.stories.ts"]
 }

@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 
 // Make vi available globally
-globalThis.vi = vi;
+(globalThis as any).vi = vi;
 
 // Setup common mocks
 vi.mock("ws", () => ({

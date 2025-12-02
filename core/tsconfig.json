@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "baseUrl": ".", // Add baseUrl
+        "baseUrl": ".",
         "target": "ESNext",
         "module": "ESNext",
         "composite": false,
@@ -16,11 +16,13 @@
         "preserveWatchOutput": true,
         "skipLibCheck": true,
         "strict": true,
-        "types": ["node", "vitest/globals"], // Add vitest globals
+        "types": ["node", "vitest/globals"],
         "allowJs": true,
         "checkJs": true,
         "lib": ["dom", "dom.iterable", "esnext"],
         "emitDeclarationOnly": true,
         "outDir": "lib"
-    }
+    },
+    "include": ["src/**/*", "test/**/*"],
+    "exclude": ["dist", "node_modules", "lib", "docs", "**/*.test.ts"]
 }

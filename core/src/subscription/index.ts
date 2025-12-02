@@ -2,7 +2,7 @@ import { EventEmitter } from "tseep";
 
 import type { NDKEventId, NDKSignedEvent, NostrEvent } from "../events/index.js";
 import { createSignedEvent, NDKEvent } from "../events/index.js";
-import type { NDKKind } from "../events/kinds/index.js";
+import { NDKKind } from "../events/kinds/index.js";
 import { verifiedSignatures } from "../events/validation.js";
 import { wrapEvent } from "../events/wrap.js";
 import type { NDK } from "../ndk/index.js";
@@ -858,6 +858,8 @@ export class NDKSubscription extends EventEmitter<{
             // coming from the cache or have been published by us from within
             // the client
             if (!fromCache && !optimisticPublish) {
+                const mustVerifyProfile = ndkEvent.kind === NDKKind.Metadata && !this.skipVerification;
+
                 // validate it
                 if (!this.skipValidation) {
                     if (!ndkEvent.isValid) {
@@ -868,33 +870,36 @@ export class NDKSubscription extends EventEmitter<{
 
                 // verify it
                 if (relay) {
-                    // Check if we need to verify this event based on sampling
-                    const shouldVerify = relay.shouldValidateEvent();
+                    const shouldVerify = mustVerifyProfile || relay.shouldValidateEvent();
 
                     if (shouldVerify && !this.skipVerification) {
                         // Set the relay on the event for async verification
                         ndkEvent.relay = relay;
 
-                        // Attempt verification
-                        if (this.ndk.asyncSigVerification) {
-                            // Async verification - call verifySignature but don't wait for result
-                            // The validation stats will be tracked in the async callback
-                            ndkEvent.verifySignature(true);
-                        } else {
-                            // Sync verification - check result immediately
+                        // Profile metadata must be verified synchronously so we can drop invalid ones immediately
+                        if (mustVerifyProfile || !this.ndk.asyncSigVerification) {
                             if (!ndkEvent.verifySignature(true)) {
                                 this.debug("Event failed signature validation", event);
-                                // Report the invalid signature with relay information through the centralized method
                                 this.ndk.reportInvalidSignature(ndkEvent, relay);
                                 return;
                             }
 
-                            // Track successful validation
                             relay.addValidatedEvent();
+                        } else {
+                            // Async verification - call verifySignature but don't wait for result
+                            // The validation stats will be tracked in the async callback
+                            ndkEvent.verifySignature(true);
                         }
                     } else {
                         // We skipped verification for this event
                         relay.addNonValidatedEvent();
+                    }
+                } else if (mustVerifyProfile && !this.skipVerification) {
+                    // No relay reference, but still enforce signature on profile metadata
+                    if (!ndkEvent.verifySignature(true)) {
+                        this.debug("Event failed signature validation", event);
+                        this.ndk.reportInvalidSignature(ndkEvent);
+                        return;
                     }
                 }
 

@@ -27,7 +27,7 @@
         },
         "cache-browser#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["core#build", "cache-dexie#build", "cache-sqlite-wasm#build"]
         },
         "cache-dexie#build": {
             "outputs": ["dist/**"],

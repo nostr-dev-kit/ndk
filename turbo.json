@@ -25,7 +25,31 @@
             "outputs": ["dist/**"],
             "dependsOn": ["core#build"]
         },
+        "cache-browser#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build"]
+        },
+        "cache-dexie#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build"]
+        },
+        "cache-memory#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build"]
+        },
+        "cache-nostr#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build"]
+        },
+        "cache-redis#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build"]
+        },
         "cache-sqlite#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build"]
+        },
+        "cache-sqlite-wasm#build": {
             "outputs": ["dist/**"],
             "dependsOn": ["core#build"]
         },

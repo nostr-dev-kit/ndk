@@ -30,7 +30,7 @@ Some notes:
 - [ ] Try to find (or remove) API reference link
 - [ ] Remove warnings (homepage and main intro) about Docs WIP
 - [ ] Remove ✅ ❌ ⛔ icons
-- [ ] Check revert commit https://github.com/nostr-dev-kit/ndk/commit/4a7b086bd1f67f22a6c29adcf4d6c51b4dd7077c
+- [x] Check revert commit https://github.com/nostr-dev-kit/ndk/commit/4a7b086bd1f67f22a6c29adcf4d6c51b4dd7077c
 
 ### Changes made that need double check
 

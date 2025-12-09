@@ -21,14 +21,13 @@ const normalSub = ndk.subscribe(
     {kinds: [1], authors: ['pubkey...']},
     {
         relayUrls: ['wss://relay-a.com'],
-        exclusiveRelay: false  // or omit (default)
+        exclusiveRelay: false,  // or omit (default)
+        onEvent: (event) => {
+            // This fires for events from relay-a.com, relay-b.com, relay-c.com
+            // or any other relay, as long as the filter matches
+        }
     }
 );
-
-normalSub.on('event', (event) => {
-    // This fires for events from relay-a.com, relay-b.com, relay-c.com
-    // or any other relay, as long as the filter matches
-});
 ```
 
 ## Use Cases
@@ -59,13 +58,13 @@ const testSub = ndk.subscribe(
     {
         relayUrls: ['wss://test-relay.com'],
         exclusiveRelay: true,
-        closeOnEose: true
+        closeOnEose: true,
+        onEose: () => {
+            console.log('Finished fetching from test-relay.com');
+        }
     }
 );
 
-testSub.on('eose', () => {
-    console.log('Finished fetching from test-relay.com');
-});
 ```
 
 ### 3. Relay-Based Routing
@@ -77,7 +76,10 @@ const publicRelaySub = ndk.subscribe(
     {kinds: [1]},
     {
         relayUrls: ['wss://public-relay.com'],
-        exclusiveRelay: true
+        exclusiveRelay: true,
+        onEvent: (event) => {
+            console.log('Public event:', event.content);
+        }
     }
 );
 
@@ -85,17 +87,12 @@ const privateRelaySub = ndk.subscribe(
     {kinds: [1]},
     {
         relayUrls: ['wss://private-relay.com'],
-        exclusiveRelay: true
+        exclusiveRelay: true,
+        onEvent: (event) => {
+            console.log('Private event:', event.content);
+        }
     }
 );
-
-publicRelaySub.on('event', (event) => {
-    console.log('Public event:', event.content);
-});
-
-privateRelaySub.on('event', (event) => {
-    console.log('Private event:', event.content);
-});
 ```
 
 ## Using NDKRelaySet

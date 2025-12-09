@@ -25,6 +25,10 @@ Snippets are grouped by category. Some of them are listed in more than one categ
 
 <!--@include: ./snippets/publishing.md -->
 
+## Helpers
+
+<!--@include: ./snippets/helpers.md -->
+
 
 ## Not migrated yet
 

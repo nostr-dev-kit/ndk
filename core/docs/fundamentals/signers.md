@@ -37,7 +37,11 @@ applications that manage keys locally.
 > using [a browser extension](/core/docs/fundamentals/signers.html#browser-extensions)
 > or [a remote signer](/core/docs/fundamentals/signers.html#remote-signer).
 
-The private key signer takes the private key in the `nsec` format.
+The `NDKPrivateKeySigner` can be instantiated with an nsec or hex private key:
+
+<<< @/core/docs/snippets/private-signer.ts
+
+After that the signer can be used to sign events:
 
 <<< @/core/docs/snippets/sign_event_nsec.ts
 

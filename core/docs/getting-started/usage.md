@@ -42,7 +42,7 @@ NDK provides flexible ways to fetch user objects, including support for
 [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md) encoded identifiers
 and [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) addresses:
 
-<<< @/core/docs/snippets/managing-users.ts
+<<< @/core/docs/snippets/user-fetching.ts
 
 Note: `fetchUser` is async and returns a Promise. For [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md)
 lookups, it may return `undefined` if the address cannot be resolved.

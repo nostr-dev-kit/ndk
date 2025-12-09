@@ -1,0 +1,14 @@
+<script lang="ts">
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+
+  // Hashtag component auto-registers with the content renderer
+  import '$lib/registry/components/hashtag';
+
+  let { ndk, event } = $props();
+</script>
+
+<div class="w-full max-w-2xl">
+  {#if event}
+    <EventContent {ndk} {event} />
+  {/if}
+</div>

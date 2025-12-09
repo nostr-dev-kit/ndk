@@ -1,0 +1,13 @@
+<script lang="ts">
+  import { Highlight } from '$lib/registry/ui/highlight';
+
+  let { ndk, highlight } = $props();
+</script>
+
+<div class="relative p-6 border border-amber-400 rounded-xl bg-gradient-to-br from-amber-50 to-white">
+  <Highlight.Root {ndk} event={highlight}>
+    <div class="absolute top-0 left-0 w-1 h-full bg-amber-500 rounded-l-xl"></div>
+    <Highlight.Content class="text-lg leading-relaxed italic text-amber-950 mb-3" />
+    <Highlight.Source class="text-sm text-amber-900 opacity-80" />
+  </Highlight.Root>
+</div>

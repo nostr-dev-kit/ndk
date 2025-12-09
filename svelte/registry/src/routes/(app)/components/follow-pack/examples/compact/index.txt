@@ -1,0 +1,7 @@
+<script lang="ts">
+  import FollowPackCompact from '$lib/registry/components/follow/packs/compact/follow-pack-compact.svelte';
+
+  let { pack } = $props();
+</script>
+
+<FollowPackCompact followPack={pack} />

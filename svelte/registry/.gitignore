@@ -1,0 +1,6 @@
+.vercel
+__screenshots__/
+test-results/
+playwright-report/
+.vitest/
+*.tmp

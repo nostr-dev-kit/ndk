@@ -1,0 +1,9 @@
+<script>
+  import { NoteComposerCard } from '@nostr-dev-kit/svelte-registry/blocks';
+</script>
+
+<NoteComposerCard
+  {ndk}
+  title="Share your thoughts"
+  onPublish={(event) => console.log('Published:', event)}
+/>

@@ -1,0 +1,8 @@
+const thread = createThreadView(() => ({ focusedEvent: event, maxDepth: 20 }), ndk);
+
+thread.events         // Array<ThreadNode> - complete linear chain
+thread.replies        // Array<NDKEvent> - replies to focused event only
+thread.otherReplies   // Array<NDKEvent> - replies to other thread events
+thread.allReplies     // Array<NDKEvent> - all replies (replies + otherReplies)
+thread.focusedEventId // string | null - ID of focused event
+thread.focusOn(event) // Navigate to different event

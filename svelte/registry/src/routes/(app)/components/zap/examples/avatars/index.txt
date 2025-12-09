@@ -1,0 +1,7 @@
+<script lang="ts">
+  import ZapButtonAvatars from '$lib/registry/components/zap/buttons/avatars/zap-button-avatars.svelte';
+
+  let { ndk, event } = $props();
+</script>
+
+<ZapButtonAvatars {ndk} {event} variant="ghost" />

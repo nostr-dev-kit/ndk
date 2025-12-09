@@ -1,0 +1,56 @@
+<script lang="ts">
+  import { setContext } from 'svelte';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createHighlight } from '../../builders/highlight/index.svelte.js';
+  import type { Snippet } from 'svelte';
+  import { cn } from '../../utils/cn.js';
+  import {
+    HIGHLIGHT_CONTEXT_KEY,
+    type HighlightContext,
+  } from './highlight.context.js';
+  import { getNDK } from '../../utils/ndk';
+
+  interface Props {
+    ndk?: NDKSvelte;
+
+    event: NDKEvent;
+
+    class?: string;
+
+    children?: Snippet;
+  }
+
+  let {
+    ndk: providedNdk,
+    event,
+    class: className = '',
+    children,
+  }: Props = $props();
+
+  const ndk = getNDK(providedNdk);
+
+  // Create highlight builder
+  const state = createHighlight(() => ({ event }), ndk);
+
+  // Create context with getters for reactivity
+  const context: HighlightContext = {
+    get ndk() {
+      return ndk;
+    },
+    get event() {
+      return event;
+    },
+    get state() {
+      return state;
+    },
+  };
+
+  setContext(HIGHLIGHT_CONTEXT_KEY, context);
+</script>
+
+<div class={className}>
+  {#if children}
+    {@render children()}
+  {/if}
+</div>

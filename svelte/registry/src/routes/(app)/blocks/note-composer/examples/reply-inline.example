@@ -1,0 +1,10 @@
+<script>
+  import { NoteComposerInline } from '@nostr-dev-kit/svelte-registry/blocks';
+  // event is the note you're replying to
+</script>
+
+<NoteComposerInline
+  {ndk}
+  replyTo={event}
+  onPublish={(reply) => console.log('Reply published:', reply)}
+/>

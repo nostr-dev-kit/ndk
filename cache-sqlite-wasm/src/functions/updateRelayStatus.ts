@@ -2,27 +2,15 @@ import type { NDKCacheRelayInfo } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
- * Updates relay status in the SQLite WASM database.
+ * Updates relay status in the SQLite WASM database via worker.
  * Stores relay info as a JSON string in a dedicated table.
  * Merges metadata field with existing data.
- * Supports both worker and direct database modes.
  */
 export async function updateRelayStatus(
     this: NDKCacheAdapterSqliteWasm,
     relayUrl: string,
     info: NDKCacheRelayInfo,
 ): Promise<void> {
-    const createStmt = `
-        CREATE TABLE IF NOT EXISTS relay_status (
-            url TEXT PRIMARY KEY,
-            info TEXT
-        );
-    `;
-    const upsertStmt = `
-        INSERT OR REPLACE INTO relay_status (url, info)
-        VALUES (?, ?)
-    `;
-
     // Get existing data to merge metadata
     const existing = await this.getRelayStatus(relayUrl);
 
@@ -47,24 +35,14 @@ export async function updateRelayStatus(
 
     await this.ensureInitialized();
 
-    if (this.useWorker) {
-        await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: createStmt,
-                params: [],
-            },
-        });
-        await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: upsertStmt,
-                params: [relayUrl, JSON.stringify(merged)],
-            },
-        });
-    } else {
-        if (!this.db) throw new Error("Database not initialized");
-        this.db.run(createStmt);
-        this.db.run(upsertStmt, [relayUrl, JSON.stringify(merged)]);
-    }
+    // Update LRU cache immediately
+    this.metadataCache?.setRelayInfo(relayUrl, merged);
+
+    await this.postWorkerMessage({
+        type: "updateRelayStatus",
+        payload: {
+            relayUrl,
+            info: JSON.stringify(merged),
+        },
+    });
 }

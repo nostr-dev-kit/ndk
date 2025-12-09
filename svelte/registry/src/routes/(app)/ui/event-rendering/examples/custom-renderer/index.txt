@@ -1,0 +1,16 @@
+<script>
+  import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+  import CustomHashtag from './hashtag-custom.example.svelte';
+  import CustomLink from './link-custom.example.svelte';
+
+  let { ndk } = $props();
+
+  // Create custom renderer
+  const customRenderer = new ContentRenderer();
+  customRenderer.hashtagComponent = CustomHashtag;
+  customRenderer.linkComponent = CustomLink;
+
+  const sampleContent = "Check out https://nostr.com for more info! #nostr #web3";
+</script>
+
+<EventContent {ndk} content={sampleContent} renderer={customRenderer} />

@@ -1,0 +1,8 @@
+# Update all components
+jsrepo update
+
+# Update specific components
+jsrepo update components/user-card ui/user
+
+# Interactive update with diff preview
+jsrepo update --expand

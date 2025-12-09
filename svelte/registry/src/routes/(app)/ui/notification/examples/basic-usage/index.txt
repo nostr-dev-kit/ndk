@@ -1,0 +1,24 @@
+<script>
+	import * as NotificationItem from '$lib/registry/ui/notification';
+
+	let { ndk, notifications } = $props();
+</script>
+
+<div class="notification-demo">
+	{#each notifications as notification}
+		<NotificationItem.Root {ndk} {notification}>
+			<div class="notification-card">
+				<div class="notification-header">
+					<NotificationItem.Action />
+					<NotificationItem.Timestamp />
+				</div>
+
+				<NotificationItem.Content class="notification-content" />
+
+				<div class="notification-footer">
+					<NotificationItem.Actors max={5} size={28} />
+				</div>
+			</div>
+		</NotificationItem.Root>
+	{/each}
+</div>

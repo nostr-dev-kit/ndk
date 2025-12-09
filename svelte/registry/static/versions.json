@@ -1,0 +1,184 @@
+{
+  "registry": {
+    "name": "ndk-svelte",
+    "version": "4.0.0-beta.41",
+    "generated": "2025-11-06T13:43:03.368Z"
+  },
+  "components": {
+    "article-card-medium": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:00.174Z",
+      "type": "registry:component",
+      "title": "Article Card Medium",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "article-content": {
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
+      "type": "registry:component",
+      "title": "Article Content",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte",
+        "marked@^16.4.1"
+      ],
+      "registryDependencies": []
+    },
+    "avatar-group": {
+      "version": "0.4.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
+      "type": "registry:component",
+      "title": "Avatar Group",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "user-profile"
+      ]
+    },
+    "emoji-picker": {
+      "version": "0.3.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
+      "type": "registry:block",
+      "title": "Emoji Picker",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte",
+        "bits-ui@^2.8.3"
+      ],
+      "registryDependencies": []
+    },
+    "event-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:01.234Z",
+      "type": "registry:component",
+      "title": "Event Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": [
+        "user-profile",
+        "event-content",
+        "actions",
+        "ndk-context"
+      ]
+    },
+    "follow-pack-list-item": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:01.387Z",
+      "type": "registry:component",
+      "title": "Follow Pack List Item",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "highlight-card-elegant": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:01.543Z",
+      "type": "registry:component",
+      "title": "Highlight Card Elegant",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "highlight-card-feed": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:01.695Z",
+      "type": "registry:component",
+      "title": "Highlight Card Feed",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "highlight-card-grid": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:01.851Z",
+      "type": "registry:component",
+      "title": "Highlight Card Grid",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "image-card": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:02.009Z",
+      "type": "registry:component",
+      "title": "Image Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "image-card-instagram": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:02.159Z",
+      "type": "registry:component",
+      "title": "Image Card Instagram",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "relay-card": {
+      "version": "0.8.0",
+      "lastModified": "2025-10-31T07:15:56.000Z",
+      "type": "registry:component",
+      "title": "Relay Card",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "user-input": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:02.690Z",
+      "type": "registry:block",
+      "title": "User Input",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "user-profile-hero": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:02.844Z",
+      "type": "registry:component",
+      "title": "User Profile Hero",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte"
+      ],
+      "registryDependencies": []
+    },
+    "zap-button": {
+      "version": "0.0.0",
+      "lastModified": "2025-11-06T13:43:03.289Z",
+      "type": "registry:component",
+      "title": "Zap Button",
+      "dependencies": [
+        "@nostr-dev-kit/ndk",
+        "@nostr-dev-kit/svelte",
+        "@nostr-dev-kit/wallet"
+      ],
+      "registryDependencies": []
+    }
+  }
+}

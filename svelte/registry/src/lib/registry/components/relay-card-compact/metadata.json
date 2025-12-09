@@ -1,0 +1,55 @@
+{
+  "name": "relay-compact",
+  "title": "Relay Compact",
+  "category": "relay",
+  "subcategory": "cards",
+  "variant": "compact",
+  "oneLiner": "A compact card for relay content",
+  "registryName": "components/relay-card-compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "cards",
+    "compact",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "RelayCardCompact",
+    "description": "A compact square relay card displaying relay icon, name, and bookmark button. Clickable with customizable size. Integrates with bookmarked relay list for current user. Perfect for grid layouts or icon-based relay selection interfaces.",
+    "importPath": "import { RelayCardCompact } from '$lib/registry/components/relay/cards/compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "relayUrl",
+        "type": "string",
+        "required": true,
+        "description": "Relay WebSocket URL"
+      },
+      {
+        "name": "size",
+        "type": "string",
+        "default": "w-[160px] h-[160px]",
+        "description": "CSS classes for card dimensions"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler for card interaction"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

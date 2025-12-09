@@ -205,6 +205,13 @@ export interface NDKSubscriptionOptions {
     ) => void;
 
     /**
+     * Called with a batch of events from cache.
+     * When this is provided, cached events are processed in batch instead of individually.
+     * @param events Array of cached events to process in batch.
+     */
+    onEvents?: (events: NDKEvent[]) => void;
+
+    /**
      * Called when the subscription receives an EOSE (End of Stored Events) marker
      * from all connected relays.
      * @param subscription The subscription that reached EOSE.
@@ -264,7 +271,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
     dontSaveToCache: false,
     groupable: true,
-    groupableDelay: 100,
+    groupableDelay: 10,
     groupableDelayType: "at-most",
     cacheUnconstrainFilter: ["limit", "since", "until"],
     includeMuted: false,
@@ -555,20 +562,39 @@ export class NDKSubscription extends EventEmitter<{
         let cacheResult: NDKEvent[] | Promise<NDKEvent[]>;
 
         const updateStateFromCacheResults = (events: NDKEvent[]) => {
-            // Always process and emit cache events to ensure they reach subscribers
-            for (const event of events) {
-                if (
-                    event.created_at &&
-                    (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp)
-                ) {
-                    this.mostRecentCacheEventTimestamp = event.created_at;
-                }
-                this.eventReceived(event, undefined, true, false);
+            if (events.length === 0) {
+                if (!emitCachedEvents) cacheResult = events;
+                return;
             }
 
-            // If emitCachedEvents is false, also collect events for synchronous return
+            // If we're not emitting events (onEvents mode), just set NDK reference and return
             if (!emitCachedEvents) {
+                // Calculate most recent timestamp for addSinceFromCache functionality
+                let maxTimestamp = this.mostRecentCacheEventTimestamp || 0;
+                for (const event of events) {
+                    event.ndk = this.ndk;
+                    if (event.created_at && event.created_at > maxTimestamp) {
+                        maxTimestamp = event.created_at;
+                    }
+                }
+                this.mostRecentCacheEventTimestamp = maxTimestamp;
                 cacheResult = events;
+                return;
+            }
+
+            // Regular path: emit events individually
+            // Calculate most recent timestamp in a single pass
+            let maxTimestamp = this.mostRecentCacheEventTimestamp || 0;
+            for (const event of events) {
+                if (event.created_at && event.created_at > maxTimestamp) {
+                    maxTimestamp = event.created_at;
+                }
+            }
+            this.mostRecentCacheEventTimestamp = maxTimestamp;
+
+            // Process and emit each event
+            for (const event of events) {
+                this.eventReceived(event, undefined, true, false);
             }
         };
 
@@ -589,8 +615,24 @@ export class NDKSubscription extends EventEmitter<{
                 if (this.shouldWaitForCache()) {
                     // If we need to wait for it
                     cacheResult.then((events) => {
-                        // load the results into the subscription state
-                        updateStateFromCacheResults(events);
+                        // If onEvents provided, use batch processing
+                        if (this.opts.onEvents) {
+                            // Set NDK reference and calculate timestamp
+                            let maxTimestamp = this.mostRecentCacheEventTimestamp || 0;
+                            for (const event of events) {
+                                event.ndk = this.ndk;
+                                if (event.created_at && event.created_at > maxTimestamp) {
+                                    maxTimestamp = event.created_at;
+                                }
+                            }
+                            this.mostRecentCacheEventTimestamp = maxTimestamp;
+                            // Call the batch handler
+                            this.opts.onEvents(events);
+                        } else {
+                            // Regular processing (no batch handler provided)
+                            updateStateFromCacheResults(events);
+                        }
+
                         // if the cache has a hit, return early
                         if (queryFullyFilled(this)) {
                             this.emit("eose", this);
@@ -601,7 +643,24 @@ export class NDKSubscription extends EventEmitter<{
                     return null;
                 }
                 cacheResult.then((events) => {
-                    updateStateFromCacheResults(events);
+                    // If onEvents provided, use batch processing
+                    if (this.opts.onEvents) {
+                        // Set NDK reference and calculate timestamp
+                        let maxTimestamp = this.mostRecentCacheEventTimestamp || 0;
+                        for (const event of events) {
+                            event.ndk = this.ndk;
+                            if (event.created_at && event.created_at > maxTimestamp) {
+                                maxTimestamp = event.created_at;
+                            }
+                        }
+                        this.mostRecentCacheEventTimestamp = maxTimestamp;
+                        // Call the batch handler
+                        this.opts.onEvents(events);
+                    } else {
+                        // Regular processing (no batch handler provided)
+                        updateStateFromCacheResults(events);
+                    }
+
                     // If we're only using cache, emit EOSE after cache results arrive
                     if (!this.shouldQueryRelays()) {
                         this.emit("eose", this);
@@ -774,6 +833,22 @@ export class NDKSubscription extends EventEmitter<{
         if (event instanceof NDKEvent) ndkEvent = event;
 
         if (!eventAlreadySeen) {
+            // Check future timestamp grace if configured
+            if (this.ndk.futureTimestampGrace !== undefined && event.created_at) {
+                const currentTime = Math.floor(Date.now() / 1000);
+                const timeDifference = event.created_at - currentTime;
+
+                if (timeDifference > this.ndk.futureTimestampGrace) {
+                    this.debug(
+                        "Event discarded: timestamp %d is %d seconds in the future (grace: %d seconds)",
+                        event.created_at,
+                        timeDifference,
+                        this.ndk.futureTimestampGrace,
+                    );
+                    return;
+                }
+            }
+
             // generate the ndkEvent
             ndkEvent ??= new NDKEvent(this.ndk, event);
             ndkEvent.ndk = this.ndk;
@@ -823,7 +898,7 @@ export class NDKSubscription extends EventEmitter<{
                     }
                 }
 
-                if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache) {
+                if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache && !kindIsEphemeral(ndkEvent.kind as NDKKind)) {
                     this.ndk.cacheAdapter.setEvent(ndkEvent, this.filters, relay);
                 }
             }
@@ -912,7 +987,6 @@ export class NDKSubscription extends EventEmitter<{
     private eosed = false;
 
     public eoseReceived(relay: NDKRelay): void {
-        this.debug("EOSE received from %s", relay.url);
         this.eosesSeen.add(relay);
 
         let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
@@ -921,7 +995,6 @@ export class NDKSubscription extends EventEmitter<{
         const queryFilled = queryFullyFilled(this);
 
         const performEose = (reason: string) => {
-            this.debug("Performing EOSE: %s %d", reason, this.eosed);
             if (this.eosed) return;
             if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
             this.emit("eose", this);
@@ -955,13 +1028,6 @@ export class NDKSubscription extends EventEmitter<{
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
             const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / connectedRelaysWithFilters.length;
-
-            this.debug("Percentage of relays that have sent EOSE", {
-                subId: this.subId,
-                percentageOfRelaysThatHaveSentEose,
-                seen: this.eosesSeen.size,
-                total: connectedRelaysWithFilters.length,
-            });
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {

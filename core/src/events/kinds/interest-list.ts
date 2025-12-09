@@ -9,6 +9,7 @@ import { NDKKind } from "./index.js";
  * @group Kind Wrapper
  */
 export class NDKInterestList extends NDKEvent {
+    static kind = NDKKind.InterestList;
     static kinds = [NDKKind.InterestList];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
@@ -47,7 +48,6 @@ export class NDKInterestList extends NDKEvent {
     addInterest(hashtag: string): void {
         if (!this.hasInterest(hashtag)) {
             this.tags.push(["t", hashtag]);
-            this.created_at = Math.floor(Date.now() / 1000);
         }
     }
 
@@ -59,7 +59,6 @@ export class NDKInterestList extends NDKEvent {
         const index = this.tags.findIndex((tag) => tag[0] === "t" && tag[1] === hashtag);
         if (index >= 0) {
             this.tags.splice(index, 1);
-            this.created_at = Math.floor(Date.now() / 1000);
         }
     }
 

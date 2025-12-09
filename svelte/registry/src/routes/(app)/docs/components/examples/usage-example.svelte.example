@@ -1,0 +1,6 @@
+<!-- Usage -->
+<EventCard.Root {ndk} {event}>
+  <EventCard.Header />
+  <EventCard.Content />
+  <EventCard.Actions />
+</EventCard.Root>

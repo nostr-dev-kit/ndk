@@ -1,0 +1,20 @@
+<script>
+  import { FollowPack } from '$lib/registry/ui/follow-pack';
+
+  let { ndk, followPack } = $props();
+</script>
+
+<div class="border border-gray-200 rounded-xl p-6 bg-white">
+  <FollowPack.Root {ndk} {followPack}>
+    <div class="flex flex-col gap-4 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+      <FollowPack.Image class="w-full h-40 object-cover" />
+      <div class="p-4">
+        <FollowPack.Title class="text-xl font-bold text-gray-900 mb-2" />
+        <FollowPack.Description class="text-sm text-gray-500 leading-normal" />
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <FollowPack.MemberCount format="short" class="text-[13px] text-gray-500 font-medium" />
+        </div>
+      </div>
+    </div>
+  </FollowPack.Root>
+</div>

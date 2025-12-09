@@ -1,0 +1,28 @@
+{
+  "name": "getNDK",
+  "title": "Get NDK Utility",
+  "oneLiner": "Helper function to retrieve NDK instance from explicit parameter or Svelte context",
+  "importPath": "import { getNDK } from '$lib/registry/utils/ndk';",
+  "registryName": "utils/ndk",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "svelte"
+  ],
+  "nips": [],
+  "parameters": [
+    {
+      "name": "providedNDK",
+      "type": "NDKSvelte | undefined",
+      "description": "Optional explicit NDK instance to use instead of context",
+      "required": false
+    }
+  ],
+  "returns": [
+    {
+      "name": "ndk",
+      "type": "NDKSvelte",
+      "description": "Resolved NDK instance from parameter or context"
+    }
+  ],
+  "usageExample": "import { getNDK } from '$lib/registry/utils/ndk';\n\n// In your component or builder\nconst ndk = getNDK();\n\n// Or with explicit NDK (testing, custom instances)\nconst ndk = getNDK(customNDK);"
+}

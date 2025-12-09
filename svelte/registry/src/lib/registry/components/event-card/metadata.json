@@ -1,0 +1,51 @@
+{
+  "name": "event-card",
+  "title": "Event Card",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "compound",
+  "oneLiner": "A compound event card component with header, content and actions",
+  "registryName": "components/event-card",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "social-feeds",
+    "timelines",
+    "event-lists"
+  ],
+  "apiDoc": {
+    "name": "EventCardRoot",
+    "description": "Root component for compound event card builder pattern. Creates context for nested EventCard.Header, EventCard.Content, EventCard.Actions, and EventCard.Dropdown subcomponents. Supports optional click handler for interactive cards. Renders as button when clickable, div otherwise. Uses Svelte 5 snippet pattern for children composition.",
+    "importPath": "import { EventCard } from '$lib/registry/components/event/cards/compound'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler - makes card interactive"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "children",
+        "type": "Snippet",
+        "description": "Snippet for card content composition"
+      }
+    ]
+  }
+}

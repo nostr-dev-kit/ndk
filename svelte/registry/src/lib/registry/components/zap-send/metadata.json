@@ -1,0 +1,48 @@
+{
+  "name": "zap-send",
+  "title": "Zap Send",
+  "category": "zap",
+  "subcategory": "send",
+  "variant": "basic",
+  "oneLiner": "Interface for sending zaps",
+  "registryName": "components/zap-send",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "payment-forms",
+    "tip-dialogs",
+    "zap-interfaces"
+  ],
+  "apiDoc": {
+    "name": "ZapSendRoot",
+    "description": "Root component for custom zap sending interfaces using Svelte actions. Provides a send action that children can attach to any element. Supports optional zap splits for distributing payments across multiple recipients. Sets zap send context for nested components. Uses Svelte 5 snippet pattern with action parameter.",
+    "importPath": "import { ZapSendRoot } from '$lib/registry/components/zap/send/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "recipient",
+        "type": "NDKEvent | NDKUser",
+        "required": true,
+        "description": "Event or user to send zap to"
+      },
+      {
+        "name": "splits",
+        "type": "Array<{ pubkey: string; amount: number }>",
+        "description": "Optional zap splits for multi-recipient payments"
+      },
+      {
+        "name": "children",
+        "type": "Snippet<[{ send: Action<HTMLElement, SendOptions> }]>",
+        "required": true,
+        "description": "Snippet receiving send action for zap triggers"
+      }
+    ]
+  }
+}

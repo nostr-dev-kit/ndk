@@ -14,6 +14,17 @@
     let contacts = $state<Contact[]>([]);
     let selectedContact = $state<Contact | null>(null);
     let showDebug = $state(false);
+    let myProfile = $state(null);
+
+    $effect(() => {
+        const currentUser = ndk.$currentUser;
+        if (currentUser?.pubkey) {
+            const user = ndk.getUser({ pubkey: currentUser.pubkey });
+            user.fetchProfile().then(p => myProfile = p);
+        } else {
+            myProfile = null;
+        }
+    });
 
     $effect(() => {
         const currentUser = ndk.$currentUser;
@@ -124,7 +135,6 @@
 <div class="icq-window icq-window-large">
     <div class="icq-titlebar">
         {#if ndk.$currentUser}
-            {@const myProfile = ndk.$fetchProfile(() => ndk.$currentUser.pubkey)}
             <span class="icq-titlebar-text"><IcqLogo size={14} /> ICQ - {myProfile?.displayName || myProfile?.name || "User"}</span>
         {:else}
             <span class="icq-titlebar-text"><IcqLogo size={14} /> ICQ - User</span>

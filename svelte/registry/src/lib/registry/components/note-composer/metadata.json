@@ -1,0 +1,58 @@
+{
+  "name": "note-composer-compound",
+  "title": "Note-composer Compound",
+  "category": "note-composer",
+  "subcategory": "composers",
+  "variant": "compound",
+  "oneLiner": "A compound composer for note-composer content",
+  "registryName": "components/note-composer",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "note-composer",
+    "composers",
+    "compound",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "NoteComposerRoot",
+    "description": "Root component for compound note composer builder pattern. Creates context for nested NoteComposer subcomponents (Textarea, Media, Submit, etc.). Supports reply threading, publish/error callbacks, and Svelte 5 snippet composition. Uses createNoteComposer builder for state management. Exports NoteComposer.Inline, NoteComposer.Modal, NoteComposer.Card, and NoteComposer.Minimal variants.",
+    "importPath": "import { NoteComposer } from '$lib/registry/components/note-composer/composers/compound'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "replyTo",
+        "type": "NDKEvent",
+        "description": "Event being replied to for threading"
+      },
+      {
+        "name": "onPublish",
+        "type": "(event: NDKEvent) => void",
+        "description": "Callback when note is published successfully"
+      },
+      {
+        "name": "onError",
+        "type": "(error: Error) => void",
+        "description": "Callback when publish fails"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "children",
+        "type": "Snippet",
+        "required": true,
+        "description": "Svelte 5 snippet for composer content composition"
+      }
+    ]
+  }
+}

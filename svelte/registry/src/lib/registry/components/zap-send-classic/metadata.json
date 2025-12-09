@@ -1,0 +1,51 @@
+{
+  "name": "zap-send-classic",
+  "title": "Zap Send Classic",
+  "category": "zap",
+  "subcategory": "send",
+  "variant": "classic",
+  "oneLiner": "Classic zap sending interface",
+  "registryName": "components/zap-send-classic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "traditional-ui",
+    "payment-forms",
+    "desktop-apps"
+  ],
+  "apiDoc": {
+    "name": "ZapSendClassic",
+    "description": "Classic zap sending interface with preset amounts, comment input, and send/cancel actions. Features preset amount buttons (21, 100, 1000, 5000, 10000 sats), comment textarea, target user display with avatar, and success/cancel callbacks. Uses createZapSendAction builder for payment processing.",
+    "importPath": "import { ZapSendClassic } from '$lib/registry/components/zap/send/classic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "target",
+        "type": "NDKEvent | NDKUser",
+        "required": true,
+        "description": "Event or user to send zap to"
+      },
+      {
+        "name": "onsuccess",
+        "type": "() => void",
+        "description": "Callback when zap is sent successfully"
+      },
+      {
+        "name": "oncancel",
+        "type": "() => void",
+        "description": "Callback when zap send is cancelled"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

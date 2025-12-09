@@ -1,5 +1,45 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 1.0.0
+
+### Patch Changes
+
+- 53768a2: Add intelligent postinstall script that detects framework (Vite, Next.js, SvelteKit, Nuxt, Astro) and provides setup instructions for copying worker.js and sql-wasm.wasm files. Script automatically skips in CI environments and can be silenced with SKIP_NDK_CACHE_SETUP=1.
+
+## 1.0.0
+
+### Major Changes
+
+- b5bdb2c: BREAKING: Rename all use* functions to create* for consistency
+
+    All reactive utilities now consistently use the `create*` prefix to match Svelte idioms (like `createEventDispatcher`).
+
+    **Svelte package renames:**
+    - `useZapAmount` → `createZapAmount`
+    - `useIsZapped` → `createIsZapped`
+    - `useTargetTransactions` → `createTargetTransactions`
+    - `usePendingPayments` → `createPendingPayments`
+    - `useTransactions` → `createTransactions`
+    - `useWoTScore` → `createWoTScore`
+    - `useWoTDistance` → `createWoTDistance`
+    - `useIsInWoT` → `createIsInWoT`
+    - `useZapInfo` → `createZapInfo`
+    - `useBlossomUpload` → `createBlossomUpload`
+    - `useBlossomUrl` → `createBlossomUrl`
+
+    Migration: Replace all `use*` function calls with their `create*` equivalents in your Svelte components.
+
+### Minor Changes
+
+- 79503f5: Major performance improvements for cache-sqlite-wasm adapter
+    - Added binary serialization for worker communication (10-15x faster than JSON)
+    - Implemented LRU cache for events and metadata with configurable size limits
+    - Added performance monitoring system with detailed metrics tracking
+    - Improved schema with raw event storage column for faster serialization
+    - Removed deprecated functions (getEventRelays, setEventDup)
+    - Added configurable performance tracking levels (none/basic/detailed/verbose)
+    - Zero-copy ArrayBuffer transfers between worker and main thread
+
 ## 0.8.2
 
 ### Patch Changes

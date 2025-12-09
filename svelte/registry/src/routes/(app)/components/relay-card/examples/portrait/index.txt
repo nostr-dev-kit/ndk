@@ -1,0 +1,7 @@
+<script lang="ts">
+  import RelayCardPortrait from '$lib/registry/components/relay/cards/portrait/relay-card-portrait.svelte';
+
+  let { ndk, relayUrl = 'wss://relay.damus.io' } = $props();
+</script>
+
+<RelayCardPortrait {ndk} {relayUrl} />

@@ -1,0 +1,21 @@
+<script>
+	import EventContent from '$lib/registry/ui/event-content.svelte'; import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+	import LinkPreview from './link-preview.example.svelte';
+
+	let { ndk } = $props();
+
+	// Create custom renderer with link preview
+	const customRenderer = new ContentRenderer();
+	customRenderer.linkComponent = LinkPreview;
+
+	const sampleContent = `Check out these resources:
+
+https://github.com/nostr-protocol/nips
+https://nostr.com
+
+https://njump.me
+
+Great Nostr resources!`;
+</script>
+
+<EventContent {ndk} content={sampleContent} renderer={customRenderer} />

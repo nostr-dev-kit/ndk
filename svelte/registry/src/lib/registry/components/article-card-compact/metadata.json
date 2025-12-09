@@ -1,0 +1,43 @@
+{
+  "name": "article-card-compact",
+  "title": "Article Card Compact",
+  "category": "article",
+  "subcategory": "cards",
+  "variant": "compact",
+  "oneLiner": "A compact article card optimized for lists and sidebars",
+  "registryName": "components/article-card-compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "sidebars",
+    "article-lists",
+    "recent-posts",
+    "related-articles"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "wrapper": "NDKArticle"
+  },
+  "apiDoc": {
+    "name": "ArticleCardCompact",
+    "description": "A compact article card displaying article image, title, summary, and reading time in a horizontal layout. Optimized for sidebars and article lists with minimal vertical space.",
+    "importPath": "import { ArticleCardCompact } from '$lib/registry/components/article/cards/compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to display"
+      }
+    ]
+  }
+}

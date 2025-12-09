@@ -1,10 +1,98 @@
 # @nostr-dev-kit/ndk
 
+## 3.0.0
+
+### Minor Changes
+
+- 53768a2: Add NIP-A0 voice message support with NDKVoiceMessage (kind 1222) and NDKVoiceReply (kind 1244) event wrappers. Both classes include getters/setters for audio URL, waveform data, and duration from imeta tags.
+
+## 3.0.0-beta.2
+
+### Minor Changes
+
+- Add NDKRelayFeedList wrapper for NIP-51 kind 10012 (Relay Feed List). This new class provides comprehensive support for managing user's favorite browsable relays and relay sets, with helper methods for adding/removing relay URLs and relay set references.
+
+## 3.0.0
+
+### Major Changes
+
+- b5bdb2c: BREAKING: Rename all use* functions to create* for consistency
+
+    All reactive utilities now consistently use the `create*` prefix to match Svelte idioms (like `createEventDispatcher`).
+
+    **Svelte package renames:**
+    - `useZapAmount` → `createZapAmount`
+    - `useIsZapped` → `createIsZapped`
+    - `useTargetTransactions` → `createTargetTransactions`
+    - `usePendingPayments` → `createPendingPayments`
+    - `useTransactions` → `createTransactions`
+    - `useWoTScore` → `createWoTScore`
+    - `useWoTDistance` → `createWoTDistance`
+    - `useIsInWoT` → `createIsInWoT`
+    - `useZapInfo` → `createZapInfo`
+    - `useBlossomUpload` → `createBlossomUpload`
+    - `useBlossomUrl` → `createBlossomUrl`
+
+    Migration: Replace all `use*` function calls with their `create*` equivalents in your Svelte components.
+
+### Minor Changes
+
+- b5bdb2c: Add NIP-69 P2P Order event support
+
+    Added support for NIP-69 P2P Order events (kind 38383), enabling peer-to-peer marketplace functionality. This includes event class registration and proper handling of P2P order events.
+
+- 72fc3b0: Subscription performance improvements and batch processing support
+    - Added `onEvents` callback option for batch processing of cached events
+    - Reduced default `groupableDelay` from 100ms to 10ms for faster subscription grouping
+    - Optimized cache result processing with single-pass timestamp calculation
+    - Added `onEventsHandler` parameter to `start()` method for direct batch handling
+    - Improved performance by eliminating per-event overhead in batch mode
+
+### Patch Changes
+
+- b8e7a06: Remove single event ID lookup warning from AI guardrails
+
+    Removed the overly strict warning that suggested using fetchEvent() for single ID lookups with fetchEvents(). This allows more flexibility when intentionally using fetchEvents() for single event queries.
+
+- ad7936b: Fix race condition that caused empty REQ messages to be sent to relays when subscriptions were closed before their scheduled execution time
+- b5bdb2c: Allow follow/unfollow to accept hex pubkeys directly
+
+    Enhanced follow and unfollow methods to accept hex pubkeys in addition to NDKUser objects, making the API more flexible and convenient when working with raw pubkeys.
+
+- 4b8d146: Add futureTimestampGrace option to protect against events with far-future timestamps
+
+    Added a new `futureTimestampGrace` optional parameter to the NDK constructor that allows filtering out events with timestamps too far in the future. When set, subscriptions will automatically discard events where `created_at` is more than the specified number of seconds ahead of the current time. This helps protect against malicious relays sending events with manipulated timestamps. Defaults to `undefined` (no filtering) for backward compatibility.
+
+- 8f116fa: Change NIP-46 default encryption from NIP-04 to NIP-44. NIP-44 is the newer, more secure encryption standard and is now used by default in modern bunker implementations. The RPC layer automatically falls back to NIP-04 when needed for compatibility.
+- 73adeb9: Add wallet getter to NDK class
+
+    Added a proper getter for the wallet property on the NDK class, allowing retrieval of the configured wallet instance. Previously only the setter was available.
+
+## 2.18.0
+
+### Minor Changes
+
+- Allow follow/unfollow methods to accept hex pubkeys directly
+
+    The `follow` and `unfollow` methods now accept both `NDKUser` objects and hex pubkey strings for both the target user and the `currentFollowList` parameter. This provides more flexibility when working with follow lists, allowing direct use of pubkey strings without needing to wrap them in NDKUser objects.
+
+## 2.17.11
+
+### Patch Changes
+
+- Allow follow/unfollow methods to accept hex pubkeys directly
+
+    The `follow` and `unfollow` methods now accept both `NDKUser` objects and hex pubkey strings for both the target user and the `currentFollowList` parameter. This provides more flexibility when working with follow lists, allowing direct use of pubkey strings without needing to wrap them in NDKUser objects.
+
+- Add getter for ndk.wallet to return wallet instance
+
+    Previously, `ndk.wallet` was write-only (setter without getter), causing it to always return `undefined` when accessed. Now stores and returns the actual wallet instance while maintaining backward compatibility with `ndk.walletConfig` for zapping functionality.
+
 ## 2.17.10
 
 ### Patch Changes
 
-- Fix Buffer reference error in signature verification worker by replacing Node.js Buffer API with browser-compatible hexToBytes function
+- eb8d400: Add AI guardrail for replaceable events with old timestamps. Warns when calling `publish()` on a replaceable event (kind 0, 3, 10k-20k, 30k-40k) with a `created_at` older than 10 seconds, guiding developers to use `publishReplaceable()` instead to ensure proper event replacement on relays.
 
 ## 2.17.9
 

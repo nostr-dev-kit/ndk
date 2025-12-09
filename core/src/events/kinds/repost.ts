@@ -2,6 +2,7 @@ import type { NDK } from "../../ndk/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../../subscription/index.js";
 import type { NDKTag, NostrEvent } from "../index.js";
 import { NDKEvent } from "../index.js";
+import { NDKKind } from "./index.js";
 
 type classWithConvertFunction<T> = {
     from: (event: NDKEvent) => T;
@@ -13,7 +14,8 @@ type classWithConvertFunction<T> = {
  */
 export class NDKRepost<T> extends NDKEvent {
     private _repostedEvents: T[] | undefined;
-    static kinds = [6, 16]; // Repost, GenericRepost
+    static kind = NDKKind.Repost;
+    static kinds = [NDKKind.Repost, NDKKind.GenericRepost];
 
     static from(event: NDKEvent) {
         return new NDKRepost(event.ndk, event.rawEvent());

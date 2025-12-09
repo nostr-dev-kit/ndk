@@ -14,7 +14,13 @@ export * from "./session/hooks/signers.js";
 export * from "./session/hooks/use-available-sessions";
 export * from "./session/hooks/use-ndk-session-monitor.js";
 export * from "./session/storage/index.js";
-export type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./session/store/types.js";
+export type {
+    MonitorItem,
+    NDKEventConstructor,
+    NDKSessionsState,
+    NDKUserSession,
+    SessionStartOptions,
+} from "./session/store/types.js";
 export * from "./subscribe/hooks";
 export * from "./subscribe/hooks/event.js";
 export * from "./subscribe/hooks/subscribe.js";

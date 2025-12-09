@@ -1,6 +1,6 @@
 import createDebug from "debug";
 import { EventEmitter } from "tseep";
-import type { NDKEvent, NDKTag } from "../events";
+import { NDKEvent, type NDKTag } from "../events";
 import { NDKNutzap } from "../events/kinds/nutzap";
 import type { NDK } from "../ndk";
 import { NDKRelaySet } from "../relay/sets";
@@ -357,11 +357,27 @@ class NDKZapper extends EventEmitter<{
             throw new Error("No cashuPay function available");
         }
 
+        // Build proof tags for NIP-61 compliance
+        const proofTags: [string, string][] = [];
+
+        // Add event ID tag if zapping an event
+        if (this.target instanceof NDKEvent) {
+            proofTags.push(["e", this.target.id]);
+        }
+
+        // Add sender pubkey tag
+        const signer = this.signer || this.ndk.signer;
+        if (signer) {
+            const user = await signer.user();
+            proofTags.push(["P", user.pubkey]);
+        }
+
         d("Calling cashuPay function", {
             target: this.target,
             recipientPubkey: split.pubkey,
             amount: split.amount,
             unit: this.unit,
+            proofTags,
             data,
         });
 
@@ -373,6 +389,7 @@ class NDKZapper extends EventEmitter<{
                 paymentDescription: "NIP-61 Zap",
                 amount: split.amount,
                 unit: this.unit,
+                proofTags,
                 ...(data ?? {}),
             },
             (pr: string) => {

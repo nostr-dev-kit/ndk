@@ -1,0 +1,14 @@
+<script lang="ts">
+  import RelayInputBlock from '$lib/registry/components/relay/inputs/basic/relay-input.svelte';
+
+  let { ndk } = $props();
+
+  let value = $state('');
+</script>
+
+<RelayInputBlock
+  {ndk}
+  bind:value
+  label="Primary Relay"
+  helperText="Enter the WebSocket URL of your preferred relay"
+/>

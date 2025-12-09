@@ -1,0 +1,10 @@
+<script>
+    import EmbeddedEvent from '$lib/registry/ui/embedded-event.svelte';
+
+  let {  ndk, eventBech32  } = $props();
+</script>
+
+<div class="embedded-demo">
+  <p class="mb-2">Card variant (default):</p>
+  <EmbeddedEvent {ndk} bech32={eventBech32} variant="card" />
+</div>

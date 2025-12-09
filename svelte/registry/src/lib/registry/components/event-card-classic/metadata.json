@@ -1,0 +1,64 @@
+{
+  "name": "event-card-classic",
+  "title": "Event Card Classic",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "classic",
+  "oneLiner": "A classic styled event card with rounded corners and card background",
+  "registryName": "components/event-card-classic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "traditional-feeds",
+    "forums",
+    "comment-sections",
+    "card-layouts",
+    "elevated-designs"
+  ],
+  "apiDoc": {
+    "name": "EventCardClassic",
+    "description": "A classic styled event card with rounded corners, card background, and hover effects. Always shows dropdown menu and all action buttons (reply, repost, reaction, zap). Supports callbacks for user interactions (reply, quote, zap) while reaction and repost are auto-handled.",
+    "importPath": "import EventCardClassic from '$lib/registry/components/event-card-classic/event-card-classic.svelte'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "truncate",
+        "type": "number",
+        "description": "Character limit for truncating content"
+      },
+      {
+        "name": "onReplyIntent",
+        "type": "ReplyIntentCallback",
+        "description": "Callback when user wants to reply. Receives the event to reply to. Use this to show a reply composer UI."
+      },
+      {
+        "name": "onQuoteIntent",
+        "type": "QuoteIntentCallback",
+        "description": "Callback when user wants to quote. Receives the event to quote. Use this to show a quote composer UI."
+      },
+      {
+        "name": "onZapIntent",
+        "type": "ZapIntentCallback",
+        "description": "Callback when user wants to zap. Receives the event and zap function. Show a zap UI to collect amount/comment, then call zapFn(amount, comment)."
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Card Chrome Variations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: hsl(0 0% 3.9%);
+            color: hsl(0 0% 98%);
+        }
+        .card {
+            background: hsl(0 0% 14.9%);
+            border: 1px solid hsl(0 0% 20%);
+        }
+        .muted {
+            color: hsl(0 0% 63.9%);
+        }
+        .accent {
+            background: hsl(0 0% 20%);
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-7xl mx-auto space-y-12">
+        <h1 class="text-3xl font-bold mb-8">Event Card Chrome Variations</h1>
+
+        <!-- Variation 1: Classic Minimal -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold muted">1. Classic Minimal</h2>
+            <div class="card rounded-lg p-6 max-w-2xl">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold">Alice Johnson</span>
+                            <span class="muted text-sm">@alice</span>
+                            <span class="muted text-sm">· 2h ago</span>
+                        </div>
+                        <p class="text-base leading-relaxed">This is a sample event card with minimal chrome. The focus is on readability and content with subtle separation between elements.</p>
+                        <div class="flex gap-6 text-sm muted pt-2">
+                            <button class="hover:text-white transition">Reply</button>
+                            <button class="hover:text-white transition">Repost</button>
+                            <button class="hover:text-white transition">React</button>
+                            <button class="hover:text-white transition">Zap</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 2: Bordered Emphasis -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold muted">2. Bordered Emphasis</h2>
+            <div class="card rounded-lg p-6 max-w-2xl border-l-4 border-l-blue-500">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3">
+                        <div class="flex items-baseline gap-2 flex-wrap">
+                            <span class="font-semibold text-lg">Bob Smith</span>
+                            <span class="muted text-sm">@bob · 5h ago</span>
+                        </div>
+                        <p class="text-base leading-relaxed">A card with left border accent for visual hierarchy. Strong emphasis on the card boundary makes it stand out in feeds.</p>
+                        <div class="flex gap-8 text-sm pt-3 border-t border-gray-800">
+                            <button class="hover:text-white transition flex items-center gap-2">
+                                <span>💬</span> Reply
+                            </button>
+                            <button class="hover:text-white transition flex items-center gap-2">
+                                <span>🔁</span> Repost
+                            </button>
+                            <button class="hover:text-white transition flex items-center gap-2">
+                                <span>⚡</span> Zap
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 3: Compact Dense -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold muted">3. Compact Dense</h2>
+            <div class="card rounded-lg p-4 max-w-2xl">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex-shrink-0"></div>
+                    <div class="flex-1 space-y-2 min-w-0">
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="font-semibold truncate">Carol Davis</span>
+                            <span class="muted truncate">@carol</span>
+                            <span class="muted">· 1d</span>
+                        </div>
+                        <p class="text-sm leading-snug">Compact layout for dense feeds. Reduced spacing and smaller elements allow more content visibility. Perfect for timeline views.</p>
+                        <div class="flex gap-4 text-xs muted pt-1">
+                            <button class="hover:text-white">Reply</button>
+                            <button class="hover:text-white">Repost</button>
+                            <button class="hover:text-white">React</button>
+                            <button class="hover:text-white">Zap</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 4: Metadata Prominent -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold muted">4. Metadata Prominent</h2>
+            <div class="card rounded-lg overflow-hidden max-w-2xl">
+                <div class="accent p-3 flex items-center gap-3 border-b border-gray-800">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500"></div>
+                    <div>
+                        <div class="font-semibold">David Wilson</div>
+                        <div class="text-xs muted">@david · 3h ago · Kind 1</div>
+                    </div>
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-base leading-relaxed">This variation emphasizes metadata with a separate header section. Good for contexts where event type and timing are important.</p>
+                    <div class="flex justify-between items-center pt-2 border-t border-gray-800">
+                        <div class="flex gap-6 text-sm">
+                            <button class="hover:text-white transition">Reply</button>
+                            <button class="hover:text-white transition">Repost</button>
+                            <button class="hover:text-white transition">React</button>
+                        </div>
+                        <button class="hover:text-white transition text-sm">⚡ Zap</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 5: Split Layout -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold muted">5. Split Layout</h2>
+            <div class="card rounded-lg overflow-hidden max-w-2xl">
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500"></div>
+                            <div>
+                                <div class="font-semibold">Eva Martinez</div>
+                                <div class="text-sm muted">@eva</div>
+                            </div>
+                        </div>
+                        <div class="text-right text-sm muted">
+                            <div>2 hours ago</div>
+                            <div class="text-xs">12:34 PM</div>
+                        </div>
+                    </div>
+                    <p class="text-base leading-relaxed">Split layout separates user info from timestamp. Provides balanced visual weight and clear information hierarchy.</p>
+                </div>
+                <div class="accent px-6 py-3 flex justify-around text-sm border-t border-gray-800">
+                    <button class="hover:text-white transition py-2">Reply</button>
+                    <div class="border-l border-gray-700"></div>
+                    <button class="hover:text-white transition py-2">Repost</button>
+                    <div class="border-l border-gray-700"></div>
+                    <button class="hover:text-white transition py-2">React</button>
+                    <div class="border-l border-gray-700"></div>
+                    <button class="hover:text-white transition py-2">Zap</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variation 6: Timeline Style -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold muted">6. Timeline Style</h2>
+            <div class="flex gap-4 max-w-2xl">
+                <div class="flex flex-col items-center">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex-shrink-0"></div>
+                    <div class="w-0.5 flex-1 bg-gray-800 mt-2"></div>
+                </div>
+                <div class="card rounded-lg p-5 flex-1 mb-4">
+                    <div class="space-y-3">
+                        <div class="flex items-baseline gap-2">
+                            <span class="font-semibold">Frank Chen</span>
+                            <span class="muted text-sm">@frank</span>
+                        </div>
+                        <div class="text-xs muted">4 hours ago · January 10, 2025</div>
+                        <p class="text-base leading-relaxed">Timeline-style layout with vertical connector. Excellent for chronological feeds and conversation threads. The connecting line provides visual continuity.</p>
+                        <div class="flex gap-6 text-sm muted pt-2">
+                            <button class="hover:text-white transition">💬 Reply</button>
+                            <button class="hover:text-white transition">🔁 Repost</button>
+                            <button class="hover:text-white transition">❤️ React</button>
+                            <button class="hover:text-white transition">⚡ Zap</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMBEDDED/INLINE VARIATIONS (for quotes/nested cards) -->
+        <div class="pt-12 border-t-2 border-gray-800">
+            <h1 class="text-2xl font-bold mb-8">Embedded/Inline Variations (Quote Cards)</h1>
+
+            <!-- Example context: Main card with embedded quote -->
+            <div class="space-y-4 mb-12">
+                <h2 class="text-xl font-semibold muted">Example: Main Card with Embedded Quote</h2>
+                <div class="card rounded-lg p-6 max-w-2xl">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex-shrink-0"></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold">Grace Lee</span>
+                                <span class="muted text-sm">@grace · 1h ago</span>
+                            </div>
+                            <p class="text-sm leading-relaxed">This is such a great insight! Everyone should read this:</p>
+
+                            <!-- Embedded Quote (Variation 7) -->
+                            <div class="border border-gray-700 rounded-md p-3 hover:bg-gray-900/50 cursor-pointer transition">
+                                <div class="flex gap-2 items-start">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex-shrink-0"></div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2 text-xs">
+                                            <span class="font-semibold truncate">Original Author</span>
+                                            <span class="muted truncate">@author · 3h ago</span>
+                                        </div>
+                                        <p class="text-xs muted mt-1 line-clamp-3">This is the original quoted event content that appears inline within the parent card...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6 text-sm muted pt-2">
+                                <button class="hover:text-white transition">Reply</button>
+                                <button class="hover:text-white transition">Repost</button>
+                                <button class="hover:text-white transition">React</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variation 7: Minimal Inline -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold muted">7. Minimal Inline</h2>
+                <div class="max-w-2xl space-y-3">
+                    <p class="text-sm muted">Small border, single line metadata, truncated content</p>
+                    <div class="border border-gray-700 rounded-md p-3 hover:bg-gray-900/50 cursor-pointer transition">
+                        <div class="flex gap-2 items-start">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex-shrink-0"></div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="font-semibold truncate">Hannah Park</span>
+                                    <span class="muted truncate">@hannah · 3h ago</span>
+                                </div>
+                                <p class="text-xs muted mt-1 line-clamp-3">Simple inline quote with minimal chrome. Content truncates after 3 lines to keep the parent card compact and readable.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variation 8: Accent Border Inline -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold muted">8. Accent Border Inline</h2>
+                <div class="max-w-2xl space-y-3">
+                    <p class="text-sm muted">Left accent border for visual hierarchy within quotes</p>
+                    <div class="border border-gray-700 border-l-2 border-l-blue-500 rounded-md p-3 hover:bg-gray-900/50 cursor-pointer transition">
+                        <div class="flex gap-2 items-start">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex-shrink-0"></div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs">
+                                    <span class="font-semibold">Ian Foster</span>
+                                    <span class="muted"> @ian</span>
+                                </div>
+                                <p class="text-xs muted mt-1.5 line-clamp-2">Left border accent makes the quote stand out slightly more within the parent card while maintaining a clean inline appearance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variation 9: Compact No-Avatar -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold muted">9. Compact No-Avatar</h2>
+                <div class="max-w-2xl space-y-3">
+                    <p class="text-sm muted">Ultra-compact for space-constrained contexts</p>
+                    <div class="border border-gray-700 rounded p-2.5 hover:bg-gray-900/50 cursor-pointer transition">
+                        <div class="text-xs muted mb-1.5">
+                            <span class="font-semibold text-white">Julia Chen</span>
+                            <span> @julia · 5h ago</span>
+                        </div>
+                        <p class="text-xs muted line-clamp-2">No avatar for maximum space efficiency. Good when you need to show multiple nested quotes or in very tight layouts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variation 10: Subtle Background -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold muted">10. Subtle Background</h2>
+                <div class="max-w-2xl space-y-3">
+                    <p class="text-sm muted">Shaded background instead of border for differentiation</p>
+                    <div class="bg-gray-900/50 border border-gray-800 rounded-md p-3 hover:bg-gray-800/50 cursor-pointer transition">
+                        <div class="flex gap-2.5 items-start">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 flex-shrink-0"></div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 text-xs">
+                                    <span class="font-semibold">Kevin Wu</span>
+                                    <span class="muted">@kevin</span>
+                                </div>
+                                <div class="text-xs muted">2h ago</div>
+                                <p class="text-xs mt-1.5 line-clamp-3">Background shading provides subtle visual separation from the parent card without relying on borders. Works well for nested contexts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variation 11: Header-Only Compact -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold muted">11. Header-Only Compact</h2>
+                <div class="max-w-2xl space-y-3">
+                    <p class="text-sm muted">Metadata bar with single-line content preview</p>
+                    <div class="border border-gray-700 rounded-md overflow-hidden hover:bg-gray-900/50 cursor-pointer transition">
+                        <div class="flex items-center gap-2 p-2 bg-gray-900/30 border-b border-gray-800">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex-shrink-0"></div>
+                            <span class="text-xs font-semibold truncate">Lisa Wang</span>
+                            <span class="text-xs muted">@lisa</span>
+                        </div>
+                        <p class="text-xs muted p-2 truncate">Separated header from content with single-line preview. Very compact for showing quote attribution clearly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variation 12: Inline Badge Style -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold muted">12. Inline Badge Style</h2>
+                <div class="max-w-2xl space-y-3">
+                    <p class="text-sm muted">Badge-style indicator with horizontal layout</p>
+                    <div class="border border-gray-700 rounded-md p-2.5 hover:bg-gray-900/50 cursor-pointer transition">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex-shrink-0"></div>
+                            <span class="text-xs font-semibold">Mike Torres</span>
+                            <span class="text-xs muted">@mike</span>
+                            <span class="text-xs muted">· 4h ago</span>
+                            <span class="ml-auto text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-400">Quote</span>
+                        </div>
+                        <p class="text-xs muted line-clamp-2">Badge-style with label indicator. Everything on one horizontal line for maximum compactness in the metadata row.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

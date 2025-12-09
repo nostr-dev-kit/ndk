@@ -32,6 +32,28 @@ export interface SyncAndSubscribeOptions extends NDKSubscriptionOptions {
     onRelayError?: (relay: NDKRelay, error: Error) => void | Promise<void>;
 
     /**
+     * Called during negentropy sync negotiation to provide real-time progress updates.
+     * Provides visibility into the sync rounds and event discovery process.
+     *
+     * @param relay - The relay currently being synced
+     * @param progress - Current negotiation progress information
+     *
+     * @example
+     * ```typescript
+     * const sub = await syncAndSubscribe.call(ndk, filters, {
+     *   onNegotiationProgress: (relay, progress) => {
+     *     console.log(`${relay.url}: Round ${progress.round}, ${progress.phase}`);
+     *     console.log(`  Need: ${progress.needCount}, Have: ${progress.haveCount}`);
+     *   }
+     * });
+     * ```
+     */
+    onNegotiationProgress?: (
+        relay: NDKRelay,
+        progress: import("./types.js").NegotiationProgress,
+    ) => void | Promise<void>;
+
+    /**
      * Relay set or URLs to use (optional, uses default NDK relays if not provided)
      */
     relaySet?: NDKRelaySet;

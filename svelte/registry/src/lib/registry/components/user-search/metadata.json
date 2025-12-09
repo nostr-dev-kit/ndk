@@ -1,0 +1,60 @@
+{
+  "name": "user-search",
+  "title": "User Search",
+  "category": "user",
+  "subcategory": "inputs",
+  "variant": "search",
+  "oneLiner": "A search input for user content",
+  "registryName": "components/user-search",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user",
+    "inputs",
+    "search",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "UserSearchCombobox",
+    "description": "A user search combobox with live results using bits-ui Combobox. Searches by name, NIP-05, or npub with debounced input. Shows up to 8 results with avatar, name, and handle. Features custom input snippet support, configurable debounce, and selection callback. Uses createUserInput builder for search logic.",
+    "importPath": "import { UserSearchCombobox } from '$lib/registry/components/user/inputs/search'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for user search"
+      },
+      {
+        "name": "onSelect",
+        "type": "(user: NDKUser) => void",
+        "description": "Callback when user is selected"
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "default": "Search users by name, NIP-05, npub...",
+        "description": "Input placeholder text"
+      },
+      {
+        "name": "debounceMs",
+        "type": "number",
+        "default": "300",
+        "description": "Debounce delay for search in milliseconds"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      },
+      {
+        "name": "input",
+        "type": "Snippet<[{ value: string; oninput: (e: Event) => void; loading: boolean }]>",
+        "description": "Custom Svelte 5 snippet for input element"
+      }
+    ]
+  }
+}

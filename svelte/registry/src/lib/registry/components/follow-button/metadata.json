@@ -1,0 +1,46 @@
+{
+  "name": "follow-button",
+  "title": "Follow Button",
+  "category": "follow",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "oneLiner": "A basic follow/unfollow button",
+  "registryName": "components/follow-button",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "user-profiles",
+    "user-lists",
+    "social-features"
+  ],
+  "apiDoc": {
+    "name": "FollowButton",
+    "description": "Follow button component",
+    "importPath": "import { FollowButton } from '$lib/registry/components/follow/buttons/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance"
+      },
+      {
+        "name": "user",
+        "type": "NDKUser",
+        "description": "User to follow"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Button visual style"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

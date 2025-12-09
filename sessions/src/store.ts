@@ -13,29 +13,33 @@ import type { NDKSession, SessionStartOptions, SessionState } from "./types";
 import { NDKNotInitializedError, SessionNotFoundError } from "./utils/errors";
 
 /**
- * Normalize session options by converting eventConstructors to events Map
+ * Normalize monitor array into kinds and constructor map
  */
-function normalizeSessionOptions(opts: SessionStartOptions): SessionStartOptions {
-    // If no eventConstructors, return as-is
-    if (!opts.eventConstructors || opts.eventConstructors.length === 0) {
-        return opts;
+function normalizeMonitor(monitor?: import("./types").MonitorItem[]): {
+    kinds: NDKKind[];
+    constructorMap: Map<NDKKind, import("./types").NDKEventConstructor>;
+} {
+    const kinds: NDKKind[] = [];
+    const constructorMap = new Map<NDKKind, import("./types").NDKEventConstructor>();
+
+    if (!monitor || monitor.length === 0) {
+        return { kinds, constructorMap };
     }
 
-    // Create events Map from eventConstructors
-    const eventsMap = new Map(opts.events);
-
-    for (const constructor of opts.eventConstructors) {
-        for (const kind of constructor.kinds) {
-            eventsMap.set(kind, constructor);
+    for (const item of monitor) {
+        if (typeof item === "number") {
+            // Raw NDKKind
+            kinds.push(item);
+        } else if (item.kinds && Array.isArray(item.kinds)) {
+            // NDKEventConstructor
+            for (const kind of item.kinds) {
+                kinds.push(kind);
+                constructorMap.set(kind, item);
+            }
         }
     }
 
-    // Return normalized options with events Map and without eventConstructors
-    return {
-        ...opts,
-        events: eventsMap,
-        eventConstructors: undefined,
-    };
+    return { kinds, constructorMap };
 }
 
 export interface SessionStoreActions {
@@ -58,6 +62,11 @@ export interface SessionStoreActions {
      * Stop fetching data for a session
      */
     stopSession: (pubkey: Hexpubkey) => void;
+
+    /**
+     * Add monitors to the active session
+     */
+    addMonitor: (monitor: import("./types").MonitorItem[]) => void;
 
     /**
      * Switch to a different session
@@ -115,6 +124,7 @@ export function createSessionStore() {
             const session: NDKSession = existingSession || {
                 pubkey,
                 events: new Map(),
+                subscriptions: [],
                 lastActive: setActive ? Math.floor(Date.now() / 1000) : 0,
             };
 
@@ -157,16 +167,16 @@ export function createSessionStore() {
                 throw new SessionNotFoundError(pubkey);
             }
 
-            // Stop existing subscription if any
-            if (session.subscription) {
-                session.subscription.stop();
+            // Stop existing subscriptions if any
+            for (const sub of session.subscriptions) {
+                sub.stop();
             }
 
-            // Normalize options by converting eventConstructors to events Map
-            const normalizedOpts = normalizeSessionOptions(opts);
+            // Normalize monitor items
+            const { kinds: monitorKinds, constructorMap } = normalizeMonitor(opts.monitor);
 
             // Build subscription kinds
-            const kinds = buildSubscriptionKinds(normalizedOpts);
+            const kinds = buildSubscriptionKinds(opts, monitorKinds);
             if (kinds.length === 0) {
                 return; // Nothing to fetch
             }
@@ -179,29 +189,72 @@ export function createSessionStore() {
                 },
                 { closeOnEose: false, subId: "session" },
                 {
-                    onEvent: (event) => handleIncomingEvent(event, pubkey, normalizedOpts, get),
+                    onEvent: (event) => handleIncomingEvent(event, pubkey, constructorMap, get),
                 },
             );
 
-            // Update session with subscription
-            get().updateSession(pubkey, { subscription });
+            // Update session with subscriptions array
+            get().updateSession(pubkey, { subscriptions: [subscription] });
         },
 
         stopSession: (pubkey: Hexpubkey) => {
             const state = get();
             const session = state.sessions.get(pubkey);
 
-            if (session?.subscription) {
-                session.subscription.stop();
-                get().updateSession(pubkey, { subscription: undefined });
+            if (session?.subscriptions) {
+                for (const sub of session.subscriptions) {
+                    sub.stop();
+                }
+                get().updateSession(pubkey, { subscriptions: [] });
             }
+        },
+
+        addMonitor: (monitor: import("./types").MonitorItem[]) => {
+            const state = get();
+            const { ndk, activePubkey } = state;
+
+            if (!ndk) {
+                throw new NDKNotInitializedError();
+            }
+
+            if (!activePubkey) {
+                console.warn("No active session to add monitor to");
+                return;
+            }
+
+            const session = state.sessions.get(activePubkey);
+            if (!session) {
+                throw new SessionNotFoundError(activePubkey);
+            }
+
+            // Normalize monitor items
+            const { kinds, constructorMap } = normalizeMonitor(monitor);
+
+            if (kinds.length === 0) {
+                return; // Nothing to monitor
+            }
+
+            // Create new subscription for the additional monitors
+            const subscription = ndk.subscribe(
+                {
+                    kinds,
+                    authors: [activePubkey],
+                },
+                { closeOnEose: false },
+                {
+                    onEvent: (event) => handleIncomingEvent(event, activePubkey, constructorMap, get),
+                },
+            );
+
+            // Add subscription to the array
+            const updatedSubscriptions = [...session.subscriptions, subscription];
+            get().updateSession(activePubkey, { subscriptions: updatedSubscriptions });
         },
 
         switchToUser: async (pubkey: Hexpubkey | null) => {
             const state = get();
 
             if (pubkey === null) {
-                set({ activePubkey: undefined });
                 if (state.ndk) {
                     state.ndk.signer = undefined;
                     state.ndk.activeUser = undefined;
@@ -209,6 +262,7 @@ export function createSessionStore() {
                     state.ndk.muteFilter = undefined;
                     state.ndk.relayConnectionFilter = undefined;
                 }
+                set({ activePubkey: undefined });
                 return;
             }
 
@@ -222,20 +276,10 @@ export function createSessionStore() {
             // Update session last active time
             get().updateSession(pubkey, { lastActive: Math.floor(Date.now() / 1000) });
 
-            // Switch active session
-            set({ activePubkey: pubkey });
-
-            // Update NDK signer and filters
+            // Update NDK signer BEFORE setting activePubkey
+            // This prevents race conditions where reactive code runs before signer is ready
             if (state.ndk) {
                 state.ndk.signer = signer;
-
-                // Explicitly set activeUser to ensure immediate synchronization
-                // The signer setter also does this but asynchronously, so we need to do it here too
-                if (signer) {
-                    const user = await signer.user();
-                    user.ndk = state.ndk;
-                    state.ndk.activeUser = user;
-                }
 
                 // Set muteFilter based on session's mute data
                 if (session.muteSet || session.mutedWords) {
@@ -271,13 +315,21 @@ export function createSessionStore() {
                     state.ndk.relayConnectionFilter = undefined;
                 }
             }
+
+            // Switch active session AFTER signer is set
+            set({ activePubkey: pubkey });
+
+            // Explicitly set activeUser to ensure immediate synchronization (async)
+            // The signer setter also does this but we do it explicitly here too
+            if (state.ndk && signer) {
+                const user = await signer.user();
+                user.ndk = state.ndk;
+                state.ndk.activeUser = user;
+            }
         },
 
         removeSession: (pubkey: Hexpubkey) => {
             const state = get();
-
-            // Stop subscription
-            get().stopSession(pubkey);
 
             // Remove from maps
             const newSessions = new Map(state.sessions);
@@ -290,22 +342,30 @@ export function createSessionStore() {
                 signers: newSigners,
             };
 
-            // If this was the active session, handle active state
+            // If this was the active session, clear NDK state BEFORE triggering subscriptions
+            // This prevents race conditions where subscription handlers try to re-set the signer
             if (state.activePubkey === pubkey) {
                 const remainingSessions = Array.from(newSessions.keys());
+
                 if (remainingSessions.length === 0) {
-                    // No sessions left, clear active state
+                    // No sessions left, clear NDK state immediately
                     updates.activePubkey = undefined;
+
                     if (state.ndk) {
+                        // Clear NDK state directly to prevent async side effects
                         state.ndk.signer = undefined;
+                        state.ndk.activeUser = undefined;
                         state.ndk.muteFilter = undefined;
                         state.ndk.relayConnectionFilter = undefined;
                     }
                 }
             }
 
-            // Apply the session removal
+            // Apply the session removal (triggers subscriptions)
             set(updates);
+
+            // Stop subscription after state is updated
+            get().stopSession(pubkey);
 
             // After removing, switch to another session if needed
             if (state.activePubkey === pubkey) {
@@ -354,14 +414,11 @@ export function createSessionStore() {
  * Build subscription kinds array based on session options.
  * Centralizes the logic for determining which event kinds to subscribe to.
  */
-function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
+function buildSubscriptionKinds(opts: SessionStartOptions, monitorKinds: NDKKind[]): NDKKind[] {
     const kinds: NDKKind[] = [];
 
     if (opts.follows) {
         kinds.push(NDKKind.Contacts); // Contact list
-        if (Array.isArray(opts.follows)) {
-            kinds.push(...opts.follows);
-        }
     }
 
     if (opts.mutes) {
@@ -380,11 +437,8 @@ function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
         kinds.push(NDKKind.CashuWallet, NDKKind.CashuMintList); // NIP-60 wallet
     }
 
-    if (opts.events) {
-        for (const kind of opts.events.keys()) {
-            kinds.push(kind);
-        }
-    }
+    // Add monitor kinds
+    kinds.push(...monitorKinds);
 
     return kinds;
 }
@@ -396,11 +450,13 @@ function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
 function handleIncomingEvent(
     event: NDKEvent,
     pubkey: Hexpubkey,
-    opts: SessionStartOptions,
+    constructorMap: Map<NDKKind, import("./types").NDKEventConstructor>,
     getState: () => SessionStore,
 ): void {
     const currentSession = getState().sessions.get(pubkey);
-    if (!currentSession) return;
+    if (!currentSession) {
+        return;
+    }
 
     // Process contact list
     if (event.kind === NDKKind.Contacts) {
@@ -427,7 +483,7 @@ function handleIncomingEvent(
     }
 
     // Store other replaceable events
-    handleReplaceableEvent(event, currentSession, pubkey, opts, getState);
+    handleReplaceableEvent(event, currentSession, pubkey, constructorMap, getState);
 }
 
 /**
@@ -561,7 +617,7 @@ function handleReplaceableEvent(
     event: NDKEvent,
     session: NDKSession,
     pubkey: Hexpubkey,
-    opts: SessionStartOptions,
+    constructorMap: Map<NDKKind, import("./types").NDKEventConstructor>,
     getState: () => SessionStore,
 ): void {
     if (event.kind === undefined) return;
@@ -570,13 +626,17 @@ function handleReplaceableEvent(
 
     // Skip if we already have this exact event or a newer one
     if (existingEvent) {
-        if (existingEvent.id === event.id) return;
-        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+        if (existingEvent.id === event.id) {
+            return;
+        }
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) {
+            return;
+        }
     }
 
-    // Check if there's an event class to wrap this event
-    const eventClass = opts.events?.get(event.kind);
-    const wrappedEvent = eventClass && typeof eventClass.from === "function" ? eventClass.from(event) : event;
+    // Check if there's an event constructor to wrap this event
+    const eventConstructor = constructorMap.get(event.kind);
+    const wrappedEvent = eventConstructor && typeof eventConstructor.from === "function" ? eventConstructor.from(event) : event;
 
     session.events.set(event.kind, wrappedEvent);
     getState().updateSession(pubkey, { events: new Map(session.events) });

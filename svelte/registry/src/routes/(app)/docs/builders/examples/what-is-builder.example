@@ -1,0 +1,8 @@
+import { createEventContent } from '@nostr-dev-kit/svelte';
+
+const content = createEventContent(() => ({ event }), ndk);
+
+// Access reactive state
+content.segments    // ParsedSegment[] - parsed content with mentions, links, media
+content.content     // string - raw content
+content.emojiMap    // Map<string, string> - custom emoji mappings

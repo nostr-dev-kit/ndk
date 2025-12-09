@@ -84,13 +84,13 @@ export class PaymentHandler {
         }
 
         console.log("[PaymentHandler.cashuPay] Creating token with mints", payment.mints);
-        let createResult = await createToken(this.wallet, satPayment.amount, payment.mints, payment.p2pk);
+        let createResult = await createToken(this.wallet, satPayment.amount, payment.mints, payment.p2pk, payment.proofTags);
 
         if (!createResult?.result) {
             console.log("[PaymentHandler.cashuPay] Token creation failed with specified mints");
             if (payment.allowIntramintFallback) {
                 console.log("[PaymentHandler.cashuPay] Attempting intramint fallback");
-                createResult = await createToken(this.wallet, satPayment.amount, undefined, payment.p2pk);
+                createResult = await createToken(this.wallet, satPayment.amount, undefined, payment.p2pk, payment.proofTags);
             }
 
             if (!createResult?.result) {

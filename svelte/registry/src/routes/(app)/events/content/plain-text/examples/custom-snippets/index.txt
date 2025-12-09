@@ -1,0 +1,14 @@
+<script lang="ts">
+  import EventContent from '$lib/registry/ui/event-content.svelte';
+  import { ContentRenderer } from '$lib/registry/ui/content-renderer';
+  import Mention from '$lib/registry/components/mention/mention.svelte';
+  import Hashtag from '$lib/registry/components/hashtag/hashtag.svelte';
+
+  let { ndk, event } = $props();
+
+  const renderer = new ContentRenderer();
+  renderer.mentionComponent = Mention;
+  renderer.hashtagComponent = Hashtag;
+</script>
+
+<EventContent {ndk} {event} {renderer} />

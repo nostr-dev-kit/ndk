@@ -1,0 +1,17 @@
+<script lang="ts">
+  import MentionModern from '$lib/registry/components/mention-modern/mention-modern.svelte';
+  import UserCardCompact from '$lib/registry/components/user-card-compact/user-card-compact.svelte';
+
+  let { ndk } = $props();
+
+  // Customize hover card globally - affects all MentionModern instances
+  MentionModern.hoverComponent = UserCardCompact;
+
+  const sampleBech32 = 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft';
+</script>
+
+<div class="flex flex-col gap-4 max-w-2xl">
+  <p class="text-sm text-muted-foreground">
+    Hover over this mention to see the compact user card: Thanks to <MentionModern {ndk} bech32={sampleBech32} /> for the work!
+  </p>
+</div>

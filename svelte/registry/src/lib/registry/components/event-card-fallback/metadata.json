@@ -1,0 +1,42 @@
+{
+  "name": "fallback-card",
+  "title": "Fallback Event Card",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "fallback",
+  "oneLiner": "A fallback card for any event type",
+  "registryName": "components/event-card-fallback",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "unknown-events",
+    "fallback-display",
+    "debugging"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "type": "fallback"
+  },
+  "apiDoc": {
+    "name": "FallbackCard",
+    "description": "A fallback card for displaying any event kind. Automatically discovers and displays NIP-89 app handler recommendations for unknown event types. Shows event's alt tag (NIP-31) and provides links to recommended handlers with URL template replacement. Ideal for debugging or displaying events without specific renderers.",
+    "importPath": "import { FallbackCard } from '$lib/registry/components/event/cards/fallback'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      }
+    ]
+  }
+}

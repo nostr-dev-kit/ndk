@@ -2,6 +2,43 @@ import type { NDKEvent } from "src/events";
 import type { NDKFilter } from "src/subscription";
 import { RelayMock } from "./relay-mock";
 
+/**
+ * Mock relay pool for testing applications with multiple Nostr relays.
+ *
+ * Manages multiple mock relays and provides convenient methods to simulate
+ * events across all or specific relays. Perfect for testing your app's
+ * multi-relay behavior, redundancy, and relay selection logic.
+ *
+ * @example
+ * ```typescript
+ * import { RelayPoolMock, EventGenerator, UserGenerator } from '@nostr-dev-kit/ndk/test';
+ *
+ * const pool = new RelayPoolMock();
+ * const ndk = new NDK({ explicitRelayUrls: [] });
+ * ndk.pool = pool;
+ *
+ * // Add mock relays
+ * pool.addMockRelay('wss://relay1.example.com');
+ * pool.addMockRelay('wss://relay2.example.com', {
+ *   connectionDelay: 200
+ * });
+ *
+ * // Simulate event on all relays
+ * const alice = await UserGenerator.getUser('alice', ndk);
+ * const event = await EventGenerator.createSignedTextNote('Hello!', alice.pubkey);
+ * pool.simulateEventOnAll(event);
+ *
+ * // Simulate event on specific relays
+ * pool.simulateEventOn(['wss://relay1.example.com'], event);
+ *
+ * // Send EOSE to all relays
+ * pool.simulateEOSEOnAll(subscriptionId);
+ *
+ * // Cleanup
+ * pool.disconnectAll();
+ * pool.resetAll();
+ * ```
+ */
 export class RelayPoolMock {
     mockRelays: Map<string, RelayMock> = new Map();
     relays: Set<RelayMock> = new Set();

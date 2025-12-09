@@ -1,0 +1,29 @@
+<script lang="ts">
+	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import type { NotificationGroup } from '../../builders/notification/index.svelte.js';
+	import * as NotificationItem from '../../ui/notification';
+	import { cn } from '../../utils/cn';
+
+	interface Props {
+		ndk: NDKSvelte;
+		notification: NotificationGroup;
+		class?: string;
+	}
+
+	let { ndk, notification, class: className }: Props = $props();
+</script>
+
+<NotificationItem.Root {ndk} {notification}>
+	<div data-notification-item-compact="" class={cn('flex flex-col items-start gap-3 p-4 hover:bg-muted/50 transition-colors', className)}>
+		<div class="flex flex-row w-full items-center">
+			<div class="flex flex-row flex-1">
+				<!-- Actors with avatars -->
+				<NotificationItem.Actors max={3} size={24} spacing="tight" />
+				<NotificationItem.Action />
+			</div>
+			<NotificationItem.Timestamp />
+		</div>
+
+		<NotificationItem.Content />
+	</div>
+</NotificationItem.Root>

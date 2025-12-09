@@ -1,0 +1,13 @@
+<!-- my-custom-timestamp.svelte -->
+<script>
+  import { getContext } from 'svelte';
+  import { EVENT_CARD_CONTEXT_KEY } from './context.svelte';
+  import { createTimeAgo } from '$lib/utils/time-ago.svelte';
+
+  const { event } = getContext(EVENT_CARD_CONTEXT_KEY);
+  const timeAgo = createTimeAgo(event.created_at);
+</script>
+
+<div class="timestamp">
+  {timeAgo}
+</div>

@@ -1,0 +1,55 @@
+{
+  "name": "zap-list",
+  "title": "Zap List",
+  "category": "zap",
+  "subcategory": "displays",
+  "variant": "list",
+  "oneLiner": "A list display for zap content",
+  "registryName": "components/zap-list",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "zap",
+    "displays",
+    "list",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "ZapsRoot",
+    "description": "Root component for displaying zap lists with real-time subscription. Fetches and processes zaps for an event or user, providing children with processed zap array and statistics. Supports optional validation for zaps. Uses Svelte 5 snippet pattern to pass zap data to children.",
+    "importPath": "import { ZapsRoot } from '$lib/registry/components/zap/displays/list'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "description": "Event to fetch zaps for (either event or user required)"
+      },
+      {
+        "name": "user",
+        "type": "NDKUser",
+        "description": "User to fetch zaps for (either event or user required)"
+      },
+      {
+        "name": "validated",
+        "type": "boolean",
+        "default": "false",
+        "description": "Only show validated zaps"
+      },
+      {
+        "name": "children",
+        "type": "Snippet<[ProcessedZap[], ZapsStats]>",
+        "required": true,
+        "description": "Snippet receiving processed zaps array and statistics"
+      }
+    ]
+  }
+}

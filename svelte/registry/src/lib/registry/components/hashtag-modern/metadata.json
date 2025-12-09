@@ -1,0 +1,55 @@
+{
+  "name": "hashtag-modern",
+  "title": "Hashtag Modern",
+  "category": "hashtag",
+  "subcategory": "displays",
+  "variant": "modern",
+  "oneLiner": "Modern inline hashtag with stats card popover on hover",
+  "registryName": "components/hashtag-modern",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk",
+    "bits-ui"
+  ],
+  "useCases": [
+    "hashtag-display",
+    "inline-tags",
+    "topic-links",
+    "content-categorization",
+    "stats-preview"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 10,
+    "type": "hashtag"
+  },
+  "apiDoc": {
+    "name": "HashtagModern",
+    "description": "Modern inline hashtag display with hover-activated popover showing hashtag statistics. Features a unique gradient indicator and integrates with HashtagCardCompact for detailed stats.",
+    "importPath": "import HashtagModern from '$lib/registry/components/hashtag-modern/hashtag-modern.svelte'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for fetching hashtag stats"
+      },
+      {
+        "name": "tag",
+        "type": "string",
+        "required": true,
+        "description": "Hashtag text (with or without # prefix)"
+      },
+      {
+        "name": "onclick",
+        "type": "(tag: string) => void",
+        "description": "Click handler receiving the tag string"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+import type { NDKSvelte } from "../ndk-svelte.svelte.js";
+
+/**
+ * Reactive WoT score for a pubkey
+ * Returns a number between 0-1 (higher = closer in WoT)
+ *
+ * @example
+ * ```ts
+ * const score = createWoTScore(ndk, pubkey);
+ * {score.value}
+ * ```
+ */
+export function createWoTScore(
+  ndk: NDKSvelte,
+  pubkey: string | (() => string),
+) {
+  const score = $derived.by(() => {
+    const pk = typeof pubkey === "function" ? pubkey() : pubkey;
+    return ndk.$wot?.getScore(pk) ?? 0;
+  });
+
+  return {
+    get value() {
+      return score;
+    },
+  };
+}
+
+/**
+ * Reactive WoT distance (depth) for a pubkey
+ * Returns number of hops from root user, or null if not in WoT
+ *
+ * @example
+ * ```ts
+ * const distance = createWoTDistance(ndk, pubkey);
+ * {distance.value}
+ * ```
+ */
+export function createWoTDistance(
+  ndk: NDKSvelte,
+  pubkey: string | (() => string),
+) {
+  const distance = $derived.by(() => {
+    const pk = typeof pubkey === "function" ? pubkey() : pubkey;
+    return ndk.$wot?.getDistance(pk) ?? null;
+  });
+
+  return {
+    get value() {
+      return distance;
+    },
+  };
+}
+
+/**
+ * Reactive check if pubkey is in WoT
+ *
+ * @example
+ * ```ts
+ * const inWoT = createIsInWoT(ndk, pubkey, { maxDepth: 2 });
+ * {#if inWoT.value}
+ *   <span>In your WoT</span>
+ * {/if}
+ * ```
+ */
+export function createIsInWoT(
+  ndk: NDKSvelte,
+  pubkey: string | (() => string),
+  options?: { maxDepth?: number },
+) {
+  const inWoT = $derived.by(() => {
+    const pk = typeof pubkey === "function" ? pubkey() : pubkey;
+    return ndk.$wot?.includes(pk, options) ?? false;
+  });
+
+  return {
+    get value() {
+      return inWoT;
+    },
+  };
+}

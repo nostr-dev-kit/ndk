@@ -1,52 +1,58 @@
 {
-    "name": "@nostr-dev-kit/sessions",
-    "version": "0.6.1",
-    "description": "Framework-agnostic session management for NDK with multi-account support",
-    "type": "module",
-    "main": "dist/index.cjs",
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.js"
-            },
-            "require": {
-                "types": "./dist/index.d.ts",
-                "default": "./dist/index.cjs"
-            }
-        }
-    },
-    "files": [
-        "dist",
-        "README.md"
-    ],
-    "scripts": {
-        "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-        "dev": "bun run build --watch",
-        "lint": "biome check .",
-        "format": "biome format . --write",
-        "test": "vitest run",
-        "test:watch": "vitest"
-    },
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.6",
-        "zustand": "^5.0.3"
-    },
-    "devDependencies": {
-        "tsup": "^8.4.0",
-        "typescript": "^5.9.3",
-        "vitest": "^3.2.4",
-        "vite": "^7.1.9"
-    },
-    "keywords": [
-        "nostr",
-        "ndk",
-        "sessions",
-        "authentication",
-        "multi-account"
-    ],
-    "author": "_@f7z.io",
-    "license": "MIT"
+  "name": "@nostr-dev-kit/sessions",
+  "version": "1.0.0-beta.62",
+  "description": "Framework-agnostic session management for NDK with multi-account support",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "bun run build --watch",
+    "lint": "biome check .",
+    "format": "biome format . --write",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.62",
+    "@nostr-dev-kit/wallet": "1.0.0-beta.62"
+  },
+  "dependencies": {
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.62",
+    "@nostr-dev-kit/wallet": "1.0.0-beta.62",
+    "@types/node": "^24.10.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14",
+    "vite": "^7.1.11"
+  },
+  "keywords": [
+    "nostr",
+    "ndk",
+    "sessions",
+    "authentication",
+    "multi-account"
+  ],
+  "author": "_@f7z.io",
+  "license": "MIT"
 }

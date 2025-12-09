@@ -1,21 +1,21 @@
 {
     "name": "@nostr-dev-kit/monorepo",
     "dependencies": {
-        "@biomejs/biome": "^2.2.6",
+        "@biomejs/biome": "^2.3.4",
         "esbuild": "^0.25.12",
         "mermaid": "^11.12.1",
         "vitepress": "^1.6.3",
         "vitepress-plugin-mermaid": "^2.0.17"
     },
     "devDependencies": {
-        "svelte": "^5.43.14",
+        "svelte": "^5.43.3",
         "syncpack": "^13.0.4",
-        "turbo": "^2.6.1"
+        "turbo": "^2.6.0"
     },
     "engines": {
-        "node": ">=22.0"
+        "node": ">=16.0"
     },
-    "packageManager": "bun@1.3.0",
+    "packageManager": "bun@1.0.0",
     "private": true,
     "scripts": {
         "build": "turbo build",
@@ -33,9 +33,9 @@
         "cs:pub": "bun cs:check && changeset publish",
         "cs:ver": "changeset version && bunx syncpack fix-mismatches",
         "dev": "turbo dev --no-cache --continue",
-        "docs:build": "cd docs && vitepress build",
-        "docs:dev": "cd docs && npx vitepress dev",
-        "docs:preview": "cd docs && vitepress preview",
+        "docs:build": "bash ./prepare-docs.sh && vitepress build docs",
+        "docs:dev": "bash ./prepare-docs.sh && npx vitepress dev docs",
+        "docs:preview": "vitepress preview",
         "format": "biome format --write .",
         "lint": "biome check .",
         "release": "bun cs:check && turbo build --filter=docs^... && changeset publish",
@@ -45,11 +45,13 @@
     "type": "module",
     "workspaces": [
         "core",
+        "cache-browser",
         "cache-dexie",
         "cache-memory",
         "cache-redis",
         "cache-nostr",
         "cache-sqlite",
+        "cache-sqlite-wasm",
         "react",
         "mobile",
         "messages",
@@ -58,7 +60,6 @@
         "svelte",
         "wallet",
         "wot",
-        "blossom",
-        "cache-sqlite-wasm"
+        "blossom"
     ]
 }

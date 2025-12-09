@@ -1,0 +1,25 @@
+<script lang="ts">
+  import { Relay } from '$lib/registry/ui/relay';
+
+  let { ndk, bookmarks } = $props();
+  const relayUrl = 'wss://relay.damus.io';
+</script>
+
+<div class="border border-gray-200 rounded-xl p-6 bg-white">
+  <Relay.Root {ndk} {relayUrl}>
+    <div class="flex items-center gap-4 mb-4">
+      <Relay.Icon class="w-12 h-12 flex-shrink-0" />
+      <div class="flex-1">
+        <Relay.Name class="text-lg font-semibold text-gray-900 block mb-1" />
+        <Relay.Url class="text-sm text-gray-500 font-mono" />
+      </div>
+      <Relay.ConnectionStatus showLabel class="text-xs" />
+    </div>
+
+    <Relay.Description class="text-[15px] leading-normal text-gray-600 mb-4" />
+
+    <div class="flex justify-end">
+      <Relay.BookmarkButton {bookmarks} class="px-4 py-2 rounded-md border border-gray-300 bg-white cursor-pointer transition-all hover:bg-gray-50" />
+    </div>
+  </Relay.Root>
+</div>

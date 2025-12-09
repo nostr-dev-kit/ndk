@@ -9,12 +9,6 @@ export interface NDKSession {
     followSet?: Set<Hexpubkey>;
 
     /**
-     * Follows per kind (e.g., NIP-51 follow lists)
-     * Map<kind, Map<pubkey, { followed, last_updated_at }>>
-     */
-    kindFollowSet?: Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>;
-
-    /**
      * Muted IDs (from kind 10000)
      * Map<id, type> where type is "p" for pubkey or "e" for event
      */
@@ -41,9 +35,9 @@ export interface NDKSession {
     events: Map<NDKKind, NDKEvent | null>;
 
     /**
-     * Active subscription for this session
+     * Active subscriptions for this session
      */
-    subscription?: NDKSubscription;
+    subscriptions: NDKSubscription[];
 
     /**
      * Last time this session was active (seconds)
@@ -65,16 +59,18 @@ export interface NDKEventConstructor {
 }
 
 /**
+ * Monitor item - can be either an event constructor or a raw kind number
+ */
+export type MonitorItem = NDKEventConstructor | NDKKind;
+
+/**
  * Options for starting a session
  */
 export interface SessionStartOptions {
     /**
-     * Fetch contacts (follows)
-     * - true: Fetch default contact list (kind 3)
-     * - false: Don't fetch contacts
-     * - NDKKind[]: Fetch contact list + kind-scoped follows
+     * Fetch contacts (follows) - kind 3
      */
-    follows?: boolean | NDKKind[];
+    follows?: boolean;
 
     /**
      * Fetch mute list (kind 10000)
@@ -97,22 +93,17 @@ export interface SessionStartOptions {
     wallet?: boolean;
 
     /**
-     * Fetch specific replaceable event kinds
-     * Map keys are NDKKind, values are event class constructors with a static from method
-     */
-    events?: Map<NDKKind, { from(event: NDKEvent): NDKEvent }>;
-
-    /**
-     * Event class constructors to register for automatic wrapping
-     * This is a more ergonomic alternative to the events option
+     * Monitor specific event kinds and/or event constructors
      * @example
      * ```typescript
-     * eventConstructors: [NDKBlossomList, NDKArticle]
-     * // Instead of:
-     * // events: new Map([[NDKKind.BlossomList, NDKBlossomList], [NDKKind.Article, NDKArticle]])
+     * monitor: [NDKInterestList, 10050, 10051]
+     * // Monitors:
+     * // - NDKInterestList (wraps with constructor)
+     * // - Kind 10050 (as regular NDKEvent)
+     * // - Kind 10051 (as regular NDKEvent)
      * ```
      */
-    eventConstructors?: NDKEventConstructor[];
+    monitor?: MonitorItem[];
 
     /**
      * Set the muteFilter on NDK based on session's mute data

@@ -1,0 +1,23 @@
+<script lang="ts">
+  import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
+  import { ndk } from '$lib/ndk.svelte';
+
+  let showModal = $state(false);
+
+  function handleSignupSuccess(signer) {
+    console.log('Profile created!');
+    showModal = false;
+    // Login with the new signer
+    ndk.$sessions?.login(signer);
+  }
+</script>
+
+<button onclick={() => showModal = true}>Create Account</button>
+
+{#if showModal}
+  <div class="modal-overlay" onclick={() => showModal = false}>
+    <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+      <SignupBlock {ndk} onSuccess={handleSignupSuccess} />
+    </div>
+  </div>
+{/if}

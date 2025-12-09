@@ -1,0 +1,44 @@
+{
+  "name": "highlight-inline",
+  "title": "Highlight Inline",
+  "category": "highlight",
+  "subcategory": "cards",
+  "variant": "inline",
+  "oneLiner": "A inline card for highlight content",
+  "registryName": "components/highlight-card-inline",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "highlight",
+    "cards",
+    "inline",
+    "nostr",
+    "social"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "wrapper": "NDKHighlight"
+  },
+  "apiDoc": {
+    "name": "HighlightCardInline",
+    "description": "An inline highlight card for embedding highlights within content. Features centered layout with max-width constraint, highlight content, and floating source badge. Perfect for quote displays, embedded references, or highlight previews in text content.",
+    "importPath": "import { HighlightCardInline } from '$lib/registry/components/highlight/cards/inline'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Highlight event to display"
+      }
+    ]
+  }
+}

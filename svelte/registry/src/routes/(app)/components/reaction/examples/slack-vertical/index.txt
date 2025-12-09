@@ -1,0 +1,7 @@
+<script lang="ts">
+  import { ReactionDisplaySlack } from '$lib/registry/components/reaction';
+
+  let { ndk, event } = $props();
+</script>
+
+<ReactionDisplaySlack {ndk} {event} variant="vertical" />

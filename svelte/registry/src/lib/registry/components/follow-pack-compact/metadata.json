@@ -1,0 +1,48 @@
+{
+  "name": "follow-compact",
+  "title": "Follow Compact",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "compact",
+  "oneLiner": "A compact pack for follow content",
+  "registryName": "components/follow-pack-compact",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "compact",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "FollowPackCompact",
+    "description": "A compact horizontal card for follow packs featuring pack image, title, description, member avatars, and count. Shows up to 3 member avatars with avatar group component and displays member count in long format. Features card background with hover transition.",
+    "importPath": "import { FollowPackCompact } from '$lib/registry/components/follow/packs/compact'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "followPack",
+        "type": "NDKFollowPack",
+        "required": true,
+        "description": "Follow pack to display"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler callback"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

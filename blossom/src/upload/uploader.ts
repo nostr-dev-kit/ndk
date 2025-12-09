@@ -55,6 +55,7 @@ export async function uploadToServer(
         const authOptions = await createAuthenticatedFetchOptions(ndk, "upload", {
             sha256: hash,
             content: `Upload ${file.name}`,
+            signer: options.signer,
             fetchOptions: {
                 method: "PUT",
                 body: file,

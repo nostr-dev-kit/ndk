@@ -51,6 +51,21 @@ export enum NDKWalletStatus {
 
 export type NDKWalletBalance = { amount: number };
 
+/**
+ * Unified transaction type that normalizes differences between wallet types.
+ * Amounts are always in sats.
+ */
+export interface NDKWalletTransaction {
+    id: string;
+    direction: "in" | "out";
+    amount: number;
+    timestamp: number;
+    description?: string;
+    fee?: number;
+    mint?: string;
+    invoice?: string;
+}
+
 export type NDKWalletEvents = {
     ready: () => void;
     balance_updated: (balance?: NDKWalletBalance) => void;
@@ -114,6 +129,22 @@ export class NDKWallet extends EventEmitter<NDKWalletEvents> implements NDKWalle
      */
     get balance(): NDKWalletBalance | undefined {
         throw new Error("Not implemented");
+    }
+
+    /**
+     * Fetch transaction history
+     */
+    async fetchTransactions(): Promise<NDKWalletTransaction[]> {
+        return [];
+    }
+
+    /**
+     * Subscribe to transaction updates.
+     * - Cashu: real-time via relay subscription
+     * - NWC: polls slowly + triggers on wallet activity
+     */
+    subscribeTransactions(_callback: (tx: NDKWalletTransaction) => void): () => void {
+        return () => {};
     }
 
     /**

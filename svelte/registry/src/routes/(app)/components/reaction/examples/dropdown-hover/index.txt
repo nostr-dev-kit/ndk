@@ -1,0 +1,17 @@
+<script lang="ts">
+  import { EmojiPicker } from '$lib/registry/components/emoji-picker';
+  import ReactionButton from '$lib/registry/components/reaction/buttons/basic/reaction-button.svelte';
+  import { createReactionAction } from '$lib/registry/builders/reaction-action/index.svelte.js';
+
+  let { ndk, event } = $props();
+
+  const reactionState = createReactionAction(() => ({ event }), ndk);
+
+  function handleEmojiSelect(emoji: string) {
+    reactionState.react(emoji);
+  }
+</script>
+
+<EmojiPicker.Dropdown {ndk} onEmojiSelect={handleEmojiSelect}>
+  <ReactionButton {ndk} {event} variant="ghost" />
+</EmojiPicker.Dropdown>

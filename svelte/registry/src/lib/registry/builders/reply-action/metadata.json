@@ -1,0 +1,43 @@
+{
+  "name": "createReplyAction",
+  "title": "Reply Action Builder",
+  "oneLiner": "Reactive state manager for tracking and creating replies to Nostr events",
+  "importPath": "import { createReplyAction } from '$lib/registry/builders/reply-action';",
+  "registryName": "builders/reply-action",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["01", "10"],
+  "parameters": [
+    {
+      "name": "event",
+      "type": "NDKEvent | undefined",
+      "description": "The event to track replies for",
+      "required": true
+    }
+  ],
+  "returns": [
+    {
+      "name": "count",
+      "type": "number",
+      "description": "Total number of replies to the event"
+    },
+    {
+      "name": "hasReplied",
+      "type": "boolean",
+      "description": "Whether the current user has replied to this event"
+    },
+    {
+      "name": "pubkeys",
+      "type": "string[]",
+      "description": "Array of pubkeys who have replied"
+    },
+    {
+      "name": "reply",
+      "type": "(content: string) => Promise<NDKEvent>",
+      "description": "Create and publish a reply to the event with the given content"
+    }
+  ],
+  "usageExample": "const replyAction = createReplyAction(() => ({ event: myEvent }), ndk);\n\n// Get reply count\nreplyAction.count  // number\n\n// Check if current user replied\nreplyAction.hasReplied  // boolean\n\n// Get all pubkeys who replied\nreplyAction.pubkeys  // string[]\n\n// Create a reply\nconst replyEvent = await replyAction.reply(\"Great post!\");"
+}

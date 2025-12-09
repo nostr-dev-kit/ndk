@@ -1,0 +1,131 @@
+/* Component page shared styles */
+.component-page {
+  @apply max-w-[900px];
+}
+
+/* Target only the page header, not component headers */
+.component-page > header {
+  @apply mb-8;
+}
+
+.component-page > header h1 {
+  @apply text-5xl font-extrabold mb-2 text-foreground;
+}
+
+.component-page > header p {
+  @apply text-lg text-muted-foreground m-0;
+}
+
+/* Target only direct section children */
+.component-page > section {
+  @apply mb-12;
+}
+
+/* Target only h2s that are direct children of sections, not nested in components */
+.component-page > section > h2 {
+  @apply text-2xl font-bold mb-2 text-foreground;
+}
+
+.component-page .demo-description {
+  @apply text-muted-foreground mb-4;
+}
+
+.component-page .demo {
+  @apply p-6 bg-card border border-border rounded-lg;
+}
+
+.component-page .demo-container {
+  @apply p-6 border border-border rounded-lg;
+  background: color-mix(in srgb, var(--muted) calc(0.3 * 100%), transparent);
+}
+
+.component-page .space-y-3 > * + * {
+  @apply mt-3;
+}
+
+.component-page .code-examples {
+  @apply p-6 bg-card border border-border rounded-lg;
+}
+
+.component-page .code-block {
+  @apply mb-8 last:mb-0;
+}
+
+.component-page .code-block h3 {
+  @apply text-base font-semibold mb-2 text-foreground;
+}
+
+.component-page .code-block pre {
+  @apply m-0 p-4 bg-muted border border-border rounded-lg overflow-x-auto;
+}
+
+.component-page .code-block code {
+  @apply font-mono text-sm leading-normal text-foreground;
+}
+
+/* Card example styles */
+.card-example {
+  @apply flex items-center gap-3 p-4 bg-card border border-border rounded-lg;
+}
+
+.card-content {
+  @apply flex-1;
+}
+
+.card-name {
+  @apply font-semibold text-foreground;
+}
+
+.card-url {
+  @apply text-sm text-muted-foreground;
+}
+
+.card-with-description {
+  @apply p-4 bg-card border border-border rounded-lg;
+}
+
+.card-header {
+  @apply flex items-center gap-3 mb-3;
+}
+
+.card-description {
+  @apply mt-3;
+}
+
+.card-actions {
+  @apply flex items-center gap-2;
+}
+
+.percentage-badge {
+  @apply text-sm font-medium text-primary;
+}
+
+/* Controls section styles */
+.component-page .controls {
+  @apply mb-8 p-6 bg-card border border-border rounded-xl;
+}
+
+.component-page .controls label {
+  @apply flex flex-col gap-2;
+}
+
+.component-page .label-text {
+  @apply text-sm font-semibold text-foreground;
+}
+
+.component-page .nevent-input,
+.component-page .npub-input,
+.component-page .note-input {
+  @apply py-2 px-3 border border-border rounded-md font-mono text-sm w-full max-w-[600px] bg-background text-foreground;
+}
+
+.component-page .nevent-input:focus,
+.component-page .npub-input:focus,
+.component-page .note-input:focus {
+  @apply outline-none border-primary ring-2 ring-primary/10;
+}
+
+/* Loading and error states */
+.component-page .loading {
+  @apply p-8 text-center text-muted-foreground text-lg;
+}

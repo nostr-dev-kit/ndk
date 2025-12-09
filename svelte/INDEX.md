@@ -68,6 +68,7 @@ This is the complete north star for svelte - a modern, beautiful, performant Sve
 ### Core Features
 
 ✅ **Reactive Subscriptions**
+
 - `EventSubscription<T>` class using Svelte 5 runes
 - Automatic lifecycle management
 - Buffered updates (30ms → 16ms after EOSE)
@@ -75,12 +76,14 @@ This is the complete north star for svelte - a modern, beautiful, performant Sve
 - Type-safe event conversion
 
 ✅ **Global Stores**
+
 - Profile store (automatic fetching/caching)
 - Session store (multi-user auth)
 - Mute store (NIP-51 lists)
 - Wallet store (ndk-wallet integration)
 
 ✅ **Advanced Capabilities**
+
 - Reference counting for shared subscriptions
 - Repost handling and resolution
 - Deleted event filtering
@@ -89,6 +92,7 @@ This is the complete north star for svelte - a modern, beautiful, performant Sve
 - Reactive filters
 
 ✅ **Components** (designed, not implemented)
+
 - User components (Avatar, Name, Profile)
 - Wallet components (Balance, History, PaymentButton)
 - Utility components (InfiniteScroll, VirtualList)
@@ -119,10 +123,10 @@ svelte/
 
 ```svelte
 <script>
-const notes = ndk.$subscribe(() => ({
-  filters: [{ kinds: [1] }]
-}));
-// That's it! No onDestroy, no manual cleanup
+  const notes = ndk.$subscribe(() => ({
+    filters: [{ kinds: [1] }],
+  }));
+  // That's it! No onDestroy, no manual cleanup
 </script>
 ```
 
@@ -139,28 +143,27 @@ const notes = ndk.$subscribe(() => ({
 
 ```svelte
 <script>
-import { profiles, sessions, mutes } from '@nostr-dev-kit/svelte/stores';
+  import { profiles, sessions, mutes } from "@nostr-dev-kit/svelte/stores";
 
-// Profiles auto-fetch
-const profile = profiles.get(pubkey);
+  // Profiles auto-fetch
+  const profile = profiles.get(pubkey);
 
-// Multi-user sessions
-sessions.login(signer);
-await sessions.switch(pubkey);
+  // Multi-user sessions
+  sessions.login(signer);
+  await sessions.switch(pubkey);
 
-// Content filtering
-mutes.add({ pubkey });
-mutes.check({ content });
+  // Content filtering
+  mutes.add({ pubkey });
+  mutes.check({ content });
 </script>
 ```
 
 ### 4. Type Safety
 
 ```typescript
-const highlights = ndk.$subscribe<NDKHighlight>(
-  [{ kinds: [9802] }],
-  { eventClass: NDKHighlight }
-);
+const highlights = ndk.$subscribe<NDKHighlight>([{ kinds: [9802] }], {
+  eventClass: NDKHighlight,
+});
 
 // highlights.events is NDKHighlight[]
 // Full autocomplete and type checking!
@@ -187,25 +190,26 @@ const highlights = ndk.$subscribe<NDKHighlight>(
 
 ## 🔄 Comparison with ndk-svelte
 
-| Aspect | ndk-svelte | svelte |
-|--------|------------|-------------|
-| Svelte Version | 4 | 5 |
-| Reactivity | Stores | Runes |
-| Cleanup | Manual | Automatic |
-| Type Safety | Partial | Full |
-| Performance | Good | Excellent |
-| Global State | Stores | Stores + Runes |
-| Components | None | Included |
-| Bundle Size | ~15KB | ~20KB (more features) |
+| Aspect         | ndk-svelte | svelte                |
+| -------------- | ---------- | --------------------- |
+| Svelte Version | 4          | 5                     |
+| Reactivity     | Stores     | Runes                 |
+| Cleanup        | Manual     | Automatic             |
+| Type Safety    | Partial    | Full                  |
+| Performance    | Good       | Excellent             |
+| Global State   | Stores     | Stores + Runes        |
+| Components     | None       | Included              |
+| Bundle Size    | ~15KB      | ~20KB (more features) |
 
 ## ⚡ Quick Examples
 
 ### Basic Subscription
+
 ```svelte
 <script>
-const notes = ndk.$subscribe(() => ({
-  filters: [{ kinds: [1] }]
-}));
+  const notes = ndk.$subscribe(() => ({
+    filters: [{ kinds: [1] }],
+  }));
 </script>
 
 {#each notes.events as note}
@@ -214,13 +218,14 @@ const notes = ndk.$subscribe(() => ({
 ```
 
 ### With Profiles
+
 ```svelte
 <script>
-import { profiles } from '@nostr-dev-kit/svelte/stores';
+  import { profiles } from "@nostr-dev-kit/svelte/stores";
 
-const notes = ndk.$subscribe(() => ({
-  filters: [{ kinds: [1] }]
-}));
+  const notes = ndk.$subscribe(() => ({
+    filters: [{ kinds: [1] }],
+  }));
 </script>
 
 {#each notes.events as note}
@@ -233,13 +238,14 @@ const notes = ndk.$subscribe(() => ({
 ```
 
 ### With Authentication
+
 ```svelte
 <script>
-import { sessions } from '@nostr-dev-kit/svelte/stores';
+  import { sessions } from "@nostr-dev-kit/svelte/stores";
 
-async function login() {
-  await sessions.login(signer);
-}
+  async function login() {
+    await sessions.login(signer);
+  }
 </script>
 
 {#if sessions.current}
@@ -254,6 +260,7 @@ async function login() {
 **Current Phase:** 🎨 Design Complete
 
 **Next Steps:**
+
 1. ✅ Design & Documentation (DONE)
 2. ⏳ Core implementation
 3. ⏳ Store implementation
@@ -265,18 +272,21 @@ async function login() {
 ## 📖 Reading Guide
 
 ### For Users
+
 1. Start with [QUICKSTART.md](./QUICKSTART.md)
 2. Read [README.md](./README.md) for full overview
 3. Browse [EXAMPLES.md](./EXAMPLES.md) for patterns
 4. Reference [API.md](./API.md) as needed
 
 ### For Contributors
+
 1. Read [DESIGN.md](./DESIGN.md) to understand philosophy
 2. Review [PROJECT.md](./PROJECT.md) for roadmap
 3. Check [API.md](./API.md) for specifications
 4. Use [EXAMPLES.md](./EXAMPLES.md) for test cases
 
 ### For Migrators
+
 1. Read [MIGRATION.md](./MIGRATION.md)
 2. Compare examples in both versions
 3. Follow migration steps
@@ -306,7 +316,8 @@ This is the north star. Help us build it!
 
 ### Why "North Star"?
 
-This documentation represents our vision - what svelte *will be*. It's:
+This documentation represents our vision - what svelte _will be_. It's:
+
 - Complete and detailed
 - Practical and tested (conceptually)
 - Ready to guide implementation
@@ -315,6 +326,7 @@ This documentation represents our vision - what svelte *will be*. It's:
 ### Design Decisions
 
 Every pattern in these docs was carefully considered:
+
 - Runes over stores (where appropriate)
 - Automatic cleanup (via effects)
 - Progressive rendering (no EOSE blocking)
@@ -324,6 +336,7 @@ Every pattern in these docs was carefully considered:
 ### Anti-Patterns Documented
 
 We explicitly call out bad patterns:
+
 - ❌ EOSE-based loading states
 - ❌ Manual event handling
 - ❌ Wrapper types

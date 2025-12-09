@@ -1,0 +1,14 @@
+<script>
+  import { NoteComposerModal } from '@nostr-dev-kit/svelte-registry/blocks';
+  let open = $state(false);
+</script>
+
+<button onclick={() => open = true}>Compose Note</button>
+<NoteComposerModal
+  {ndk}
+  bind:open
+  onPublish={(event) => {
+    console.log('Published:', event);
+    open = false;
+  }}
+/>

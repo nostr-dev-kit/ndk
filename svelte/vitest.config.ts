@@ -1,5 +1,6 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vitest/config";
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
     plugins: [
@@ -14,10 +15,36 @@ export default defineConfig({
         extensions: [".mjs", ".js", ".ts", ".svelte", ".svelte.ts", ".svelte.js"],
     },
     test: {
-        environment: "jsdom",
+        browser: {
+            enabled: true,
+            provider: playwright(),
+            instances: [
+                {
+                    browser: "chromium",
+                },
+            ],
+            headless: true,
+        },
         globals: true,
-        include: ["src/**/*.test.ts", "src/**/*.spec.ts"],
-        setupFiles: ["./src/test/setup.ts"],
+        include: ["src/**/*.test.ts", "src/**/*.svelte.test.ts", "src/**/*.spec.ts"],
+        coverage: {
+            provider: "v8",
+            reporter: ["text", "json", "html"],
+            include: ["src/lib/**/*.ts", "src/lib/**/*.svelte.ts"],
+            exclude: [
+                "**/*.test.ts",
+                "**/*.spec.ts",
+                "**/*.svelte.test.ts",
+                "**/test-utils.ts",
+                "**/types.ts",
+            ],
+            thresholds: {
+                lines: 60,
+                functions: 60,
+                branches: 60,
+                statements: 60,
+            },
+        },
     },
     define: {
         "process.env.NODE_ENV": '"test"',

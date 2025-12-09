@@ -1,0 +1,15 @@
+<script>
+  import { createProfileFetcher, createEventContent } from '@nostr-dev-kit/svelte';
+
+  const profile = createProfileFetcher(() => ({ user: event.author }), ndk);
+  const content = createEventContent(() => ({ event }), ndk);
+</script>
+
+<div class="my-design">
+  <h2>{profile.profile?.displayName}</h2>
+  {#each content.segments as segment}
+    {#if segment.type === 'text'}
+      <p>{segment.text}</p>
+    {/if}
+  {/each}
+</div>

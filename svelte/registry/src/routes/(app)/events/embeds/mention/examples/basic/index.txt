@@ -1,0 +1,15 @@
+<script lang="ts">
+  import { Mention } from '$lib/registry/components/mention';
+
+  let { ndk } = $props();
+</script>
+
+<div class="flex flex-col gap-4 max-w-2xl">
+  <p class="text-sm text-muted-foreground">
+    Hey <Mention {ndk} bech32="npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" />, check this out!
+  </p>
+
+  <p class="text-sm text-muted-foreground">
+    Thanks to <Mention {ndk} bech32="npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" /> for the help.
+  </p>
+</div>

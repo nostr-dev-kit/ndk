@@ -9,24 +9,26 @@ export const stopSession = (
 ): void => {
     const session = get().sessions.get(pubkey);
 
-    if (session?.subscription) {
-        console.debug(`Stopping session subscription for ${pubkey}`);
+    if (session?.subscriptions && session.subscriptions.length > 0) {
+        console.debug(`Stopping session subscriptions for ${pubkey}`);
         try {
-            session.subscription.stop();
+            for (const sub of session.subscriptions) {
+                sub.stop();
+            }
         } catch (error) {
-            console.error(`Error stopping subscription for ${pubkey}:`, error);
+            console.error(`Error stopping subscriptions for ${pubkey}:`, error);
         }
 
-        // Remove subscription handle from state immutably
+        // Remove subscription handles from state immutably
         set((state) => {
             const session = state.sessions.get(pubkey);
             if (!session) return {};
-            const updatedSession = { ...session, subscription: undefined };
+            const updatedSession = { ...session, subscriptions: [] };
             const newSessions = new Map(state.sessions);
             newSessions.set(pubkey, updatedSession);
             return { sessions: newSessions };
         });
     } else {
-        console.debug(`No active subscription found for session ${pubkey} to stop.`);
+        console.debug(`No active subscriptions found for session ${pubkey} to stop.`);
     }
 };

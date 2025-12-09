@@ -1,0 +1,12 @@
+<script lang="ts">
+  import SignupBlock from '$lib/registry/blocks/signup-block.svelte';
+  import { ndk } from '$lib/ndk.svelte';
+
+  function handleSignupSuccess(signer) {
+    console.log('Profile created with custom styling');
+  }
+</script>
+
+<div class="max-w-2xl mx-auto p-8">
+  <SignupBlock {ndk} onSuccess={handleSignupSuccess} class="custom-signup" />
+</div>

@@ -1,0 +1,69 @@
+{
+  "name": "@nostr-dev-kit/cache-browser",
+  "version": "1.0.0-beta.62",
+  "description": "Browser-optimized NDK cache adapter with automatic WASM/IndexedDB fallback",
+  "license": "MIT",
+  "docs": "typedoc",
+  "bugs": {
+    "url": "https://github.com/nostr-dev-kit/ndk/issues"
+  },
+  "homepage": "https://github.com/nostr-dev-kit/ndk#readme",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "require": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "bun run build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "rm -rf dist",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "vitest"
+  },
+  "keywords": [
+    "nostr",
+    "cache",
+    "browser",
+    "wasm",
+    "indexeddb",
+    "dexie"
+  ],
+  "authors": [
+    "pablof7z"
+  ],
+  "devDependencies": {
+    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.62",
+    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.62",
+    "@types/debug": "^4.1.12",
+    "@types/node": "^24.10.0",
+    "fake-indexeddb": "^6.0.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.4.0",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "vitest": "^4.0.14"
+  },
+  "dependencies": {
+    "debug": "^4.3.7",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.62",
+    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.62",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.62"
+  }
+}

@@ -90,7 +90,11 @@ export class NDKRelaySubscription {
      *
      * @param fingerprint The fingerprint of this subscription.
      */
-    constructor(relay: NDKRelay, fingerprint: NDKFilterFingerprint | null, topSubManager: NDKSubscriptionManager) {
+    constructor(
+        relay: NDKRelay,
+        fingerprint: NDKFilterFingerprint | null,
+        topSubManager: NDKSubscriptionManager,
+    ) {
         this.relay = relay;
         this.topSubManager = topSubManager;
         this.debug = relay.debug.extend(`sub[${this.id}]`);
@@ -112,14 +116,6 @@ export class NDKRelaySubscription {
     }
 
     public addItem(subscription: NDKSubscription, filters: NDKFilter[]) {
-        this.debug("Adding item", {
-            filters: formatFilters(filters),
-            internalId: subscription.internalId,
-            status: this.status,
-            fingerprint: this.fingerprint,
-            id: this.subId,
-            itemsSize: this.items.size,
-        });
         if (this.items.has(subscription.internalId)) {
             return;
         }
@@ -170,6 +166,15 @@ export class NDKRelaySubscription {
         this.items.delete(subscription.internalId);
 
         if (this.items.size === 0) {
+            // If we haven't started executing yet (INITIAL or PENDING), cleanup immediately
+            // to prevent sending an empty REQ when the timer fires
+            if (this.status === NDKRelaySubscriptionStatus.INITIAL ||
+                this.status === NDKRelaySubscriptionStatus.PENDING) {
+                this.status = NDKRelaySubscriptionStatus.CLOSED;
+                this.cleanup();
+                return;
+            }
+
             // if we haven't received an EOSE yet, don't close, relays don't like that
             // rather, when we EOSE and we have 0 items we will close there.
             if (!this.eosed) return;
@@ -280,7 +285,10 @@ export class NDKRelaySubscription {
         const currentTime = Date.now();
         this.fireTime = currentTime + delay;
         this.delayType = delayType;
-        const timer = setTimeout(this.execute.bind(this), delay);
+
+        const timer = setTimeout(() => {
+            this.execute();
+        }, delay);
 
         /**
          * We only store the execution timer if it's an "at-least" delay,
@@ -294,12 +302,15 @@ export class NDKRelaySubscription {
     private executeOnRelayReady = () => {
         if (this.status !== NDKRelaySubscriptionStatus.WAITING) return;
         if (this.items.size === 0) {
-            this.debug("No items to execute; this relay was probably too slow to respond and the caller gave up", {
-                status: this.status,
-                fingerprint: this.fingerprint,
-                id: this.id,
-                subId: this.subId,
-            });
+            this.debug(
+                "No items to execute; this relay was probably too slow to respond and the caller gave up",
+                {
+                    status: this.status,
+                    fingerprint: this.fingerprint,
+                    id: this.id,
+                    subId: this.subId,
+                },
+            );
             this.cleanup();
             return;
         }
@@ -346,9 +357,12 @@ export class NDKRelaySubscription {
         } else {
             // relays don't like to have the subscription close before they eose back,
             // so wait until we eose before closing the old subscription
-            this.debug("We are abandoning an opened subscription, once it EOSE's, the handler will close it", {
-                oldSubId,
-            });
+            this.debug(
+                "We are abandoning an opened subscription, once it EOSE's, the handler will close it",
+                {
+                    oldSubId,
+                },
+            );
         }
         this._subId = undefined;
         this.status = NDKRelaySubscriptionStatus.PENDING;
@@ -414,13 +428,6 @@ export class NDKRelaySubscription {
             subscription.eoseReceived(this.relay);
 
             if (subscription.closeOnEose) {
-                this.debug("Removing item because of EOSE", {
-                    filters: formatFilters(subscription.filters),
-                    internalId: subscription.internalId,
-                    status: this.status,
-                    fingerprint: this.fingerprint,
-                    itemsSize: this.items.size,
-                });
                 this.removeItem(subscription);
             }
         }

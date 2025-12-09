@@ -1,0 +1,49 @@
+{
+  "name": "createReactionAction",
+  "title": "Reaction Action Builder",
+  "oneLiner": "Reactive state manager for emoji reactions on Nostr events with NIP-30 custom emoji support",
+  "importPath": "import { createReactionAction } from '$lib/registry/builders/reaction-action';",
+  "registryName": "builders/reaction-action",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["25", "30"],
+  "parameters": [
+    {
+      "name": "event",
+      "type": "NDKEvent | undefined",
+      "description": "The event to track reactions for",
+      "required": true
+    },
+    {
+      "name": "delayed",
+      "type": "number",
+      "description": "Optional delay in seconds before publishing reactions (for cancellable reactions)",
+      "required": false
+    }
+  ],
+  "returns": [
+    {
+      "name": "all",
+      "type": "EmojiReaction[]",
+      "description": "Array of all reactions grouped by emoji, sorted by count descending"
+    },
+    {
+      "name": "totalCount",
+      "type": "number",
+      "description": "Total count of all reactions across all emojis"
+    },
+    {
+      "name": "get",
+      "type": "(emoji: string) => EmojiReaction | undefined",
+      "description": "Get reaction data for a specific emoji"
+    },
+    {
+      "name": "react",
+      "type": "(emoji: string | CustomEmojiData) => Promise<void>",
+      "description": "Toggle reaction for given emoji or custom emoji data. Publishes if not reacted, deletes if already reacted, or cancels if pending"
+    }
+  ],
+  "usageExample": "const reaction = createReactionAction(() => ({ event: myEvent }), ndk);\n\n// Get all reactions sorted by count\nreaction.all  // EmojiReaction[] - { emoji, count, hasReacted, pubkeys, ... }\n\n// Get total reaction count\nreaction.totalCount  // number\n\n// Get data for specific emoji\nreaction.get(\"+\")  // EmojiReaction | undefined\n\n// React with standard emoji\nawait reaction.react(\"+\");\n\n// React with custom emoji (NIP-30)\nawait reaction.react({ emoji: \":custom:\", shortcode: \"custom\", url: \"https://...\" });\n\n// With delayed/cancellable reactions (5 seconds)\nconst reaction = createReactionAction(() => ({ event: myEvent, delayed: 5 }), ndk);"
+}

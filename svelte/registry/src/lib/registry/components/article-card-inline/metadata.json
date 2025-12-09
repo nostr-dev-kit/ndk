@@ -1,0 +1,43 @@
+{
+  "name": "article-card-inline",
+  "title": "Article Card Inline",
+  "category": "article",
+  "subcategory": "cards",
+  "variant": "inline",
+  "oneLiner": "A text-only inline article reference for citations and mentions",
+  "registryName": "components/article-card-inline",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "citations",
+    "references",
+    "inline-mentions",
+    "text-links"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 1,
+    "wrapper": "NDKArticle"
+  },
+  "apiDoc": {
+    "name": "ArticleCardInline",
+    "description": "A compact inline article card with vertical layout showing image, title, truncated summary, and reading time. Designed for inline references, citations, and compact article previews with a max width of 400px.",
+    "importPath": "import { ArticleCardInline } from '$lib/registry/components/article/cards/inline'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to display"
+      }
+    ]
+  }
+}

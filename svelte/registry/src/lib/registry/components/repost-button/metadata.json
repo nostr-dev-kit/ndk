@@ -1,0 +1,77 @@
+{
+  "name": "repost-button",
+  "title": "Repost Button",
+  "category": "repost",
+  "subcategory": "buttons",
+  "variant": "basic",
+  "oneLiner": "A basic button for repost content",
+  "registryName": "components/repost-button",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "repost",
+    "buttons",
+    "basic",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "RepostButton",
+    "description": "Basic repost button with automatic repost/unrepost behavior. When clicked without custom onclick handler, it toggles the repost state. Supports quote repost via dropdown menu.",
+    "importPath": "import { RepostButton } from '$lib/registry/components/repost/buttons/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (optional if available in context)"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to repost"
+      },
+      {
+        "name": "variant",
+        "type": "'ghost' | 'outline' | 'pill' | 'solid'",
+        "default": "'ghost'",
+        "description": "Visual variant of the button"
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "default": "true",
+        "description": "Whether to show repost count"
+      },
+      {
+        "name": "onclick",
+        "type": "() => void",
+        "description": "Optional custom click handler. If not provided, clicking will toggle repost state (repost/unrepost)"
+      },
+      {
+        "name": "onquote",
+        "type": "() => void",
+        "description": "Optional handler for quote repost. When provided, shows a dropdown menu with 'Repost' and 'Quote' options"
+      },
+      {
+        "name": "openDelay",
+        "type": "number",
+        "default": "200",
+        "description": "Delay in milliseconds before opening dropdown menu"
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "default": "300",
+        "description": "Delay in milliseconds before closing dropdown menu"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

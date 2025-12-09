@@ -1,0 +1,15 @@
+<script lang="ts">
+	import MediaBasic from '$lib/registry/components/media-basic';
+
+	let { event } = $props();
+
+	// Sample image URL (marked as NSFW via event tags)
+	const imageUrl = 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&h=600';
+</script>
+
+<div class="w-full max-w-2xl">
+	<div class="mb-2 px-3 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg text-sm">
+		⚠️ This example simulates NSFW content with a content-warning tag
+	</div>
+	<MediaBasic url={imageUrl} {event} />
+</div>

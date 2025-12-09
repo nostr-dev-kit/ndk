@@ -1,0 +1,48 @@
+{
+  "name": "follow-basic",
+  "title": "Follow Basic",
+  "category": "follow",
+  "subcategory": "packs",
+  "variant": "basic",
+  "oneLiner": "A basic pack for follow content",
+  "registryName": "components/follow-pack",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "follow",
+    "packs",
+    "basic",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "FollowPackListItem",
+    "description": "A minimal list item display for follow packs showing pack image, title, and member count with chevron indicator. Features hover background transition and compact horizontal layout. Ideal for sidebar lists and compact follow pack directories.",
+    "importPath": "import { FollowPackListItem } from '$lib/registry/components/follow/packs/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "description": "NDK instance (uses context if not provided)"
+      },
+      {
+        "name": "followPack",
+        "type": "NDKFollowPack",
+        "required": true,
+        "description": "Follow pack to display"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler callback"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

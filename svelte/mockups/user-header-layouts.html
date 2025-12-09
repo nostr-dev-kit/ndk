@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Header Layout Mockups</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          sans-serif;
+        margin: 0;
+        padding: 40px;
+        background: #f5f5f5;
+      }
+      .mockup-container {
+        max-width: 800px;
+        margin: 0 auto 60px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .mockup-title {
+        padding: 20px;
+        background: #333;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .mockup-description {
+        padding: 12px 20px;
+        background: #f9f9f9;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Option 1: Overlapping Avatar with Better Spacing -->
+    <div class="mockup-container">
+      <div class="mockup-title">
+        Option 1: Overlapping Avatar (Improved Spacing)
+      </div>
+      <div class="mockup-description">
+        Classic layout with avatar overlapping banner, but with better spacing
+        and button placement
+      </div>
+      <div style="position: relative; width: 100%">
+        <!-- Banner -->
+        <div
+          style="
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          "
+        ></div>
+
+        <!-- Content Area with proper padding -->
+        <div style="padding: 0 24px 24px">
+          <!-- Avatar positioned to overlap -->
+          <div style="margin-top: -80px; margin-bottom: 16px">
+            <img
+              src="https://via.placeholder.com/160"
+              style="
+                width: 160px;
+                height: 160px;
+                border-radius: 50%;
+                border: 4px solid white;
+                display: block;
+              "
+              alt="Avatar"
+            />
+          </div>
+
+          <!-- Follow button positioned top-right -->
+          <div style="position: absolute; top: 216px; right: 24px">
+            <button
+              style="
+                padding: 10px 24px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 24px;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 15px;
+              "
+            >
+              Follow
+            </button>
+          </div>
+
+          <!-- User Info -->
+          <div style="margin-top: 8px">
+            <h1
+              style="
+                margin: 0 0 8px 0;
+                font-size: 28px;
+                font-weight: 700;
+                color: #1a1a1a;
+              "
+            >
+              fiatjaf
+            </h1>
+            <p
+              style="
+                margin: 0 0 16px 0;
+                color: #666;
+                font-size: 15px;
+                line-height: 1.5;
+                max-width: 600px;
+              "
+            >
+              Bitcoin developer and Nostr enthusiast. Building the future of
+              decentralized social media.
+            </p>
+
+            <!-- Stats -->
+            <div style="display: flex; gap: 24px; margin-top: 16px">
+              <div>
+                <span style="font-weight: 700; color: #1a1a1a">1.2k</span>
+                <span style="color: #666; margin-left: 4px">Following</span>
+              </div>
+              <div>
+                <span style="font-weight: 700; color: #1a1a1a">5.4k</span>
+                <span style="color: #666; margin-left: 4px">Followers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 2: Inline Layout -->
+    <div class="mockup-container">
+      <div class="mockup-title">Option 2: Inline Layout</div>
+      <div class="mockup-description">
+        Avatar and info side-by-side below banner for a more compact design
+      </div>
+      <div style="position: relative; width: 100%">
+        <!-- Banner -->
+        <div
+          style="
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          "
+        ></div>
+
+        <!-- Content Area -->
+        <div
+          style="padding: 24px; display: flex; gap: 24px; align-items: start"
+        >
+          <!-- Avatar -->
+          <img
+            src="https://via.placeholder.com/120"
+            style="
+              width: 120px;
+              height: 120px;
+              border-radius: 50%;
+              border: 4px solid white;
+              margin-top: -60px;
+              flex-shrink: 0;
+            "
+            alt="Avatar"
+          />
+
+          <!-- User Info -->
+          <div style="flex: 1; min-width: 0; padding-top: 8px">
+            <h1
+              style="
+                margin: 0 0 8px 0;
+                font-size: 28px;
+                font-weight: 700;
+                color: #1a1a1a;
+              "
+            >
+              fiatjaf
+            </h1>
+            <p
+              style="
+                margin: 0 0 16px 0;
+                color: #666;
+                font-size: 15px;
+                line-height: 1.5;
+              "
+            >
+              Bitcoin developer and Nostr enthusiast. Building the future of
+              decentralized social media.
+            </p>
+
+            <!-- Stats -->
+            <div style="display: flex; gap: 24px">
+              <div>
+                <span style="font-weight: 700; color: #1a1a1a">1.2k</span>
+                <span style="color: #666; margin-left: 4px">Following</span>
+              </div>
+              <div>
+                <span style="font-weight: 700; color: #1a1a1a">5.4k</span>
+                <span style="color: #666; margin-left: 4px">Followers</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Follow button aligned to top-right -->
+          <button
+            style="
+              padding: 10px 24px;
+              background: #667eea;
+              color: white;
+              border: none;
+              border-radius: 24px;
+              font-weight: 600;
+              cursor: pointer;
+              font-size: 15px;
+              flex-shrink: 0;
+              margin-top: 8px;
+            "
+          >
+            Follow
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 3: Centered Layout -->
+    <div class="mockup-container">
+      <div class="mockup-title">Option 3: Centered Layout</div>
+      <div class="mockup-description">
+        Centered design with follow button below avatar for a balanced look
+      </div>
+      <div style="position: relative; width: 100%">
+        <!-- Banner -->
+        <div
+          style="
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          "
+        ></div>
+
+        <!-- Content Area -->
+        <div style="padding: 0 24px 32px; text-align: center">
+          <!-- Avatar -->
+          <div style="margin-top: -80px; margin-bottom: 16px">
+            <img
+              src="https://via.placeholder.com/160"
+              style="
+                width: 160px;
+                height: 160px;
+                border-radius: 50%;
+                border: 4px solid white;
+                display: inline-block;
+              "
+              alt="Avatar"
+            />
+          </div>
+
+          <!-- User Info -->
+          <h1
+            style="
+              margin: 0 0 8px 0;
+              font-size: 28px;
+              font-weight: 700;
+              color: #1a1a1a;
+            "
+          >
+            fiatjaf
+          </h1>
+          <p
+            style="
+              margin: 0 0 20px 0;
+              color: #666;
+              font-size: 15px;
+              line-height: 1.5;
+              max-width: 500px;
+              margin-left: auto;
+              margin-right: auto;
+            "
+          >
+            Bitcoin developer and Nostr enthusiast. Building the future of
+            decentralized social media.
+          </p>
+
+          <!-- Follow button -->
+          <button
+            style="
+              padding: 10px 32px;
+              background: #667eea;
+              color: white;
+              border: none;
+              border-radius: 24px;
+              font-weight: 600;
+              cursor: pointer;
+              font-size: 15px;
+              margin-bottom: 20px;
+            "
+          >
+            Follow
+          </button>
+
+          <!-- Stats -->
+          <div
+            style="
+              display: flex;
+              gap: 32px;
+              justify-content: center;
+              padding-top: 16px;
+              border-top: 1px solid #eee;
+            "
+          >
+            <div>
+              <div style="font-weight: 700; color: #1a1a1a; font-size: 20px">
+                1.2k
+              </div>
+              <div style="color: #666; margin-top: 4px; font-size: 14px">
+                Following
+              </div>
+            </div>
+            <div>
+              <div style="font-weight: 700; color: #1a1a1a; font-size: 20px">
+                5.4k
+              </div>
+              <div style="color: #666; margin-top: 4px; font-size: 14px">
+                Followers
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 4: Modern Card Style -->
+    <div class="mockup-container">
+      <div class="mockup-title">Option 4: Modern Card Style</div>
+      <div class="mockup-description">
+        Card-based design with avatar inside banner for a clean, modern look
+      </div>
+      <div style="position: relative; width: 100%">
+        <!-- Banner with avatar inside -->
+        <div
+          style="
+            height: 240px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+          "
+        >
+          <div style="display: flex; align-items: flex-end; gap: 20px">
+            <img
+              src="https://via.placeholder.com/120"
+              style="
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                border: 4px solid white;
+              "
+              alt="Avatar"
+            />
+            <div style="flex: 1; padding-bottom: 8px">
+              <h1
+                style="
+                  margin: 0;
+                  font-size: 32px;
+                  font-weight: 700;
+                  color: white;
+                  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                "
+              >
+                fiatjaf
+              </h1>
+            </div>
+            <button
+              style="
+                padding: 10px 24px;
+                background: white;
+                color: #667eea;
+                border: none;
+                border-radius: 24px;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 15px;
+                margin-bottom: 8px;
+              "
+            >
+              Follow
+            </button>
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div style="padding: 24px">
+          <p
+            style="
+              margin: 0 0 20px 0;
+              color: #666;
+              font-size: 15px;
+              line-height: 1.5;
+            "
+          >
+            Bitcoin developer and Nostr enthusiast. Building the future of
+            decentralized social media.
+          </p>
+
+          <!-- Stats -->
+          <div style="display: flex; gap: 32px">
+            <div>
+              <span style="font-weight: 700; color: #1a1a1a; font-size: 18px"
+                >1.2k</span
+              >
+              <span style="color: #666; margin-left: 6px">Following</span>
+            </div>
+            <div>
+              <span style="font-weight: 700; color: #1a1a1a; font-size: 18px"
+                >5.4k</span
+              >
+              <span style="color: #666; margin-left: 6px">Followers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 5: Compact Professional -->
+    <div class="mockup-container">
+      <div class="mockup-title">Option 5: Compact Professional</div>
+      <div class="mockup-description">
+        Clean, compact layout optimized for space efficiency
+      </div>
+      <div style="position: relative; width: 100%">
+        <!-- Shorter Banner -->
+        <div
+          style="
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          "
+        ></div>
+
+        <!-- Content Area -->
+        <div style="padding: 0 24px 24px; position: relative">
+          <!-- Header row with avatar and button -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 16px;
+            "
+          >
+            <img
+              src="https://via.placeholder.com/100"
+              style="
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                border: 4px solid white;
+                margin-top: -50px;
+              "
+              alt="Avatar"
+            />
+            <button
+              style="
+                padding: 8px 20px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 20px;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 14px;
+                margin-top: 12px;
+              "
+            >
+              Follow
+            </button>
+          </div>
+
+          <!-- User Info -->
+          <h1
+            style="
+              margin: 0 0 6px 0;
+              font-size: 24px;
+              font-weight: 700;
+              color: #1a1a1a;
+            "
+          >
+            fiatjaf
+          </h1>
+          <p
+            style="
+              margin: 0 0 16px 0;
+              color: #666;
+              font-size: 14px;
+              line-height: 1.5;
+            "
+          >
+            Bitcoin developer and Nostr enthusiast. Building the future of
+            decentralized social media.
+          </p>
+
+          <!-- Stats -->
+          <div style="display: flex; gap: 20px; font-size: 14px">
+            <div>
+              <span style="font-weight: 700; color: #1a1a1a">1.2k</span>
+              <span style="color: #666; margin-left: 4px">Following</span>
+            </div>
+            <div>
+              <span style="font-weight: 700; color: #1a1a1a">5.4k</span>
+              <span style="color: #666; margin-left: 4px">Followers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

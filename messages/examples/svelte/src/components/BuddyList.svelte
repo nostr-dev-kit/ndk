@@ -21,6 +21,33 @@
 
     let showAddContact = $state(false);
     let newContactInput = $state("");
+    let myProfile = $state(null);
+    let contactProfiles = $state<Map<string, any>>(new Map());
+
+    // Fetch current user profile
+    $effect(() => {
+        if (currentUser?.pubkey) {
+            const user = ndk.getUser({ pubkey: currentUser.pubkey });
+            user.fetchProfile().then(p => myProfile = p);
+        } else {
+            myProfile = null;
+        }
+    });
+
+    // Fetch profiles for all contacts
+    $effect(() => {
+        const newProfiles = new Map(contactProfiles);
+        for (const contact of contacts) {
+            const pubkey = contact.user.pubkey;
+            if (!newProfiles.has(pubkey)) {
+                const user = ndk.getUser({ pubkey });
+                user.fetchProfile().then(p => {
+                    contactProfiles.set(pubkey, p);
+                    contactProfiles = new Map(contactProfiles); // Trigger reactivity
+                });
+            }
+        }
+    });
 
     function handleContactClick(contact: Contact) {
         onSelectContact(contact);
@@ -46,7 +73,6 @@
         <div class="icq-status-indicator online"></div>
         <div class="icq-user-info">
             {#if currentUser}
-                {@const myProfile = ndk.$fetchProfile(() => currentUser.pubkey)}
                 {myProfile?.displayName || myProfile?.name || currentUser.npub.slice(0, 16) + "..."}
             {/if}
         </div>
@@ -90,7 +116,7 @@
             </div>
         {:else}
             {#each contacts as contact (contact.user.pubkey)}
-                {@const contactProfile = ndk.$fetchProfile(() => contact.user.pubkey)}
+                {@const contactProfile = contactProfiles.get(contact.user.pubkey)}
                 <button
                     class="icq-contact"
                     class:selected={selectedContact?.user.pubkey === contact.user.pubkey}

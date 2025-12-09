@@ -14,8 +14,11 @@ export { createSessionStore } from "./store";
 // Types
 export type {
     LoginOptions,
+    MonitorItem,
+    NDKEventConstructor,
     NDKSession,
     SerializedSession,
+    SessionPreferences,
     SessionStartOptions,
     SessionState,
 } from "./types";

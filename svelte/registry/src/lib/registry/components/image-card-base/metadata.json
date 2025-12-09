@@ -1,0 +1,85 @@
+{
+  "name": "image-card-base",
+  "title": "Image Card Base",
+  "category": "image",
+  "subcategory": "cards",
+  "variant": "base",
+  "oneLiner": "A basic card for image content",
+  "registryName": "components/image-card-base",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "image",
+    "cards",
+    "basic",
+    "nostr",
+    "social"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 5,
+    "wrapper": "NDKImage"
+  },
+  "apiDoc": {
+    "name": "ImageCardBase",
+    "description": "A card for displaying image events (NIP-94) with header, image content, metadata, and optional actions. Features customizable image height, interactive mode, and toggleable image metadata display. Includes reaction and repost buttons. Uses EventCard builder pattern with ImageContent component for NIP-94 imeta tag support.",
+    "importPath": "import { ImageCardBase } from '$lib/registry/components/image-card-base'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "image",
+        "type": "NDKImage",
+        "required": true,
+        "description": "Image event to display"
+      },
+      {
+        "name": "interactive",
+        "type": "boolean",
+        "default": "false",
+        "description": "Enable clickable interaction mode"
+      },
+      {
+        "name": "showActions",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show action buttons (reactions, reposts)"
+      },
+      {
+        "name": "showDropdown",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show dropdown menu"
+      },
+      {
+        "name": "showImageMeta",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show image metadata (dimensions, file size, etc.)"
+      },
+      {
+        "name": "showAlt",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show alt text caption"
+      },
+      {
+        "name": "imageHeight",
+        "type": "string",
+        "default": "max-h-[600px]",
+        "description": "CSS class for image height constraint"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

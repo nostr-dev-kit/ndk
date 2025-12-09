@@ -21,11 +21,13 @@ import {
     type NDKWalletBalance,
     type NDKWalletEvents,
     NDKWalletStatus,
+    type NDKWalletTransaction,
     type NDKWalletTypes,
 } from "../index.js";
 import { getCashuWallet, MintInterface } from "../mint.js";
 import { redeemNutzaps } from "./nutzap.js";
 import { sendReq } from "./req.js";
+import { toWalletTransaction } from "./tx.js";
 import type {
     NDKNWCGetInfoResult,
     NDKNWCMakeInvoiceResult,
@@ -35,6 +37,8 @@ import type {
 } from "./types.js";
 
 const d = createDebug("ndk-wallet:nwc");
+
+const TX_POLL_INTERVAL = 60_000;
 
 export type NDKNWCWalletEvents = NDKWalletEvents & {
     connecting: () => void;
@@ -270,12 +274,40 @@ export class NDKNWCWallet extends NDKWallet {
         return res.result;
     }
 
-    async listTransactions() {
+    async fetchTransactions(): Promise<NDKWalletTransaction[]> {
         const res = await this.req("list_transactions", {});
+        if (!res.result) return [];
+        return res.result.transactions.map(toWalletTransaction);
+    }
 
-        if (!res.result) throw new Error("Failed to list transactions");
+    subscribeTransactions(callback: (tx: NDKWalletTransaction) => void): () => void {
+        const knownIds = new Set<string>();
 
-        return res.result;
+        const poll = async () => {
+            try {
+                const txs = await this.fetchTransactions();
+                for (const tx of txs) {
+                    if (!knownIds.has(tx.id)) {
+                        knownIds.add(tx.id);
+                        callback(tx);
+                    }
+                }
+            } catch (e) {
+                d("Error polling transactions", e);
+            }
+        };
+
+        poll();
+
+        const interval = setInterval(poll, TX_POLL_INTERVAL);
+
+        const boundPoll = () => { poll(); };
+        this.on("balance_updated", boundPoll);
+
+        return () => {
+            clearInterval(interval);
+            this.off("balance_updated", boundPoll);
+        };
     }
 
     async makeInvoice(amount: number, description: string): Promise<NDKNWCMakeInvoiceResult> {

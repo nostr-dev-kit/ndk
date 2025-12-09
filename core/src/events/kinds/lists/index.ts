@@ -31,6 +31,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;
+    static kind = NDKKind.CategorizedBookmarkList;
     static kinds: NDKKind[] = [
         NDKKind.CategorizedBookmarkList,
         NDKKind.CommunityList,
@@ -42,6 +43,7 @@ export class NDKList extends NDKEvent {
         NDKKind.SearchRelayList,
         NDKKind.BlockRelayList,
         NDKKind.BookmarkList,
+        NDKKind.RelayFeedList,
     ];
 
     /**
@@ -98,6 +100,9 @@ export class NDKList extends NDKEvent {
         }
         if (this.kind === NDKKind.DirectMessageReceiveRelayList) {
             return "Direct Message Receive Relays";
+        }
+        if (this.kind === NDKKind.RelayFeedList) {
+            return "Relay Feeds";
         }
         if (this.kind === NDKKind.InterestList) {
             return "Interests";

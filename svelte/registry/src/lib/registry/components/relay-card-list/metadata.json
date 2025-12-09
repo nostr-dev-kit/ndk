@@ -1,0 +1,62 @@
+{
+  "name": "relay-card-list",
+  "title": "Relay Card List",
+  "category": "relay",
+  "subcategory": "cards",
+  "variant": "list",
+  "oneLiner": "A list-style card for relay content optimized for relay browsers",
+  "registryName": "components/relay-card-list",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "relay",
+    "cards",
+    "list",
+    "browser",
+    "nostr",
+    "settings"
+  ],
+  "apiDoc": {
+    "name": "RelayCardList",
+    "description": "A list-style relay card displaying relay information in a compact format suitable for relay browsers and settings pages. Features relay icon, name, URL, optional description, and bookmark functionality. Supports both default and compact modes.",
+    "importPath": "import { RelayCardList } from '$lib/registry/components/relay-card-list'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "relayUrl",
+        "type": "string",
+        "required": true,
+        "description": "Relay URL to display"
+      },
+      {
+        "name": "showDescription",
+        "type": "boolean",
+        "default": "true",
+        "description": "Show relay description"
+      },
+      {
+        "name": "compact",
+        "type": "boolean",
+        "default": "false",
+        "description": "Use compact layout mode"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler for the card"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

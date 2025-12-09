@@ -1,0 +1,38 @@
+{
+  "name": "negentropy-sync-minimal",
+  "title": "Negentropy-sync Minimal",
+  "category": "negentropy-sync",
+  "subcategory": "progress",
+  "variant": "minimal",
+  "oneLiner": "A minimal progres for negentropy-sync content",
+  "registryName": "components/negentropy-sync-minimal",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "negentropy-sync",
+    "progress",
+    "minimal",
+    "nostr",
+    "social"
+  ],
+  "apiDoc": {
+    "name": "NegentropySyncProgressMinimal",
+    "description": "Minimal negentropy sync progress indicator with compact stats and progress bar. Features horizontal stats display in monospace font and percentage-based progress bar. Ideal for space-constrained layouts, status bars, or inline sync indicators where minimal UI footprint is required.",
+    "importPath": "import { NegentropySyncProgressMinimal } from '$lib/registry/components/negentropy-sync/progress/minimal'",
+    "props": [
+      {
+        "name": "syncBuilder",
+        "type": "ReturnType<typeof createNegentropySync>",
+        "required": true,
+        "description": "Negentropy sync builder instance from createNegentropySync"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

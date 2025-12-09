@@ -44,6 +44,10 @@ export enum NDKKind {
 
     Media = 1063,
 
+    // NIP-A0: Voice Messages
+    VoiceMessage = 1222,
+    VoiceReply = 1244,
+
     DraftCheckpoint = 1234,
 
     Task = 1934,
@@ -104,6 +108,7 @@ export enum NDKKind {
     BlockRelayList = 10006,
     SearchRelayList = 10007,
     SimpleGroupList = 10009,
+    RelayFeedList = 10012,
     InterestList = 10015,
     CashuMintList = 10019,
     EmojiList = 10030,
@@ -147,6 +152,9 @@ export enum NDKKind {
     EcashMintRecommendation = 38000,
     CashuMintAnnouncement = 38172,
     FedimintMintAnnouncement = 38173,
+
+    // NIP-69: P2P Order
+    P2POrder = 38383,
 
     HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
@@ -197,6 +205,7 @@ export const NDKListKinds = [
     NDKKind.PublicChatList,
     NDKKind.BlockRelayList,
     NDKKind.SearchRelayList,
+    NDKKind.RelayFeedList,
     NDKKind.InterestList,
     NDKKind.EmojiList,
     NDKKind.DirectMessageReceiveRelayList,

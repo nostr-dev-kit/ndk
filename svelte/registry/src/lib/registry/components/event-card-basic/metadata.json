@@ -1,0 +1,70 @@
+{
+  "name": "event-card-basic",
+  "title": "Event Card Basic",
+  "category": "event",
+  "subcategory": "cards",
+  "variant": "basic",
+  "oneLiner": "A minimal event card with flat design and subtle hover effects",
+  "registryName": "components/event-card-basic",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "minimal-feeds",
+    "dense-layouts",
+    "clean-ui",
+    "flat-design",
+    "modern-interfaces"
+  ],
+  "apiDoc": {
+    "name": "EventCardBasic",
+    "description": "A minimal event card with flat design, no rounded corners, and subtle hover effects. Features a clean background color that transitions to muted on hover. Always shows dropdown menu and all action buttons (reply, repost, reaction, zap). Supports callbacks for user interactions (reply, quote, zap) while reaction and repost are auto-handled. Optional avatar variants show who engaged with the event.",
+    "importPath": "import { EventCardBasic } from '$lib/registry/components/event/cards/basic'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKEvent",
+        "required": true,
+        "description": "Event to display"
+      },
+      {
+        "name": "truncate",
+        "type": "number",
+        "description": "Character limit for truncating content"
+      },
+      {
+        "name": "withAvatars",
+        "type": "boolean",
+        "default": "false",
+        "description": "Use avatar button variants showing who engaged with the event (filtered to only show follows)"
+      },
+      {
+        "name": "onReplyIntent",
+        "type": "ReplyIntentCallback",
+        "description": "Callback when user wants to reply. Receives the event to reply to. Use this to show a reply composer UI."
+      },
+      {
+        "name": "onQuoteIntent",
+        "type": "QuoteIntentCallback",
+        "description": "Callback when user wants to quote. Receives the event to quote. Use this to show a quote composer UI."
+      },
+      {
+        "name": "onZapIntent",
+        "type": "ZapIntentCallback",
+        "description": "Callback when user wants to zap. Receives the event and zap function. Show a zap UI to collect amount/comment, then call zapFn(amount, comment)."
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

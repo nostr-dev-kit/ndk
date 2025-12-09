@@ -1,0 +1,48 @@
+{
+  "name": "createRepostAction",
+  "title": "Repost Action Builder",
+  "oneLiner": "Reactive state manager for tracking and creating reposts and quote posts on Nostr",
+  "importPath": "import { createRepostAction } from '$lib/registry/builders/repost-action';",
+  "registryName": "builders/repost-action",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "nips": ["01", "18"],
+  "parameters": [
+    {
+      "name": "event",
+      "type": "NDKEvent | undefined",
+      "description": "The event to track reposts for",
+      "required": true
+    }
+  ],
+  "returns": [
+    {
+      "name": "count",
+      "type": "number",
+      "description": "Total number of unique users who have reposted (includes both regular reposts and quotes)"
+    },
+    {
+      "name": "hasReposted",
+      "type": "boolean",
+      "description": "Whether the current user has reposted this event"
+    },
+    {
+      "name": "pubkeys",
+      "type": "string[]",
+      "description": "Array of unique pubkeys who have reposted"
+    },
+    {
+      "name": "repost",
+      "type": "() => Promise<NDKEvent>",
+      "description": "Toggle repost - creates repost if not reposted, deletes existing repost if already reposted"
+    },
+    {
+      "name": "quote",
+      "type": "(content: string) => Promise<NDKEvent>",
+      "description": "Create a quote post with commentary on the original event"
+    }
+  ],
+  "usageExample": "const repostAction = createRepostAction(() => ({ event: myEvent }), ndk);\n\n// Get repost count (unique users)\nrepostAction.count  // number\n\n// Check if current user reposted\nrepostAction.hasReposted  // boolean\n\n// Get all pubkeys who reposted\nrepostAction.pubkeys  // string[]\n\n// Toggle repost\nawait repostAction.repost();\n\n// Create a quote post with commentary\nawait repostAction.quote(\"This is amazing!\");"
+}

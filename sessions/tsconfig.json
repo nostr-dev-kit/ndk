@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-      "baseUrl": ".",
         "target": "ES2020",
         "module": "ESNext",
         "moduleResolution": "bundler",
@@ -13,14 +12,7 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
-      "types": [
-        "vitest"
-      ],
-      "paths": {
-        "@nostr-dev-kit/sessions": [
-          "src/index.ts"
-        ]
-      }
+        "types": ["node", "vitest"]
     },
     "include": ["src/**/*", "__tests__/**/*"],
     "exclude": ["node_modules", "dist"]

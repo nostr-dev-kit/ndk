@@ -202,19 +202,21 @@ export class NDKWoT {
                     kinds: [NDKKind.Contacts],
                     authors,
                 },
-                { closeOnEose: true, subId: "wot-fetch", addSinceFromCache: true },
+                {
+                    closeOnEose: true,
+                    subId: "wot-fetch",
+                    addSinceFromCache: true,
+                    onEvent: (event: NDKEvent) => {
+                        events.add(event);
+                    },
+                    onEose: () => {
+                        clearTimeout(timeout);
+                        sub.stop();
+                        d("Subscription fetch completed: %d events", events.size);
+                        resolve(events);
+                    },
+                },
             );
-
-            sub.on("event", (event: NDKEvent) => {
-                events.add(event);
-            });
-
-            sub.on("eose", () => {
-                clearTimeout(timeout);
-                sub.stop();
-                d("Subscription fetch completed: %d events", events.size);
-                resolve(events);
-            });
         });
     }
 

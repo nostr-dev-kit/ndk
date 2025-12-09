@@ -1,0 +1,19 @@
+<script lang="ts">
+  import LoginCompact from '$lib/registry/blocks/login-compact.svelte';
+  import { ndk } from '$lib/ndk.svelte';
+
+  let showLoginModal = $state(false);
+
+  function handleSuccess() {
+    showLoginModal = false;
+    console.log('Login successful!');
+  }
+</script>
+
+{#if showLoginModal}
+  <div class="modal-backdrop" onclick={() => showLoginModal = false}>
+    <div onclick={(e) => e.stopPropagation()}>
+      <LoginCompact {ndk} onSuccess={handleSuccess} />
+    </div>
+  </div>
+{/if}

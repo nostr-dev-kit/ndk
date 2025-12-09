@@ -1,0 +1,8 @@
+# Add a single component
+jsrepo add components/user-card
+
+# Add multiple components at once
+jsrepo add components/user-card ui/user ui/event
+
+# Add with confirmation prompt
+jsrepo add components/note-composer -y

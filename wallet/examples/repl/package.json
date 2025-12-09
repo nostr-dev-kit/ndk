@@ -1,52 +1,52 @@
 {
-    "name": "@nostr-dev-kit/wallet-repl",
-    "version": "1.0.1",
-    "private": true,
-    "description": "Beautiful debugging REPL for NDK Cashu Wallet",
-    "type": "module",
-    "main": "dist/index.js",
-    "bin": {
-        "ndk-wallet": "./dist/index.js"
-    },
-    "scripts": {
-        "dev": "tsx src/index.ts",
-        "build": "tsup src/index.ts --format esm --dts --external readline --external readline/promises",
-        "start": "bun src/index.ts"
-    },
-    "keywords": [
-        "nostr",
-        "ndk",
-        "wallet",
-        "cashu",
-        "ecash",
-        "repl",
-        "cli"
-    ],
-    "author": "Nostr Dev Kit Contributors",
-    "license": "MIT",
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.16.0",
-        "@nostr-dev-kit/wallet": "^0.8.0",
-        "@nostr-dev-kit/cache-sqlite": "^4.0.0",
-        "@nostr-dev-kit/sync": "^0.2.0",
-        "chalk": "^5.3.0",
-        "boxen": "^7.1.1",
-        "inquirer": "^9.2.12",
-        "qrcode-terminal": "^0.12.0",
-        "ora": "^8.0.1",
-        "stdin-discarder": "^0.2.2",
-        "cli-table3": "^0.6.3",
-        "nanospinner": "^1.1.0",
-        "gradient-string": "^2.0.2",
-        "figlet": "^1.7.0"
-    },
-    "devDependencies": {
-        "@types/figlet": "^1.5.8",
-        "@types/gradient-string": "^1.1.6",
-        "@types/inquirer": "^9.0.7",
-        "@types/node": "^20.0.0",
-        "tsup": "^8.0.0",
-        "tsx": "^4.7.0",
-        "typescript": "^5.3.3"
-    }
+  "name": "@nostr-dev-kit/wallet-repl",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Beautiful debugging REPL for NDK Cashu Wallet",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "ndk-wallet": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts --external readline --external readline/promises",
+    "start": "bun src/index.ts"
+  },
+  "keywords": [
+    "nostr",
+    "ndk",
+    "wallet",
+    "cashu",
+    "ecash",
+    "repl",
+    "cli"
+  ],
+  "author": "Nostr Dev Kit Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.62",
+    "@nostr-dev-kit/wallet": "1.0.0-beta.62",
+    "@nostr-dev-kit/cache-sqlite": "8.0.0-beta.62",
+    "@nostr-dev-kit/sync": "1.0.0-beta.62",
+    "chalk": "^5.3.0",
+    "boxen": "^7.1.1",
+    "inquirer": "^9.2.12",
+    "qrcode-terminal": "^0.12.0",
+    "ora": "^8.0.1",
+    "stdin-discarder": "^0.2.2",
+    "cli-table3": "^0.6.3",
+    "nanospinner": "^1.1.0",
+    "gradient-string": "^2.0.2",
+    "figlet": "^1.7.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.8",
+    "@types/gradient-string": "^1.1.6",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
 }

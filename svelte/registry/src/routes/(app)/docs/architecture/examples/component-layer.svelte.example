@@ -1,0 +1,12 @@
+<!-- Copied to your project -->
+<script>
+  import { createEventContent } from '@nostr-dev-kit/svelte';
+  const state = createEventContent(() => ({ event }), ndk);
+</script>
+
+<article>
+  <!-- Your UI using builder state -->
+  {#each state.segments as segment}
+    {segment.text}
+  {/each}
+</article>

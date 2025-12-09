@@ -1,0 +1,70 @@
+{
+  "name": "article-card-portrait",
+  "title": "Article Card Portrait",
+  "category": "article",
+  "subcategory": "cards",
+  "variant": "portrait",
+  "oneLiner": "A vertical article card with prominent image",
+  "registryName": "components/article-card-portrait",
+  "dependencies": [
+    "@nostr-dev-kit/svelte",
+    "@nostr-dev-kit/ndk"
+  ],
+  "useCases": [
+    "featured-articles",
+    "magazine-layouts",
+    "content-grids"
+  ],
+  "registration": {
+    "autoRegister": true,
+    "priority": 6,
+    "wrapper": "NDKArticle"
+  },
+  "apiDoc": {
+    "name": "ArticleCardPortrait",
+    "description": "A vertical portrait-oriented article card with prominent cover image, title, summary, and reading time. Features hover effects with scale and shadow transitions. Ideal for magazine-style layouts and content grids.",
+    "importPath": "import { ArticleCardPortrait } from '$lib/registry/components/article/cards/portrait'",
+    "props": [
+      {
+        "name": "ndk",
+        "type": "NDKSvelte",
+        "required": true,
+        "description": "NDK instance for Nostr operations"
+      },
+      {
+        "name": "event",
+        "type": "NDKArticle",
+        "required": true,
+        "description": "Article to display"
+      },
+      {
+        "name": "width",
+        "type": "string",
+        "default": "'w-[320px]'",
+        "description": "Tailwind CSS width class for the card"
+      },
+      {
+        "name": "height",
+        "type": "string",
+        "default": "'h-[420px]'",
+        "description": "Tailwind CSS height class for the card"
+      },
+      {
+        "name": "imageHeight",
+        "type": "string",
+        "default": "'h-56'",
+        "description": "Tailwind CSS height class for the cover image"
+      },
+      {
+        "name": "onclick",
+        "type": "(e: MouseEvent) => void",
+        "description": "Click handler - renders as button when provided"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "description": "Additional CSS classes"
+      }
+    ]
+  }
+}

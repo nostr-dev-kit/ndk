@@ -3,9 +3,11 @@ temp
 .idea
 **/build
 **/dist
+**/coverage
 **/lib
 !ndk-svelte-components/src/lib/
 !svelte/src/lib/
+!svelte/registry/src/lib/
 **/.vscode
 justfile
 package-lock.json

@@ -22,8 +22,6 @@
         "lib": ["dom", "dom.iterable", "esnext"],
         "emitDeclarationOnly": true,
         "outDir": "lib",
-        "paths": {
-            "@nostr-dev-kit/ndk": ["src/index.ts"]
-        }
+      "paths": {}
     }
 }

@@ -1,3 +1,4 @@
 .vitepress/cache
 .vitepress/dist
 public/*
+/snippets/pnpm-lock.yaml

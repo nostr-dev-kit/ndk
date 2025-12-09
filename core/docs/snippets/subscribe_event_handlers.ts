@@ -9,7 +9,7 @@ ndk.subscribe(
         // Direct handlers via autoStart parameter (now the 3rd argument)
         onEvent: (event: NDKEvent, relay?: NDKRelay) => {
             // Called for events received from relays after the initial cache load (if onEvents is used)
-            console.log("Received event from relay (id):", event.id);
+            console.log("Received event from relay (id):", event.id, relay);
         },
         onEvents: (events: NDKEvent[]) => {
             // Parameter renamed to 'events'

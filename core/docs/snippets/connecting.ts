@@ -5,5 +5,6 @@ import NDK from "@nostr-dev-kit/ndk";
 const ndk = new NDK({
     explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
 });
+
 // Now connect to specified relays
 await ndk.connect();

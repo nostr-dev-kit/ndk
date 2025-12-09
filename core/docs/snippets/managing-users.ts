@@ -1,6 +1,6 @@
 import NDK from "@nostr-dev-kit/ndk";
 
-const ndk = new NDK({});
+const ndk = new NDK();
 
 // From hex pubkey
 const user1 = await ndk.fetchUser("3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d");

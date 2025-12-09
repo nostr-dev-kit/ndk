@@ -1,5 +1,5 @@
-import {bytesToHex, hexToBytes} from "@noble/hashes/utils";
-import {nip49} from "@nostr-dev-kit/ndk";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
+import { nip49 } from "@nostr-dev-kit/ndk";
 
 // Encrypt raw private key bytes
 const privateKeyHex = "14c226dbdd865d5e1645e72c7470fd0a17feb42cc87b750bab6538171b3a3f8a";

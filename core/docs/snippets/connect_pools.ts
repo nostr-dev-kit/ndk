@@ -5,7 +5,11 @@ const ndk = new NDK();
 const largeRelays = new NDKPool([`wss://relay.damus.io`, "wss://premium.primal.net"], ndk);
 largeRelays.addRelay(new NDKRelay("wss://nos.lol", undefined, ndk));
 
-const nicheRelays = new NDKPool([`wss://asad`, "wss://premisadasdum.primal.net"], ndk);
+largeRelays.connect();
+
+ndk.pools.length; // 1
+
+const nicheRelays = new NDKPool([`wss://relay.vertexlab.io`, "wss://purplepag.es/"], ndk);
 
 nicheRelays.connect();
 

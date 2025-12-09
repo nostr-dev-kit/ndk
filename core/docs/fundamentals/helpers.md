@@ -50,6 +50,9 @@ nsec, npub).
 
 More about key generaton in [the signer documentation](/core/docs/fundamentals/signers).
 
+## Code Snippets
+
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md#helpers)
 
 
 

@@ -55,7 +55,7 @@ export default defineConfig({
                     { text: "Subscribing ✅", link: "/core/docs/fundamentals/subscribing" },
                     { text: "Signers ✅", link: "/core/docs/fundamentals/signers" },
                     { text: "Zaps ✅", link: "/core/docs/fundamentals/zapping" },
-                    { text: "Helpers ❌", link: "/core/docs/fundamentals/helpers" },
+                    { text: "Helpers ✅", link: "/core/docs/fundamentals/helpers" },
                 ],
             },
             {

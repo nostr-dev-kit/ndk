@@ -1,10 +1,7 @@
 # Helpers
 
-NDK comes with a ton of useful helpers and utilities to do things faster and easier.
-
-Quite a number of those utilities come from the
-[nostr-tools library](https://github.com/nbd-wtf/nostr-tools) which is included as part of
-NDK
+NDK comes with a ton of additional helpers and utilities to do things faster. A number of those utilities come from the
+[nostr-tools library](https://github.com/nbd-wtf/nostr-tools) which is included as part of NDK
 
 ## NIP-19 Identifiers
 
@@ -32,12 +29,6 @@ The `ndk.fetchUser()` method accepts [NIP-19](https://github.com/nostr-protocol/
 directly, automatically detecting and decoding the format:
 
 <<< @/core/docs/snippets/user-fetching.ts
-
-## Encoding Events
-
-NDK events have a built-in `encode()` method that automatically determines the appropriate NIP-19 format:
-
-<<< @/core/docs/snippets/event_encode.ts
 
 ## Generate Keys
 

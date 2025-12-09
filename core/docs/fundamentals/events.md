@@ -40,6 +40,12 @@ NDK uses the default signer `ndk.signer` to sign events.
 
 Read more about signers in [the signer documentation](/core/docs/fundamentals/signers.md)
 
+## Encoding Events
+
+NDK events have a built-in `encode()` method that automatically determines the appropriate NIP-19 format:
+
+<<< @/core/docs/snippets/event_encode.ts
+
 ## Code Snippets
 
 More snippets and examples can be found in the [snippets directory](/docs/snippets.md#events).

@@ -1,6 +1,6 @@
 ### Creating an event
 
-<<< @/core/docs/snippets/create_event.ts
+<<< @/core/docs/snippets/event_create.ts
 
 ### Tagging users
 

@@ -11,7 +11,7 @@ can also create your own.
 This is the simplest example of creating a text note [
 `kind:1`](https://github.com/nostr-protocol/nips/tree/master?tab=readme-ov-file#event-kinds) event.
 
-<<< @/core/docs/snippets/create_event.ts
+<<< @/core/docs/snippets/event_create.ts
 
 No need to fill in event's `id`, `tags`, `pubkey`, `created_at`, NDK will do that (if not set).
 

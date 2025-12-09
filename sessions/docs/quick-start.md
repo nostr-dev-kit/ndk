@@ -28,11 +28,7 @@ bun add @nostr-dev-kit/sessions
 
 ### 1. Initialize NDK
 
-First, create and [initialise your NDK instance](/core/docs/getting-started/usage.html):
-
-<<< @/core/docs/snippets/connect_explicit.ts
-
-Additional information about relay connections in the [connection section](/core/docs/fundamentals/connecting.html).
+First, create and [initialise your NDK instance](/core/docs/getting-started/usage#instantiate-ndk).
 
 ### 2. Create Session Manager
 
@@ -50,7 +46,8 @@ Restore any previously saved sessions:
 
 ### 4. Login (and auto-fetch)
 
-Login with a signer. To automatically fetch user data, configure `fetches` in the constructor:
+Login with [a signer](/core/docs/fundamentals/signers). To automatically fetch user data, configure `fetches` in the
+constructor:
 
 <<< @/sessions/docs/snippets/session_fetch_user_data.ts
 

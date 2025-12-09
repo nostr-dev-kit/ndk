@@ -4,7 +4,8 @@ The library supports multiple accounts (called sessions) through [different sign
 
 ## Adding a Session
 
-Each time you use `sessions.login` NDK will create a new session if that signer isn't already an active session.
+Each time you use `sessions.login` NDK will create a new session if [that signer](/core/docs/fundamentals/signers) isn't
+already an active session.
 
 <<< @/sessions/docs/snippets/adding_sessions.ts
 

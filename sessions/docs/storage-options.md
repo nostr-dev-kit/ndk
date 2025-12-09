@@ -28,7 +28,7 @@ const sessions = new NDKSessionManager(ndk, {
 
 ## Memory Storage
 
-Temporary, mostly used for testing or short lived application logic.
+Temporary, mostly used for testing or short-lived application logic.
 
 ```typescript
 import { MemoryStorage } from '@nostr-dev-kit/sessions';

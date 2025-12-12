@@ -1,34 +1,34 @@
 import debug from "debug";
-import type { NostrEvent } from "nostr-tools";
-import { nip19 } from "nostr-tools";
-import { EventEmitter } from "tseep";
-import { AIGuardrails } from "../ai-guardrails/index.js";
-import type { NDKCacheAdapter } from "../cache/index.js";
+import type {NostrEvent} from "nostr-tools";
+import {nip19} from "nostr-tools";
+import {EventEmitter} from "tseep";
+import {AIGuardrails} from "../ai-guardrails/index.js";
+import type {NDKCacheAdapter} from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import { NDKEvent } from "../events/index.js";
-import { signatureVerificationInit } from "../events/signature.js";
-import { OutboxTracker } from "../outbox/tracker.js";
-import type { NDKAuthPolicy } from "../relay/auth-policies.js";
-import { NDKRelay } from "../relay/index.js";
-import { NDKPool } from "../relay/pool/index.js";
-import type { NDKPublishError } from "../relay/sets/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
-import { correctRelaySet } from "../relay/sets/utils.js";
-import type { NDKSigner } from "../signers/index.js";
-import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
-import { NDKSubscription } from "../subscription/index.js";
-import { NDKSubscriptionManager } from "../subscription/manager.js";
-import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
-import type { NDKUserParams, ProfilePointer } from "../user/index.js";
-import { NDKUser } from "../user/index.js";
-import { isValidNip05 } from "../utils/validation.js";
-import { normalizeRelayUrl } from "../utils/normalize-url.js";
-import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
-import type { NDKLnUrlData } from "../zapper/ln.js";
-import { setActiveUser } from "./active-user.js";
-import { getEntity } from "./entity.js";
-import { fetchEventFromTag } from "./fetch-event-from-tag.js";
-import { Queue } from "./queue/index.js";
+import {NDKEvent} from "../events/index.js";
+import {signatureVerificationInit} from "../events/signature.js";
+import {OutboxTracker} from "../outbox/tracker.js";
+import type {NDKAuthPolicy} from "../relay/auth-policies.js";
+import {NDKRelay} from "../relay/index.js";
+import {NDKPool} from "../relay/pool/index.js";
+import type {NDKPublishError} from "../relay/sets/index.js";
+import {NDKRelaySet} from "../relay/sets/index.js";
+import {correctRelaySet} from "../relay/sets/utils.js";
+import type {NDKSigner} from "../signers/index.js";
+import type {NDKFilter, NDKSubscriptionOptions} from "../subscription/index.js";
+import {NDKSubscription} from "../subscription/index.js";
+import {NDKSubscriptionManager} from "../subscription/manager.js";
+import {filterFromId, isNip33AValue, relaysFromBech32} from "../subscription/utils.js";
+import type {NDKUserParams, ProfilePointer} from "../user/index.js";
+import {NDKUser} from "../user/index.js";
+import {normalizeRelayUrl} from "../utils/normalize-url.js";
+import {isValidNip05} from "../utils/validation.js";
+import type {CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit} from "../zapper/index.js";
+import type {NDKLnUrlData} from "../zapper/ln.js";
+import {setActiveUser} from "./active-user.js";
+import {getEntity} from "./entity.js";
+import {fetchEventFromTag} from "./fetch-event-from-tag.js";
+import {Queue} from "./queue/index.js";
 
 export type NDKValidationRatioFn = (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
 
@@ -448,7 +448,7 @@ export class NDK extends EventEmitter<{
 
         if (!(opts.enableOutboxModel === false)) {
             this.outboxPool = new NDKPool(opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS, this, {
-                debug: this.debug.extend("outbox-pool"),
+                debug: this.debug.extend("pool:outbox"),
                 name: "Outbox Pool",
             });
 

@@ -1,10 +1,10 @@
 import type debug from "debug";
-import { EventEmitter } from "tseep";
+import {EventEmitter} from "tseep";
 
-import type { NDK } from "../../ndk/index.js";
-import type { NDKFilter } from "../../subscription/index.js";
-import { normalizeRelayUrl } from "../../utils/normalize-url.js";
-import { NDKRelay, NDKRelayStatus } from "../index.js";
+import type {NDK} from "../../ndk/index.js";
+import type {NDKFilter} from "../../subscription/index.js";
+import {normalizeRelayUrl} from "../../utils/normalize-url.js";
+import {NDKRelay, NDKRelayStatus} from "../index.js";
 
 export type NDKPoolStats = {
     total: number;
@@ -104,7 +104,7 @@ export class NDKPool extends EventEmitter<{
 
     set name(name: string) {
         this._name = name;
-        this.debug = this.debug.extend(name);
+        this.debug = this.debug.extend(name.toLowerCase());
     }
 
     /**

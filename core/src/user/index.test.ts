@@ -94,6 +94,121 @@ describe("NDKUser", () => {
             pubkey = user.pubkey;
         });
 
+        it("profile returns metadata event", async () => {
+            const event = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                }),
+                pubkey,
+            );
+            event.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(event);
+
+            const profile = await user.fetchProfile();
+            const metadataevent = JSON.parse(profile.profileEvent);
+
+            expect(metadataevent.id).toEqual(event.id);
+        });
+
+        it("duplicate fetching of profile", async () => {
+            const event = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                }),
+                pubkey,
+            );
+            event.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(event);
+
+            const profile = await user.fetchProfile();
+            expect(profile?.name).toEqual("Jeff");
+            expect(profile?.picture).toEqual("https://image.url");
+
+            const profile2 = await user.fetchProfile();
+            expect(profile2?.name).toEqual("Jeff");
+            expect(profile2?.picture).toEqual("https://image.url");
+        });
+
+        it("newer profile overwrites older profile (two fetches)", async () => {
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff_OLD",
+                    picture: "https://image.url.old",
+                    about: "About jeff OLD",
+                }),
+                pubkey,
+            );
+            oldEvent.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(oldEvent);
+
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff_OLD");
+            expect(user.profile?.picture).toEqual("https://image.url.old");
+            expect(user.profile?.about).toEqual("About jeff OLD");
+
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                    about: "About jeff",
+                }),
+                pubkey,
+            );
+            newEvent.created_at = NOW_SEC;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(newEvent);
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff");
+            expect(user.profile?.picture).toEqual("https://image.url");
+            expect(user.profile?.about).toEqual("About jeff");
+        });
+
+        it.skip("older profile does not overwrite newer profile (two fetches)", async () => {
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                    about: "About jeff",
+                }),
+                pubkey,
+            );
+            newEvent.created_at = NOW_SEC - 3600;
+
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff_OLD",
+                    picture: "https://image.url.old",
+                    about: "About jeff OLD",
+                }),
+                pubkey,
+            );
+            oldEvent.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
+
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff");
+            expect(user.profile?.picture).toEqual("https://image.url");
+            expect(user.profile?.about).toEqual("About jeff");
+
+            ndk.fetchEvent = vi.fn().mockResolvedValue(oldEvent);
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff");
+            expect(user.profile?.picture).toEqual("https://image.url");
+            expect(user.profile?.about).toEqual("About jeff");
+        });
+
         it("Returns updated fields", async () => {
             // Use EventGenerator to create profile events
             newEvent = EventGenerator.createEvent(

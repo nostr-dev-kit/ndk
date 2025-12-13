@@ -101,7 +101,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     displayName: "JeffG",
                     name: "Jeff",
-                    image: "https://image.url",
+                    picture: "https://image.url",
                     banner: "https://banner.url",
                     bio: "Some bio info",
                     nip05: "_@jeffg.fyi",
@@ -118,7 +118,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     displayName: "JeffG_OLD",
                     name: "Jeff_OLD",
-                    image: "https://image.url.old",
+                    picture: "https://image.url.old",
                     banner: "https://banner.url.old",
                     bio: "Some OLD bio info",
                     nip05: "OLD@jeffg.fyi",
@@ -135,7 +135,7 @@ describe("NDKUser", () => {
             await user.fetchProfile();
             expect(user.profile?.displayName).toEqual("JeffG");
             expect(user.profile?.name).toEqual("Jeff");
-            expect(user.profile?.image).toEqual("https://image.url");
+            expect(user.profile?.picture).toEqual("https://image.url");
             expect(user.profile?.banner).toEqual("https://banner.url");
             expect(user.profile?.bio).toEqual("Some bio info");
             expect(user.profile?.nip05).toEqual("_@jeffg.fyi");
@@ -185,7 +185,7 @@ describe("NDKUser", () => {
             oldEvent = EventGenerator.createEvent(
                 0,
                 JSON.stringify({
-                    image: "https://set-from-image-field.url",
+                    picture: "https://set-from-image-field.url",
                 }),
                 pubkey,
             );
@@ -194,7 +194,7 @@ describe("NDKUser", () => {
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
             await user.fetchProfile();
-            expect(user.profile?.image).toEqual("https://set-from-picture-field.url");
+            expect(user.profile?.picture).toEqual("https://set-from-picture-field.url");
         });
 
         it("Allows for arbitrary values to be set on user profiles", async () => {
@@ -225,9 +225,7 @@ describe("NDKUser", () => {
 
     describe("validateNip05", () => {
         it("validates the NIP-05 for users", async () => {
-            const user = ndk.getUser({
-                pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
-            });
+            const user = await ndk.fetchUser("1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef");
 
             // Valid NIP-05
             const validNip05 = "_@jeffg.fyi";

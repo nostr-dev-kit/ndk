@@ -1,18 +1,28 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EventGenerator } from "../../test";
-import type { NDKEvent } from "../events/index.js";
-import { NDK } from "../ndk/index.js";
-import { NDKSubscription } from "../subscription/index.js";
+import type { NDKEvent } from "../events";
+import { NDK } from "../ndk";
 import { NDKUser, type NDKUserParams, type ProfilePointer } from "./index.js";
 import * as Nip05 from "./nip05.js";
 
 describe("NDKUser", () => {
     let ndk: NDK;
 
+    const FROZEN_TIME = new Date("2020-01-01T00:00:00.000Z");
+    const NOW_SEC = Math.floor(FROZEN_TIME.getTime() / 1000);
+
     beforeEach(() => {
         vi.clearAllMocks();
+
+        vi.useFakeTimers();
+        vi.setSystemTime(FROZEN_TIME);
+
         ndk = new NDK();
         EventGenerator.setNDK(ndk);
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
     });
 
     describe("constructor", () => {
@@ -101,7 +111,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
@@ -144,7 +154,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
@@ -153,7 +163,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
+            oldEvent.created_at = NOW_SEC - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -170,7 +180,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
@@ -179,7 +189,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
+            oldEvent.created_at = NOW_SEC - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -195,7 +205,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
@@ -204,7 +214,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
+            oldEvent.created_at = NOW_SEC - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 

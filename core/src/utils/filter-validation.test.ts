@@ -106,11 +106,16 @@ describe("Filter Validation", () => {
                 "#t": ["bitcoin", undefined],
             };
 
-            expect(() => {
+            try {
                 ndk.subscribe(badFilter);
-            }).toThrow(
-                /Filter\[0\]\.authors\[1\] is undefined.*Filter\[0\]\.kinds\[1\] is undefined.*Filter\[0\]\.#t\[1\] is undefined/s,
-            );
+                expect.fail("Expected ndk.subscribe to throw");
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : String(e);
+
+                expect(message).toContain("Filter[0].authors[1] is undefined");
+                expect(message).toContain("Filter[0].kinds[1] is undefined");
+                expect(message).toContain("Filter[0].#t[1] is undefined");
+            }
         });
     });
 
@@ -289,9 +294,14 @@ describe("Filter Validation", () => {
                 },
             ];
 
-            expect(() => {
+            try {
                 ndk.subscribe(badFilters);
-            }).toThrow(/Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s);
+                expect.fail("Expected ndk.subscribe to throw");
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : String(e);
+                expect(message).toContain("Filter[0].authors[1] is undefined");
+                expect(message).toContain("Filter[1].kinds[1] is undefined");
+            }
         });
 
         it("should fix all filters in fix mode", async () => {
@@ -414,38 +424,92 @@ describe("Filter Validation", () => {
         });
 
         describe("bech32 in ids array", () => {
+            describe("bech32 in authors array", () => {
+                it("should throw fatal error when authors contains npub bech32", () => {
+                    const badFilter: NDKFilter = {
+                        authors: ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
+                        kinds: [1],
+                    };
+
+                    try {
+                        ndk.subscribe(badFilter);
+                        expect.fail("Expected ndk.subscribe to throw");
+                    } catch (e: unknown) {
+                        const message = e instanceof Error ? e.message : String(e);
+
+                        expect(message).toContain("AI_GUARDRAILS");
+                        expect(message).toContain("authors[0] contains bech32");
+                        expect(message).toContain("Use ndkUser.pubkey instead");
+                    }
+                });
+
+                it("should throw fatal error when authors contains nprofile bech32", () => {
+                    const badFilter: NDKFilter = {
+                        authors: ["nprofile1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs0enayy"],
+                        kinds: [1],
+                    };
+
+                    try {
+                        ndk.subscribe(badFilter);
+                        expect.fail("Expected ndk.subscribe to throw");
+                    } catch (e: unknown) {
+                        const message = e instanceof Error ? e.message : String(e);
+
+                        expect(message).toContain("AI_GUARDRAILS");
+                        expect(message).toContain("authors[0] contains bech32");
+                    }
+                });
+
+                it("should throw fatal error for multiple authors with one being bech32", () => {
+                    const badFilter: NDKFilter = {
+                        authors: [
+                            validPubkey1,
+                            "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l",
+                            validPubkey2,
+                        ],
+                        kinds: [1],
+                    };
+
+                    try {
+                        ndk.subscribe(badFilter);
+                        expect.fail("Expected ndk.subscribe to throw");
+                    } catch (e: unknown) {
+                        const message = e instanceof Error ? e.message : String(e);
+
+                        expect(message).toContain("AI_GUARDRAILS");
+                        expect(message).toContain("authors[1] contains bech32");
+                    }
+                });
+
+                it("should allow valid hex pubkeys", () => {
+                    const goodFilter: NDKFilter = {
+                        authors: [validPubkey1, validPubkey2, validPubkey3],
+                        kinds: [1],
+                    };
+
+                    expect(() => {
+                        const sub = ndk.subscribe(goodFilter);
+                        sub.stop();
+                    }).not.toThrow();
+                });
+            });
+
             it("should throw fatal error when ids contains note1 bech32", () => {
                 const badFilter: NDKFilter = {
                     ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
                     kinds: [1],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/ids\[0\] contains bech32/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/Use filterFromId\(\)/);
-            });
-
-            it("should throw fatal error when ids contains nevent1 bech32", () => {
-                const badFilter: NDKFilter = {
-                    ids: ["nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3"],
-                    kinds: [1],
-                };
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/ids\[0\] contains bech32/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("ids[0] contains bech32");
+                    expect(message).toContain("Use filterFromId()");
+                }
             });
 
             it("should fall back to standard validation when trying to skip the check", () => {

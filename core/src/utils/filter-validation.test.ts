@@ -561,17 +561,16 @@ describe("Filter Validation", () => {
                     kinds: [1],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/authors\[0\] contains bech32/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/Use ndkUser\.pubkey instead/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("authors[0] contains bech32");
+                    expect(message).toContain("Use ndkUser.pubkey instead");
+                }
             });
 
             it("should throw fatal error when authors contains nprofile bech32", () => {
@@ -580,13 +579,15 @@ describe("Filter Validation", () => {
                     kinds: [1],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/authors\[0\] contains bech32/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("authors[0] contains bech32");
+                }
             });
 
             it("should throw fatal error for multiple authors with one being bech32", () => {
@@ -599,13 +600,15 @@ describe("Filter Validation", () => {
                     kinds: [1],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/authors\[1\] contains bech32/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("authors[1] contains bech32");
+                }
             });
 
             it("should allow valid hex pubkeys", () => {
@@ -628,17 +631,16 @@ describe("Filter Validation", () => {
                     "#e": ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#e\[0\] contains bech32/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/Use filterFromId\(\) or nip19\.decode\(\)/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("#e[0] contains bech32");
+                    expect(message).toContain("Use filterFromId() or nip19.decode");
+                }
             });
 
             it("should throw fatal error when #p tag contains npub bech32", () => {
@@ -647,13 +649,15 @@ describe("Filter Validation", () => {
                     "#p": ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#p\[0\] contains bech32/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("#p[0] contains bech32");
+                }
             });
 
             it("should throw fatal error for naddr in #a tag filter", () => {
@@ -662,17 +666,16 @@ describe("Filter Validation", () => {
                     "#a": ["naddr1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsdtpwtk"],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#a\[0\] has invalid format/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/Must be "kind:pubkey:d-tag"/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("#a[0] has invalid format");
+                    expect(message).toContain('Must be "kind:pubkey:d-tag"');
+                }
             });
 
             it("should throw fatal error for non-addressable kind in #a tag filter", () => {
@@ -681,17 +684,16 @@ describe("Filter Validation", () => {
                     "#a": ["20:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:undefined"],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#a\[0\] uses non-addressable kind 20/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#a filters are only for addressable events \(kinds 30000-39999\)/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("#a[0] uses non-addressable kind 20");
+                    expect(message).toContain("#a filters are only for addressable events (kinds 30000-39999)");
+                }
             });
 
             it("should throw for kind 1 in #a tag", () => {
@@ -824,17 +826,16 @@ describe("Filter Validation", () => {
                     "#t": ["#nostr"],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#t\[0\] contains hashtag with # prefix/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/"#nostr"/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("#t[0] contains hashtag with # prefix");
+                    expect(message).toContain("#nostr");
+                }
             });
 
             it("should throw fatal error for multiple hashtags with # prefix", () => {
@@ -843,17 +844,16 @@ describe("Filter Validation", () => {
                     "#t": ["#bitcoin", "#nostr", "programming"],
                 };
 
-                expect(() => {
+                try {
                     ndk.subscribe(badFilter);
-                }).toThrow(/AI_GUARDRAILS/);
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
 
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/#t\[0\] contains hashtag with # prefix/);
-
-                expect(() => {
-                    ndk.subscribe(badFilter);
-                }).toThrow(/"#bitcoin"/);
+                    expect(message).toContain("AI_GUARDRAILS");
+                    expect(message).toContain("#t[0] contains hashtag with # prefix");
+                    expect(message).toContain("#bitcoin");
+                }
             });
 
             it("should allow valid hashtags without # prefix", () => {
@@ -876,11 +876,13 @@ describe("Filter Validation", () => {
 
                 try {
                     ndk.subscribe(badFilter);
-                    expect.fail("Should have thrown");
-                } catch (error: any) {
-                    expect(error.message).toContain("Remove the # prefix from hashtag filters");
-                    expect(error.message).toContain('✅ { "#t": ["nostr"] }');
-                    expect(error.message).toContain('❌ { "#t": ["#nostr"] }');
+                    expect.fail("Expected ndk.subscribe to throw");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
+
+                    expect(message).toContain("Remove the # prefix from hashtag filters");
+                    expect(message).toContain('✅ { "#t": ["nostr"] }');
+                    expect(message).toContain('❌ { "#t": ["#nostr"] }');
                 }
             });
         });
@@ -895,10 +897,12 @@ describe("Filter Validation", () => {
                 try {
                     ndk.subscribe(badFilter);
                     expect.fail("Should have thrown");
-                } catch (error: any) {
-                    expect(error.message).toContain("IDs must be hex, not bech32");
-                    expect(error.message).toContain("Use filterFromId() to decode bech32 first");
-                    expect(error.message).toContain('@nostr-dev-kit/ndk"');
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
+
+                    expect(message).toContain("IDs must be hex, not bech32");
+                    expect(message).toContain("Use filterFromId() to decode bech32 first");
+                    expect(message).toContain('@nostr-dev-kit/ndk"');
                 }
             });
 
@@ -911,10 +915,12 @@ describe("Filter Validation", () => {
                 try {
                     ndk.subscribe(badFilter);
                     expect.fail("Should have thrown");
-                } catch (error: any) {
-                    expect(error.message).toContain("Authors must be hex pubkeys, not npub");
-                    expect(error.message).toContain("Use ndkUser.pubkey instead");
-                    expect(error.message).toContain("{ authors: [ndkUser.pubkey] }");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
+
+                    expect(message).toContain("Authors must be hex pubkeys, not npub");
+                    expect(message).toContain("Use ndkUser.pubkey instead");
+                    expect(message).toContain("{ authors: [ndkUser.pubkey] }");
                 }
             });
 
@@ -927,9 +933,11 @@ describe("Filter Validation", () => {
                 try {
                     ndk.subscribe(badFilter);
                     expect.fail("Should have thrown");
-                } catch (error: any) {
-                    expect(error.message).toContain("Tag values must be decoded");
-                    expect(error.message).toContain("Use filterFromId() or nip19.decode()");
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
+
+                    expect(message).toContain("Tag values must be decoded");
+                    expect(message).toContain("Use filterFromId() or nip19.decode()");
                 }
             });
 
@@ -947,17 +955,17 @@ describe("Filter Validation", () => {
                 try {
                     ndk.subscribe(badFilter);
                     expect.fail("Should have thrown");
-                } catch (error: any) {
-                    expect(error.message).toContain("AI_GUARDRAILS ERROR");
-                    expect(error.message).toContain("is not a valid 64-char hex pubkey");
-                    expect(error.message).toContain('"Follow List"');
-                    expect(error.message).toContain("Kind:3 follow lists can contain invalid entries");
-                    expect(error.message).toContain('labels ("Follow List")');
-                    expect(error.message).toContain('partial strings ("highlig")');
-                    expect(error.message).toContain("You MUST validate all pubkeys");
-                    expect(error.message).toContain(
-                        "const validPubkeys = pubkeys.filter(p => /^[0-9a-f]{64}$/i.test(p));",
-                    );
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
+
+                    expect(message).toContain("AI_GUARDRAILS ERROR");
+                    expect(message).toContain("is not a valid 64-char hex pubkey");
+                    expect(message).toContain('"Follow List"');
+                    expect(message).toContain("Kind:3 follow lists can contain invalid entries");
+                    expect(message).toContain('labels ("Follow List")');
+                    expect(message).toContain('partial strings ("highlig")');
+                    expect(message).toContain("You MUST validate all pubkeys");
+                    expect(message).toContain("const validPubkeys = pubkeys.filter(p => /^[0-9a-f]{64}$/i.test(p));");
                 }
             });
         });
@@ -974,10 +982,12 @@ describe("Filter Validation", () => {
                 try {
                     ndk.subscribe(badFilter);
                     expect.fail("Should have thrown");
-                } catch (error: any) {
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : String(e);
+
                     // Guardrails throw on first error, so we only see the ids error
-                    expect(error.message).toContain("ids[0] contains bech32");
-                    expect(error.message).toContain("AI_GUARDRAILS ERROR");
+                    expect(message).toContain("ids[0] contains bech32");
+                    expect(message).toContain("AI_GUARDRAILS ERROR");
                 }
             });
         });

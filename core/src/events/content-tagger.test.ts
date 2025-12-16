@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { generateContentTags } from "./content-tagger";
 import type { ContentTaggingOptions, NDKEvent, NDKTag } from "./index.js";
 
@@ -199,7 +200,7 @@ describe("await generateContentTags", () => {
             ]);
         });
 
-        it("copies p-tags from target event when copyPTagsFromTarget is true", async () => {
+        it("do not copy p-tags from target event when copyPTagsFromTarget is true but pubkeys are invalid", async () => {
             const content = "Reply to event";
             const opts: ContentTaggingOptions = { copyPTagsFromTarget: true };
             const mockEvent = {
@@ -216,9 +217,29 @@ describe("await generateContentTags", () => {
 
             const { tags: processedTags } = await generateContentTags(content, [], opts, mockEvent);
 
+            expect(processedTags).toEqual([]);
+        });
+
+        it("copies p-tags from target event when copyPTagsFromTarget is true and pubkeys are valid", async () => {
+            const content = "Reply to event";
+            const opts: ContentTaggingOptions = { copyPTagsFromTarget: true };
+            const mockEvent = {
+                getMatchingTags: (tag: string) => {
+                    if (tag === "p") {
+                        return [
+                            ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
+                            ["p", "b190175cef407c593f17c155480eda1a2ee7f6c84378eef0e97353f87ee59300"],
+                        ];
+                    }
+                    return [];
+                },
+            } as unknown as NDKEvent;
+
+            const { tags: processedTags } = await generateContentTags(content, [], opts, mockEvent);
+
             expect(processedTags).toEqual([
-                ["p", "pubkey1"],
-                ["p", "pubkey2"],
+                ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
+                ["p", "b190175cef407c593f17c155480eda1a2ee7f6c84378eef0e97353f87ee59300"],
             ]);
         });
 

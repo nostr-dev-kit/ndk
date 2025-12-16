@@ -1057,7 +1057,7 @@ export class NDK extends EventEmitter<{
              */
             let s: any;
             const t2 = setTimeout(() => {
-                s.stop();
+                s?.stop();
                 this.aiGuardrails["_nextCallDisabled"] = null;
                 resolve(fetchedEvent);
             }, 10000);

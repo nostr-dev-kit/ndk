@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nostr-dev-kit/blossom": "8.0.0-beta.62",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.62",
-    "@nostr-dev-kit/sessions": "1.0.0-beta.62",
-    "@nostr-dev-kit/svelte": "4.0.0-beta.62"
+    "@nostr-dev-kit/blossom": "8.0.0-beta.63",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.63",
+    "@nostr-dev-kit/sessions": "1.0.0-beta.63",
+    "@nostr-dev-kit/svelte": "4.0.0-beta.63"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.2.1",

@@ -369,8 +369,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         vi.spyOn(giftWrappingModule, "giftWrap").mockImplementation(async (event, _recipient, _signer, params = {}) => {
             const method = params.scheme === "nip04" ? "nip04_encrypt" : "nip44_encrypt";
             mockSendRequest("", method, {}, 0, () => {});
-            const wrapped = new NDKEvent(event.ndk);
-            return wrapped;
+            return new NDKEvent(event.ndk);
         });
 
         await giftWrappingModule.giftWrap(message, receiveUser, send46Signer);
@@ -412,7 +411,6 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
 
         // Spy on cache methods
         const getDecryptedEventSpy = vi.spyOn(mockCache, "getDecryptedEvent");
-        const _addDecryptedEventSpy = vi.spyOn(mockCache, "addDecryptedEvent");
 
         // Mock the decrypt function for signer to verify it's not called
         const decryptSpy = vi.spyOn(receiveSigner, "decrypt");

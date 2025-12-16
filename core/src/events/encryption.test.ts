@@ -25,12 +25,12 @@ class MockCacheAdapter implements NDKCacheAdapter {
         return Promise.resolve();
     }
 
-    getDecryptedEvent(eventId: string): NDKEvent | null {
-        return this.decryptedEvents.get(eventId) || null;
+    getDecryptedEvent(wrapperId: string): NDKEvent | null {
+        return this.decryptedEvents.get(wrapperId) || null;
     }
 
-    addDecryptedEvent(event: NDKEvent): void {
-        this.decryptedEvents.set(event.id, event);
+    addDecryptedEvent(wrapperId: string, decryptedEvent: NDKEvent): void {
+        this.decryptedEvents.set(wrapperId, decryptedEvent);
     }
 }
 
@@ -407,7 +407,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
 
         // Set up mock cache adapter
         const mockCache = new MockCacheAdapter();
-        mockCache.addDecryptedEvent(decryptedEvent);
+        mockCache.addDecryptedEvent(encryptedEvent.id, decryptedEvent);
         fixture.ndk.cacheAdapter = mockCache;
 
         // Spy on cache methods
@@ -465,7 +465,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         expect(getDecryptedEventSpy).toHaveBeenCalledWith(encryptedEvent.id);
 
         // Verify the decrypted event was cached
-        expect(addDecryptedEventSpy).toHaveBeenCalledWith(encryptedEvent);
+        expect(addDecryptedEventSpy).toHaveBeenCalledWith(encryptedEvent.id, encryptedEvent);
 
         // Verify content is correct
         expect(encryptedEvent.content).toBe(original);

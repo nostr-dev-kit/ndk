@@ -304,7 +304,7 @@ done
 
 echo -e "${YELLOW}Step 7: Committing changes...${NC}"
 git add -A
-git commit -m "chore: bump to beta.${BETA_NUM}"
+git commit -m "chore: bump to beta.${BETA_NUM}" || true
 echo -e "${GREEN}✓ Changes committed${NC}"
 
 echo ""

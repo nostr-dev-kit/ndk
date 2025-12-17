@@ -66,16 +66,24 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
         },
     });
 
-    // Import decoder dynamically to avoid circular dependency
-    const { decodeEvents } = await import('../binary/decoder');
-
     let eventsData: EventForEncoding[];
 
-    try {
-        eventsData = decodeEvents(result.buffer);
-    } catch (error) {
-        console.error('Failed to decode events from cache, cache may be corrupted:', error);
-        // Return empty results on decode error - cache will be rebuilt
+    // Handle both JSON and binary responses from worker
+    if (result.type === 'json') {
+        // Direct JSON transfer (used for small result sets)
+        eventsData = result.events;
+    } else if (result.type === 'binary') {
+        // Binary encoded transfer (used for large result sets)
+        const { decodeEvents } = await import('../binary/decoder');
+        try {
+            eventsData = decodeEvents(result.buffer);
+        } catch (error) {
+            console.error('Failed to decode events from cache, cache may be corrupted:', error);
+            // Return empty results on decode error - cache will be rebuilt
+            return [];
+        }
+    } else {
+        console.error('Unknown result type from worker:', result.type);
         return [];
     }
 
@@ -87,6 +95,8 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
         for (const { event, relayUrl } of eventsWithRelay) {
             if (event && event.id) {
                 results.set(event.id, event);
+                // Track cached event IDs for O(1) duplicate checking on writes
+                this.addCachedEventId(event.id);
                 // Set relay on event if we have one
                 if (relayUrl) {
                     const relay = subscription.pool.getRelay(relayUrl, false);
@@ -151,8 +161,7 @@ export function querySync(db: Database, filters: NDKFilter[], subId?: string): R
                 AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
                 ORDER BY events.created_at DESC
             `;
-            const params = filter.authors;
-            const events = db.exec(sql, params);
+            const events = db.exec(sql, filter.authors);
             const normalizedEvents = normalizeDbRows(events);
             allRecords.push(...normalizedEvents);
         } else if (filter.kinds) {
@@ -163,8 +172,7 @@ export function querySync(db: Database, filters: NDKFilter[], subId?: string): R
                 AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
                 ORDER BY events.created_at DESC
             `;
-            const params = filter.kinds;
-            const events = db.exec(sql, params);
+            const events = db.exec(sql, filter.kinds);
             const normalizedEvents = normalizeDbRows(events);
             allRecords.push(...normalizedEvents);
         } else if (filter.ids) {
@@ -175,8 +183,7 @@ export function querySync(db: Database, filters: NDKFilter[], subId?: string): R
                 AND events.id IN (${filter.ids.map(() => "?").join(",")})
                 ORDER BY events.created_at DESC
             `;
-            const params = filter.ids;
-            const events = db.exec(sql, params);
+            const events = db.exec(sql, filter.ids);
             const normalizedEvents = normalizeDbRows(events);
             allRecords.push(...normalizedEvents);
         }

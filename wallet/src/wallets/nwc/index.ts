@@ -1,4 +1,4 @@
-import { CashuMint, CashuWallet, type MintQuoteResponse } from "@cashu/cashu-ts";
+import { Mint, Wallet, type MintQuoteResponse } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
     type LnPaymentInfo,
@@ -171,10 +171,10 @@ export class NDKNWCWallet extends NDKWallet {
 
             amount = amount / 1000;
 
-            const wallet = new CashuWallet(new CashuMint(mint), { unit: "sat" });
+            const wallet = new Wallet(new Mint(mint), { unit: "sat" });
             let quote: MintQuoteResponse | undefined;
             try {
-                quote = await wallet.createMintQuote(amount);
+                quote = await wallet.createMintQuoteBolt11(amount);
                 d("cashuPay quote", quote);
                 onLnInvoice?.(quote.request);
             } catch (e) {

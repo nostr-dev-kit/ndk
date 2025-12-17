@@ -1,4 +1,4 @@
-import type { CashuWallet, GetInfoResponse, SendResponse } from "@cashu/cashu-ts";
+import type { Wallet, GetInfoResponse, SendResponse } from "@cashu/cashu-ts";
 import { getDecodedToken, getEncodedToken } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
@@ -176,9 +176,8 @@ export class NDKCashuWallet extends NDKWallet {
             result = await wallet.send(totalAmount, mintProofs, {
                 proofsWeHave: mintProofs,
                 includeFees: true,
-                outputAmounts: {
-                    sendAmounts: amounts,
-                },
+            }, {
+                send: { type: 'random', denominations: amounts },
             });
 
             if (result.send.length > 0) {
@@ -693,7 +692,7 @@ export class NDKCashuWallet extends NDKWallet {
         return this.paymentHandler.cashuPay(payment);
     }
 
-    public wallets = new Map<string, CashuWallet>();
+    public wallets = new Map<string, Wallet>();
 
     async redeemNutzaps(
         nutzaps: NDKNutzap[],

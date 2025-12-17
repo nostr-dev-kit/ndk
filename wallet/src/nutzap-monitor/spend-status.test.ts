@@ -1,4 +1,4 @@
-import { CashuWallet, CheckStateEnum } from "@cashu/cashu-ts";
+import { Wallet, CheckStateEnum } from "@cashu/cashu-ts";
 import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { mockNutzap } from "@nostr-dev-kit/ndk/test";
 import { describe, expect, it, vi } from "vitest";
@@ -10,7 +10,7 @@ const ndk = new NDK({ signer: ndkSigner });
 
 describe("spend-status", () => {
     describe("getProofSpendState", () => {
-        const wallet = new CashuWallet({} as any);
+        const wallet = new Wallet({} as any);
 
         it("should correctly map proofs to their spend states", async () => {
             const nutzaps = [
@@ -50,7 +50,7 @@ describe("spend-status", () => {
         });
 
         it("should handle empty nutzap array", async () => {
-            const freshWallet = new CashuWallet({} as any);
+            const freshWallet = new Wallet({} as any);
             freshWallet.checkProofsStates = vi.fn().mockResolvedValue([]);
 
             const result = await getProofSpendState(freshWallet, []);

@@ -55,7 +55,7 @@ export class NDKCashuDeposit extends EventEmitter<{
      */
     async start(pollTime = 2500) {
         const cashuWallet = await this.wallet.getCashuWallet(this.mint);
-        const quote = await cashuWallet.createMintQuote(this.amount);
+        const quote = await cashuWallet.createMintQuoteBolt11(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
 
         this.quoteId = quote.quote;

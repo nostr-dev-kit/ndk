@@ -1,5 +1,5 @@
 // Removed duplicate import line
-import type { CashuWallet, Proof } from "@cashu/cashu-ts";
+import type { Wallet, Proof } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import type { NDKNutzapState } from "@nostr-dev-kit/ndk";
 import {
@@ -100,7 +100,7 @@ export class NDKNutzapMonitor
 
     public privkeys = new Map<string, NDKPrivateKeySigner>();
 
-    public cashuWallets = new Map<string, CashuWallet>();
+    public cashuWallets = new Map<string, Wallet>();
     public getCashuWallet = getCashuWallet.bind(this) as MintInterface["getCashuWallet"];
     public onMintInfoNeeded?: MintInfoNeededCb;
     public onMintInfoLoaded?: MintInfoLoadedCb;

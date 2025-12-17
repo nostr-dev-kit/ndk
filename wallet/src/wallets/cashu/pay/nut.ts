@@ -1,4 +1,4 @@
-import type { Proof, SendResponse } from "@cashu/cashu-ts";
+import type { Proof, SendResponse, P2PKTag } from "@cashu/cashu-ts";
 import { type CashuPaymentInfo, normalizeUrl } from "@nostr-dev-kit/ndk";
 import { ensureIsCashuPubkey, mintProofs } from "../../../utils/cashu";
 import { getBolt11Amount } from "../../../utils/ln";
@@ -101,10 +101,16 @@ async function createTokenInMint(
                 });
 
                 const sendResult = await cashuWallet.send(amount, proofsToUse, {
-                    pubkey: p2pk,
                     proofsWeHave: allOurProofs,
-                    ...(proofTags && proofTags.length > 0 ? { tags: proofTags } : {}),
-                });
+                }, p2pk ? {
+                    send: {
+                        type: 'p2pk',
+                        options: {
+                            pubkey: p2pk,
+                            ...(proofTags && proofTags.length > 0 ? { additionalTags: proofTags as P2PKTag[] } : {}),
+                        },
+                    },
+                } : undefined);
 
                 console.log("[createTokenInMint] Send result", {
                     sendCount: sendResult.send.length,
@@ -146,7 +152,7 @@ async function createTokenWithMintTransfer(
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
             const targetMintWallet = await walletForMint(mint);
             if (!targetMintWallet) throw new Error(`unable to load wallet for mint ${mint}`);
-            const quote = await targetMintWallet.createMintQuote(amount);
+            const quote = await targetMintWallet.createMintQuoteBolt11(amount);
             return { quote, mint, targetMintWallet };
         };
 

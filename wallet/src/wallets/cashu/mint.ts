@@ -1,8 +1,8 @@
-import { CashuMint, CashuWallet, type GetInfoResponse, type MintKeys } from "@cashu/cashu-ts";
+import { Mint, Wallet, type GetInfoResponse, type MintKeys } from "@cashu/cashu-ts";
 import type { MintUrl } from "./mint/utils";
 
-const mintWallets = new Map<string, CashuWallet>();
-const mintWalletPromises = new Map<string, Promise<CashuWallet | null>>();
+const mintWallets = new Map<string, Wallet>();
+const mintWalletPromises = new Map<string, Promise<Wallet | null>>();
 
 function mintKey(mint: MintUrl, unit: string, pk?: Uint8Array) {
     if (unit === "sats") {
@@ -38,7 +38,7 @@ export async function walletForMint(
         onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>;
         onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void;
     } = {},
-): Promise<CashuWallet | null> {
+): Promise<Wallet | null> {
     const startTime = Date.now();
     const ts = () => `+${Date.now() - startTime}ms`;
 
@@ -76,7 +76,8 @@ export async function walletForMint(
     if (!mintInfo && onMintInfoLoaded) {
         console.log(`[MINT-CACHE ${ts()}] Fetching mint info from ${mint}/v1/info`);
         const fetchStartTime = Date.now();
-        mintInfo = await CashuMint.getInfo(mint);
+        const mintInstance = new Mint(mint);
+        mintInfo = await mintInstance.getInfo();
         const fetchTime = Date.now() - fetchStartTime;
         console.log(`[MINT-CACHE ${ts()}] Caching mint info: ${mint} (fetched in ${fetchTime}ms)`, {
             name: mintInfo.name,
@@ -90,13 +91,13 @@ export async function walletForMint(
     // Check if we already have a wallet for this mint
     if (mintWallets.has(key)) {
         console.log(`[MINT-CACHE ${ts()}] Returning cached wallet instance: ${mint}`);
-        return mintWallets.get(key) as CashuWallet;
+        return mintWallets.get(key) as Wallet;
     }
 
     // Check if there's already a promise to load this wallet
     if (mintWalletPromises.has(key)) {
         console.log(`[MINT-CACHE ${ts()}] Wallet loading in progress, returning existing promise: ${mint}`);
-        return mintWalletPromises.get(key) as Promise<CashuWallet | null>;
+        return mintWalletPromises.get(key) as Promise<Wallet | null>;
     }
 
     // Load mint info if needed (second check)
@@ -118,7 +119,8 @@ export async function walletForMint(
         if (!mintInfo && onMintInfoLoaded) {
             console.log(`[MINT-CACHE ${ts()}] Fetching mint info from ${mint}/v1/info (second check)`);
             const fetchStartTime = Date.now();
-            mintInfo = await CashuMint.getInfo(mint);
+            const mintInstance = new Mint(mint);
+            mintInfo = await mintInstance.getInfo();
             const fetchTime = Date.now() - fetchStartTime;
             console.log(`[MINT-CACHE ${ts()}] Caching mint info (second check): ${mint} (fetched in ${fetchTime}ms)`, {
                 name: mintInfo.name,
@@ -142,14 +144,14 @@ export async function walletForMint(
         }
     }
 
-    const wallet = new CashuWallet(new CashuMint(mint), {
+    const wallet = new Wallet(new Mint(mint), {
         unit,
         bip39seed: pk,
         mintInfo,
         keys: mintKeys,
     });
 
-    const loadPromise = new Promise<CashuWallet | null>(async (resolve) => {
+    const loadPromise = new Promise<Wallet | null>(async (resolve) => {
         try {
             console.log(`[MINT-CACHE ${ts()}] Loading mint wallet: ${mint}`);
             const loadStartTime = Date.now();
@@ -167,11 +169,13 @@ export async function walletForMint(
             mintWallets.set(key, wallet);
             mintWalletPromises.delete(key);
 
-            if (wallet.keys) {
+            const cache = wallet.keyChain.getCache();
+            if (cache.keys.length > 0) {
                 console.log(`[MINT-CACHE ${ts()}] Caching mint keys after loadMint: ${mint}`, {
-                    count: wallet.keys.size,
+                    count: cache.keys.length,
                 });
-                onMintKeysLoaded?.(mint, wallet.keys);
+                const keysMap = new Map(cache.keys.map(k => [k.id, k]));
+                onMintKeysLoaded?.(mint, keysMap);
             }
 
             resolve(wallet);

@@ -1,4 +1,4 @@
-import type { CashuWallet, Proof } from "@cashu/cashu-ts";
+import type { Wallet, Proof } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import type {
     CashuPaymentInfo,
@@ -75,7 +75,7 @@ export type NDKWalletEvents = {
 };
 
 export class NDKWallet extends EventEmitter<NDKWalletEvents> implements NDKWalletInterface, MintInterface {
-    public cashuWallets = new Map<string, CashuWallet>();
+    public cashuWallets = new Map<string, Wallet>();
 
     public onMintInfoNeeded?: MintInfoNeededCb;
     public onMintInfoLoaded?: MintInfoLoadedCb;
@@ -164,7 +164,7 @@ export class NDKWallet extends EventEmitter<NDKWalletEvents> implements NDKWalle
 }
 
 export interface RedeemNutzapsOpts {
-    cashuWallet?: CashuWallet;
+    cashuWallet?: Wallet;
     proofs?: Proof[];
     mint?: string;
 }

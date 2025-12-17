@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/cache-browser",
-  "version": "1.0.0-beta.63",
+  "version": "1.0.0-beta.64",
   "description": "Browser-optimized NDK cache adapter with automatic WASM/IndexedDB fallback",
   "license": "MIT",
   "docs": "typedoc",
@@ -45,8 +45,8 @@
     "pablof7z"
   ],
   "devDependencies": {
-    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.63",
-    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.63",
+    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.64",
+    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.64",
     "@types/debug": "^4.1.12",
     "@types/node": "^24.10.0",
     "fake-indexeddb": "^6.0.0",
@@ -62,8 +62,8 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.63",
-    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.63",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.63"
+    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.64",
+    "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.64",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.64"
   }
 }

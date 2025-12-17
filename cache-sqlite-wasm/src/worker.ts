@@ -385,6 +385,8 @@ self.onmessage = async (event: MessageEvent) => {
             }
             case "setEventBatch": {
                 const { events } = payload;
+                // Events are pre-filtered on UI thread via O(1) Set check
+                // Only new events reach here
                 for (const item of events) {
                     const relayObj = item.relay ? { url: item.relay } : undefined;
                     setEventSync(db, item.event, relayObj);
@@ -397,7 +399,7 @@ self.onmessage = async (event: MessageEvent) => {
                 const queryResult = querySync(db, filters, subId);
 
                 if (queryResult.length > 0) {
-                    // Convert to format suitable for binary encoding
+                    // Convert to format suitable for encoding
                     const eventsForEncoding: EventForEncoding[] = queryResult.map((row: any) => {
                         // Parse the raw field if it's a JSON string
                         let eventData;
@@ -450,20 +452,28 @@ self.onmessage = async (event: MessageEvent) => {
                         };
                     });
 
-                    // Encode to binary
-                    const buffer = encodeEvents(eventsForEncoding);
-
-                    // Prepare response with binary data
-                    result = {
-                        type: 'binary',
-                        buffer,
-                        eventCount: eventsForEncoding.length,
-                    };
+                    // For small result sets (< 100 events), use JSON transfer instead of binary encoding
+                    // JSON is faster for small sets and avoids the encoding/decoding overhead
+                    if (eventsForEncoding.length < 100) {
+                        result = {
+                            type: 'json',
+                            events: eventsForEncoding,
+                            eventCount: eventsForEncoding.length,
+                        };
+                    } else {
+                        // For large result sets, use binary encoding for better transfer size
+                        const buffer = encodeEvents(eventsForEncoding);
+                        result = {
+                            type: 'binary',
+                            buffer,
+                            eventCount: eventsForEncoding.length,
+                        };
+                    }
                 } else {
                     // Empty result
                     result = {
-                        type: 'binary',
-                        buffer: new ArrayBuffer(0),
+                        type: 'json',
+                        events: [],
                         eventCount: 0,
                     };
                 }

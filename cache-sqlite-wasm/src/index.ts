@@ -53,6 +53,23 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     // Performance optimizations
     protected metadataCache: MetadataLRUCache;
 
+    // In-memory set of cached event IDs for O(1) duplicate checking
+    private cachedEventIds = new Set<string>();
+
+    /**
+     * Track a cached event ID for duplicate checking
+     */
+    public addCachedEventId(eventId: string): void {
+        this.cachedEventIds.add(eventId);
+    }
+
+    /**
+     * Check if an event ID is already cached
+     */
+    public hasCachedEvent(eventId: string): boolean {
+        return this.cachedEventIds.has(eventId);
+    }
+
     // Event batching for worker mode
     private eventBatch: Array<{ event: any; relay?: string; resolve: () => void; reject: (err: Error) => void }> = [];
     private batchTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -304,7 +321,17 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
      * Protected so setEvent can access it
      */
     protected batchEvent(event: any, relay?: string): Promise<void> {
+        // O(1) check: skip if already cached (avoids worker message entirely)
+        if (event.id && this.cachedEventIds.has(event.id)) {
+            return Promise.resolve();
+        }
+
         return new Promise((resolve, reject) => {
+            // Add to Set immediately to prevent duplicates within same batch
+            if (event.id) {
+                this.cachedEventIds.add(event.id);
+            }
+
             this.eventBatch.push({ event, relay, resolve, reject });
 
             // Flush immediately if batch is full

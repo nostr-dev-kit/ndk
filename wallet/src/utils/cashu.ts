@@ -1,4 +1,4 @@
-import type { CashuWallet, MintQuoteResponse, Proof } from "@cashu/cashu-ts";
+import type { Wallet, MintQuoteResponse, Proof, OutputType, P2PKTag } from "@cashu/cashu-ts";
 
 /**
  * Ensures a pubkey is in the correct format for Cashu.
@@ -20,7 +20,7 @@ export function ensureIsCashuPubkey(pubkey?: string): string | undefined {
 }
 
 export async function mintProofs(
-    wallet: CashuWallet,
+    wallet: Wallet,
     quote: MintQuoteResponse,
     amount: number,
     mint: string,
@@ -30,11 +30,20 @@ export async function mintProofs(
     const mintTokenAttempt = (resolve: (value: any) => void, reject: (reason?: any) => void, attempt: number) => {
         const pubkey = ensureIsCashuPubkey(p2pk);
 
+        // Build OutputType for P2PK if pubkey is provided
+        let outputType: OutputType | undefined;
+        if (pubkey) {
+            outputType = {
+                type: 'p2pk',
+                options: {
+                    pubkey,
+                    ...(proofTags && proofTags.length > 0 ? { additionalTags: proofTags as P2PKTag[] } : {}),
+                },
+            };
+        }
+
         wallet
-            .mintProofs(amount, quote.quote, {
-                pubkey,
-                ...(proofTags && proofTags.length > 0 ? { tags: proofTags } : {}),
-            })
+            .mintProofsBolt11(amount, quote.quote, {}, outputType)
             .then((mintProofs) => {
                 console.debug("minted tokens", mintProofs);
 

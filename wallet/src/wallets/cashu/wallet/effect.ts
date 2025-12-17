@@ -1,4 +1,4 @@
-import type { CashuWallet, Proof } from "@cashu/cashu-ts";
+import type { Wallet, Proof } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
 import { calculateFee } from "./fee";
 import type { NDKCashuWallet } from "./index.js";
@@ -45,7 +45,7 @@ export type WalletOperation<T> = {
  */
 export async function withProofReserve<T>(
     wallet: NDKCashuWallet,
-    cashuWallet: CashuWallet | undefined,
+    cashuWallet: Wallet | undefined,
     mint: MintUrl,
     amountWithFees: number,
     amountWithoutFees: number,

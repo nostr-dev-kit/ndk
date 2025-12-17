@@ -1,4 +1,4 @@
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import { Mint, Wallet } from "@cashu/cashu-ts";
 import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
 import type { NutPayment } from "../cashu/pay/nut";
 import type { NDKWebLNWallet } from ".";
@@ -36,8 +36,8 @@ export class NDKLnPay {
 
         // get quotes from the mints the recipient has
         const quotesPromises = mints.map(async (mint) => {
-            const wallet = new CashuWallet(new CashuMint(mint), { unit: unit });
-            const quote = await wallet.createMintQuote(amount);
+            const wallet = new Wallet(new Mint(mint), { unit: unit });
+            const quote = await wallet.createMintQuoteBolt11(amount);
             return { quote, mint };
         });
 
@@ -54,7 +54,7 @@ export class NDKLnPay {
             throw new Error("payment failed");
         }
 
-        const wallet = new CashuWallet(new CashuMint(mint), { unit });
+        const wallet = new Wallet(new Mint(mint), { unit });
         const proofs = await wallet.mintProofs(amount, quote.quote, {
             pubkey: p2pk,
         });

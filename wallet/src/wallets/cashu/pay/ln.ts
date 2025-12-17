@@ -85,7 +85,7 @@ async function executePayment(
     const cashuWallet = await wallet.getCashuWallet(mint);
 
     try {
-        const meltQuote = await cashuWallet.createMeltQuote(pr);
+        const meltQuote = await cashuWallet.createMeltQuoteBolt11(pr);
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
 
         const result = await withProofReserve<NDKPaymentConfirmationLN>(
@@ -95,7 +95,7 @@ async function executePayment(
             amountToSend,
             amountWithoutFees,
             async (proofsToUse, _allOurProofs) => {
-                const meltResult = await cashuWallet.meltProofs(meltQuote, proofsToUse);
+                const meltResult = await cashuWallet.meltProofsBolt11(meltQuote, proofsToUse);
 
                 if (meltResult.quote.state === MeltQuoteState.PAID) {
                     return {

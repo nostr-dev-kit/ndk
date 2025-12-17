@@ -61,3 +61,6 @@ svelte/examples/basic-feed/public/
 **/baseline-timing.ts
 **/current-timing.ts
 .playwright-mcp
+
+# Git worktrees
+.worktrees/

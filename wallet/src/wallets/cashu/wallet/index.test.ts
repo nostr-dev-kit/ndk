@@ -7,8 +7,8 @@ import { NDKCashuWallet } from "./index";
 vi.mock("@cashu/cashu-ts", () => {
     return {
         getDecodedToken: vi.fn().mockReturnValue({ mint: "https://mock-mint.com" }),
-        CashuMint: vi.fn(),
-        CashuWallet: vi.fn(),
+        Mint: vi.fn(),
+        Wallet: vi.fn(),
     };
 });
 

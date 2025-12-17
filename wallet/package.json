@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/wallet",
-  "version": "1.0.0-beta.64",
+  "version": "1.0.0-beta.66",
   "description": "NDK Wallet",
   "type": "module",
   "main": "./dist/index.js",
@@ -50,10 +50,10 @@
   },
   "homepage": "https://github.com/nostr-dev-kit/ndk",
   "peerDependencies": {
-    "@cashu/cashu-ts": "^2.1",
+    "@cashu/cashu-ts": "^3.1",
     "@cashu/crypto": "*",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.64",
-    "@nostr-dev-kit/sync": "1.0.0-beta.64"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.66",
+    "@nostr-dev-kit/sync": "1.0.0-beta.66"
   },
   "dependencies": {
     "debug": "^4.3.7",
@@ -64,10 +64,10 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@cashu/cashu-ts": "^2.1",
+    "@cashu/cashu-ts": "^3.1",
     "@cashu/crypto": "*",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.64",
-    "@nostr-dev-kit/sync": "1.0.0-beta.64",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.66",
+    "@nostr-dev-kit/sync": "1.0.0-beta.66",
     "@types/debug": "^4.1.12",
     "@types/node": "^24.10.0",
     "@webbtc/webln-types": "^3.0.0",

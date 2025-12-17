@@ -1,4 +1,4 @@
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import { Mint, Wallet } from "@cashu/cashu-ts";
 import NDK, {
     NDKCashuMintList,
     NDKEvent,
@@ -68,7 +68,7 @@ describe("NDKNutzapMonitor", () => {
         mintList.mints = ["https://testmint.com"];
 
         // Mock CashuWallet
-        const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+        const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
         vi.spyOn(mockCashuWallet, "checkProofsStates").mockResolvedValue([]);
         vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
@@ -361,7 +361,7 @@ describe("NDKNutzapMonitor", () => {
 
         it("should transition through states and set redeemedAmount when successfully redeemed", async () => {
             // Mock the wallet for mints
-            const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+            const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
             vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
             // Get the user's pubkey and create a nutzap for them
@@ -428,7 +428,7 @@ describe("NDKNutzapMonitor", () => {
 
         it("should mark nutzap as PERMANENT_ERROR when 'unknown public key size' error occurs", async () => {
             // Mock the wallet for mints
-            const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+            const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
             vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
             // Get the user's pubkey and create a nutzap for them
@@ -470,7 +470,7 @@ describe("NDKNutzapMonitor", () => {
 
         it("should emit 'failed' event for other errors during redemption", async () => {
             // Mock the wallet for mints
-            const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+            const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
             vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
             // Get the user's pubkey and create a nutzap for them
@@ -936,7 +936,7 @@ describe("NIP-61 specific functionality", () => {
         mintList.mints = ["https://testmint.com"];
 
         // Mock CashuWallet
-        const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+        const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
         vi.spyOn(mockCashuWallet, "checkProofsStates").mockResolvedValue([]);
         vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
@@ -980,7 +980,7 @@ describe("NIP-61 specific functionality", () => {
         await monitor.addPrivkey(signer2);
 
         // Mock CashuWallet
-        const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+        const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
         vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
         // Mock getProofSpendState to return unspent proofs
@@ -1046,7 +1046,7 @@ describe("NIP-61 specific functionality", () => {
         });
 
         // Mock CashuWallet
-        const mockCashuWallet = new CashuWallet(new CashuMint("https://testmint.com"));
+        const mockCashuWallet = new Wallet(new Mint("https://testmint.com"));
         vi.spyOn(CashuMintModule, "walletForMint").mockResolvedValue(mockCashuWallet);
 
         // Mock getProofSpendState to return unspent proofs

@@ -1,4 +1,4 @@
-import type { CashuWallet, GetInfoResponse, MintKeys } from "@cashu/cashu-ts";
+import type { Wallet, GetInfoResponse, MintKeys } from "@cashu/cashu-ts";
 import type { NDKCacheAdapter } from "@nostr-dev-kit/ndk";
 import { walletForMint } from "./cashu/mint";
 
@@ -39,7 +39,7 @@ export function createMintCacheCallbacks(adapter: NDKCacheAdapter): {
 }
 
 export interface MintInterface {
-    cashuWallets: Map<string, CashuWallet>;
+    cashuWallets: Map<string, Wallet>;
 
     /**
      * Called when the wallet needs to load mint info. Use this
@@ -66,11 +66,11 @@ export interface MintInterface {
     /**
      * Get a cashu wallet for a mint.
      */
-    getCashuWallet(mint: string): Promise<CashuWallet>;
+    getCashuWallet(mint: string): Promise<Wallet>;
 }
 
-export async function getCashuWallet(this: MintInterface, mint: string): Promise<CashuWallet> {
-    if (this.cashuWallets.has(mint)) return this.cashuWallets.get(mint) as CashuWallet;
+export async function getCashuWallet(this: MintInterface, mint: string): Promise<Wallet> {
+    if (this.cashuWallets.has(mint)) return this.cashuWallets.get(mint) as Wallet;
 
     const w = await walletForMint(mint, {
         onMintInfoNeeded: this.onMintInfoNeeded,

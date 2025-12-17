@@ -30,7 +30,7 @@ export async function redeemNutzaps(
     while (sweepAmount > 0) {
         const invoice = await this.makeInvoice(sweepAmount * 1000, "Nutzap redemption");
 
-        const meltQuote = await cashuWallet.createMeltQuote(invoice.invoice);
+        const meltQuote = await cashuWallet.createMeltQuoteBolt11(invoice.invoice);
         const totalRequired = meltQuote.amount + meltQuote.fee_reserve;
 
         if (totalRequired > totalAvailable) {
@@ -38,7 +38,7 @@ export async function redeemNutzaps(
             continue;
         }
 
-        const result = await cashuWallet.meltProofs(meltQuote, proofs, { privkey });
+        const result = await cashuWallet.meltProofsBolt11(meltQuote, proofs, { privkey });
         let change: NDKCashuToken | undefined;
         if (result.change.length > 0) change = await saveChange(this.ndk, mint, result.change);
 

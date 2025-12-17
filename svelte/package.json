@@ -65,7 +65,7 @@
     "@nostr-dev-kit/sync": "1.0.0-beta.66",
     "@nostr-dev-kit/wallet": "1.0.0-beta.66",
     "@nostr-dev-kit/wot": "1.0.0-beta.66",
-    "svelte": "^5.43.3"
+    "svelte": "^5.46.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -84,7 +84,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.0.0",
     "shadcn-svelte": "^1.0.10",
-    "svelte": "^5.43.3",
+    "svelte": "^5.46.0",
     "svelte-check": "^4.0.0",
     "svelte-eslint-parser": "^1.4.0",
     "tslib": "^2.6.0",

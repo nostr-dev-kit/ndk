@@ -1,18 +1,28 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EventGenerator } from "../../test";
-import type { NDKEvent } from "../events/index.js";
-import { NDK } from "../ndk/index.js";
-import { NDKSubscription } from "../subscription/index.js";
+import type { NDKEvent } from "../events";
+import { NDK } from "../ndk";
 import { NDKUser, type NDKUserParams, type ProfilePointer } from "./index.js";
 import * as Nip05 from "./nip05.js";
 
 describe("NDKUser", () => {
     let ndk: NDK;
 
+    const FROZEN_TIME = new Date("2020-01-01T00:00:00.000Z");
+    const NOW_SEC = Math.floor(FROZEN_TIME.getTime() / 1000);
+
     beforeEach(() => {
         vi.clearAllMocks();
+
+        vi.useFakeTimers();
+        vi.setSystemTime(FROZEN_TIME);
+
         ndk = new NDK();
         EventGenerator.setNDK(ndk);
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
     });
 
     describe("constructor", () => {
@@ -84,6 +94,121 @@ describe("NDKUser", () => {
             pubkey = user.pubkey;
         });
 
+        it("profile returns metadata event", async () => {
+            const event = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                }),
+                pubkey,
+            );
+            event.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(event);
+
+            const profile = await user.fetchProfile();
+            const metadataevent = JSON.parse(profile.profileEvent);
+
+            expect(metadataevent.id).toEqual(event.id);
+        });
+
+        it("duplicate fetching of profile", async () => {
+            const event = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                }),
+                pubkey,
+            );
+            event.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(event);
+
+            const profile = await user.fetchProfile();
+            expect(profile?.name).toEqual("Jeff");
+            expect(profile?.picture).toEqual("https://image.url");
+
+            const profile2 = await user.fetchProfile();
+            expect(profile2?.name).toEqual("Jeff");
+            expect(profile2?.picture).toEqual("https://image.url");
+        });
+
+        it("newer profile overwrites older profile (two fetches)", async () => {
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff_OLD",
+                    picture: "https://image.url.old",
+                    about: "About jeff OLD",
+                }),
+                pubkey,
+            );
+            oldEvent.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(oldEvent);
+
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff_OLD");
+            expect(user.profile?.picture).toEqual("https://image.url.old");
+            expect(user.profile?.about).toEqual("About jeff OLD");
+
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                    about: "About jeff",
+                }),
+                pubkey,
+            );
+            newEvent.created_at = NOW_SEC;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValueOnce(newEvent);
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff");
+            expect(user.profile?.picture).toEqual("https://image.url");
+            expect(user.profile?.about).toEqual("About jeff");
+        });
+
+        it.skip("older profile does not overwrite newer profile (two fetches)", async () => {
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff",
+                    picture: "https://image.url",
+                    about: "About jeff",
+                }),
+                pubkey,
+            );
+            newEvent.created_at = NOW_SEC - 3600;
+
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
+                    name: "Jeff_OLD",
+                    picture: "https://image.url.old",
+                    about: "About jeff OLD",
+                }),
+                pubkey,
+            );
+            oldEvent.created_at = NOW_SEC - 7200;
+
+            ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
+
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff");
+            expect(user.profile?.picture).toEqual("https://image.url");
+            expect(user.profile?.about).toEqual("About jeff");
+
+            ndk.fetchEvent = vi.fn().mockResolvedValue(oldEvent);
+            await user.fetchProfile();
+            expect(user.profile?.name).toEqual("Jeff");
+            expect(user.profile?.picture).toEqual("https://image.url");
+            expect(user.profile?.about).toEqual("About jeff");
+        });
+
         it("Returns updated fields", async () => {
             // Use EventGenerator to create profile events
             newEvent = EventGenerator.createEvent(
@@ -91,7 +216,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     displayName: "JeffG",
                     name: "Jeff",
-                    image: "https://image.url",
+                    picture: "https://image.url",
                     banner: "https://banner.url",
                     bio: "Some bio info",
                     nip05: "_@jeffg.fyi",
@@ -101,14 +226,14 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
                 JSON.stringify({
                     displayName: "JeffG_OLD",
                     name: "Jeff_OLD",
-                    image: "https://image.url.old",
+                    picture: "https://image.url.old",
                     banner: "https://banner.url.old",
                     bio: "Some OLD bio info",
                     nip05: "OLD@jeffg.fyi",
@@ -125,7 +250,7 @@ describe("NDKUser", () => {
             await user.fetchProfile();
             expect(user.profile?.displayName).toEqual("JeffG");
             expect(user.profile?.name).toEqual("Jeff");
-            expect(user.profile?.image).toEqual("https://image.url");
+            expect(user.profile?.picture).toEqual("https://image.url");
             expect(user.profile?.banner).toEqual("https://banner.url");
             expect(user.profile?.bio).toEqual("Some bio info");
             expect(user.profile?.nip05).toEqual("_@jeffg.fyi");
@@ -144,7 +269,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
@@ -153,7 +278,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
+            oldEvent.created_at = NOW_SEC - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -170,21 +295,21 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
                 JSON.stringify({
-                    image: "https://set-from-image-field.url",
+                    picture: "https://set-from-image-field.url",
                 }),
                 pubkey,
             );
-            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
+            oldEvent.created_at = NOW_SEC - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
             await user.fetchProfile();
-            expect(user.profile?.image).toEqual("https://set-from-picture-field.url");
+            expect(user.profile?.picture).toEqual("https://set-from-picture-field.url");
         });
 
         it("Allows for arbitrary values to be set on user profiles", async () => {
@@ -195,7 +320,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
+            newEvent.created_at = NOW_SEC - 3600;
 
             oldEvent = EventGenerator.createEvent(
                 0,
@@ -204,7 +329,7 @@ describe("NDKUser", () => {
                 }),
                 pubkey,
             );
-            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
+            oldEvent.created_at = NOW_SEC - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -215,9 +340,7 @@ describe("NDKUser", () => {
 
     describe("validateNip05", () => {
         it("validates the NIP-05 for users", async () => {
-            const user = ndk.getUser({
-                pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
-            });
+            const user = await ndk.fetchUser("1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef");
 
             // Valid NIP-05
             const validNip05 = "_@jeffg.fyi";

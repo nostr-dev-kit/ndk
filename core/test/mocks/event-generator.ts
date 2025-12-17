@@ -1,5 +1,9 @@
-import { NDKEvent } from "../../src/events";
-import { NDKPrivateKeySigner } from "../../src/signers/private-key";
+/** biome-ignore-all lint/complexity/noStaticOnlyClass: <test purposes> */
+/** biome-ignore-all lint/suspicious/noExplicitAny: <test purposes> */
+
+import { EncryptedDirectMessage, Repost, ShortTextNote } from "nostr-tools/kinds";
+import type NDK from "../../src";
+import { NDKEvent, NDKPrivateKeySigner } from "../../src";
 
 /**
  * Low-level event generator for creating test events in your Nostr application tests.
@@ -23,10 +27,9 @@ import { NDKPrivateKeySigner } from "../../src/signers/private-key";
  * ```
  */
 export class EventGenerator {
-    private static privateKeys = new Map<string, string>();
-    private static ndk: any = null;
+    private static ndk: NDK | null = null;
 
-    static setNDK(ndk: any): void {
+    static setNDK(ndk: NDK): void {
         EventGenerator.ndk = ndk;
 
         // Check if the NDK instance has a signer, if not create one
@@ -35,99 +38,38 @@ export class EventGenerator {
         }
     }
 
-    static getPrivateKeyForPubkey(pubkey: string): string {
-        if (!EventGenerator.privateKeys.has(pubkey)) {
-            const signer = NDKPrivateKeySigner.generate();
-            const hexPrivateKey = signer.privateKey;
-            const generatedPubkey = signer.pubkey;
-
-            // If this is a randomly generated pubkey, associate it
-            if (!pubkey || pubkey === generatedPubkey) {
-                EventGenerator.privateKeys.set(generatedPubkey, hexPrivateKey);
-                return hexPrivateKey;
-            }
-
-            // Otherwise, we need to create a mapping for the specific pubkey
-            // (This is just for testing - in real world the private key would need to match)
-            EventGenerator.privateKeys.set(pubkey, hexPrivateKey);
-        }
-        return EventGenerator.privateKeys.get(pubkey) || "";
-    }
-
-    static createEvent(
-        kind = 1, // text note
-        content = "",
-        pubkey = "",
-    ): NDKEvent {
-        if (!EventGenerator.ndk) {
-            throw new Error("NDK not set in EventGenerator. Call setNDK first.");
-        }
-
-        if (!pubkey) {
-            const signer = NDKPrivateKeySigner.generate();
-            pubkey = signer.pubkey;
-        }
-
-        const event = new NDKEvent(EventGenerator.ndk);
+    static createEvent(kind = ShortTextNote, content = "", pubkey?: string): NDKEvent {
+        const ndk = EventGenerator.requireNDK();
+        const event = new NDKEvent(ndk);
         event.kind = kind;
-        event.pubkey = pubkey;
+        event.pubkey = EventGenerator.resolvePubkey(pubkey);
         event.content = content;
 
         return event;
     }
 
-    static async createSignedTextNote(content: string, pubkey = ""): Promise<NDKEvent> {
-        if (!EventGenerator.ndk) {
-            throw new Error("NDK not set in EventGenerator. Call setNDK first.");
-        }
+    static async createSignedTextNote(content: string, pubkey?: string): Promise<NDKEvent> {
+        const event = EventGenerator.createEvent(ShortTextNote, content, pubkey);
 
-        if (!pubkey) {
-            const signer = NDKPrivateKeySigner.generate();
-            pubkey = signer.pubkey;
-        }
-
-        const _privateKey = EventGenerator.getPrivateKeyForPubkey(pubkey);
-        const event = EventGenerator.createEvent(1, content, pubkey);
-
-        // Sign the event using NDK's signing mechanism
         await event.sign();
 
         return event;
     }
 
     static async createEncryptedDirectMessage(content: string, from: string, to: string): Promise<NDKEvent> {
-        if (!EventGenerator.ndk) {
-            throw new Error("NDK not set in EventGenerator. Call setNDK first.");
-        }
-
-        const event = EventGenerator.createEvent(4, content, from);
+        const event = EventGenerator.createEvent(EncryptedDirectMessage, content, from);
         event.tags.push(["p", to]);
 
-        // Sign the event
         await event.sign();
 
         return event;
     }
 
-    static async createRepost(originalEvent: NDKEvent, pubkey = ""): Promise<NDKEvent> {
-        if (!EventGenerator.ndk) {
-            throw new Error("NDK not set in EventGenerator. Call setNDK first.");
-        }
-
-        if (!pubkey) {
-            const signer = NDKPrivateKeySigner.generate();
-            pubkey = signer.pubkey;
-        }
-
-        const event = EventGenerator.createEvent(
-            6, // Repost kind
-            JSON.stringify(await originalEvent.toNostrEvent()),
-            pubkey,
-        );
+    static async createRepost(originalEvent: NDKEvent, pubkey?: string): Promise<NDKEvent> {
+        const event = EventGenerator.createEvent(Repost, JSON.stringify(await originalEvent.toNostrEvent()), pubkey);
         event.tags.push(["e", originalEvent.id || ""]);
         event.tags.push(["p", originalEvent.pubkey]);
 
-        // Sign the event
         await event.sign();
 
         return event;
@@ -136,20 +78,11 @@ export class EventGenerator {
     static async createParameterizedReplaceable(
         kind: number,
         content: string,
-        pubkey = "",
+        pubkey?: string,
         dTag = "",
     ): Promise<NDKEvent> {
-        if (!EventGenerator.ndk) {
-            throw new Error("NDK not set in EventGenerator. Call setNDK first.");
-        }
-
         if (kind < 30000 || kind > 39999) {
             throw new Error(`Invalid parameterized replaceable event kind: ${kind}. Must be between 30000-39999.`);
-        }
-
-        if (!pubkey) {
-            const signer = NDKPrivateKeySigner.generate();
-            pubkey = signer.pubkey;
         }
 
         const event = EventGenerator.createEvent(kind, content, pubkey);
@@ -157,9 +90,20 @@ export class EventGenerator {
         // Parameterized replaceable events require a d tag
         event.tags.push(["d", dTag]);
 
-        // Sign the event
         await event.sign();
 
         return event;
+    }
+
+    private static requireNDK() {
+        if (!EventGenerator.ndk) {
+            throw new Error("NDK not set in EventGenerator. Call setNDK first.");
+        }
+        return EventGenerator.ndk;
+    }
+
+    private static resolvePubkey(pubkey?: string): string {
+        if (pubkey && pubkey.length > 0) return pubkey;
+        return NDKPrivateKeySigner.generate().pubkey;
     }
 }

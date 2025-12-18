@@ -54,13 +54,13 @@
 
 - Add NIP-05 verification caching to SQLite adapters
 
-    Implements NIP-05 verification result caching in both cache-sqlite-wasm and mobile SQLite adapters to prevent unnecessary network requests. Both successful and failed verifications are now cached with smart expiration:
+  Implements NIP-05 verification result caching in both cache-sqlite-wasm and mobile SQLite adapters to prevent unnecessary network requests. Both successful and failed verifications are now cached with smart expiration:
     - Successful verifications are cached indefinitely
     - Failed verifications are cached for 1 hour (configurable) to prevent hammering down/non-existent endpoints
     - Expired failed verifications return "missing" to trigger retry
     - Fresh failed verifications return null to prevent re-fetch
 
-    This brings feature parity with cache-dexie and cache-memory adapters.
+  This brings feature parity with cache-dexie and cache-memory adapters.
 
 ### Patch Changes
 
@@ -772,7 +772,6 @@
 - c83166a: bump
 - 6e16e06: Enhance SQLite adapter to support decrypted events storage and retrieval.
 - import changes
-- df73b9b: add <EventContent> component
 - Updated dependencies [c83166a]
 - Updated dependencies [5ab19ef]
 - Updated dependencies [6e16e06]
@@ -786,7 +785,7 @@
 
 ### Patch Changes
 
-- add <EventContent> component
+- add `EventContent` component
 
 ## 0.4.4
 

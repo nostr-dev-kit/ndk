@@ -24,8 +24,7 @@ rm -rf \
     "$DOCS_DIR/tutorial" \
     "$DOCS_DIR/api-examples.md" \
     "$DOCS_DIR/snippets" \
-    "$DOCS_DIR/snippets" \
-    "$DOCS_DIR/cache" \
+Re    "$DOCS_DIR/cache" \
     "$DOCS_DIR/mobile" \
     "$DOCS_DIR/wallet" \
     "$DOCS_DIR/wot" \
@@ -40,7 +39,6 @@ mkdir -p \
     "$DOCS_DIR/cache/sqlite-wasm" \
     "$DOCS_DIR/mobile" \
     "$DOCS_DIR/snippets/mobile" \
-    "$DOCS_DIR/wallet" \
     "$DOCS_DIR/wallet" \
     "$DOCS_DIR/snippets/wallet" \
     "$DOCS_DIR/wot" \

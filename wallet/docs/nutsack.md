@@ -1,4 +1,4 @@
-# NIP-60 (Nutack) wallets
+# NIP-60 (Nutsack) wallets
 
 NIP-60 provides wallets that are available to any nostr application immediately; the goal of NIP-60 is to provide the same
 seamless experience nostr users expect from their apps with regards to the immediate aailability of their data, to their money.
@@ -58,7 +58,6 @@ ndk.wallet = wallet;
 Now that we have a wallet, some funds, and we have ndk prepared to use that wallet, we'll send a zap. NDK provides a convenient `wallet` setter that allows
 
 ```ts
-// have an ndk instance bound to `ndk`, you'll need to pass it in below
 const user = await NDKUser.fromNip05("_@f7z.io", ndk);
 const zapper = new NDKZapper(user, 1, "sat", {
     comment: "hello from my wallet!",

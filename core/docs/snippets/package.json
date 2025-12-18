@@ -1,0 +1,11 @@
+{
+  "name": "snippets",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.62",
+    "@nostr-dev-kit/wallet": "1.0.0-beta.62"
+  }
+}

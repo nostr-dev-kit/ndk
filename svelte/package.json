@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/svelte",
-  "version": "4.0.0-beta.64",
+  "version": "4.0.0-beta.66",
   "description": "Modern, performant, and beautiful Svelte 5 integration for NDK",
   "type": "module",
   "svelte": "./dist/index.js",
@@ -59,13 +59,13 @@
   "author": "pablof7z",
   "license": "MIT",
   "peerDependencies": {
-    "@nostr-dev-kit/blossom": "8.0.0-beta.64",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.64",
-    "@nostr-dev-kit/sessions": "1.0.0-beta.64",
-    "@nostr-dev-kit/sync": "1.0.0-beta.64",
-    "@nostr-dev-kit/wallet": "1.0.0-beta.64",
-    "@nostr-dev-kit/wot": "1.0.0-beta.64",
-    "svelte": "^5.43.3"
+    "@nostr-dev-kit/blossom": "8.0.0-beta.66",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.66",
+    "@nostr-dev-kit/sessions": "1.0.0-beta.66",
+    "@nostr-dev-kit/sync": "1.0.0-beta.66",
+    "@nostr-dev-kit/wallet": "1.0.0-beta.66",
+    "@nostr-dev-kit/wot": "1.0.0-beta.66",
+    "svelte": "^5.46.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -84,7 +84,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.0.0",
     "shadcn-svelte": "^1.0.10",
-    "svelte": "^5.43.3",
+    "svelte": "^5.46.0",
     "svelte-check": "^4.0.0",
     "svelte-eslint-parser": "^1.4.0",
     "tslib": "^2.6.0",

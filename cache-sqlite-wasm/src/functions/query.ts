@@ -92,9 +92,6 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
                     const relay = subscription.pool.getRelay(relayUrl, false);
                     if (relay) {
                         event.relay = relay;
-                        if (subscription.ndk) {
-                            subscription.ndk.subManager.seenEvent(event.id, relay);
-                        }
                     }
                 }
             }

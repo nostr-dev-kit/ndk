@@ -37,16 +37,20 @@
 		return createFetchUser(ndk, () => String(defaultValue));
 	});
 
+	// Track loaded state separately for reactivity
+	const isUserLoaded = $derived(type === 'user' && userFetcher ? userFetcher.$loaded : false);
+	const isEventLoaded = $derived(type === 'event' && eventFetcher ? !eventFetcher.loading && !!eventFetcher.event : false);
+
 	// Wire up fetched values when they become available
 	$effect(() => {
-		if (type === 'event' && eventFetcher && !eventFetcher.loading && eventFetcher.event && !value) {
+		if (isEventLoaded && eventFetcher && eventFetcher.event && !value) {
 			value = eventFetcher.event;
 			context.updatePropValue(name, eventFetcher.event);
 		}
 	});
 
 	$effect(() => {
-		if (type === 'user' && userFetcher && userFetcher.$loaded && !value) {
+		if (isUserLoaded && userFetcher && !value) {
 			value = userFetcher;
 			context.updatePropValue(name, userFetcher);
 		}

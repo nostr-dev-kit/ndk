@@ -363,10 +363,7 @@
         Extension
       </button>
       <button class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg bg-background text-sm font-medium cursor-pointer transition-all flex items-center justify-center gap-2 text-foreground hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleBunkerSigner} disabled={isLoading}>
-        <div style="text-align: center; width: 100%;">
-          <div>Bunker Signer</div>
-          <div class="text-[0.6875rem] text-muted-foreground font-normal block mt-0.5">nostrconnect://</div>
-        </div>
+        Bunker Signer
       </button>
     </div>
   {:else}
@@ -425,10 +422,7 @@
       </button>
 
       <button class="w-full px-3.5 py-3.5 border-[1.5px] border-border rounded-lg bg-background text-sm font-medium cursor-pointer transition-all flex items-center justify-center gap-2 text-foreground mt-2 hover:border-primary hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed" onclick={handleBunkerSigner} disabled={isLoading}>
-        <div style="text-align: center; width: 100%;">
-          <div>Bunker Signer</div>
-          <div class="text-[0.6875rem] text-muted-foreground font-normal block mt-0.5">nostrconnect://</div>
-        </div>
+        Bunker Signer
       </button>
     </div>
   {/if}

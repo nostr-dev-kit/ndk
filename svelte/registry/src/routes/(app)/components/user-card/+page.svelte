@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { ndk } from '$lib/site/ndk.svelte';
-  import type { NDKUser } from '@nostr-dev-kit/ndk';
+  import { NDKUser } from '@nostr-dev-kit/ndk';
   import ComponentPageTemplate from '$lib/site/templates/ComponentPageTemplate.svelte';
   import { EditProps } from '$lib/site/components/edit-props';
   import SectionTitle from '$site-components/SectionTitle.svelte';
@@ -42,16 +42,16 @@
     title: 'User Cards',
     description: 'Beautiful user profile cards with multiple variants and styles'
   };
-  // State for users
-  let user1 = $state<NDKUser | undefined>();
-  let user2 = $state<NDKUser | undefined>();
-  let user3 = $state<NDKUser | undefined>();
-  let user4 = $state<NDKUser | undefined>();
-  let user5 = $state<NDKUser | undefined>();
-  let user6 = $state<NDKUser | undefined>();
-  let user7 = $state<NDKUser | undefined>();
-  let user8 = $state<NDKUser | undefined>();
-  let user9 = $state<NDKUser | undefined>();
+  // State for users - initialize directly with npubs
+  let user1 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" }));
+  let user2 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6" }));
+  let user3 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m" }));
+  let user4 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1gcxzte5zlkncx26j68ez60fzkvtkm9e0vrwdcvsjakxf9mu9qewqlfnj5z" }));
+  let user5 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1a2cww4kn9wqte4ry70vyfwqyqvpswksna27rtxd8vty6c74era8sdcw83a" }));
+  let user6 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1hu3hdctm5nkzd8gslnyedfr5ddz3z547jqcl5j88g4fame2jd08qep89nw" }));
+  let user7 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s" }));
+  let user8 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1qny3tkh0acurzla8x3zy4nhrjz5zd8l9sy9jys09umwng00manysew95gx" }));
+  let user9 = $state<NDKUser | undefined>(new NDKUser({ npub: "npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" }));
 
   const displayUsers = $derived([user1, user2, user3, user4, user5, user6, user7, user8, user9].filter(Boolean) as NDKUser[]);
 

@@ -24,7 +24,7 @@
 
   // Initialize sample user directly with npub
   let sampleUser = $state<NDKUser | undefined>(
-    NDKUser.fromNpub("npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft")
+    new NDKUser({ npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" })
   );
 
   // Components section configuration

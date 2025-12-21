@@ -15,6 +15,7 @@ package-lock.json
 !svelte.config.js
 !tailwind.config.js
 !postcss.config.js
+!svelte/registry/static/worker.js
 **/*.d.ts
 **/*.d.ts.map
 !light-bolt11-decoder.d.ts

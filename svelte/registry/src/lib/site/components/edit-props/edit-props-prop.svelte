@@ -39,14 +39,16 @@
 
 	// Wire up fetched values when they become available
 	$effect(() => {
-		if (!value) {
-			if (type === 'event' && eventFetcher && !eventFetcher.loading && eventFetcher.event) {
-				value = eventFetcher.event;
-				context.updatePropValue(name, eventFetcher.event);
-			} else if (type === 'user' && userFetcher && userFetcher.$loaded) {
-				value = userFetcher;
-				context.updatePropValue(name, userFetcher);
-			}
+		if (type === 'event' && eventFetcher && !eventFetcher.loading && eventFetcher.event && !value) {
+			value = eventFetcher.event;
+			context.updatePropValue(name, eventFetcher.event);
+		}
+	});
+
+	$effect(() => {
+		if (type === 'user' && userFetcher && userFetcher.$loaded && !value) {
+			value = userFetcher;
+			context.updatePropValue(name, userFetcher);
 		}
 	});
 

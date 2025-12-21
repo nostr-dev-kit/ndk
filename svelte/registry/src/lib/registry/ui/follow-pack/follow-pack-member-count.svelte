@@ -11,7 +11,7 @@
 	let { class: className = '', format = 'short' }: Props = $props();
 
 	const context = getContext<FollowPackContext>(FOLLOW_PACK_CONTEXT_KEY);
-	const count = $derived(context.followPack.pubkeys.length);
+	const count = $derived(context.followPack.pubkeys?.length ?? 0);
 
 	const displayText = $derived(
 		format === 'long' ? `${count} ${count === 1 ? 'person' : 'people'}` : count.toString()

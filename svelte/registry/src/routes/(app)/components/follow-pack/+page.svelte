@@ -59,10 +59,10 @@
       {...followPackListItemCard, code: followPackListItemCode}
     ],
     previews: {
-      'follow-pack-hero': heroPreview,
-      'follow-pack-portrait': portraitPreview,
-      'follow-pack-compact': compactPreview,
-      'follow-pack-list-item': listItemPreview
+      'follow-hero': heroPreview,
+      'follow-portrait': portraitPreview,
+      'follow-compact': compactPreview,
+      'follow-basic': listItemPreview
     }
   };
 
@@ -98,7 +98,7 @@
 {#snippet heroPreview()}
   {#if pack1}
     <div class="min-w-[800px]">
-      {pack1.content}
+      <FollowPackHero {ndk} followPack={pack1} />
     </div>
   {/if}
 {/snippet}

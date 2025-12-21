@@ -81,7 +81,7 @@ export function createFetchEvent(
 
     const sub = ndk.subscribe(
       filter,
-      { relaySet, closeOnEose: true, ...opts },
+      { relaySet, closeOnEose: true, wrap: true, ...opts },
       {
         onEvent: (e: NDKEvent) => {
           if (

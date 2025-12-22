@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, test } from "bun:test";
-import { NDKEvent } from "../../events/index.js";
-import { NDK } from "../../ndk/index.js";
+import { beforeEach, describe, expect, test } from "vitest";
+import { NDK } from "../../ndk";
+import { NDKEvent } from "../index";
 import { NDKKind } from "./index.js";
 import { NDKInterestList } from "./interest-list.js";
 
@@ -29,6 +29,18 @@ describe("NDKInterestList", () => {
         expect(interests).toEqual(["nostr", "bitcoin", "technology"]);
     });
 
+    test("filters out falsy interest tag values", () => {
+        const list = new NDKInterestList(ndk);
+        list.tags = [
+            ["t", "nostr"],
+            ["t", ""],
+            ["t", undefined as any],
+            ["t", "bitcoin"],
+        ];
+
+        expect(list.interests).toEqual(["nostr", "bitcoin"]);
+    });
+
     test("sets interests replacing existing ones", () => {
         const list = new NDKInterestList(ndk);
         list.tags = [
@@ -47,6 +59,35 @@ describe("NDKInterestList", () => {
         list.addInterest("nostr");
         list.addInterest("bitcoin");
         list.addInterest("nostr"); // duplicate
+
+        expect(list.interests).toEqual(["nostr", "bitcoin"]);
+    });
+
+    test("removeInterest is a no-op when interest does not exist", () => {
+        const list = new NDKInterestList(ndk);
+        list.tags = [
+            ["t", "nostr"],
+            ["title", "My Interests"],
+            ["t", "bitcoin"],
+        ];
+
+        const beforeTags = list.tags.map((t) => [...t]);
+
+        list.removeInterest("technology");
+
+        expect(list.tags).toEqual(beforeTags);
+        expect(list.interests).toEqual(["nostr", "bitcoin"]);
+    });
+
+    test("removes only the first matching interest tag", () => {
+        const list = new NDKInterestList(ndk);
+        list.tags = [
+            ["t", "nostr"],
+            ["t", "nostr"],
+            ["t", "bitcoin"],
+        ];
+
+        list.removeInterest("nostr");
 
         expect(list.interests).toEqual(["nostr", "bitcoin"]);
     });
@@ -99,22 +140,32 @@ describe("NDKInterestList", () => {
         expect(list.interestSetReferences).toEqual([]);
     });
 
-    test("updates created_at when adding interest", () => {
+    test("does not set created_at when adding interest (local mutation only)", () => {
         const list = new NDKInterestList(ndk);
-        const before = Math.floor(Date.now() / 1000);
+        expect(list.created_at).toBeUndefined();
 
         list.addInterest("nostr");
 
-        expect(list.created_at).toBeGreaterThanOrEqual(before);
+        expect(list.created_at).toBeUndefined();
     });
 
-    test("updates created_at when removing interest", () => {
+    test("does not set created_at when removing interest (local mutation only)", () => {
         const list = new NDKInterestList(ndk);
         list.interests = ["nostr", "bitcoin"];
-        const before = Math.floor(Date.now() / 1000);
+        expect(list.created_at).toBeUndefined();
 
         list.removeInterest("nostr");
 
-        expect(list.created_at).toBeGreaterThanOrEqual(before);
+        expect(list.created_at).toBeUndefined();
+    });
+
+    test("does not set created_at when removing a missing interest (no-op)", () => {
+        const list = new NDKInterestList(ndk);
+        list.interests = ["nostr", "bitcoin"];
+        expect(list.created_at).toBeUndefined();
+
+        list.removeInterest("technology");
+
+        expect(list.created_at).toBeUndefined();
     });
 });

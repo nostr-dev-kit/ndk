@@ -1,6 +1,6 @@
-import { describe, expect, test } from "bun:test";
-import { NDK } from "../../ndk/index.js";
-import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
+import { describe, expect, test } from "vitest";
+import { NDK } from "../../ndk";
+import { NDKPrivateKeySigner } from "../../signers/private-key";
 import { NDKKind } from "./index.js";
 import { NDKRelayFeedList } from "./relay-feed-list.js";
 
@@ -18,8 +18,7 @@ describe("NDKRelayFeedList", () => {
     });
 
     test("adds relay URLs", async () => {
-        const signer = NDKPrivateKeySigner.generate();
-        ndk.signer = signer;
+        ndk.signer = NDKPrivateKeySigner.generate();
 
         const list = new NDKRelayFeedList(ndk);
         await list.addRelay("wss://relay.damus.io");

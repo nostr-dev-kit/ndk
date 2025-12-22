@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NDK } from "../ndk/index.js";
+import { NDK } from "../ndk";
 import {
     assertSignedEvent,
     createSignedEvent,

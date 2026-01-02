@@ -226,12 +226,17 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return new Promise((resolve, reject) => {
             const connect = (response: NDKRpcResponse) => {
                 if (response.result === this.nostrConnectSecret) {
-                    this._user = response.event.author;
-                    this.userPubkey = response.event.pubkey;
+                    // The response event pubkey is the bunker's pubkey, not the user's
                     this.bunkerPubkey = response.event.pubkey;
 
                     this.rpc.off("response", connect);
-                    resolve(this._user);
+
+                    // Get the actual user's pubkey from the bunker
+                    this.getPublicKey().then((pubkey) => {
+                        this.userPubkey = pubkey;
+                        this._user = this.ndk.getUser({ pubkey });
+                        resolve(this._user);
+                    }).catch(reject);
                 }
             };
 

@@ -517,13 +517,14 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     private shouldQueryCache(): boolean {
-        if (this.opts.addSinceFromCache) return true;
-
         // explicitly told to not query the cache
         if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
 
-        const hasNonEphemeralKind = this.filters.some((f) => f.kinds?.some((k) => kindIsEphemeral(k)));
-        if (hasNonEphemeralKind) return true;
+        // If all filters contain only ephemeral kinds, don't query cache
+        const allFiltersEphemeralOnly = this.filters.every((f) =>
+            f.kinds && f.kinds.length > 0 && f.kinds.every((k) => kindIsEphemeral(k))
+        );
+        if (allFiltersEphemeralOnly) return false;
 
         return true;
     }

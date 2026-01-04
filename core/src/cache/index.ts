@@ -8,6 +8,9 @@ import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 
+// Export filter utilities for cache adapters
+export { filterForCache, filterEphemeralKindsFromFilter, isEphemeralKind } from "./filter.js";
+
 export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
 };

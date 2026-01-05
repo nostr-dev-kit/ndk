@@ -6,7 +6,7 @@ import { setEventSync } from "./functions/setEvent";
 import { encodeEvents, type EventForEncoding } from "./binary/encoder";
 import type { CacheStats } from "./functions/getCacheStats";
 import { PACKAGE_VERSION, PROTOCOL_NAME } from "./version";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, matchFilter, type NDKFilter } from "@nostr-dev-kit/ndk";
 
 // Helper function for getting cache stats within worker
 function getCacheStatsSync(db: Database): CacheStats {
@@ -395,52 +395,68 @@ self.onmessage = async (event: MessageEvent) => {
                 break;
             }
             case "query": {
-                const { filters, subId } = payload;
-                const queryResult = querySync(db, filters, subId);
+                const { filters } = payload as { filters: NDKFilter[] };
+                const queryResult = querySync(db, filters);
 
-                if (queryResult.length > 0) {
-                    // Convert to format suitable for encoding
-                    const eventsForEncoding: EventForEncoding[] = queryResult.map((row: any) => {
-                        // Parse the raw field if it's a JSON string
-                        let eventData;
-                        if (typeof row.raw === 'string') {
-                            try {
-                                const parsed = JSON.parse(row.raw);
-                                eventData = {
-                                    id: parsed[0] || row.id,
-                                    pubkey: parsed[1] || row.pubkey,
-                                    created_at: parsed[2] || row.created_at,
-                                    kind: parsed[3] || row.kind,
-                                    tags: parsed[4] || (typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : row.tags || []),
-                                    content: parsed[5] || row.content,
-                                    sig: parsed[6] || row.sig
-                                };
-                            } catch {
-                                // Fallback to individual fields
-                                eventData = {
-                                    id: row.id,
-                                    pubkey: row.pubkey,
-                                    created_at: row.created_at,
-                                    kind: row.kind,
-                                    tags: typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : row.tags || [],
-                                    content: row.content,
-                                    sig: row.sig
-                                };
-                            }
-                        } else {
-                            // No raw field or not a string, use individual fields
-                            eventData = {
-                                id: row.id,
-                                pubkey: row.pubkey,
-                                created_at: row.created_at,
-                                kind: row.kind,
-                                tags: typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : row.tags || [],
-                                content: row.content,
-                                sig: row.sig
+                // Parse rows into event data, apply matchFilter + per-filter limits
+                const eventsForEncoding: EventForEncoding[] = [];
+                const seenIds = new Set<string>();
+                const now = Math.floor(Date.now() / 1000);
+
+                // Helper to parse a row into event data
+                const parseRow = (row: Record<string, unknown>) => {
+                    if (typeof row.raw === 'string') {
+                        try {
+                            const parsed = JSON.parse(row.raw as string);
+                            return {
+                                id: parsed[0] || row.id as string,
+                                pubkey: parsed[1] || row.pubkey as string,
+                                created_at: parsed[2] || row.created_at as number,
+                                kind: parsed[3] || row.kind as number,
+                                tags: parsed[4] || (typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : row.tags || []),
+                                content: parsed[5] || row.content as string,
+                                sig: parsed[6] || row.sig as string,
+                                relay_url: row.relay_url as string || null
                             };
+                        } catch {
+                            // fall through
                         }
+                    }
+                    return {
+                        id: row.id as string,
+                        pubkey: row.pubkey as string,
+                        created_at: row.created_at as number,
+                        kind: row.kind as number,
+                        tags: typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : (row.tags as string[][] || []),
+                        content: row.content as string,
+                        sig: row.sig as string,
+                        relay_url: row.relay_url as string || null
+                    };
+                };
 
-                        return {
+                // Process each filter separately to respect per-filter limits
+                for (const filter of filters) {
+                    const limit = filter.limit || Infinity;
+                    let count = 0;
+
+                    for (const row of queryResult) {
+                        if (count >= limit) break;
+
+                        const eventData = parseRow(row);
+
+                        // Skip if already added by a previous filter
+                        if (seenIds.has(eventData.id)) continue;
+
+                        // Check expiration
+                        const expirationTag = eventData.tags?.find((t: string[]) => t[0] === 'expiration');
+                        if (expirationTag && now > parseInt(expirationTag[1])) continue;
+
+                        // Check if event matches this specific filter
+                        if (!matchFilter(filter, eventData as any)) continue;
+
+                        seenIds.add(eventData.id);
+                        count++;
+                        eventsForEncoding.push({
                             id: eventData.id || '',
                             pubkey: eventData.pubkey || '',
                             created_at: eventData.created_at || 0,
@@ -448,12 +464,13 @@ self.onmessage = async (event: MessageEvent) => {
                             sig: eventData.sig || '',
                             content: eventData.content || '',
                             tags: Array.isArray(eventData.tags) ? eventData.tags : [],
-                            relay_url: row.relay_url || null
-                        };
-                    });
+                            relay_url: eventData.relay_url
+                        });
+                    }
+                }
 
-                    // For small result sets (< 100 events), use JSON transfer instead of binary encoding
-                    // JSON is faster for small sets and avoids the encoding/decoding overhead
+                if (eventsForEncoding.length > 0) {
+                    // For small result sets (< 100 events), use JSON transfer
                     if (eventsForEncoding.length < 100) {
                         result = {
                             type: 'json',
@@ -461,7 +478,7 @@ self.onmessage = async (event: MessageEvent) => {
                             eventCount: eventsForEncoding.length,
                         };
                     } else {
-                        // For large result sets, use binary encoding for better transfer size
+                        // For large result sets, use binary encoding
                         const buffer = encodeEvents(eventsForEncoding);
                         result = {
                             type: 'binary',
@@ -470,7 +487,6 @@ self.onmessage = async (event: MessageEvent) => {
                         };
                     }
                 } else {
-                    // Empty result
                     result = {
                         type: 'json',
                         events: [],

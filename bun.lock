@@ -19,7 +19,7 @@
     },
     "blossom": {
       "name": "@nostr-dev-kit/blossom",
-      "version": "8.0.0-beta.67",
+      "version": "8.0.0-beta.68",
       "dependencies": {
         "debug": "^4.3.7",
       },
@@ -36,14 +36,14 @@
     },
     "cache-browser": {
       "name": "@nostr-dev-kit/cache-browser",
-      "version": "1.0.0-beta.67",
+      "version": "1.0.0-beta.68",
       "dependencies": {
         "debug": "^4.3.7",
         "typescript": "^5.9.3",
       },
       "devDependencies": {
-        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.67",
-        "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.67",
+        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.68",
+        "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.68",
         "@types/debug": "^4.1.12",
         "@types/node": "^24.10.0",
         "fake-indexeddb": "^6.0.0",
@@ -55,16 +55,16 @@
         "vitest": "^4.0.14",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.67",
-        "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.67",
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.68",
+        "@nostr-dev-kit/cache-sqlite-wasm": "1.0.0-beta.68",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
       },
     },
     "cache-dexie": {
       "name": "@nostr-dev-kit/cache-dexie",
-      "version": "2.7.8-beta.67",
+      "version": "2.7.8-beta.68",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
         "debug": "^4.3.7",
         "dexie": "^4.0.8",
         "nostr-tools": "^2.17.2",
@@ -85,9 +85,9 @@
     },
     "cache-memory": {
       "name": "@nostr-dev-kit/cache-memory",
-      "version": "2.7.8-beta.67",
+      "version": "2.7.8-beta.68",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
         "debug": "^4.3.7",
         "nostr-tools": "^2.17.2",
         "typescript": "^5.9.3",
@@ -106,9 +106,9 @@
     },
     "cache-nostr": {
       "name": "@nostr-dev-kit/cache-nostr",
-      "version": "0.1.66-beta.67",
+      "version": "0.1.66-beta.68",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
         "debug": "^4.3.7",
         "typescript": "^5.9.3",
         "websocket-polyfill": "^0.0.3",
@@ -122,7 +122,7 @@
     },
     "cache-redis": {
       "name": "@nostr-dev-kit/cache-redis",
-      "version": "0.1.52-beta.67",
+      "version": "0.1.52-beta.68",
       "dependencies": {
         "@nostr-dev-kit/ndk": "3.0.0-beta.66",
         "debug": "^4.3.7",
@@ -139,12 +139,12 @@
     },
     "cache-sqlite": {
       "name": "@nostr-dev-kit/cache-sqlite",
-      "version": "8.0.0-beta.67",
+      "version": "8.0.0-beta.68",
       "dependencies": {
         "better-sqlite3": "^12.4.1",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
         "@types/better-sqlite3": "^7.6.8",
         "@types/node": "^24.10.0",
         "tsup": "^8.4.0",
@@ -152,17 +152,17 @@
         "vitest": "^4.0.14",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
       },
     },
     "cache-sqlite-wasm": {
       "name": "@nostr-dev-kit/cache-sqlite-wasm",
-      "version": "1.0.0-beta.67",
+      "version": "1.0.0-beta.68",
       "dependencies": {
         "sql.js": "^1.8.0",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
         "@types/node": "^24.10.0",
         "@types/sql.js": "^1.4.9",
         "jsdom": "^27.0.1",
@@ -172,7 +172,7 @@
     },
     "core": {
       "name": "@nostr-dev-kit/ndk",
-      "version": "3.0.0-beta.67",
+      "version": "3.0.0-beta.68",
       "dependencies": {
         "@codesandbox/sandpack-client": "^2.19.8",
         "@noble/curves": "^1.6.0",
@@ -206,7 +206,7 @@
     },
     "messages": {
       "name": "@nostr-dev-kit/messages",
-      "version": "2.0.0-beta.67",
+      "version": "2.0.0-beta.68",
       "dependencies": {
         "eventemitter3": "^5.0.1",
       },
@@ -223,7 +223,7 @@
     },
     "mobile": {
       "name": "@nostr-dev-kit/mobile",
-      "version": "0.9.3-beta.67",
+      "version": "0.9.3-beta.68",
       "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@nostr-dev-kit/ndk": "3.0.0-beta.66",
@@ -255,7 +255,7 @@
     },
     "react": {
       "name": "@nostr-dev-kit/react",
-      "version": "1.3.13-beta.67",
+      "version": "1.3.13-beta.68",
       "dependencies": {
         "@nostr-dev-kit/ndk": "3.0.0-beta.67",
         "@nostr-dev-kit/wallet": "1.0.0-beta.67",
@@ -280,13 +280,13 @@
     },
     "sessions": {
       "name": "@nostr-dev-kit/sessions",
-      "version": "1.0.0-beta.67",
+      "version": "1.0.0-beta.68",
       "dependencies": {
         "zustand": "^5.0.3",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
-        "@nostr-dev-kit/wallet": "1.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
+        "@nostr-dev-kit/wallet": "1.0.0-beta.68",
         "@types/node": "^24.10.0",
         "tsup": "^8.4.0",
         "typescript": "^5.9.3",
@@ -294,13 +294,13 @@
         "vitest": "^4.0.14",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
-        "@nostr-dev-kit/wallet": "1.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
+        "@nostr-dev-kit/wallet": "1.0.0-beta.68",
       },
     },
     "svelte": {
       "name": "@nostr-dev-kit/svelte",
-      "version": "4.0.0-beta.67",
+      "version": "4.0.0-beta.68",
       "devDependencies": {
         "@sveltejs/adapter-auto": "^3.0.0",
         "@sveltejs/adapter-vercel": "^6.0.0",
@@ -340,15 +340,15 @@
     },
     "sync": {
       "name": "@nostr-dev-kit/sync",
-      "version": "1.0.0-beta.67",
+      "version": "1.0.0-beta.68",
       "dependencies": {
         "nostr-tools": "^2.17.2",
         "tseep": "^1.3.1",
       },
       "devDependencies": {
-        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.67",
-        "@nostr-dev-kit/cache-memory": "2.7.8-beta.67",
-        "@nostr-dev-kit/cache-nostr": "0.1.66-beta.67",
+        "@nostr-dev-kit/cache-dexie": "2.7.8-beta.68",
+        "@nostr-dev-kit/cache-memory": "2.7.8-beta.68",
+        "@nostr-dev-kit/cache-nostr": "0.1.66-beta.68",
         "@types/node": "^24.10.0",
         "tsup": "^8.4.0",
         "typescript": "^5.9.3",
@@ -356,12 +356,12 @@
         "vitest": "^4.0.14",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
       },
     },
     "wallet": {
       "name": "@nostr-dev-kit/wallet",
-      "version": "1.0.0-beta.67",
+      "version": "1.0.0-beta.68",
       "dependencies": {
         "debug": "^4.3.7",
         "light-bolt11-decoder": "^3.2.0",
@@ -373,8 +373,8 @@
       "devDependencies": {
         "@cashu/cashu-ts": "^2.1",
         "@cashu/crypto": "*",
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
-        "@nostr-dev-kit/sync": "1.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
+        "@nostr-dev-kit/sync": "1.0.0-beta.68",
         "@types/debug": "^4.1.12",
         "@types/node": "^24.10.0",
         "@webbtc/webln-types": "^3.0.0",
@@ -386,26 +386,26 @@
       "peerDependencies": {
         "@cashu/cashu-ts": "^2.1",
         "@cashu/crypto": "*",
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
-        "@nostr-dev-kit/sync": "1.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
+        "@nostr-dev-kit/sync": "1.0.0-beta.68",
       },
     },
     "wot": {
       "name": "@nostr-dev-kit/wot",
-      "version": "1.0.0-beta.67",
+      "version": "1.0.0-beta.68",
       "dependencies": {
         "debug": "^4.3.7",
         "typescript": "^5.9.3",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
-        "@nostr-dev-kit/sync": "1.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
+        "@nostr-dev-kit/sync": "1.0.0-beta.68",
         "@types/debug": "^4.1.12",
         "tsup": "^8.4.0",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.67",
-        "@nostr-dev-kit/sync": "1.0.0-beta.67",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.68",
+        "@nostr-dev-kit/sync": "1.0.0-beta.68",
       },
     },
   },

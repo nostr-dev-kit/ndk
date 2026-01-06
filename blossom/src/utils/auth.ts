@@ -84,8 +84,12 @@ export async function createAuthEvent(
  */
 export function addAuthHeaders(headers: Record<string, string>, authEvent: NDKEvent): Record<string, string> {
     // Serialize and base64 encode the event according to BUD-01
+    // Use TextEncoder to properly handle UTF-8 characters (e.g., Unicode in filenames)
     const serializedEvent = JSON.stringify(authEvent.rawEvent());
-    const encodedEvent = btoa(serializedEvent);
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(serializedEvent);
+    const binaryString = String.fromCharCode(...uint8Array);
+    const encodedEvent = btoa(binaryString);
 
     return {
         ...headers,

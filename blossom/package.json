@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/blossom",
-  "version": "8.0.0-beta.69",
+  "version": "8.0.0-beta.70",
   "description": "Blossom protocol support for NDK (Nostr Development Kit)",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -42,7 +42,7 @@
     "debug": "^4.3.7"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.69"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.70"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",

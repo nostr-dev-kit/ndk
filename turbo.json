@@ -6,64 +6,60 @@
             "dependsOn": ["^build"],
             "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
         },
-        "core#build": {
+        "@nostr-dev-kit/ndk#build": {
             "outputs": ["dist/**"]
         },
-        "wallet#build": {
+        "@nostr-dev-kit/wallet#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build", "sync#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build", "@nostr-dev-kit/sync#build"]
         },
-        "hooks#build": {
+        "@nostr-dev-kit/mobile#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build", "wallet#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build", "@nostr-dev-kit/wallet#build"]
         },
-        "mobile#build": {
+        "@nostr-dev-kit/blossom#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build", "wallet#build", "hooks#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "blossom#build": {
+        "@nostr-dev-kit/cache-browser#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build", "@nostr-dev-kit/cache-dexie#build", "@nostr-dev-kit/cache-sqlite-wasm#build"]
         },
-        "cache-browser#build": {
+        "@nostr-dev-kit/cache-dexie#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build", "cache-dexie#build", "cache-sqlite-wasm#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "cache-dexie#build": {
+        "@nostr-dev-kit/cache-memory#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "cache-memory#build": {
+        "@nostr-dev-kit/cache-nostr#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "cache-nostr#build": {
+        "@nostr-dev-kit/cache-redis#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "cache-redis#build": {
+        "@nostr-dev-kit/cache-sqlite#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "cache-sqlite#build": {
+        "@nostr-dev-kit/cache-sqlite-wasm#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "cache-sqlite-wasm#build": {
+        "@nostr-dev-kit/sync#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build"]
         },
-        "sync#build": {
+        "@nostr-dev-kit/wot#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build", "@nostr-dev-kit/sync#build"]
         },
-        "wot#build": {
+        "@nostr-dev-kit/sessions#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["core#build", "sync#build"]
-        },
-        "sessions#build": {
-            "outputs": ["dist/**"],
-            "dependsOn": ["core#build", "wallet#build"]
+            "dependsOn": ["@nostr-dev-kit/ndk#build", "@nostr-dev-kit/wallet#build"]
         },
         "test": {
             "outputs": ["coverage/**"],

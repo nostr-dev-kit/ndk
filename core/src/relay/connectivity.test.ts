@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NDK } from "../ndk";
+import { NDKSubscriptionManager } from "../subscription/manager";
 import { NDKRelayConnectivity } from "./connectivity";
 import { type NDKRelay, NDKRelayStatus } from "./index";
 
@@ -294,6 +295,76 @@ describe("NDKRelayConnectivity", () => {
 
             expect(connectivity["wasIdle"]).toBe(true);
             expect(connectivity["reconnectTimeout"]).toBeUndefined();
+        });
+    });
+
+    describe("seenEvents deduplication bug", () => {
+        it("should deliver events to new subscriptions even if event was previously seen", () => {
+            // This test reproduces the bug where:
+            // 1. Subscription A sees event X -> event X added to seenEvents
+            // 2. Subscription B is created later, asks for event X
+            // 3. Relay sends event X back for subscription B
+            // 4. BUG: event is skipped because it's in seenEvents
+            // 5. Subscription B never receives the event
+
+            const eventId = "abc123def456789012345678901234567890123456789012345678901234abcd";
+            const subId = "test-sub";
+
+            // Create a real subManager
+            const subManager = new NDKSubscriptionManager();
+
+            // Pre-populate seenEvents (simulating event was seen by subscription A)
+            subManager.seenEvent(eventId, mockRelay);
+
+            // Verify seenEvents is populated
+            const seenRelays = subManager.seenEvents.get(eventId);
+            expect(seenRelays).toBeDefined();
+            expect(seenRelays!.length).toBe(1);
+
+            // Create mockNDK with real subManager
+            const ndkWithSubManager = {
+                ...mockNDK,
+                subManager,
+            } as any;
+
+            // Create a relay mock with getProtocolHandler
+            const relayWithProtocolHandler = {
+                ...mockRelay,
+                getProtocolHandler: vi.fn(() => undefined),
+            } as any;
+
+            // Create connectivity with the NDK that has seenEvents populated
+            const conn = new NDKRelayConnectivity(relayWithProtocolHandler, ndkWithSubManager);
+            conn["_status"] = NDKRelayStatus.CONNECTED;
+
+            // Track if dispatchEvent was called
+            const dispatchEventSpy = vi.spyOn(subManager, "dispatchEvent");
+
+            // Create a mock relay subscription (subscription B)
+            const mockRelaySub = {
+                onevent: vi.fn((event) => {
+                    // This should call dispatchEvent on the subManager
+                    subManager.dispatchEvent(event, mockRelay);
+                }),
+            };
+
+            // Register the subscription
+            conn.openSubs.set(subId, mockRelaySub as any);
+
+            // Verify subscription is registered
+            expect(conn.openSubs.get(subId)).toBe(mockRelaySub);
+
+            // Send the event via WebSocket message
+            const eventMsg = `["EVENT","${subId}",{"id":"${eventId}","pubkey":"xyz","created_at":1234567890,"kind":1,"tags":[],"content":"hello","sig":"sig123"}]`;
+            const mockMessageEvent = new MessageEvent("message", { data: eventMsg });
+
+            conn["onMessage"](mockMessageEvent);
+
+            // The subscription's onevent should have been called
+            expect(mockRelaySub.onevent).toHaveBeenCalled();
+
+            // And dispatchEvent should have been called to route to all matching subs
+            expect(dispatchEventSpy).toHaveBeenCalled();
         });
     });
 });

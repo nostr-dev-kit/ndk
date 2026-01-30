@@ -9,7 +9,7 @@ import { NDKRelayStatus } from ".";
 import { NDKRelayKeepalive, probeRelayConnection } from "./keepalive";
 import type { NDKRelaySubscription } from "./subscription";
 
-const MAX_RECONNECT_ATTEMPTS = 5;
+// Removed MAX_RECONNECT_ATTEMPTS - we retry indefinitely with capped backoff
 const FLAPPING_THRESHOLD_MS = 1000;
 
 export type CountResolver = {
@@ -117,12 +117,29 @@ export class NDKRelayConnectivity {
     }
 
     /**
-     * Handles detection of a stale connection
+     * Handles detection of a stale connection by cleaning up and triggering reconnection.
      */
     private handleStaleConnection(): void {
-        this._status = NDKRelayStatus.DISCONNECTED;
         this.wasIdle = true; // Mark as idle to reset backoff
-        this.onDisconnect();
+
+        // Stop keepalive
+        this.keepalive?.stop();
+
+        // Clean up the dead WebSocket
+        if (this.ws) {
+            try {
+                this.ws.close();
+            } catch (e) {
+                // Ignore errors closing dead socket
+            }
+            this.ws = undefined;
+        }
+
+        this._status = NDKRelayStatus.DISCONNECTED;
+        this.ndkRelay.emit("disconnect");
+
+        // Trigger reconnection for stale connections
+        this.handleReconnection();
     }
 
     /**
@@ -668,15 +685,9 @@ export class NDKRelayConnectivity {
             this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
 
-            this.connect().catch((_err) => {
-                if (attempt < MAX_RECONNECT_ATTEMPTS) {
-                    // Continue with next attempt
-                    this.handleReconnection(attempt + 1);
-                } else {
-                    this.debug("Max reconnect attempts reached");
-                    // Reset idle flag after max attempts
-                    this.wasIdle = false;
-                }
+            this.connect().catch(() => {
+                // Always keep retrying with backoff
+                this.handleReconnection(attempt + 1);
             });
         }, reconnectDelay);
 

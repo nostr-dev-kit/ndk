@@ -1,4 +1,4 @@
-import type { Database } from "sql.js";
+import type { Database } from "../types";
 
 export function setCacheData<T>(db: Database, namespace: string, key: string, data: T): void {
     const now = Math.floor(Date.now() / 1000);

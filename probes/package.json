@@ -1,0 +1,17 @@
+{
+  "name": "wallet-probes",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "probe:1.1": "bun run probe-1.1-wallet-init.ts",
+    "probe:1.2": "bun run probe-1.2-deposit.ts",
+    "probe:2.1": "bun run probe-2.1-send-token.ts",
+    "probe:all": "bun run probe:1.1 && bun run probe:1.2 && bun run probe:2.1"
+  },
+  "dependencies": {
+    "@cashu/cashu-ts": "^2.1",
+    "@nostr-dev-kit/ndk": "3.0.0-beta.71",
+    "@nostr-dev-kit/wallet": "1.0.0-beta.71",
+    "@nostr-dev-kit/sync": "1.0.0-beta.71"
+  }
+}

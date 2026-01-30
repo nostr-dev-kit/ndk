@@ -1,7 +1,7 @@
 {
   "name": "@nostr-dev-kit/cache-sqlite-wasm",
-  "version": "1.0.0-beta.70",
-  "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
+  "version": "1.0.0-beta.71",
+  "description": "SQLite WASM cache adapter for NDK using OPFS for persistence.",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,30 +11,31 @@
       "require": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
     },
-    "./sql-wasm.wasm": "./dist/sql-wasm.wasm"
+    "./wa-sqlite.wasm": "./dist/wa-sqlite.wasm",
+    "./wa-sqlite-async.wasm": "./dist/wa-sqlite-async.wasm"
   },
   "files": [
     "dist",
-    "dist/sql-wasm.wasm",
     "docs",
     "scripts"
   ],
   "scripts": {
-    "build": "tsc --emitDeclarationOnly && bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && cp ./example/sql-wasm.wasm ./dist/sql-wasm.wasm",
+    "build": "tsc --emitDeclarationOnly && bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && node scripts/copy-wasm.js",
     "test": "vitest",
     "prepublishOnly": "bun run build",
     "postinstall": "node scripts/postinstall.js"
   },
-  "dependencies": {
-    "sql.js": "^1.8.0"
+  "peerDependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.71"
   },
   "devDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.70",
     "@types/node": "^24.10.0",
-    "@types/sql.js": "^1.4.9",
     "jsdom": "^27.0.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.14"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "wa-sqlite": "github:rhashimoto/wa-sqlite"
+  }
 }

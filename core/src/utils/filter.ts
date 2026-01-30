@@ -17,7 +17,9 @@ export function matchFilter(filter: NDKFilter, event: NDKRawEvent): boolean {
         return false;
     }
 
-    for (const f in filter) {
+    // Use Object.keys() instead of for...in to only iterate own properties
+    // This prevents potential issues with inherited enumerable properties
+    for (const f of Object.keys(filter)) {
         if (f[0] === "#") {
             const tagName = f.slice(1);
             if (tagName === "t") {

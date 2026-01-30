@@ -1,17 +1,18 @@
-// Import the actual sql.js types
-import type initSqlJs from "sql.js";
+/**
+ * Type definitions for cache-sqlite-wasm
+ */
+
+import type { WaSqliteDatabase, QueryExecResult } from "./db/wa-sqlite-db";
 
 export interface NDKCacheAdapterSqliteWasmOptions {
+    /** Database name (used for OPFS path and migration from IndexedDB) */
     dbName?: string;
-    wasmUrl?: string;
+
+    /** URL to the worker.js file */
     workerUrl?: string;
 
-    // Metadata LRU cache
-    metadataLruSize?: number; // Max metadata items (profiles, relay info, NIP-05) in LRU cache (default: 1000)
-
-    // Persistence configuration
-    saveDebounceMs?: number; // Debounce time for saving to IndexedDB (default: 5000ms)
-    disableAutosave?: boolean; // Disable automatic persistence (default: false)
+    /** Max metadata items (profiles, relay info, NIP-05) in LRU cache (default: 1000) */
+    metadataLruSize?: number;
 }
 
 export type WorkerMessage = {
@@ -29,12 +30,9 @@ export type WorkerResponse = {
     };
 };
 
-// Re-export sql.js types for convenience
-export type QueryExecResult = initSqlJs.QueryExecResult;
-export type Database = initSqlJs.Database;
+/** Re-export wa-sqlite types */
+export type Database = WaSqliteDatabase;
+export type { QueryExecResult };
 
-// Extended Database type that includes our custom methods added in wasm-loader
-export type SQLDatabase = Database & {
-    _scheduleSave: () => void;
-    saveToIndexedDB: () => Promise<void>;
-};
+/** Persistence mode used by the worker */
+export type PersistenceMode = "opfs" | "memory";

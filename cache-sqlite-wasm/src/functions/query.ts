@@ -1,32 +1,6 @@
 import { NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-import type { Database, QueryExecResult } from "../types";
 import type { EventForEncoding } from "../binary/encoder";
-
-/**
- * Utility to normalize DB rows from `{ columns, values }` to array of objects.
- */
-function normalizeDbRows(queryResults: QueryExecResult[]): Record<string, unknown>[] {
-    if (!queryResults || queryResults.length === 0) {
-        return [];
-    }
-
-    // Take the first result (sql.js exec returns an array of results)
-    const queryResult = queryResults[0];
-    if (!queryResult || !queryResult.columns || !queryResult.values) {
-        return [];
-    }
-
-    const { columns, values } = queryResult;
-
-    return values.map((row) => {
-        const obj: Record<string, unknown> = {};
-        columns.forEach((col, idx) => {
-            obj[col] = row[idx];
-        });
-        return obj;
-    });
-}
 
 /**
  * Query events from the WASM-backed SQLite DB using NDKSubscription filters.
@@ -112,85 +86,6 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
 
     return events;
 }
-
-// Sync query function that can be used both in main thread and worker
-export function querySync(db: Database, filters: NDKFilter[], subId?: string): Record<string, unknown>[] {
-    const allRecords: Record<string, unknown>[] = [];
-
-    for (const filter of filters) {
-        const hasHashtagFilter = Object.keys(filter).some((key) => key.startsWith("#") && key.length === 2);
-
-        if (hasHashtagFilter) {
-            for (const key in filter) {
-                if (key.startsWith("#") && key.length === 2) {
-                    const tagValues = Array.isArray((filter as any)[key]) ? (filter as any)[key] : [];
-                    const placeholders = tagValues.map(() => "?").join(",");
-                    const sql = `
-                        SELECT events.*
-                        FROM events
-                        INNER JOIN event_tags ON events.id = event_tags.event_id
-                        WHERE events.deleted = 0 AND event_tags.tag = ? AND event_tags.value IN (${placeholders})
-                        ORDER BY events.created_at DESC
-                    `;
-                    const params = [key[1], ...tagValues];
-                    const events = db.exec(sql, params);
-                    const normalizedEvents = normalizeDbRows(events);
-                    allRecords.push(...normalizedEvents);
-                    break;
-                }
-            }
-        } else if (filter.authors && filter.kinds) {
-            const sql = `
-                SELECT events.*
-                FROM events
-                WHERE events.deleted = 0
-                AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
-                AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
-                ORDER BY events.created_at DESC
-            `;
-            const params = [...filter.authors, ...filter.kinds];
-            const events = db.exec(sql, params);
-            const normalizedEvents = normalizeDbRows(events);
-            allRecords.push(...normalizedEvents);
-        } else if (filter.authors) {
-            const sql = `
-                SELECT events.*
-                FROM events
-                WHERE events.deleted = 0
-                AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
-                ORDER BY events.created_at DESC
-            `;
-            const events = db.exec(sql, filter.authors);
-            const normalizedEvents = normalizeDbRows(events);
-            allRecords.push(...normalizedEvents);
-        } else if (filter.kinds) {
-            const sql = `
-                SELECT events.*
-                FROM events
-                WHERE events.deleted = 0
-                AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
-                ORDER BY events.created_at DESC
-            `;
-            const events = db.exec(sql, filter.kinds);
-            const normalizedEvents = normalizeDbRows(events);
-            allRecords.push(...normalizedEvents);
-        } else if (filter.ids) {
-            const sql = `
-                SELECT events.*
-                FROM events
-                WHERE events.deleted = 0
-                AND events.id IN (${filter.ids.map(() => "?").join(",")})
-                ORDER BY events.created_at DESC
-            `;
-            const events = db.exec(sql, filter.ids);
-            const normalizedEvents = normalizeDbRows(events);
-            allRecords.push(...normalizedEvents);
-        }
-    }
-
-    return allRecords;
-}
-
 
 /**
  * Helper to adjust filters for cache, similar to mobile implementation.

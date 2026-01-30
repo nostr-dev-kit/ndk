@@ -1,6 +1,6 @@
 # cache-sqlite-wasm
 
-A SQLite-backed cache adapter for NDK, running in the browser or any JS environment with WASM support.
+A SQLite-backed cache adapter for NDK, using wa-sqlite with OPFS for high-performance persistence in browsers.
 
 ## Quick Start
 
@@ -8,131 +8,88 @@ A SQLite-backed cache adapter for NDK, running in the browser or any JS environm
 import NDK from "@nostr-dev-kit/ndk";
 import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
-// Create the adapter (optionally specify dbName)
-const cacheAdapter = new NDKCacheAdapterSqliteWasm({ dbName: "my-ndk-cache" });
+// Create the adapter
+const cacheAdapter = new NDKCacheAdapterSqliteWasm({
+  dbName: "my-ndk-cache",
+  workerUrl: "/worker.js"  // Path to the bundled worker
+});
 
-// Initialize the adapter (loads WASM, runs migrations)
-await cacheAdapter.initialize();
+// Initialize the adapter
+await cacheAdapter.initializeAsync();
 
 // Use with NDK
 const ndk = new NDK({ cacheAdapter });
 ```
 
-Or, if you already have an NDK instance:
+## Features
 
-```ts
-ndk.cacheAdapter = new NDKCacheAdapterSqliteWasm({ dbName: "my-ndk-cache" });
-await ndk.cacheAdapter.initialize();
+- **OPFS Persistence**: Uses Origin Private File System for incremental writes (only changed pages, not entire database)
+- **No Main Thread Blocking**: All SQLite operations run in a Web Worker
+- **Automatic Fallback**: Falls back to in-memory mode when OPFS is unavailable
+- **Migration**: Automatically cleans up old IndexedDB data from previous sql.js versions
+
+## Required Headers
+
+For OPFS persistence to work, your server must set these headers:
+
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
 ```
 
-## WASM Loading
+Without these headers, the adapter falls back to in-memory mode (no persistence).
 
-**No manual WASM loading required.**  
-The adapter automatically loads and initializes the SQLite WASM module internally when you call `initialize()`. You do not need to import or fetch the WASM file yourself; the adapter handles all setup, including:
-
-- Fetching and instantiating the WASM binary
-- Initializing the database
-- Running all required migrations
-
-If you need to customize the WASM binary path (for example, if you are self-hosting or using a CDN), you can pass a `wasmUrl` option:
+## Check Persistence Mode
 
 ```ts
-const cacheAdapter = new NDKCacheAdapterSqliteWasm({
-  dbName: "my-ndk-cache",
-  wasmUrl: "/path/to/sqlite.wasm"
-});
-await cacheAdapter.initialize();
+await cacheAdapter.initializeAsync();
+const mode = cacheAdapter.getPersistenceMode(); // 'opfs' or 'memory'
+console.log(`Cache persistence: ${mode}`);
 ```
 
-## Web Worker Support
-
-**Optional Web Worker mode to improve UI responsiveness.**
-The adapter can run SQLite operations in a Web Worker to prevent blocking the main thread:
+## Configuration Options
 
 ```ts
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({
-  dbName: "my-ndk-cache",
-  useWorker: true,                // Enable Web Worker mode
-  workerUrl: "/dist/worker.js",   // Path to the worker script
-  wasmUrl: "/dist/sql-wasm.wasm"  // Path to the WASM file (accessible to the worker)
+  dbName: "my-cache",        // Database name (default: "ndk-cache")
+  workerUrl: "/worker.js",   // Path to worker script
+  metadataLruSize: 1000      // Max cached profiles/metadata (default: 1000)
 });
-await cacheAdapter.initialize();
 ```
-
-Key benefits:
-- Prevents UI freezing during heavy database operations
-- Maintains the same API surface (with async methods)
-- Works with the same persistence mechanism (IndexedDB)
-
-**Note:** When using Web Worker mode, all database operations become asynchronous. See [Web Worker Setup](./web-worker-setup.md) for detailed configuration instructions.
 
 ## Migrations
 
-All database migrations are handled automatically on initialization, mirroring the schema and logic of the NDK mobile SQLite adapter. You do not need to run any manual migration steps.
-
-## Synchronous and Asynchronous APIs
-
-The adapter provides both synchronous and asynchronous methods, matching the NDKCacheAdapter interface. Use whichever fits your application's needs.
-
-**Note:** When using Web Worker mode (`useWorker: true`), only asynchronous methods are supported. Synchronous methods like `fetchProfileSync` and `getAllProfilesSync` will throw an error in worker mode.
+All database migrations are handled automatically on initialization. The adapter also automatically cleans up old IndexedDB data from the previous sql.js-based implementation.
 
 ## Advanced Features
 
-- **Decrypted Event Cache:**  
-  Supports storing and retrieving decrypted events with `addDecryptedEvent` and `getDecryptedEvent`, just like the ndk-mobile SQLite adapter.
+- **Decrypted Event Cache**: Store and retrieve decrypted events with `addDecryptedEvent` and `getDecryptedEvent`
+- **Unpublished Event Management**: Track events pending publish with `addUnpublishedEvent`, `getUnpublishedEvents`, and `discardUnpublishedEvent`
+- **Profile Search**: Search profiles by field with `getProfiles`
+- **Cache Stats**: Get cache statistics with `getCacheStats`
 
-- **Unpublished Event Management:**  
-  Supports adding, retrieving, and discarding unpublished events with `addUnpublishedEvent`, `getUnpublishedEvents`, and `discardUnpublishedEvent`.
-
-- **Automatic Persistence:**  
-  The database is automatically persisted to IndexedDB 1000ms after the last write, so your data survives page reloads without manual intervention.
-
-- **Full Parity with ndk-mobile:**  
-  Implements all core and advanced cache methods, including relay status, profile, and event management.
-
-## Minimal Setup
-
-- No manual WASM loading or DB setup required.
-- No need to manage migrations.
-- No need to manually save the database—persistence is automatic.
-- Just instantiate, initialize, and use.
-
-## Troubleshooting
-
-- If you encounter issues with WASM loading (e.g., due to CSP or hosting), ensure the `wasmUrl` is accessible from your app.
-- For Web Worker issues, check that both `workerUrl` and `wasmUrl` are correctly configured and accessible.
-- For advanced debugging, enable verbose logging via the adapter's options.
-
-## Examples
-
-### Standard Integration
-
-```ts
-import NDK from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
-
-const cacheAdapter = new NDKCacheAdapterSqliteWasm();
-await cacheAdapter.initialize();
-
-const ndk = new NDK({ cacheAdapter });
-// ...use NDK as usual
-```
-
-### Web Worker Integration
+## Example Integration
 
 ```ts
 import NDK from "@nostr-dev-kit/ndk";
 import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({
-  useWorker: true,
-  workerUrl: "/dist/worker.js",
-  wasmUrl: "/dist/sql-wasm.wasm"
+  workerUrl: "/worker.js"
 });
-await cacheAdapter.initialize();
+
+await cacheAdapter.initializeAsync();
 
 const ndk = new NDK({ cacheAdapter });
-// ...use NDK as usual with async methods
+await ndk.connect();
+
+// Cache is now active - events will be automatically cached
 ```
 
-See [Web Worker Setup](./web-worker-setup.md) for detailed configuration instructions for different frameworks.
+## Troubleshooting
+
+- **Worker fails to load**: Check the network tab for 404s and verify `workerUrl` is correct
+- **Always in memory mode**: Verify COOP/COEP headers are set on your server
+- **iOS Lockdown Mode**: WASM may not work; the adapter will enter degraded mode gracefully
+
+See [bundling.md](./bundling.md) for build and deployment details.

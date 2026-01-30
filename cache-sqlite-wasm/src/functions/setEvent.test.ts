@@ -8,25 +8,45 @@ describe("setEvent", () => {
     beforeEach(async () => {
         cache = new NDKCacheSqliteWasm({
             dbName: "test-cache-setEvent",
-            wasmUrl: new URL("../../example/sql-wasm.wasm", import.meta.url).href,
         });
         await cache.initializeAsync();
     });
 
-    it.skip("should store a basic event (worker mode tests need update)", async () => {
-        // Tests need to be rewritten for worker mode
-        // Direct database access is no longer available
+    it("should store and retrieve an event", async () => {
+        const event = new NDKEvent();
+        event.id = "test-event-1";
+        event.pubkey = "test-pubkey";
+        event.created_at = Math.floor(Date.now() / 1000);
+        event.kind = 1;
+        event.content = "Hello world";
+        event.tags = [["p", "alice"], ["e", "event123"]];
+        event.sig = "test-sig";
+
+        await cache.setEvent(event, []);
+
+        // Retrieve via getEvent
+        const retrieved = await cache.getEvent(event.id);
+        expect(retrieved).not.toBeNull();
+        expect(retrieved?.id).toBe(event.id);
+        expect(retrieved?.content).toBe("Hello world");
     });
 
-    it.skip("should index single-letter tags (worker mode tests need update)", async () => {
-        // Tests need to be rewritten for worker mode
-    });
+    it("should store and retrieve kind:0 profile events", async () => {
+        const profileData = { name: "Alice", about: "Test user" };
+        const event = new NDKEvent();
+        event.id = "profile-event-1";
+        event.pubkey = "alice-pubkey";
+        event.created_at = Math.floor(Date.now() / 1000);
+        event.kind = NDKKind.Metadata;
+        event.content = JSON.stringify(profileData);
+        event.tags = [];
+        event.sig = "test-sig";
 
-    it.skip("should deduplicate tags (worker mode tests need update)", async () => {
-        // Tests need to be rewritten for worker mode
-    });
+        await cache.setEvent(event, []);
 
-    it.skip("should extract and save profile from kind:0 events (worker mode tests need update)", async () => {
-        // Tests need to be rewritten for worker mode
+        // Profile should be extractable via fetchProfile
+        const profile = await cache.fetchProfile("alice-pubkey");
+        expect(profile).not.toBeNull();
+        expect(profile?.name).toBe("Alice");
     });
 });

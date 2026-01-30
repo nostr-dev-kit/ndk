@@ -38,11 +38,10 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 `;
 
 // Add console logs to verify Web Worker usage
-console.log("Creating adapter with Web Worker mode (worker-only)");
+console.log("Creating adapter with Web Worker mode");
 const adapter = new NDKCacheAdapterSqliteWasm({
     dbName: "demo-db",
     workerUrl: "/worker.js",
-    wasmUrl: "/sql-wasm.wasm",
 });
 // Inspect the adapter object to see its properties
 console.log("Adapter object:", Object.getOwnPropertyNames(adapter));

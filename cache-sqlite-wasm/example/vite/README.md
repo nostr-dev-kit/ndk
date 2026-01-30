@@ -1,12 +1,12 @@
 # Vite Example: cache-sqlite-wasm with Web Worker
 
-This example demonstrates how to use the `cache-sqlite-wasm` library in a Vite application with Web Worker support.
+This example demonstrates how to use the `cache-sqlite-wasm` library in a Vite application with Web Worker support and OPFS persistence.
 
 ## Features
 
-- Runs SQLite operations in a Web Worker for responsive UI
+- Runs SQLite operations in a Web Worker using wa-sqlite
+- OPFS persistence for incremental writes (no main thread blocking)
 - Demonstrates storing and retrieving data using the adapter
-- Shows how to configure Vite to serve the worker and WASM files
 
 ## Setup
 
@@ -29,16 +29,37 @@ This example demonstrates how to use the `cache-sqlite-wasm` library in a Vite a
 ## How it works
 
 - The demo initializes `NDKCacheAdapterSqliteWasm` with:
-  - `useWorker: true`
   - `workerUrl: "/worker.js"`
-  - `wasmUrl: "/sql-wasm.wasm"`
-- The worker script and WASM file are located in the `public/` directory.
-- Click "Store Value" to insert a value into the database, and "Retrieve Value" to fetch it.
+  - `dbName: "demo-db"`
+- The worker script is located in the `public/` directory.
+- Click "Store Event" to insert a value into the database, and "Retrieve Event" to fetch it.
+
+## Required Headers
+
+For OPFS persistence to work, the dev server must send these headers:
+
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+Configure this in `vite.config.ts`:
+
+```typescript
+export default defineConfig({
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
+});
+```
 
 ## Troubleshooting
 
-- If you see errors about missing `worker.js` or `sql-wasm.wasm`, ensure both files exist in `public/`.
-- All database operations are asynchronous in worker mode.
+- If you see errors about missing `worker.js`, ensure it exists in `public/`.
+- If persistence isn't working (always in-memory mode), check that COOP/COEP headers are set.
 - Open the browser console for logs and error details.
 
 ## File Structure
@@ -47,21 +68,21 @@ This example demonstrates how to use the `cache-sqlite-wasm` library in a Vite a
 example/vite/
   public/
     worker.js         # Web Worker script (built from src/worker.ts)
-    sql-wasm.wasm     # SQLite WASM binary
   src/
     main.ts           # Demo logic
-    cache-sqlite-wasm-shim.d.ts # TypeScript shim for local dev
   README.md
   index.html
-  ...
+  vite.config.ts
 ```
 
-## Notes
+## Building the Worker
 
-- This example assumes you have built `worker.js` from your local `src/worker.ts` using Bun:
+Build the worker from the main package:
 
-  ```sh
-  bun build ../../src/worker.ts --outfile ./public/worker.js --format esm --target browser
-  ```
+```sh
+cd ../..  # Go to cache-sqlite-wasm root
+pnpm run build
+cp dist/worker.js example/vite/public/
+```
 
-- The adapter import assumes the package is available as `@nostr-dev-kit/cache-sqlite-wasm`. Adjust the import path if using a local build.
+Or use the pre-built worker from the package's dist folder.

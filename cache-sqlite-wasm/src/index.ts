@@ -29,7 +29,6 @@ export { MetadataLRUCache } from "./cache/metadata-lru";
 
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
-    public wasmUrl?: string;
     public locking = false;
     public ndk?: NDK;
     public ready = false;
@@ -49,6 +48,9 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
     // Degraded mode for WASM failures (e.g., iOS Lockdown Mode)
     protected degradedMode = false;
+
+    // Persistence mode (set after worker initialization)
+    private persistenceMode: "opfs" | "memory" | "unknown" = "unknown";
 
     // Performance optimizations
     protected metadataCache: MetadataLRUCache;
@@ -76,16 +78,9 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     private readonly BATCH_DELAY_MS = 0; // Use microtask (0ms) for immediate batching
     private readonly MAX_BATCH_SIZE = 100; // Maximum events per batch
 
-    // Persistence options
-    private saveDebounceMs?: number;
-    private disableAutosave?: boolean;
-
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
         this.dbName = options.dbName || "ndk-cache";
-        this.wasmUrl = options.wasmUrl;
         this.workerUrl = options.workerUrl;
-        this.saveDebounceMs = options.saveDebounceMs;
-        this.disableAutosave = options.disableAutosave;
 
         // Initialize metadata cache
         this.metadataCache = new MetadataLRUCache(options.metadataLruSize || 1000);
@@ -236,10 +231,12 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             console.error(
                 `[NDK-cache-sqlite-wasm] ❌ Worker failed: ${errorMsg}\n\n` +
                     `🔧 Common solutions:\n` +
-                    `1. Copy worker.js and sql-wasm.wasm to your public directory:\n` +
+                    `1. Copy worker.js and wa-sqlite.wasm to your public directory:\n` +
                     `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/\n` +
-                    `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm public/\n\n` +
-                    `2. Ensure your bundler serves the public directory correctly\n\n` +
+                    `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/wa-sqlite.wasm public/\n\n` +
+                    `2. Ensure COOP/COEP headers are set for OPFS support:\n` +
+                    `   Cross-Origin-Opener-Policy: same-origin\n` +
+                    `   Cross-Origin-Embedder-Policy: require-corp\n\n` +
                     `3. Check browser DevTools Network tab for 404 errors on worker.js\n\n` +
                     `Current workerUrl: ${effectiveWorkerUrl}`,
             );
@@ -251,15 +248,18 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         };
 
         // Send initialization config to worker
-        await this.postWorkerMessage<WorkerResponse>({
+        const initResult = await this.postWorkerMessage<{ initialized: boolean; persistenceMode: "opfs" | "memory" }>({
             type: "init",
             payload: {
                 dbName: this.dbName,
-                wasmUrl: this.wasmUrl,
-                saveDebounceMs: this.saveDebounceMs,
-                disableAutosave: this.disableAutosave,
             },
         });
+
+        // Capture persistence mode from worker
+        if (initResult?.persistenceMode) {
+            this.persistenceMode = initResult.persistenceMode;
+            console.log(`[NDK Cache SQLite WASM] Initialized with ${this.persistenceMode} persistence`);
+        }
     }
 
     /**
@@ -427,6 +427,16 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
      */
     public clearMetadataCache(): void {
         this.metadataCache.clear();
+    }
+
+    /**
+     * Get the current persistence mode.
+     * - "opfs": Data persists to Origin Private File System (best, no main thread blocking)
+     * - "memory": Data is only in memory (no persistence across page reloads)
+     * - "unknown": Worker not yet initialized
+     */
+    public getPersistenceMode(): "opfs" | "memory" | "unknown" {
+        return this.persistenceMode;
     }
 
     // Generic cache data storage

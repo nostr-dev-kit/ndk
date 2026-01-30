@@ -31,36 +31,17 @@ describe("Worker query processing", () => {
             await cache.setEvent(event, [{ kinds: [NDKKind.CashuToken] }]);
         }
 
-        // Get raw worker-style results
+        // Test the full query flow via cache.query()
         const sub = new NDKSubscription(ndk, [{ kinds: [NDKKind.CashuToken] }]);
-
-        // Simulate what the worker returns by calling querySync directly
-        if (cache.db) {
-            const { querySync } = await import("../src/functions/query");
-            const rawResults = querySync(cache.db, [{ kinds: [NDKKind.CashuToken] }]);
-
-            console.log("Raw results from querySync:", rawResults.length);
-            if (rawResults.length > 0) {
-                console.log("First raw result:", rawResults[0]);
-                console.log("First raw result.raw:", rawResults[0].raw);
-                console.log("First raw result.raw type:", typeof rawResults[0].raw);
-
-                // Try to parse it
-                try {
-                    const parsed = JSON.parse(rawResults[0].raw);
-                    console.log("Parsed raw:", parsed);
-                } catch (e) {
-                    console.error("Failed to parse raw:", e);
-                }
-            }
-
-            expect(rawResults.length).toBe(5);
-        }
-
-        // Now test the full query flow
         const results = await cache.query(sub);
-        console.log("Processed results:", results.length);
 
+        console.log("Processed results:", results.length);
         expect(results.length).toBe(5);
+
+        // Verify events have correct data
+        for (const event of results) {
+            expect(event.kind).toBe(NDKKind.CashuToken);
+            expect(event.content).toMatch(/^test token \d$/);
+        }
     });
 });

@@ -29,11 +29,6 @@ export type NDKCacheBrowserOptions = {
     workerUrl?: string;
 
     /**
-     * URL to the SQLite WASM binary (required for WASM adapter)
-     */
-    wasmUrl?: string;
-
-    /**
      * Enable debug logging
      */
     debug?: boolean;
@@ -163,15 +158,9 @@ export default class NDKCacheBrowser implements NDKCacheAdapter {
         try {
             debug("Attempting to initialize WASM adapter");
 
-            if (!this.options.workerUrl || !this.options.wasmUrl) {
-                debug("WASM adapter requires workerUrl and wasmUrl options");
-                return false;
-            }
-
             const wasmAdapter = new NDKCacheSqliteWasm({
                 dbName: this.options.dbName || "ndk-cache",
                 workerUrl: this.options.workerUrl,
-                wasmUrl: this.options.wasmUrl,
             });
 
             await wasmAdapter.initializeAsync(ndk);

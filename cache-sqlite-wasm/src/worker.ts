@@ -1,17 +1,24 @@
-import initSqlJs, { type Database } from "sql.js";
-import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
+/**
+ * SQLite WASM Worker using wa-sqlite with OPFS VFS
+ *
+ * This worker provides persistent SQLite storage using OPFS with:
+ * - Incremental writes (only changed pages are written)
+ * - No main thread blocking
+ * - Async operations for wa-sqlite compatibility
+ */
+
+import { WaSqliteDatabase, type QueryExecResult } from "./db/wa-sqlite-db";
+import { cleanupOldIndexedDB } from "./db/migration";
 import { runMigrations } from "./db/migrations";
-import { querySync } from "./functions/query";
-import { setEventSync } from "./functions/setEvent";
 import { encodeEvents, type EventForEncoding } from "./binary/encoder";
 import type { CacheStats } from "./functions/getCacheStats";
 import { PACKAGE_VERSION, PROTOCOL_NAME } from "./version";
-import { NDKEvent, matchFilter, type NDKFilter } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, matchFilter, type NDKFilter } from "@nostr-dev-kit/ndk";
 
 // Helper function for getting cache stats within worker
-function getCacheStatsSync(db: Database): CacheStats {
+async function getCacheStats(db: WaSqliteDatabase): Promise<CacheStats> {
     // Get events grouped by kind
-    const eventsByKindResult = db.exec(`
+    const eventsByKindResult = await db.exec(`
         SELECT kind, COUNT(*) as count
         FROM events
         WHERE deleted = 0
@@ -27,12 +34,12 @@ function getCacheStatsSync(db: Database): CacheStats {
     }
 
     // Get total counts for each table
-    const totalEventsResult = db.exec(`SELECT COUNT(*) FROM events WHERE deleted = 0`);
-    const totalProfilesResult = db.exec(`SELECT COUNT(*) FROM profiles`);
-    const totalEventTagsResult = db.exec(`SELECT COUNT(*) FROM event_tags`);
-    const totalDecryptedEventsResult = db.exec(`SELECT COUNT(*) FROM decrypted_events`);
-    const totalUnpublishedEventsResult = db.exec(`SELECT COUNT(*) FROM unpublished_events`);
-    const cacheDataResult = db.exec(`SELECT COUNT(*) FROM cache_data`);
+    const totalEventsResult = await db.exec(`SELECT COUNT(*) FROM events WHERE deleted = 0`);
+    const totalProfilesResult = await db.exec(`SELECT COUNT(*) FROM profiles`);
+    const totalEventTagsResult = await db.exec(`SELECT COUNT(*) FROM event_tags`);
+    const totalDecryptedEventsResult = await db.exec(`SELECT COUNT(*) FROM decrypted_events`);
+    const totalUnpublishedEventsResult = await db.exec(`SELECT COUNT(*) FROM unpublished_events`);
+    const cacheDataResult = await db.exec(`SELECT COUNT(*) FROM cache_data`);
 
     return {
         eventsByKind,
@@ -45,105 +52,221 @@ function getCacheStatsSync(db: Database): CacheStats {
     };
 }
 
+// Helper to set an event (async version)
+async function setEvent(db: WaSqliteDatabase, event: any, relay?: { url: string }): Promise<void> {
+    const stmt = `
+        INSERT OR REPLACE INTO events (
+            id, pubkey, created_at, kind, tags, content, sig, raw, deleted, relay_url
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const tags = JSON.stringify(event.tags ?? []);
+    const raw = JSON.stringify([
+        event.id,
+        event.pubkey,
+        event.created_at,
+        event.kind,
+        event.tags ?? [],
+        event.content,
+        event.sig,
+    ]);
+    const values = [
+        event.id ?? "",
+        event.pubkey ?? "",
+        event.created_at ?? 0,
+        event.kind ?? 0,
+        tags,
+        event.content ?? "",
+        event.sig ?? "",
+        raw,
+        0,
+        relay?.url ?? null,
+    ];
 
-let db: Database | null = null;
-let SQL: initSqlJs.SqlJsStatic | null = null;
-let dbName: string = "ndk-cache";
+    await db.run(stmt, values);
 
-let saveTimeout: number | null = null;
-let SAVE_DEBOUNCE_MS = 5000; // Increased from 500ms to reduce memory pressure
-let DISABLE_AUTOSAVE = false;
+    // Store event tags for efficient querying (only single-letter indexable tags)
+    const seenKeys = new Set<string>();
 
-// Debounced persistence: saves DB to IndexedDB after writes
-function scheduleSave() {
-    if (DISABLE_AUTOSAVE) {
-        return;
-    }
+    if (event.tags && event.tags.length > 0) {
+        for (const tag of event.tags) {
+            if (tag.length >= 2 && tag[0].length === 1) {
+                const tagName = tag[0];
+                const tagValue = tag[1] || null;
+                const key = `${event.id}:${tagName}:${tagValue}`;
 
-    if (saveTimeout !== null) {
-        clearTimeout(saveTimeout);
-    }
-    saveTimeout = setTimeout(async () => {
-        if (db && dbName) {
-            const startTime = performance.now();
-            const data = db.export();
-            const exportTime = performance.now() - startTime;
-            const dbSizeMB = (data.byteLength / (1024 * 1024)).toFixed(2);
+                if (seenKeys.has(key)) continue;
+                seenKeys.add(key);
 
-            console.log(`[Worker] DB export: ${dbSizeMB}MB in ${exportTime.toFixed(0)}ms`);
-
-            try {
-                const saveStartTime = performance.now();
-                await saveToIndexedDB(dbName, data);
-                const saveTime = performance.now() - saveStartTime;
-                console.log(`[Worker] DB save to IndexedDB: ${saveTime.toFixed(0)}ms`);
-            } catch (err) {
-                console.error("[Worker Persistence] Failed to save DB to IndexedDB", err);
+                try {
+                    await db.run("INSERT OR IGNORE INTO event_tags (event_id, tag, value) VALUES (?, ?, ?)", [
+                        event.id,
+                        tagName,
+                        tagValue,
+                    ]);
+                } catch (e) {
+                    console.error('[setEvent] Failed to insert tag:', tag, e);
+                }
             }
         }
-    }, SAVE_DEBOUNCE_MS) as unknown as number;
+    }
+
+    // Extract and save profile from kind:0 events (only if newer than existing)
+    if (event.kind === NDKKind.Metadata || event.kind === 0) {
+        try {
+            const profile = typeof event.content === "string" ? JSON.parse(event.content) : event.content;
+            if (profile && event.pubkey) {
+                const eventTimestamp = event.created_at ?? 0;
+                // Only update if newer than existing profile
+                await db.run(`
+                    INSERT INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)
+                    ON CONFLICT(pubkey) DO UPDATE SET profile = excluded.profile, updated_at = excluded.updated_at
+                    WHERE excluded.updated_at > profiles.updated_at
+                `, [
+                    event.pubkey,
+                    JSON.stringify(profile),
+                    eventTimestamp,
+                ]);
+            }
+        } catch {
+            // Invalid profile JSON, skip
+        }
+    }
 }
 
-// Patch db.run to schedule save after each write
-function patchDbPersistence(database: Database): void {
-    const origRun = database.run.bind(database);
-    database.run = function (sql: string, params?: initSqlJs.BindParams) {
-        const result = origRun(sql, params);
-        scheduleSave();
-        return result;
-    };
+// Helper to query events (async version)
+async function queryEvents(db: WaSqliteDatabase, filters: NDKFilter[]): Promise<Record<string, unknown>[]> {
+    const allRecords: Record<string, unknown>[] = [];
+
+    function normalizeDbRows(queryResults: QueryExecResult[]): Record<string, unknown>[] {
+        if (!queryResults || queryResults.length === 0) return [];
+        const queryResult = queryResults[0];
+        if (!queryResult || !queryResult.columns || !queryResult.values) return [];
+        const { columns, values } = queryResult;
+        return values.map((row) => {
+            const obj: Record<string, unknown> = {};
+            columns.forEach((col, idx) => {
+                obj[col] = row[idx];
+            });
+            return obj;
+        });
+    }
+
+    for (const filter of filters) {
+        const hasHashtagFilter = Object.keys(filter).some((key) => key.startsWith("#") && key.length === 2);
+
+        if (hasHashtagFilter) {
+            for (const key in filter) {
+                if (key.startsWith("#") && key.length === 2) {
+                    const tagValues = Array.isArray((filter as any)[key]) ? (filter as any)[key] : [];
+                    const placeholders = tagValues.map(() => "?").join(",");
+                    const sql = `
+                        SELECT events.*
+                        FROM events
+                        INNER JOIN event_tags ON events.id = event_tags.event_id
+                        WHERE events.deleted = 0 AND event_tags.tag = ? AND event_tags.value IN (${placeholders})
+                        ORDER BY events.created_at DESC
+                    `;
+                    const params = [key[1], ...tagValues];
+                    const events = await db.exec(sql, params);
+                    const normalizedEvents = normalizeDbRows(events);
+                    allRecords.push(...normalizedEvents);
+                    break;
+                }
+            }
+        } else if (filter.authors && filter.kinds) {
+            const sql = `
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
+                AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
+            `;
+            const params = [...filter.authors, ...filter.kinds];
+            const events = await db.exec(sql, params);
+            const normalizedEvents = normalizeDbRows(events);
+            allRecords.push(...normalizedEvents);
+        } else if (filter.authors) {
+            const sql = `
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
+            `;
+            const events = await db.exec(sql, filter.authors);
+            const normalizedEvents = normalizeDbRows(events);
+            allRecords.push(...normalizedEvents);
+        } else if (filter.kinds) {
+            const sql = `
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
+            `;
+            const events = await db.exec(sql, filter.kinds);
+            const normalizedEvents = normalizeDbRows(events);
+            allRecords.push(...normalizedEvents);
+        } else if (filter.ids) {
+            const sql = `
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.id IN (${filter.ids.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
+            `;
+            const events = await db.exec(sql, filter.ids);
+            const normalizedEvents = normalizeDbRows(events);
+            allRecords.push(...normalizedEvents);
+        }
+    }
+
+    return allRecords;
 }
 
-async function initializeDatabase(config: {
-    dbName: string;
-    wasmUrl?: string;
-    saveDebounceMs?: number;
-    disableAutosave?: boolean;
-}) {
+let db: WaSqliteDatabase | null = null;
+let dbName: string = "ndk-cache";
+let persistenceMode: "opfs" | "idb" | "memory" = "memory";
+
+async function initializeDatabase(config: { dbName: string }) {
     dbName = config.dbName || "ndk-cache";
-
-    // Apply persistence configuration
-    if (config.saveDebounceMs !== undefined) {
-        SAVE_DEBOUNCE_MS = config.saveDebounceMs;
-    }
-    if (config.disableAutosave !== undefined) {
-        DISABLE_AUTOSAVE = config.disableAutosave;
-    }
-
-    console.log(`[Worker] Persistence config: debounce=${SAVE_DEBOUNCE_MS}ms, autosave=${!DISABLE_AUTOSAVE}`);
+    // Note: OPFS paths should NOT have leading slash
+    const dbPath = `${dbName}.sqlite3`;
 
     try {
-        const sqlJsConfig: any = {};
-        if (config.wasmUrl) {
-            sqlJsConfig.locateFile = () => config.wasmUrl;
-        }
-        SQL = await initSqlJs(sqlJsConfig);
+        db = await WaSqliteDatabase.create(dbPath);
+        persistenceMode = db.persistenceMode;
+        console.log(`[Worker] Using ${db.persistenceMode} persistence at ${dbPath}`);
 
-        const savedData = await loadFromIndexedDB(dbName);
-        if (savedData) {
-            db = new SQL.Database(new Uint8Array(savedData));
-        } else {
-            db = new SQL.Database();
-        }
-        patchDbPersistence(db);
+        // Run schema migrations
+        await runMigrations(db);
 
-        await runMigrations(db as any);
+        // Sync to ensure migrations are persisted
+        await db.sync();
 
-        // Initial save after migrations (in case schema changed)
-        scheduleSave();
+        // Clean up old IndexedDB storage if exists (from sql.js era)
+        await cleanupOldIndexedDB(dbName);
 
         // Warm up profile LRU cache
-        warmupProfileCache(db);
+        await warmupProfileCache(db);
+
     } catch (error) {
-        console.error("Worker: Database initialization failed", error);
-        throw error;
+        console.warn("[Worker] OPFS unavailable, falling back to in-memory database:", error);
+
+        db = await WaSqliteDatabase.createInMemory();
+        persistenceMode = "memory";
+
+        // Run schema migrations
+        await runMigrations(db);
     }
+
+    console.log(`[Worker] Database initialized (persistence: ${persistenceMode})`);
 }
 
-function warmupProfileCache(database: Database) {
+async function warmupProfileCache(database: WaSqliteDatabase) {
     try {
-        // Get the most recently updated profiles to warm the cache
-        const stmt = database.prepare(`
+        const rows = await database.queryAll(`
             SELECT pubkey, profile, updated_at
             FROM profiles
             ORDER BY updated_at DESC
@@ -152,23 +275,20 @@ function warmupProfileCache(database: Database) {
 
         const profiles: Array<{ pubkey: string; profile: any }> = [];
 
-        while (stmt.step()) {
-            const row = stmt.getAsObject();
+        for (const row of rows) {
             try {
                 profiles.push({
                     pubkey: row.pubkey as string,
                     profile: JSON.parse(row.profile as string),
                 });
-            } catch (e) {
+            } catch {
                 // Skip invalid profile JSON
             }
         }
-        stmt.free();
 
-        // Send warmup data back to main thread to populate the LRU
         if (profiles.length > 0) {
             self.postMessage({
-                type: 'warmupProfiles',
+                type: "warmupProfiles",
                 profiles,
             });
         }
@@ -183,7 +303,11 @@ self.onmessage = async (event: MessageEvent) => {
     try {
         if (type === "init") {
             await initializeDatabase(payload);
-            const initResponse = { id, result: "initialized" };
+
+            const initResponse = {
+                id,
+                result: { initialized: true, persistenceMode },
+            };
             self.postMessage(initResponse);
             return;
         }
@@ -197,7 +321,7 @@ self.onmessage = async (event: MessageEvent) => {
             // Profile operations
             case "saveProfile": {
                 const { pubkey, profile, updatedAt } = payload;
-                db.run(
+                await db.run(
                     "INSERT OR REPLACE INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)",
                     [pubkey, profile, updatedAt]
                 );
@@ -206,20 +330,17 @@ self.onmessage = async (event: MessageEvent) => {
             }
             case "fetchProfile": {
                 const { pubkey } = payload;
-                const stmt = db.prepare("SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1", [pubkey]);
-                if (stmt.step()) {
-                    result = stmt.getAsObject();
-                } else {
-                    result = null;
-                }
-                stmt.free();
+                result = await db.queryOne(
+                    "SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1",
+                    [pubkey]
+                );
                 break;
             }
 
             // NIP-05 operations
             case "saveNip05": {
                 const { nip05, profile, fetchedAt } = payload;
-                db.run(
+                await db.run(
                     "INSERT OR REPLACE INTO nip05 (nip05, profile, fetched_at) VALUES (?, ?, ?)",
                     [nip05, profile, fetchedAt]
                 );
@@ -228,31 +349,25 @@ self.onmessage = async (event: MessageEvent) => {
             }
             case "loadNip05": {
                 const { nip05 } = payload;
-                const stmt = db.prepare("SELECT profile, fetched_at FROM nip05 WHERE nip05 = ? LIMIT 1", [nip05]);
-                if (stmt.step()) {
-                    result = stmt.getAsObject();
-                } else {
-                    result = null;
-                }
-                stmt.free();
+                result = await db.queryOne(
+                    "SELECT profile, fetched_at FROM nip05 WHERE nip05 = ? LIMIT 1",
+                    [nip05]
+                );
                 break;
             }
 
             // Event operations
             case "getEvent": {
-                const { id } = payload;
-                const stmt = db.prepare("SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1", [id]);
-                if (stmt.step()) {
-                    result = stmt.getAsObject();
-                } else {
-                    result = null;
-                }
-                stmt.free();
+                const { id: eventId } = payload;
+                result = await db.queryOne(
+                    "SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1",
+                    [eventId]
+                );
                 break;
             }
             case "addDecryptedEvent": {
                 const { wrapperId, serialized } = payload;
-                db.run(
+                await db.run(
                     "INSERT OR REPLACE INTO decrypted_events (id, event) VALUES (?, ?)",
                     [wrapperId, serialized]
                 );
@@ -261,46 +376,35 @@ self.onmessage = async (event: MessageEvent) => {
             }
             case "getDecryptedEvent": {
                 const { wrapperId } = payload;
-                const stmt = db.prepare("SELECT event FROM decrypted_events WHERE id = ? LIMIT 1", [wrapperId]);
-                if (stmt.step()) {
-                    result = stmt.getAsObject();
-                } else {
-                    result = null;
-                }
-                stmt.free();
+                result = await db.queryOne(
+                    "SELECT event FROM decrypted_events WHERE id = ? LIMIT 1",
+                    [wrapperId]
+                );
                 break;
             }
             case "discardUnpublishedEvent": {
-                const { id } = payload;
-                db.run("DELETE FROM unpublished_events WHERE id = ?", [id]);
+                const { id: eventId } = payload;
+                await db.run("DELETE FROM unpublished_events WHERE id = ?", [eventId]);
                 result = undefined;
                 break;
             }
             case "getUnpublishedEvents": {
-                const stmt = db.prepare("SELECT event, relays FROM unpublished_events");
-                result = [];
-                while (stmt.step()) {
-                    result.push(stmt.getAsObject());
-                }
-                stmt.free();
+                result = await db.queryAll("SELECT event, relays FROM unpublished_events");
                 break;
             }
             case "addUnpublishedEvent": {
-                const { id, event, relays } = payload;
+                const { id: eventId, event: eventJson, relays } = payload;
 
-                // Store in unpublished_events table for retry tracking
-                db.run(
+                await db.run(
                     "INSERT OR REPLACE INTO unpublished_events (id, event, relays) VALUES (?, ?, ?)",
-                    [id, event, relays]
+                    [eventId, eventJson, relays]
                 );
 
-                // Also store in main events table with relay_url = NULL
-                // so it's queryable by subscriptions
                 try {
-                    const ndkEvent = new NDKEvent(undefined, JSON.parse(event));
-                    setEventSync(db, ndkEvent, undefined);
+                    const ndkEvent = new NDKEvent(undefined, JSON.parse(eventJson));
+                    await setEvent(db, ndkEvent, undefined);
                 } catch (e) {
-                    console.error('[addUnpublishedEvent] Failed to store event in main table:', e);
+                    console.error("[addUnpublishedEvent] Failed to store event in main table:", e);
                 }
 
                 result = undefined;
@@ -310,31 +414,25 @@ self.onmessage = async (event: MessageEvent) => {
             // Relay operations
             case "getRelayStatus": {
                 const { relayUrl } = payload;
-                // Create table if needed
-                db.run("CREATE TABLE IF NOT EXISTS relay_status (url TEXT PRIMARY KEY, info TEXT)");
-                const stmt = db.prepare("SELECT info FROM relay_status WHERE url = ? LIMIT 1", [relayUrl]);
-                if (stmt.step()) {
-                    result = stmt.getAsObject();
-                } else {
-                    result = null;
-                }
-                stmt.free();
+                await db.run("CREATE TABLE IF NOT EXISTS relay_status (url TEXT PRIMARY KEY, info TEXT)");
+                result = await db.queryOne(
+                    "SELECT info FROM relay_status WHERE url = ? LIMIT 1",
+                    [relayUrl]
+                );
                 break;
             }
             case "updateRelayStatus": {
                 const { relayUrl, info } = payload;
-                // Create table if needed
-                db.run("CREATE TABLE IF NOT EXISTS relay_status (url TEXT PRIMARY KEY, info TEXT)");
-                db.run(
-                    "INSERT OR REPLACE INTO relay_status (url, info) VALUES (?, ?)",
-                    [relayUrl, info]
-                );
+                await db.run("CREATE TABLE IF NOT EXISTS relay_status (url TEXT PRIMARY KEY, info TEXT)");
+                await db.run("INSERT OR REPLACE INTO relay_status (url, info) VALUES (?, ?)", [
+                    relayUrl,
+                    info,
+                ]);
                 result = undefined;
                 break;
             }
 
             case "getProfiles": {
-                // payload: { field?: string, fields?: string[], contains: string }
                 const { field, fields, contains } = payload;
                 const searchFields = fields || (field ? [field] : []);
 
@@ -344,7 +442,7 @@ self.onmessage = async (event: MessageEvent) => {
 
                 const conditions = searchFields
                     .map((f: string) => `json_extract(profile, '$.${f}') LIKE ?`)
-                    .join(' OR ');
+                    .join(" OR ");
 
                 const sql = `
                     SELECT pubkey, profile
@@ -354,10 +452,9 @@ self.onmessage = async (event: MessageEvent) => {
                 const param = `%${contains}%`;
                 const params = searchFields.map(() => param);
 
-                const stmt = db.prepare(sql, params);
+                const rows = await db.queryAll(sql, params);
                 result = [];
-                while (stmt.step()) {
-                    const row = stmt.getAsObject();
+                for (const row of rows) {
                     try {
                         result.push({
                             pubkey: row.pubkey as string,
@@ -367,74 +464,98 @@ self.onmessage = async (event: MessageEvent) => {
                         // skip invalid profile
                     }
                 }
-                stmt.free();
                 break;
             }
-            case "export":
-                result = db.export();
-                break;
+
             case "getCacheStats":
-                result = getCacheStatsSync(db);
+                result = await getCacheStats(db);
                 break;
+
+            case "getPersistenceMode":
+                result = persistenceMode;
+                break;
+
             case "setEvent": {
                 const { event, relay } = payload;
                 const relayObj = relay ? { url: relay } : undefined;
-                setEventSync(db, event, relayObj);
+                await setEvent(db, event, relayObj);
                 result = undefined;
                 break;
             }
             case "setEventBatch": {
                 const { events } = payload;
-                // Events are pre-filtered on UI thread via O(1) Set check
-                // Only new events reach here
                 for (const item of events) {
                     const relayObj = item.relay ? { url: item.relay } : undefined;
-                    setEventSync(db, item.event, relayObj);
+                    await setEvent(db, item.event, relayObj);
                 }
+                // Sync after batch to ensure data is flushed
+                await db.sync();
                 result = undefined;
                 break;
             }
             case "query": {
                 const { filters } = payload as { filters: NDKFilter[] };
-                const queryResult = querySync(db, filters);
 
-                // Parse rows into event data, apply matchFilter + per-filter limits
+                let queryResult: Record<string, unknown>[];
+                try {
+                    queryResult = await queryEvents(db, filters);
+                } catch (e: any) {
+                    console.error(`[Worker] queryEvents failed:`, e.message);
+                    throw e;
+                }
+
                 const eventsForEncoding: EventForEncoding[] = [];
                 const seenIds = new Set<string>();
                 const now = Math.floor(Date.now() / 1000);
 
-                // Helper to parse a row into event data
                 const parseRow = (row: Record<string, unknown>) => {
-                    if (typeof row.raw === 'string') {
+                    let tags: string[][] = [];
+
+                    if (typeof row.raw === "string") {
                         try {
                             const parsed = JSON.parse(row.raw as string);
+                            if (Array.isArray(parsed[4])) {
+                                tags = parsed[4];
+                            } else if (typeof row.tags === "string") {
+                                tags = JSON.parse(row.tags || "[]");
+                            }
                             return {
-                                id: parsed[0] || row.id as string,
-                                pubkey: parsed[1] || row.pubkey as string,
-                                created_at: parsed[2] || row.created_at as number,
-                                kind: parsed[3] || row.kind as number,
-                                tags: parsed[4] || (typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : row.tags || []),
-                                content: parsed[5] || row.content as string,
-                                sig: parsed[6] || row.sig as string,
-                                relay_url: row.relay_url as string || null
+                                id: parsed[0] || (row.id as string),
+                                pubkey: parsed[1] || (row.pubkey as string),
+                                created_at: parsed[2] || (row.created_at as number),
+                                kind: parsed[3] || (row.kind as number),
+                                tags,
+                                content: parsed[5] || (row.content as string),
+                                sig: parsed[6] || (row.sig as string),
+                                relay_url: (row.relay_url as string) || null,
                             };
                         } catch {
                             // fall through
                         }
                     }
+
+                    if (typeof row.tags === "string") {
+                        try {
+                            tags = JSON.parse(row.tags || "[]");
+                        } catch {
+                            tags = [];
+                        }
+                    } else if (Array.isArray(row.tags)) {
+                        tags = row.tags as string[][];
+                    }
+
                     return {
                         id: row.id as string,
                         pubkey: row.pubkey as string,
                         created_at: row.created_at as number,
                         kind: row.kind as number,
-                        tags: typeof row.tags === 'string' ? JSON.parse(row.tags || '[]') : (row.tags as string[][] || []),
+                        tags,
                         content: row.content as string,
                         sig: row.sig as string,
-                        relay_url: row.relay_url as string || null
+                        relay_url: (row.relay_url as string) || null,
                     };
                 };
 
-                // Process each filter separately to respect per-filter limits
                 for (const filter of filters) {
                     const limit = filter.limit || Infinity;
                     let count = 0;
@@ -442,53 +563,64 @@ self.onmessage = async (event: MessageEvent) => {
                     for (const row of queryResult) {
                         if (count >= limit) break;
 
-                        const eventData = parseRow(row);
+                        let eventData;
+                        try {
+                            eventData = parseRow(row);
+                        } catch (e: any) {
+                            console.error(`[Worker] parseRow failed:`, e.message);
+                            continue;
+                        }
 
-                        // Skip if already added by a previous filter
                         if (seenIds.has(eventData.id)) continue;
 
-                        // Check expiration
-                        const expirationTag = eventData.tags?.find((t: string[]) => t[0] === 'expiration');
+                        const expirationTag = eventData.tags?.find(
+                            (t: string[]) => t[0] === "expiration"
+                        );
                         if (expirationTag && now > parseInt(expirationTag[1])) continue;
 
-                        // Check if event matches this specific filter
-                        if (!matchFilter(filter, eventData as any)) continue;
+                        try {
+                            if (!matchFilter(filter, eventData as any)) continue;
+                        } catch (e: any) {
+                            console.error(
+                                `[Worker] matchFilter failed for event ${eventData.id}:`,
+                                e.message
+                            );
+                            throw e;
+                        }
 
                         seenIds.add(eventData.id);
                         count++;
                         eventsForEncoding.push({
-                            id: eventData.id || '',
-                            pubkey: eventData.pubkey || '',
+                            id: eventData.id || "",
+                            pubkey: eventData.pubkey || "",
                             created_at: eventData.created_at || 0,
                             kind: eventData.kind || 0,
-                            sig: eventData.sig || '',
-                            content: eventData.content || '',
+                            sig: eventData.sig || "",
+                            content: eventData.content || "",
                             tags: Array.isArray(eventData.tags) ? eventData.tags : [],
-                            relay_url: eventData.relay_url
+                            relay_url: eventData.relay_url,
                         });
                     }
                 }
 
                 if (eventsForEncoding.length > 0) {
-                    // For small result sets (< 100 events), use JSON transfer
                     if (eventsForEncoding.length < 100) {
                         result = {
-                            type: 'json',
+                            type: "json",
                             events: eventsForEncoding,
                             eventCount: eventsForEncoding.length,
                         };
                     } else {
-                        // For large result sets, use binary encoding
                         const buffer = encodeEvents(eventsForEncoding);
                         result = {
-                            type: 'binary',
+                            type: "binary",
                             buffer,
                             eventCount: eventsForEncoding.length,
                         };
                     }
                 } else {
                     result = {
-                        type: 'json',
+                        type: "json",
                         events: [],
                         eventCount: 0,
                     };
@@ -499,25 +631,22 @@ self.onmessage = async (event: MessageEvent) => {
                 const { namespace, key, maxAgeInSecs } = payload;
                 const now = Math.floor(Date.now() / 1000);
 
-                const stmt = db.prepare("SELECT data, cached_at FROM cache_data WHERE namespace = ? AND key = ?");
-                stmt.bind([namespace, key]);
+                const row = await db.queryOne(
+                    "SELECT data, cached_at FROM cache_data WHERE namespace = ? AND key = ?",
+                    [namespace, key]
+                );
 
-                if (stmt.step()) {
-                    const row = stmt.getAsObject();
+                if (row) {
                     const cachedAt = row.cached_at as number;
 
-                    // Check if expired
                     if (maxAgeInSecs && now - cachedAt > maxAgeInSecs) {
-                        stmt.free();
                         result = undefined;
                         break;
                     }
 
                     result = JSON.parse(row.data as string);
-                    stmt.free();
                 } else {
                     result = undefined;
-                    stmt.free();
                 }
                 break;
             }
@@ -526,12 +655,10 @@ self.onmessage = async (event: MessageEvent) => {
                 const now = Math.floor(Date.now() / 1000);
                 const dataJson = JSON.stringify(data);
 
-                db.run("INSERT OR REPLACE INTO cache_data (namespace, key, data, cached_at) VALUES (?, ?, ?, ?)", [
-                    namespace,
-                    key,
-                    dataJson,
-                    now,
-                ]);
+                await db.run(
+                    "INSERT OR REPLACE INTO cache_data (namespace, key, data, cached_at) VALUES (?, ?, ?, ?)",
+                    [namespace, key, dataJson, now]
+                );
                 result = undefined;
                 break;
             }
@@ -546,20 +673,18 @@ self.onmessage = async (event: MessageEvent) => {
             result,
         };
 
-        // Check if we should use transferables
         const transferables: Transferable[] = [];
-        if (result && result.type === 'binary' && result.buffer) {
+        if (result && result.type === "binary" && result.buffer) {
             transferables.push(result.buffer);
         }
 
         if (transferables.length > 0) {
-            // Use any cast to handle Web Worker postMessage signature
             (self as any).postMessage(response, transferables);
         } else {
             self.postMessage(response);
         }
     } catch (error: any) {
-        console.error(`Worker: Error processing command ${id} (${type}):`, error);
+        console.error(`[Worker] Error processing command ${id} (${type}):`, error);
         const errorResponse = {
             _protocol: PROTOCOL_NAME,
             _version: PACKAGE_VERSION,
@@ -570,7 +695,6 @@ self.onmessage = async (event: MessageEvent) => {
     }
 };
 
-// Add a global error handler
 self.addEventListener("error", (event) => {
     console.error("Worker: Uncaught error:", event.message, event.error);
 });

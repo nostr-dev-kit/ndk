@@ -78,10 +78,10 @@ export class Database extends Dexie {
 
     constructor(name: string) {
         super(name);
-        this.version(18).stores({
+        this.version(19).stores({
             profiles: "&pubkey",
             events: "&id, kind",
-            eventTags: "&tagValue",
+            eventTags: "[tagValue+eventId], tagValue",
             nip05: "&nip05",
             lnurl: "&pubkey",
             relayStatus: "&url",

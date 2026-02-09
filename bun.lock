@@ -168,7 +168,7 @@
         "vitest": "^4.0.14",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": ">=3.0.0-beta.70",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.71",
       },
     },
     "core": {

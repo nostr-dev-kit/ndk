@@ -12,8 +12,11 @@ import type { NDKRelaySubscription } from "./subscription";
 // Removed MAX_RECONNECT_ATTEMPTS - we retry indefinitely with capped backoff
 const FLAPPING_THRESHOLD_MS = 1000;
 
+import type { NDKCountResult } from "../count/index.js";
+import { NDKCountHll } from "../count/index.js";
+
 export type CountResolver = {
-    resolve: (count: number) => void;
+    resolve: (result: NDKCountResult) => void;
     reject: (err: Error) => void;
 };
 
@@ -406,10 +409,19 @@ export class NDKRelayConnectivity {
                     return;
                 }
                 case "COUNT": {
-                    const payload = data[2] as { count: number };
+                    const payload = data[2] as { count: number; hll?: string };
                     const cr = this.openCountRequests.get(id) as CountResolver;
                     if (cr) {
-                        cr.resolve(payload.count);
+                        const result: NDKCountResult = { count: payload.count };
+                        // Parse HLL if present (NIP-45 HyperLogLog support)
+                        if (payload.hll) {
+                            try {
+                                result.hll = NDKCountHll.fromHex(payload.hll);
+                            } catch (e) {
+                                this.debug("Failed to parse HLL from COUNT response:", e);
+                            }
+                        }
+                        cr.resolve(result);
                         this.openCountRequests.delete(id);
                     }
                     return;
@@ -841,13 +853,13 @@ export class NDKRelayConnectivity {
      *
      * @param filters - The filters to apply to the count request.
      * @param params - An optional object containing a custom id for the count request.
-     * @returns A promise that resolves with the number of matching events.
+     * @returns A promise that resolves with the count result including optional HLL data.
      * @throws {Error} If attempting to send the count request on a closed relay connection.
      */
-    async count(filters: NDKFilter[], params: { id?: string | null }): Promise<number> {
+    async count(filters: NDKFilter[], params: { id?: string | null }): Promise<NDKCountResult> {
         this.serial++;
         const id = params?.id || `count:${this.serial}`;
-        const ret = new Promise<number>((resolve, reject) => {
+        const ret = new Promise<NDKCountResult>((resolve, reject) => {
             this.openCountRequests.set(id, { resolve, reject });
         });
         this.send(`["COUNT","${id}",${JSON.stringify(filters).substring(1)}`);

@@ -11,6 +11,7 @@ export { NDKPool };
 
 export * from "./app-settings/index.js";
 export * from "./cache/index.js";
+export * from "./count/index.js";
 export * from "./dvm/schedule.js";
 export * from "./events/content-tagger.js";
 export * from "./events/gift-wrapping.js";

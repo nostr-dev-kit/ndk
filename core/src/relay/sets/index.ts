@@ -1,5 +1,8 @@
+import type { NDKAggregatedCountResult, NDKCountOptions, NDKCountResult } from "../../count/index.js";
+import { NDKCountHll } from "../../count/index.js";
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
+import type { NDKFilter } from "../../subscription/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 import type { NDKPool } from "../pool/index.js";
@@ -323,5 +326,91 @@ export class NDKRelaySet {
 
     get size(): number {
         return this.relays.size;
+    }
+
+    /**
+     * Counts events matching the given filters across all relays in this set.
+     *
+     * This method implements NIP-45 COUNT with HyperLogLog (HLL) support for
+     * accurate cardinality estimation across multiple relays.
+     *
+     * When relays return HLL data, the counts are merged using the HLL algorithm
+     * to avoid double-counting events that appear on multiple relays.
+     *
+     * @param filters - The filters to count events for
+     * @param opts - Optional count options (timeout, custom id)
+     * @returns An aggregated count result with the best estimate and per-relay results
+     *
+     * @example
+     * ```typescript
+     * const relaySet = new NDKRelaySet(new Set([relay1, relay2]), ndk);
+     * const result = await relaySet.count([{ kinds: [1], authors: [pubkey] }]);
+     * console.log(`Estimated unique count: ${result.count}`);
+     * console.log(`Relay 1 reported: ${result.relayResults.get(relay1.url)?.count}`);
+     * ```
+     */
+    public async count(
+        filters: NDKFilter | NDKFilter[],
+        opts: NDKCountOptions = {},
+    ): Promise<NDKAggregatedCountResult> {
+        const timeout = opts.timeout ?? 5000;
+        const filtersArray = Array.isArray(filters) ? filters : [filters];
+
+        // Track results from each relay
+        const relayResults = new Map<string, NDKCountResult>();
+        const hlls: NDKCountHll[] = [];
+
+        // Create promises for each relay
+        const promises: Promise<void>[] = Array.from(this.relays).map(async (relay) => {
+            // Skip relays that aren't connected
+            if (relay.status < NDKRelayStatus.CONNECTED) {
+                return;
+            }
+
+            try {
+                // Create a timeout promise
+                const timeoutPromise = new Promise<never>((_, reject) => {
+                    setTimeout(() => reject(new Error(`Count timeout after ${timeout}ms`)), timeout);
+                });
+
+                // Race the count against the timeout
+                const result = await Promise.race([
+                    relay.connectivity.count(filtersArray, { id: opts.id }),
+                    timeoutPromise,
+                ]);
+
+                relayResults.set(relay.url, result);
+                if (result.hll) {
+                    hlls.push(result.hll);
+                }
+            } catch (error) {
+                this.debug(`Count failed for relay ${relay.url}:`, error);
+            }
+        });
+
+        // Wait for all relays to respond (or timeout)
+        await Promise.allSettled(promises);
+
+        // Compute the best estimate
+        let count: number;
+        let mergedHll: NDKCountHll | undefined;
+
+        if (hlls.length > 0) {
+            // If we have HLL data, merge it and estimate
+            mergedHll = NDKCountHll.merge(hlls);
+            count = mergedHll.estimate();
+        } else {
+            // Fall back to maximum count from all relays
+            count = 0;
+            for (const result of relayResults.values()) {
+                count = Math.max(count, result.count);
+            }
+        }
+
+        return {
+            count,
+            mergedHll,
+            relayResults,
+        };
     }
 }

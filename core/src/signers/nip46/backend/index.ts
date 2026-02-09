@@ -13,6 +13,7 @@ import Nip44DecryptHandlingStrategy from "./nip44-decrypt.js";
 import Nip44EncryptHandlingStrategy from "./nip44-encrypt.js";
 import PingEventHandlingStrategy from "./ping.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import SwitchRelaysEventHandlingStrategy from "./switch-relays.js";
 
 export type NIP46Method =
     | "connect"
@@ -22,7 +23,8 @@ export type NIP46Method =
     | "nip44_encrypt"
     | "nip44_decrypt"
     | "get_public_key"
-    | "ping";
+    | "ping"
+    | "switch_relays";
 
 export type Nip46PermitCallbackParams = {
     /**
@@ -143,6 +145,7 @@ export class NDKNip46Backend {
         nip44_decrypt: new Nip44DecryptHandlingStrategy(),
         get_public_key: new GetPublicKeyHandlingStrategy(),
         ping: new PingEventHandlingStrategy(),
+        switch_relays: new SwitchRelaysEventHandlingStrategy(),
     };
 
     /**
@@ -210,6 +213,12 @@ export class NDKNip46Backend {
             } catch (sendError: any) {
                 this.debug("failed to send response", sendError);
             }
+        }
+
+        // After sending switch_relays response, update the RPC to use the preferred relays
+        // so future responses are published on the new relay set
+        if (method === "switch_relays" && response) {
+            this.rpc.updateRelays(this.relayUrls);
         }
     }
 

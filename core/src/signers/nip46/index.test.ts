@@ -177,6 +177,17 @@ describe("NDKNip46Signer", () => {
             // Simulate startListening
             (signer as any).startListening = vi.fn();
 
+            // Mock sendRequest to handle get_public_key and switch_relays
+            (mockRpc.sendRequest as any).mockImplementation(
+                (_remotePubkey: string, method: string, _params: any[], _kind: number, cb: Function) => {
+                    if (method === "get_public_key") {
+                        cb({ result: alice.pubkey });
+                    } else if (method === "switch_relays") {
+                        cb({ result: "null" });
+                    }
+                },
+            );
+
             // Simulate on("response")
             let responseCb: any;
             (mockRpc.on as any).mockImplementation((event: string, cb: Function) => {
@@ -190,7 +201,7 @@ describe("NDKNip46Signer", () => {
                 event: { author: alice, pubkey: alice.pubkey },
             });
             const user = await promise;
-            expect(user).toBe(alice);
+            expect(user.pubkey).toBe(alice.pubkey);
             expect(signer.userPubkey).toBe(alice.pubkey);
             expect(signer.bunkerPubkey).toBe(alice.pubkey);
         });

@@ -57,6 +57,36 @@ export class NDKNostrRpc extends EventEmitter {
     }
 
     /**
+     * Updates the relay set used for RPC communication.
+     * Disconnects from old relays and connects to new ones.
+     */
+    public updateRelays(relayUrls: string[]): void {
+        // Disconnect old pool
+        if (this.pool) {
+            for (const relay of this.pool.relays.values()) {
+                relay.disconnect();
+            }
+        }
+
+        this.pool = new NDKPool(relayUrls, this.ndk, {
+            debug: this.debug.extend("rpc-pool"),
+            name: "Nostr RPC",
+        });
+
+        this.relaySet = new NDKRelaySet(new Set(), this.ndk, this.pool);
+        for (const url of relayUrls) {
+            const relay = this.pool.getRelay(url, false, false);
+            relay.authPolicy = NDKRelayAuthPolicies.signIn({
+                ndk: this.ndk,
+                signer: this.signer,
+                debug: this.debug,
+            });
+            this.relaySet.addRelay(relay);
+            relay.connect();
+        }
+    }
+
+    /**
      * Subscribe to a filter. This function will resolve once the subscription is ready.
      */
     public subscribe(filter: NDKFilter): Promise<NDKSubscription> {

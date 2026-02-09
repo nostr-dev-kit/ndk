@@ -232,9 +232,10 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     this.rpc.off("response", connect);
 
                     // Get the actual user's pubkey from the bunker
-                    this.getPublicKey().then((pubkey) => {
+                    this.getPublicKey().then(async (pubkey) => {
                         this.userPubkey = pubkey;
                         this._user = this.ndk.getUser({ pubkey });
+                        await this.switchRelays();
                         resolve(this._user);
                     }).catch(reject);
                 }
@@ -285,14 +286,58 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
             this.rpc.sendRequest(this.bunkerPubkey, "connect", connectParams, 24133, (response: NDKRpcResponse) => {
                 if (response.result === "ack") {
-                    this.getPublicKey().then((pubkey) => {
+                    this.getPublicKey().then(async (pubkey) => {
                         this.userPubkey = pubkey;
                         this._user = this.ndk.getUser({ pubkey });
+                        await this.switchRelays();
                         resolve(this._user);
                     });
                 } else {
                     reject(response.error);
                 }
+            });
+        });
+    }
+
+    /**
+     * Sends a switch_relays request to the bunker.
+     * If the bunker responds with new relay URLs, updates the RPC layer
+     * and resubscribes on the new relays.
+     */
+    private async switchRelays(): Promise<void> {
+        if (!this.bunkerPubkey) return;
+
+        return new Promise<void>((resolve) => {
+            // Timeout in case the bunker doesn't support switch_relays
+            const timeout = setTimeout(() => {
+                this.debug("switch_relays timed out, bunker may not support it");
+                resolve();
+            }, 5000);
+
+            this.rpc.sendRequest(this.bunkerPubkey!, "switch_relays", [], 24133, async (response: NDKRpcResponse) => {
+                clearTimeout(timeout);
+
+                if (response.error || !response.result || response.result === "null") {
+                    this.debug("switch_relays: no relay change needed");
+                    resolve();
+                    return;
+                }
+
+                try {
+                    const newRelays: string[] = JSON.parse(response.result);
+                    if (Array.isArray(newRelays) && newRelays.length > 0) {
+                        this.debug("switching relays to %o", newRelays);
+                        this.relayUrls = newRelays;
+                        this.rpc.updateRelays(newRelays);
+                        this.subscription?.stop();
+                        this.subscription = undefined;
+                        await this.startListening();
+                    }
+                } catch (e) {
+                    this.debug("error parsing switch_relays response", e);
+                }
+
+                resolve();
             });
         });
     }

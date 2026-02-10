@@ -1,32 +1,23 @@
-{
-  "$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/project-config.json",
+import { defineConfig } from "jsrepo";
+import prettier from "@jsrepo/transform-prettier"; // Optional: for formatting
 
+export default defineConfig({
   // Registries to use
-  "repos": ["@nostr-dev-kit/svelte"],
+  registries: ["@nostr-dev-kit/svelte"],
 
-  // Include test files with components
-  "includeTests": false,
-
-  // Include documentation files
-  "includeDocs": false,
-
-  // Add watermark comments to files
-  "watermark": true,
-
-  // Code formatter: "prettier" | "biome" | "none"
-  "formatter": "biome",
-
-  // Config file paths (rarely needed)
-  "configFiles": {},
+  // Optional: Add transform plugins for formatting
+  // Run: jsrepo config transform @jsrepo/transform-prettier
+  // Or: jsrepo config transform @jsrepo/transform-biome
+  transforms: [prettier()],
 
   // Where to install components by category
-  "paths": {
+  paths: {
     "*": "$lib/ndk/components",      // Default path
-    "ui": "$lib/ndk/ui",             // UI primitives
-    "hooks": "$lib/ndk/hooks",       // Svelte hooks
-    "utils": "$lib/ndk/utils",       // Utilities
-    "icons": "$lib/ndk/icons",       // Icon components
-    "blocks": "$lib/ndk/blocks",     // Complete blocks
-    "builders": "$lib/ndk/builders"  // Component builders
-  }
-}
+    ui: "$lib/ndk/ui",               // UI primitives
+    hooks: "$lib/ndk/hooks",         // Svelte hooks
+    utils: "$lib/ndk/utils",         // Utilities
+    icons: "$lib/ndk/icons",         // Icon components
+    blocks: "$lib/ndk/blocks",       // Complete blocks
+    builders: "$lib/ndk/builders",   // Component builders
+  },
+});

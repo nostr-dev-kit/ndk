@@ -1,16 +1,13 @@
-{
-  "$schema": "https://unpkg.com/jsrepo@2.5.1/schemas/project-config.json",
-  "repos": ["@nostr-dev-kit/svelte"],
-  "includeTests": false,
-  "includeDocs": false,
-  "watermark": true,
-  "formatter": "biome",
-  "paths": {
+import { defineConfig } from "jsrepo";
+
+export default defineConfig({
+  registries: ["@nostr-dev-kit/svelte"],
+  paths: {
     "*": "$lib/ndk/components",
-    "ui": "$lib/ndk/ui",
-    "hooks": "$lib/ndk/hooks",
-    "utils": "$lib/ndk/utils",
-    "icons": "$lib/ndk/icons",
-    "blocks": "$lib/ndk/blocks"
-  }
-}
+    ui: "$lib/ndk/ui",
+    hooks: "$lib/ndk/hooks",
+    utils: "$lib/ndk/utils",
+    icons: "$lib/ndk/icons",
+    blocks: "$lib/ndk/blocks",
+  },
+});

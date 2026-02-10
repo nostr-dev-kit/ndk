@@ -470,12 +470,12 @@ cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js static/"
 	<section>
 		<h2>Configuration Options</h2>
 
-	<h3>jsrepo.json Reference</h3>
+	<h3>jsrepo.config.ts Reference</h3>
 
-	<p>Your <code>jsrepo.json</code> file controls how components are installed:</p>
+	<p>Your <code>jsrepo.config.ts</code> file controls how components are installed:</p>
 
 	<CodeBlock
-		lang="json"
+		lang="typescript"
 		code={jsrepoConfigReference}
 	/>
 
@@ -515,7 +515,7 @@ cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js static/"
 	<p>If imports fail after adding components, check:</p>
 	<ol>
 		<li>Verify the component was added: <code>ls src/lib/components/</code></li>
-		<li>Check your path configuration in <code>jsrepo.json</code></li>
+		<li>Check your path configuration in <code>jsrepo.config.ts</code></li>
 		<li>Ensure TypeScript paths are configured in <code>tsconfig.json</code></li>
 	</ol>
 

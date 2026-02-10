@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 
 type VersionBump = 'major' | 'minor' | 'patch';
 
-const CONFIG_PATH = resolve(process.cwd(), 'jsrepo-build-config.json');
+const CONFIG_PATH = resolve(process.cwd(), 'jsrepo.config.ts');
 
 function bumpVersion(version: string, type: VersionBump): string {
 	const [major, minor, patch] = version.split('.').map(Number);
@@ -22,17 +22,37 @@ function bumpVersion(version: string, type: VersionBump): string {
 
 async function updateVersion(type: VersionBump) {
 	const content = await readFile(CONFIG_PATH, 'utf-8');
-	const config = JSON.parse(content);
 
-	const oldVersion = config.version;
+	// Extract current version from REGISTRY_VERSION constant
+	const versionMatch = content.match(/const REGISTRY_VERSION\s*=\s*["'](\d+\.\d+\.\d+)["']/);
+	if (!versionMatch) {
+		throw new Error('Could not find REGISTRY_VERSION in jsrepo.config.ts');
+	}
+
+	const oldVersion = versionMatch[1];
 	const newVersion = bumpVersion(oldVersion, type);
 
-	config.version = newVersion;
+	// Replace the version in the config file
+	const newContent = content.replace(
+		/const REGISTRY_VERSION\s*=\s*["']\d+\.\d+\.\d+["']/,
+		`const REGISTRY_VERSION = "${newVersion}"`
+	);
 
-	await writeFile(CONFIG_PATH, JSON.stringify(config, null, '\t') + '\n');
+	await writeFile(CONFIG_PATH, newContent);
 
 	console.log(`Version bumped: ${oldVersion} → ${newVersion}`);
 	return newVersion;
+}
+
+async function buildRegistry() {
+	console.log('Building registry...');
+	try {
+		execSync('jsrepo build', { stdio: 'inherit' });
+		console.log('✅ Registry built successfully!');
+	} catch (error) {
+		console.error('❌ Registry build failed:', error);
+		process.exit(1);
+	}
 }
 
 async function publish() {
@@ -57,6 +77,7 @@ async function main() {
 	}
 
 	const newVersion = await updateVersion(bumpType);
+	await buildRegistry();
 	await publish();
 
 	console.log(`\n🎉 Successfully published version ${newVersion}`);

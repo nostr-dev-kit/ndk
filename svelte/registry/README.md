@@ -55,7 +55,7 @@ bun add -g jsrepo
 jsrepo init @nostr/svelte
 ```
 
-This creates a `jsrepo.json` configuration file in your project.
+This creates a `jsrepo.config.ts` configuration file in your project.
 
 3. **Install NDK dependencies**
 
@@ -126,9 +126,8 @@ registry/
 │   │   │   └── icons/         # Icon components
 │   │   └── site-components/   # Showcase components
 │   └── routes/                # Showcase pages
-├── jsrepo.json                # jsrepo project config
-├── jsrepo-build-config.json   # jsrepo registry config
-└── jsrepo-manifest.json       # Generated manifest
+├── jsrepo.config.ts           # jsrepo configuration (project + registry)
+└── registry.json              # Generated manifest
 ```
 
 ### Building the Registry

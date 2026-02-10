@@ -1,10 +1,10 @@
 import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
-import { SvelteMap } from 'svelte/reactivity';
 import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 import { getNDK } from '../../utils/ndk/index.svelte.js';
 
 // Track in-flight profile fetch requests to prevent duplicate fetches
-const inFlightRequests = new SvelteMap<string, Promise<NDKUserProfile | null>>();
+// Plain Map (not SvelteMap) to avoid reactive dependency tracking in effects
+const inFlightRequests = new Map<string, Promise<NDKUserProfile | null>>();
 
 export interface ProfileFetcherState {
     profile: NDKUserProfile | null;
@@ -67,6 +67,9 @@ export function createProfileFetcher(
                 state.loading = false;
                 return;
             }
+
+            // Ensure the user has an NDK reference for profile fetching
+            if (!ndkUser.ndk) ndkUser.ndk = ndkInstance;
 
             const pubkey = ndkUser.pubkey;
 

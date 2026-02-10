@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/cache-sqlite-wasm",
-  "version": "1.0.0-beta.71",
+  "version": "1.0.0",
   "description": "SQLite WASM cache adapter for NDK using OPFS for persistence.",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
@@ -26,7 +26,7 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.71"
+    "@nostr-dev-kit/ndk": "3.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",

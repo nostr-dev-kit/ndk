@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@cashu/cashu-ts": "^2.1",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.71",
-    "@nostr-dev-kit/wallet": "1.0.0-beta.71",
-    "@nostr-dev-kit/sync": "1.0.0-beta.71"
+    "@nostr-dev-kit/ndk": "3.0.0",
+    "@nostr-dev-kit/wallet": "1.0.0",
+    "@nostr-dev-kit/sync": "1.0.0"
   }
 }

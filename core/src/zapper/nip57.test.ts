@@ -9,7 +9,7 @@ describe("generateZapRequest", () => {
     test("creates valid NIP-57 zap request with required fields", async () => {
         const signer = NDKPrivateKeySigner.generate();
         const ndk = new NDK({ signer });
-        const user = ndk.getUser({ pubkey: "recipient-pubkey" });
+        const user = await ndk.fetchUser("recipient-pubkey");
 
         const lnUrlData = {
             callback: "https://example.com/lnurlp/callback",
@@ -58,7 +58,7 @@ describe("generateZapRequest", () => {
     test("limits relays to maximum of 4", async () => {
         const signer = NDKPrivateKeySigner.generate();
         const ndk = new NDK({ signer });
-        const user = ndk.getUser({ pubkey: "recipient-pubkey" });
+        const user = await ndk.fetchUser("recipient-pubkey");
 
         const lnUrlData = {
             callback: "https://example.com/callback",
@@ -116,7 +116,7 @@ describe("generateZapRequest", () => {
     test("handles empty comment", async () => {
         const signer = NDKPrivateKeySigner.generate();
         const ndk = new NDK({ signer });
-        const user = ndk.getUser({ pubkey: "recipient-pubkey" });
+        const user = await ndk.fetchUser("recipient-pubkey");
 
         const lnUrlData = {
             callback: "https://example.com/callback",
@@ -136,7 +136,7 @@ describe("generateZapRequest", () => {
     test("only includes one p-tag", async () => {
         const signer = NDKPrivateKeySigner.generate();
         const ndk = new NDK({ signer });
-        const user = ndk.getUser({ pubkey: "recipient-pubkey" });
+        const user = await ndk.fetchUser("recipient-pubkey");
 
         const lnUrlData = {
             callback: "https://example.com/callback",

@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeAll } from "bun:test";
-import { NDK } from "../../../ndk/index.js";
-import { NDKPrivateKeySigner } from "../../../signers/private-key/index.js";
-import { mockNutzap, mockProof } from "../../../../test/mocks/nutzaps.js";
+import { beforeAll, describe, expect, it } from "vitest";
+import { mockNutzap, mockProof } from "../../../../test";
+import { NDK } from "../../../ndk";
+import { NDKPrivateKeySigner } from "../../../signers/private-key";
 import { NDKNutzap } from "./index.js";
 import { NutzapValidationCode, NutzapValidationSeverity } from "./validation.js";
 
@@ -64,7 +64,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.NO_PROOFS,
                     severity: NutzapValidationSeverity.ERROR,
-                })
+                }),
             );
         });
 
@@ -80,7 +80,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.NO_RECIPIENT,
                     severity: NutzapValidationSeverity.ERROR,
-                })
+                }),
             );
         });
 
@@ -100,7 +100,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.MULTIPLE_RECIPIENTS,
                     severity: NutzapValidationSeverity.ERROR,
-                })
+                }),
             );
         });
 
@@ -116,7 +116,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.NO_MINT,
                     severity: NutzapValidationSeverity.ERROR,
-                })
+                }),
             );
         });
 
@@ -137,7 +137,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.MULTIPLE_MINTS,
                     severity: NutzapValidationSeverity.ERROR,
-                })
+                }),
             );
         });
 
@@ -156,7 +156,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.MULTIPLE_EVENT_TAGS,
                     severity: NutzapValidationSeverity.ERROR,
-                })
+                }),
             );
         });
 
@@ -181,7 +181,7 @@ describe("NIP-61 Nutzap Validation", () => {
                     code: NutzapValidationCode.MALFORMED_PROOF_SECRET,
                     severity: NutzapValidationSeverity.ERROR,
                     proofIndex: 0,
-                })
+                }),
             );
         });
     });
@@ -206,7 +206,7 @@ describe("NIP-61 Nutzap Validation", () => {
                     code: NutzapValidationCode.MISSING_EVENT_TAG_IN_PROOF,
                     severity: NutzapValidationSeverity.WARNING,
                     proofIndex: 0,
-                })
+                }),
             );
         });
 
@@ -216,7 +216,12 @@ describe("NIP-61 Nutzap Validation", () => {
             nutzap.recipientPubkey = recipientPubkey;
             nutzap.tags.push(["e", "event1"]);
             // Create proof with different e tag
-            nutzap.proofs = [mockProof("mint", 100, recipientPubkey, [["e", "event2"], ["P", senderPubkey]])];
+            nutzap.proofs = [
+                mockProof("mint", 100, recipientPubkey, [
+                    ["e", "event2"],
+                    ["P", senderPubkey],
+                ]),
+            ];
             await nutzap.sign(senderSigner);
 
             const result = nutzap.validateNIP61();
@@ -228,7 +233,7 @@ describe("NIP-61 Nutzap Validation", () => {
                     code: NutzapValidationCode.MISMATCHED_EVENT_TAG_IN_PROOF,
                     severity: NutzapValidationSeverity.WARNING,
                     proofIndex: 0,
-                })
+                }),
             );
         });
 
@@ -251,7 +256,7 @@ describe("NIP-61 Nutzap Validation", () => {
                     code: NutzapValidationCode.MISSING_SENDER_TAG_IN_PROOF,
                     severity: NutzapValidationSeverity.WARNING,
                     proofIndex: 0,
-                })
+                }),
             );
         });
 
@@ -262,7 +267,12 @@ describe("NIP-61 Nutzap Validation", () => {
             nutzap.recipientPubkey = recipientPubkey;
             nutzap.tags.push(["e", eventId]);
             // Create proof with wrong P tag
-            nutzap.proofs = [mockProof("mint", 100, recipientPubkey, [["e", eventId], ["P", "wrong_pubkey"]])];
+            nutzap.proofs = [
+                mockProof("mint", 100, recipientPubkey, [
+                    ["e", eventId],
+                    ["P", "wrong_pubkey"],
+                ]),
+            ];
             await nutzap.sign(senderSigner);
 
             const result = nutzap.validateNIP61();
@@ -274,7 +284,7 @@ describe("NIP-61 Nutzap Validation", () => {
                     code: NutzapValidationCode.MISMATCHED_SENDER_TAG_IN_PROOF,
                     severity: NutzapValidationSeverity.WARNING,
                     proofIndex: 0,
-                })
+                }),
             );
         });
 
@@ -293,7 +303,7 @@ describe("NIP-61 Nutzap Validation", () => {
                 expect.objectContaining({
                     code: NutzapValidationCode.NO_EVENT_TAG_IN_EVENT,
                     severity: NutzapValidationSeverity.WARNING,
-                })
+                }),
             );
         });
     });

@@ -1,24 +1,24 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { NDK } from "../ndk/index.js";
-import { NDKPrivateKeySigner } from "../signers/private-key/index.js";
-import type { NDKCacheAdapter, NDKEventId } from "../cache/index.js";
+import type { NDKCacheAdapter } from "../cache";
+import { NDK } from "../ndk";
+import { NDKPrivateKeySigner } from "../signers/private-key";
+import { giftUnwrap, giftWrap } from "./gift-wrapping.js";
 import { NDKEvent } from "./index.js";
-import { NDKKind } from "./kinds/index.js";
-import { giftWrap, giftUnwrap } from "./gift-wrapping.js";
+import { NDKKind } from "./kinds";
 
 // Mock cache adapter to track cache operations
 class MockCacheAdapter implements Partial<NDKCacheAdapter> {
     public locking = false;
-    private cache = new Map<NDKEventId, NDKEvent>();
+    private cache = new Map<NDKEvent["id"], NDKEvent>();
     public getDecryptedEventCalls: string[] = [];
     public addDecryptedEventCalls: Array<{ wrapperId: string; rumorId: string }> = [];
 
-    async getDecryptedEvent(wrapperId: NDKEventId): Promise<NDKEvent | null> {
+    async getDecryptedEvent(wrapperId: NDKEvent["id"]): Promise<NDKEvent | null> {
         this.getDecryptedEventCalls.push(wrapperId);
         return this.cache.get(wrapperId) ?? null;
     }
 
-    async addDecryptedEvent(wrapperId: NDKEventId, decryptedEvent: NDKEvent): Promise<void> {
+    async addDecryptedEvent(wrapperId: NDKEvent["id"], decryptedEvent: NDKEvent): Promise<void> {
         this.addDecryptedEventCalls.push({ wrapperId, rumorId: decryptedEvent.id });
         this.cache.set(wrapperId, decryptedEvent);
     }

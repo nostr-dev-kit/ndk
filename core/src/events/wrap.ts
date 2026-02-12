@@ -14,6 +14,7 @@ import { NDKList } from "./kinds/lists/index.js";
 import { NDKAppHandlerEvent } from "./kinds/nip89/app-handler.js";
 import { NDKNutzap } from "./kinds/nutzap/index.js";
 import { NDKCashuMintList } from "./kinds/nutzap/mint-list.js";
+import { NDKProfileCustomization } from "./kinds/profile-customization.js";
 import { NDKProject } from "./kinds/project.js";
 import { NDKProjectTemplate } from "./kinds/project-template.js";
 import { NDKRelayList } from "./kinds/relay-list.js";
@@ -111,6 +112,7 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKCashuMintAnnouncement,
         NDKFedimintMint,
         NDKMintRecommendation,
+        NDKProfileCustomization,
     ];
 
     // Combine built-in and registered classes

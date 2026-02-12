@@ -194,6 +194,9 @@ export enum NDKKind {
     // NIP-89: App Metadata
     AppRecommendation = 31989,
     AppHandler = 31990,
+
+    // NIP-F1: Profile Hypercustomization
+    ProfileCustomization = 19999,
 }
 
 export const NDKListKinds = [

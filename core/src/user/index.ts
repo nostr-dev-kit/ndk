@@ -3,6 +3,7 @@ import { nip19 } from "nostr-tools";
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
+import { NDKProfileCustomization } from "../events/kinds/profile-customization.js";
 import type { NDKFilter, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
 import type { NDK } from "../ndk/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
@@ -276,6 +277,32 @@ export class NDKUser {
         }
 
         return this.profile;
+    }
+
+    /**
+     * Fetches the user's NIP-F1 profile customization event.
+     *
+     * @param opts - NDKSubscriptionOptions for the fetch
+     * @returns The NDKProfileCustomization event, or null if not found
+     */
+    public async fetchProfileCustomization(
+        opts?: NDKSubscriptionOptions,
+    ): Promise<NDKProfileCustomization | null> {
+        if (!this.ndk) throw new Error("NDK not set");
+
+        opts ??= {};
+        opts.closeOnEose ??= true;
+        opts.groupable ??= true;
+        opts.groupableDelay ??= 25;
+
+        const event = await this.ndk.fetchEvent(
+            { kinds: [NDKKind.ProfileCustomization], authors: [this.pubkey] },
+            opts,
+        );
+
+        if (!event) return null;
+
+        return NDKProfileCustomization.from(event);
     }
 
     /**

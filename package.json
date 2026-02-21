@@ -60,6 +60,7 @@
         "svelte",
         "wallet",
         "wot",
-        "blossom"
+        "blossom",
+        "examples/nip-c1-cli"
     ]
 }

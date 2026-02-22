@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vitest";
 import { NDKEvent } from "./index.js";
 import { serialize } from "./serializer.js";
 
@@ -24,7 +24,7 @@ describe("Event Serializer Validation", () => {
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
             tags: [],
-        } as any;
+        };
 
         expect(() => serialize.call(rawEvent)).toThrow(
             "Can't serialize event with invalid properties: kind (must be number, got undefined)",
@@ -33,7 +33,8 @@ describe("Event Serializer Validation", () => {
 
     it("should throw detailed error for invalid kind type", () => {
         const event = new NDKEvent(undefined, {
-            kind: "1" as any,
+            // @ts-expect-error intentional
+            kind: "1",
             content: "test content",
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
@@ -52,7 +53,7 @@ describe("Event Serializer Validation", () => {
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
             tags: [],
-        } as any;
+        };
 
         expect(() => serialize.call(rawEvent)).toThrow(
             "Can't serialize event with invalid properties: content (must be string, got undefined)",
@@ -62,7 +63,8 @@ describe("Event Serializer Validation", () => {
     it("should throw detailed error for invalid content type", () => {
         const event = new NDKEvent(undefined, {
             kind: 1,
-            content: 123 as any,
+            // @ts-expect-error intentional
+            content: 123,
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
             tags: [],
@@ -80,7 +82,7 @@ describe("Event Serializer Validation", () => {
             content: "test",
             pubkey: "a".repeat(64),
             tags: [],
-        } as any;
+        };
 
         expect(() => serialize.call(rawEvent)).toThrow(
             "Can't serialize event with invalid properties: created_at (must be number, got undefined)",
@@ -93,7 +95,7 @@ describe("Event Serializer Validation", () => {
             content: "test",
             created_at: Math.floor(Date.now() / 1000),
             tags: [],
-        } as any;
+        };
 
         expect(() => serialize.call(rawEvent)).toThrow(
             "Can't serialize event with invalid properties: pubkey (must be string, got undefined)",
@@ -106,7 +108,8 @@ describe("Event Serializer Validation", () => {
             content: "test",
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
-            tags: "not-an-array" as any,
+            // @ts-expect-error intentional
+            tags: "not-an-array",
         });
 
         expect(() => serialize.call(event)).toThrow(
@@ -120,7 +123,8 @@ describe("Event Serializer Validation", () => {
             content: "test",
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
-            tags: ["invalid" as any],
+            // @ts-expect-error intentional
+            tags: ["invalid"],
         });
 
         expect(() => serialize.call(event)).toThrow(
@@ -134,7 +138,8 @@ describe("Event Serializer Validation", () => {
             content: "test",
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
-            tags: [["p", 123 as any]],
+            // @ts-expect-error intentional
+            tags: [["p", 123]],
         });
 
         expect(() => serialize.call(event)).toThrow(
@@ -146,11 +151,11 @@ describe("Event Serializer Validation", () => {
         // Test with a raw event object that bypasses NDKEvent defaults
         // The validation fails fast, so only the first error is reported
         const rawEvent = {
-            kind: "invalid" as any,
-            content: 123 as any,
+            kind: "invalid",
+            content: 123,
             pubkey: "a".repeat(64),
             tags: [],
-        } as any;
+        };
 
         expect(() => serialize.call(rawEvent)).toThrow("kind (must be number, got string)");
     });
@@ -162,7 +167,7 @@ describe("Event Serializer Validation", () => {
             created_at: Math.floor(Date.now() / 1000),
             pubkey: "a".repeat(64),
             tags: [],
-        } as any;
+        };
 
         expect(() => serialize.call(rawEvent)).toThrow(/"kind":"invalid-kind"/);
     });

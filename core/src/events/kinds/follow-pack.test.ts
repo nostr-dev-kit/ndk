@@ -90,12 +90,26 @@ describe("NDKFollowPack", () => {
             });
         });
 
-        it("should get/set pubkeys and manipulate p tags", () => {
+        it("should get/set pubkeys and manipulate p tags if pubkeys are invalid", () => {
             const fp = new NDKFollowPack();
             expect(fp.pubkeys).toEqual([]);
 
             fp.pubkeys = ["pk1", "pk2"];
-            expect(fp.pubkeys).toEqual(["pk1", "pk2"]);
+            expect(fp.pubkeys).toEqual([]);
+        });
+
+        it("should get/set pubkeys and manipulate p tags are valid", () => {
+            const fp = new NDKFollowPack();
+            expect(fp.pubkeys).toEqual([]);
+
+            fp.pubkeys = [
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            ];
+            expect(fp.pubkeys).toEqual([
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            ]);
             expect(fp.tags.filter((t) => t[0] === "p").length).toBe(2);
 
             fp.pubkeys = [];

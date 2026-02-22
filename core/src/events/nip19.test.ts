@@ -1,6 +1,7 @@
-import { NDKEvent } from "src";
+import { beforeAll, describe, expect, it } from "vitest";
 import { TestFixture } from "../../test";
 import { NDKRelay } from "../relay";
+import { NDKEvent } from "./index";
 
 let fixture: TestFixture;
 
@@ -24,7 +25,7 @@ describe("NDKEvent", () => {
             const event = new NDKEvent(fixture.ndk, { kind: 30000, pubkey });
             event.tags.push(["d", "1234"]);
             // Cast to any to avoid type issues with NDKRelay
-            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, fixture.ndk) as any;
+            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, fixture.ndk);
 
             const a = event.encode();
             expect(a).toBe(
@@ -37,7 +38,7 @@ describe("NDKEvent", () => {
             const event = new NDKEvent(fixture.ndk, { kind: 1, pubkey });
             event.tags.push(["e", "1234"]);
             // Cast to any to avoid type issues with NDKRelay
-            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, fixture.ndk) as any;
+            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, fixture.ndk);
 
             const a = event.encode();
             expect(a).toBe(

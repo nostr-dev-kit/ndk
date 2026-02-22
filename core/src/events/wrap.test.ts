@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import type { NDK } from "../ndk";
 import type { NostrEvent } from "./index.js";
 import { NDKEvent } from "./index.js";
 import { getRegisteredEventClasses, registerEventClass, unregisterEventClass, wrapEvent } from "./wrap.js";
@@ -10,18 +11,13 @@ class TestCustomEvent extends NDKEvent {
         return new TestCustomEvent(event.ndk, event);
     }
 
-    constructor(ndk: any, rawEvent?: NostrEvent | NDKEvent) {
+    constructor(ndk: NDK, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= 99999;
     }
 
     get customProperty(): string | undefined {
         return this.tagValue("custom");
-    }
-
-    set customProperty(value: string | undefined) {
-        this.removeTag("custom");
-        if (value) this.tags.push(["custom", value]);
     }
 }
 
@@ -32,7 +28,7 @@ class TestMultiKindEvent extends NDKEvent {
         return new TestMultiKindEvent(event.ndk, event);
     }
 
-    constructor(ndk: any, rawEvent?: NostrEvent | NDKEvent) {
+    constructor(ndk: NDK, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= 88888;
     }
@@ -42,9 +38,9 @@ describe("Event Class Registration", () => {
     beforeEach(() => {
         // Clean up any registered classes
         const registered = getRegisteredEventClasses();
-        for (const klass of registered) {
+        registered.forEach((klass) => {
             unregisterEventClass(klass);
-        }
+        });
     });
 
     it("should register and use custom event class", () => {

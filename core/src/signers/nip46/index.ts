@@ -14,6 +14,24 @@ import { registerSigner } from "../registry.js";
 import { generateNostrConnectUri, type NostrConnectOptions, nostrConnectGenerateSecret } from "./nostrconnect.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
+
+/**
+ * Error thrown when a NIP-46 remote signer operation times out.
+ */
+export class NDKNip46TimeoutError extends Error {
+    /** The operation that timed out (e.g. "sign", "encrypt", "blockUntilReady") */
+    public readonly operation: string;
+    /** The timeout duration in milliseconds */
+    public readonly timeoutMs: number;
+
+    constructor(operation: string, timeoutMs: number) {
+        super(`NIP-46 ${operation} timed out after ${timeoutMs}ms`);
+        this.name = "NDKNip46TimeoutError";
+        this.operation = operation;
+        this.timeoutMs = timeoutMs;
+    }
+}
+
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
  * This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)
@@ -78,6 +96,17 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * The random secret used for nostrconnect:// flows.
      */
     private nostrConnectSecret?: string;
+
+    /**
+     * Timeout in milliseconds for remote signer operations.
+     * When set, operations that don't receive a response within this
+     * duration will reject with an NDKNip46TimeoutError.
+     * Set to `undefined` (the default) to disable timeouts.
+     *
+     * @example
+     * signer.timeout = 30_000; // 30 seconds
+     */
+    public timeout?: number;
 
     /**
      *
@@ -190,6 +219,34 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     /**
+     * Wraps a promise with a timeout. If `this.timeout` is set and the
+     * promise doesn't settle within that duration, it rejects with an
+     * NDKNip46TimeoutError. If no timeout is configured, returns the
+     * promise as-is.
+     */
+    private withTimeout<T>(promise: Promise<T>, operation: string): Promise<T> {
+        if (!this.timeout) return promise;
+
+        const timeoutMs = this.timeout;
+        return new Promise<T>((resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new NDKNip46TimeoutError(operation, timeoutMs));
+            }, timeoutMs);
+
+            promise.then(
+                (value) => {
+                    clearTimeout(timer);
+                    resolve(value);
+                },
+                (error) => {
+                    clearTimeout(timer);
+                    reject(error);
+                },
+            );
+        });
+    }
+
+    /**
      * We start listening for events from the bunker
      */
     private async startListening() {
@@ -223,7 +280,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async blockUntilReadyNostrConnect(): Promise<NDKUser> {
-        return new Promise((resolve, reject) => {
+        const promise = new Promise<NDKUser>((resolve, reject) => {
             const connect = (response: NDKRpcResponse) => {
                 if (response.result === this.nostrConnectSecret) {
                     // The response event pubkey is the bunker's pubkey, not the user's
@@ -244,6 +301,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.startListening();
             this.rpc.on("response", connect);
         });
+
+        return this.withTimeout(promise, "blockUntilReady");
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
@@ -277,7 +336,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.emit("authUrl", ...props);
         });
 
-        return new Promise((resolve, reject) => {
+        const promise = new Promise<NDKUser>((resolve, reject) => {
             const connectParams = [this.userPubkey ?? ""];
 
             if (this.secret) connectParams.push(this.secret);
@@ -297,6 +356,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 }
             });
         });
+
+        return this.withTimeout(promise, "blockUntilReady");
     }
 
     /**
@@ -350,13 +411,15 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     public async getPublicKey(): Promise<Hexpubkey> {
         if (this.userPubkey) return this.userPubkey;
 
-        return new Promise<Hexpubkey>((resolve, _reject) => {
+        const promise = new Promise<Hexpubkey>((resolve, _reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
             this.rpc.sendRequest(this.bunkerPubkey, "get_public_key", [], 24133, (response: NDKRpcResponse) => {
                 resolve(response.result);
             });
         });
+
+        return this.withTimeout(promise, "getPublicKey");
     }
 
     public async encryptionEnabled(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
@@ -396,7 +459,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             );
         });
 
-        return promise;
+        return this.withTimeout(promise, method);
     }
 
     public async sign(event: NostrEvent): Promise<string> {
@@ -419,7 +482,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             );
         });
 
-        return promise;
+        return this.withTimeout(promise, "sign");
     }
 
     /**
@@ -437,7 +500,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         if (domain) req.push(domain);
         if (email) req.push(email);
 
-        return new Promise<Hexpubkey>((resolve, reject) => {
+        const promise = new Promise<Hexpubkey>((resolve, reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
             this.rpc.sendRequest(
@@ -455,6 +518,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 },
             );
         });
+
+        return this.withTimeout(promise, "createAccount");
     }
 
     /**

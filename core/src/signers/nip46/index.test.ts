@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RelayMock, SignerGenerator, UserGenerator } from "../../../test";
+import { SignerGenerator, UserGenerator } from "../../../test";
 import type { NostrEvent } from "../../events/index";
 import type { NDK } from "../../ndk/index";
-import type { NDKSubscription } from "../../subscription/index";
 import { NDKUser } from "../../user/index";
 import type { NDKPrivateKeySigner } from "../private-key/index";
 import { NDKNip46Signer, NDKNip46TimeoutError } from "./index";
@@ -27,15 +26,8 @@ function createMockRpc() {
         on: vi.fn(),
         off: vi.fn(),
         emit: vi.fn(),
-        debug: { exntend: vi.fn() },
+        debug: { extend: vi.fn() },
     } as unknown as NDKNostrRpc;
-}
-
-// Helper to create a mock NDKSubscription
-function createMockSubscription() {
-    return {
-        stop: vi.fn(),
-    } as unknown as NDKSubscription;
 }
 
 describe("NDKNip46Signer", () => {
@@ -439,6 +431,45 @@ describe("NDKNip46Signer", () => {
             expect(error.operation).toBe("sign");
             expect(error.timeoutMs).toBe(7500);
             expect(error.name).toBe("NDKNip46TimeoutError");
+        });
+
+        it("getPublicKey rejects with NDKNip46TimeoutError when timeout expires", async () => {
+            const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com";
+            const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
+            signer.timeout = 4000;
+
+            const mockRpc = createMockRpc();
+            (signer as any).rpc = mockRpc as NDKNostrRpc;
+            (signer as any).bunkerPubkey = "bunkerpubkey";
+            // Clear userPubkey so getPublicKey actually sends an RPC request
+            (signer as any).userPubkey = undefined;
+
+            (mockRpc.sendRequest as any).mockImplementation(() => {});
+
+            const promise = signer.getPublicKey();
+            const rejection = expect(promise).rejects.toThrow(NDKNip46TimeoutError);
+            await vi.advanceTimersByTimeAsync(4001);
+
+            await rejection;
+        });
+
+        it("createAccount rejects with NDKNip46TimeoutError when timeout expires", async () => {
+            const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com";
+            const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
+            signer.timeout = 6000;
+
+            const mockRpc = createMockRpc();
+            (signer as any).rpc = mockRpc as NDKNostrRpc;
+            (signer as any).bunkerPubkey = "bunkerpubkey";
+            (signer as any).startListening = vi.fn();
+
+            (mockRpc.sendRequest as any).mockImplementation(() => {});
+
+            const promise = signer.createAccount("testuser", "example.com");
+            const rejection = expect(promise).rejects.toThrow(NDKNip46TimeoutError);
+            await vi.advanceTimersByTimeAsync(6001);
+
+            await rejection;
         });
 
         it("does not apply timeout when timeout is undefined", async () => {

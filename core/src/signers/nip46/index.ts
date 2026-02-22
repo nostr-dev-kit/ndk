@@ -225,7 +225,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * promise as-is.
      */
     private withTimeout<T>(promise: Promise<T>, operation: string): Promise<T> {
-        if (!this.timeout) return promise;
+        if (this.timeout === undefined) return promise;
 
         const timeoutMs = this.timeout;
         return new Promise<T>((resolve, reject) => {
@@ -280,6 +280,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async blockUntilReadyNostrConnect(): Promise<NDKUser> {
+        let removeHandler: (() => void) | undefined;
+
         const promise = new Promise<NDKUser>((resolve, reject) => {
             const connect = (response: NDKRpcResponse) => {
                 if (response.result === this.nostrConnectSecret) {
@@ -287,6 +289,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     this.bunkerPubkey = response.event.pubkey;
 
                     this.rpc.off("response", connect);
+                    removeHandler = undefined;
 
                     // Get the actual user's pubkey from the bunker
                     this.getPublicKey().then(async (pubkey) => {
@@ -298,11 +301,15 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 }
             };
 
+            removeHandler = () => this.rpc.off("response", connect);
+
             this.startListening();
             this.rpc.on("response", connect);
         });
 
-        return this.withTimeout(promise, "blockUntilReady");
+        return this.withTimeout(promise, "blockUntilReady").finally(() => {
+            removeHandler?.();
+        });
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
@@ -350,7 +357,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                         this._user = this.ndk.getUser({ pubkey });
                         await this.switchRelays();
                         resolve(this._user);
-                    });
+                    }).catch(reject);
                 } else {
                     reject(response.error);
                 }

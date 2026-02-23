@@ -1,7 +1,7 @@
 import type { NDK } from "../../ndk/index.js";
 import type { NDKSubscription, NDKSubscriptionOptions } from "../../subscription/index.js";
 import type { NDKUser } from "../../user/index.js";
-import { NDKEvent, type NDKTag, type NostrEvent } from "../index.js";
+import { NDKEvent, type NostrEvent } from "../index.js";
 import { NDKKind } from "./index.js";
 
 /**
@@ -39,7 +39,7 @@ export type CollaborativeEventUpdateCallback = (event: NDKEvent) => void;
  *   console.log('collaborative document updated by', e.pubkey);
  * });
  *
- * const currentVersion = collabDoc.event;
+ * const latestVersion = collabDoc.currentVersion;
  * collabDoc.stop();
  * ```
  *
@@ -59,7 +59,7 @@ export class NDKCollaborativeEvent extends NDKEvent {
      * The current best version of the collaborative document.
      * This is the event with the highest created_at from any of the authors.
      */
-    private _event: NDKEvent | undefined;
+    private _currentVersion: NDKEvent | undefined;
 
     /**
      * Active subscription for live updates
@@ -95,10 +95,11 @@ export class NDKCollaborativeEvent extends NDKEvent {
      * Parse p-tags from the event into NDKUser objects
      */
     private _parseAuthorsFromTags(): void {
-        if (!this.ndk) return;
+        const ndk = this.ndk;
+        if (!ndk) return;
 
         const pTags = this.getMatchingTags("p");
-        this._authors = pTags.map((tag) => this.ndk!.getUser({ pubkey: tag[1] }));
+        this._authors = pTags.map((tag) => ndk.getUser({ pubkey: tag[1] }));
     }
 
     /**
@@ -145,8 +146,8 @@ export class NDKCollaborativeEvent extends NDKEvent {
      * Get the current best version of the collaborative document.
      * This is the event with the highest created_at from any of the authors.
      */
-    get event(): NDKEvent | undefined {
-        return this._event;
+    get currentVersion(): NDKEvent | undefined {
+        return this._currentVersion;
     }
 
     /**
@@ -182,7 +183,7 @@ export class NDKCollaborativeEvent extends NDKEvent {
         this.targetKind = targetEvent.kind;
 
         // Store the event reference
-        this._event = targetEvent;
+        this._currentVersion = targetEvent;
 
         // The pubkey of the target event author should be included in authors
         // if not already present
@@ -213,8 +214,8 @@ export class NDKCollaborativeEvent extends NDKEvent {
         const relays = await super.publish(relaySet, timeoutMs, requiredRelayCount);
 
         // Check if we have a target event and it needs a backlink
-        if (this._event) {
-            await this._ensureBacklink(this._event);
+        if (this._currentVersion) {
+            await this._ensureBacklink(this._currentVersion);
         }
 
         return relays;
@@ -268,7 +269,7 @@ export class NDKCollaborativeEvent extends NDKEvent {
             throw new Error("No d-tag defined for collaborative event");
         }
 
-        if (!targetKind) {
+        if (targetKind === undefined || Number.isNaN(targetKind)) {
             throw new Error("No target kind defined for collaborative event");
         }
 
@@ -295,10 +296,10 @@ export class NDKCollaborativeEvent extends NDKEvent {
      */
     private _handleIncomingEvent(event: NDKEvent): void {
         // Check if this event is newer than our current best
-        const isNewer = !this._event || (event.created_at ?? 0) > (this._event.created_at ?? 0);
+        const isNewer = !this._currentVersion || (event.created_at ?? 0) > (this._currentVersion.created_at ?? 0);
 
         if (isNewer) {
-            this._event = event;
+            this._currentVersion = event;
         }
 
         // Notify all update callbacks

@@ -366,10 +366,10 @@ describe("NDKCollaborativeEvent", () => {
         });
     });
 
-    describe("event property (best version)", () => {
+    describe("currentVersion property (best version)", () => {
         it("should return undefined initially", () => {
             const collab = new NDKCollaborativeEvent(ndk);
-            expect(collab.event).toBeUndefined();
+            expect(collab.currentVersion).toBeUndefined();
         });
 
         it("should track the best (newest) event", () => {
@@ -398,16 +398,16 @@ describe("NDKCollaborativeEvent", () => {
 
             // @ts-expect-error Accessing private property for testing
             collab._handleIncomingEvent(olderEvent);
-            expect(collab.event?.created_at).toBe(1000);
+            expect(collab.currentVersion?.created_at).toBe(1000);
 
             // @ts-expect-error Accessing private property for testing
             collab._handleIncomingEvent(newerEvent);
-            expect(collab.event?.created_at).toBe(2000);
+            expect(collab.currentVersion?.created_at).toBe(2000);
 
             // Older event should not replace newer event
             // @ts-expect-error Accessing private property for testing
             collab._handleIncomingEvent(olderEvent);
-            expect(collab.event?.created_at).toBe(2000);
+            expect(collab.currentVersion?.created_at).toBe(2000);
 
             collab.stop();
         });

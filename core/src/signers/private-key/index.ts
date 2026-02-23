@@ -1,4 +1,4 @@
-import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils.js";
 import type { UnsignedEvent } from "nostr-tools";
 import { finalizeEvent, generateSecretKey, getPublicKey, nip04, nip19, nip44 } from "nostr-tools";
 import * as nip49 from "nostr-tools/nip49";

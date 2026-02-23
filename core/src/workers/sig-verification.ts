@@ -1,5 +1,5 @@
-import { schnorr } from "@noble/curves/secp256k1";
-import { sha256 } from "@noble/hashes/sha256";
+import { schnorr } from "@noble/curves/secp256k1.js";
+import { sha256 } from "@noble/hashes/sha2.js";
 
 // Protocol version for signature verification worker
 // Format: [major, minor, patch] matching @nostr-dev-kit/ndk package version
@@ -26,7 +26,9 @@ globalThis.onmessage = (msg: MessageEvent) => {
             return;
         }
 
-        const result = schnorr.verify(sig as string, idHash, pubkey);
+        const sigBytes = hexToBytes(sig);
+        const pubkeyBytes = hexToBytes(pubkey);
+        const result = schnorr.verify(sigBytes, idHash, pubkeyBytes);
         postMessage([id, result]);
     });
 };

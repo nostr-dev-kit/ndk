@@ -1,6 +1,6 @@
-import { schnorr } from "@noble/curves/secp256k1";
-import { sha256 } from "@noble/hashes/sha256";
-import { bytesToHex } from "@noble/hashes/utils";
+import { schnorr } from "@noble/curves/secp256k1.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils.js";
 import { LRUCache } from "typescript-lru-cache";
 import type { NDKEvent, NostrEvent } from ".";
 import { verifySignatureAsync } from "./signature";
@@ -83,7 +83,9 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
                 });
         } else {
             const hash = sha256(new TextEncoder().encode(this.serialize()));
-            const res = schnorr.verify(this.sig as string, hash, this.pubkey);
+            const sigBytes = hexToBytes(this.sig as string);
+            const pubkeyBytes = hexToBytes(this.pubkey);
+            const res = schnorr.verify(sigBytes, hash, pubkeyBytes);
             if (res) verifiedSignatures.set(this.id, this.sig!);
             else verifiedSignatures.set(this.id, false);
             this.signatureVerified = res;

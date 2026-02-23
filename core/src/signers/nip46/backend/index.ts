@@ -1,4 +1,4 @@
-import { hexToBytes } from "@noble/hashes/utils";
+import { hexToBytes } from "@noble/hashes/utils.js";
 import type { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUser } from "../../../user/index.js";

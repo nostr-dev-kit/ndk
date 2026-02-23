@@ -5,7 +5,7 @@ import { join, basename } from "path";
 import { globSync } from "glob";
 
 // Registry version - update this when publishing
-const REGISTRY_VERSION = "0.0.53";
+const REGISTRY_VERSION = "0.0.59";
 
 // File patterns to exclude from the registry
 const EXCLUDE_PATTERNS = [

@@ -26,7 +26,7 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0"
+    "@nostr-dev-kit/ndk": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",

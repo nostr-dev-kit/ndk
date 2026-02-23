@@ -59,7 +59,7 @@
         "vitest": "^4.0.14"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0",
+        "@nostr-dev-kit/ndk": "^3.0.0",
         "debug": "^4.3.7",
         "dexie": "^4.0.8",
         "nostr-tools": "^2.17.2",

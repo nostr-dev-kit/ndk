@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 3.0.1
+
+### Patch Changes
+
+- feat: implement NDKCollaborativeEvent for NIP-C1
+
+    Adds `NDKCollaborativeEvent` (kind 39382) supporting multi-author collaborative documents. Includes author management, target kind tracking, subscription-based live updates via `start()`/`stop()`, and an `onUpdate` callback.
+
 ## 3.0.0
 
 ### Minor Changes

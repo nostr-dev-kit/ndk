@@ -43,7 +43,7 @@
     "better-sqlite3": "^12.4.1"
   },
   "devDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0",
+    "@nostr-dev-kit/ndk": "^3.0.0",
     "@types/better-sqlite3": "^7.6.8",
     "@types/node": "^24.10.0",
     "tsup": "^8.4.0",
@@ -55,6 +55,6 @@
     "node": ">=18.0.0"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0"
+    "@nostr-dev-kit/ndk": "^3.0.0"
   }
 }

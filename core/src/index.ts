@@ -26,6 +26,7 @@ export * from "./events/kinds/cashu/mint-recommendation.js";
 export * from "./events/kinds/cashu/token.js";
 export * from "./events/kinds/cashu/tx.js";
 export * from "./events/kinds/classified.js";
+export * from "./events/kinds/collaborative.js";
 export * from "./events/kinds/drafts.js";
 export * from "./events/kinds/dvm/index.js";
 export * from "./events/kinds/follow-pack.js";

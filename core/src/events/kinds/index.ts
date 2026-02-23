@@ -156,6 +156,9 @@ export enum NDKKind {
     // NIP-69: P2P Order
     P2POrder = 38383,
 
+    // NIP-C1: Collaborative Events
+    CollaborativeEvent = 39382,
+
     HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 

@@ -116,6 +116,11 @@ describe("Signer Serialization/Deserialization", () => {
             payload: localSigner.privateKey,
         });
 
+        // Mock startListening to avoid real relay subscriptions during deserialization
+        const mockStartListening = vi
+            .spyOn(NDKNip46Signer.prototype as any, "startListening")
+            .mockResolvedValue(undefined);
+
         // Mock blockUntilReady for the deserialized instance to avoid network calls
         // and simulate successful connection/user retrieval.
         const mockBlockUntilReady = vi

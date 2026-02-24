@@ -600,6 +600,12 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             signer._user = new NDKUser({ pubkey: payload.userPubkey });
             if (signer._user) signer._user.ndk = ndk;
         }
+
+        // Initialize the RPC subscription so that sign/encrypt/decrypt
+        // requests receive responses. Without this, operations hang
+        // indefinitely because no subscription is listening.
+        await signer.startListening();
+
         return signer;
     }
 }

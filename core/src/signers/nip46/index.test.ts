@@ -15,6 +15,13 @@ function createMockNDK() {
         debug: debugMock,
         getUser: vi.fn((opts: { pubkey: string }) => new NDKUser({ pubkey: opts.pubkey })),
         pools: [],
+        // Mock subscribe: returns a subscription-like object and immediately triggers onEose
+        subscribe: vi.fn((_filter: any, opts: any) => {
+            const sub = { stop: vi.fn(), on: vi.fn(), off: vi.fn() };
+            // Trigger onEose asynchronously so the RPC subscribe promise resolves
+            if (opts?.onEose) queueMicrotask(() => opts.onEose());
+            return sub;
+        }),
     } as unknown as NDK;
 }
 
@@ -248,6 +255,52 @@ describe("NDKNip46Signer", () => {
             expect(parsed.payload.userPubkey).toBe("userpubkey");
             expect(parsed.payload.bunkerPubkey).toBe("bunkerpubkey");
             expect(parsed.payload.localSignerPayload).toBeDefined();
+        });
+
+        it("fromPayload initializes the RPC subscription (issue #332)", async () => {
+            // Create and serialize a signer
+            const token = `bunker://${bob.pubkey}?pubkey=${alice.pubkey}&relay=wss://relay.nsec.app`;
+            const signer = new NDKNip46Signer(ndk, token, localSigner);
+            const payload = signer.toPayload();
+
+            // Deserialize — fromPayload should call startListening()
+            const deserialized = await NDKNip46Signer.fromPayload(payload, ndk);
+
+            // The subscription should have been initialized
+            expect((deserialized as any).subscription).toBeDefined();
+        });
+
+        it("restored signer can sign events via RPC (issue #332)", async () => {
+            // Create and serialize a signer
+            const token = `bunker://${bob.pubkey}?pubkey=${alice.pubkey}&relay=wss://relay.nsec.app`;
+            const signer = new NDKNip46Signer(ndk, token, localSigner);
+            const payload = signer.toPayload();
+
+            // Deserialize
+            const deserialized = await NDKNip46Signer.fromPayload(payload, ndk);
+
+            // Replace the RPC with a mock that responds to sign requests
+            const mockRpc = createMockRpc();
+            (deserialized as any).rpc = mockRpc;
+
+            (mockRpc.sendRequest as any).mockImplementation(
+                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                    cb({ result: JSON.stringify({ sig: "restored-sig" }) });
+                },
+            );
+
+            const event: NostrEvent = {
+                kind: 1,
+                pubkey: alice.pubkey,
+                created_at: Math.floor(Date.now() / 1000),
+                tags: [],
+                content: "test",
+                id: "eventid",
+                sig: "signature",
+            };
+
+            const sig = await deserialized.sign(event);
+            expect(sig).toBe("restored-sig");
         });
     });
 

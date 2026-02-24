@@ -168,6 +168,16 @@ export interface NDKSubscriptionOptions {
     includeMuted?: boolean;
 
     /**
+     * Maximum time in milliseconds to wait for EOSE from relays.
+     * When used with `fetchEvents()` or `fetchEvent()`, if EOSE is not received
+     * within this time, the Promise resolves with whatever events have been
+     * collected so far. This prevents hanging Promises when relays are
+     * unresponsive or never send EOSE.
+     * @default 10000
+     */
+    timeout?: number;
+
+    /**
      * Number of relays to query for each author in the subscription.
      * This controls the outbox model relay selection when the filter has authors.
      * Higher values improve redundancy but increase bandwidth usage.

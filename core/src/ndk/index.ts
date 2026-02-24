@@ -1053,15 +1053,16 @@ export class NDK extends EventEmitter<{
             };
             if (relaySet) subscribeOpts.relaySet = relaySet;
 
-            /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
-             * seeing them; this is a temporary fix until we find the bug.
-             */
-            let s: any;
+            // Timeout protection: resolve with whatever event has been found if EOSE
+            // is not received within the specified timeout. This prevents the Promise
+            // from hanging indefinitely when relays are unresponsive.
+            let s: NDKSubscription | undefined;
+            const timeoutMs = opts?.timeout ?? 10000;
             const t2 = setTimeout(() => {
                 s?.stop();
                 this.aiGuardrails["_nextCallDisabled"] = null;
                 resolve(fetchedEvent);
-            }, 10000);
+            }, timeoutMs);
 
             s = this.subscribe(filters, subscribeOpts);
         });
@@ -1108,20 +1109,25 @@ export class NDK extends EventEmitter<{
                 },
                 onEvent: processEvent,
                 onEose: () => {
+                    clearTimeout(timeoutId);
                     this.aiGuardrails["_nextCallDisabled"] = null;
                     resolve(new Set(events.values()));
                 },
             };
             if (relaySet) subscribeOpts.relaySet = relaySet;
 
-            const _relaySetSubscription = this.subscribe(filters, subscribeOpts);
+            // Timeout protection: resolve with collected events if EOSE is not received
+            // within the specified timeout. This prevents the Promise from hanging
+            // indefinitely when relays connect but never send EOSE (issue #306).
+            let sub: NDKSubscription | undefined;
+            const timeoutMs = opts?.timeout ?? 10000;
+            const timeoutId = setTimeout(() => {
+                sub?.stop();
+                this.aiGuardrails["_nextCallDisabled"] = null;
+                resolve(new Set(events.values()));
+            }, timeoutMs);
 
-            // We want to inspect duplicated events
-            // so we can dedup them
-            // relaySetSubscription.on("event:dup", (rawEvent: NostrEvent) => {
-            //     const ndkEvent = new NDKEvent(undefined, rawEvent);
-            //     onEvent(ndkEvent)
-            // });
+            sub = this.subscribe(filters, subscribeOpts);
         });
     }
 

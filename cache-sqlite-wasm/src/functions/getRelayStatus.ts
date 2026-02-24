@@ -17,6 +17,9 @@ export async function getRelayStatus(
         return cached;
     }
 
+    // If in degraded mode, return undefined (only LRU cache available)
+    if (this.degradedMode) return undefined;
+
     const result = await this.postWorkerMessage<{ info?: string }>({
         type: "getRelayStatus",
         payload: { relayUrl },

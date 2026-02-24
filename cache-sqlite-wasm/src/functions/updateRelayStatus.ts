@@ -38,6 +38,9 @@ export async function updateRelayStatus(
     // Update LRU cache immediately
     this.metadataCache?.setRelayInfo(relayUrl, merged);
 
+    // If in degraded mode, skip persistent storage (LRU cache only)
+    if (this.degradedMode) return;
+
     await this.postWorkerMessage({
         type: "updateRelayStatus",
         payload: {

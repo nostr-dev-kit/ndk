@@ -10,6 +10,9 @@ export async function getUnpublishedEvents(
 ): Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]> {
     await this.ensureInitialized();
 
+    // If in degraded mode, return empty (no cache available)
+    if (this.degradedMode) return [];
+
     const results = await this.postWorkerMessage<
         Array<{ id: string; event: string; relays: string; lastTryAt: number }>
     >({

@@ -442,6 +442,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     // Generic cache data storage
     public async getCacheData<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined> {
         await this.ensureInitialized();
+        if (this.degradedMode) return undefined;
         const result = await this.postWorkerMessage<T | undefined>({
             type: "getCacheData",
             payload: { namespace, key, maxAgeInSecs }
@@ -451,6 +452,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
     public async setCacheData<T>(namespace: string, key: string, data: T): Promise<void> {
         await this.ensureInitialized();
+        if (this.degradedMode) return;
         await this.postWorkerMessage({
             type: "setCacheData",
             payload: { namespace, key, data }

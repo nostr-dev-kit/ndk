@@ -6,6 +6,9 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function discardUnpublishedEvent(this: NDKCacheAdapterSqliteWasm, eventId: string): Promise<void> {
     await this.ensureInitialized();
 
+    // If in degraded mode, silently skip
+    if (this.degradedMode) return;
+
     await this.postWorkerMessage({
         type: "discardUnpublishedEvent",
         payload: { id: eventId },

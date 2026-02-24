@@ -9,6 +9,9 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, wrapperId: NDKEventId, decryptedEvent: NDKEvent): Promise<void> {
     await this.ensureInitialized();
 
+    // If in degraded mode, silently skip caching
+    if (this.degradedMode) return;
+
     const serialized = decryptedEvent.serialize(true, true);
 
     await this.postWorkerMessage({

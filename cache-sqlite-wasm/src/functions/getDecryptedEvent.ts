@@ -10,6 +10,9 @@ export async function getDecryptedEvent(
 ): Promise<NDKEvent | null> {
     await this.ensureInitialized();
 
+    // If in degraded mode, return null (no cache available)
+    if (this.degradedMode) return null;
+
     const result = await this.postWorkerMessage<{ event?: string }>({
         type: "getDecryptedEvent",
         payload: { wrapperId: eventId },

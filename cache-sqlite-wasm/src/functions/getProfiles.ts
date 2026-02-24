@@ -21,6 +21,9 @@ export async function getProfiles(
 ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
     await this.ensureInitialized();
 
+    // If in degraded mode, return undefined (no cache available)
+    if (this.degradedMode) return undefined;
+
     // Worker mode only supports filter descriptors
     if (typeof filter === 'function') {
         throw new Error('getProfiles with filter functions is not supported in worker mode. Use filter descriptors instead.');

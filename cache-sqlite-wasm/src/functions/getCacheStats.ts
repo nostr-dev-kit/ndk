@@ -16,6 +16,19 @@ export interface CacheStats {
 export async function getCacheStats(this: NDKCacheAdapterSqliteWasm): Promise<CacheStats> {
     await this.ensureInitialized();
 
+    // If in degraded mode, return empty stats
+    if (this.degradedMode) {
+        return {
+            eventsByKind: {},
+            totalEvents: 0,
+            totalProfiles: 0,
+            totalEventTags: 0,
+            totalDecryptedEvents: 0,
+            totalUnpublishedEvents: 0,
+            cacheData: 0,
+        };
+    }
+
     return this.postWorkerMessage<CacheStats>({
         type: "getCacheStats",
     });

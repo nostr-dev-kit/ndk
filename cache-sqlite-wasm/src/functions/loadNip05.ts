@@ -29,6 +29,9 @@ export async function loadNip05(
         return cached.profile;
     }
 
+    // If in degraded mode, return "missing" (only LRU cache available)
+    if (this.degradedMode) return "missing";
+
     const result = await this.postWorkerMessage<{ profile?: string; fetched_at?: number }>({
         type: "loadNip05",
         payload: { nip05 },

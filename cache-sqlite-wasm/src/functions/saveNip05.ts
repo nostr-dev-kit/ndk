@@ -20,6 +20,9 @@ export async function saveNip05(
     // Update LRU cache immediately
     this.metadataCache?.setNip05(nip05, { profile: profileStr, fetched_at: fetchedAt });
 
+    // If in degraded mode, skip persistent storage (LRU cache only)
+    if (this.degradedMode) return;
+
     await this.postWorkerMessage({
         type: "saveNip05",
         payload: {

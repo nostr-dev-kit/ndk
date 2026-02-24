@@ -15,6 +15,9 @@ export async function addUnpublishedEvent(
 ): Promise<void> {
     await this.ensureInitialized();
 
+    // If in degraded mode, silently skip caching
+    if (this.degradedMode) return;
+
     await this.postWorkerMessage({
         type: "addUnpublishedEvent",
         payload: {

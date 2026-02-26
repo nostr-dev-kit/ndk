@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 3.0.3
+
+### Patch Changes
+
+- bump
+
 ## 3.0.1
 
 ### Patch Changes

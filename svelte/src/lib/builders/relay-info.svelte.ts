@@ -3,7 +3,6 @@ import {
   normalizeRelayUrl,
   type NDKRelayInformation,
 } from "@nostr-dev-kit/ndk";
-import { SvelteMap } from "svelte/reactivity";
 
 export interface RelayInfoState {
   readonly url: string | null;
@@ -13,7 +12,7 @@ export interface RelayInfoState {
 }
 
 // Cache for NIP-11 info
-const relayInfoCache = new SvelteMap<
+const relayInfoCache = new Map<
   string,
   { info: NDKRelayInformation; timestamp: number }
 >();

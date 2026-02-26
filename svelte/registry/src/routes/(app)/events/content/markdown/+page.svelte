@@ -37,6 +37,16 @@
 	</div>
 {/snippet}
 
+{#snippet articleNotLoadedPreview()}
+	<div class="rounded-xl border border-dashed border-border bg-muted/20 p-5">
+		<p class="m-0 text-sm font-medium text-foreground">Article event not loaded.</p>
+		<p class="m-0 mt-2 text-sm text-muted-foreground">
+			This preview fetches a remote <code>naddr1...</code> article. If relay access is unavailable, content will stay empty.
+			Use <strong>Edit Examples</strong> to try another event.
+		</p>
+	</div>
+{/snippet}
+
 {#snippet articleContentDescription()}
 	<div class="space-y-4">
 		<p class="text-lg leading-normal text-muted-foreground">
@@ -70,12 +80,16 @@
 {#snippet articleContentBasicPreview()}
 	{#if article}
 		<BasicSimpleExample article={article} />
+	{:else}
+		{@render articleNotLoadedPreview()}
 	{/if}
 {/snippet}
 
 {#snippet articleContentPreview()}
 	{#if article}
 		<BasicExample {article} />
+	{:else}
+		{@render articleNotLoadedPreview()}
 	{/if}
 {/snippet}
 
@@ -116,11 +130,11 @@
 	}}
 	{anatomy}
 >
-<EditProps.Prop
+	<EditProps.Prop
 		name="Real Article"
 		type="article"
 		bind:value={article}
-		default="naddr1qvzqqqr4gupzqmjxss3dld622uu8q25gywum9qtg4w4cv4064jmg20xsac2aam5nqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqxnzd3cx5urjd35xg6rwwpee39928"
+		default="naddr1qvzqqqr4gupzqmsw5ht265e5kn5rx48sdw7phnvsczdg2ah99w6ck7l6nvpj0u6nqy2hwumn8ghj7un9d3shjtnyv9kh2uewd9hj7qg3waehxw309ahx7um5wgh8w6twv5hsqft5dpjj6erfwd3kjurvd9hx2tt0vckkxat5w35kueedv3jkzepdwajkjemgws0xvx8e"
 	/>
 <EditProps.Prop
 		name="Test Article"

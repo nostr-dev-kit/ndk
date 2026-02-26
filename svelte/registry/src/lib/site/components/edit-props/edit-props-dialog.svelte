@@ -56,13 +56,13 @@
 			if (!input?.trim()) continue;
 
 			// Validate bech32 format
-			if (prop.type === 'event') {
+			if (prop.type === 'event' || prop.type === 'article') {
 				const isValid = input.startsWith('note1') || input.startsWith('nevent1') || input.startsWith('naddr1');
 				if (!isValid) {
 					newErrors[prop.name] = 'Must be note1..., nevent1..., or naddr1...';
 					continue;
 				}
-				newFetchers[prop.name] = createFetchEvent(ndk, () => ({ bech32: input }));
+				newFetchers[prop.name] = createFetchEvent(ndk, () => ({ bech32: input, opts: { wrap: true } }));
 			} else if (prop.type === 'user') {
 				if (!input.startsWith('npub1') && !input.startsWith('nprofile1')) {
 					newErrors[prop.name] = 'Must be npub1... or nprofile1...';
@@ -91,7 +91,7 @@
 		for (const prop of props) {
 			const fetcher = fetchers[prop.name];
 			if (fetcher) {
-				if (prop.type === 'event' && fetcher.event) {
+				if ((prop.type === 'event' || prop.type === 'article') && fetcher.event) {
 					onApply(prop.name, fetcher.event);
 				} else if (prop.type === 'user' && fetcher.$loaded) {
 					onApply(prop.name, fetcher);
@@ -172,7 +172,7 @@
 						{#if fetcher?.error}
 							<div class="text-xs text-destructive">{fetcher.error}</div>
 						{/if}
-						{#if fetcher?.event}
+						{#if fetcher?.event && (prop.type === 'event' || prop.type === 'article')}
 							<div class="p-3 bg-muted/30 border border-border rounded-md">
 								<EditPropsPreview type={prop.type} value={fetcher.event} />
 							</div>

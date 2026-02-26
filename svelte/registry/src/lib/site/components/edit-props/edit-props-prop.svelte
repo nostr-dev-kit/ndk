@@ -28,7 +28,7 @@
 
 	// Create reactive fetchers based on type
 	const eventFetcher = $derived.by(() => {
-		if (type !== 'event' || !defaultValue) return null;
+		if ((type !== 'event' && type !== 'article') || !defaultValue) return null;
 		return createFetchEvent(ndk, () => ({ bech32: String(defaultValue), opts: { wrap: true } }));
 	});
 
@@ -39,7 +39,9 @@
 
 	// Track loaded state separately for reactivity
 	const isUserLoaded = $derived(type === 'user' && userFetcher ? userFetcher.$loaded : false);
-	const isEventLoaded = $derived(type === 'event' && eventFetcher ? !eventFetcher.loading && !!eventFetcher.event : false);
+	const isEventLoaded = $derived(
+		(type === 'event' || type === 'article') && eventFetcher ? !eventFetcher.loading && !!eventFetcher.event : false
+	);
 
 	// Wire up fetched values when they become available
 	$effect(() => {

@@ -1,14 +1,16 @@
-import { nip19 } from "nostr-tools";
+import createDebug from "debug";
+import {nip19} from "nostr-tools";
+import {NDKEvent, type NDKTag, type NostrEvent} from "../events/index.js";
+import {NDKKind} from "../events/kinds/index.js";
+import {NDKCashuMintList} from "../events/kinds/nutzap/mint-list.js";
+import type {NDKFilter, NDKRelay, NDKZapMethod, NDKZapMethodInfo} from "../index.js";
+import type {NDK} from "../ndk/index.js";
+import {NDKSubscriptionCacheUsage, type NDKSubscriptionOptions} from "../subscription/index.js";
+import {follows} from "./follows.js";
+import {getNip05For} from "./nip05.js";
+import {type NDKUserProfile, profileFromEvent, serializeProfile} from "./profile.js";
 
-import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
-import { NDKKind } from "../events/kinds/index.js";
-import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
-import type { NDKFilter, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
-import type { NDK } from "../ndk/index.js";
-import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
-import { follows } from "./follows.js";
-import { getNip05For } from "./nip05.js";
-import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
+const d = createDebug("ndk:user");
 
 export type Hexpubkey = string;
 
@@ -126,12 +128,42 @@ export class NDKUser {
     }
 
     /**
+     * Instantiate an NDKUser from a NIP-05 string
+     * @param nip05Id {string} The user's NIP-05
+     * @param ndk {NDK} An NDK instance
+     * @param skipCache {boolean} Whether to skip the cache or not
+     * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
+     */
+    static async fromNip05(nip05Id: string, ndk: NDK, skipCache = false): Promise<NDKUser | undefined> {
+        if (!ndk) throw new Error("No NDK instance found");
+
+        const opts: RequestInit = {};
+
+        if (skipCache) opts.cache = "no-cache";
+        const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
+
+        if (profile) {
+            const user = new NDKUser({
+                pubkey: profile.pubkey,
+                relayUrls: profile.relays,
+                nip46Urls: profile.nip46,
+            });
+            user.ndk = ndk;
+            return user;
+        }
+    }
+
+    /**
      * Gets NIP-57 and NIP-61 information that this user has signaled
      *
      * @param getAll {boolean} Whether to get all zap info or just the first one
      */
     async getZapInfo(timeoutMs?: number): Promise<Map<NDKZapMethod, NDKZapMethodInfo>> {
         if (!this.ndk) throw new Error("No NDK instance found");
+
+        d("Looking for zap info", {
+            pubkey: this.pubkey,
+        });
 
         const promiseWithTimeout = async <T>(promise: Promise<T>): Promise<T | undefined> => {
             if (!timeoutMs) return promise;
@@ -157,12 +189,22 @@ export class NDKUser {
                 return undefined;
             }
         };
+
+        d("Fetching user Profile and mint event", {
+            pubkey: this.pubkey,
+            profile: await this.fetchProfile(),
+        });
+
         const [userProfile, mintListEvent] = await Promise.all([
-            promiseWithTimeout(this.fetchProfile()),
-            promiseWithTimeout(
-                this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] }),
-            ),
+            this.fetchProfile(),
+            this.ndk.fetchEvent({kinds: [NDKKind.CashuMintList], authors: [this.pubkey]}),
         ]);
+
+        d("Fetched user Profile and mint event", {
+            pubkey: this.pubkey,
+            profile: userProfile,
+            mintListEvent: mintListEvent,
+        });
 
         const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
 
@@ -186,36 +228,6 @@ export class NDKUser {
     }
 
     /**
-     * Instantiate an NDKUser from a NIP-05 string
-     * @param nip05Id {string} The user's NIP-05
-     * @param ndk {NDK} An NDK instance
-     * @param skipCache {boolean} Whether to skip the cache or not
-     * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
-     */
-    static async fromNip05(
-        nip05Id: string,
-        ndk: NDK,
-        skipCache = false,
-    ): Promise<NDKUser | undefined> {
-        if (!ndk) throw new Error("No NDK instance found");
-
-        const opts: RequestInit = {};
-
-        if (skipCache) opts.cache = "no-cache";
-        const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
-
-        if (profile) {
-            const user = new NDKUser({
-                pubkey: profile.pubkey,
-                relayUrls: profile.relays,
-                nip46Urls: profile.nip46,
-            });
-            user.ndk = ndk;
-            return user;
-        }
-    }
-
-    /**
      * Fetch a user's profile
      * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
      * @param storeProfileEvent {boolean} Whether to store the profile event or not
@@ -227,13 +239,17 @@ export class NDKUser {
     ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
-        let setMetadataEvent: NDKEvent | null = null;
+        d("Fetching profile", {
+            pubkey: this.pubkey,
+        });
 
         if (
             this.ndk.cacheAdapter &&
             (this.ndk.cacheAdapter.fetchProfile || this.ndk.cacheAdapter.fetchProfileSync) &&
             opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
         ) {
+            d("Doing cache adapter stuff", {});
+
             let profile: NDKUserProfile | null = null;
 
             if (this.ndk.cacheAdapter.fetchProfileSync) {
@@ -243,7 +259,13 @@ export class NDKUser {
             }
 
             if (profile) {
+                d("Return profile from cache", {
+                    pubkey: this.pubkey,
+                    profile,
+                });
+
                 this.profile = profile;
+
                 return profile;
             }
         }
@@ -254,26 +276,47 @@ export class NDKUser {
         opts.groupable ??= true;
         opts.groupableDelay ??= 25;
 
+        let setMetadataEvent: NDKEvent | null = null;
+
         if (!setMetadataEvent) {
-            setMetadataEvent = await this.ndk.fetchEvent(
-                { kinds: [0], authors: [this.pubkey] },
+            d("Fetching Metadata event", {
+                pubkey: this.pubkey,
+                filters: {kinds: [0], authors: [this.pubkey]},
                 opts,
-            );
+            });
+
+            setMetadataEvent = await this.ndk.fetchEvent({kinds: [0], authors: [this.pubkey]}, opts);
         }
 
-        if (!setMetadataEvent) return null;
+        d("Finished fetching metadata event", {
+            pubkey: this.pubkey,
+            event: setMetadataEvent,
+        });
+
+        if (!setMetadataEvent) {
+            d("Metadata event not found", {
+                pubkey: this.pubkey,
+            });
+
+            return null;
+        }
 
         // return the most recent profile
         this.profile = profileFromEvent(setMetadataEvent);
 
-        if (
-            storeProfileEvent &&
-            this.profile &&
-            this.ndk.cacheAdapter &&
-            this.ndk.cacheAdapter.saveProfile
-        ) {
+        if (storeProfileEvent && this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+            d("Saving profile in cache adapter", {
+                pubkey: this.pubkey,
+            });
+
             this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
         }
+
+        d("Returning profile", {
+            pubkey: this.pubkey,
+            setMetadataEvent,
+            profile: this.profile,
+        });
 
         return this.profile;
     }
@@ -415,9 +458,7 @@ export class NDKUser {
         }
 
         const usersToUnfollow = Array.isArray(user) ? user : [user];
-        const unfollowPubkeys = new Set(
-            usersToUnfollow.map((u) => (typeof u === "string" ? u : u.pubkey)),
-        );
+        const unfollowPubkeys = new Set(usersToUnfollow.map((u) => (typeof u === "string" ? u : u.pubkey)));
 
         const newUserFollowList = new Set<NDKUser | Hexpubkey>();
         let foundAny = false;

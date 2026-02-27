@@ -32,10 +32,8 @@ describe("NDKZapper", () => {
         const event = new NDKEvent();
         event.ndk = ndk;
 
-        it("uses the author pubkey when the target is the user", () => {
-            const user = ndk.getUser({
-                pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-            });
+        it("uses the author pubkey when the target is the user", async () => {
+            const user = await ndk.fetchUser("fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52");
             const splits = new NDKZapper(user, 1000).getZapSplits();
             expect(splits).toEqual([
                 {
@@ -74,7 +72,7 @@ describe("NDKZapper", () => {
     });
 });
 
-describe("getZapMethod", () => {
+describe("getZapMethod", async () => {
     let ndk: NDK;
     let signer: NDKPrivateKeySigner;
     let user: NDKUser;
@@ -85,7 +83,7 @@ describe("getZapMethod", () => {
         });
         signer = NDKPrivateKeySigner.generate();
         ndk.signer = signer;
-        user = ndk.getUser({ pubkey: signer.pubkey });
+        user = await ndk.fetchUser(signer.pubkey);
         user.ndk = ndk;
     });
 
@@ -130,7 +128,6 @@ describe("getZapMethod", () => {
         });
 
         // Mock both profile and mint list fetching
-        const _fetchProfileMock = vi.fn().mockResolvedValue(profile);
         ndk.fetchEvent = vi.fn().mockImplementation((filter) => {
             if (filter.kinds?.[0] === 0) {
                 return Promise.resolve(profileEvent);

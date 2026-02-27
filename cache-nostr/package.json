@@ -4,6 +4,9 @@
   "description": "NDK cache adapter that uses a local nostr relay.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "files": [
+    "dist"
+  ],
   "exports": {
     "import": {
       "types": "./dist/index.d.mts",

@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { NDKEvent } from "../events/index";
+import { verifiedSignatures } from "../events/validation";
 import { NDK } from "../ndk/index";
+import { NDKPrivateKeySigner } from "../signers/private-key/index";
 import { NDKRelay } from "./index";
 
 describe("Signature Verification Sampling", () => {
@@ -188,5 +190,153 @@ describe("Invalid Signature Handling", () => {
         // Test with even more validated events (should approach minimum)
         ratio = mockRatioFn(relay, 1000, 0);
         expect(ratio).toBeCloseTo(0.1, 1);
+    });
+});
+
+describe("Signature cache poisoning resistance", () => {
+    beforeEach(() => {
+        verifiedSignatures.clear();
+    });
+
+    test("negative cache entry triggers re-verification instead of short-circuiting", () => {
+        const ndk = new NDK();
+        const event = new NDKEvent(ndk, {
+            kind: 0,
+            created_at: 1234567890,
+            pubkey: "a".repeat(64),
+            id: "poisoned-id",
+            sig: "some-sig",
+            tags: [],
+            content: "{}",
+        });
+
+        // Poison the cache with a negative entry
+        verifiedSignatures.set("poisoned-id", false);
+
+        // Spy on serialize to prove verification code path was entered
+        // (serialize is called inside the sync verification branch)
+        const serializeSpy = vi.spyOn(event, "serialize");
+
+        event.verifySignature(false);
+
+        // If the negative cache short-circuited, serialize would never be called.
+        // The fact that it IS called proves re-verification happened.
+        expect(serializeSpy).toHaveBeenCalled();
+        serializeSpy.mockRestore();
+    });
+
+    test("positive cache hit with matching sig and valid hash short-circuits schnorr verify", async () => {
+        const ndk = new NDK();
+        const signer = NDKPrivateKeySigner.generate();
+
+        // Create a real signed event so id matches the payload hash
+        const event = new NDKEvent(ndk);
+        event.kind = 0;
+        event.content = '{"name":"cached"}';
+        await event.sign(signer);
+
+        // Populate cache with the real sig
+        verifiedSignatures.set(event.id, event.sig!);
+
+        // Clear the per-instance flag so cache lookup is exercised
+        event.signatureVerified = undefined as any;
+
+        const result = event.verifySignature(false);
+
+        // Should return true from cache — hash matches, sig matches
+        expect(result).toBe(true);
+    });
+
+    test("positive cache hit with mismatched sig triggers re-verification", () => {
+        const ndk = new NDK();
+        const event = new NDKEvent(ndk, {
+            kind: 0,
+            created_at: 1234567890,
+            pubkey: "a".repeat(64),
+            id: "cached-id",
+            sig: "different-sig",
+            tags: [],
+            content: "{}",
+        });
+
+        // Cache was set by a different event with a different sig
+        verifiedSignatures.set("cached-id", "original-sig");
+
+        const serializeSpy = vi.spyOn(event, "serialize");
+        event.verifySignature(false);
+
+        // Mismatched sig should NOT trust the cache — must re-verify
+        expect(serializeSpy).toHaveBeenCalled();
+        serializeSpy.mockRestore();
+    });
+
+    test("real signed event passes after negative cache poisoning", async () => {
+        const ndk = new NDK();
+        const signer = NDKPrivateKeySigner.generate();
+
+        // Create and sign a real kind:0 profile event
+        const event = new NDKEvent(ndk);
+        event.kind = 0;
+        event.content = '{"name":"alice"}';
+        await event.sign(signer);
+
+        // Poison the cache: a forged event with the same id was seen first
+        verifiedSignatures.set(event.id, false);
+
+        // Despite the poisoned cache, the valid event must still verify
+        const result = event.verifySignature(true, true);
+        expect(result).toBe(true);
+    });
+
+    test("real signed event rejected when cache holds a different valid sig", async () => {
+        const ndk = new NDK();
+        const signer = NDKPrivateKeySigner.generate();
+
+        // Create and sign a real event
+        const event = new NDKEvent(ndk);
+        event.kind = 0;
+        event.content = '{"name":"bob"}';
+        await event.sign(signer);
+
+        // Cache holds a "valid" sig that doesn't match this event's actual sig
+        verifiedSignatures.set(event.id, "aaa" + event.sig!.slice(3));
+
+        // Should not trust the cached sig — must re-verify cryptographically
+        // The real sig is valid, so it should pass
+        const result = event.verifySignature(true, true);
+        expect(result).toBe(true);
+    });
+
+    test("tampered payload with replayed id+sig is rejected despite cache hit", async () => {
+        const ndk = new NDK();
+        const signer = NDKPrivateKeySigner.generate();
+
+        // Create and sign a legitimate kind:0 event
+        const event = new NDKEvent(ndk);
+        event.kind = 0;
+        event.content = '{"name":"real"}';
+        await event.sign(signer);
+
+        const originalId = event.id;
+        const originalSig = event.sig!;
+
+        // First verification succeeds and populates the cache
+        expect(event.verifySignature(true, true)).toBe(true);
+        expect(verifiedSignatures.get(originalId)).toBe(originalSig);
+
+        // Simulate a relay replaying the same (id, sig) but with tampered content
+        const tampered = new NDKEvent(ndk, {
+            kind: 0,
+            created_at: event.created_at!,
+            pubkey: event.pubkey,
+            id: originalId,
+            sig: originalSig,
+            tags: [],
+            content: '{"name":"evil"}',  // altered payload
+        });
+
+        // Cache has matching id+sig, but payload hash won't match the id
+        const result = tampered.verifySignature(true, true);
+        expect(result).toBe(false);
     });
 });

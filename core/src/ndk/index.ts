@@ -8,6 +8,7 @@ import dedupEvent from "../events/dedup.js";
 import { NDKEvent } from "../events/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NIP66LivenessFilter } from "../outbox/nip66.js";
+import { ThompsonSampler } from "../outbox/thompson.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import type { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { NDKRelay } from "../relay/index.js";
@@ -248,11 +249,31 @@ export interface NDKConstructorParams {
     nip66MonitorRelays?: string[];
 
     /**
+     * Enable Thompson Sampling for outbox relay selection.
+     * When enabled, relays are scored using Bayesian learning from delivery outcomes.
+     * @default false
+     */
+    enableThompsonSampling?: boolean;
+
+    /**
      * Maximum number of outbox relays to connect to.
      * Works independently of Thompson Sampling.
      * @default undefined (no cap)
      */
     maxOutboxRelays?: number;
+
+    /**
+     * Enable CG3 (Coverage Guarantee v3) for sole-source authors.
+     * Only effective when Thompson Sampling is enabled.
+     * @default true (when Thompson is enabled)
+     */
+    enableCoverageGuarantee?: boolean;
+
+    /**
+     * Fraction of maxOutboxRelays budget reserved for CG3 sole-source relays.
+     * @default 0.5
+     */
+    cgBudgetFraction?: number;
 
     /**
      * Optional grace period (in seconds) for future timestamps.
@@ -380,7 +401,10 @@ export class NDK extends EventEmitter<{
     public aiGuardrails: AIGuardrails;
     public futureTimestampGrace?: number;
     public nip66Filter?: NIP66LivenessFilter;
+    public thompsonSampler?: ThompsonSampler;
     public maxOutboxRelays?: number;
+    public enableCoverageGuarantee?: boolean;
+    public cgBudgetFraction?: number;
 
     /**
      * Private storage for the signature verification function
@@ -533,7 +557,13 @@ export class NDK extends EventEmitter<{
             });
         }
 
+        if (opts.enableThompsonSampling) {
+            this.thompsonSampler = new ThompsonSampler();
+        }
+
         this.maxOutboxRelays = opts.maxOutboxRelays;
+        this.enableCoverageGuarantee = opts.enableCoverageGuarantee;
+        this.cgBudgetFraction = opts.cgBudgetFraction;
 
         // Trigger guardrails hook for NDK instantiation
         this.aiGuardrails.ndkInstantiated(this);

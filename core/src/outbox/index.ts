@@ -1,6 +1,7 @@
 import type { NDK } from "../ndk";
 import type { NDKRelay } from "../relay";
 import type { Hexpubkey } from "../user";
+import { applyCoverageGuarantee } from "./coverage-guarantee";
 import { getTopRelaysForAuthors } from "./relay-ranking";
 import { getRelaysForSync } from "./write";
 
@@ -31,6 +32,7 @@ export function getAllRelaysForAllPubkeys(
             // Apply NIP-66 liveness filtering if available
             if (ndk.nip66Filter) {
                 const filtered = ndk.nip66Filter.filterAlive(relays);
+                // If filtering empties the set, preserve the original (don't orphan the author)
                 if (filtered.size > 0) {
                     relays = filtered;
                 }
@@ -78,12 +80,14 @@ export function chooseRelayCombinationForPubkeys(
 
     const sortedRelays = getTopRelaysForAuthors(ndk, pubkeys);
 
+    // Track unique relays for maxOutboxRelays enforcement (P12)
     const maxRelays = ndk.maxOutboxRelays;
     const selectedRelays = new Set<WebSocket["url"]>();
 
     const addAuthorToRelay = (author: Hexpubkey, relay: WebSocket["url"]): boolean => {
+        // Enforce maxOutboxRelays connection cap
         if (maxRelays && !selectedRelays.has(relay) && selectedRelays.size >= maxRelays) {
-            return false;
+            return false; // would exceed connection cap
         }
         const authorsInRelay = relayToAuthorsMap.get(relay) || [];
         authorsInRelay.push(author);
@@ -92,8 +96,25 @@ export function chooseRelayCombinationForPubkeys(
         return true;
     };
 
+    // CG3: Force-select sole-source relays before the main loop
+    const cgAssignedAuthors = new Set<Hexpubkey>();
+    if (ndk.thompsonSampler && ndk.enableCoverageGuarantee !== false) {
+        const maxConn = maxRelays ?? 20;
+        const cg = applyCoverageGuarantee(pubkeysToRelays, maxConn, ndk.cgBudgetFraction ?? 0.5);
+        if (!cg.skipped) {
+            for (const [relay, pubkeys] of cg.forcedRelays) {
+                for (const pk of pubkeys) {
+                    addAuthorToRelay(pk, relay);
+                    cgAssignedAuthors.add(pk);
+                }
+            }
+        }
+    }
+
     // Go through the pubkeys that have relays
     for (const [author, authorRelays] of pubkeysToRelays.entries()) {
+        // Skip authors already fully assigned by CG3
+        if (cgAssignedAuthors.has(author)) continue;
         let missingRelayCount = count;
         const addedRelaysForAuthor = new Set<WebSocket["url"]>();
 

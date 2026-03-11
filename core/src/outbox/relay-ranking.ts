@@ -15,12 +15,15 @@ export function getTopRelaysForAuthors(ndk: NDK, authors: Hexpubkey[]): WebSocke
         }
     });
 
-    /**
-     * TODO: Here we are sorting the relays just by number of authors that write to them.
-     * Here is the place where the relay scoring can be used to modify the weights of the relays.
-     */
+    if (ndk.thompsonSampler) {
+        // Sample once per relay to ensure stable, transitive sort order
+        const scored = Array.from(relaysWithCount.entries()).map(
+            ([url, count]) => [url, ndk.thompsonSampler!.weightedScore(url, count)] as const,
+        );
+        return scored.sort((a, b) => b[1] - a[1]).map((e) => e[0]);
+    }
 
-    // Sort the relays by the number of authors that write to them
+    // Fallback: existing popularity sort (unchanged default behavior)
     const sortedRelays = Array.from(relaysWithCount.entries()).sort((a, b) => b[1] - a[1]);
 
     return sortedRelays.map((entry) => entry[0]);

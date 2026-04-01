@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "bun run build --watch",
     "build": "tsup src/index.ts --format cjs,esm --dts",
+    "prepublishOnly": "bun run build",
     "clean": "rm -rf dist",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write ."

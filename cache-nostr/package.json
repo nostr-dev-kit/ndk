@@ -4,6 +4,9 @@
   "description": "NDK cache adapter that uses a local nostr relay.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "files": [
+    "dist"
+  ],
   "exports": {
     "import": {
       "types": "./dist/index.d.mts",
@@ -17,6 +20,7 @@
   "scripts": {
     "dev": "bun run build --watch",
     "build": "tsup src/index.ts --format cjs,esm --dts",
+    "prepublishOnly": "bun run build",
     "clean": "rm -rf dist",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write ."

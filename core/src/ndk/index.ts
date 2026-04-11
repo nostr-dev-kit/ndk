@@ -7,6 +7,8 @@ import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import { NDKEvent } from "../events/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
+import { NIP66LivenessFilter } from "../outbox/nip66.js";
+import { ThompsonSampler } from "../outbox/thompson.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import type { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { NDKRelay } from "../relay/index.js";
@@ -233,6 +235,47 @@ export interface NDKConstructorParams {
     aiGuardrails?: boolean | { skip?: Set<string> };
 
     /**
+     * Relay URLs to fetch NIP-66 monitor data from.
+     * When set, dead relays will be filtered from outbox candidate sets.
+     * Requires monitor relays that serve kind 30166 events.
+     *
+     * @example
+     * ```typescript
+     * const ndk = new NDK({
+     *   nip66MonitorRelays: ['wss://relay.nostr.watch'],
+     * });
+     * ```
+     */
+    nip66MonitorRelays?: string[];
+
+    /**
+     * Enable Thompson Sampling for outbox relay selection.
+     * When enabled, relays are scored using Bayesian learning from delivery outcomes.
+     * @default false
+     */
+    enableThompsonSampling?: boolean;
+
+    /**
+     * Maximum number of outbox relays to connect to.
+     * Works independently of Thompson Sampling.
+     * @default undefined (no cap)
+     */
+    maxOutboxRelays?: number;
+
+    /**
+     * Enable CG3 (Coverage Guarantee v3) for sole-source authors.
+     * Only effective when Thompson Sampling is enabled.
+     * @default true (when Thompson is enabled)
+     */
+    enableCoverageGuarantee?: boolean;
+
+    /**
+     * Fraction of maxOutboxRelays budget reserved for CG3 sole-source relays.
+     * @default 0.5
+     */
+    cgBudgetFraction?: number;
+
+    /**
      * Optional grace period (in seconds) for future timestamps.
      *
      * When set, subscriptions will automatically discard events where
@@ -357,6 +400,11 @@ export class NDK extends EventEmitter<{
     public subManager: NDKSubscriptionManager;
     public aiGuardrails: AIGuardrails;
     public futureTimestampGrace?: number;
+    public nip66Filter?: NIP66LivenessFilter;
+    public thompsonSampler?: ThompsonSampler;
+    public maxOutboxRelays?: number;
+    public enableCoverageGuarantee?: boolean;
+    public cgBudgetFraction?: number;
 
     /**
      * Private storage for the signature verification function
@@ -502,6 +550,20 @@ export class NDK extends EventEmitter<{
         this.filterValidationMode = opts.filterValidationMode || "validate";
         this.aiGuardrails = new AIGuardrails(opts.aiGuardrails || false);
         this.futureTimestampGrace = opts.futureTimestampGrace;
+
+        if (opts.nip66MonitorRelays?.length) {
+            this.nip66Filter = new NIP66LivenessFilter(this, {
+                monitorRelays: opts.nip66MonitorRelays,
+            });
+        }
+
+        if (opts.enableThompsonSampling) {
+            this.thompsonSampler = new ThompsonSampler();
+        }
+
+        this.maxOutboxRelays = opts.maxOutboxRelays;
+        this.enableCoverageGuarantee = opts.enableCoverageGuarantee;
+        this.cgBudgetFraction = opts.cgBudgetFraction;
 
         // Trigger guardrails hook for NDK instantiation
         this.aiGuardrails.ndkInstantiated(this);

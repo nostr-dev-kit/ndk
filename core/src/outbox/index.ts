@@ -1,6 +1,7 @@
 import type { NDK } from "../ndk";
 import type { NDKRelay } from "../relay";
 import type { Hexpubkey } from "../user";
+import { applyCoverageGuarantee } from "./coverage-guarantee";
 import { getTopRelaysForAuthors } from "./relay-ranking";
 import { getRelaysForSync } from "./write";
 
@@ -20,9 +21,23 @@ export function getAllRelaysForAllPubkeys(
     const pubkeysToRelays = new Map<Hexpubkey, Set<WebSocket["url"]>>();
     const authorsMissingRelays = new Set<Hexpubkey>();
 
+    // Trigger NIP-66 refresh (non-blocking, skips if data is fresh)
+    if (ndk.nip66Filter) {
+        ndk.nip66Filter.refresh().catch(() => {});
+    }
+
     pubkeys.forEach((pubkey) => {
-        const relays = getRelaysForSync(ndk, pubkey, type);
+        let relays = getRelaysForSync(ndk, pubkey, type);
         if (relays && relays.size > 0) {
+            // Apply NIP-66 liveness filtering if available
+            if (ndk.nip66Filter) {
+                const filtered = ndk.nip66Filter.filterAlive(relays);
+                // If filtering empties the set, preserve the original (don't orphan the author)
+                if (filtered.size > 0) {
+                    relays = filtered;
+                }
+            }
+
             relays.forEach((relay) => {
                 const pubkeysInRelay = pubkeysToRelays.get(relay) || new Set();
                 pubkeysInRelay.add(pubkey);
@@ -65,14 +80,41 @@ export function chooseRelayCombinationForPubkeys(
 
     const sortedRelays = getTopRelaysForAuthors(ndk, pubkeys);
 
-    const addAuthorToRelay = (author: Hexpubkey, relay: WebSocket["url"]) => {
+    // Track unique relays for maxOutboxRelays enforcement (P12)
+    const maxRelays = ndk.maxOutboxRelays;
+    const selectedRelays = new Set<WebSocket["url"]>();
+
+    const addAuthorToRelay = (author: Hexpubkey, relay: WebSocket["url"]): boolean => {
+        // Enforce maxOutboxRelays connection cap
+        if (maxRelays && !selectedRelays.has(relay) && selectedRelays.size >= maxRelays) {
+            return false; // would exceed connection cap
+        }
         const authorsInRelay = relayToAuthorsMap.get(relay) || [];
         authorsInRelay.push(author);
         relayToAuthorsMap.set(relay, authorsInRelay);
+        selectedRelays.add(relay);
+        return true;
     };
+
+    // CG3: Force-select sole-source relays before the main loop
+    const cgAssignedAuthors = new Set<Hexpubkey>();
+    if (ndk.thompsonSampler && ndk.enableCoverageGuarantee !== false) {
+        const maxConn = maxRelays ?? 20;
+        const cg = applyCoverageGuarantee(pubkeysToRelays, maxConn, ndk.cgBudgetFraction ?? 0.5);
+        if (!cg.skipped) {
+            for (const [relay, pubkeys] of cg.forcedRelays) {
+                for (const pk of pubkeys) {
+                    addAuthorToRelay(pk, relay);
+                    cgAssignedAuthors.add(pk);
+                }
+            }
+        }
+    }
 
     // Go through the pubkeys that have relays
     for (const [author, authorRelays] of pubkeysToRelays.entries()) {
+        // Skip authors already fully assigned by CG3
+        if (cgAssignedAuthors.has(author)) continue;
         let missingRelayCount = count;
         const addedRelaysForAuthor = new Set<WebSocket["url"]>();
 
@@ -80,9 +122,10 @@ export function chooseRelayCombinationForPubkeys(
         // If we are already connected to some of this user's relays, add those first
         for (const relay of connectedRelays) {
             if (authorRelays.has(relay.url)) {
-                addAuthorToRelay(author, relay.url);
-                addedRelaysForAuthor.add(relay.url);
-                missingRelayCount--;
+                if (addAuthorToRelay(author, relay.url)) {
+                    addedRelaysForAuthor.add(relay.url);
+                    missingRelayCount--;
+                }
             }
         }
 
@@ -91,9 +134,10 @@ export function chooseRelayCombinationForPubkeys(
             if (addedRelaysForAuthor.has(authorRelay)) continue;
 
             if (relayToAuthorsMap.has(authorRelay)) {
-                addAuthorToRelay(author, authorRelay);
-                addedRelaysForAuthor.add(authorRelay);
-                missingRelayCount--;
+                if (addAuthorToRelay(author, authorRelay)) {
+                    addedRelaysForAuthor.add(authorRelay);
+                    missingRelayCount--;
+                }
             }
         }
 
@@ -108,9 +152,10 @@ export function chooseRelayCombinationForPubkeys(
             if (addedRelaysForAuthor.has(relay)) continue;
 
             if (authorRelays.has(relay)) {
-                addAuthorToRelay(author, relay);
-                addedRelaysForAuthor.add(relay);
-                missingRelayCount--;
+                if (addAuthorToRelay(author, relay)) {
+                    addedRelaysForAuthor.add(relay);
+                    missingRelayCount--;
+                }
             }
         }
     }
@@ -118,9 +163,7 @@ export function chooseRelayCombinationForPubkeys(
     // For the pubkey that are missing relays, pool's relays
     for (const author of authorsMissingRelays) {
         pool.permanentAndConnectedRelays().forEach((relay: NDKRelay) => {
-            const authorsInRelay = relayToAuthorsMap.get(relay.url) || [];
-            authorsInRelay.push(author);
-            relayToAuthorsMap.set(relay.url, authorsInRelay);
+            addAuthorToRelay(author, relay.url);
         });
     }
 

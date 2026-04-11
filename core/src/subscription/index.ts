@@ -6,11 +6,13 @@ import type { NDKKind } from "../events/kinds/index.js";
 import { verifiedSignatures } from "../events/validation.js";
 import { wrapEvent } from "../events/wrap.js";
 import type { NDK } from "../ndk/index.js";
+import { getAllRelaysForAllPubkeys } from "../outbox/index.js";
 import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKFilterValidationMode, processFilters } from "../utils/filter-validation.js";
+import type { Hexpubkey } from "../user/index.js";
 import { queryFullyFilled } from "./utils.js";
 
 export type NDKSubscriptionInternalId = string;
@@ -431,6 +433,18 @@ export class NDKSubscription extends EventEmitter<{
      */
     public cacheUnconstrainFilter?: Array<keyof NDKFilter>;
 
+    /**
+     * Relay → authors assignment map for Thompson observation (P5).
+     * Set by the outbox relay selection pipeline.
+     */
+    public authorRelayAssignments?: Map<WebSocket["url"], Hexpubkey[]>;
+
+    /**
+     * Author → relays map for detecting sole-source authors during observation.
+     * Set by the outbox relay selection pipeline.
+     */
+    public pubkeysToRelays?: Map<Hexpubkey, Set<WebSocket["url"]>>;
+
     public constructor(ndk: NDK, filters: NDKFilter | NDKFilter[], opts?: NDKSubscriptionOptions, subId?: string) {
         super();
         this.ndk = ndk;
@@ -772,6 +786,40 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
+        // Build authorRelayAssignments for Thompson observation if enabled
+        if (this.ndk.thompsonSampler && this.relayFilters) {
+            this.authorRelayAssignments = new Map();
+            for (const [relayUrl, filters] of this.relayFilters) {
+                const authors: Hexpubkey[] = [];
+                for (const filter of filters) {
+                    if (filter.authors) {
+                        for (const author of filter.authors) {
+                            if (!authors.includes(author)) authors.push(author);
+                        }
+                    }
+                }
+                if (authors.length > 0) {
+                    this.authorRelayAssignments.set(relayUrl, authors);
+                }
+            }
+
+            // Build pubkeysToRelays for sole-source detection
+            const allAuthors = new Set<Hexpubkey>();
+            for (const filter of this.filters) {
+                if (filter.authors) {
+                    for (const a of filter.authors) allAuthors.add(a);
+                }
+            }
+            if (allAuthors.size > 0) {
+                const { pubkeysToRelays } = getAllRelaysForAllPubkeys(
+                    this.ndk,
+                    Array.from(allAuthors),
+                    "write",
+                );
+                this.pubkeysToRelays = pubkeysToRelays;
+            }
+        }
+
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl, true, true, filters);
@@ -910,6 +958,11 @@ export class NDKSubscription extends EventEmitter<{
                 return;
             }
 
+            // Track relay attribution for Thompson observation
+            if (relay && !fromCache && !optimisticPublish && ndkEvent.pubkey) {
+                this.trackRelayAttribution(ndkEvent.pubkey, relay.url);
+            }
+
             // emit it
             if (!optimisticPublish || this.skipOptimisticPublishEvent !== true) {
                 this.emitEvent(this.opts?.wrap ?? false, ndkEvent, relay, fromCache, optimisticPublish);
@@ -917,6 +970,12 @@ export class NDKSubscription extends EventEmitter<{
                 this.eventFirstSeen.set(eventId, Date.now());
             }
         } else {
+            // Track relay attribution for duplicates too — the relay did deliver
+            // Use event.pubkey (not ndkEvent) since ndkEvent may not be initialized for raw NostrEvents
+            if (relay && !fromCache && !optimisticPublish && event.pubkey) {
+                this.trackRelayAttribution(event.pubkey, relay.url);
+            }
+
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
             this.emit("event:dup", event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
 
@@ -979,6 +1038,111 @@ export class NDKSubscription extends EventEmitter<{
         }
     }
 
+    /**
+     * Observe delivery outcomes for Thompson Sampling.
+     *
+     * Called at subscription-level EOSE. Only observes on finite
+     * subscriptions (closeOnEose: true) [P2].
+     *
+     * For each (relay, author) assignment:
+     * - Skip if author is inactive (no relay delivered events for them) [P4]
+     * - Observe hit if this relay delivered ≥1 event for this author
+     * - Observe miss otherwise
+     *
+     * Uses an optimized lookup via Map<pubkey, Set<relayUrl>> [P1, P8].
+     */
+    private observeDelivery(): void {
+        if (!this.ndk.thompsonSampler || !this.authorRelayAssignments) return;
+        if (!this.opts?.closeOnEose) return; // P2: only finite subscriptions
+
+        const sampler = this.ndk.thompsonSampler;
+
+        // Build optimized lookup: which relays delivered events for each author
+        const authorToRelays = new Map<Hexpubkey, Set<string>>();
+        for (const [eventId] of this.eventFirstSeen) {
+            // eventFirstSeen only has IDs — we need to look at relayFilters events
+            // Instead, iterate the events we know about through the subscription manager
+        }
+
+        // Use relayFilters to find events: check each relay's event delivery
+        // We'll build from the eventFirstSeen map — but we need relay info.
+        // The most reliable approach: scan eventFirstSeen and use ndk.subManager's seenEvents
+        // However, the simplest correct approach is to collect events from the 'event' emissions.
+
+        // Since eventFirstSeen only tracks event IDs and NDKSubscription doesn't maintain
+        // a received events array by default, we'll use a simpler approach:
+        // Check if any event was seen from each relay for each author.
+        // We can reconstruct this from the relayFilters (which relays we queried)
+        // and cross-reference with events in the subscription manager.
+
+        // Actually, the subscription manager's seenEvents has the events, but they are
+        // not directly accessible. The practical approach is to use the event:dup tracking
+        // that already exists. But the simplest correct implementation that works with the
+        // existing NDK architecture:
+
+        // We need to track events with relay attribution. Let's use a lighter approach:
+        // check per-relay EOSE status — if a relay didn't connect, it's inconclusive.
+        // For connected relays, if the relay has entries in eventFirstSeen that match
+        // an author, it delivered.
+
+        // The cleanest approach: we build authorToRelays from scratch.
+        // We already have this.eosesSeen (relays that completed) and this.relayFilters.
+        // We need event→relay mapping which is on NDKEvent.relay.
+
+        // Unfortunately, NDKSubscription doesn't store received events.
+        // We'll need to collect them. Let's add collection in eventReceived.
+        // But we can't modify eventReceived extensively without risking existing behavior.
+
+        // SIMPLEST CORRECT APPROACH: Use the subscription's event tracking.
+        // The subscription emits events, but doesn't store them by relay.
+        // We'll use the receivedEventsByRelay map we'll add as a lightweight tracker.
+        if (!this._receivedAuthorsByRelay) return;
+
+        for (const [relayUrl, authors] of this.authorRelayAssignments) {
+            for (const author of authors) {
+                // P4: Skip inactive authors (no relay delivered events for them)
+                if (!this._receivedAuthorsByRelay.has(author)) continue;
+
+                const delivered = this._receivedAuthorsByRelay.get(author)!.has(relayUrl);
+
+                // Determine weight: sole-source authors get 0.3x weight
+                let weight = 1.0;
+                if (this.pubkeysToRelays) {
+                    const authorRelays = this.pubkeysToRelays.get(author);
+                    if (authorRelays && authorRelays.size === 1) {
+                        weight = 0.3;
+                    }
+                }
+
+                sampler.observe(relayUrl, author, delivered, weight);
+            }
+        }
+
+        sampler.decay();
+    }
+
+    /**
+     * Tracks which relays delivered events for which authors.
+     * Built lazily by eventReceived when Thompson sampling is enabled.
+     */
+    private _receivedAuthorsByRelay?: Map<Hexpubkey, Set<string>>;
+
+    /**
+     * Record relay attribution for Thompson observation.
+     * Called from eventReceived for new (non-duplicate) events.
+     */
+    private trackRelayAttribution(pubkey: Hexpubkey, relayUrl: string): void {
+        if (!this.ndk.thompsonSampler || !this.authorRelayAssignments) return;
+
+        if (!this._receivedAuthorsByRelay) {
+            this._receivedAuthorsByRelay = new Map();
+        }
+
+        const relays = this._receivedAuthorsByRelay.get(pubkey) ?? new Set();
+        relays.add(relayUrl);
+        this._receivedAuthorsByRelay.set(pubkey, relays);
+    }
+
     public closedReceived(relay: NDKRelay, reason: string): void {
         this.emit("closed", relay, reason);
     }
@@ -998,6 +1162,10 @@ export class NDKSubscription extends EventEmitter<{
         const performEose = (reason: string) => {
             if (this.eosed) return;
             if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
+
+            // Observe delivery outcomes before emitting EOSE (non-blocking, P10)
+            this.observeDelivery();
+
             this.emit("eose", this);
             this.eosed = true;
 

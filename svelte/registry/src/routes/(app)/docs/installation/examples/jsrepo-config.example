@@ -1,7 +1,7 @@
 import { defineConfig } from "jsrepo";
 
 export default defineConfig({
-  registries: ["@nostr-dev-kit/svelte"],
+  registries: ["@ndk/svelte"],
   paths: {
     "*": "$lib/ndk/components",
     ui: "$lib/ndk/ui",

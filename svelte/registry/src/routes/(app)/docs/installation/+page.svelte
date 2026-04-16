@@ -23,7 +23,7 @@
 
 <PageTitle
 	title="Installation"
-  subtitle="Complete guide to installing and configuring the @nostr-dev-kit/svelte component registry in your SvelteKit project."
+  subtitle="Complete guide to installing and configuring the @ndk/svelte component registry in your SvelteKit project."
 />
 
 <div class="docs-page">
@@ -49,7 +49,7 @@
 			<section>
 				<h2>Step 1: Install NDK Dependencies</h2>
 
-<p>Install the core NDK packages that power @nostr-dev-kit/svelte components:</p>
+<p>Install the core NDK packages that power @ndk/svelte components:</p>
 
 	<PMCommand command="add" args={["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"]} />
 
@@ -110,7 +110,7 @@ cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js static/"
 				<h2>Step 3: Install jsrepo CLI</h2>
 
 	<p>
-    jsrepo is the package manager for @nostr-dev-kit/svelte components. Install it globally to use across
+    jsrepo is the package manager for @ndk/svelte components. Install it globally to use across
 		projects:
 	</p>
 
@@ -254,7 +254,7 @@ cd my-nostr-app" />
 				<h2>Step 2: Install Tailwind CSS v4</h2>
 
 				<p>
-					Tailwind CSS v4 provides the styling foundation for @nostr-dev-kit/svelte components. Install the
+					Tailwind CSS v4 provides the styling foundation for @ndk/svelte components. Install the
 					Vite plugin:
 				</p>
 
@@ -288,7 +288,7 @@ cd my-nostr-app" />
 			<section>
 				<h2>Step 3: Install NDK Dependencies</h2>
 
-				<p>Install the core NDK packages that power @nostr-dev-kit/svelte components:</p>
+				<p>Install the core NDK packages that power @ndk/svelte components:</p>
 
 				<PMCommand command="add" args={["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"]} />
 
@@ -347,7 +347,7 @@ cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js static/"
 				<h2>Step 5: Install jsrepo CLI</h2>
 
 				<p>
-					jsrepo is the package manager for @nostr-dev-kit/svelte components. Install it globally to use across
+					jsrepo is the package manager for @ndk/svelte components. Install it globally to use across
 					projects:
 				</p>
 
@@ -553,7 +553,7 @@ cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js static/"
 	<section>
 		<h2>Next Steps</h2>
 
-<p>Now that you have @nostr-dev-kit/svelte installed, explore:</p>
+<p>Now that you have @ndk/svelte installed, explore:</p>
 
 	<ul>
 		<li>

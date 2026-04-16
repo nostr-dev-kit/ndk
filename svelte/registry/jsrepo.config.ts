@@ -5,7 +5,7 @@ import { join, basename } from "path";
 import { globSync } from "glob";
 
 // Registry version - update this when publishing
-const REGISTRY_VERSION = "0.0.53";
+const REGISTRY_VERSION = "1.0.0";
 
 // File patterns to exclude from the registry
 const EXCLUDE_PATTERNS = [
@@ -179,7 +179,7 @@ export default defineConfig({
 
 	// Registry configuration (for building THIS registry)
 	registry: ({ cwd }) => ({
-		name: "@nostr/svelte",
+		name: "@ndk/svelte",
 		version: REGISTRY_VERSION,
 		excludeDeps: ["svelte"],
 		defaultPaths: {

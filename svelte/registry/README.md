@@ -1,10 +1,10 @@
-# @nostr/svelte Component Registry
+# @ndk/svelte Component Registry
 
 A comprehensive collection of beautiful, production-ready Svelte 5 components for building Nostr applications. Built on NDK and distributed through jsrepo.
 
-## What is @nostr/svelte?
+## What is @ndk/svelte?
 
-The @nostr/svelte registry provides a curated set of UI components, hooks, utilities, and complete blocks specifically designed for Nostr applications. All components are:
+The @ndk/svelte registry provides a curated set of UI components, hooks, utilities, and complete blocks specifically designed for Nostr applications. All components are:
 
 - **Svelte 5 Native** - Built from the ground up using Svelte 5 runes
 - **NDK Powered** - Deep integration with [@nostr-dev-kit/svelte](https://github.com/nostr-dev-kit/ndk)
@@ -26,7 +26,7 @@ The registry includes a comprehensive collection of components organized into ca
 To see all available components, run:
 
 ```bash
-jsrepo info @nostr/svelte
+jsrepo info @ndk/svelte
 ```
 
 Or browse the [component showcase](#) to see live examples and documentation for each component.
@@ -52,7 +52,7 @@ bun add -g jsrepo
 2. **Initialize jsrepo in your project**
 
 ```bash
-jsrepo init @nostr/svelte
+jsrepo init @ndk/svelte
 ```
 
 This creates a `jsrepo.config.ts` configuration file in your project.
@@ -98,12 +98,12 @@ For comprehensive installation instructions, configuration options, and componen
 
 ## jsrepo Registry
 
-This registry is published to [jsrepo.com](https://jsrepo.com) as `@nostr/svelte`.
+This registry is published to [jsrepo.com](https://jsrepo.com) as `@ndk/svelte`.
 
 To explore all available components:
 
 ```bash
-jsrepo info @nostr/svelte
+jsrepo info @ndk/svelte
 ```
 
 ## Development

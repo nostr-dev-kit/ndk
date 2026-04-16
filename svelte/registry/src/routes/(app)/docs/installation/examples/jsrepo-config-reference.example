@@ -3,7 +3,7 @@ import prettier from "@jsrepo/transform-prettier"; // Optional: for formatting
 
 export default defineConfig({
   // Registries to use
-  registries: ["@nostr-dev-kit/svelte"],
+  registries: ["@ndk/svelte"],
 
   // Optional: Add transform plugins for formatting
   // Run: jsrepo config transform @jsrepo/transform-prettier

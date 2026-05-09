@@ -19,6 +19,9 @@
             },
             "correctness": {
                 "noUnsafeOptionalChaining": "info"
+            },
+          "style": {
+            "noNonNullAssertion": "off"
             }
         }
     },

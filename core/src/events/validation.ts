@@ -41,18 +41,23 @@ export const verifiedSignatures = new LRUCache<string, false | string>({
  * @param event {NDKEvent} The event to verify
  * @returns {boolean | undefined} True if the signature is valid, false if it is invalid, and undefined if the signature has not been verified yet.
  */
-export function verifySignature(this: NDKEvent, persist: boolean): boolean | undefined {
+export function verifySignature(this: NDKEvent, persist: boolean, forceSync = false): boolean | undefined {
     if (typeof this.signatureVerified === "boolean") return this.signatureVerified;
 
-    const prevVerification = verifiedSignatures.get(this.id);
-    if (prevVerification !== null) {
-        this.signatureVerified = !!prevVerification;
-        return this.signatureVerified;
-    }
-
     try {
+        const prevVerification = verifiedSignatures.get(this.id);
+        if (prevVerification !== null && prevVerification !== false) {
+            if (prevVerification === this.sig && this.getEventHash() === this.id) {
+                // Positive cache hit — sig matches and payload hashes to the claimed id
+                this.signatureVerified = true;
+                return true;
+            }
+            // Sig mismatch or payload tampered — re-verify
+        }
+        // Negative or missing cache entries always re-verify
+
         // Use async verification if enabled (either via worker or custom function)
-        if (this.ndk?.asyncSigVerification) {
+        if (this.ndk?.asyncSigVerification && !forceSync) {
             // Capture the relay in a closure before the async call
             const relayForVerification = this.relay;
 

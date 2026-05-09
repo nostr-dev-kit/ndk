@@ -1,5 +1,7 @@
-import { describe, expect, it, vi } from "vitest"; // Added describe, it, expect
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKEvent } from "../events";
+import { NDKKind } from "../events/kinds/index";
+import { verifiedSignatures } from "../events/validation";
 import { NDK } from "../ndk";
 import { NDKSubscription } from ".";
 
@@ -109,5 +111,142 @@ describe("NDKSubscriptionFilters", () => {
             mockedValidate.mockRestore();
             mockedVerify.mockRestore();
         });
+    });
+});
+
+describe("Kind:0 profile signature enforcement", () => {
+    const validPubkey = "a".repeat(64);
+
+    function makeProfileEvent(testNdk: NDK): NDKEvent {
+        return new NDKEvent(testNdk, {
+            kind: NDKKind.Metadata,
+            created_at: Math.floor(Date.now() / 1000),
+            pubkey: validPubkey,
+            id: Math.random().toString(36).substring(2),
+            sig: "b".repeat(128),
+            tags: [],
+            content: '{"name":"test"}',
+        });
+    }
+
+    function mockRelay() {
+        return {
+            shouldValidateEvent: () => true,
+            addValidatedEvent: vi.fn(),
+            addNonValidatedEvent: vi.fn(),
+            url: "wss://mock.relay",
+        };
+    }
+
+    beforeEach(() => {
+        verifiedSignatures.clear();
+    });
+
+    it("drops kind:0 events with invalid signatures via relay", () => {
+        const testNdk = new NDK();
+        const sub = new NDKSubscription(testNdk, { kinds: [0] }, { skipValidation: true });
+        const event = makeProfileEvent(testNdk);
+        const relay = mockRelay();
+
+        const mockedVerify = vi.spyOn(event, "verifySignature").mockReturnValue(false);
+        const mockedEmit = vi.spyOn(sub, "emit" as any);
+
+        sub.eventReceived(event, relay as any);
+
+        expect(mockedVerify).toHaveBeenCalled();
+        expect(mockedEmit).not.toHaveBeenCalled();
+        mockedVerify.mockRestore();
+        mockedEmit.mockRestore();
+    });
+
+    it("emits kind:0 events with valid signatures via relay", () => {
+        const testNdk = new NDK();
+        const sub = new NDKSubscription(testNdk, { kinds: [0] }, { skipValidation: true });
+        const event = makeProfileEvent(testNdk);
+        const relay = mockRelay();
+
+        const mockedVerify = vi.spyOn(event, "verifySignature").mockReturnValue(true);
+        const mockedEmit = vi.spyOn(sub, "emit" as any);
+
+        sub.eventReceived(event, relay as any);
+
+        expect(mockedVerify).toHaveBeenCalled();
+        expect(mockedEmit).toHaveBeenCalled();
+        mockedVerify.mockRestore();
+        mockedEmit.mockRestore();
+    });
+
+    it("uses forceSync=true for kind:0 even when asyncSigVerification is enabled", () => {
+        const testNdk = new NDK();
+        testNdk.asyncSigVerification = true;
+        const sub = new NDKSubscription(testNdk, { kinds: [0] }, { skipValidation: true });
+        const event = makeProfileEvent(testNdk);
+        const relay = mockRelay();
+
+        const mockedVerify = vi.spyOn(event, "verifySignature").mockReturnValue(true);
+
+        sub.eventReceived(event, relay as any);
+
+        // Should be called with (true, true) — persist=true, forceSync=true
+        expect(mockedVerify).toHaveBeenCalledWith(true, true);
+        mockedVerify.mockRestore();
+    });
+
+    it("drops kind:0 events with invalid signatures without relay", () => {
+        const testNdk = new NDK();
+        const sub = new NDKSubscription(testNdk, { kinds: [0] }, { skipValidation: true });
+        const event = makeProfileEvent(testNdk);
+
+        const mockedVerify = vi.spyOn(event, "verifySignature").mockReturnValue(false);
+        const mockedEmit = vi.spyOn(sub, "emit" as any);
+
+        // No relay passed
+        sub.eventReceived(event, undefined);
+
+        expect(mockedVerify).toHaveBeenCalledWith(true, true);
+        expect(mockedEmit).not.toHaveBeenCalled();
+        mockedVerify.mockRestore();
+        mockedEmit.mockRestore();
+    });
+
+    it("emits kind:0 events with valid signatures without relay", () => {
+        const testNdk = new NDK();
+        const sub = new NDKSubscription(testNdk, { kinds: [0] }, { skipValidation: true });
+        const event = makeProfileEvent(testNdk);
+
+        const mockedVerify = vi.spyOn(event, "verifySignature").mockReturnValue(true);
+        const mockedEmit = vi.spyOn(sub, "emit" as any);
+
+        sub.eventReceived(event, undefined);
+
+        expect(mockedVerify).toHaveBeenCalled();
+        expect(mockedEmit).toHaveBeenCalled();
+        mockedVerify.mockRestore();
+        mockedEmit.mockRestore();
+    });
+
+    it("does not force-verify non-kind:0 events without relay", () => {
+        const testNdk = new NDK();
+        const sub = new NDKSubscription(testNdk, { kinds: [1] }, { skipValidation: true });
+        const event = new NDKEvent(testNdk, {
+            kind: NDKKind.Text,
+            created_at: Math.floor(Date.now() / 1000),
+            pubkey: validPubkey,
+            id: Math.random().toString(36).substring(2),
+            sig: "b".repeat(128),
+            tags: [],
+            content: "hello",
+        });
+
+        const mockedVerify = vi.spyOn(event, "verifySignature");
+        const mockedEmit = vi.spyOn(sub, "emit" as any);
+
+        // kind:1 without relay — should NOT trigger verification
+        sub.eventReceived(event, undefined);
+
+        expect(mockedVerify).not.toHaveBeenCalled();
+        expect(mockedEmit).toHaveBeenCalled();
+        mockedVerify.mockRestore();
+        mockedEmit.mockRestore();
     });
 });

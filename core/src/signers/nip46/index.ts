@@ -345,11 +345,19 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         const promise = new Promise<NDKUser>((resolve, reject) => {
             // Per NIP-46, the first parameter to `connect` is the
-            // remote-signer-pubkey, not the user-pubkey. For bunker:// URIs
-            // without `?pubkey=` (the typical single-user signer case),
-            // userPubkey is null — fall through to bunkerPubkey, which is
-            // the URI hostname and is by definition the remote-signer-pubkey.
-            const connectParams = [this.userPubkey || this.bunkerPubkey || ""];
+            // remote-signer-pubkey, not the user-pubkey:
+            //   connect: [<remote-signer-pubkey>, <optional_secret>, ...]
+            // bunkerPubkey is the URI host and is by definition the
+            // remote-signer-pubkey. Even when the URI carries
+            // `?pubkey=<user-pubkey>` (multi-user signers), that value is the
+            // user identity, not the connect target — it is resolved
+            // separately via get_public_key after the handshake. Sending
+            // userPubkey here breaks signers that validate connect.params[0]
+            // against their own signer pubkey. (nostr-tools' BunkerSigner
+            // sends `this.bp.pubkey` — the bunker pubkey — likewise.)
+            // bunkerPubkey is guaranteed set by the guard earlier in
+            // blockUntilReady; `?? ""` only satisfies the type checker.
+            const connectParams = [this.bunkerPubkey ?? ""];
 
             if (this.secret) connectParams.push(this.secret);
 

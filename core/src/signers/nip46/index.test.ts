@@ -120,6 +120,125 @@ describe("NDKNip46Signer", () => {
             expect(user.pubkey).toBe("userpubkey");
         });
 
+        it("blockUntilReady resolves user on URI secret echoed back (NIP-46 spec)", async () => {
+            // Per NIP-46, a successful `connect` response result is either
+            // "ack" OR the URI secret echoed back. Spec-compliant signers
+            // like Clave (https://github.com/DocNR/clave) and any signer
+            // matching nostr-tools' BunkerSigner.fromURI semantics return
+            // the secret-echo form.
+            const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com&secret=shh";
+            const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
+
+            const mockRpc = createMockRpc();
+            (signer as any).rpc = mockRpc as NDKNostrRpc;
+            (signer as any).startListening = vi.fn();
+            (signer as any).userPubkey = "userpubkey";
+            (signer as any).bunkerPubkey = "bunkerpubkey";
+            (signer as any).secret = "shh";
+
+            (signer as any).getPublicKey = vi.fn().mockResolvedValue("userpubkey");
+
+            // Bunker returns the URI secret echoed back instead of "ack".
+            (mockRpc.sendRequest as any).mockImplementation(
+                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                    cb({ result: "shh" });
+                },
+            );
+
+            const user = await signer.blockUntilReady();
+            expect(user).toBeInstanceOf(NDKUser);
+            expect(user.pubkey).toBe("userpubkey");
+        });
+
+        it("blockUntilReady sends bunkerPubkey as first connect param when no userPubkey", async () => {
+            // Per NIP-46, the first parameter to `connect` is the
+            // remote-signer-pubkey, not the user-pubkey. For bunker:// URIs
+            // without `?pubkey=` (the typical single-user signer case),
+            // userPubkey is null — fall through to bunkerPubkey.
+            const token = "bunker://bunkerpubkey?relay=wss://relay.example.com&secret=shh";
+            const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
+
+            const mockRpc = createMockRpc();
+            (signer as any).rpc = mockRpc as NDKNostrRpc;
+            (signer as any).startListening = vi.fn();
+            (signer as any).userPubkey = null; // ← typical Clave-style URI: no ?pubkey=
+            (signer as any).bunkerPubkey = "bunkerpubkey";
+            (signer as any).secret = "shh";
+
+            (signer as any).getPublicKey = vi.fn().mockResolvedValue("userpubkey");
+
+            let capturedParams: any[] | undefined;
+            (mockRpc.sendRequest as any).mockImplementation(
+                (_bunkerPubkey: string, _method: string, params: any[], _kind: number, cb: Function) => {
+                    capturedParams = params;
+                    cb({ result: "ack" });
+                },
+            );
+
+            await signer.blockUntilReady();
+            expect(capturedParams?.[0]).toBe("bunkerpubkey");
+            expect(capturedParams?.[1]).toBe("shh");
+        });
+
+        it("blockUntilReady sends bunkerPubkey (not userPubkey) as first connect param when the URI carries ?pubkey=", async () => {
+            // Per NIP-46, connect.params[0] is the remote-signer-pubkey. For a
+            // multi-user signer URI like
+            //   bunker://<bunkerPubkey>?pubkey=<userPubkey>&relay=...&secret=...
+            // NDK parses `?pubkey=` into userPubkey — but that value is the
+            // user identity, NOT the connect target. params[0] must still be
+            // bunkerPubkey, or signers that validate it against their own
+            // signer pubkey reject the otherwise-valid token. userPubkey is
+            // resolved separately via get_public_key after the handshake.
+            const token =
+                "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com&secret=shh";
+            const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
+
+            const mockRpc = createMockRpc();
+            (signer as any).rpc = mockRpc as NDKNostrRpc;
+            (signer as any).startListening = vi.fn();
+            (signer as any).userPubkey = "userpubkey"; // ← distinct from bunkerPubkey
+            (signer as any).bunkerPubkey = "bunkerpubkey";
+            (signer as any).secret = "shh";
+
+            (signer as any).getPublicKey = vi.fn().mockResolvedValue("userpubkey");
+
+            let capturedParams: any[] | undefined;
+            (mockRpc.sendRequest as any).mockImplementation(
+                (_bunkerPubkey: string, _method: string, params: any[], _kind: number, cb: Function) => {
+                    capturedParams = params;
+                    cb({ result: "ack" });
+                },
+            );
+
+            await signer.blockUntilReady();
+            expect(capturedParams?.[0]).toBe("bunkerpubkey"); // NOT "userpubkey"
+            expect(capturedParams?.[1]).toBe("shh");
+        });
+
+        it("blockUntilReady rejects with a real Error (not undefined) for unexpected connect responses", async () => {
+            // Pre-fix, NDK rejected with `response.error` which is `undefined`
+            // when the bunker returns a non-error non-ack result. Downstream
+            // catch handlers (e.g. `e.message`) would then throw a confusing
+            // TypeError on `undefined`. Now we always reject with an Error.
+            const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com";
+            const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
+
+            const mockRpc = createMockRpc();
+            (signer as any).rpc = mockRpc as NDKNostrRpc;
+            (signer as any).startListening = vi.fn();
+            (signer as any).userPubkey = "userpubkey";
+            (signer as any).bunkerPubkey = "bunkerpubkey";
+            (signer as any).secret = null; // no secret set, so secret-echo path can't match
+
+            (mockRpc.sendRequest as any).mockImplementation(
+                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                    cb({ result: "something_unexpected" });
+                },
+            );
+
+            await expect(signer.blockUntilReady()).rejects.toThrow(/unexpected NIP-46 connect response/);
+        });
+
         it("signs events via RPC", async () => {
             const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com";
             const signer = NDKNip46Signer.bunker(ndk, token, localSigner);

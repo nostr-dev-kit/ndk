@@ -344,14 +344,33 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
 
         const promise = new Promise<NDKUser>((resolve, reject) => {
-            const connectParams = [this.userPubkey ?? ""];
+            // Per NIP-46, the first parameter to `connect` is the
+            // remote-signer-pubkey, not the user-pubkey:
+            //   connect: [<remote-signer-pubkey>, <optional_secret>, ...]
+            // bunkerPubkey is the URI host and is by definition the
+            // remote-signer-pubkey. Even when the URI carries
+            // `?pubkey=<user-pubkey>` (multi-user signers), that value is the
+            // user identity, not the connect target — it is resolved
+            // separately via get_public_key after the handshake. Sending
+            // userPubkey here breaks signers that validate connect.params[0]
+            // against their own signer pubkey. (nostr-tools' BunkerSigner
+            // sends `this.bp.pubkey` — the bunker pubkey — likewise.)
+            // bunkerPubkey is guaranteed set by the guard earlier in
+            // blockUntilReady; `?? ""` only satisfies the type checker.
+            const connectParams = [this.bunkerPubkey ?? ""];
 
             if (this.secret) connectParams.push(this.secret);
 
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
             this.rpc.sendRequest(this.bunkerPubkey, "connect", connectParams, 24133, (response: NDKRpcResponse) => {
-                if (response.result === "ack") {
+                // Per NIP-46, a successful `connect` response result is
+                // either `"ack"` OR the URI secret echoed back. The latter
+                // is what spec-compliant signers like Clave
+                // (https://github.com/DocNR/clave) and any signer matching
+                // nostr-tools' BunkerSigner.fromURI semantics return.
+                const ok = response.result === "ack" || (this.secret != null && response.result === this.secret);
+                if (ok) {
                     this.getPublicKey().then(async (pubkey) => {
                         this.userPubkey = pubkey;
                         this._user = this.ndk.getUser({ pubkey });
@@ -359,7 +378,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                         resolve(this._user);
                     }).catch(reject);
                 } else {
-                    reject(response.error);
+                    reject(new Error(response.error || `unexpected NIP-46 connect response: ${response.result}`));
                 }
             });
         });

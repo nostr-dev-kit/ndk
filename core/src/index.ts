@@ -88,6 +88,22 @@ export * from "./subscription/utils.js";
 export * from "./thread/index.js";
 export * from "./types.js";
 export * from "./user/index.js";
+export {
+    DEFAULT_ELECTRUMX_SERVERS,
+    NIP05_NAMECOIN_REGEX_BIT,
+    NIP05_NAMECOIN_REGEX_NAMESPACED,
+    NamecoinAddress,
+    buildNameIndexScript,
+    electrumScriptHash,
+    extractNostrFromValue,
+    isDotBit,
+    isValidNamecoinIdentifier,
+    parseNameUpdateScript,
+    profilePointerFromRawJson,
+} from "./user/nip05namecoin.js";
+export type { ElectrumXServer, NamecoinNip05Extract } from "./user/nip05namecoin.js";
+export { getNamecoinNip05For, getNamecoinNip05User } from "./user/nip05namecoin-resolver.js";
+export type { GetNamecoinNip05Opts, NamecoinResolver } from "./user/nip05namecoin-resolver.js";
 export * from "./user/pin.js";
 export * from "./user/profile.js";
 export * from "./utils/filter.js";

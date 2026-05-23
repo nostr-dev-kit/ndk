@@ -8,6 +8,8 @@ import type { NDK } from "../ndk/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { getNip05For } from "./nip05.js";
+import { isValidNamecoinIdentifier } from "./nip05namecoin.js";
+import { getNamecoinNip05For } from "./nip05namecoin-resolver.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 
 export type Hexpubkey = string;
@@ -202,7 +204,15 @@ export class NDKUser {
         const opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
-        const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
+
+        // Route `.bit` / `d/` / `id/` identifiers through Namecoin when a
+        // resolver has been configured. Otherwise fall through to DNS.
+        let profile;
+        if (isValidNamecoinIdentifier(nip05Id) && ndk.namecoinResolver) {
+            profile = await getNamecoinNip05For(ndk, nip05Id, { skipCache });
+        } else {
+            profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
+        }
 
         if (profile) {
             const user = new NDKUser({

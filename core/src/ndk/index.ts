@@ -21,6 +21,7 @@ import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
 import type { NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import type { NamecoinResolver } from "../user/nip05namecoin-resolver.js";
 import { isValidNip05 } from "../utils/validation.js";
 import { normalizeRelayUrl } from "../utils/normalize-url.js";
 import type { NDKAggregatedCountResult, NDKCountOptions } from "../count/index.js";
@@ -349,6 +350,17 @@ export class NDK extends EventEmitter<{
     public clientNip89?: string;
     public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
     public queuesNip05: Queue<ProfilePointer | null>;
+
+    /**
+     * Optional resolver for NIP-05 over Namecoin (`.bit`) identifiers.
+     *
+     * NDK is isomorphic and does not bundle an ElectrumX WSS client. Set this
+     * to a function that, given a parsed `NamecoinAddress`, returns the raw
+     * Namecoin name-value JSON string. See `getNamecoinNip05For` and
+     * `NamecoinResolver` in `./user/nip05namecoin-resolver.js`.
+     */
+    public namecoinResolver?: NamecoinResolver;
+
     public asyncSigVerification = false;
     public initialValidationRatio = 1.0;
     public lowestValidationRatio = 0.1;

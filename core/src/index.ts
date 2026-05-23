@@ -104,6 +104,8 @@ export {
 export type { ElectrumXServer, NamecoinNip05Extract } from "./user/nip05namecoin.js";
 export { getNamecoinNip05For, getNamecoinNip05User } from "./user/nip05namecoin-resolver.js";
 export type { GetNamecoinNip05Opts, NamecoinResolver } from "./user/nip05namecoin-resolver.js";
+export { DEFAULT_IMPORT_MAX_DEPTH, expandImports } from "./user/nip05namecoin-import.js";
+export type { NamecoinImportLookup, NamecoinValue } from "./user/nip05namecoin-import.js";
 export * from "./user/pin.js";
 export * from "./user/profile.js";
 export * from "./utils/filter.js";

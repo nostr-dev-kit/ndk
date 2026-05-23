@@ -14,7 +14,16 @@
 import type { NDK } from "../ndk/index.js";
 import type { ProfilePointer } from "./index.js";
 import { NDKUser } from "./index.js";
-import { extractNostrFromValue, isValidNamecoinIdentifier, NamecoinAddress } from "./nip05namecoin.js";
+import {
+    extractNostrFromValue,
+    isValidNamecoinIdentifier,
+    NamecoinAddress,
+} from "./nip05namecoin.js";
+import {
+    expandImports,
+    type NamecoinImportLookup,
+    type NamecoinValue,
+} from "./nip05namecoin-import.js";
 
 /**
  * Caller-supplied transport. Given a parsed Namecoin address, return the raw
@@ -117,6 +126,17 @@ export async function getNamecoinNip05For(
                 return null;
             }
 
+            // ifa-0001 §"import": if the apex value declares an `import`,
+            // recursively merge the imported sibling(s) before extracting
+            // the `nostr` field. The `testls.bit` deployment uses this to
+            // delegate its `nostr.names` block to `dd/testls`, since the
+            // 520-byte per-name limit makes the apex record crowded.
+            // Non-import records cost zero extra I/O.
+            if (isPlainObject(value)) {
+                const lookup = makeImportLookup(resolver);
+                value = await expandImports(value, lookup);
+            }
+
             const extracted = extractNostrFromValue(address, value);
             let profile: ProfilePointer | null = null;
             if (extracted !== null) {
@@ -131,6 +151,34 @@ export async function getNamecoinNip05For(
             return profile;
         },
     });
+}
+
+function isPlainObject(v: unknown): v is NamecoinValue {
+    return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+
+/**
+ * Adapt a {@link NamecoinResolver} (`(NamecoinAddress) => Promise<string>`)
+ * to a {@link NamecoinImportLookup} (`(name) => Promise<string | null>`)
+ * for use with {@link expandImports}.
+ *
+ * Synthesises a minimal `NamecoinAddress` from the imported Namecoin name
+ * (which may be any namespace — `d/`, `id/`, `dd/`, etc., per
+ * ifa-0001). The transport only consumes `address.namecoinName` and
+ * `address.electrumScriptHash()`; `localPart` defaults to `_` and
+ * `isDomain` is inferred from the `d/` prefix. Resolver throws are
+ * absorbed — {@link expandImports} already treats them as `{}`.
+ */
+function makeImportLookup(resolver: NamecoinResolver): NamecoinImportLookup {
+    return async (name: string): Promise<string | null> => {
+        const isDomain = name.startsWith("d/");
+        const importedAddress = new NamecoinAddress(name, "_", isDomain);
+        try {
+            return await resolver(importedAddress);
+        } catch {
+            return null;
+        }
+    };
 }
 
 /**

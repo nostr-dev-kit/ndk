@@ -1,6 +1,9 @@
+import debug from "debug";
 import type { NDK } from "../ndk";
 import type { Hexpubkey, ProfilePointer } from ".";
 import { NDKUser } from ".";
+
+const d = debug("ndk:nip05");
 
 export const NIP05_REGEX = /^(?:([\w.+-]+)@)?([\w.-]+)$/;
 
@@ -59,7 +62,7 @@ export async function getNip05For(
                 if (ndk?.cacheAdapter?.saveNip05) {
                     ndk?.cacheAdapter.saveNip05(fullname, null);
                 }
-                console.error("Failed to fetch NIP05 for", fullname, _e);
+                d("Failed to fetch NIP05 for %s: %O", fullname, _e);
                 return null;
             }
         },

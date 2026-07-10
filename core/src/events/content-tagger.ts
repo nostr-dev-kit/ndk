@@ -85,7 +85,7 @@ export function uniqueTag(a: NDKTag, b: NDKTag): NDKTag[] {
     return [a, b];
 }
 
-const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
+const hashtagRegex = /(?:^|\s)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
 
 /**
  * Generates a unique list of hashtags as used in the content. If multiple variations
@@ -94,7 +94,7 @@ const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
  * @returns
  */
 export function generateHashtags(content: string): string[] {
-    const hashtags = content.match(hashtagRegex);
+    const hashtags = content.match(hashtagRegex)?.map((m) => m.trimStart());
     const tagIds = new Set<string>();
     const tag = new Set<string>();
     if (hashtags) {

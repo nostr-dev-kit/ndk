@@ -292,7 +292,8 @@ export class NDKRelay extends EventEmitter<{
             return false;
         }
 
-        if (this.targetValidationRatio === undefined) {
+        // Non-finite ratio: verify rather than silently skip
+        if (!Number.isFinite(this.targetValidationRatio)) {
             return true;
         }
 

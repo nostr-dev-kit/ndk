@@ -498,7 +498,7 @@ export class NDK extends EventEmitter<{
 
         this.initialValidationRatio = opts.initialValidationRatio || 1.0;
         this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
-        this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
+        this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn.bind(this);
         this.filterValidationMode = opts.filterValidationMode || "validate";
         this.aiGuardrails = new AIGuardrails(opts.aiGuardrails || false);
         this.futureTimestampGrace = opts.futureTimestampGrace;

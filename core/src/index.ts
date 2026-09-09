@@ -95,6 +95,7 @@ export { isValidPubkey, isValidEventId, isValidHex64, isValidNip05 } from "./uti
 export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
 export * from "./utils/normalize-url.js";
+export * from "./utils/sorted-events.js";
 export type { NDKZapInvoice } from "./zap/invoice.js";
 export { zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zapper/index.js";

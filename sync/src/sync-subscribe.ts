@@ -17,17 +17,21 @@ import { ndkSync } from "./ndk-sync.js";
 
 export interface SyncAndSubscribeOptions extends NDKSubscriptionOptions {
     /**
-     * Called after each relay is synced
+     * Called once a relay's historical events have been synced, either through
+     * Negentropy or through the `fetchEvents` fallback.
      */
     onRelaySynced?: (relay: NDKRelay, eventCount: number) => void;
 
     /**
-     * Called when all relays have been synced
+     * Called when every relay has finished its sync attempt (successfully or not).
      */
     onSyncComplete?: () => void;
 
     /**
-     * Called when a relay error occurs during sync
+     * Called when a relay could not be synced at all: Negentropy was unavailable or
+     * the negotiation failed, and the `fetchEvents` fallback failed too.
+     * Negotiation failures that are recovered by the fallback are not reported here;
+     * each relay ends with exactly one of `onRelaySynced` or `onRelayError`.
      */
     onRelayError?: (relay: NDKRelay, error: Error) => void | Promise<void>;
 
@@ -134,33 +138,70 @@ export async function syncAndSubscribe(
         let completedCount = 0;
         const totalRelays = relays.length;
 
+        // Consumer callbacks run outside the try/catch blocks that classify the sync outcome, so an
+        // exception thrown by the consumer is never mistaken for a negotiation or fetch failure.
+        // Such exceptions are logged and otherwise ignored (syncWithRelay is not awaited by anyone).
+        const invokeCallback = (name: string, relay: NDKRelay | undefined, fn: () => void | Promise<void>) =>
+            Promise.resolve()
+                .then(fn)
+                .catch((error) => {
+                    console.error(
+                        `[syncAndSubscribe] ${name} callback threw${relay ? ` for ${relay.url}` : ""}:`,
+                        error,
+                    );
+                });
+
         const syncWithRelay = async (relay: NDKRelay) => {
+            let outcome: { synced: number } | { failed: Error } | undefined;
+            let negotiationError: Error | undefined;
+
+            // Try Negentropy sync first.
+            // ndkSync() does not reject when a single relay fails to negotiate (NOTICE, NEG-ERR,
+            // timeout); it reports the failure through onRelayError and resolves with an empty
+            // result. Track it so we fall back instead of reporting an empty sync as success.
             try {
-                // Try Negentropy sync first
                 const result = await ndkSync.call(this, filterArray, {
                     relaySet: new NDKRelaySet(new Set([relay]), this),
                     autoFetch: true, // Fetched events automatically route to subscription
+                    onNegotiationProgress: opts.onNegotiationProgress,
+                    onRelayError: (_relay, error) => {
+                        negotiationError = error;
+                    },
                 });
+                if (!negotiationError) outcome = { synced: result.events.length };
+            } catch (error) {
+                negotiationError = error instanceof Error ? error : new Error(String(error));
+            }
 
-                opts.onRelaySynced?.(relay, result.events.length);
-            } catch (_error) {
-                // Relay doesn't support Negentropy - fallback to fetchEvents
+            // Relay doesn't support Negentropy (or negotiation failed) - fallback to fetchEvents.
+            // Same guardrail exemption as NDKSync.syncSingleRelay(): this is the intended use of fetchEvents.
+            if (!outcome) {
                 try {
-                    const events = await this.fetchEvents(filterArray, {
+                    const events = await this.guardrailOff("fetch-events-usage").fetchEvents(filterArray, {
                         relaySet: new NDKRelaySet(new Set([relay]), this),
                         subId: "sync-fetch-fallback",
                         groupable: false,
                     });
-
-                    opts.onRelaySynced?.(relay, events.size);
+                    outcome = { synced: events.size };
                 } catch (fetchError) {
-                    console.error(`[syncAndSubscribe] Failed to sync/fetch from ${relay.url}:`, fetchError);
+                    console.error(
+                        `[syncAndSubscribe] Failed to sync/fetch from ${relay.url} (negotiation: ${negotiationError?.message}):`,
+                        fetchError,
+                    );
+                    outcome = { failed: fetchError instanceof Error ? fetchError : new Error(String(fetchError)) };
                 }
-            } finally {
-                completedCount++;
-                if (completedCount === totalRelays) {
-                    opts.onSyncComplete?.();
-                }
+            }
+
+            const terminal = outcome;
+            if ("failed" in terminal) {
+                await invokeCallback("onRelayError", relay, () => opts.onRelayError?.(relay, terminal.failed));
+            } else {
+                await invokeCallback("onRelaySynced", relay, () => opts.onRelaySynced?.(relay, terminal.synced));
+            }
+
+            completedCount++;
+            if (completedCount === totalRelays) {
+                await invokeCallback("onSyncComplete", undefined, () => opts.onSyncComplete?.());
             }
         };
 

@@ -46,10 +46,12 @@
     "@nostr-dev-kit/cache-dexie": "^2.7.8",
     "@nostr-dev-kit/cache-nostr": "^0.1.66",
     "@types/node": "^24.10.0",
+    "@types/ws": "^8.18.1",
     "tsup": "^8.4.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.14",
-    "vite": "^7.1.11"
+    "vite": "^7.1.11",
+    "ws": "^8.18.3"
   },
   "keywords": [
     "nostr",

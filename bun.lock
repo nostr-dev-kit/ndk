@@ -351,10 +351,12 @@
         "@nostr-dev-kit/cache-memory": "^2.7.8",
         "@nostr-dev-kit/cache-nostr": "^0.1.66",
         "@types/node": "^24.10.0",
+        "@types/ws": "^8.18.1",
         "tsup": "^8.4.0",
         "typescript": "^5.9.3",
         "vite": "^7.1.11",
         "vitest": "^4.0.14",
+        "ws": "^8.18.3",
       },
       "peerDependencies": {
         "@nostr-dev-kit/ndk": "^3.0.0",
@@ -1284,6 +1286,8 @@
     "@types/unist": ["@types/unist@3.0.3", "", {}, "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="],
 
     "@types/web-bluetooth": ["@types/web-bluetooth@0.0.21", "", {}, "sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA=="],
+
+    "@types/ws": ["@types/ws@8.18.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-67MQl+fpWKVTT1NYdnmo3U4sc/xPo/zQBncVnI74qmQa0z/b+1g6iYqNmGCPbxO+zz2aklb08a0oHfegiVd0/w=="],
 
     "@types/yargs": ["@types/yargs@17.0.34", "", { "dependencies": { "@types/yargs-parser": "*" } }, "sha512-KExbHVa92aJpw9WDQvzBaGVE2/Pz+pLZQloT2hjL8IqsZnV62rlPOYvNnLmf/L2dyllfVUOVBj64M0z/46eR2A=="],
 

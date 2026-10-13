@@ -152,17 +152,6 @@ export class NDKSync {
     }
 
     /**
-     * Create an onRelayError handler that updates cache and calls user callback
-     * @private
-     */
-    private createErrorHandler(userCallback?: (relay: NDKRelay, error: Error) => void | Promise<void>) {
-        return async (relay: NDKRelay, error: Error) => {
-            await userCallback?.(relay, error);
-            await this.markRelayAsNotSupporting(relay.url, error);
-        };
-    }
-
-    /**
      * Sync with a single relay, with automatic fallback to fetchEvents if negentropy not supported
      * @private
      */
@@ -174,15 +163,28 @@ export class NDKSync {
         const supportsNeg = await this.checkRelaySupport(relay);
 
         if (supportsNeg) {
-            // Use Negentropy sync - errors are handled by onRelayError in opts
-            return await ndkSync.call(this.ndk, filters, {
+            // Use Negentropy sync. ndkSync() does not reject when the negotiation fails (NOTICE,
+            // NEG-ERR, timeout): it reports through onRelayError and resolves with an empty result.
+            let negotiationError: Error | undefined;
+            const result = await ndkSync.call(this.ndk, filters, {
                 ...opts,
                 relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
                 onNegotiationProgress: opts.onNegotiationProgress,
+                onRelayError: async (_relay, error) => {
+                    negotiationError = error;
+                    // Keep the caller's onRelayError as a negotiation diagnostic (NDKSync.sync() contract);
+                    // syncAndSubscribe() does not pass one here and reports only terminal failures.
+                    await opts.onRelayError?.(relay, error);
+                    await this.markRelayAsNotSupporting(relay.url, error);
+                },
             });
+
+            if (!negotiationError) return result;
+            // Negotiation failed on this attempt: fall back now instead of returning an empty result.
+            // The capability cache was already updated so later attempts skip Negentropy.
         }
 
-        // Fallback to fetchEvents when negentropy not supported
+        // Fallback to fetchEvents when negentropy not supported (or negotiation just failed)
         const events = await this.ndk.guardrailOff("fetch-events-usage").fetchEvents(filters, {
             relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
             subId: "sync-fetch-fallback",
@@ -229,17 +231,11 @@ export class NDKSync {
             have: new Set(),
         };
 
-        // Merge options with error handler
-        const mergedOpts: NDKSyncOptions = {
-            ...opts,
-            onRelayError: this.createErrorHandler(opts?.onRelayError),
-        };
-
         // Sync with each relay in parallel (with fallback for non-negentropy relays)
         await Promise.all(
             relays.map(async (relay) => {
                 try {
-                    const relayResult = await this.syncSingleRelay(relay, filterArray, mergedOpts);
+                    const relayResult = await this.syncSingleRelay(relay, filterArray, opts);
 
                     // Merge results
                     result.events.push(...relayResult.events);
@@ -309,21 +305,40 @@ export class NDKSync {
             let completedCount = 0;
             const totalRelays = relays.length;
 
+            // Consumer callbacks run outside the try/catch that classifies the sync outcome, so an
+            // exception thrown by the consumer is never mistaken for a sync failure. Such exceptions
+            // are logged and otherwise ignored (syncWithRelay is not awaited by anyone).
+            const invokeCallback = (name: string, relay: NDKRelay | undefined, fn: () => void | Promise<void>) =>
+                Promise.resolve()
+                    .then(fn)
+                    .catch((error) => {
+                        console.error(`[NDKSync] ${name} callback threw${relay ? ` for ${relay.url}` : ""}:`, error);
+                    });
+
             const syncWithRelay = async (relay: NDKRelay) => {
+                let outcome: { synced: number } | { failed: Error };
                 try {
                     const result = await this.syncSingleRelay(relay, filterArray, {
                         autoFetch: true,
-                        onRelayError: this.createErrorHandler(opts.onRelayError),
                         onNegotiationProgress: opts.onNegotiationProgress,
                     });
-                    opts.onRelaySynced?.(relay, result.events.length);
+                    outcome = { synced: result.events.length };
                 } catch (error) {
+                    // Both Negentropy and the fetchEvents fallback failed for this relay
                     console.error(`[NDKSync] Failed to sync from ${relay.url}:`, error);
-                } finally {
-                    completedCount++;
-                    if (completedCount === totalRelays) {
-                        opts.onSyncComplete?.();
-                    }
+                    outcome = { failed: error instanceof Error ? error : new Error(String(error)) };
+                }
+
+                const terminal = outcome;
+                if ("failed" in terminal) {
+                    await invokeCallback("onRelayError", relay, () => opts.onRelayError?.(relay, terminal.failed));
+                } else {
+                    await invokeCallback("onRelaySynced", relay, () => opts.onRelaySynced?.(relay, terminal.synced));
+                }
+
+                completedCount++;
+                if (completedCount === totalRelays) {
+                    await invokeCallback("onSyncComplete", undefined, () => opts.onSyncComplete?.());
                 }
             };
 

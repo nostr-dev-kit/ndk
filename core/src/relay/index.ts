@@ -292,7 +292,9 @@ export class NDKRelay extends EventEmitter<{
             return false;
         }
 
-        if (this.targetValidationRatio === undefined) {
+        // A ratio that is not a number (NaN from a ratio function, say) would
+        // make the comparison below false for every event: check them all instead.
+        if (this.targetValidationRatio === undefined || !Number.isFinite(this.targetValidationRatio)) {
             return true;
         }
 

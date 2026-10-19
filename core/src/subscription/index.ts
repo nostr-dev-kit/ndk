@@ -879,8 +879,14 @@ export class NDKSubscription extends EventEmitter<{
                         // Attempt verification
                         if (this.ndk.asyncSigVerification) {
                             // Async verification - call verifySignature but don't wait for result
-                            // The validation stats will be tracked in the async callback
-                            ndkEvent.verifySignature(true);
+                            // The validation stats will be tracked in the async callback.
+                            // A result that is known at once (an id that is not the event's
+                            // hash) is acted on now.
+                            if (ndkEvent.verifySignature(true) === false) {
+                                this.debug("Event failed signature validation", event);
+                                this.ndk.reportInvalidSignature(ndkEvent, relay);
+                                return;
+                            }
                         } else {
                             // Sync verification - check result immediately
                             if (!ndkEvent.verifySignature(true)) {

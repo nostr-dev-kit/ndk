@@ -6,6 +6,7 @@ import type { NDKEvent, NostrEvent } from ".";
 import { verifySignatureAsync } from "./signature";
 
 const PUBKEY_REGEX = /^[a-f0-9]{64}$/;
+const SIG_REGEX = /^[a-f0-9]{128}$/;
 
 /**
  * Validates an NDKEvent object.
@@ -31,26 +32,54 @@ export function validate(this: NDKEvent): boolean {
     return true;
 }
 
-export const verifiedSignatures = new LRUCache<string, false | string>({
+/**
+ * Signatures already verified, by event id: the id maps to the signature that
+ * was found valid for it.
+ *
+ * An entry is only written once the id has been checked to be the hash of the
+ * event, so the same id always means the same author, time, kind, tags and
+ * content, and an entry is only used for the same signature. Failures are not
+ * remembered: a bad signature under an event's id must not count against the
+ * genuine event.
+ */
+export const verifiedSignatures = new LRUCache<string, string>({
     maxSize: 1000,
     entryExpirationTimeInMS: 60000,
 });
 
 /**
  * This method verifies the signature of an event and optionally persists the result to the event.
+ *
+ * An event whose id is not the hash of its contents is invalid, whatever its signature.
+ *
  * @param event {NDKEvent} The event to verify
  * @returns {boolean | undefined} True if the signature is valid, false if it is invalid, and undefined if the signature has not been verified yet.
  */
 export function verifySignature(this: NDKEvent, persist: boolean): boolean | undefined {
     if (typeof this.signatureVerified === "boolean") return this.signatureVerified;
 
-    const prevVerification = verifiedSignatures.get(this.id);
-    if (prevVerification !== null) {
-        this.signatureVerified = !!prevVerification;
-        return this.signatureVerified;
+    // A signature that is not 64 bytes of hex can never verify (and would make
+    // the worker throw instead of answering).
+    if (typeof this.sig !== "string" || !SIG_REGEX.test(this.sig)) {
+        this.signatureVerified = false;
+        return false;
     }
 
     try {
+        // The signature is over the id, and the cache below is keyed by it: check
+        // that the id is this event's before trusting either.
+        const hash = sha256(new TextEncoder().encode(this.serialize()));
+        if (bytesToHex(hash) !== this.id) {
+            this.signatureVerified = false;
+            return false;
+        }
+
+        const prevVerification = verifiedSignatures.get(this.id);
+        if (prevVerification !== null && prevVerification === this.sig) {
+            this.signatureVerified = true;
+            return true;
+        }
+
         // Use async verification if enabled (either via worker or custom function)
         if (this.ndk?.asyncSigVerification) {
             // Capture the relay in a closure before the async call
@@ -70,7 +99,6 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
                         } else {
                             this.ndk?.reportInvalidSignature(this);
                         }
-                        verifiedSignatures.set(this.id, false);
                     } else {
                         // Track successful validation
                         if (relayForVerification) {
@@ -82,12 +110,10 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
                     console.error("signature verification error", this.id, err);
                 });
         } else {
-            const hash = sha256(new TextEncoder().encode(this.serialize()));
             const sigBytes = hexToBytes(this.sig as string);
             const pubkeyBytes = hexToBytes(this.pubkey);
             const res = schnorr.verify(sigBytes, hash, pubkeyBytes);
             if (res) verifiedSignatures.set(this.id, this.sig!);
-            else verifiedSignatures.set(this.id, false);
             this.signatureVerified = res;
             return res;
         }

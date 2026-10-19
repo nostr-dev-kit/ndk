@@ -70,6 +70,15 @@ export async function verifySignatureAsync(event: NDKEvent, _persist: boolean, r
     if (ndkInstance.signatureVerificationFunction) {
         result = await ndkInstance.signatureVerificationFunction(event);
     } else {
+        // The worker answers by event id, which verifySignature has already
+        // checked is the hash of the event. A check already waiting for this id
+        // answers only for its own signature: wait for it, then check this one.
+        const pending = processingQueue[event.id];
+        if (pending && pending.event.sig !== event.sig) {
+            await new Promise<void>((resolve) => pending.resolves.push(() => resolve()));
+            return verifySignatureAsync(event, _persist, relay);
+        }
+
         // Otherwise use the worker-based verification
         result = await new Promise<boolean>((resolve) => {
             const serialized = event.serialize();

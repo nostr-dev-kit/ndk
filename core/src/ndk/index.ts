@@ -148,11 +148,12 @@ export interface NDKConstructorParams {
 
     /**
      * The lowest validation ratio any single relay can have.
-     * Relays will have a sample of events verified based on this ratio.
+     * Set it below 1 to have only a sample of each relay's events verified,
+     * once the relay has sent enough events with valid signatures.
      * When using this, you MUST listen for event:invalid-sig events
      * to handle invalid signatures and disconnect from evil relays.
      *
-     * @default 0.1
+     * @default 1 (every event is verified)
      */
     lowestValidationRatio?: number;
 
@@ -351,7 +352,7 @@ export class NDK extends EventEmitter<{
     public queuesNip05: Queue<ProfilePointer | null>;
     public asyncSigVerification = false;
     public initialValidationRatio = 1.0;
-    public lowestValidationRatio = 0.1;
+    public lowestValidationRatio = 1.0;
     public validationRatioFn?: NDKValidationRatioFn;
     public filterValidationMode: "validate" | "fix" | "ignore" = "validate";
     public subManager: NDKSubscriptionManager;
@@ -429,6 +430,13 @@ export class NDK extends EventEmitter<{
 
         this.debug = opts.debug || debug("ndk");
         this.netDebug = opts.netDebug;
+
+        // Every NDKRelay copies these when it is constructed, so they must be
+        // in place before the pools below build the configured relays.
+        this.initialValidationRatio = opts.initialValidationRatio || 1.0;
+        this.lowestValidationRatio = opts.lowestValidationRatio || 1.0;
+        this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
+
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.subManager = new NDKSubscriptionManager();
         this.pool = new NDKPool(opts.explicitRelayUrls || [], this);
@@ -496,9 +504,6 @@ export class NDK extends EventEmitter<{
             this.signatureVerificationFunction = opts.signatureVerificationFunction;
         }
 
-        this.initialValidationRatio = opts.initialValidationRatio || 1.0;
-        this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
-        this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
         this.filterValidationMode = opts.filterValidationMode || "validate";
         this.aiGuardrails = new AIGuardrails(opts.aiGuardrails || false);
         this.futureTimestampGrace = opts.futureTimestampGrace;
@@ -686,8 +691,11 @@ export class NDK extends EventEmitter<{
     /**
      * Default function to calculate validation ratio based on historical validation results.
      * The more events validated successfully, the lower the ratio goes (down to the minimum).
+     *
+     * An arrow function, so that it reads this NDK instance whatever it is called on:
+     * each NDKRelay binds `validationRatioFn` to itself.
      */
-    private defaultValidationRatioFn(_relay: NDKRelay, validatedCount: number, _nonValidatedCount: number): number {
+    private defaultValidationRatioFn: NDKValidationRatioFn = (_relay, validatedCount, _nonValidatedCount) => {
         if (validatedCount < 10) return this.initialValidationRatio;
 
         // Calculate a logarithmically decreasing ratio that approaches the minimum
@@ -698,7 +706,7 @@ export class NDK extends EventEmitter<{
             this.initialValidationRatio * (1 - trustFactor) + this.lowestValidationRatio * trustFactor;
 
         return Math.max(calculatedRatio, this.lowestValidationRatio);
-    }
+    };
 
     /**
      * Get a NDKUser object

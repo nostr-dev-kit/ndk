@@ -18,18 +18,24 @@ globalThis.onmessage = (msg: MessageEvent) => {
     };
 
     queueMicrotask(() => {
-        const eventHash = sha256(new TextEncoder().encode(serialized));
-        const idHash = hexToBytes(id);
+        // Always answer: NDK waits for a reply for every id it sends, and
+        // schnorr.verify throws on a signature or key of the wrong length.
+        try {
+            const eventHash = sha256(new TextEncoder().encode(serialized));
+            const idHash = hexToBytes(id);
 
-        if (!compareTypedArrays(eventHash, idHash)) {
+            if (!compareTypedArrays(eventHash, idHash)) {
+                postMessage([id, false]);
+                return;
+            }
+
+            const sigBytes = hexToBytes(sig);
+            const pubkeyBytes = hexToBytes(pubkey);
+            const result = schnorr.verify(sigBytes, idHash, pubkeyBytes);
+            postMessage([id, result]);
+        } catch {
             postMessage([id, false]);
-            return;
         }
-
-        const sigBytes = hexToBytes(sig);
-        const pubkeyBytes = hexToBytes(pubkey);
-        const result = schnorr.verify(sigBytes, idHash, pubkeyBytes);
-        postMessage([id, result]);
     });
 };
 

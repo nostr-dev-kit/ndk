@@ -45,7 +45,7 @@ describe("defaultValidationRatioFn binding (NaN regression)", () => {
     test("rebound fn returns finite ratios at every count threshold", () => {
         const ndk = new NDK({ initialValidationRatio: 1.0, lowestValidationRatio: 0.1 });
         const relay = new NDKRelay("wss://t.relay", undefined, ndk);
-        const fn = relay.validationRatioFn!; // rebound to relay in its ctor
+        const fn = relay.validationRatioFn!; // already bound to NDK; relay ctor's .bind(this) is a no-op
 
         for (const c of [0, 9, 10, 50, 100, 1000]) {
             const r = fn(relay, c, 0);

@@ -244,6 +244,7 @@ export class NDKPool extends EventEmitter<{
     public removeRelay(relayUrl: string): boolean {
         const relay = this.relays.get(relayUrl);
         if (relay) {
+            relay.connectivity.resetReconnectionState();
             relay.disconnect();
             this.relays.delete(relayUrl);
             this.autoConnectRelays.delete(relayUrl);

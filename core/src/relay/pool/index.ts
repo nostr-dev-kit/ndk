@@ -50,6 +50,7 @@ export class NDKPool extends EventEmitter<{
     private flappingRelays: Set<WebSocket["url"]> = new Set();
     // A map to store timeouts for each flapping relay.
     private backoffTimes: Map<string, number> = new Map();
+    private flappingTimers = new Map<string, ReturnType<typeof setTimeout>>();
     private ndk: NDK;
 
     // System-wide disconnection detection
@@ -247,6 +248,9 @@ export class NDKPool extends EventEmitter<{
             relay.disconnect();
             this.relays.delete(relayUrl);
             this.autoConnectRelays.delete(relayUrl);
+            clearTimeout(this.flappingTimers.get(relayUrl));
+            this.flappingTimers.delete(relayUrl);
+            this.backoffTimes.delete(relayUrl);
             this.emit("relay:disconnect", relay);
             return true;
         }
@@ -467,6 +471,7 @@ export class NDKPool extends EventEmitter<{
     }
 
     private handleFlapping(relay: NDKRelay) {
+        if (this.relays.get(relay.url) !== relay) return;
         this.debug(`Relay ${relay.url} is flapping`);
 
         // Increment the backoff time for this relay, starting with 5 seconds.
@@ -476,12 +481,19 @@ export class NDKPool extends EventEmitter<{
 
         this.debug(`Backoff time for ${relay.url} is ${currentBackoff}ms`);
 
-        setTimeout(() => {
+        clearTimeout(this.flappingTimers.get(relay.url));
+        const timer = setTimeout(() => {
+            this.flappingTimers.delete(relay.url);
+            if (this.relays.get(relay.url) !== relay) return;
             this.debug(`Attempting to reconnect to ${relay.url}`);
             this.emit("relay:connecting", relay);
-            relay.connect();
+            if (this.relays.get(relay.url) !== relay) return;
+            relay.connect().catch((error) => {
+                this.debug(`Failed to reconnect flapping relay ${relay.url}`, error);
+            });
             this.checkOnFlappingRelays();
         }, currentBackoff);
+        this.flappingTimers.set(relay.url, timer);
 
         relay.disconnect();
 

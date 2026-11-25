@@ -5,6 +5,25 @@ import { NDKRelay, NDKRelayStatus } from "../index.js";
 import { NDKRelaySet } from "../sets/index.js";
 
 describe("NDKPool", () => {
+    it("does not reconnect a removed flapping relay", async () => {
+        vi.useFakeTimers();
+        try {
+            const ndk = new NDK({});
+            const relay = new NDKRelay("wss://flapping.example/", undefined, ndk);
+            const connect = vi.spyOn(relay, "connect").mockResolvedValue(undefined);
+            ndk.pool.addRelay(relay, false);
+
+            relay.emit("flapping");
+            expect(ndk.pool.removeRelay(relay.url)).toBe(true);
+            await vi.advanceTimersByTimeAsync(10_000);
+
+            expect(connect).not.toHaveBeenCalled();
+        } finally {
+            vi.useRealTimers();
+            vi.restoreAllMocks();
+        }
+    });
+
     it("refuses connecting to blacklisted relays", async () => {
         const blacklistedRelayUrl = "wss://url1";
         const ndk = new NDK({
